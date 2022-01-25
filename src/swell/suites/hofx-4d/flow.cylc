@@ -1,0 +1,101 @@
+#!jinja2
+
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc 8 suite for executing JEDI-based 4D h(x)
+
+# --------------------------------------------------------------------------------------------------
+
+%include "suite.jinja2"
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{suite_properties["intial cylc point"]}}
+    final cycle point = {{suite_properties["final cylc point"]}}
+    runahead limit = {{suite_properties["runahead limit"]}}
+
+    [[graph]]
+        R1 = """
+             BuildJedi & Stage
+             """
+        T00,T06,T12,T18 = """
+                          GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
+                          => RunJediExecutable => MergeObsDiags =>
+                          ObsCorrelationScatterDriver & SaveObsDiags => CleanCycle
+                          #CleanCycle[-PT6H] => CleanCycle
+                          """
+        R1/$ = """
+               CleanCycle => CleanExperiment
+               """
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment-filled.yaml
+
+    # Tasks
+    # -----
+    [[Stage]]
+        script = "tide Stage $config"
+
+    [[BuildJedi]]
+        script = "tide BuildJedi $config"
+
+    [[GetBackground]]
+        script = "tide GetBackground $config -d $datetime"
+
+    [[GetObservations]]
+        script = "tide GetObservations $config -d $datetime"
+
+    [[JediConfig]]
+        script = "tide JediConfig $config -d $datetime"
+
+    [[RunJediExecutable]]
+        script = "tide RunJediExecutable $config -d $datetime"
+        platform = {{suite_properties["RunJediExecutable"]["platform"]}}
+        execution time limit = {{suite_properties["RunJediExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{suite_properties["RunJediExecutable"]["account"]}}
+            --qos = {{suite_properties["RunJediExecutable"]["qos"]}}
+            --constraint = {{suite_properties["RunJediExecutable"]["constraint"]}}
+            --job-name = RunJediExecutable
+            --nodes={{suite_properties["RunJediExecutable"]["nodes"]}}
+            --ntasks-per-node={{suite_properties["RunJediExecutable"]["ntasks_per_node"]}}
+
+    [[MergeObsDiags]]
+        script = "tide-diagnostics MergeIodaFiles $config -d $datetime"
+
+    [[ObsCorrelationScatterDriver]]
+        script = "tide-diagnostics ObsCorrelationScatterDriver $config -d $datetime"
+
+    [[SaveObsDiags]] #TODO
+        script = "sleep 10; echo this task will save the observation output"
+
+    [[CleanCycle]] #TODO
+        script = "sleep 10; echo this task will remove files associated with the cycle"
+
+    [[CleanExperiment]] #TODO
+        script = "sleep 10; echo this task will remove files associated with the entire experiment"
+
+# --------------------------------------------------------------------------------------------------
