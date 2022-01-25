@@ -4,7 +4,7 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-from tide.task_base import taskBase
+from swell.tasks.base.task_base import taskBase
 
 from oadiag.utilities import ioda_definitions
 from oadiag.diag_base import diag_main

@@ -8,7 +8,7 @@
 
 import sys
 import click
-from tide.config import Config
+from swell.tasks.base.config import Config
 
 @click.command()
 @click.argument('config')

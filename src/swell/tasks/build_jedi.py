@@ -8,8 +8,8 @@ import os
 import shutil
 import subprocess
 
-from tide.task_base import taskBase
-from tide.utils import git_got
+from swell.tasks.task_base import taskBase
+from swell.utilities.git_utils import git_got
 
 # --------------------------------------------------------------------------------------------------
 

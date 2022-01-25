@@ -11,7 +11,7 @@ import re
 import glob
 from shutil import copyfile
 
-from tide.task_base import taskBase
+from swell.tasks.base.task_base import taskBase
 from r2d2 import fetch
 
 class Stage(taskBase):

@@ -8,7 +8,7 @@ import os
 import shutil
 import yaml
 
-from tidesuites.suites.suites import return_suite_path
+from swell.suites.suites import return_suite_path
 
 # --------------------------------------------------------------------------------------------------
 

@@ -9,8 +9,8 @@ import os
 
 from solo.ioda import Ioda
 
-from tide.task_base import taskBase
-from taskdiag import utils_diag
+from swell.tasks.base.task_base import taskBase
+from eva.utilities.ioda_definitions import find_instrument_from_string
 
 # --------------------------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ class MergeIodaFiles(taskBase):
       cycle_dir, obs_file = os.path.split(ob_config["obs space"]["obsdataout"]["obsfile"])
 
       # Get instrument name
-      instrument, instrument_long = utils_diag.find_instrument_from_string(obs_file)
+      instrument, instrument_long = find_instrument_from_string(obs_file)
 
       # Check the above returned something
       if instrument == None:

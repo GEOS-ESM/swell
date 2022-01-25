@@ -6,7 +6,7 @@
 
 # ---------------------------------------------------------------------------
 
-from tide.task_base import taskBase
+from swell.tasks.base.task_base import taskBase
 
 from datetime import datetime as dt
 import isodate

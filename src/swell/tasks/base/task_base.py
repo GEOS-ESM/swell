@@ -17,11 +17,11 @@ import sys
 import time
 
 # local imports
-from tide.config import Config
-from tide.datetime import Datetime
-from tide.logger import Logger
-from tide.task_registry import valid_tasks
-from tide.utils import camelcase_to_underscore
+from swell.tasks.base.config import Config
+from swell.tasks.base.datetime import Datetime
+from swell.utilities.logger import Logger
+from swell.tasks.task_registry import valid_tasks
+from swell.tasks.utilities.utils import camelcase_to_underscore
 
 
 # --------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ class taskFactory():
     task_lower = camelcase_to_underscore(task)
 
     # Import class based on user selected task
-    task_class = getattr(importlib.import_module("tide."+task_lower), task)
+    task_class = getattr(importlib.import_module("swell."+task_lower), task)
 
     # Return task object
     return task_class(config, datetime, task)

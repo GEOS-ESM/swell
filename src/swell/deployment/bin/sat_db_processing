@@ -15,13 +15,13 @@ import pandas as pd
 
 from datetime import datetime as dt
 
-from tide.utils import git_got
-from tide.utils import run_sat_db_process
+from swell.tasks.utils import git_got
+from swell.tasks.utils import run_sat_db_process
 
 def make_yamls(final_df, output_dir):
 
     '''
-	Uses the dataframe created by tide sat_db_processing
+	Uses the dataframe created by sat_db_processing
 	to write out yaml files
     '''
 
@@ -88,7 +88,7 @@ def main(config):
     yaml_out_dir = geos_sat_db_root + '/satdb_yamls'
     git_out_dir  = geos_sat_db_root + '/GEOSana_GridComp'
 
-    #run sat db processing tide util
+    #run sat db processing util
     processed_data = run_sat_db_process(git_out_dir)
 
     #create yamls

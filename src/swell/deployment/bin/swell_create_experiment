@@ -11,11 +11,11 @@ import os
 import shutil
 import yaml
 
-from tide.logger import Logger
-from tide.utils import git_got
-import tidesuites.yaml_exploder as ye
-import tidesuites.prep_exp_dirs as ped
-import tidesuites.prep_suite as ps
+from swell.utilities.logger import Logger
+from swell.utilities.git_utils import git_got
+import swell.deployment.yaml_exploder as ye
+import swell.deployment.prep_exp_dirs as ped
+import swell.deployment.prep_suite as ps
 
 
 # --------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ def main(config, clean):
 
   # Create a logger
   # ---------------
-  logger = Logger('tide_create_experiment')
+  logger = Logger('swell_create_experiment')
 
   # Create experiment directory
   # ---------------------------
@@ -48,7 +48,7 @@ def main(config, clean):
   # Optionally clean up any existing directory
   # ------------------------------------------
   if clean:
-    check_clean = input('tide_create_experiment: removing existing experiment directory '+
+    check_clean = input('swell_create_experiment: removing existing experiment directory '+
                         exp_id_dir+'. Press return to continue')
     logger.info('removing'+exp_id_dir)
     shutil.rmtree(exp_id_dir)

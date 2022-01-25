@@ -7,7 +7,7 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 #******************************************************************************
-# English Name: tide Run Experiment
+# English Name: Deploy Experiment
 # -------------
 #
 # Purpose: Executes a JEDI/GEOS experiment using a designated workflow engine
@@ -19,7 +19,7 @@
 # Notes: 1. This utility should be installed in the experiment suite dir.
 # ------ 2. CYLC is the default workflow engine for now.
 #
-# Usage: tide_run_experiment [-p|--path path] [-i|--initial initial_dt]
+# Usage: swell_run_experiment [-p|--path path] [-i|--initial initial_dt]
 # ------                         [-f|--final final_dt]
 #
 # Interface:              Type   Access  Description

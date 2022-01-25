@@ -6,7 +6,7 @@
 
 # ---------------------------------------------------------------------------
 
-from tide.task_base import taskBase
+from swell.tasks.base.task_base import taskBase
 from r2d2 import fetch
 
 import os
@@ -15,7 +15,7 @@ import sys
 import time
 import argparse
 from datetime import datetime as dt
-from tide.utils import run_sat_db_process
+from swell.tasks.utilities.satbd_utils import run_sat_db_process
 import itertools
 import yaml
 

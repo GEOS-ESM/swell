@@ -8,8 +8,8 @@ import os
 import subprocess
 import sys
 
-from tide.task_base import taskBase
-from tide.utils import run_subprocess
+from swell.tasks.base.task_base import taskBase
+from swell.tasks.utilities.utils import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 

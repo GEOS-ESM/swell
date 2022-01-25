@@ -57,22 +57,22 @@
     # Tasks
     # -----
     [[Stage]]
-        script = "tide Stage $config"
+        script = "swell-task Stage $config"
 
     [[BuildJedi]]
-        script = "tide BuildJedi $config"
+        script = "swell-task BuildJedi $config"
 
     [[GetBackground]]
-        script = "tide GetBackground $config -d $datetime"
+        script = "swell-task GetBackground $config -d $datetime"
 
     [[GetObservations]]
-        script = "tide GetObservations $config -d $datetime"
+        script = "swell-task GetObservations $config -d $datetime"
 
     [[JediConfig]]
-        script = "tide JediConfig $config -d $datetime"
+        script = "swell-task JediConfig $config -d $datetime"
 
     [[RunJediExecutable]]
-        script = "tide RunJediExecutable $config -d $datetime"
+        script = "swell-task RunJediExecutable $config -d $datetime"
         platform = {{suite_properties["RunJediExecutable"]["platform"]}}
         execution time limit = {{suite_properties["RunJediExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -84,10 +84,10 @@
             --ntasks-per-node={{suite_properties["RunJediExecutable"]["ntasks_per_node"]}}
 
     [[MergeObsDiags]]
-        script = "tide-diagnostics MergeIodaFiles $config -d $datetime"
+        script = "swell-task-diagnostics MergeIodaFiles $config -d $datetime"
 
     [[ObsCorrelationScatterDriver]]
-        script = "tide-diagnostics ObsCorrelationScatterDriver $config -d $datetime"
+        script = "swell-task-diagnostics ObsCorrelationScatterDriver $config -d $datetime"
 
     [[SaveObsDiags]] #TODO
         script = "sleep 10; echo this task will save the observation output"
