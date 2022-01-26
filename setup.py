@@ -41,6 +41,16 @@ setuptools.setup(
         'pandas>=1.1.3',
         'isodate>=0.5.4',
     ],
+    package_data={
+        '': [
+               'suites/modules',
+               'suites/CMakeLists_template.txt',
+               'suites/*/experiment.yaml',
+               'suites/*/flow.cylc',
+             ],
+    },
+    include_package_data=True,
+    scripts=scripts,
     entry_points={
         'console_scripts': [
             'swell_task = swell.tasks.base.task_base:main',
