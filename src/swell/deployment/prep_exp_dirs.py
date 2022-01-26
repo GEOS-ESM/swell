@@ -15,9 +15,7 @@ from swell.suites.suites import return_suite_path
 
 class dir_config():
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def __init__(self, logger, suite_name, experiment_id_dir, exp_id, *dirs):
 
@@ -40,10 +38,7 @@ class dir_config():
         # --------------------------------
         self.populate_suite(suite_name)
 
-
-
     # ----------------------------------------------------------------------------------------------
-
 
     def dir_maker(self, exp_id_dir, dir_name=('', '')):
         dir_var_name = dir_name[0]
@@ -57,19 +52,17 @@ class dir_config():
         self.logger.info('Adding this directory to config with key: {}'.format(dir_var_name))
         self.dir_dict.update({dir_var_name: dir_full})
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def populate_suite(self, suite_name):
         print(suite_name)
         suite_path = return_suite_path()
         for s in ['modules', os.path.join(suite_name, 'flow.cylc'), 'CMakeLists_template.txt']:
-          src_file = os.path.split(s)[1]
-          src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
-          dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
-          self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
-          shutil.copy(src_path_file, dst_path_file)
+            src_file = os.path.split(s)[1]
+            src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
+            dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
+            self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
+            shutil.copy(src_path_file, dst_path_file)
 
 
 # --------------------------------------------------------------------------------------------------

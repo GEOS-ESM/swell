@@ -6,7 +6,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
+
 import os
+
 
 # --------------------------------------------------------------------------------------------------
 #  @package logger
@@ -17,56 +19,55 @@ import os
 
 class Logger:
 
-  def __init__(self, task_name):
+    def __init__(self, task_name):
 
-    self.task_name = task_name
+        self.task_name = task_name
 
-    # Set default logging levels
-    self.loggerdict = {"INFO": True,
-                       "TRACE": False,
-                       "DEBUG": False}
+        # Set default logging levels
+        self.loggerdict = {"INFO": True,
+                           "TRACE": False,
+                           "DEBUG": False}
 
-    # Loop over logging levels
-    for loglevel in self.loggerdict:
+        # Loop over logging levels
+        for loglevel in self.loggerdict:
 
-      # Check for environment variable e.g. LOG_TRACE=1 will activiate trace logging
-      log_env = os.environ.get('LOG_'+loglevel)
+            # Check for environment variable e.g. LOG_TRACE=1 will activiate trace logging
+            log_env = os.environ.get('LOG_'+loglevel)
 
-      # If found set element to environment variable
-      if log_env is not None:
-        self.loggerdict[loglevel] = int(log_env) == 1
+            # If found set element to environment variable
+            if log_env is not None:
+                self.loggerdict[loglevel] = int(log_env) == 1
 
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+    def send_message(self, level, message):
 
-  def send_message(self, level, message):
+        if self.loggerdict[level]:
+            print(level+" "+self.task_name+": "+message)
 
-    if self.loggerdict[level]:
-      print(level+" "+self.task_name+": "+message)
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+    def info(self, message):
 
-  def info(self, message):
+        self.send_message("INFO", message)
 
-    self.send_message("INFO", message)
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+    def trace(self, message):
 
-  def trace(self, message):
+        self.send_message("TRACE", message)
 
-    self.send_message("TRACE", message)
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+    def debug(self, message):
 
-  def debug(self, message):
+        self.send_message("DEBUG", message)
 
-    self.send_message("DEBUG", message)
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+    def abort(self, message):
 
-  def abort(self, message):
+        self.send_message("ABORT", message)
+        sys.exit('ABORT\n')
 
-    self.send_message("ABORT", message)
-    sys.exit('ABORT\n')
-
-# --------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------

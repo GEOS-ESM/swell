@@ -29,50 +29,46 @@ from swell.tasks.utilities.utils import camelcase_to_underscore
 
 class taskBase(ABC):
 
-  # Base class constructor
-  def __init__(self, config_input, datetime_input, task_name):
+    # Base class constructor
+    def __init__(self, config_input, datetime_input, task_name):
 
-    print("\nInitializing task with the following parameters:")
-    print("  Task name:     ", task_name)
-    print("  Configuration: ", config_input)
+        print("\nInitializing task with the following parameters:")
+        print("  Task name:     ", task_name)
+        print("  Configuration: ", config_input)
 
-    # Create message logger
-    # ---------------------
-    self.logger = Logger(task_name)
+        # Create message logger
+        # ---------------------
+        self.logger = Logger(task_name)
 
+        # Create a configuration object
+        # -----------------------------
+        self.config = Config(config_input, self.logger)
 
-    # Create a configuration object
-    # -----------------------------
-    self.config = Config(config_input, self.logger)
+        # If task receives a datetime create the object and update the config
+        # -------------------------------------------------------------------
+        if (datetime_input is not None):
 
+            # Print out the datetime
+            print("  Date and time: ", datetime_input, "\n")
 
-    # If task receives a datetime create the object and update the config
-    # -------------------------------------------------------------------
-    if (datetime_input is not None):
+            # Create a datetime object
+            self.datetime = Datetime(datetime_input)
 
-      # Print out the datetime
-      print("  Date and time: ", datetime_input, "\n")
+            # Augment configuration with cycle time.
+            self.config.add_cyle_time_parameter(self.datetime.datetime)
 
-      # Create a datetime object
-      self.datetime = Datetime(datetime_input)
+            # Add data assimilation window paramters to config
+            self.config.add_data_assimilation_window_parameters()
 
-      # Augment configuration with cycle time.
-      self.config.add_cyle_time_parameter(self.datetime.datetime)
+        # Resolve all variables that can be resolved
+        # ------------------------------------------
+        self.config.resolve_config_file()
 
-      # Add data assimilation window paramters to config
-      self.config.add_data_assimilation_window_parameters()
-
-
-    # Resolve all variables that can be resolved
-    # ------------------------------------------
-    self.config.resolve_config_file()
-
-
-  # Execute is the place where a task does its work. It's defined as abstract in the base class
-  # in order to force the sub classes (tasks) to implement it.
-  @abstractmethod
-  def execute(self):
-    pass
+    # Execute is the place where a task does its work. It's defined as abstract in the base class
+    # in order to force the sub classes (tasks) to implement it.
+    @abstractmethod
+    def execute(self):
+        pass
 
 
 # --------------------------------------------------------------------------------------------------
@@ -80,16 +76,16 @@ class taskBase(ABC):
 
 class taskFactory():
 
-  def create_task(self, task, config, datetime):
+    def create_task(self, task, config, datetime):
 
-    # Convert capitilized string to one with underscores
-    task_lower = camelcase_to_underscore(task)
+        # Convert capitilized string to one with underscores
+        task_lower = camelcase_to_underscore(task)
 
-    # Import class based on user selected task
-    task_class = getattr(importlib.import_module("swell.tasks."+task_lower), task)
+        # Import class based on user selected task
+        task_class = getattr(importlib.import_module("swell.tasks."+task_lower), task)
 
-    # Return task object
-    return task_class(config, datetime, task)
+        # Return task object
+        return task_class(config, datetime, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -99,13 +95,13 @@ def task_main(task, config, datetime):
 
     # For security check that task is in the registry
     if task not in valid_tasks:
-      print("\nTask \'"+task+"\' not found in registry; valid tasks are: \n")
-      valid_tasks.sort()
-      for valid_task in valid_tasks:
-        print("  ", valid_task)
-      print(" ")
-      print("ABORT: Task not found in task registry.")
-      sys.exit()
+        print("\nTask \'"+task+"\' not found in registry; valid tasks are: \n")
+        valid_tasks.sort()
+        for valid_task in valid_tasks:
+            print("  ", valid_task)
+        print(" ")
+        print("ABORT: Task not found in task registry.")
+        sys.exit()
 
     # Create the object
     constrc_start = time.perf_counter()
@@ -139,13 +135,13 @@ def task_main(task, config, datetime):
 @click.option('-d', '--datetime', 'datetime', default=None)
 def main(task, config, datetime):
 
-  task_main(task, config, datetime)
+    task_main(task, config, datetime)
 
 
 # --------------------------------------------------------------------------------------------------
 
 
 if __name__ == "__main__":
-  main()
+    main()
 
 # --------------------------------------------------------------------------------------------------

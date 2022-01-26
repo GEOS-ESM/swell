@@ -15,29 +15,29 @@ import subprocess
 
 def camelcase_to_underscore(CamelCaseString):
 
-  # Convert a string that looks like e.g. ThisIsAString to this_is_a_string
-  # -----------------------------------------------------------------------
+    # Convert a string that looks like e.g. ThisIsAString to this_is_a_string
+    # -----------------------------------------------------------------------
 
-  # Create empty output string
-  underscore_string = ''
+    # Create empty output string
+    underscore_string = ''
 
-  # Loop over the elements in the string
-  for element in CamelCaseString:
+    # Loop over the elements in the string
+    for element in CamelCaseString:
 
-    # Check if element is upper case and if so prepend with underscore
-    if element.isupper():
-      new_element = '_'+element.lower()
-    else:
-      new_element = element
+        # Check if element is upper case and if so prepend with underscore
+        if element.isupper():
+            new_element = '_'+element.lower()
+        else:
+            new_element = element
 
-    # Add new element to the output string
-    underscore_string = underscore_string+new_element
+        # Add new element to the output string
+        underscore_string = underscore_string+new_element
 
-  # If this results in leading underscore then remove it
-  if underscore_string[0] == "_":
-    underscore_string = underscore_string[1:]
+    # If this results in leading underscore then remove it
+    if underscore_string[0] == "_":
+        underscore_string = underscore_string[1:]
 
-  return underscore_string
+    return underscore_string
 
 
 # --------------------------------------------------------------------------------------------------
@@ -45,15 +45,15 @@ def camelcase_to_underscore(CamelCaseString):
 
 def run_subprocess(command):
 
-  process = subprocess.Popen(command, stdout=subprocess.PIPE)
-  while True:
-    output = process.stdout.readline().decode()
-    if output == '' and process.poll() is not None:
-      break
-    if output:
-      print(output.strip())
-  rc = process.poll()
-  return rc
+    process = subprocess.Popen(command, stdout=subprocess.PIPE)
+    while True:
+        output = process.stdout.readline().decode()
+        if output == '' and process.poll() is not None:
+            break
+        if output:
+            print(output.strip())
+    rc = process.poll()
+    return rc
 
 
 # --------------------------------------------------------------------------------------------------

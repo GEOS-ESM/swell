@@ -24,6 +24,8 @@ class yaml_exploder():
         self.exp_file_path = os.path.join(exp_id_dir,
                                           'experiment_{}.yaml'.format(self.dir_dict['experiment']))
 
+    # ----------------------------------------------------------------------------------------------
+
     def boom(self):
         '''
         Expands the experiment yaml file into a readable expanded yaml file that the workflow engine
@@ -44,7 +46,8 @@ class yaml_exploder():
             # check if something is a string, if yes, then force into list. However, that may cause
             # problems later
 
-            # Check if key is STAGE, then get the pre-pend paths that we'll use later in the expanded yaml
+            # Check if key is STAGE, then get the pre-pend paths that we'll use later in the
+            # expanded yaml
             if 'STAGE' in k:
                 self.stage_setter(param_list)
 
@@ -66,15 +69,15 @@ class yaml_exploder():
         # Prepend stage paths to stage items
         self.stage_filler()
 
+    # ----------------------------------------------------------------------------------------------
 
     def write(self):
-
-        # Prepend stage paths to stage items
-        #target = self.stage_filler()
 
         # Write out the final expanded yaml file
         with open(os.path.join(self.suite_dir, 'experiment-filled.yaml'), 'w') as outfile:
             yaml.dump(self.target, outfile, default_flow_style=False)
+
+    # ----------------------------------------------------------------------------------------------
 
     def check_wilds(self, param):
         '''
@@ -85,15 +88,19 @@ class yaml_exploder():
                 param = param.replace('$({})'.format(item), self.target[item])
         return param
 
+    # ----------------------------------------------------------------------------------------------
+
     def add_env_dirs(self, dir_dict):
         '''
         Add the environmental directories to the experiment file.
         '''
         exp_root = dir_dict['experiment_root']
         dir_dict.update(self.target)
-        dir_dict.update({'experiment_root':exp_root})
+        dir_dict.update({'experiment_root': exp_root})
 
         return dir_dict
+
+    # ----------------------------------------------------------------------------------------------
 
     def pull_yaml(self, param):
         '''
@@ -112,10 +119,13 @@ class yaml_exploder():
             big_yaml = yamlfile.read()
 
         # Replace the directories and experiment ID variables specific to this run
-        big_yaml = replace_vars(big_yaml, stage_dir=stage_dir, experiment_id_dir=self.experiment_id_dir,
+        big_yaml = replace_vars(big_yaml, stage_dir=stage_dir,
+                                experiment_id_dir=self.experiment_id_dir,
                                 run_dir=run_dir, experiment=self.dir_dict['experiment'])
         big_yaml = yaml.safe_load(big_yaml)
         return big_yaml
+
+    # ----------------------------------------------------------------------------------------------
 
     def stage_setter(self, param_list):
         self.stage_path_list = []
@@ -129,6 +139,8 @@ class yaml_exploder():
 
         return None
 
+    # ----------------------------------------------------------------------------------------------
+
     def stage_filler(self):
         stage_list = self.target['STAGE']
         for i, stage_item in enumerate(stage_list):
@@ -137,6 +149,7 @@ class yaml_exploder():
             for j, copy_item in enumerate(copy_list):
                 copy_item[0] = prepend_path(copy_item[0], stage_path_item)
                 self.target['STAGE'][i]['copy_files']['directories'][j] = copy_item
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -149,9 +162,11 @@ def replace_vars(s, **defs):
 
     # Resolve EWOK vars first: {{var}} and $(var)
     for var in re.findall(r'{{(\w+)}}', expr):
-        if var in defs: expr = re.sub(r'{{'+var+'}}', defs[var], expr)
+        if var in defs:
+            expr = re.sub(r'{{'+var+'}}', defs[var], expr)
     for var in re.findall(r'\$\((\w+)\)', expr):
-        if var in defs: expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
+        if var in defs:
+            expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
 
     # Recursively resolve shell variables
     s_interp = Template(expr).safe_substitute(defs)
@@ -160,6 +175,9 @@ def replace_vars(s, **defs):
         s_interp = replace_vars(s_interp, **defs)
 
     return s_interp
+
+
+# --------------------------------------------------------------------------------------------------
 
 
 def prepend_path(s, prepath):
@@ -172,5 +190,5 @@ def prepend_path(s, prepath):
         prepath = os.path.dirname(prepath)
         s_list.remove('..')
     s = ('/').join(s_list)
-    new_s = os.path.join(prepath,s)
+    new_s = os.path.join(prepath, s)
     return new_s

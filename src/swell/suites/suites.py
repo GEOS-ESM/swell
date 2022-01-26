@@ -4,7 +4,18 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 import os
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 def return_suite_path():
-  return os.path.split(__file__)[0]
+    return os.path.split(__file__)[0]
+
+
+# --------------------------------------------------------------------------------------------------

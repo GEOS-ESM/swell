@@ -6,19 +6,22 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Dictionary containing the tasks per node for each platform/constraint
 
+# Dictionary containing the tasks per node for each platform/constraint
 ntasks_per_node_dict = {
-  'nccs-discover': { 'hasw': 28,
-                     'sky': 40,
-                     'cas': 48
+  'nccs-discover': {'hasw': 28,
+                    'sky': 40,
+                    'cas': 48
                     }
 }
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 def get_tasks_per_node(platform, constraint):
 
-  return ntasks_per_node_dict[platform][constraint]
+    return ntasks_per_node_dict[platform][constraint]
+
 
 # --------------------------------------------------------------------------------------------------
