@@ -4,12 +4,12 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-from swell.tasks.base.task_base import taskBase
-
-from oadiag.utilities import ioda_definitions
-from oadiag.diag_base import diag_main
-
 import os
+import yaml
+
+from swell.tasks.base.task_base import taskBase
+from eva.utilities import ioda_definitions
+from eva.base import create_and_run
 
 # --------------------------------------------------------------------------------------------------
 
@@ -66,7 +66,14 @@ class ObsCorrelationScatterDriver(taskBase):
       obs_plot_dict["output path"] = os.path.join(cycle_dir, "observation_scatter_plots")
       obs_plot_dict["figure file type"] = 'png'
 
+      # Write the dictionary out to file
+      # --------------------------------
+      conf_dir = os.path.join(self.config.get("experiment_dir"), self.config.get("current_cycle"))
+      conf_output = os.path.join(conf_dir, "ObsCorrelationScatterDriver.yaml")
+      with open(conf_output, 'w') as outfile:
+        yaml.dump(obs_plot_dict, outfile, default_flow_style=False)
+
       # Run the diagnostic application
       # ------------------------------
       self.logger.info("Creating the scatter plots for "+instrument+" ("+instrument_long+")")
-      diag_main("ObsCorrelationScatter", obs_plot_dict, self.logger)
+      create_and_run("ObsCorrelationScatter", obs_plot_dict, self.logger)
