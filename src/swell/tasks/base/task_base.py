@@ -43,7 +43,7 @@ class taskBase(ABC):
 
     # Create a configuration object
     # -----------------------------
-    self.config = Config(config_input, logger)
+    self.config = Config(config_input, self.logger)
 
 
     # If task receives a datetime create the object and update the config
@@ -86,7 +86,7 @@ class taskFactory():
     task_lower = camelcase_to_underscore(task)
 
     # Import class based on user selected task
-    task_class = getattr(importlib.import_module("swell."+task_lower), task)
+    task_class = getattr(importlib.import_module("swell.tasks."+task_lower), task)
 
     # Return task object
     return task_class(config, datetime, task)

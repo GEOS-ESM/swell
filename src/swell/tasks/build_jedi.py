@@ -8,7 +8,7 @@ import os
 import shutil
 import subprocess
 
-from swell.tasks.task_base import taskBase
+from swell.tasks.base.task_base import taskBase
 from swell.utilities.git_utils import git_got
 
 # --------------------------------------------------------------------------------------------------

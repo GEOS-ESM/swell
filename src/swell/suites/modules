@@ -2,13 +2,15 @@
 # ---------------------
 source $MODULESHOME/init/bash
 
+# Purge modules
+# -------------
+module purge
+
 # JEDI Modules
 # ------------
 export OPT=/discover/swdev/jcsda/modules
 module use $OPT/modulefiles/apps
 module use $OPT/modulefiles/core
-module load comp/intel/19.1.0.166
-module load mpi/impi/19.1.0.166
 module load jedi/intel-impi
 
 # Python module with workflow dependencies
