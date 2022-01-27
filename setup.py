@@ -14,9 +14,6 @@
 
 import setuptools
 
-script_dir = 'src/swell/deployment/bin'
-scripts = [os.path.join(script_dir, x) for x in os.listdir(script_dir)]
-
 setuptools.setup(
     name='swell',
     version='0.0.0',
@@ -43,17 +40,16 @@ setuptools.setup(
     ],
     package_data={
         '': [
-               'suites/modules',
-               'suites/CMakeLists_template.txt',
-               'suites/*/experiment.yaml',
-               'suites/*/flow.cylc',
+               'deployment/platforms/*/modules*',
+               'suites/*/*',
              ],
     },
     include_package_data=True,
-    scripts=scripts,
     entry_points={
         'console_scripts': [
             'swell_task = swell.tasks.base.task_base:main',
+            'swell_create_experiment = swell.deployment.bin.swell_create_experiment:main',
+            'swell_launch_experiment = swell.deployment.bin.swell_launch_experiment:main',
         ],
     },
     )

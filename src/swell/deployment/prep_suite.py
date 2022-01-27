@@ -4,7 +4,11 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-from swell.deployment.platforms import get_tasks_per_node
+
+# ----------------------------------------------------------------------------------------------
+
+
+import importlib as il
 import os
 
 
@@ -15,11 +19,15 @@ class PrepSuite():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, exp_dict):
+    def __init__(self, logger, platform, exp_dict):
 
         # Copy of logger
         # --------------
         self.logger = logger
+
+        # Copy of platform
+        # ----------------
+        self.platform = platform
 
         # First update the scheduling dictionary, overwriting default with task specific values
         # -------------------------------------------------------------------------------------
@@ -46,7 +54,9 @@ class PrepSuite():
                 def_scheduling_dict = scheduling_dict
 
         # Get default tasks per node depending on platform/constraint
-        dtpn = get_tasks_per_node(def_scheduling_dict['platform'],
+        plat_mod = il.import_module('swell.deployment.platforms.'+self.platform+'.scheduling')
+        get_tasks_per_node_call = getattr(plat_mod, 'get_tasks_per_node')
+        dtpn = get_tasks_per_node_call(def_scheduling_dict['platform'],
                                   def_scheduling_dict['constraint'])
         def_scheduling_dict['ntasks_per_node'] = dtpn
 

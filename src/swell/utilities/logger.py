@@ -8,6 +8,7 @@
 
 
 import os
+import sys
 
 
 # --------------------------------------------------------------------------------------------------
@@ -24,9 +25,9 @@ class Logger:
         self.task_name = task_name
 
         # Set default logging levels
-        self.loggerdict = {"INFO": True,
-                           "TRACE": False,
-                           "DEBUG": False}
+        self.loggerdict = {'INFO': True,
+                           'TRACE': False,
+                           'DEBUG': False,}
 
         # Loop over logging levels
         for loglevel in self.loggerdict:
@@ -42,32 +43,32 @@ class Logger:
 
     def send_message(self, level, message):
 
-        if self.loggerdict[level]:
-            print(level+" "+self.task_name+": "+message)
+        if level == 'ABORT' or self.loggerdict[level]:
+            print(level+' '+self.task_name+': '+message)
 
     # ----------------------------------------------------------------------------------------------
 
     def info(self, message):
 
-        self.send_message("INFO", message)
+        self.send_message('INFO', message)
 
     # ----------------------------------------------------------------------------------------------
 
     def trace(self, message):
 
-        self.send_message("TRACE", message)
+        self.send_message('TRACE', message)
 
     # ----------------------------------------------------------------------------------------------
 
     def debug(self, message):
 
-        self.send_message("DEBUG", message)
+        self.send_message('DEBUG', message)
 
     # ----------------------------------------------------------------------------------------------
 
     def abort(self, message):
 
-        self.send_message("ABORT", message)
-        sys.exit('ABORT\n')
+        self.send_message('ABORT', message)
+        sys.exit('ABORTING\n')
 
     # ----------------------------------------------------------------------------------------------

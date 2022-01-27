@@ -240,47 +240,49 @@ class Config(dict):
                 if override:
                     root[key] = hash[key]
 
-    # ----------------------------------------------------------------------------------------------
 
-    def replace(s, **defs):
-        """Interpolate/replace variables in string
+# ----------------------------------------------------------------------------------------------
 
-        Resolved variable formats are: $var, {{var}} and $(var). Undefined
-        variables remain unchanged in the returned string. This method will
-        recursively resolve variables of variables.
 
-        Parameters
-        ----------
-        s : string, required
-            Input string containing variables to be resolved.
-        defs: dict, required
-            dictionary of definitions for resolving variables expressed
-            as key-word arguments.
+def replace(s, **defs):
+    """Interpolate/replace variables in string
 
-        Returns
-        -------
-        s_interp: string
-            Interpolated string. Undefined variables are left unchanged.
-        """
+    Resolved variable formats are: $var, {{var}} and $(var). Undefined
+    variables remain unchanged in the returned string. This method will
+    recursively resolve variables of variables.
 
-        expr = s
+    Parameters
+    ----------
+    s : string, required
+        Input string containing variables to be resolved.
+    defs: dict, required
+        dictionary of definitions for resolving variables expressed
+        as key-word arguments.
 
-        # Resolve special variables: {{var}}
-        for var in re.findall(r'{{(\w+)}}', expr):
-            if var in defs:
-                expr = re.sub(r'{{'+var+'}}', defs[var], expr)
+    Returns
+    -------
+    s_interp: string
+        Interpolated string. Undefined variables are left unchanged.
+    """
 
-        # Resolve special variables: $(var)
-        close = "\)"
-        for var in re.findall(r'\$\((\w+)\)', expr):
-            if var in defs:
-                expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
+    expr = s
 
-        # Resolve defs
-        s_interp = string.Template(expr).safe_substitute(defs)
+    # Resolve special variables: {{var}}
+    for var in re.findall(r'{{(\w+)}}', expr):
+        if var in defs:
+            expr = re.sub(r'{{'+var+'}}', defs[var], expr)
 
-        # Recurse until no substitutions remain
-        if s_interp != s:
-            s_interp = replace(s_interp, **defs)
+    # Resolve special variables: $(var)
+    close = "\)"
+    for var in re.findall(r'\$\((\w+)\)', expr):
+        if var in defs:
+            expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
 
-        return s_interp
+    # Resolve defs
+    s_interp = string.Template(expr).safe_substitute(defs)
+
+    # Recurse until no substitutions remain
+    if s_interp != s:
+        s_interp = replace(s_interp, **defs)
+
+    return s_interp

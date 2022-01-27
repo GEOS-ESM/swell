@@ -84,10 +84,10 @@
             --ntasks-per-node={{suite_properties["RunJediExecutable"]["ntasks_per_node"]}}
 
     [[MergeObsDiags]]
-        script = "swell_task-diagnostics MergeIodaFiles $config -d $datetime"
+        script = "swell_task MergeIodaFiles $config -d $datetime"
 
     [[ObsCorrelationScatterDriver]]
-        script = "swell_task-diagnostics ObsCorrelationScatterDriver $config -d $datetime"
+        script = "swell_task ObsCorrelationScatterDriver $config -d $datetime"
 
     [[SaveObsDiags]] #TODO
         script = "sleep 10; echo this task will save the observation output"

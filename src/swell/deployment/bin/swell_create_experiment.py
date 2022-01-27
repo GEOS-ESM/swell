@@ -45,6 +45,10 @@ def main(config, clean):
 
   logger.info('Creating experiment directory: '+exp_id_dir)
 
+  # Platform
+  # --------
+  platform = config_dict['platform_name']
+
   # Optionally clean up any existing directory
   # ------------------------------------------
   if clean:
@@ -66,7 +70,7 @@ def main(config, clean):
 
   # Set the suite and add environmental variables to the experiment yaml
   # --------------------------------------------------------------------
-  suite = ped.dir_config(logger, config_dict['suite']['suite name'], exp_id_dir, exp_id,
+  suite = ped.dir_config(logger, config_dict['suite']['suite name'], platform, exp_id_dir, exp_id,
                          ('suite_dir', exp_id+'-suite'), ('bundle', 'bundle'),
                          ('stage_dir', 'stage'), ('experiment_dir', 'run'),
                          ('jedi_build', 'bundle/build'))
@@ -102,7 +106,7 @@ def main(config, clean):
 
   # Prepare the suite driver file
   # -----------------------------
-  suite_prep = ps.PrepSuite(logger, big_yaml.target)
+  suite_prep = ps.PrepSuite(logger, platform, big_yaml.target)
 
   # Write the complete experiment yaml to suite directory
   # -----------------------------------------------------

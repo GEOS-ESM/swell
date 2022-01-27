@@ -59,17 +59,23 @@ class BuildJedi(taskBase):
             repo_dict = cfg['build jedi']['bundle repos']
 
             # Prep ecbuild string
-            ecb_tmp =
-            'ecbuild_bundle( PROJECT {} GIT "https://github.com/{}/{}.git" BRANCH {} UPDATE )\n'
+            ecb_tmp = 'ecbuild_bundle( PROJECT {} GIT "https://github.com/{}/{}.git" ' + \
+                      'BRANCH {} UPDATE )\n'
 
             # Prepare CMakeLists file
-            cmake_src = os.path.join(suite_dir, 'CMakeLists_template.txt')
             cmake_dst = os.path.join(bundle_dir, 'CMakeLists.txt')
 
-            # Populate CMakeLists.txt
-            self.logger.info('Populating cmake lists file')
-            with open(cmake_src, 'r+') as f:
-                cmake = f.readlines()
+            # Template CMakeLists.txt
+            cmake = ['cmake_minimum_required( VERSION 3.12 FATAL_ERROR )\n',
+                     'find_package( ecbuild 3.5 REQUIRED HINTS ${CMAKE_CURRENT_SOURCE_DIR} ' +
+                     '${CMAKE_CURRENT_SOURCE_DIR}/../ecbuild)\n',
+                     'project( jedi-bundle VERSION 1.1.0 LANGUAGES C CXX Fortran )\n',
+                     'list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")\n',
+                     'include( ecbuild_bundle )\n',
+                     'set( ECBUILD_DEFAULT_BUILD_TYPE Release )\n',
+                     'set( ENABLE_MPI ON CACHE BOOL "Compile with MPI")\n',
+                     'ecbuild_bundle_initialize()\n',
+                     'ecbuild_bundle_finalize()\n']
 
             # Iterate over repo dictionary
             for d in repo_dict:

@@ -1,6 +1,7 @@
 # Experiment logistics
 experiment_id: x0044-jedi
 experiment_root: /discover/nobackup/${USER}/cylc_jedi_dev/experiments
+platform_name: nccs_discover
 
 # suite and executable
 executable: fv3jedi_hofx.x

@@ -4,11 +4,18 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+import importlib
 import os
 import shutil
 import yaml
 
 from swell.suites.suites import return_suite_path
+from swell.deployment import platforms
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -17,7 +24,7 @@ class dir_config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, suite_name, experiment_id_dir, exp_id, *dirs):
+    def __init__(self, logger, suite_name, platform, experiment_id_dir, exp_id, *dirs):
 
         # Create copy of the logger
         # -------------------------
@@ -36,7 +43,7 @@ class dir_config():
 
         # Put files in the suite directory
         # --------------------------------
-        self.populate_suite(suite_name)
+        self.populate_suite(suite_name, platform)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -54,12 +61,27 @@ class dir_config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def populate_suite(self, suite_name):
-        print(suite_name)
+    def populate_suite(self, suite_name, platform):
+
+        # Copy suite related files to the suite directory
+        # -----------------------------------------------
         suite_path = return_suite_path()
-        for s in ['modules', os.path.join(suite_name, 'flow.cylc'), 'CMakeLists_template.txt']:
+        for s in [os.path.join(suite_name, 'flow.cylc')]:
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
+            dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
+            self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
+            shutil.copy(src_path_file, dst_path_file)
+
+        # Copy platform related files to the suite directory
+        # --------------------------------------------------
+        plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
+        return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
+        platform_path = return_platform_install_path_call()
+
+        for s in ['modules']:
+            src_file = os.path.split(s)[1]
+            src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
             self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
             shutil.copy(src_path_file, dst_path_file)
