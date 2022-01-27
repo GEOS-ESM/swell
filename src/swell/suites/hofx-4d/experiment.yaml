@@ -1,0 +1,135 @@
+# Experiment logistics
+experiment_id: x0044-jedi
+experiment_root: /discover/nobackup/${USER}/cylc_jedi_dev/experiments
+platform_name: nccs_discover
+
+# suite and executable
+executable: fv3jedi_hofx.x
+application_config: hofx4d
+
+# suite configuration
+suite:
+  intial cylc point: 2020-12-15T00
+  final cylc point: 2020-12-15T00
+  runahead limit: PT24H
+  suite name: hofx-4d
+  scheduling:
+    - task: Default
+      platform: nccs-discover
+      nodes: 1
+      account: g0613
+      execution_time_limit: PT10M
+      qos: debug
+      constraint: hasw
+    - task: BuildJedi
+      execution_time_limit: PT1H
+      ntasks_per_node: 28
+    - task: RunJediExecutable
+      ntasks_per_node: 24
+
+# data assimilation window
+window_type: 4D
+window_length: PT6H
+window_offset: PT3H
+analysis_forecast_window_offset: -PT3H
+pseudo_model_tstep: PT1H
+
+# backgrounds
+backgrounds:
+  background experiment: x0044    # Experiment that provides the background
+  background source: file         # Could be file or model
+  background schema: geos         # Schema for r2d2
+  background frequency: PT1H      # Frequency of background if coming from file
+
+# cycle times
+initial_cycle_dt: 2020-12-15T12
+final_cycle_dt: 2020-12-15T18
+
+# resolution
+horizontal_resolution: c360
+npx: 361
+npy: 361
+npz: 72
+npx_proc: 2
+npy_proc: 2
+processors:
+  - $(npx_proc)
+  - $(npy_proc)
+  - 6
+
+build jedi:
+  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop/build-intel-impi-release-fv3/
+  build options:
+    - release    # release, debug, relwithdebug
+  packages:
+    - fv3-jedi
+  bundle repos:
+    - git url: https://github.com/jcsda-internal/jedi-cmake
+      project: jedicmake
+      branch: develop
+    - git url: https://github.com/jcsda-internal/crtm
+      project: crtm
+      branch: release/crtm_jedi
+    - git url: https://github.com/jcsda-internal/oops
+      project: oops
+      branch: develop
+    - git url: https://github.com/jcsda-internal/saber
+      project: saber
+      branch: develop
+    - git url: https://github.com/jcsda-internal/ioda
+      project: ioda
+      branch: develop
+    - git url: https://github.com/jcsda-internal/ufo
+      project: ufo
+      branch: develop
+    - git url: https://github.com/jcsda/FMS
+      project: fms
+      branch: release-stable
+    - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
+      project: fv3
+      branch: release-stable
+    - git url: https://github.com/jcsda-internal/fv3-jedi-linearmodel
+      project: fv3-jedi-lm
+      branch: develop
+    - git url: https://github.com/jcsda-internal/femps
+      project: femps
+      branch: develop
+    - git url: https://github.com/jcsda-internal/fv3-jedi
+      project: fv3-jedi
+      branch: develop
+
+STAGE:
+  - yaml::$(bundle)/fv3-jedi/ewok/geos/stage.yaml
+GEOMETRY: yaml::$(bundle)/fv3-jedi/ewok/geos/geometry.yaml
+BACKGROUND: yaml::$(bundle)/fv3-jedi/ewok/geos/bg.yaml
+AN_TEMPLATE: yaml::$(bundle)/fv3-jedi/ewok/geos/an.yaml
+OB_TEMPLATE: yaml::$(bundle)/fv3-jedi/ewok/geos/ob.yaml
+R2D2: yaml::$(bundle)/fv3-jedi/ewok/geos/r2d2.yaml
+MODEL: yaml::$(bundle)/fv3-jedi/ewok/geos/pseudo_model.yaml
+
+# Observations
+# ------------
+obs_experiment: x0044
+
+OBSERVATIONS:
+  - yaml::$(bundle)/ufo/ewok/jedi-geos/aircraft.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/airs_aqua.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_aqua.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-a.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-b.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-c.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n15.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n18.yaml
+  - yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n19.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/cris-fsr_n20.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/cris-fsr_npp.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/iasi_metop-a.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/iasi_metop-b.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_metop-b.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_metop-c.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_n19.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/rass_tv.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/satwind.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/sfc.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/sfcship.yaml
+  #- yaml::$(bundle)/ufo/ewok/jedi-geos/vadwind.yaml

@@ -1,0 +1,29 @@
+# Module initialization
+# ---------------------
+source $MODULESHOME/init/bash
+
+# Purge modules
+# -------------
+module purge
+
+# JEDI Modules
+# ------------
+export OPT=/discover/swdev/jcsda/modules
+module use $OPT/modulefiles/apps
+module use $OPT/modulefiles/core
+module load jedi/intel-impi
+
+# Python module with workflow dependencies
+# ----------------------------------------
+export DHOPT=/discover/nobackup/drholdaw/opt/
+module use -a $DHOPT/modulefiles/core
+module load miniconda/3.9-cylc
+
+# Load workflow modules
+# ---------------------
+export DHJEDIOPT=/discover/nobackup/drholdaw/JediOpt/
+module use -a $DHJEDIOPT/modulefiles/core
+module load solo/develop
+module load r2d2/develop
+module load eva/work
+module load swell/work
