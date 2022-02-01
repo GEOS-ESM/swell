@@ -44,9 +44,6 @@ class Stage(taskBase):
     def get_files(self, group, type, fh):
         """Acquires indicated files using the supplied file handler.
 
-           The input group data structure follows the conventions set forth in EWOK
-           for the STAGE directive.
-
            Parameters
            ----------
            group : dict, required

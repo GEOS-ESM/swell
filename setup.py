@@ -33,7 +33,7 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'click',
-        'pyyaml>=5.3.1',
+        'pyyaml>=5.4',
         'pycodestyle>=2.8.0',
         'pandas>=1.1.3',
         'isodate>=0.5.4',

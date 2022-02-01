@@ -1,0 +1,5 @@
+click
+PyYAML>=5.4
+pycodestyle>=2.8.0
+pandas>=1.1.3
+isodate>=0.5.4

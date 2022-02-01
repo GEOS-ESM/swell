@@ -160,13 +160,13 @@ def replace_vars(s, **defs):
     '''
     expr = s
 
-    # Resolve EWOK vars first: {{var}} and $(var)
+    # Resolve {{var}} and $(var) first
     for var in re.findall(r'{{(\w+)}}', expr):
         if var in defs:
-            expr = re.sub(r'{{'+var+'}}', defs[var], expr)
+            expr = re.sub(r'{{'+var+r'}}', defs[var], expr)
     for var in re.findall(r'\$\((\w+)\)', expr):
         if var in defs:
-            expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
+            expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
 
     # Recursively resolve shell variables
     s_interp = Template(expr).safe_substitute(defs)

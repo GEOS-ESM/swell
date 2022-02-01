@@ -1,5 +1,11 @@
 # Swell Workflow Ecosystem, Layout and Launcher (SWELL)
 
+### Continuous integration:
+
+| Test      | Status  |
+| --------- | --------|
+| Python coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/codestyle.yml/badge.svg) |
+
 ### Licence:
 
 (C) Copyright 2021-2022 United States Government as represented by the Administrator of the National
@@ -19,4 +25,5 @@ The swell package requires Python 3 and can be installed using pip:
 
     git clone https://github.com/GEOS-ESM/swell
     cd swell
-	pip install --prefix=/path/to/install/ .
+    pip install --prefix=/path/to/install/ .
+

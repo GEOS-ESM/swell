@@ -270,13 +270,12 @@ def replace(s, **defs):
     # Resolve special variables: {{var}}
     for var in re.findall(r'{{(\w+)}}', expr):
         if var in defs:
-            expr = re.sub(r'{{'+var+'}}', defs[var], expr)
+            expr = re.sub(r'{{'+var+r'}}', defs[var], expr)
 
     # Resolve special variables: $(var)
-    close = "\)"
     for var in re.findall(r'\$\((\w+)\)', expr):
         if var in defs:
-            expr = re.sub(r'\$\('+var+'\)', defs[var], expr)
+            expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
 
     # Resolve defs
     s_interp = string.Template(expr).safe_substitute(defs)
