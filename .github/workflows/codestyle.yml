@@ -1,0 +1,19 @@
+name: Check Style
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pycodestyle:
+    name: Check Python Style
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # https://github.com/actions/setup-python#caching-packages-dependencies
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - run: python3 pycodestyle_run.py
