@@ -1,4 +1,4 @@
-name: Check Style
+name: Coding Norms
 
 on:
   pull_request:
@@ -6,11 +6,10 @@ on:
 
 jobs:
   pycodestyle:
-    name: Check Python Style
+    name: Check Python Coding Norms
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    # https://github.com/actions/setup-python#caching-packages-dependencies
     - uses: actions/setup-python@v2
       with:
         python-version: '3.9'
