@@ -27,7 +27,7 @@ class Logger:
         # Set default logging levels
         self.loggerdict = {'INFO': True,
                            'TRACE': False,
-                           'DEBUG': False,}
+                           'DEBUG': False, }
 
         # Loop over logging levels
         for loglevel in self.loggerdict:
