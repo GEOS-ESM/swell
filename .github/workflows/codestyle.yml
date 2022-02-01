@@ -1,0 +1,14 @@
+name: Check Style
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pycodestyle:
+    name: Check Python Style
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: python3 pycodestyle_run.py
+
