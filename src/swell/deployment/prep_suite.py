@@ -57,7 +57,7 @@ class PrepSuite():
         plat_mod = il.import_module('swell.deployment.platforms.'+self.platform+'.scheduling')
         get_tasks_per_node_call = getattr(plat_mod, 'get_tasks_per_node')
         dtpn = get_tasks_per_node_call(def_scheduling_dict['platform'],
-                                  def_scheduling_dict['constraint'])
+                                       def_scheduling_dict['constraint'])
         def_scheduling_dict['ntasks_per_node'] = dtpn
 
         # Loop and set task dictionaries
