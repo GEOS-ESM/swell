@@ -26,3 +26,4 @@ The swell package requires Python 3 and can be installed using pip:
     git clone https://github.com/GEOS-ESM/swell
     cd swell
     pip install --prefix=/path/to/install/ .
+
