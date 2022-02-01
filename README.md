@@ -1,4 +1,4 @@
-# Swell Workflow Ecosystem, Layout and Launcher  (SWELL)
+# Swell Workflow Ecosystem, Layout and Launcher (SWELL)
 
 ### Licence:
 
