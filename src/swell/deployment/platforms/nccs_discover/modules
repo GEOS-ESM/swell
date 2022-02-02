@@ -11,7 +11,7 @@ module purge
 export OPT=/discover/swdev/jcsda/modules
 module use $OPT/modulefiles/apps
 module use $OPT/modulefiles/core
-module load jedi/intel-impi
+module load jedi/intel-impi/ecbuild35
 
 # Python module with workflow dependencies
 # ----------------------------------------

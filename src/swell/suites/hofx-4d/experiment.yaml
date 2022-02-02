@@ -58,7 +58,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop/build-intel-impi-release-fv3/
+  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop/build-intel-impi-release-fv3-swell-1.0.0/
   build options:
     - release    # release, debug, relwithdebug
   packages:
