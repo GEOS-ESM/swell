@@ -89,8 +89,12 @@ class Stage(taskBase):
 
         self.logger.info("Copying " + src + " to " + dest)
         if not os.path.isfile(src):
-            return
-        copyfile(src, dest)
+            self.logger.abort('Source file does not exist: "' + src + '"')
+
+        try:
+            copyfile(src, dest)
+        except:
+            self.logger.abort('Unable to copy "' + src + '" to "' + dest + '"')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -106,8 +110,16 @@ class Stage(taskBase):
              Destination link file to be created.
         """
 
-        self.logger.info("Linking " + dest + " to " + src)
-        if os.path.islink(dest):
-            os.remove(dest)
-        if not os.path.isfile(dest):
-            os.symlink(src, dest)
+        self.logger.info('Linking "' + dest + '" to "' + src + '"')
+        if not os.path.isfile(src):
+            self.logger.abort('Source file does not exist: "' + src + '"')
+
+        try:
+            if os.path.islink(dest):
+                os.remove(dest)
+            if os.path.isfile(dest):
+                self.logger.abort('File already exists: "' + dest + '"')
+            if not os.path.isfile(dest):
+                os.symlink(src, dest)
+        except:
+            self.logger.abort('Unable to link "' + dest + '" to "' + src + '"')
