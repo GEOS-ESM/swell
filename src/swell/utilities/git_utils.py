@@ -28,12 +28,12 @@ def git_got(git_url, git_branch, out_dir, logger):
         try:
             subprocess.run(['git', 'clone', git_url, out_dir], check=True,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError :
+        except subprocess.CalledProcessError:
             logger.abort('Git clone failed in git_got.')
 
     else:
 
-        logger.info('Directory ' + out_dir + ' already exists so '+ git_url +' not cloned.')
+        logger.info('Directory ' + out_dir + ' already exists so ' + git_url + ' not cloned.')
 
     # Whether the directory exists or not switch to desired branch
     # ------------------------------------------------------------
