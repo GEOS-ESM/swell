@@ -96,8 +96,7 @@ def main(config, clean):
             git_url = d['git url']
             branch = d['branch']
             proj_dir = os.path.join(suite.dir_dict['bundle'], project)
-            logger.info('cloning branch {} of {}'.format(branch, git_url))
-            git_got(git_url, branch, proj_dir)
+            git_got(git_url, branch, proj_dir, logger)
 
     # Expand yaml and add cfg yaml variables at the root level
     # --------------------------------------------------------
@@ -112,11 +111,17 @@ def main(config, clean):
     # -----------------------------------------------------
     big_yaml.write()
 
+    # Print out launch command for convenience
+    # ----------------------------------------
+    logger.info(' ')
+    logger.info('   Experiment successfully installed. To launch experiment use: ')
+    logger.info('   swell_launch_experiment --suite_path ' + suite.dir_dict['suite_dir'])
+
 
 # --------------------------------------------------------------------------------------------------
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 
 
