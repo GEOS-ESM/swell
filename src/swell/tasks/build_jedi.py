@@ -88,7 +88,7 @@ class BuildJedi(taskBase):
                 if not os.path.exists(proj_dir):
                     self.logger.info('Cloning into {}...'.format(project))
                     git_url = 'https://github.com/{}/{}.git'.format(org, repo)
-                    git_got(git_url, branch, proj_dir)
+                    git_got(git_url, branch, proj_dir, self.logger)
                 else:
                     self.logger.info('{} has already been cloned into bundle'.format(project))
 
