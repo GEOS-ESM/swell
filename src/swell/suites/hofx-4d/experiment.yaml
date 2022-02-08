@@ -66,37 +66,37 @@ build jedi:
   bundle repos:
     - git url: https://github.com/jcsda-internal/jedi-cmake
       project: jedicmake
-      branch: develop
+      branch: 251872d
     - git url: https://github.com/jcsda-internal/crtm
       project: crtm
-      branch: release/crtm_jedi
+      branch: 6938cc1a9
     - git url: https://github.com/jcsda-internal/oops
       project: oops
-      branch: develop
+      branch: 265b845a
     - git url: https://github.com/jcsda-internal/saber
       project: saber
-      branch: develop
+      branch: de274aaf
     - git url: https://github.com/jcsda-internal/ioda
       project: ioda
-      branch: develop
+      branch: 5af03502
     - git url: https://github.com/jcsda-internal/ufo
       project: ufo
-      branch: develop
+      branch: 915887bd
     - git url: https://github.com/jcsda/FMS
       project: fms
-      branch: release-stable
+      branch: 8bead804
     - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
       project: fv3
-      branch: release-stable
+      branch: f4c1b7e
     - git url: https://github.com/jcsda-internal/fv3-jedi-linearmodel
       project: fv3-jedi-lm
-      branch: develop
+      branch: 48c20618
     - git url: https://github.com/jcsda-internal/femps
       project: femps
-      branch: develop
+      branch: 75544fc
     - git url: https://github.com/jcsda-internal/fv3-jedi
       project: fv3-jedi
-      branch: develop
+      branch: 48c20618
 
 STAGE:
   - yaml::$(bundle)/fv3-jedi/ewok/geos/stage.yaml
