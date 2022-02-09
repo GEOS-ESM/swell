@@ -175,7 +175,7 @@ class Config(dict):
         window_dict['window_offset'] = window_offset
         window_dict['window_begin'] = window_begin_dto.strftime(self.dt_format)
         window_dict['background_time'] = background_time_dto.strftime(self.dt_format)
-        window_dict['local_background_time'] = local_background_time.strftime("%Y%m%d.%H%M%S")
+        window_dict['local_background_time'] = local_background_time.strftime("%Y-%m-%dT%H:%M:%SZ")
 
         # Merge with self
         self.merge(window_dict)
