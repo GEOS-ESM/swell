@@ -121,7 +121,7 @@ class Stage(taskBase):
             if os.path.islink(dest):
                 os.remove(dest)
             if os.path.isfile(dest):
-                self.logger.abort('File already exists: "' + dest + '"')
+                self.logger.abort('File exists where link expected: "' + dest + '"')
             if not os.path.isfile(dest):
                 os.symlink(src, dest)
         except Exception:
