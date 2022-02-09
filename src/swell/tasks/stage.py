@@ -64,10 +64,13 @@ class Stage(taskBase):
 
                 filelist = glob.glob(src)
 
+                if not filelist:
+                    self.logger.abort('Source inputs not found "' + src + '"')
+
                 try:
-                    os.makedirs(dir, 0o755)
+                    os.makedirs(dir, 0o755, exist_ok=True)
                 except Exception:
-                    pass
+                    self.logger.abort('Unable to create "' + dir + '"')
 
                 for file in filelist:
                     dest = os.path.join(dir, os.path.basename(file))
@@ -93,7 +96,7 @@ class Stage(taskBase):
 
         try:
             copyfile(src, dest)
-        except:
+        except Exception:
             self.logger.abort('Unable to copy "' + src + '" to "' + dest + '"')
 
     # ----------------------------------------------------------------------------------------------
@@ -121,5 +124,5 @@ class Stage(taskBase):
                 self.logger.abort('File already exists: "' + dest + '"')
             if not os.path.isfile(dest):
                 os.symlink(src, dest)
-        except:
+        except Exception:
             self.logger.abort('Unable to link "' + dest + '" to "' + src + '"')
