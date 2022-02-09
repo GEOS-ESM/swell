@@ -103,8 +103,8 @@ build jedi:
 STAGE:
   - copy_files:
       directories:
-        - [../../test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
-        - [../../test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
+        - [$(bundle)/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [$(bundle)/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
     link_files:
       directories:
         - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.$(horizontal_resolution).nc4, $(stage_dir)/Data/bkg/]

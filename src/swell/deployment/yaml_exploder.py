@@ -46,11 +46,6 @@ class yaml_exploder():
             # check if something is a string, if yes, then force into list. However, that may cause
             # problems later
 
-            # Check if key is STAGE, then get the pre-pend paths that we'll use later in the
-            # expanded yaml
-            if 'STAGE' in k:
-                self.stage_setter(param_list)
-
             if 'yaml::' in str(param_list) and isinstance(param_list, list):
                 exp_list = []
                 for p in param_list:
@@ -124,20 +119,6 @@ class yaml_exploder():
                                 run_dir=run_dir, experiment=self.dir_dict['experiment'])
         big_yaml = yaml.safe_load(big_yaml)
         return big_yaml
-
-    # ----------------------------------------------------------------------------------------------
-
-    def stage_setter(self, param_list):
-        self.stage_path_list = []
-        if isinstance(param_list, list):
-            for p in param_list:
-                p_path = p.split('yaml::')[1]
-                pre_path = os.path.dirname(p_path)
-                self.stage_path_list.append(pre_path)
-        else:
-            raise Exception('Stage value must be a yaml list in experiment yaml.')
-
-        return None
 
     # ----------------------------------------------------------------------------------------------
 
