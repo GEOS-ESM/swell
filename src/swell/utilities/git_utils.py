@@ -29,6 +29,7 @@ def git_got(git_url, git_branch, out_dir, logger):
             subprocess.run(['git', 'clone', git_url, out_dir], check=True,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError:
+            subprocess.run(['git', 'clone', git_url, out_dir])
             logger.abort('Git clone failed in git_got.')
 
     else:
@@ -44,6 +45,7 @@ def git_got(git_url, git_branch, out_dir, logger):
         subprocess.run(['git', 'checkout', git_branch], check=True, stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError:
+        subprocess.run(['git', 'checkout', git_branch])
         logger.abort('Git checkout of branch ' + git_branch + ' failed in git_got. ')
     os.chdir(cwd)
 

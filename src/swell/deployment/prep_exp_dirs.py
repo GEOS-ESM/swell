@@ -50,13 +50,13 @@ class dir_config():
     def dir_maker(self, exp_id_dir, dir_name=('', '')):
         dir_var_name = dir_name[0]
         dir_full = os.path.join(exp_id_dir, dir_name[1])
-        self.logger.info('Creating directory: {}'.format(dir_full))
+        self.logger.trace('Creating directory: {}'.format(dir_full))
         try:
             os.mkdir(dir_full)
         except Exception:
-            self.logger.info('Directory already exists: {}'.format(dir_full))
+            self.logger.trace('Directory already exists: {}'.format(dir_full))
 
-        self.logger.info('Adding this directory to config with key: {}'.format(dir_var_name))
+        self.logger.trace('Adding this directory to config with key: {}'.format(dir_var_name))
         self.dir_dict.update({dir_var_name: dir_full})
 
     # ----------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ class dir_config():
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
-            self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
+            self.logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
             shutil.copy(src_path_file, dst_path_file)
 
         # Copy platform related files to the suite directory
@@ -83,7 +83,7 @@ class dir_config():
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
-            self.logger.info('Copying {} to {}'.format(src_path_file, dst_path_file))
+            self.logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
             shutil.copy(src_path_file, dst_path_file)
 
 

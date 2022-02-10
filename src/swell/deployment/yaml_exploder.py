@@ -117,6 +117,7 @@ class yaml_exploder():
                                 experiment_id_dir=self.experiment_id_dir,
                                 run_dir=run_dir, experiment=self.dir_dict['experiment'])
         big_yaml = yaml.safe_load(big_yaml)
+
         return big_yaml
 
 
