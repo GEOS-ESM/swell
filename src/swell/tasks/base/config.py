@@ -14,8 +14,10 @@ import isodate
 import os
 import string
 import re
+import json
 import yaml
 
+from swell.utilities.string_utils import replace_vars
 
 # --------------------------------------------------------------------------------------------------
 #  @package configuration
@@ -44,9 +46,6 @@ class Config(dict):
          Reads in YAML files.
        define(cycle_dt):
          Defines cycle/time dependent parameters.
-       replace(s):
-         Interpolates variables in string using defined parameters. This is
-         the default call method (__call__).
     """
 
     # ----------------------------------------------------------------------------------------------
@@ -55,7 +54,7 @@ class Config(dict):
         """Reads YAML file(s) as a dictionary.
 
         Environment definitions and root-level YAML parameters are extracted to be
-        used for variable interpolation within strings (see replace()).
+        used for variable interpolation within strings (see replace_vars()).
 
         Parameters
         ----------
@@ -130,7 +129,7 @@ class Config(dict):
         """ Defines cycle dependent parameters for the data assimilation window
 
         Parameters defined by this method are needed for resolving
-        time-dependent variables using the replace() method.
+        time-dependent variables using the replace_vars() method.
 
         Parameters
         ----------
@@ -175,7 +174,8 @@ class Config(dict):
         window_dict['window_offset'] = window_offset
         window_dict['window_begin'] = window_begin_dto.strftime(self.dt_format)
         window_dict['background_time'] = background_time_dto.strftime(self.dt_format)
-        window_dict['local_background_time'] = local_background_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        window_dict['local_background_time'] = local_background_time.strftime(self.dt_format)
 
         # Merge with self
         self.merge(window_dict)
@@ -196,7 +196,7 @@ class Config(dict):
             text = f.read()
 
         # Replace any unresolved variables in the file
-        text = replace(text, **self.defs)
+        text = replace_vars(text, **self.defs)
 
         # Return a yaml
         resolved_dict = yaml.safe_load(text)
@@ -242,46 +242,3 @@ class Config(dict):
 
 
 # ----------------------------------------------------------------------------------------------
-
-
-def replace(s, **defs):
-    """Interpolate/replace variables in string
-
-    Resolved variable formats are: $var, {{var}} and $(var). Undefined
-    variables remain unchanged in the returned string. This method will
-    recursively resolve variables of variables.
-
-    Parameters
-    ----------
-    s : string, required
-        Input string containing variables to be resolved.
-    defs: dict, required
-        dictionary of definitions for resolving variables expressed
-        as key-word arguments.
-
-    Returns
-    -------
-    s_interp: string
-        Interpolated string. Undefined variables are left unchanged.
-    """
-
-    expr = s
-
-    # Resolve special variables: {{var}}
-    for var in re.findall(r'{{(\w+)}}', expr):
-        if var in defs:
-            expr = re.sub(r'{{'+var+r'}}', defs[var], expr)
-
-    # Resolve special variables: $(var)
-    for var in re.findall(r'\$\((\w+)\)', expr):
-        if var in defs:
-            expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
-
-    # Resolve defs
-    s_interp = string.Template(expr).safe_substitute(defs)
-
-    # Recurse until no substitutions remain
-    if s_interp != s:
-        s_interp = replace(s_interp, **defs)
-
-    return s_interp
