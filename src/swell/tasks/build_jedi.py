@@ -45,7 +45,7 @@ class BuildJedi(taskBase):
                 os.symlink(ex_build_dir, jedi_build)
             else:
                 self.logger.abort('Existing JEDI build directory is provided but the executable' +
-                                 ' is not found in that directory')
+                                  ' is not found in that directory')
 
         else:
 

@@ -69,8 +69,8 @@ def main(config, clean):
 
     # Set the suite and add environmental variables to the experiment yaml
     # --------------------------------------------------------------------
-    suite = ped.dir_config(logger, experiment_dict['suite']['suite name'], platform, exp_id_dir, exp_id,
-                           ('suite_dir', exp_id+'-suite'), ('bundle', 'bundle'),
+    suite = ped.dir_config(logger, experiment_dict['suite']['suite name'], platform, exp_id_dir,
+                           exp_id, ('suite_dir', exp_id+'-suite'), ('bundle', 'bundle'),
                            ('stage_dir', 'stage'), ('experiment_dir', 'run'),
                            ('jedi_build', 'bundle/build'), ('run_dir', 'run/{{current_cycle}}'))
 
