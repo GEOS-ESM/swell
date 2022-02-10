@@ -41,6 +41,13 @@ class dir_config():
         for new_dir in dirs:
             self.dir_maker(experiment_id_dir, new_dir)
 
+        # Remove run/{{current_cycle}} (seems hacky)
+        dir_full = os.path.join(experiment_id_dir, 'run/{{current_cycle}}')
+        try:
+            shutil.rmtree(dir_full)
+        except OSError as e:
+            pass
+
         # Put files in the suite directory
         # --------------------------------
         self.populate_suite(suite_name, platform)
