@@ -58,29 +58,29 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop-swell/build-intel-impi-release-fv3/
+  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/build-intel-impi-release-fv3/
   build options:
     - release    # release, debug, relwithdebug
   packages:
     - fv3-jedi
   bundle repos:
-    - git url: https://github.com/jcsda-internal/jedi-cmake
+    - git url: https://github.com/jcsda/jedi-cmake
       project: jedicmake
       branch: develop
-    - git url: https://github.com/jcsda-internal/crtm
+    - git url: https://github.com/jcsda/crtm
       project: crtm
       branch: develop
-    - git url: https://github.com/jcsda-internal/oops
+    - git url: https://github.com/jcsda/oops
       project: oops
       branch: develop
       clone on create: true
-    - git url: https://github.com/jcsda-internal/saber
+    - git url: https://github.com/jcsda/saber
       project: saber
       branch: develop
-    - git url: https://github.com/jcsda-internal/ioda
+    - git url: https://github.com/jcsda/ioda
       project: ioda
       branch: develop
-    - git url: https://github.com/jcsda-internal/ufo
+    - git url: https://github.com/jcsda/ufo
       project: ufo
       branch: develop
       clone on create: true
@@ -90,13 +90,13 @@ build jedi:
     - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
       project: fv3
       branch: release-stable
-    - git url: https://github.com/jcsda-internal/fv3-jedi-linearmodel
+    - git url: https://github.com/jcsda/fv3-jedi-linearmodel
       project: fv3-jedi-lm
       branch: develop
-    - git url: https://github.com/jcsda-internal/femps
+    - git url: https://github.com/jcsda/femps
       project: femps
       branch: develop
-    - git url: https://github.com/jcsda-internal/fv3-jedi
+    - git url: https://github.com/jcsda/fv3-jedi
       project: fv3-jedi
       branch: develop
       clone on create: true
