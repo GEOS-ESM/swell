@@ -58,7 +58,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop/build-intel-impi-release-fv3-swell-1.0.0/
+  existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop-swell/build-intel-impi-release-fv3/
   build options:
     - release    # release, debug, relwithdebug
   packages:
@@ -66,46 +66,116 @@ build jedi:
   bundle repos:
     - git url: https://github.com/jcsda-internal/jedi-cmake
       project: jedicmake
-      branch: 251872d
+      branch: develop
     - git url: https://github.com/jcsda-internal/crtm
       project: crtm
-      branch: 6938cc1a9
+      branch: develop
     - git url: https://github.com/jcsda-internal/oops
       project: oops
-      branch: 265b845a
+      branch: develop
+      clone on create: true
     - git url: https://github.com/jcsda-internal/saber
       project: saber
-      branch: de274aaf
+      branch: develop
     - git url: https://github.com/jcsda-internal/ioda
       project: ioda
-      branch: 5af03502
+      branch: develop
     - git url: https://github.com/jcsda-internal/ufo
       project: ufo
-      branch: 915887bd
+      branch: develop
+      clone on create: true
     - git url: https://github.com/jcsda/FMS
       project: fms
-      branch: 8bead804
+      branch: release-stable
     - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
       project: fv3
-      branch: f4c1b7e
+      branch: release-stable
     - git url: https://github.com/jcsda-internal/fv3-jedi-linearmodel
       project: fv3-jedi-lm
-      branch: 48c20618
+      branch: develop
     - git url: https://github.com/jcsda-internal/femps
       project: femps
-      branch: 75544fc
+      branch: develop
     - git url: https://github.com/jcsda-internal/fv3-jedi
       project: fv3-jedi
-      branch: 48c20618
+      branch: develop
+      clone on create: true
 
+# Fix file staging
+# ----------------
 STAGE:
-  - yaml::$(bundle)/fv3-jedi/ewok/geos/stage.yaml
-GEOMETRY: yaml::$(bundle)/fv3-jedi/ewok/geos/geometry.yaml
-BACKGROUND: yaml::$(bundle)/fv3-jedi/ewok/geos/bg.yaml
-AN_TEMPLATE: yaml::$(bundle)/fv3-jedi/ewok/geos/an.yaml
-OB_TEMPLATE: yaml::$(bundle)/fv3-jedi/ewok/geos/ob.yaml
-R2D2: yaml::$(bundle)/fv3-jedi/ewok/geos/r2d2.yaml
-MODEL: yaml::$(bundle)/fv3-jedi/ewok/geos/pseudo_model.yaml
+  - copy_files:
+      directories:
+        - [$(bundle)/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [$(bundle)/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
+    link_files:
+      directories:
+        - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.$(horizontal_resolution).nc4, $(stage_dir)/Data/bkg/]
+
+# JEDI Geometry
+# -------------
+GEOMETRY:
+  fms initialization:
+    namelist filename: '$(stage_dir)/Data/fv3files/fmsmpp.nml'
+    field table filename: '$(stage_dir)/Data/fv3files/field_table_gmao'
+  akbk: '$(stage_dir)/Data/fv3files/akbk$(npz).nc4'
+  layout: [$(npx_proc),$(npy_proc)]
+  npx: $(npx)
+  npy: $(npy)
+  npz: $(npz)
+  fieldsets:
+    - fieldset: '$(stage_dir)/Data/fieldsets/dynamics.yaml'
+    - fieldset: '$(stage_dir)/Data/fieldsets/ufo.yaml'
+
+# JEDI Background
+# ---------------
+BACKGROUND:
+  datetime: '{{local_background_time}}'
+  filetype: cube sphere history
+  provider: geos
+  datapath: ''
+  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+              $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
+  state variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,
+                    qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
+                    zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
+                    stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]
+  filename: $(run_dir)/$(valid_date).$(file_type).nc4  # R2D2
+
+# JEDI Forecast model
+# -------------------
+MODEL:
+  name: PSEUDO
+  tstep: '$(pseudo_model_tstep)'
+  filetype: cube sphere history
+  provider: geos
+  datapath: ''
+  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+              $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
+  model variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,qls,qcn,cfcn,frocean,frland,varflt,ustar,
+                    bstar,zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,stype,vfrac,sheleg,
+                    ts,soilt,soilm,u10m,v10m]
+
+# R2D2 schema
+# -----------
+R2D2:
+  fetch:
+    an:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    bc:
+      - file_type: satbias
+        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).nc4
+      - file_type: tlapse
+        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).txt
+  store:
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+
 
 # Observations
 # ------------

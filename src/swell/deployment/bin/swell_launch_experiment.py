@@ -15,7 +15,6 @@ import os
 import subprocess
 
 # local imports
-from swell.tasks.utilities.utils import run_subprocess
 from swell.utilities.logger import Logger
 
 
@@ -82,7 +81,7 @@ def main(suite_path, workflow_manager):
     # ----------------------------
     deploy_workflow = DeployWorkflow(suite_path, experiment_name)
 
-    # Print some info for the user
+    # Write some info for the user
     # ----------------------------
     deploy_workflow.logger.info('Launching workflow defined by files in ' + suite_path + '.')
     deploy_workflow.logger.info('Using ' + workflow_manager + ' for the wofklow manager.')

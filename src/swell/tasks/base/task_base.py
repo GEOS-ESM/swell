@@ -32,13 +32,15 @@ class taskBase(ABC):
     # Base class constructor
     def __init__(self, config_input, datetime_input, task_name):
 
-        print("\nInitializing task with the following parameters:")
-        print("  Task name:     ", task_name)
-        print("  Configuration: ", config_input)
-
         # Create message logger
         # ---------------------
         self.logger = Logger(task_name)
+
+        # Write out the initialization info
+        # ---------------------------------
+        self.logger.info('  Initializing task with the following parameters:')
+        self.logger.info('  Task name:     ' + task_name)
+        self.logger.info('  Configuration: ' + config_input)
 
         # Create a configuration object
         # -----------------------------
@@ -48,8 +50,8 @@ class taskBase(ABC):
         # -------------------------------------------------------------------
         if (datetime_input is not None):
 
-            # Print out the datetime
-            print("  Date and time: ", datetime_input, "\n")
+            # Write out the datetime
+            self.logger.info('  Date and time: ' + datetime_input + '\n')
 
             # Create a datetime object
             self.datetime = Datetime(datetime_input)
@@ -82,7 +84,7 @@ class taskFactory():
         task_lower = camelcase_to_underscore(task)
 
         # Import class based on user selected task
-        task_class = getattr(importlib.import_module("swell.tasks."+task_lower), task)
+        task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
 
         # Return task object
         return task_class(config, datetime, task)
@@ -95,12 +97,14 @@ def task_main(task, config, datetime):
 
     # For security check that task is in the registry
     if task not in valid_tasks:
-        print("\nTask \'"+task+"\' not found in registry; valid tasks are: \n")
+        valid_task_logger = Logger('CheckValidTasks')
+        valid_task_logger.info(' ')
+        valid_task_logger.info('Task \'' + task + '\' not found in registry; valid tasks are:')
         valid_tasks.sort()
         for valid_task in valid_tasks:
-            print("  ", valid_task)
-        print(" ")
-        print("ABORT: Task not found in task registry.")
+            valid_task_logger.info('  ' + valid_task)
+        valid_task_logger.info(' ')
+        valid_task_logger.info('ABORT: Task not found in task registry.')
         sys.exit()
 
     # Create the object
@@ -108,22 +112,22 @@ def task_main(task, config, datetime):
     creator = taskFactory()
     task_object = creator.create_task(task, config, datetime)
     constrc_final = time.perf_counter()
-    constrc_time = f"Constructed in {constrc_final - constrc_start:0.4f} seconds"
+    constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 
     # Execute task
     execute_start = time.perf_counter()
     task_object.execute()
     execute_final = time.perf_counter()
-    execute_time = f"Executed in {execute_final - execute_start:0.4f} seconds"
+    execute_time = f'Executed in {execute_final - execute_start:0.4f} seconds'
 
     # Output timing stats
-    task_object.logger.info("-----------------------------")
-    task_object.logger.info("        Task Complete        ")
-    task_object.logger.info("-----------------------------")
-    task_object.logger.info("Timing statistics:")
+    task_object.logger.info('-----------------------------')
+    task_object.logger.info('        Task Complete        ')
+    task_object.logger.info('-----------------------------')
+    task_object.logger.info('Timing statistics:')
     task_object.logger.info(constrc_time)
     task_object.logger.info(execute_time)
-    task_object.logger.info("-----------------------------")
+    task_object.logger.info('-----------------------------')
 
 
 # --------------------------------------------------------------------------------------------------
@@ -141,7 +145,7 @@ def main(task, config, datetime):
 # --------------------------------------------------------------------------------------------------
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 
 # --------------------------------------------------------------------------------------------------
