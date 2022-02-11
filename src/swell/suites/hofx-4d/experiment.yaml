@@ -64,41 +64,41 @@ build jedi:
   packages:
     - fv3-jedi
   bundle repos:
-    - git url: https://github.com/jcsda/jedi-cmake
-      project: jedicmake
-      branch: develop
     - git url: https://github.com/jcsda/crtm
       project: crtm
-      branch: develop
+      branch: 6938cc1a9
+    - git url: https://github.com/jcsda/femps
+      project: femps
+      branch: 75544fc
+    - git url: https://github.com/jcsda/FMS
+      project: fms
+      branch: 1f739141
+    - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
+      project: fv3
+      branch: f4c1b7e
+    - git url: https://github.com/jcsda/fv3-jedi
+      project: fv3-jedi
+      branch: 5649cad5
+      clone on create: true
+    - git url: https://github.com/jcsda/fv3-jedi-linearmodel
+      project: fv3-jedi-lm
+      branch: 6bb36ce
+    - git url: https://github.com/jcsda/ioda
+      project: ioda
+      branch: 9d8f983a
+    - git url: https://github.com/jcsda/jedi-cmake
+      project: jedicmake
+      branch: 93402f2
     - git url: https://github.com/jcsda/oops
       project: oops
-      branch: develop
+      branch: 1eefd50c
       clone on create: true
     - git url: https://github.com/jcsda/saber
       project: saber
-      branch: develop
-    - git url: https://github.com/jcsda/ioda
-      project: ioda
-      branch: develop
+      branch: 6d4d7ed3
     - git url: https://github.com/jcsda/ufo
       project: ufo
-      branch: develop
-      clone on create: true
-    - git url: https://github.com/jcsda/FMS
-      project: fms
-      branch: release-stable
-    - git url: https://github.com/jcsda/GFDL_atmos_cubed_sphere
-      project: fv3
-      branch: release-stable
-    - git url: https://github.com/jcsda/fv3-jedi-linearmodel
-      project: fv3-jedi-lm
-      branch: develop
-    - git url: https://github.com/jcsda/femps
-      project: femps
-      branch: develop
-    - git url: https://github.com/jcsda/fv3-jedi
-      project: fv3-jedi
-      branch: develop
+      branch: 5e7253cf
       clone on create: true
 
 # Fix file staging
