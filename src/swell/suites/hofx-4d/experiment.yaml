@@ -57,6 +57,11 @@ processors:
   - $(npy_proc)
   - 6
 
+# GEOS satellite database logistics
+geos_sat_db_root: /discover/nobackup/${USER}/jedi_geos_sat_db/
+use_sat_db_yaml: True
+update_channels: True
+
 build jedi:
   existing build directory: /discover/nobackup/drholdaw/JediDev/fv3-bundle/develop/build-intel-impi-release-fv3-swell-1.0.0/
   build options:
