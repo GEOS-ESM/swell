@@ -38,12 +38,22 @@ class BuildJedi(taskBase):
                 self.logger.info("Suitable JEDI build found, linking build directory. Warning: " +
                                  "problems will follow if the loaded modules are not consistent " +
                                  "with those used to build this version of JEDI.")
-                # Remove any exisiting
-                if os.path.isdir(jedi_build_dir):
+
+                # Remove trailing slash if needed
+                if jedi_build_dir.endswith('/'):
+                    jedi_build_dir = jedi_build_dir[:-1]
+
+                # Remove existing build path if present
+                if os.path.islink(jedi_build_dir): # Is a link
+                    os.remove(jedi_build_dir)
+                elif os.path.isdir(jedi_build_dir): # Is a directory
                     shutil.rmtree(jedi_build_dir)
+
                 # Link directory
                 os.symlink(ex_build_dir, jedi_build_dir)
+
             else:
+
                 self.logger.abort('Existing JEDI build directory is provided but the executable' +
                                   ' is not found in that directory')
 
