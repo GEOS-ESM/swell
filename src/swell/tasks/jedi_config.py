@@ -61,7 +61,7 @@ class JediConfig(taskBase):
         # ------------------------
         cycle_dir = self.config.get("cycle_dir")
         if not os.path.exists(cycle_dir):
-            os.makedirs(cycle_dir, exist_ok=True)
+            os.makedirs(cycle_dir, 0o755, exist_ok=True)
 
         jedi_conf_output = os.path.join(cycle_dir, "jedi_config.yaml")
 

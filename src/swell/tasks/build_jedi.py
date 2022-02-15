@@ -100,9 +100,9 @@ class BuildJedi(taskBase):
                 f.writelines(cmake)
 
             # Create and change into the build directory
-            if not os.path.exists(jedi_build):
-                os.mkdir(jedi_build)
-            os.chdir(jedi_build)
+            if not os.path.exists(jedi_build_dir):
+                os.mkdir(jedi_build_dir)
+            os.chdir(jedi_build_dir)
             self.logger.info('Starting Jedi build at {}'.format(os.getcwd()))
 
             # Commands to build jedi

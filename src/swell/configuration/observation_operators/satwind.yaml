@@ -3,9 +3,9 @@ obs operator:
 obs space:
   name: satwind
   obsdatain:
-    obsfile: $(experiment_dir)/{{current_cycle}}/satwind.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/satwind.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).satwind.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment).satwind.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind]
 obs filters:
 #

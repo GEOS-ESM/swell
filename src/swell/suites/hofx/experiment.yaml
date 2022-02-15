@@ -127,13 +127,13 @@ BACKGROUND:
   filetype: cube sphere history
   provider: geos
   datapath: ''
-  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+  filenames: [$(cycle_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
               $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
   state variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,
                     qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
                     zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
                     stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]
-  filename: $(run_dir)/$(valid_date).$(file_type).nc4  # R2D2
+  filename: $(cycle_dir)/$(valid_date).$(file_type).nc4  # R2D2
 
 # JEDI Forecast model
 # -------------------
@@ -143,7 +143,7 @@ MODEL:
   filetype: cube sphere history
   provider: geos
   datapath: ''
-  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+  filenames: [$(cycle_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
               $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
   model variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,qls,qcn,cfcn,frocean,frland,varflt,ustar,
                     bstar,zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,stype,vfrac,sheleg,
@@ -161,9 +161,9 @@ R2D2:
         user_date_format: '%Y%m%d.%H%M%S'
     bc:
       - file_type: satbias
-        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).nc4
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).nc4
       - file_type: tlapse
-        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).txt
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).txt
   store:
     fc:
       - file_type: [bkg]

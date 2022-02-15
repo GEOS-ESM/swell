@@ -3,13 +3,13 @@ obs operator:
 obs space:
   name: Aircraft
   obsdatain:
-    obsfile: $(experiment_dir)/{{current_cycle}}/aircraft.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/aircraft.{{window_begin}}.nc4
     obsgrouping:
       group variables: ["station_id"]
       sort variable: "air_pressure"
       sort order: "descending"
   obsdataout:
-    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).aircraft.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment).aircraft.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind, air_temperature]
 obs filters:
 #--------------------------------------------------------------------------------------------------------------------

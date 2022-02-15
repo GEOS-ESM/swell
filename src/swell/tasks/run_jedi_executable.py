@@ -19,7 +19,7 @@ class RunJediExecutable(taskBase):
 
         # Path to executable being run
         # ----------------------------
-        jedi_build_path = self.config.get('jedi_build')
+        jedi_build_path = self.config.get('jedi_build_dir')
         jedi_executable = self.config.get('executable')
         jedi_exe_path = os.path.join(jedi_build_path, 'bin', jedi_executable)
 

@@ -3,13 +3,13 @@ obs operator:
 obs space:
   name: vadwind
   obsdatain:
-    obsfile: $(experiment_dir)/{{current_cycle}}/vadwind.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/vadwind.{{window_begin}}.nc4
     obsgrouping:
       group variables: ["station_id", "datetime"]
       sort variable: "air_pressure"
       sort order: "descending"
   obsdataout:
-    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).vadwind.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment).vadwind.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind]
 #--------------------------------------------------------------------------------------------------------------------
 obs filters:

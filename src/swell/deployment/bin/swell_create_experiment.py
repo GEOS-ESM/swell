@@ -72,7 +72,6 @@ def main(config, clean):
     add_dir_to_conf_mkdir(logger, experiment_dict, 'jedi_build_dir', 'bundle/build', False)
     add_dir_to_conf_mkdir(logger, experiment_dict, 'stage_dir', 'stage')
     add_dir_to_conf_mkdir(logger, experiment_dict, 'suite_dir', exp_id+'-suite')
-    add_dir_to_conf_mkdir(logger, experiment_dict, 'run_dir', 'run')
     add_dir_to_conf_mkdir(logger, experiment_dict, 'cycle_dir', 'run/{{current_cycle}}', False)
 
     # Put the swell install path in to the config

@@ -131,8 +131,7 @@ class GetBackground(taskBase):
 
                     # Set the target file name
                     target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(cfg.get('experiment_dir'), current_cycle,
-                                               target_file)
+                    target_file = os.path.join(cfg.get('cycle_dir'), target_file)
 
                     # Perform the fetch
                     fetch(date=forecast_start_time,

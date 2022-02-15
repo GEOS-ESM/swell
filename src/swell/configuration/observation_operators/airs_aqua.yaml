@@ -1,9 +1,9 @@
 obs space:
   name: airs_aqua
   obsdatain:
-    obsfile: $(experiment_dir)/{{current_cycle}}/airs_aqua.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/airs_aqua.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).airs_aqua.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment).airs_aqua.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &airs_aqua_channels 1, 6, 7, 10, 11, 15, 16, 17, 20, 21, 22, 24,
             27, 28, 30, 36, 39, 40, 42, 51, 52, 54, 55, 56, 59, 62, 63, 68, 69, 71,
@@ -35,13 +35,13 @@ obs operator:
     EndianType: little_endian
     CoefficientPath: $(jedi_build)/ufo/test/Data/
 obs bias:
-  input file: $(experiment_dir)/{{current_cycle}}/airs_aqua.{{background_time}}.satbias.nc4
+  input file: $(cycle_dir)/airs_aqua.{{background_time}}.satbias.nc4
   variational bc:
     predictors:
     - name: constant
     - name: lapse_rate
       order: 2
-      tlapse: &airs_aqua_tlapse $(experiment_dir)/{{current_cycle}}/airs_aqua.{{background_time}}.tlapse.txt
+      tlapse: &airs_aqua_tlapse $(cycle_dir)/airs_aqua.{{background_time}}.tlapse.txt
     - name: lapse_rate
       tlapse: *airs_aqua_tlapse
     - name: emissivity

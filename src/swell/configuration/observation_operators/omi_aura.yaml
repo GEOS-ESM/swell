@@ -1,9 +1,9 @@
 obs space:
   name: omi_aura
   obsdatain:
-    obsfile: $(experiment_dir)/{{current_cycle}}/omi_aura.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/omi_aura.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).omi_aura.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment).omi_aura.{{window_begin}}.nc4
   simulated variables: [integrated_layer_ozone_in_air]
 obs operator:
   name: AtmVertInterpLay
