@@ -55,13 +55,14 @@ class DeployWorkflow():
         # Pre TUI messages
         logger.info(' ')
         logger.info('Launching Terminal User Interface (TUI) to monitor the running jobs...')
-        logger.info('If the workflow needs to be stopped close the TUI (press q) and issue either:'
+        logger.info('If the workflow needs to be stopped close the TUI (press q) and issue either:')
         logger.info('cylc stop ' + self.experiment_name)
         logger.info('or to kill running tasks and stop:')
         logger.info('cylc stop --kill' + self.experiment_name)
         logger.info(' ')
 
         # Launch the job monitor
+        logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
         subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
 

@@ -25,7 +25,7 @@ class BuildJedi(taskBase):
         cfg = self.config
 
         # Path to JEDI build
-        jedi_build = self.config.get('jedi_build')
+        jedi_build_dir = self.config.get('jedi_build_dir')
 
         # Get path to jedi executable
         if 'executable' in cfg.keys() and 'existing build directory' in cfg['build jedi'].keys():
@@ -39,10 +39,10 @@ class BuildJedi(taskBase):
                                  "problems will follow if the loaded modules are not consistent " +
                                  "with those used to build this version of JEDI.")
                 # Remove any exisiting
-                if os.path.isdir(jedi_build):
-                    shutil.rmtree(jedi_build)
+                if os.path.isdir(jedi_build_dir):
+                    shutil.rmtree(jedi_build_dir)
                 # Link directory
-                os.symlink(ex_build_dir, jedi_build)
+                os.symlink(ex_build_dir, jedi_build_dir)
             else:
                 self.logger.abort('Existing JEDI build directory is provided but the executable' +
                                   ' is not found in that directory')

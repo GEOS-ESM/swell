@@ -14,11 +14,10 @@ import yaml
 from swell.install_path import swell_install_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
+from swell.utilities.dictionary_utilities import resolve_definitions
 from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files
 from swell.deployment.yaml_exploder import recursive_yaml_expansion
-
-
-import swell.deployment.prep_suite as ps
+from swell.deployment.prep_suite import prepare_suite
 
 
 # --------------------------------------------------------------------------------------------------
@@ -50,8 +49,7 @@ def main(config, clean):
     # Optionally clean up any existing directory
     # ------------------------------------------
     if clean:
-        check_clean = input('swell_create_experiment: removing existing experiment directory ' +
-                            experiment_dir + '. Press return to continue')
+        logger.input('Removing existing experiment directory ' + experiment_dir)
         logger.info('removing' + experiment_dir)
         shutil.rmtree(experiment_dir)
 
@@ -82,10 +80,13 @@ def main(config, clean):
     swell_dir = swell_install_path()
     add_dir_to_conf_mkdir(logger, experiment_dict, 'swell_dir', swell_dir, False)
 
+    # Resolve all dictionary definitions
+    # ----------------------------------
+    experiment_dict = resolve_definitions(experiment_dict)
+
     # Copy files to the suite directory
     # ---------------------------------
     copy_suite_files(logger, experiment_dict)
-
 
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------
@@ -121,9 +122,13 @@ def main(config, clean):
     # -----------
     recursive_yaml_expansion(experiment_dict)
 
+    # Resolve all dictionary definitions for full yaml
+    # ------------------------------------------------
+    experiment_dict = resolve_definitions(experiment_dict)
+
     # Prepare the suite driver file
     # -----------------------------
-    suite_prep = ps.PrepSuite(logger, experiment_dict)
+    prepare_suite(logger, experiment_dict)
 
     # Write the complete experiment yaml to suite directory
     # -----------------------------------------------------
