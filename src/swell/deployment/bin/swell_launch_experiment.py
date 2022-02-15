@@ -52,6 +52,15 @@ class DeployWorkflow():
         # Start the workflow
         subprocess.run(['cylc', 'play', self.experiment_name], check=True)
 
+        # Pre TUI messages
+        logger.info(' ')
+        logger.info('Launching Terminal User Interface (TUI) to monitor the running jobs...')
+        logger.info('If the workflow needs to be stopped close the TUI (press q) and issue either:'
+        logger.info('cylc stop ' + self.experiment_name)
+        logger.info('or to kill running tasks and stop:')
+        logger.info('cylc stop --kill' + self.experiment_name)
+        logger.info(' ')
+
         # Launch the job monitor
         subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
@@ -84,7 +93,7 @@ def main(suite_path, workflow_manager):
     # Write some info for the user
     # ----------------------------
     deploy_workflow.logger.info('Launching workflow defined by files in ' + suite_path + '.')
-    deploy_workflow.logger.info('Using ' + workflow_manager + ' for the wofklow manager.')
+    deploy_workflow.logger.info('Using ' + workflow_manager + ' for the workflow manager.')
 
     # Launch the workflow
     # -------------------

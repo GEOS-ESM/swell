@@ -1,0 +1,295 @@
+obs space:
+  name: sondes
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/sondes.{{window_begin}}.nc4
+    obsgrouping:
+      group variables: ["station_id", "LaunchTime"]
+      sort variable: "air_pressure"
+      sort order: "descending"
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sondes.{{window_begin}}.nc4
+  simulated variables: [air_temperature, specific_humidity, eastward_wind, northward_wind, surface_pressure]
+obs operator:
+  name: Composite
+  components:
+   - name: VertInterp
+     variables:
+     - name: air_temperature
+     - name: specific_humidity
+     - name: eastward_wind
+     - name: northward_wind
+   - name: SfcPCorrected
+     variables:
+     - name: surface_pressure
+     da_psfc_scheme: UKMO
+#    geovar_geomz: geopotential_height
+#    geovar_sfc_geomz: surface_geopotential_height
+obs filters:
+# Reject all obs with PreQC mark already set above 3
+- filter: PreQC
+  maxvalue: 3
+  action:
+    name: reject
+#
+# Observation Range Sanity Check: temperature, surface_pressure, moisture, winds
+- filter: Bounds Check
+  filter variables:
+  - name: air_temperature
+  minvalue: 185
+  maxvalue: 327
+  action:
+    name: reject
+#
+- filter: Bounds Check
+  filter variables:
+  - name: surface_pressure
+  minvalue: 37499
+  maxvalue: 106999
+  action:
+    name: reject
+#
+- filter: Bounds Check
+  filter variables:
+  - name: specific_humidity
+  minvalue: 1.0E-8
+  maxvalue: 0.034999999
+  action:
+    name: reject
+#
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -135
+  maxvalue: 135
+  action:
+    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: Velocity@ObsFunction
+  maxvalue: 135.0
+  action:
+    name: reject
+#
+# Reject when difference of wind direction is more than 50 degrees.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: WindDirAngleDiff@ObsFunction
+  maxvalue: 50.0
+  action:
+    name: reject
+#
+# Assign the initial observation error, based on height/pressure
+- filter: Perform Action
+  filter variables:
+  - name: air_temperature
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: air_pressure@MetaData
+        xvals: [100000, 95000, 90000, 85000, 35000, 30000, 25000, 20000, 15000, 10000, 7500, 5000, 4000, 3000, 2000, 1000]
+        errors: [1.2, 1.1, 0.9, 0.8, 0.8, 0.9, 1.2, 1.2, 1.0, 0.8, 0.8, 0.9, 0.95, 1.0, 1.25, 1.5]
+#
+- filter: Perform Action
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: surface_pressure@ObsValue
+        xvals: [80000, 75000]
+        errors: [110, 120]        # 1.1 mb below 800 mb and 1.2 mb agove 750 mb
+#
+- filter: Perform Action
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorSfcPressure@ObsFunction
+      options:
+        error_min: 100         # 1 mb
+        error_max: 300         # 3 mb
+        geovar_sfc_geomz: surface_geopotential_height
+#
+- filter: Perform Action
+  filter variables:
+  - name: specific_humidity
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: air_pressure@MetaData
+        xvals: [25000, 20000, 10]
+        errors: [0.2, 0.4, 0.8]        # 20% RH up to 250 mb, then increased rapidly above
+        scale_factor_var: specific_humidity@ObsValue
+#
+- filter: Perform Action
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: air_pressure@MetaData
+        xvals: [100000, 95000, 80000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [1.4, 1.5, 1.6, 1.8, 1.9, 2.0, 2.1, 2.3, 2.6, 2.8, 3.0, 3.2, 2.7, 2.4, 2.1]
+#
+# Inflate obserror when multiple obs exist inside vertical model layers.
+- filter: Perform Action
+  filter variables:
+  - name: specific_humidity
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [specific_humidity]
+  defer to post: true
+- filter: Perform Action
+  filter variables:
+  - name: air_temperature
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [air_temperature]
+  defer to post: true
+- filter: Perform Action
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [eastward_wind]
+  defer to post: true
+#
+- filter: Perform Action
+  filter variables:
+  - name: northward_wind
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [northward_wind]
+  defer to post: true
+#
+- filter: Background Check
+  filter variables:
+  - name: air_temperature
+  absolute threshold: 4.0
+  action:
+    name: inflate error
+    inflation factor: 3.0
+  defer to post: true
+#
+- filter: Background Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  absolute threshold: 7.5
+  action:
+    name: inflate error
+    inflation factor: 3.0
+  defer to post: true
+#
+# If the total inflation factor is too big, reject.
+- filter: Bounds Check
+  filter variables:
+  - name: air_temperature
+  action:
+    name: reject
+  maxvalue: 8.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: air_temperature@ObsErrorData   # After inflation step
+      denominator:
+        name: air_temperature@ObsError
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: specific_humidity
+  action:
+    name: reject
+  maxvalue: 8.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: specific_humidity@ObsErrorData   # After inflation step
+      denominator:
+        name: specific_humidity@ObsError
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: reject
+  maxvalue: 8.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: eastward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: eastward_wind@ObsError
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: northward_wind
+  action:
+    name: reject
+  maxvalue: 8.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: northward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: northward_wind@ObsError
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: reject
+  maxvalue: 4.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: surface_pressure@ObsErrorData   # After inflation step
+      denominator:
+        name: surface_pressure@ObsError
+  defer to post: true

@@ -32,9 +32,7 @@ class RunJediExecutable(taskBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_conf_output = os.path.join(self.config.get("experiment_dir"),
-                                        self.config.get("current_cycle"),
-                                        self.config.get("application_config")+".yaml")
+        jedi_conf_output = os.path.join(self.config.get("cycle_dir"), "jedi_config.yaml")
 
         # Run the JEDI executable
         # -----------------------

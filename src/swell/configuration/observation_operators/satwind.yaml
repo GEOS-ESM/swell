@@ -1,0 +1,315 @@
+obs operator:
+  name: VertInterp
+obs space:
+  name: satwind
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/satwind.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).satwind.{{window_begin}}.nc4
+  simulated variables: [eastward_wind, northward_wind]
+obs filters:
+#
+# Reject all obs with PreQC mark already set above 3
+- filter: PreQC
+  maxvalue: 3
+  action:
+    name: reject
+#
+# Assign the initial observation error, based on height/pressure
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -135
+  maxvalue: 135
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: air_pressure@MetaData
+        xvals: [100000, 95000, 80000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [1.4, 1.5, 1.6, 1.8, 1.9, 2.0, 2.1, 2.3, 2.6, 2.8, 3.0, 3.2, 2.7, 2.4, 2.1]
+#
+# Observation Range Sanity Check: either wind component or velocity exceeds 135 m/s
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -135
+  maxvalue: 135
+  action:
+    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: Velocity@ObsFunction
+  maxvalue: 135.0
+  action:
+    name: reject
+#
+# All satellite platforms, reject when pressure greater than 950 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  maxvalue: 95000
+  action:
+    name: reject
+#
+# Difference check surface_pressure and air_pressure@ObsValue, if less than 100 hPa, reject.
+# Starting with 730029 values, 338418 missing (half?), 50883 rejected by difference check, leaving 340728
+- filter: Difference Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  reference: surface_pressure@GeoVaLs
+  value: air_pressure@MetaData
+  maxvalue: -10000
+#
+# Multiple satellite platforms, reject when pressure is more than 50 mb above tropopause.
+- filter: Difference Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  reference: TropopauseEstimate@ObsFunction
+  value: air_pressure@MetaData
+  minvalue: -5000                    # 50 hPa above tropopause level, negative p-diff
+  action:
+    name: reject
+#
+# GOES WV (non-cloudy; itype=247) reject when difference of wind direction is more than 50 degrees.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: WindDirAngleDiff@ObsFunction
+  maxvalue: 50.0
+  action:
+    name: reject
+#
+# GOES IR (245), EUMET IR (253), JMA IR (252) reject when pressure between 400 and 800 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  minvalue: 40000
+  maxvalue: 80000
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 245, 252, 253
+  action:
+    name: reject
+#
+# GOES WV (246, 250, 254), reject when pressure greater than 400 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  maxvalue: 40000
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 246, 250, 254
+  action:
+    name: reject
+#
+# EUMET (242) and JMA (243) vis, reject when pressure less than 700 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  minvalue: 70000
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 242, 243
+  action:
+    name: reject
+#
+# MODIS-Aqua/Terra (257) and (259), reject when pressure less than 250 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  minvalue: 25000
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 257-259
+  action:
+    name: reject
+#
+# MODIS-Aqua/Terra (258) and (259), reject when pressure greater than 600 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  maxvalue: 60000
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 258, 259
+  action:
+    name: reject
+#
+# AVHRR (244), MODIS (257,258,259), VIIRS (260), GOES (247) use a LNVD check.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: SatWindsLNVDCheck@ObsFunction
+  maxvalue: 3
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 244, 247, 257-260
+  action:
+    name: reject
+#
+# AVHRR and MODIS (ObsType=244,257,258,259) use a SPDB check.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: SatWindsSPDBCheck@ObsFunction
+    options:
+      error_min: 1.4
+      error_max: 20.0
+  maxvalue: 1.75
+  where:
+    - variable:
+        name: eastward_wind@ObsType
+      is_in: 244, 257, 258, 259
+  action:
+    name: reject
+#
+# GOES (ObsType=245,246,253,254) use a SPDB check only between 300-400 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: SatWindsSPDBCheck@ObsFunction
+    options:
+      error_min: 1.4
+      error_max: 20.0
+  maxvalue: 1.75
+  where:
+    - variable:
+        name: eastward_wind@ObsType
+      is_in: 244, 257, 258, 259
+    - variable:
+        name: air_pressure@MetaData
+      minvalue: 30000
+      maxvalue: 40000
+  action:
+    name: reject
+#
+- filter: Background Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  absolute threshold: 7.5
+  action:
+    name: inflate error
+    inflation factor: 3.0
+  defer to post: true
+#
+# If the total inflation factor is too big, reject.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: reject
+  maxvalue: 2.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: eastward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: eastward_wind@ObsError
+  where:
+    - variable:
+        name: eastward_wind@ObsType
+      is_in: 240, 241, 242, 244, 247, 248, 249, 250, 252, 255-260
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: northward_wind
+  action:
+    name: reject
+  maxvalue: 2.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: northward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: northward_wind@ObsError
+  where:
+    - variable:
+        name: northward_wind@ObsType
+      is_in: 240, 241, 242, 244, 247, 248, 249, 250, 252, 255-260
+  defer to post: true
+#
+# Some satellite platforms have a lower threshold of inflation factor of 1.5
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: reject
+  maxvalue: 1.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: eastward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: eastward_wind@ObsError
+  where:
+    - variable:
+        name: eastward_wind@ObsType
+      is_in: 243, 245, 246, 251, 253, 254
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: northward_wind
+  action:
+    name: reject
+  maxvalue: 1.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: northward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: northward_wind@ObsError
+  where:
+    - variable:
+        name: eastward_wind@ObsType
+      is_in: 243, 245, 246, 251, 253, 254
+  defer to post: true
+

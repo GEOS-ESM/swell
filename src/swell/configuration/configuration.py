@@ -4,24 +4,18 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
 # --------------------------------------------------------------------------------------------------
 
 
-# Dictionary containing the tasks per node for each platform/constraint
-ntasks_per_node_dict = {
-  'nccs_discover': {'hasw': 28,
-                    'sky': 40,
-                    'cas': 48
-                    }
-}
+import os
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def get_tasks_per_node(platform, constraint):
-
-    return ntasks_per_node_dict[platform][constraint]
+def return_configuration_path():
+    return os.path.split(__file__)[0]
 
 
 # --------------------------------------------------------------------------------------------------

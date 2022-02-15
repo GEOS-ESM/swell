@@ -1,0 +1,154 @@
+obs operator:
+  name: VertInterp
+obs space:
+  name: vadwind
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/vadwind.{{window_begin}}.nc4
+    obsgrouping:
+      group variables: ["station_id", "datetime"]
+      sort variable: "air_pressure"
+      sort order: "descending"
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).vadwind.{{window_begin}}.nc4
+  simulated variables: [eastward_wind, northward_wind]
+#--------------------------------------------------------------------------------------------------------------------
+obs filters:
+# Begin by assigning all ObsError to a constant value. These might get overwritten later.
+- filter: BlackList
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  action:
+    name: assign error
+    error parameter: 2.0             # 2.0 m/s
+#
+# Assign the initial ObsError, based on height/pressure
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -135
+  maxvalue: 135
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: air_pressure@MetaData
+        xvals: [100000, 95000, 85000, 80000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]
+        errors: [1.4, 1.5, 1.5, 1.6, 1.6, 1.8, 1.9, 2.0, 2.1, 2.3, 2.6, 2.8, 3.0, 3.2, 2.7, 2.4, 2.1]
+#
+# Reject all obs with PreQC mark already set above 3
+- filter: PreQC
+  maxvalue: 3
+  action:
+    name: reject
+#
+# Reject when pressure is less than 226 mb.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: air_pressure@MetaData
+  minvalue: 22600
+  action:
+    name: reject
+#
+# Observation Range Sanity Check: either wind component or velocity exceeds 135 m/s
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -135
+  maxvalue: 135
+  action:
+    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: Velocity@ObsFunction
+  maxvalue: 135.0
+  action:
+    name: reject
+#
+# Reject when difference of wind direction is more than 50 degrees.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: WindDirAngleDiff@ObsFunction
+  maxvalue: 50.0
+  action:
+    name: reject
+  defer to post: true
+#
+# Inflate obserror when multiple obs exist inside vertical model layers.
+- filter: BlackList
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [eastward_wind]
+  defer to post: true
+#
+- filter: BlackList
+  filter variables:
+  - name: northward_wind
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorConventional@ObsFunction
+      options:
+        test QCflag: PreQC
+        inflate variables: [northward_wind]
+  defer to post: true
+#
+- filter: Background Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  absolute threshold: 7.5
+  action:
+    name: inflate error
+    inflation factor: 2.5
+  defer to post: true
+#
+# If the total inflation factor is too big, reject.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: reject
+  maxvalue: 6.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: eastward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: eastward_wind@ObsError
+  defer to post: true
+#
+- filter: Bounds Check
+  filter variables:
+  - name: northward_wind
+  action:
+    name: reject
+  maxvalue: 6.5
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: northward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: northward_wind@ObsError
+  defer to post: true

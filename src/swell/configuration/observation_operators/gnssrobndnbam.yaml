@@ -1,0 +1,45 @@
+obs space:
+  name: gnssrobndnbam
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/gnssrobndnbam.{{window_begin}}.nc4
+    obsgrouping:
+      group variables: [ 'record_number' ]
+      sort variable: 'impact_height'
+      sort order: 'ascending'
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).gnssrobndnbam.{{window_begin}}.nc4
+  simulated variables: [bending_angle]
+obs operator:
+  name: GnssroBndNBAM
+  obs options:
+    use_compress: 1
+    sr_steps: 2
+    vertlayer: full
+    super_ref_qc: NBAM
+obs filters:
+- filter: Domain Check
+  filter variables:
+  - name: [bending_angle]
+  where:
+  - variable:
+      name: impact_height@MetaData
+    minvalue: 0
+    maxvalue: 50000
+- filter: Bounds Check
+  filter variables:
+  - name: [bending_angle]
+  where:
+  - variable:
+      name: occulting_sat_id@MetaData
+    is_in: 3-5
+  test variables:
+  - name: impact_height@MetaData
+  minvalue: 8000
+- filter: ROobserror
+  filter variables:
+  - name: bending_angle
+  errmodel: NBAM
+- filter: Background Check RONBAM
+  filter variables:
+  - name: [bending_angle]
+  threshold: 3

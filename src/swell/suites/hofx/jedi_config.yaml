@@ -1,0 +1,11 @@
+window begin: '{{window_begin}}'
+window length: ${window_length}
+forecast length: ${window_length}
+geometry:
+  ${GEOMETRY}
+model:
+  ${MODEL}
+initial condition:
+  '{{BACKGROUND}}'
+observations:
+  ${OBSERVATIONS}

@@ -1,0 +1,12 @@
+obs space:
+  name: omi_aura
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/omi_aura.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).omi_aura.{{window_begin}}.nc4
+  simulated variables: [integrated_layer_ozone_in_air]
+obs operator:
+  name: AtmVertInterpLay
+  geovals: [mole_fraction_of_ozone_in_air]
+  coefficients: [0.007886131] # convert from ppmv to DU
+  nlevels: [1]

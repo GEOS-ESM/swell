@@ -1,0 +1,120 @@
+obs operator:
+  name: SfcPCorrected
+  da_psfc_scheme: UKMO
+# geovar_geomz: geopotential_height
+# geovar_sfc_geomz: surface_geopotential_height
+obs space:
+  name: sfc
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/sfc.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).sfc.{{window_begin}}.nc4
+  simulated variables: [surface_pressure] #, air_temperature]
+obs filters:
+# Observation Range Sanity Check
+- filter: Bounds Check
+  filter variables:
+  - name: surface_pressure
+  minvalue: 37499
+  maxvalue: 106999
+  action:
+    name: reject
+# Reject all obs with PreQC mark already set above 3
+- filter: PreQC
+  maxvalue: 3
+  action:
+    name: reject
+# Assign obsError.
+- filter: BlackList
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: assign error
+    error parameter: 120             # 120 Pa (1.2mb)
+#
+- filter: BlackList
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: surface_pressure@ObsValue
+        xvals: [80000, 75000]
+        errors: [110, 120]
+  where:
+  - variable:
+      name: surface_pressure@ObsType
+    is_in: 181          # Type is SYNOP
+#
+- filter: BlackList
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: surface_pressure@ObsValue
+        xvals: [85000, 80000]
+        errors: [120, 140]
+  where:
+  - variable:
+      name: surface_pressure@ObsType
+    is_in: 187          # Type is METAR
+#
+# Inflate ObsError as it is done with GSI
+- filter: BlackList
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorSfcPressure@ObsFunction
+      options:
+#       original_obserr: ObsError
+        error_min: 100         # 1 mb
+        error_max: 300         # 3 mb
+        geovar_sfc_geomz: surface_geopotential_height
+#
+# If the ObsError is inflated too much, reject the obs
+- filter: Bounds Check
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: reject
+  maxvalue: 3.6
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: surface_pressure@ObsErrorData   # After inflation step
+      denominator:
+        name: surface_pressure@ObsError
+  defer to post: true
+  where:
+  - variable:
+      name: surface_pressure@ObsType
+    is_in: 181          # Type is SYNOP
+#
+- filter: Bounds Check
+  filter variables:
+  - name: surface_pressure
+  action:
+    name: reject
+  maxvalue: 4.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: surface_pressure@ObsErrorData   # After inflation step
+      denominator:
+        name: surface_pressure@ObsError
+  defer to post: true
+  where:
+  - variable:
+      name: surface_pressure@ObsType
+    is_in: 187          # Type is METAR

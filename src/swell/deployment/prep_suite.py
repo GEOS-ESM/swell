@@ -19,7 +19,7 @@ class PrepSuite():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, platform, exp_dict):
+    def __init__(self, logger, exp_dict):
 
         # Copy of logger
         # --------------
@@ -27,7 +27,7 @@ class PrepSuite():
 
         # Copy of platform
         # ----------------
-        self.platform = platform
+        self.platform = exp_dict['suite']['platform']
 
         # First update the scheduling dictionary, overwriting default with task specific values
         # -------------------------------------------------------------------------------------

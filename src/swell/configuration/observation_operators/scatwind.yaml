@@ -1,0 +1,113 @@
+obs operator:
+  name: GSISfcModel
+obs space:
+  name: scatwind
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/scatwind.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).scatwind.{{window_begin}}.nc4
+  simulated variables: [eastward_wind, northward_wind]
+obs filters:
+# Reject all obs with PreQC mark already set above 3
+- filter: PreQC
+  maxvalue: 3
+  action:
+    name: reject
+#
+# WindSat (289), ASCAT (290), or OSCAT (291) either wind component or velocity greater than 20 m/s, then reject.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  minvalue: -20
+  maxvalue: 20
+#
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: Velocity@ObsFunction
+  maxvalue: 20.0
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 289, 290, 291
+  action:
+    name: reject
+#
+# Similar to satellite winds AMV, reject when obs wind direction is more than 50 degrees different than model.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: WindDirAngleDiff@ObsFunction
+  maxvalue: 50.0
+  action:
+    name: reject
+#
+# ASCAT (290), RAPIDSCAT (296)  use a LNVD check.
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  test variables:
+  - name: SatWindsLNVDCheck@ObsFunction
+  maxvalue: 3
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 290, 296
+  action:
+    name: reject
+#
+# Assign the initial observation error (constant value, 3.5 m/s right now).
+- filter: BlackList
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  action:
+    name: assign error
+    error parameter: 3.5
+#
+# For OSCAT, ASCAT, RAPIDSCAT, or WindSat, reject when either wind component differs by at least 6 m/s from model.
+- filter: Background Check
+  filter variables:
+  - name: eastward_wind
+  - name: northward_wind
+  absolute threshold: 6.0
+  where:
+  - variable:
+      name: eastward_wind@ObsType
+    is_in: 289, 290, 291, 296
+  action:
+    name: reject
+#
+- filter: Bounds Check
+  filter variables:
+  - name: eastward_wind
+  action:
+    name: reject
+  maxvalue: 5.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: eastward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: eastward_wind@ObsError
+#
+- filter: Bounds Check
+  filter variables:
+  - name: northward_wind
+  action:
+    name: reject
+  maxvalue: 5.0
+  test variables:
+  - name: ObsErrorFactorQuotient@ObsFunction
+    options:
+      numerator:
+        name: northward_wind@ObsErrorData   # After inflation step
+      denominator:
+        name: northward_wind@ObsError

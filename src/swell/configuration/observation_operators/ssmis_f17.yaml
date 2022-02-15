@@ -1,0 +1,164 @@
+obs space:
+  name: ssmis_f17
+  obsdatain:
+    obsfile: $(experiment_dir)/{{current_cycle}}/ssmis_f17.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(experiment_dir)/{{current_cycle}}/$(experiment).ssmis_f17.{{window_begin}}.nc4
+  simulated variables: [brightness_temperature]
+  channels: &ssmis_f17_channels 1-24
+obs operator:
+  name: CRTM
+  Absorbers: [H2O,O3,CO2]
+  obs options:
+    Sensor_ID: ssmis_f17
+    EndianType: little_endian
+    CoefficientPath: $(jedi_build)/ufo/test/Data/
+obs bias:
+  input file: $(experiment_dir)/{{current_cycle}}/ssmis_f17.{{background_time}}.satbias.nc4
+  variational bc:
+    predictors:
+    - name: constant
+    - name: cloud_liquid_water
+      satellite: SSMIS
+      ch19h: 12
+      ch19v: 13
+      ch22v: 14
+      ch37h: 15
+      ch37v: 16
+      ch91v: 17
+      ch91h: 18
+    - name: cosine_of_latitude_times_orbit_node
+    - name: sine_of_latitude
+    - name: lapse_rate
+      order: 2
+      tlapse: &ssmis_f17_tlapse $(experiment_dir)/{{current_cycle}}/ssmis_f17.{{background_time}}.tlapse.txt
+    - name: lapse_rate
+      tlapse: *ssmis_f17_tlapse
+    - name: emissivity
+    - name: scan_angle
+      var_name: scan_position
+      order: 4
+    - name: scan_angle
+      var_name: scan_position
+      order: 3
+    - name: scan_angle
+      var_name: scan_position
+      order: 2
+    - name: scan_angle
+      var_name: scan_position
+obs filters:
+#step1: Gross check (setuprad)
+- filter: Background Check
+  filter variables:
+  - name: brightness_temperature
+    channels: *ssmis_f17_channels
+  threshold: 1.5
+  action:
+    name: reject
+#step1: Gross check(qcmod)
+- filter: Background Check
+  filter variables:
+  - name: brightness_temperature
+    channels: *ssmis_f17_channels
+  absolute threshold: 3.5
+  remove bias correction: true
+  action:
+    name: reject
+# #step2: clw check
+# Keep the CLW check in yaml for further improvement.
+# The test case using 2020110112 global SSMIS data shows that CLW check is not activated in GSI.
+#- filter: Bounds Check
+#  filter variables:
+#  - name: brightness_temperature
+#    channels: 1
+#  test variables:
+#  - name: CLWRetMW_SSMIS@ObsFunction
+#    options:
+#      satellite: SSMIS
+#      ch19h: 12
+#      ch19v: 13
+#      ch22v: 14
+#      ch37h: 15
+#      ch37v: 16
+#      ch91v: 17
+#      ch91h: 18
+#      varGroup: ObsValue
+#  minvalue: 0.0
+#  maxvalue: 0.1
+#  where:
+#  - variable:
+#      name: water_area_fraction@GeoVaLs
+#    minvalue: 0.99
+#  action:
+#    name: reject    
+#step3:
+- filter: Difference Check
+  filter variables:
+  - name: brightness_temperature
+    channels: 1-2,12-16
+  reference: brightness_temperature_2@ObsValue
+  value: brightness_temperature_2@HofX
+  minvalue: -1.5
+  maxvalue: 1.5
+  where:
+  - variable:
+      name: water_area_fraction@GeoVaLs
+    maxvalue: 0.99
+#QC_terrain: If ssmis and terrain height > 2km. do not use
+- filter: Domain Check
+  filter variables:
+  - name: brightness_temperature
+    channels: *ssmis_f17_channels
+  where:
+  - variable:
+      name: height_above_mean_sea_level@MetaData
+    maxvalue: 2000.0
+#Do not use over mixed surface
+- filter: BlackList
+  filter variables:
+  - name: brightness_temperature
+    channels: 1-3,8-18
+  where:
+  - variable:
+      name: land_area_fraction@GeoVaLs
+    maxvalue: 0.99
+  - variable:
+      name: water_area_fraction@GeoVaLs
+    maxvalue: 0.99
+  - variable:
+      name: ice_area_fraction@GeoVaLs
+    maxvalue: 0.99
+  - variable:
+      name: surface_snow_area_fraction@GeoVaLs
+    maxvalue: 0.99
+#step4: Generate q.c. bounds and modified variances
+- filter: BlackList
+  filter variables:
+  - name: brightness_temperature
+    channels: *ssmis_f17_channels
+  action:
+    name: inflate error
+    inflation variable:
+#Surface Jacobian check
+      name: ObsErrorFactorSurfJacobianRad@ObsFunction
+      channels: *ssmis_f17_channels
+      options:
+        channels: *ssmis_f17_channels
+        obserr_demisf: [0.010, 0.010, 0.010, 0.010, 0.010]
+        obserr_dtempf: [0.500, 0.500, 0.500, 0.500, 0.500]
+#Useflag Check
+- filter: Bounds Check
+  filter variables:
+  - name: brightness_temperature
+    channels: *ssmis_f17_channels
+  test variables:
+  - name: ChannelUseflagCheckRad@ObsFunction
+    channels: *ssmis_f17_channels
+    options:
+      channels: *ssmis_f17_channels
+      use_flag: [ 1, -1, -1, -1,  1 , 1,  1, -1, -1, -1,
+                 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                 -1, -1, -1, 1]
+  minvalue: 1.0e-12
+  action:
+    name: reject
