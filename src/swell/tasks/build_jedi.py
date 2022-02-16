@@ -43,6 +43,9 @@ class BuildJedi(taskBase):
                     shutil.rmtree(jedi_build)
                 # Link directory
                 os.symlink(ex_build_dir, jedi_build)
+            else:
+                self.logger.abort('Existing JEDI build directory is provided but the executable' +
+                                  ' is not found in that directory')
 
         else:
 
@@ -88,7 +91,7 @@ class BuildJedi(taskBase):
                 if not os.path.exists(proj_dir):
                     self.logger.info('Cloning into {}...'.format(project))
                     git_url = 'https://github.com/{}/{}.git'.format(org, repo)
-                    git_got(git_url, branch, proj_dir)
+                    git_got(git_url, branch, proj_dir, self.logger)
                 else:
                     self.logger.info('{} has already been cloned into bundle'.format(project))
 

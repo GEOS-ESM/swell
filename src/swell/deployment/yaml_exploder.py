@@ -4,12 +4,14 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 import os
-import sys
 import yaml
-import shutil
-import re
-from string import *
+
+from swell.utilities.string_utils import replace_vars
 
 
 # --------------------------------------------------------------------------------------------------
@@ -46,11 +48,6 @@ class yaml_exploder():
             # check if something is a string, if yes, then force into list. However, that may cause
             # problems later
 
-            # Check if key is STAGE, then get the pre-pend paths that we'll use later in the
-            # expanded yaml
-            if 'STAGE' in k:
-                self.stage_setter(param_list)
-
             if 'yaml::' in str(param_list) and isinstance(param_list, list):
                 exp_list = []
                 for p in param_list:
@@ -65,9 +62,6 @@ class yaml_exploder():
                 big_yaml = self.pull_yaml(param_list)
                 # Assign the expanded yaml to the original ditionary key
                 self.target[k] = big_yaml
-
-        # Prepend stage paths to stage items
-        self.stage_filler()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -123,72 +117,8 @@ class yaml_exploder():
                                 experiment_id_dir=self.experiment_id_dir,
                                 run_dir=run_dir, experiment=self.dir_dict['experiment'])
         big_yaml = yaml.safe_load(big_yaml)
+
         return big_yaml
 
-    # ----------------------------------------------------------------------------------------------
-
-    def stage_setter(self, param_list):
-        self.stage_path_list = []
-        if isinstance(param_list, list):
-            for p in param_list:
-                p_path = p.split('yaml::')[1]
-                pre_path = os.path.dirname(p_path)
-                self.stage_path_list.append(pre_path)
-        else:
-            raise Exception('Stage value must be a yaml list in experiment yaml.')
-
-        return None
-
-    # ----------------------------------------------------------------------------------------------
-
-    def stage_filler(self):
-        stage_list = self.target['STAGE']
-        for i, stage_item in enumerate(stage_list):
-            copy_list = stage_item['copy_files']['directories']
-            stage_path_item = self.stage_path_list[i]
-            for j, copy_item in enumerate(copy_list):
-                copy_item[0] = prepend_path(copy_item[0], stage_path_item)
-                self.target['STAGE'][i]['copy_files']['directories'][j] = copy_item
-
 
 # --------------------------------------------------------------------------------------------------
-
-
-def replace_vars(s, **defs):
-    '''
-    Replaces $() variables with the provided def
-    '''
-    expr = s
-
-    # Resolve {{var}} and $(var) first
-    for var in re.findall(r'{{(\w+)}}', expr):
-        if var in defs:
-            expr = re.sub(r'{{'+var+r'}}', defs[var], expr)
-    for var in re.findall(r'\$\((\w+)\)', expr):
-        if var in defs:
-            expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
-
-    # Recursively resolve shell variables
-    s_interp = Template(expr).safe_substitute(defs)
-
-    if s_interp != s:
-        s_interp = replace_vars(s_interp, **defs)
-
-    return s_interp
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def prepend_path(s, prepath):
-    '''
-    prepend repo path to src directory from stage yaml
-    '''
-    s_list = s.split('/')
-    parent_count = s_list.count('..')
-    for i in range(parent_count):
-        prepath = os.path.dirname(prepath)
-        s_list.remove('..')
-    s = ('/').join(s_list)
-    new_s = os.path.join(prepath, s)
-    return new_s

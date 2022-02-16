@@ -9,7 +9,6 @@ import subprocess
 import sys
 
 from swell.tasks.base.task_base import taskBase
-from swell.tasks.utilities.utils import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,7 +26,6 @@ class RunJediExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         processors = self.config.get('processors')
-        print(processors)
         np = 1
         for processor in processors:
             np = np * processor
@@ -40,6 +38,21 @@ class RunJediExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
-        command = ['mpirun', '-np', str(np), jedi_exe_path, jedi_conf_output]
         self.logger.info('Running '+jedi_exe_path+' with '+str(np)+' processors.')
-        run_subprocess(command)
+
+        command = ['mpirun', '-np', str(np), jedi_exe_path, jedi_conf_output]
+
+        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        while True:
+            output = process.stdout.readline().decode()
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                print(output.strip())
+        rc = process.poll()
+
+        # Abort if the executable did not run successfully
+        if rc != 0:
+            command_string = ' '.join(command)
+            self.logger.abort('subprocess.run with command ' + command_string +
+                              ' failed to execute.')

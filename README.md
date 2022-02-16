@@ -1,4 +1,4 @@
-# Swell Workflow Ecosystem, Layout and Launcher (SWELL)
+# Swell Workflow Ecosystem, Layout and Launcher
 
 ### Continuous integration:
 
@@ -26,4 +26,3 @@ The swell package requires Python 3 and can be installed using pip:
     git clone https://github.com/GEOS-ESM/swell
     cd swell
     pip install --prefix=/path/to/install/ .
-

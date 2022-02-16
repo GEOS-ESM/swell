@@ -64,10 +64,13 @@ class Stage(taskBase):
 
                 filelist = glob.glob(src)
 
+                if not filelist:
+                    self.logger.abort('Source inputs not found "' + src + '"')
+
                 try:
-                    os.makedirs(dir, 0o755)
+                    os.makedirs(dir, 0o755, exist_ok=True)
                 except Exception:
-                    pass
+                    self.logger.abort('Unable to create "' + dir + '"')
 
                 for file in filelist:
                     dest = os.path.join(dir, os.path.basename(file))
@@ -89,8 +92,12 @@ class Stage(taskBase):
 
         self.logger.info("Copying " + src + " to " + dest)
         if not os.path.isfile(src):
-            return
-        copyfile(src, dest)
+            self.logger.abort('Source file does not exist: "' + src + '"')
+
+        try:
+            copyfile(src, dest)
+        except Exception:
+            self.logger.abort('Unable to copy "' + src + '" to "' + dest + '"')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -106,8 +113,16 @@ class Stage(taskBase):
              Destination link file to be created.
         """
 
-        self.logger.info("Linking " + dest + " to " + src)
-        if os.path.islink(dest):
-            os.remove(dest)
-        if not os.path.isfile(dest):
-            os.symlink(src, dest)
+        self.logger.info('Linking "' + dest + '" to "' + src + '"')
+        if not os.path.isfile(src):
+            self.logger.abort('Source file does not exist: "' + src + '"')
+
+        try:
+            if os.path.islink(dest):
+                os.remove(dest)
+            if os.path.isfile(dest):
+                self.logger.abort('File exists where link expected: "' + dest + '"')
+            if not os.path.isfile(dest):
+                os.symlink(src, dest)
+        except Exception:
+            self.logger.abort('Unable to link "' + dest + '" to "' + src + '"')
