@@ -44,9 +44,9 @@ class BuildJedi(taskBase):
                     jedi_build_dir = jedi_build_dir[:-1]
 
                 # Remove existing build path if present
-                if os.path.islink(jedi_build_dir): # Is a link
+                if os.path.islink(jedi_build_dir):  # Is a link
                     os.remove(jedi_build_dir)
-                elif os.path.isdir(jedi_build_dir): # Is a directory
+                elif os.path.isdir(jedi_build_dir):  # Is a directory
                     shutil.rmtree(jedi_build_dir)
 
                 # Link directory
