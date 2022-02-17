@@ -1,0 +1,9 @@
+obs operator:
+  name: VertInterp
+obs space:
+  name: rass_tv
+  obsdatain:
+    obsfile: $(cycle_dir)/rass_tv.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(cycle_dir)/$(experiment).rass_tv.{{window_begin}}.nc4
+  simulated variables: [virtual_temperature]

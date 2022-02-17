@@ -50,7 +50,7 @@ class ModifySatDb(taskBase):
         cfg = self.config
 
         time_window = cfg.get('current_cycle')
-        bundle = cfg.get('bundle')
+        swell_dir = cfg.get('swell_dir')
         obs = cfg.get('OBSERVATIONS')
         cycle_dt = dt.strptime(time_window, '%Y-%m-%dT%H:%M:%SZ')
         geos_sat_db_dir = cfg.get('geos_sat_db_root')
@@ -124,7 +124,8 @@ class ModifySatDb(taskBase):
 
                     # Find where the channel list is defined in the dict
                     # Replace it with new channel string
-                    yaml_file = bundle + '/ufo/ewok/jedi-geos/' + instr + '_' + sat + '.yaml'
+                    yaml_file = swell_dir + '/configuration/observation_operators/' + instr + '_' \
+                        + sat + '.yaml'
                     with open(yaml_file, 'r') as file:
                         ufo_dict = yaml.full_load(file)
                     ufo_dict['obs space']['channels'] = new_ch_str
