@@ -67,9 +67,8 @@ class ObsCorrelationScatterDriver(taskBase):
 
             # Write the dictionary out to file
             # --------------------------------
-            conf_dir = os.path.join(self.config.get("experiment_dir"),
-                                    self.config.get("current_cycle"))
-            conf_output = os.path.join(conf_dir, "ObsCorrelationScatterDriver.yaml")
+            cycle_dir = self.config.get("cycle_dir")
+            conf_output = os.path.join(cycle_dir, "ObsCorrelationScatterDriver.yaml")
             with open(conf_output, 'w') as outfile:
                 yaml.dump(obs_plot_dict, outfile, default_flow_style=False)
 

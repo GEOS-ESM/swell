@@ -138,9 +138,10 @@ class JediConfig(taskBase):
                         print('sat {} and instr {} are not in the sat database'.format(sat, instr))
                         continue
 
+
         # Set full path to the templated config file
         # ------------------------------------------
-        jedi_conf_path = os.path.join(bundle_directory, "oops", "ewok", application_config+".yaml")
+        jedi_conf_path = os.path.join(self.config.get("suite_dir"), "jedi_config.yaml")
 
         # Open the template file to dictionary
         # ------------------------------------
@@ -166,11 +167,11 @@ class JediConfig(taskBase):
 
         # Filename for output yaml
         # ------------------------
-        conf_dir = os.path.join(self.config.get("experiment_dir"), self.config.get("current_cycle"))
-        if not os.path.exists(conf_dir):
-            os.makedirs(conf_dir, exist_ok=True)
+        cycle_dir = self.config.get("cycle_dir")
+        if not os.path.exists(cycle_dir):
+            os.makedirs(cycle_dir, 0o755, exist_ok=True)
 
-        jedi_conf_output = os.path.join(conf_dir, application_config+".yaml")
+        jedi_conf_output = os.path.join(cycle_dir, "jedi_config.yaml")
 
         # Write out the final yaml file
         # -----------------------------

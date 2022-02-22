@@ -11,11 +11,13 @@ import os
 import shutil
 import yaml
 
+from swell.install_path import swell_install_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
-import swell.deployment.yaml_exploder as ye
-import swell.deployment.prep_exp_dirs as ped
-import swell.deployment.prep_suite as ps
+from swell.utilities.dictionary_utilities import resolve_definitions
+from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files
+from swell.deployment.yaml_exploder import recursive_yaml_expansion
+from swell.deployment.prep_suite import prepare_suite
 
 
 # --------------------------------------------------------------------------------------------------
@@ -26,53 +28,64 @@ import swell.deployment.prep_suite as ps
 @click.option('--clean', '-c', is_flag=True, help='Remove any existing experiment directory')
 def main(config, clean):
 
+    # Create a logger
+    # ---------------
+    logger = Logger('SwellCreateExperiment')
+
     # Load experiment file
     # --------------------
     with open(config, 'r') as ymlfile:
         experiment_dict = yaml.safe_load(ymlfile)
 
-    # Create a logger
-    # ---------------
-    logger = Logger('SwellCreateExperiment')
-
-    # Create experiment directory
-    # ---------------------------
+    # Set experiment directory
+    # ------------------------
     exp_root = experiment_dict['experiment_root'].replace('${USER}', os.environ['USER'])
     exp_id = experiment_dict['experiment_id']
+    experiment_dir = os.path.join(exp_root, exp_id)
 
-    exp_id_dir = os.path.join(exp_root, exp_id)
+    # Add to dictionary
+    experiment_dict.update({'experiment_dir': experiment_dir})
 
     # Optionally clean up any existing directory
     # ------------------------------------------
     if clean:
-        check_clean = input('swell_create_experiment: removing existing experiment directory ' +
-                            exp_id_dir + '. Press return to continue')
-        logger.info('removing' + exp_id_dir)
-        shutil.rmtree(exp_id_dir)
+        logger.input('Removing existing experiment directory ' + experiment_dir)
+        logger.info('removing' + experiment_dir)
+        shutil.rmtree(experiment_dir)
 
     # Create the experiment directory
     # -------------------------------
-    logger.info('Creating experiment directory: '+exp_id_dir)
-    try:
-        os.makedirs(exp_id_dir)
-    except Exception:
-        logger.info('Experiment directory is already present')
+    logger.info('Creating experiment directory: '+experiment_dir)
+    if not os.path.exists(experiment_dir):
+        os.makedirs(experiment_dir, 0o755)
+    else:
+        logger.info('Experiment directory is already present, overwriting files')
 
     # Copy experiment.yaml to the experiment directory with the experiment id name
     # ----------------------------------------------------------------------------
-    shutil.copy(config, os.path.join(exp_id_dir, 'experiment_{}.yaml'.format(exp_id)))
+    shutil.copy(config, os.path.join(experiment_dir, 'experiment_{}.yaml'.format(exp_id)))
     logger.info('Experiment yaml copied to working directory...')
 
-    # Platform
-    # --------
-    platform = experiment_dict['platform_name']
+    # Create directories within experiment directory and add key to dictionary
+    # ------------------------------------------------------------------------
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'bundle_dir', 'bundle')
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'jedi_build_dir', 'bundle/build', False)
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'stage_dir', 'stage')
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'suite_dir', exp_id+'-suite')
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'cycle_dir', 'run/{{current_cycle}}', False)
 
-    # Set the suite and add environmental variables to the experiment yaml
-    # --------------------------------------------------------------------
-    suite = ped.dir_config(logger, experiment_dict['suite']['suite name'], platform, exp_id_dir,
-                           exp_id, ('suite_dir', exp_id+'-suite'), ('bundle', 'bundle'),
-                           ('stage_dir', 'stage'), ('experiment_dir', 'run'),
-                           ('jedi_build', 'bundle/build'), ('run_dir', 'run/{{current_cycle}}'))
+    # Put the swell install path in to the config
+    # -------------------------------------------
+    swell_dir = swell_install_path()
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'swell_dir', swell_dir, False)
+
+    # Resolve all dictionary definitions
+    # ----------------------------------
+    experiment_dict = resolve_definitions(experiment_dict)
+
+    # Copy files to the suite directory
+    # ---------------------------------
+    copy_suite_files(logger, experiment_dict)
 
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------
@@ -101,27 +114,33 @@ def main(config, clean):
             project = d['project']
             git_url = d['git url']
             branch = d['branch']
-            proj_dir = os.path.join(suite.dir_dict['bundle'], project)
+            proj_dir = os.path.join(experiment_dict['bundle_dir'], project)
             git_got(git_url, branch, proj_dir, logger)
 
-    # Expand yaml and add cfg yaml variables at the root level
-    # --------------------------------------------------------
-    big_yaml = ye.yaml_exploder(exp_id_dir, suite.dir_dict['suite_dir'], suite.dir_dict)
-    big_yaml.boom()
+    # Expand yaml
+    # -----------
+    recursive_yaml_expansion(experiment_dict)
+
+    # Resolve all dictionary definitions for full yaml
+    # ------------------------------------------------
+    experiment_dict = resolve_definitions(experiment_dict)
 
     # Prepare the suite driver file
     # -----------------------------
-    suite_prep = ps.PrepSuite(logger, platform, big_yaml.target)
+    prepare_suite(logger, experiment_dict)
 
     # Write the complete experiment yaml to suite directory
     # -----------------------------------------------------
-    big_yaml.write()
+    output_file_name = os.path.join(experiment_dict['suite_dir'], 'experiment-filled.yaml')
+    with open(output_file_name, 'w') as output_file:
+        yaml.dump(experiment_dict, output_file, default_flow_style=False)
 
     # Write out launch command for convenience
     # ----------------------------------------
     logger.info(' ')
-    logger.info('   Experiment successfully installed. To launch experiment use: ')
-    logger.info('   swell_launch_experiment --suite_path ' + suite.dir_dict['suite_dir'])
+    logger.info('  Experiment successfully installed. To launch experiment use: ')
+    logger.info('  swell_launch_experiment --suite_path ' + experiment_dict['suite_dir'])
+    logger.info(' ')
 
 
 # --------------------------------------------------------------------------------------------------

@@ -42,6 +42,7 @@ setuptools.setup(
         '': [
                'deployment/platforms/*/modules*',
                'suites/*/*',
+               'configuration/*/*',
              ],
     },
     include_package_data=True,

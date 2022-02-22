@@ -11,87 +11,64 @@
 import importlib
 import os
 import shutil
-import yaml
 
 from swell.suites.suites import return_suite_path
-from swell.deployment import platforms
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class dir_config():
+def add_dir_to_conf_mkdir(logger, experiment_dict, experiment_dict_key, experiment_sub_dir,
+                          make_dir=True):
 
-    # ----------------------------------------------------------------------------------------------
+    # Get experiment directory
+    experiment_dir = experiment_dict['experiment_dir']
+    experiment_sub_dir_full = os.path.join(experiment_dir, experiment_sub_dir)
 
-    def __init__(self, logger, suite_name, platform, experiment_id_dir, exp_id, *dirs):
+    if make_dir:
+        # Make the new directory
+        os.makedirs(experiment_sub_dir_full, exist_ok=True)
 
-        # Create copy of the logger
-        # -------------------------
-        self.logger = logger
+        # Set permissions
+        os.chmod(experiment_sub_dir_full, 0o755)
 
-        # Dictionary with paths to experiment directories
-        # -----------------------------------------------
-        self.dir_dict = {}
-        self.dir_dict['experiment'] = exp_id
-        self.dir_dict.update({'experiment_root': os.path.dirname(experiment_id_dir)})
+    # Add the associated key to the dictionary
+    experiment_dict.update({experiment_dict_key: experiment_sub_dir_full})
 
-        # Create the sub directories of the experiment
-        # --------------------------------------------
-        for new_dir in dirs:
-            self.dir_maker(experiment_id_dir, new_dir)
 
-        # Remove run/{{current_cycle}} (seems hacky)
-        dir_full = os.path.join(experiment_id_dir, 'run/{{current_cycle}}')
-        try:
-            shutil.rmtree(dir_full)
-        except OSError as e:
-            pass
+# --------------------------------------------------------------------------------------------------
 
-        # Put files in the suite directory
-        # --------------------------------
-        self.populate_suite(suite_name, platform)
 
-    # ----------------------------------------------------------------------------------------------
+def copy_suite_files(logger, experiment_dict):
 
-    def dir_maker(self, exp_id_dir, dir_name=('', '')):
-        dir_var_name = dir_name[0]
-        dir_full = os.path.join(exp_id_dir, dir_name[1])
-        self.logger.trace('Creating directory: {}'.format(dir_full))
-        try:
-            os.mkdir(dir_full)
-        except Exception:
-            self.logger.trace('Directory already exists: {}'.format(dir_full))
+    # Extract config
+    # --------------
+    suite_dir = experiment_dict['suite_dir']
+    suite_name = experiment_dict['suite']['suite name']
+    platform = experiment_dict['suite']['platform']
 
-        self.logger.trace('Adding this directory to config with key: {}'.format(dir_var_name))
-        self.dir_dict.update({dir_var_name: dir_full})
+    # Copy suite related files to the suite directory
+    # -----------------------------------------------
+    suite_path = return_suite_path()
+    for s in [os.path.join(suite_name, 'jedi_config.yaml'), os.path.join(suite_name, 'flow.cylc')]:
+        src_file = os.path.split(s)[1]
+        src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
+        dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
+        logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+        shutil.copy(src_path_file, dst_path_file)
 
-    # ----------------------------------------------------------------------------------------------
+    # Copy platform related files to the suite directory
+    # --------------------------------------------------
+    plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
+    return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
+    platform_path = return_platform_install_path_call()
 
-    def populate_suite(self, suite_name, platform):
-
-        # Copy suite related files to the suite directory
-        # -----------------------------------------------
-        suite_path = return_suite_path()
-        for s in [os.path.join(suite_name, 'flow.cylc')]:
-            src_file = os.path.split(s)[1]
-            src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
-            dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
-            self.logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
-            shutil.copy(src_path_file, dst_path_file)
-
-        # Copy platform related files to the suite directory
-        # --------------------------------------------------
-        plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
-        return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
-        platform_path = return_platform_install_path_call()
-
-        for s in ['modules']:
-            src_file = os.path.split(s)[1]
-            src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
-            dst_path_file = os.path.join(self.dir_dict['suite_dir'], '{}'.format(src_file))
-            self.logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
-            shutil.copy(src_path_file, dst_path_file)
+    for s in ['modules']:
+        src_file = os.path.split(s)[1]
+        src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
+        dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
+        logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+        shutil.copy(src_path_file, dst_path_file)
 
 
 # --------------------------------------------------------------------------------------------------
