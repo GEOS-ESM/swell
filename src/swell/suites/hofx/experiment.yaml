@@ -74,7 +74,7 @@ build jedi:
     - git url: https://github.com/jcsda/fv3-jedi
       project: fv3-jedi
       branch: 5649cad5
-      clone on create: true
+      clone on create: false
     - git url: https://github.com/jcsda/fv3-jedi-linearmodel
       project: fv3-jedi-lm
       branch: 6bb36ce
@@ -99,8 +99,8 @@ build jedi:
 STAGE:
   - copy_files:
       directories:
-        - [$(bundle_dir)/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
-        - [$(bundle_dir)/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
     link_files:
       directories:
         - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.$(horizontal_resolution).nc4, $(stage_dir)/Data/bkg/]
