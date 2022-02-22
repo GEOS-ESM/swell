@@ -13,7 +13,15 @@ from swell.tasks.base.task_base import taskBase
 import os
 import re
 import yaml
+import itertools
+from datetime import datetime as dt
 
+# --------------------------------------------------------------------------------------------------
+
+def ranges(i):
+    for _, group in itertools.groupby(enumerate(i), lambda pair: pair[1] - pair[0]):
+        group = list(group)
+        yield group[0][1], group[-1][1]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -68,67 +76,67 @@ class JediConfig(taskBase):
                     instr = sat_instr_list[0]
                     sat = sat_instr_list[1]
 
-                try:
-                    if use_sat_db_yaml:
+                    try:
+                        if use_sat_db_yaml:
 
-                        # Open observation yaml file
-                        # --------------------------
-                        with open(sat_db_yaml_loc + sat + '.yaml', 'r') as file:
-                            sat_dict = yaml.full_load(file)
-                            instr_dict = sat_dict[instr]
+                            # Open observation yaml file
+                            # --------------------------
+                            with open(sat_db_yaml_loc + sat + '.yaml', 'r') as file:
+                                sat_dict = yaml.full_load(file)
+                                instr_dict = sat_dict[instr]
 
-                        # Find instrument channel ranges for given cycle time
-                        # ---------------------------------------------------
-                        instr_ind = 999
-                        for ind in range(len(instr_dict)):
-                            begin = dt.strptime(instr_dict[ind]['begin date'], '%Y-%m-%dT%H:%M:%S')
-                            end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
-                            if((cycle_dt >= begin) and (cycle_dt < end)):
-                                instr_ind = ind
-                        assert(instr_ind != 999)
-                        instr_ch_list = instr_dict[ind]['channels']
+                            # Find instrument channel ranges for given cycle time
+                            # ---------------------------------------------------
+                            instr_ind = 999
+                            for ind in range(len(instr_dict)):
+                                begin = dt.strptime(instr_dict[ind]['begin date'], '%Y-%m-%dT%H:%M:%S')
+                                end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
+                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                    instr_ind = ind
+                            assert(instr_ind != 999)
+                            instr_ch_list = instr_dict[ind]['channels']
 
-                    else:
-
-                        # Extract instrument dataframe from loaded satellite database
-                        # -----------------------------------------------------------
-                        sat_df = sat_db.loc[sat_db['sat'] == sat]
-                        instr_df = sat_df.loc[sat_df['instr'] == instr]
-
-                        # Find instrument channel ranges for given cycle time
-                        # ---------------------------------------------------
-                        instr_ind = 999
-                        for ind in range(len(instr_df)):
-                            begin = dt.strptime(instr_df['start'][ind], '%Y%m%d%H%M%S')
-                            end = dt.strptime(instr_df['end'][ind], '%Y%m%d%H%M%S')
-                            if((cycle_dt >= begin) and (cycle_dt < end)):
-                                instr_ind = ind
-                        assert(instr_ind != 999)
-                        instr_ch_list = instr_df['channels'][ind]
-
-                    # Process instrument channel list into ranges
-                    # -------------------------------------------
-                    instr_ch_list = [int(i) for i in instr_ch_list]
-                    ch_ranges = list(ranges(instr_ch_list))
-                    new_ch_str = ''
-                    for ch_range in ch_ranges:
-                        if(ch_range[0] != ch_range[1]):
-                            new_ch_str += str(ch_range[0]) + '-' + str(ch_range[1]) + ','
                         else:
-                            new_ch_str += str(ch_range[0]) + ','
-                    new_ch_str = new_ch_str[0:-1]
 
-                    # Update channel range directly in loaded config
-                    # ----------------------------------------------
-                    ob['obs space']['channels'] = new_ch_str
+                            # Extract instrument dataframe from loaded satellite database
+                            # -----------------------------------------------------------
+                            sat_df = sat_db.loc[sat_db['sat'] == sat]
+                            instr_df = sat_df.loc[sat_df['instr'] == instr]
 
-                    # Delete obs filters
-                    # ------------------
-                    del ob['obs filters']
+                            # Find instrument channel ranges for given cycle time
+                            # ---------------------------------------------------
+                            instr_ind = 999
+                            for ind in range(len(instr_df)):
+                                begin = dt.strptime(instr_df['start'][ind], '%Y%m%d%H%M%S')
+                                end = dt.strptime(instr_df['end'][ind], '%Y%m%d%H%M%S')
+                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                    instr_ind = ind
+                            assert(instr_ind != 999)
+                            instr_ch_list = instr_df['channels'][ind]
 
-                except AssertionError:
-                    print('sat {} and instr {} are not in the sat database'.format(sat, instr))
-                    continue
+                        # Process instrument channel list into ranges
+                        # -------------------------------------------
+                        instr_ch_list = [int(i) for i in instr_ch_list]
+                        ch_ranges = list(ranges(instr_ch_list))
+                        new_ch_str = ''
+                        for ch_range in ch_ranges:
+                            if(ch_range[0] != ch_range[1]):
+                                new_ch_str += str(ch_range[0]) + '-' + str(ch_range[1]) + ','
+                            else:
+                                new_ch_str += str(ch_range[0]) + ','
+                            new_ch_str = new_ch_str[0:-1]
+
+                        # Update channel range directly in loaded config
+                        # ----------------------------------------------
+                        ob['obs space']['channels'] = new_ch_str
+
+                        # Delete obs filters
+                        # ------------------
+                        del ob['obs filters']
+
+                    except AssertionError:
+                        print('sat {} and instr {} are not in the sat database'.format(sat, instr))
+                        continue
 
         # Set full path to the templated config file
         # ------------------------------------------
