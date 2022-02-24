@@ -39,7 +39,18 @@ def main(config, clean):
 
     # Set experiment directory
     # ------------------------
-    exp_root = experiment_dict['experiment_root'].replace('${USER}', os.environ['USER'])
+
+    # Create experiment directory with user specified experiment ID and location, user can keep
+    # ${USER} in experiment.yaml
+    user = os.environ['USER']
+    user_template = '${USER}'
+
+    # replace all instances of ${USER}
+    for key, value in experiment_dict.items():
+        if isinstance(value, str) and user_template in value:
+            experiment_dict[key] = experiment_dict[key].replace(user_template, user)
+
+    exp_root = experiment_dict['experiment_root']
     exp_id = experiment_dict['experiment_id']
     experiment_dir = os.path.join(exp_root, exp_id)
 

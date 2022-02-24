@@ -71,6 +71,11 @@ class JediConfig(taskBase):
             for ob in obs:
 
                 name = ob['obs space']['name']
+
+                # Delete obs filters
+                # ------------------
+                del ob['obs filters']
+
                 if '_' in name:
                     sat_instr_list = name.split('_')
                     instr = sat_instr_list[0]
@@ -121,10 +126,10 @@ class JediConfig(taskBase):
                         new_ch_str = ''
                         for ch_range in ch_ranges:
                             if(ch_range[0] != ch_range[1]):
-                                new_ch_str += str(ch_range[0]) + '-' + str(ch_range[1]) + ','
+                                new_ch_str = new_ch_str +  str(ch_range[0]) + '-' + str(ch_range[1]) + ','
                             else:
                                 new_ch_str += str(ch_range[0]) + ','
-                            new_ch_str = new_ch_str[0:-1]
+                        new_ch_str = new_ch_str[0:-1]
 
                         # Update channel range directly in loaded config
                         # ----------------------------------------------
@@ -132,12 +137,11 @@ class JediConfig(taskBase):
 
                         # Delete obs filters
                         # ------------------
-                        del ob['obs filters']
+                        #del ob['obs filters']
 
                     except AssertionError:
                         print('sat {} and instr {} are not in the sat database'.format(sat, instr))
                         continue
-
 
         # Set full path to the templated config file
         # ------------------------------------------
@@ -164,6 +168,8 @@ class JediConfig(taskBase):
         # Remove some keys that do not pass yaml validation
         # -------------------------------------------------
         del jedi_conf['initial condition']['filename']
+        #print(jedi_conf)
+
 
         # Filename for output yaml
         # ------------------------
