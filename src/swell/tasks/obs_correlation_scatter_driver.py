@@ -84,5 +84,5 @@ class ObsCorrelationScatterDriver(taskBase):
 
         # Run the diagnostic application
         # ------------------------------
-        self.logger.info("Creating the scatter plots for "+instrument+" ("+instrument_long+")")
+        self.logger.info("Creating the correlation scatter plots with eva")
         eva(eva_dict, self.logger)
