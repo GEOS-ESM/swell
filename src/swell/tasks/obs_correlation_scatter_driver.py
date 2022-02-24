@@ -13,7 +13,7 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from eva.utilities import ioda_definitions
-from eva.base import create_and_run
+from eva.eva_base import eva
 
 
 # --------------------------------------------------------------------------------------------------
@@ -41,6 +41,8 @@ class ObsCorrelationScatterDriver(taskBase):
             self.logger.info("No observations to plot")
             return
 
+        obs_plot_dicts = []
+
         # Loop over observations
         for ob_config in ob_configs:
 
@@ -54,6 +56,7 @@ class ObsCorrelationScatterDriver(taskBase):
             # Create the dictionary to pass to the diagnostic tool
             # ----------------------------------------------------
             obs_plot_dict = {}
+            obs_plot_dict["diagnostic name"] = "ObsCorrelationScatter"
             obs_plot_dict["platforms"] = [instrument]
             obs_plot_dict["ioda experiment files"] = obs_path_file
             obs_plot_dict["ioda reference files"] = obs_path_file
@@ -65,14 +68,21 @@ class ObsCorrelationScatterDriver(taskBase):
             obs_plot_dict["output path"] = os.path.join(cycle_dir, "observation_scatter_plots")
             obs_plot_dict["figure file type"] = 'png'
 
-            # Write the dictionary out to file
-            # --------------------------------
-            cycle_dir = self.config.get("cycle_dir")
-            conf_output = os.path.join(cycle_dir, "ObsCorrelationScatterDriver.yaml")
-            with open(conf_output, 'w') as outfile:
-                yaml.dump(obs_plot_dict, outfile, default_flow_style=False)
+            obs_plot_dicts.append(obs_plot_dict)
 
-            # Run the diagnostic application
-            # ------------------------------
-            self.logger.info("Creating the scatter plots for "+instrument+" ("+instrument_long+")")
-            create_and_run("ObsCorrelationScatter", obs_plot_dict, self.logger)
+        # Combine into dictionary to pass to eva
+        # --------------------------------------
+        eva_dict = {}
+        eva_dict["diagnostics"] = obs_plot_dicts
+
+        # Write the dictionary out to file
+        # --------------------------------
+        cycle_dir = self.config.get("cycle_dir")
+        conf_output = os.path.join(cycle_dir, "ObsCorrelationScatterDriver.yaml")
+        with open(conf_output, 'w') as outfile:
+            yaml.dump(eva_dict, outfile, default_flow_style=False)
+
+        # Run the diagnostic application
+        # ------------------------------
+        self.logger.info("Creating the correlation scatter plots with eva")
+        eva(eva_dict, self.logger)
