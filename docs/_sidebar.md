@@ -1,9 +1,3 @@
-<!-- docs/_sidebar.md -->
-
-* [Home](/)
-
-* [Release notes](stable.md)
-
 - Getting started
 
   - [Installing swell](installation.md)
@@ -16,3 +10,5 @@
 - Writing documentation
 
   - [Installing Docsify](docsify.md)
+
+- [Release notes](stable.md)
