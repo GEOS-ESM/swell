@@ -6,5 +6,3 @@
 [Getting Started](#swell)
 
 ![](_media/swell.jpeg)
-
-![color](#000000)
