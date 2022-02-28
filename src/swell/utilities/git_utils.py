@@ -38,7 +38,6 @@ def git_got(git_url, git_branch, out_dir, logger):
 
     # Whether the directory exists or not switch to desired branch
     # ------------------------------------------------------------
-    cwd = os.getcwd()
     os.chdir(out_dir)
     logger.info('Checking out branch/tag/commit ' + git_branch)
     try:
@@ -47,7 +46,6 @@ def git_got(git_url, git_branch, out_dir, logger):
     except subprocess.CalledProcessError:
         subprocess.run(['git', 'checkout', git_branch])
         logger.abort('Git checkout of branch ' + git_branch + ' failed in git_got. ')
-    os.chdir(cwd)
 
 
 # --------------------------------------------------------------------------------------------------

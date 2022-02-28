@@ -1,26 +1,25 @@
-# Experiment logistics
+# Experiment name and location
 experiment_id: x0044-jedi
-experiment_root: /discover/nobackup/${USER}/cylc_jedi_dev/experiments
-platform_name: nccs_discover
+experiment_root: /discover/nobackup/${USER}/JediExperiments/
 
 # suite and executable
 executable: fv3jedi_hofx.x
-application_config: hofx4d
 
 # suite configuration
 suite:
+  platform: nccs_discover
   intial cylc point: 2020-12-15T00
   final cylc point: 2020-12-15T00
   runahead limit: PT24H
-  suite name: hofx-4d
+  suite name: hofx
   scheduling:
     - task: Default
-      platform: nccs-discover
       nodes: 1
       account: g0613
       execution_time_limit: PT10M
       qos: debug
       constraint: hasw
+      platform: nccs_discover
     - task: BuildJedi
       execution_time_limit: PT1H
       ntasks_per_node: 28
@@ -40,10 +39,6 @@ backgrounds:
   background source: file         # Could be file or model
   background schema: geos         # Schema for r2d2
   background frequency: PT1H      # Frequency of background if coming from file
-
-# cycle times
-initial_cycle_dt: 2020-12-15T12
-final_cycle_dt: 2020-12-15T18
 
 # resolution
 horizontal_resolution: c360
@@ -79,7 +74,7 @@ build jedi:
     - git url: https://github.com/jcsda/fv3-jedi
       project: fv3-jedi
       branch: 5649cad5
-      clone on create: true
+      clone on create: false
     - git url: https://github.com/jcsda/fv3-jedi-linearmodel
       project: fv3-jedi-lm
       branch: 6bb36ce
@@ -92,22 +87,20 @@ build jedi:
     - git url: https://github.com/jcsda/oops
       project: oops
       branch: 1eefd50c
-      clone on create: true
     - git url: https://github.com/jcsda/saber
       project: saber
       branch: 6d4d7ed3
     - git url: https://github.com/jcsda/ufo
       project: ufo
       branch: 5e7253cf
-      clone on create: true
 
 # Fix file staging
 # ----------------
 STAGE:
   - copy_files:
       directories:
-        - [$(bundle)/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
-        - [$(bundle)/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
     link_files:
       directories:
         - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.$(horizontal_resolution).nc4, $(stage_dir)/Data/bkg/]
@@ -134,13 +127,13 @@ BACKGROUND:
   filetype: cube sphere history
   provider: geos
   datapath: ''
-  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+  filenames: [$(cycle_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
               $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
   state variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,
                     qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
                     zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
                     stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]
-  filename: $(run_dir)/$(valid_date).$(file_type).nc4  # R2D2
+  filename: $(cycle_dir)/$(valid_date).$(file_type).nc4  # R2D2
 
 # JEDI Forecast model
 # -------------------
@@ -150,7 +143,7 @@ MODEL:
   filetype: cube sphere history
   provider: geos
   datapath: ''
-  filenames: [$(run_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
+  filenames: [$(cycle_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
               $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
   model variables: [u,v,ua,va,t,delp,q,qi,ql,o3ppmv,phis,qls,qcn,cfcn,frocean,frland,varflt,ustar,
                     bstar,zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,stype,vfrac,sheleg,
@@ -168,9 +161,9 @@ R2D2:
         user_date_format: '%Y%m%d.%H%M%S'
     bc:
       - file_type: satbias
-        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).nc4
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).nc4
       - file_type: tlapse
-        target_file: $(run_dir)/$(obs_type).$(date).$(file_type).txt
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).txt
   store:
     fc:
       - file_type: [bkg]
@@ -182,24 +175,24 @@ R2D2:
 obs_experiment: x0044
 
 OBSERVATIONS:
-  - yaml::$(bundle)/ufo/ewok/jedi-geos/aircraft.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/airs_aqua.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_aqua.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-a.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-b.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_metop-c.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n15.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n18.yaml
-  - yaml::$(bundle)/ufo/ewok/jedi-geos/amsua_n19.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/cris-fsr_n20.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/cris-fsr_npp.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/iasi_metop-a.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/iasi_metop-b.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_metop-b.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_metop-c.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/mhs_n19.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/rass_tv.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/satwind.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/sfc.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/sfcship.yaml
-  #- yaml::$(bundle)/ufo/ewok/jedi-geos/vadwind.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/airs_aqua.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_aqua.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_metop-a.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_metop-b.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_metop-c.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_n15.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsua_n18.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/amsua_n19.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/cris-fsr_n20.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/cris-fsr_npp.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/iasi_metop-a.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/iasi_metop-b.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/mhs_metop-b.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/mhs_metop-c.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/mhs_n19.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/rass_tv.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/satwind.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/sfc.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/sfcship.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/vadwind.yaml
