@@ -65,7 +65,7 @@ from shutil import copyfile
 
 from exceptions import *
 
-def get_data(config, **kwargs):
+def get_file_handler(config, **kwargs):
     """Factory for determining the file handler type for retrieving data.
 
        This method uses a heuristic algorithm to determine the staging
