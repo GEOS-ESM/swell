@@ -19,10 +19,6 @@ Aeronautics and Space Administration. All Rights Reserved.
 Software infrastructure for deploying cycling workflow for coupled data assimilation applications
 using a workflow manager and scheduler.
 
-### Installation
+### Documentation
 
-The swell package requires Python 3 and can be installed using pip:
-
-    git clone https://github.com/GEOS-ESM/swell
-    cd swell
-    pip install --prefix=/path/to/install/ .
+Documentation for swell, which includes installation instructions, can be found [here](https://geos-esm.github.io/swell/#/).
