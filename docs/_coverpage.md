@@ -4,3 +4,7 @@
 
 [GitHub](https://github.com/GEOS-ESM/swell)
 [Getting Started](#swell)
+
+![](_media/swell.jpeg)
+
+![color](#000000)
