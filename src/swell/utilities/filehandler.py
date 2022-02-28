@@ -63,7 +63,7 @@ import copy
 import datetime as dt
 from shutil import copyfile
 
-from exceptions import *
+from swell.utilities.exceptions import *
 
 def get_file_handler(config, **kwargs):
     """Factory for determining the file handler type for retrieving data.
