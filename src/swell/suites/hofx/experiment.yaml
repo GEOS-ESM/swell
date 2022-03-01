@@ -173,7 +173,7 @@ R2D2:
 # Observations
 # ------------
 obs_experiment: x0044
-update channels from database: true
+update channels from database: false
 use geos satellite channel database: true
 
 OBSERVATIONS:
