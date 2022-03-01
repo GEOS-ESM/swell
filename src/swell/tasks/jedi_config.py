@@ -85,7 +85,8 @@ class JediConfig(taskBase):
 
                             # Open observation yaml file
                             # --------------------------
-                            with open(sat_db_yaml_loc + sat + '.yaml', 'r') as file:
+                            instr_file = os.path.join(sat_db_yaml_loc, sat + '.yaml')
+                            with open(instr_file, 'r') as file:
                                 sat_dict = yaml.full_load(file)
                                 instr_dict = sat_dict[instr]
 
