@@ -9,6 +9,8 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.configuration.configuration import return_configuration_path
+from swell.utilities.sat_db_utils import run_sat_db_process
 
 import os
 import re
@@ -43,30 +45,25 @@ class JediConfig(taskBase):
 
         # Parse config
         # ------------
-        bundle_directory = self.config.get("bundle")
-        application_config = self.config.get("application_config")
         time_window = self.config.get('current_cycle')
-        geos_sat_db_dir = self.config.get('geos_sat_db_root')
-        use_sat_db_yaml = self.config.get('use_sat_db_yaml')
-        update_channels = self.config.get('update_channels')
+        update_channels = self.config.get('update channels from database')
+        use_geos_sat_db = self.config.get('use geos satellite channel database')
         obs = self.config.get('OBSERVATIONS')
 
-        sat_db_yaml_loc = geos_sat_db_dir + 'satdb_yamls/'
+        sat_db_yaml_loc = os.path.join(return_configuration_path(), 'satellite_channels')
+
+        print(sat_db_yaml_loc)
+
         cycle_dt = dt.strptime(time_window, '%Y-%m-%dT%H:%M:%SZ')
 
         if update_channels:
 
             # Manage satellite database preparation
             # -------------------------------------
-            if not use_sat_db_yaml:
-                # Need to make sure GEOSana_GridComp is cloned and ready
-                try:
-                    os.makedirs(geos_sat_db_dir)
-                except Exception:
-                    self.logger.info('Satellite database directory is already generated')
+            if use_geos_sat_db:
 
-                git_out_dir = geos_sat_db_dir + 'GEOSana_GridComp'
-                sat_db = run_sat_db_process(git_out_dir)
+                # Clone GEOSana_GridComp and generate database data frame
+                sat_db = run_sat_db_process(self.config.get('geos_dir'), self.logger)
 
             # Loop over observation operators to update instrument channels in loaded config
             # ------------------------------------------------------------------------------
@@ -84,7 +81,7 @@ class JediConfig(taskBase):
                     sat = sat_instr_list[1]
 
                     try:
-                        if use_sat_db_yaml:
+                        if not use_geos_sat_db:
 
                             # Open observation yaml file
                             # --------------------------

@@ -1,0 +1,59 @@
+amsua:
+- begin date: '2002-07-15T00:00:00'
+  channels:
+  - '4'
+  - '5'
+  - '6'
+  - '8'
+  - '9'
+  - '10'
+  - '11'
+  - '12'
+  - '13'
+  - '14'
+  comments: '# ncep does not use amsua ch7'
+  end date: '2003-10-27T18:00:00'
+- begin date: '2003-10-28T00:00:00'
+  channels: []
+  comments: '# amsua: antenna anomaly'
+  end date: '2003-10-30T18:00:00'
+amsub:
+- begin date: '2002-07-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  comments: no comment
+  end date: '2009-12-22T12:00:00'
+- begin date: '2009-12-22T18:00:00'
+  channels: []
+  comments: '# amsub: ch3-5 noisy; turn off all'
+  end date: '2013-04-20T18:00:00'
+avhrr3:
+- begin date: '2002-11-01T18:00:00'
+  channels:
+  - '4'
+  - '5'
+  comments: no comment
+  end date: '2010-09-30T18:00:00'
+hirs3:
+- begin date: '2002-06-25T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2011-12-03T18:00:00'
+- begin date: '2011-12-04T00:00:00'
+  channels: []
+  comments: '# hirs: noise jump ch1-5,12'
+  end date: '2012-08-28T18:00:00'

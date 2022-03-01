@@ -84,6 +84,7 @@ def main(config, clean):
     add_dir_to_conf_mkdir(logger, experiment_dict, 'stage_dir', 'stage')
     add_dir_to_conf_mkdir(logger, experiment_dict, 'suite_dir', exp_id+'-suite')
     add_dir_to_conf_mkdir(logger, experiment_dict, 'cycle_dir', 'run/{{current_cycle}}', False)
+    add_dir_to_conf_mkdir(logger, experiment_dict, 'geos_dir', 'geos')
 
     # Put the swell install path in to the config
     # -------------------------------------------

@@ -1,0 +1,181 @@
+imgr:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2100-12-31T18:00:00'
+sndr:
+- begin date: '2006-06-22T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2007-03-31T18:00:00'
+- begin date: '2007-04-01T00:00:00'
+  channels: []
+  comments: '# switch to single fov/indiv. detectors on 1 Apr 2007'
+  end date: '2007-12-03T18:00:00'
+sndrD1:
+- begin date: '2007-03-20T18:00:00'
+  channels: []
+  comments: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
+  end date: '2007-03-31T18:00:00'
+- begin date: '2007-04-01T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
+  end date: '2007-12-04T18:00:00'
+- begin date: '2007-12-05T00:00:00'
+  channels: []
+  comments: '# error with g10 labeled with g11 sat id'
+  end date: '2007-12-10T18:00:00'
+- begin date: '2007-12-11T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# 5 Dec 2011 -> GOES-15 became ops GOES-West'
+  end date: '2011-12-05T18:00:00'
+sndrD2:
+- begin date: '2007-03-20T18:00:00'
+  channels: []
+  comments: '# Kept passive till 1 Apr transition'
+  end date: '2007-03-31T18:00:00'
+- begin date: '2007-04-01T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# becomes active on 1 Apr'
+  end date: '2007-12-04T18:00:00'
+- begin date: '2007-12-05T00:00:00'
+  channels: []
+  comments: '# turn off g11 until fixed @ NESDIS 2007/12/11 00z'
+  end date: '2007-12-10T18:00:00'
+- begin date: '2007-12-11T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2011-12-05T18:00:00'
+sndrD3:
+- begin date: '2007-03-20T18:00:00'
+  channels: []
+  comments: no comment
+  end date: '2007-03-31T18:00:00'
+- begin date: '2007-04-01T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2007-12-04T18:00:00'
+- begin date: '2007-12-05T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2007-12-10T18:00:00'
+- begin date: '2007-12-11T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2011-12-05T18:00:00'
+sndrD4:
+- begin date: '2007-03-20T18:00:00'
+  channels: []
+  comments: no comment
+  end date: '2007-03-31T18:00:00'
+- begin date: '2007-04-01T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2007-12-04T18:00:00'
+- begin date: '2007-12-05T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2007-12-10T18:00:00'
+- begin date: '2007-12-11T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2011-12-05T18:00:00'

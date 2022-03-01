@@ -17,7 +17,7 @@ import sys
 import time
 import argparse
 from datetime import datetime as dt
-from swell.tasks.utilities.satbd_utils import run_sat_db_process
+from swell.utilities.satbd_utils import run_sat_db_process
 import itertools
 import yaml
 

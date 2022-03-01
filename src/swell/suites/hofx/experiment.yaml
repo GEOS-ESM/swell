@@ -52,11 +52,6 @@ processors:
   - $(npy_proc)
   - 6
 
-# GEOS satellite database logistics
-geos_sat_db_root: /discover/nobackup/${USER}/jedi_geos_sat_db/
-use_sat_db_yaml: True
-update_channels: True
-
 build jedi:
   existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/build-intel-impi-release-fv3/
   build options:
@@ -178,6 +173,8 @@ R2D2:
 # Observations
 # ------------
 obs_experiment: x0044
+update channels from database: true
+use geos satellite channel database: true
 
 OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml

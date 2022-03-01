@@ -3,13 +3,16 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 import os
 import pandas as pd
 import numpy as np
 from swell.utilities.git_utils import git_got
 from swell.utilities.instr_state_machine import InstrStateMachine
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -18,7 +21,7 @@ def read_sat_db(path_to_sat_db, column_names):
 
     # read data into a dataframe, throw line away if it starts with # or newline
     # ---------------------------------------------------------------------------
-    filename = path_to_sat_db + 'active_channels.tbl'
+    filename = os.path.join(path_to_sat_db, 'active_channels.tbl')
     df = pd.DataFrame(columns=column_names)
 
     file = open(filename, 'r')
@@ -67,17 +70,20 @@ def read_sat_db(path_to_sat_db, column_names):
 
 
 # --------------------------------------------------------------------------------------------------
-def run_sat_db_process(git_out_dir):
+
+
+def run_sat_db_process(git_out_dir, logger):
 
     # Process satellite database files in GEOS-ESM and return dataframe
     # -----------------------------------------------------------------------
 
     git_repo = 'https://github.com/GEOS-ESM/GEOSana_GridComp.git'
     git_branch = 'develop'
+    git_out_path = os.path.join(git_out_dir, 'GEOSana_GridComp')
 
     # clone repo
-    git_got(git_repo, git_branch, git_out_dir)
-    path_to_sat_db = git_out_dir + '/GEOSaana_GridComp/GSI_GridComp/mksi/sidb/'
+    git_got(git_repo, git_branch, git_out_path, logger)
+    path_to_sat_db = os.path.join(git_out_path, 'GEOSaana_GridComp', 'GSI_GridComp', 'mksi', 'sidb')
 
     column_names = ['sat', 'start', 'end', 'instr', 'channel_num',
                            'channels', 'comments']
@@ -99,3 +105,6 @@ def run_sat_db_process(git_out_dir):
             final_df = final_df.append(new_instr_df)
 
     return final_df
+
+
+# --------------------------------------------------------------------------------------------------
