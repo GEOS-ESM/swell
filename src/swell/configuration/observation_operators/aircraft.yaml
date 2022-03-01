@@ -9,7 +9,7 @@ obs space:
       sort variable: "air_pressure"
       sort order: "descending"
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment).aircraft.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment_id).aircraft.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind, air_temperature]
 obs filters:
 #--------------------------------------------------------------------------------------------------------------------

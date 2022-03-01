@@ -7,7 +7,7 @@ obs space:
       sort variable: 'impact_height'
       sort order: 'ascending'
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment).gnssrobndnbam.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment_id).gnssrobndnbam.{{window_begin}}.nc4
   simulated variables: [bending_angle]
 obs operator:
   name: GnssroBndNBAM

@@ -3,7 +3,7 @@ obs space:
   obsdatain:
     obsfile: $(cycle_dir)/amsua_metop-c.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment).amsua_metop-c.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment_id).amsua_metop-c.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &amsua_metop-c_channels 1-15
 obs operator:

@@ -1,0 +1,20 @@
+sndrD1:
+- begin date: '2012-10-01T00:00:00'
+  channels: []
+  comments: '# on-orbit spare, keep channels as passive if'
+  end date: '2999-12-31T18:00:00'
+sndrD2:
+- begin date: '2012-10-01T00:00:00'
+  channels: []
+  comments: '# data starts flowing'
+  end date: '2999-12-31T18:00:00'
+sndrD3:
+- begin date: '2012-10-01T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2999-12-31T18:00:00'
+sndrD4:
+- begin date: '2012-10-01T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2999-12-31T18:00:00'

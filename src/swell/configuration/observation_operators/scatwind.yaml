@@ -5,7 +5,7 @@ obs space:
   obsdatain:
     obsfile: $(cycle_dir)/scatwind.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment).scatwind.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment_id).scatwind.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind]
 obs filters:
 # Reject all obs with PreQC mark already set above 3
