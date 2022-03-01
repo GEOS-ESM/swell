@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -15,14 +13,15 @@ import pandas as pd
 
 from datetime import datetime as dt
 
-from swell.tasks.utils import git_got
-from swell.tasks.utils import run_sat_db_process
+from swell.utilities.git_utils import git_got
+from swell.utilities.sat_db_utils import run_sat_db_process
+
 
 def make_yamls(final_df, output_dir):
 
     '''
-	Uses the dataframe created by sat_db_processing
-	to write out yaml files
+        Uses the dataframe created by sat_db_processing
+        to write out yaml files
     '''
 
     if not os.path.exists(output_dir):
@@ -31,22 +30,22 @@ def make_yamls(final_df, output_dir):
     sat_list = np.unique(final_df['sat'].values)
     for sat in sat_list:
 
-        df = final_df.loc[final_df['sat']==sat]
+        df = final_df.loc[final_df['sat'] == sat]
         instr_list = np.unique(df['instr'].values)
         sat_dict = {}
 
         for instr in instr_list:
 
             sat_dict[instr] = {}
-            instr_df = df.loc[df['instr']==instr]
+            instr_df = df.loc[df['instr'] == instr]
 
             field_list = []
             for idx, row in instr_df.iterrows():
 
                 row_dict = {}
                 row_dict['begin date'] = format_date(row['start'])
-                row_dict['end date']   = format_date(row['end'])
-                row_dict['channels']   = row['channels']
+                row_dict['end date'] = format_date(row['end'])
+                row_dict['channels'] = row['channels']
 
                 if(row['comments']):
                     row_dict['comments'] = row['comments']
@@ -64,10 +63,10 @@ def make_yamls(final_df, output_dir):
 def format_date(old_date):
 
     '''
-	Formatting datetime object
+        Formatting datetime object
     '''
 
-    date = dt.strptime(old_date,'%Y%m%d%H%M%S')
+    date = dt.strptime(old_date, '%Y%m%d%H%M%S')
     return date.isoformat()
 
 
@@ -76,23 +75,24 @@ def format_date(old_date):
 def main(config):
 
     with open(config, 'r') as ymlfile:
-      config_dict = yaml.safe_load(ymlfile)
+        config_dict = yaml.safe_load(ymlfile)
     user = os.environ['USER']
     geos_sat_db_root = config_dict['geos_sat_db_root'].replace('${USER}', user)
 
     try:
-      os.makedirs(geos_sat_db_root)
+        os.makedirs(geos_sat_db_root)
     except Exception:
-      print('SATELLITE DATABASE DIRECTORY IS ALREADY GENERATED')
+        print('SATELLITE DATABASE DIRECTORY IS ALREADY GENERATED')
 
     yaml_out_dir = geos_sat_db_root + '/satdb_yamls'
-    git_out_dir  = geos_sat_db_root + '/GEOSana_GridComp'
+    git_out_dir = geos_sat_db_root + '/GEOSana_GridComp'
 
-    #run sat db processing util
+    # run sat db processing util
     processed_data = run_sat_db_process(git_out_dir)
 
-    #create yamls
+    # create yamls
     make_yamls(processed_data, yaml_out_dir)
+
 
 if __name__ == '__main__':
     main()

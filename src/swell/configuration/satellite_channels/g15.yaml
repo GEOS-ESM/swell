@@ -1,0 +1,80 @@
+sndrD1:
+- begin date: '2010-03-04T00:00:00'
+  channels: []
+  comments: '# Passive till Operational GOES-West'
+  end date: '2011-12-06T18:00:00'
+- begin date: '2011-12-07T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# GOES-15 became ops GOES-West on 5 Dec 2011'
+  end date: '2020-03-02T18:00:00'
+sndrD2:
+- begin date: '2010-03-04T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2011-12-06T18:00:00'
+- begin date: '2011-12-07T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# GOES-17 (no sounder) operational in 2019,'
+  end date: '2020-03-02T18:00:00'
+sndrD3:
+- begin date: '2010-03-04T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2011-12-06T18:00:00'
+- begin date: '2011-12-07T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# last G15 data on 20200302'
+  end date: '2020-03-02T18:00:00'
+sndrD4:
+- begin date: '2010-03-04T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2011-12-06T18:00:00'
+- begin date: '2011-12-07T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2020-03-02T18:00:00'
