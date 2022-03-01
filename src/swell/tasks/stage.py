@@ -35,6 +35,9 @@ class Stage(taskBase):
 
         try:
             fh = get_file_handler(self.config['STAGE'])
-            fh.get()
+            if not fh.is_ready():
+                self.logger.abort('One or more files not ready')
+            else:
+                fh.get()
         except SWELLError as e:
             self.logger.abort(str(e))
