@@ -1,7 +1,11 @@
 # Release notes
 
-[comment]: <> ( Headers )
-| Tag version | Updates for this tag   |
-| ----------- | ---------------------- |
-| 1.0.1       | Dependency on JEDI repos removed unless building JEDI |
-| 1.0.0       | First version of swell |
+### 1.1.0
+
+- Dependency on JEDI repos removed unless building JEDI.
+
+### 1.0.0
+
+- First tag of Swell
+- Added first application, which is 4D H(x) runs with the atmosphere only.
+- Uses Cylc for the workflow manager.
