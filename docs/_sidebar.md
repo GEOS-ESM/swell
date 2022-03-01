@@ -1,14 +1,22 @@
 - Getting started
 
-  - [Installing swell](installation.md)
-  - [Installing swell as a module](installation_lua.md)
-  - [Creating an experiment](swell_create_expriment.md)
-  - [Launching an experiment](swell_launch_expriment.md)
-  - [Modifying an experiment](swell_modify_expriment.md)
+  - [Installing swell](installing_swell.md)
+  - [Installing swell as a module](installing_swell_as_a_module.md)
+  - [Configuring Cylc](configuring_cylc.md)
+  - [Creating an experiment](creating_an_experiment.md)
+  - [Launching an experiment](launching_an_experiment.md)
+  - [Modifying an experiment](modifying_an_experiment.md)
 
 - Configuration files in swell
 
-  - [Observation configuration](configuration.md)
-  - [Model configuration](configuration.md)
+  - [Observation configuration](observation_configuration.md)
+  - [Model configuration](model_configuration.md)
 
-- [Release notes](stable.md)
+- Tasks
+
+  - [Task infrastructure](task_infrastructure.md)
+  - [Tasks](tasks.md)
+
+- [Useful links](useful_links.md)
+
+- [Release notes](release_notes.md)
