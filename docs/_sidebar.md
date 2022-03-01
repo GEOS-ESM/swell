@@ -5,6 +5,7 @@
   - [Configuring Cylc](configuring_cylc.md)
   - [Creating an experiment](creating_an_experiment.md)
   - [Launching an experiment](launching_an_experiment.md)
+  - [Monitoring an experiment](monitoring_an_experiment.md)
   - [Modifying an experiment](modifying_an_experiment.md)
 
 - Configuration files in swell

@@ -3,7 +3,7 @@
 Swell is a Python package and is most easily installed using pip. The package can be cloned using:
 
 ```
-git clone https://github.com//GEOS-ESM/swell
+git clone https://github.com/GEOS-ESM/swell swell
 ```
 
 This will clone the develop branch into a directory called swell.
@@ -26,7 +26,7 @@ cd swell
 pip install --user .
 ```
 
-To specify the path where swell gets installed you can do:
+To specify the path where swell gets installed supply the prefix argument:
 ```
 cd swell
 pip install --prefix=/path/to/install .

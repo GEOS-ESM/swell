@@ -1,9 +1,12 @@
 # Configuring Cylc
 
+Before you can run a swell generated workflow it's necessary to configure Cylc. This is only done
+before the first run, or when the Cylc version needs to be updated or when the behavior of Cylc
+needs to be modified.
+
 Start by creating a file called `cylc` that is always visible in the path. A good choice is typically
 something like `$HOME/bin/cylc`, where `$HOME/bin` is always in the path. In this new file copy the
 below contents:
-
 
 ```
 #!/usr/bin/env bash
@@ -20,8 +23,9 @@ cylc "$@"
 ```
 
 The role of this file is to redirect each issuance of `cycl` through the version of Cylc loaded by
-the module. This saves you explicitly loading the module everywhere Cylc is needed, for example
-within the workflow. You can test that the above works properly by issuing `cylc --version`
+the module. This saves you explicitly loading the module everywhere Cylc is needed and makes sure
+Cylc is accessible when the workflow is running. You can test that the above works properly by
+issuing `cylc --version`.
 
 Cylc uses a file called `$HOME/.cylc/flow/global.cylc` to control common aspects of the workflow
 system. Create this file and then fill it with the following:
@@ -38,5 +42,3 @@ system. Create this file and then fill it with the following:
     install target = localhost
     hosts = localhost
 ```
-
-The above steps only need to be completed once.

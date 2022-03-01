@@ -1,16 +1,16 @@
 # Installing swell using Lua modules
 
+Swell is a Python package and is typically installed using pip. The following outlines how
+swell can be installed and deployed as a Lua module. This requires Lua modules being available on
+the target system.
+
 ### Cloning the swell code
 
-Swell is a Python package and is installed using pip. In the following we demonstrate an how swell
-can be installed using Lua and deployed as a module. This requires Lua modules being installed on
-the system
+The first step is to choose the base directory for the installation. This directory will contain the source
+code as well as the installation and the module files. Sub directories will follow Lua standards.
 
-The first step is to choose the base of the installation. This directory will contain the source
-code as well as the installation and the module files.
-
-As an example you might choose the base directory as being $NOBACKUP/opt. Next you can make the
-directory where the code will be cloned to and then move to that directory:
+As an example you might choose the base directory as being `$NOBACKUP/opt`, though it can be any
+location. Next you can make the directory where the code will be cloned to and then move to that directory:
 
 ```
 mkdir –p $NOBACKUP/opt/src/swell/
@@ -23,14 +23,14 @@ purposes we'll give this installation the generic name of **development**.  The 
 with:
 
 ```
-git clone https://github.com//GEOS-ESM/swell development
+git clone https://github.com/GEOS-ESM/swell development
 ```
 
 When working with swell you should start your development from a specific tag rather than the
 develop branch, this ensures that swell works with a particular version of JEDI. It might not always
 be possible to use the develop version of swell with the develop versions of the JEDI code.
-Sometimes the two systems get out of sync and some work is required to re-sync. The latest tag of
-swell can be found [here](stable.md). Once settled on a tag you can switch to that tag with
+Sometimes the two systems get out of sync and some work is required to re-sync. The latest stable tag of
+swell can be found [here](release_notes.md). Once settled on a tag you can switch to that tag with
 
 ```
 cd development        # Change to directory where the code was cloned
@@ -39,10 +39,10 @@ git checkout 1.0.1    # Replace 1.0.1 with the desired tag
 
 ### Installing the swell code
 
-Now we are ready to install swell. Swell requires Python 3 with a number of dependencies. If using
-your own Python install and these packages are not already met they will be installed by pip in the
+Now we are ready to install swell. Swell requires Python 3 and depends on several third-party dependencies. If using
+your own Python install and these packages dependencies are not already met they will be installed by pip in the
 same location as swell. For convenience a Miniconda install is provided on Discover with all the
-dependencies required by swell. This can be made available with:
+dependencies required by swell. This can be made available to load with:
 
 ```
 export DHOPT=/discover/nobackup/drholdaw/opt/
@@ -61,7 +61,7 @@ Since we are using Lua modules we'll follow the standard module package paths an
 ```
 module purge
 module load miniconda/3.9
-umask 022
+umask 022  # Ensure pip has permission to create directories
 pip install --prefix=$NOBACKUP/opt/core/swell/development .
 ```
 
@@ -74,13 +74,13 @@ to overwrite it. The `module purge` step helps ensure that swell doesn't already
 ### Deploying the module
 
 Now that the code is installed we can deploy the Lua module to make for ease of access. First we
-make the directory where the module file will reside:
+make the directory where the module file will reside, again following Lua-recommended path naming:
 
 ```
-mkdir $NOBACKUP/opt/modulefiles/core/swell
+mkdir -p $NOBACKUP/opt/modulefiles/core/swell
 ```
 
-Now we create the module file:
+Now we create an empty module file:
 
 ```
 cd $NOBACKUP/opt/modulefiles/core/swell
@@ -112,17 +112,18 @@ prepend_path("SUITESPATH", pathJoin(base,"lib",pythondir,"site-packages","swell"
 whatis("Name: ".. pkgName)
 whatis("Version: " .. pkgVersion)
 whatis("Category: Software")
-whatis("Description: GMAO Coupled DA workflow suites ")
+whatis("Description: Swell Workflow Ecosystem, Layout and Launcher")
 ```
 
 In the above the line `local opt = os.getenv("FLOPT")` needs to be changed to use an environment
 variable that is unique to you. For example replace `FLOPT` with your own **F**irst and **L**ast
-initial.
+initial. You may also need to change the line `local pythondir = "python3.9"` if the version of
+Python is different from 3.9.
 
 Now you can deploy the module with:
 
 ```
-export FLOPT=$NOBACKUP/opt
+export FLOPT=$NOBACKUP/opt                  # Replace FLOPT with the choice made above
 module use -a $FLOPT/modulefiles/core
 module load swell/development
 ```
@@ -141,7 +142,7 @@ installation. If you do not have directories like `$NOBACKUP/opt/core/swell/deve
 
 The advantage of using a module approach is that it makes it straightforward to install further
 versions of swell that you can easily switch between. The following demonstrates the process that
-would be taken to install another version of swell where you can make developments.
+would be taken to install another version of swell where you can make parallel developments.
 
 ```
 cd $NOBACKUP/opt/src/swell/

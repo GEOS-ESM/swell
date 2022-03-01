@@ -4,15 +4,15 @@ Once you have [configured Cylc](configuring_cylc) you should be able to create a
 experiment.
 
 First you need to load swell so it's available in your path. Modules for supported tags of Swell are
-available on Discover by issuing:
+available on Discover by issuing, for example:
 
 ```
 export DHJEDIOPT=/discover/nobackup/drholdaw/JediOpt/
 module use -a $DHJEDIOPT/modulefiles/core
 module load swell/1.0.1
 ```
-Alternatively you can load your own version of Swell, for example if you followed the instructions
-[to install Swell as a module](installing_swell_as_a_module).
+Alternatively you can load your own version of Swell, especially if you followed the instructions to
+[install Swell as a module](installing_swell_as_a_module).
 
 In order to create an experiment Swell uses a YAML configuration file that describes the setup. To
 create an experiment that runs a data assimilation *h(x)* experiment you can issue:
