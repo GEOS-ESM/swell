@@ -3,7 +3,7 @@ obs space:
   obsdatain:
     obsfile: $(cycle_dir)/atms_npp.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment).atms_npp.{{window_begin}}.nc4
+    obsfile: $(cycle_dir)/$(experiment_id).atms_npp.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &atms_npp_channels 1-22
 obs operator:
