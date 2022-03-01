@@ -18,10 +18,12 @@ from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
+
 def ranges(i):
     for _, group in itertools.groupby(enumerate(i), lambda pair: pair[1] - pair[0]):
         group = list(group)
         yield group[0][1], group[-1][1]
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -61,7 +63,7 @@ class JediConfig(taskBase):
                 try:
                     os.makedirs(geos_sat_db_dir)
                 except Exception:
-                    print('GEOS SAT DATABASE DIRECTORY IS ALREADY GENERATED')
+                    self.logger.info('Satellite database directory is already generated')
 
                 git_out_dir = geos_sat_db_dir + 'GEOSana_GridComp'
                 sat_db = run_sat_db_process(git_out_dir)
@@ -94,7 +96,8 @@ class JediConfig(taskBase):
                             # ---------------------------------------------------
                             instr_ind = 999
                             for ind in range(len(instr_dict)):
-                                begin = dt.strptime(instr_dict[ind]['begin date'], '%Y-%m-%dT%H:%M:%S')
+                                begin = dt.strptime(instr_dict[ind]['begin date'],
+                                                    '%Y-%m-%dT%H:%M:%S')
                                 end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
                                 if((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
@@ -126,7 +129,8 @@ class JediConfig(taskBase):
                         new_ch_str = ''
                         for ch_range in ch_ranges:
                             if(ch_range[0] != ch_range[1]):
-                                new_ch_str = new_ch_str +  str(ch_range[0]) + '-' + str(ch_range[1]) + ','
+                                new_ch_str = new_ch_str + str(ch_range[0]) + '-' + \
+                                             str(ch_range[1]) + ','
                             else:
                                 new_ch_str += str(ch_range[0]) + ','
                         new_ch_str = new_ch_str[0:-1]
@@ -135,12 +139,9 @@ class JediConfig(taskBase):
                         # ----------------------------------------------
                         ob['obs space']['channels'] = new_ch_str
 
-                        # Delete obs filters
-                        # ------------------
-                        #del ob['obs filters']
-
                     except AssertionError:
-                        print('sat {} and instr {} are not in the sat database'.format(sat, instr))
+                        self.logger.info('sat {} and instr {} are not in the sat database'.
+                                         format(sat, instr))
                         continue
 
         # Set full path to the templated config file
@@ -168,8 +169,6 @@ class JediConfig(taskBase):
         # Remove some keys that do not pass yaml validation
         # -------------------------------------------------
         del jedi_conf['initial condition']['filename']
-        #print(jedi_conf)
-
 
         # Filename for output yaml
         # ------------------------
