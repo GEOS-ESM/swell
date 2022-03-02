@@ -47,7 +47,7 @@ def recursive_yaml_expansion(experiment_dict):
                 exp_list.append(sub_yaml_dict)
 
             # Write the expanded list element to the original dictionary key
-            if len(exp_list) > 1:
+            if len(exp_list) > 1 or isinstance(experiment_item, list):
                 experiment_dict[k] = exp_list
             else:
                 experiment_dict[k] = exp_list[0]
