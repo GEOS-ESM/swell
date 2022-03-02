@@ -9,7 +9,7 @@ executable: fv3jedi_hofx.x
 suite:
   platform: nccs_discover
   intial cylc point: 2020-12-15T00
-  final cylc point: 2020-12-15T00
+  final cylc point: 2020-12-15T06
   runahead limit: PT24H
   suite name: hofx
   scheduling:
