@@ -104,8 +104,8 @@ class FileHandler(object):
     def __init__(self, config, **kwargs):
 
         self.listing = []
-        self.config  = copy.deepcopy(config)
-        self.strict  = kwargs.get('strict', True)
+        self.config = copy.deepcopy(config)
+        self.strict = kwargs.get('strict', True)
 
 #-------------------------------------------------------------------------------
 
@@ -137,9 +137,9 @@ class FileHandler(object):
 
             if not os.path.isfile(srcfile): continue
 
-            mt   = dt.datetime.fromtimestamp(os.stat(srcfile).st_mtime)
-            now  = dt.datetime.now()
-            age  = (now - mt).total_seconds()
+            mt = dt.datetime.fromtimestamp(os.stat(srcfile).st_mtime)
+            now = dt.datetime.now()
+            age = (now - mt).total_seconds()
 
             if age < fc.min_age: return False
 
@@ -257,7 +257,7 @@ class StageFileHandler(FileHandler):
                 link = False
                 if directive == 'link_files': link = True
 
-                fc    = FileCollection({'link': link})
+                fc = FileCollection({'link': link})
                 files = entry['directories']
 
                 for record in files:
@@ -314,8 +314,8 @@ class GetDataFileHandler(FileHandler):
             options = {k:v for k,v in iter(collection.items())
                        if k not in ['src','dst','files']}
 
-            paths  = collection.get('src', '').split()
-            dst    = collection.get('dst', '')
+            paths = collection.get('src', '').split()
+            dst = collection.get('dst', '')
             if not paths: paths = ['']
 
             # Create file listing
@@ -325,7 +325,7 @@ class GetDataFileHandler(FileHandler):
 
             for entry in collection.get('files', ['*']):
 
-                args  = entry.split() + ['']
+                args = entry.split() + ['']
                 found = False
 
                 for src in paths:
@@ -334,20 +334,20 @@ class GetDataFileHandler(FileHandler):
                     if os.path.isabs(args[0]): srcfile = args[0]
 
                     filelist = glob.glob(srcfile)
-                    found    = found or filelist
+                    found = found or filelist
 
                     for srcfile in filelist:
 
                         dstfile = args[1]
-                        bname   = os.path.basename(srcfile)
+                        bname = os.path.basename(srcfile)
 
                         if not dstfile: dstfile = bname
                         if not os.path.isabs(dstfile) and dst:
-                            dstfile = os.path.join(dst,dstfile)
+                            dstfile = os.path.join(dst, dstfile)
 
                         if dstfile in registry:
                             continue
-                        
+
                         registry[dstfile] = srcfile
                         fc.update(srcfile, dstfile)
 
@@ -363,16 +363,17 @@ class GetDataFileHandler(FileHandler):
 
 # ------------------------------------------------------------------------------
 
+
 class FileCollection(object):
 
     def __init__(self, config):
 
         self.config = copy.deepcopy(config)
 
-        self.listing   = []
-        self.link      = config.get('link', False)
+        self.listing = []
+        self.link = config.get('link', False)
         self.min_count = config.get('min_count', 1)
-        self.min_age   = config.get('min_age', 0)
+        self.min_age = config.get('min_age', 0)
 
 # ------------------------------------------------------------------------------
 
