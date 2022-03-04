@@ -22,7 +22,7 @@ module load miniconda/3.9-cylc
 cylc "$@"
 ```
 
-The role of this file is to redirect each issuance of `cycl` through the version of Cylc loaded by
+The role of this file is to redirect each issuance of `cylc` through the version of Cylc loaded by
 the module. This saves you explicitly loading the module everywhere Cylc is needed and makes sure
 Cylc is accessible when the workflow is running. You can test that the above works properly by
 issuing `cylc --version`.
