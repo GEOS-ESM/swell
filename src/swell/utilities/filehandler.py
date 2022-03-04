@@ -176,7 +176,7 @@ class FileHandler(object):
             else:
                 self.copy(srcfile, dstfile)
 
-#----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
     def copy(self, src, dst):
         """File handler - copies a file
@@ -198,7 +198,7 @@ class FileHandler(object):
         except Exception as e:
             raise SWELLFileError(str(e))
 
-#----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
     def link(self, src, dst):
         """File handler - Symbolically links a file
@@ -225,7 +225,7 @@ class FileHandler(object):
         except Exception as e:
             raise SWELLFileError(str(e))
 
-#----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 class StageFileHandler(FileHandler):
 
@@ -282,7 +282,7 @@ class StageFileHandler(FileHandler):
 
         return listing
 
-#----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 class GetDataFileHandler(FileHandler):
 
@@ -345,7 +345,8 @@ class GetDataFileHandler(FileHandler):
                         if not os.path.isabs(dstfile) and dst:
                             dstfile = os.path.join(dst,dstfile)
 
-                        if dstfile in registry: continue
+                        if dstfile in registry:
+                            continue
                         
                         registry[dstfile] = srcfile
                         fc.update(srcfile, dstfile)
@@ -360,7 +361,7 @@ class GetDataFileHandler(FileHandler):
 
         return listing
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class FileCollection(object):
 
@@ -373,17 +374,18 @@ class FileCollection(object):
         self.min_count = config.get('min_count', 1)
         self.min_age   = config.get('min_age', 0)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
     def update(self, srcfile, dstfile):
 
         self.listing.append((srcfile, dstfile))
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
     def num_files(self): return len(self.listing)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
     def __iter__(self):
-        for v in self.listing: yield v
+        for v in self.listing:
+            yield v
