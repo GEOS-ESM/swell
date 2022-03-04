@@ -24,7 +24,7 @@ def git_got(git_url, git_branch, out_dir, logger):
         os.mkdir(out_dir)
 
         # Clone the repo
-        logger.info('Attempting Git clone of ' + git_url)
+        logger.info('Attempting Git clone of ' + git_url + ' to ' + out_dir)
         try:
             subprocess.run(['git', 'clone', git_url, out_dir], check=True,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
