@@ -229,6 +229,7 @@ class FileHandler(object):
 
 class StageFileHandler(FileHandler):
 
+
     def list(self, force=False):
         """Creates a list of file collections defined in configuration
            using the "stage" data structure convention.
@@ -316,7 +317,8 @@ class GetDataFileHandler(FileHandler):
 
             paths = collection.get('src', '').split()
             dst = collection.get('dst', '')
-            if not paths: paths = ['']
+            if not paths:
+                paths = ['']
 
             # Create file listing
 
@@ -352,8 +354,8 @@ class GetDataFileHandler(FileHandler):
                         fc.update(srcfile, dstfile)
 
                 if not found and self.strict:
-                    raise SWELLConfigError('Source inputs not found "'
-                                          + srcfile + '"')
+                    raise SWELLConfigError('Source inputs not found "' +
+                                           srcfile + '"')
 
             listing.append(fc)
 
