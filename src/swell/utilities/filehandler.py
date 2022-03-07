@@ -3,7 +3,7 @@
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # This module provides file handlers for reading data structures describing
 # files to be copied or linked. There are two YAML data structure conventions
@@ -55,7 +55,7 @@
 #
 #     Listed source files may contain wildcards. If the "files" parameter
 #     is omitted, all files in "src" will be copied to "dst".
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import os
 import glob
@@ -90,17 +90,17 @@ def get_file_handler(config, **kwargs):
         raise SWELLConfigError(config)
 
     group = config[0]
-    collection = group.get('copy_files',{}).get('directories',[])
+    collection = group.get('copy_files',{}).get('directories', [])
     if collection:
         return StageFileHandler(config, strict=strict)
 
-    collection = group.get('link_files',{}).get('directories',[])
+    collection = group.get('link_files',{}).get('directories', [])
     if collection:
         return StageFileHandler(config, strict=strict)
 
     return GetDataFileHandler(config, strict=strict)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 class FileHandler(object):
 
@@ -110,7 +110,7 @@ class FileHandler(object):
         self.config = copy.deepcopy(config)
         self.strict = kwargs.get('strict', True)
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
     def is_ready(self, fc=None):
         """Determines if the file collection meets the criteria for
@@ -236,7 +236,6 @@ class FileHandler(object):
 
 class StageFileHandler(FileHandler):
 
-
     def list(self, force=False):
         """Creates a list of file collections defined in configuration
            using the "stage" data structure convention.
@@ -322,8 +321,8 @@ class GetDataFileHandler(FileHandler):
 
             # Get collection parameters
 
-            options = {k:v for k,v in iter(collection.items())
-                       if k not in ['src','dst','files']}
+            options = {k: v for k, v in iter(collection.items())
+                       if k not in ['src', 'dst', 'files']}
 
             paths = collection.get('src', '').split()
             dst = collection.get('dst', '')
