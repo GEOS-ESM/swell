@@ -37,7 +37,7 @@
 #   min_count: <count>
 #     Minimum file count (default: 1). Every copy or link resulting in a
 #     new file is counted. Duplicate copies to the same file are only counted
-#     once. 
+#     once.
 #   min_age: <age>
 #     Minimum file age (default: 0 seconds). Only files resulting in a unique
 #     copy or link are assessed.
@@ -65,6 +65,7 @@ from shutil import copyfile
 
 from swell.utilities.exceptions import *
 
+
 def get_file_handler(config, **kwargs):
     """Factory for determining the file handler type for retrieving data.
 
@@ -90,17 +91,18 @@ def get_file_handler(config, **kwargs):
         raise SWELLConfigError(config)
 
     group = config[0]
-    collection = group.get('copy_files',{}).get('directories', [])
+    collection = group.get('copy_files', {}).get('directories', [])
     if collection:
         return StageFileHandler(config, strict=strict)
 
-    collection = group.get('link_files',{}).get('directories', [])
+    collection = group.get('link_files', {}).get('directories', [])
     if collection:
         return StageFileHandler(config, strict=strict)
 
     return GetDataFileHandler(config, strict=strict)
 
 # ------------------------------------------------------------------------------
+
 
 class FileHandler(object):
 
@@ -111,6 +113,7 @@ class FileHandler(object):
         self.strict = kwargs.get('strict', True)
 
 # ------------------------------------------------------------------------------
+
 
     def is_ready(self, fc=None):
         """Determines if the file collection meets the criteria for
