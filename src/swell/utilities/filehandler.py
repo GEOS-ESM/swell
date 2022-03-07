@@ -114,7 +114,6 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------------
 
-
     def is_ready(self, fc=None):
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
@@ -237,6 +236,7 @@ class FileHandler(object):
 
 # ---------------------------------------------------------------------------
 
+
 class StageFileHandler(FileHandler):
 
     def list(self, force=False):
@@ -295,6 +295,7 @@ class StageFileHandler(FileHandler):
         return listing
 
 # ---------------------------------------------------------------------------
+
 
 class GetDataFileHandler(FileHandler):
 

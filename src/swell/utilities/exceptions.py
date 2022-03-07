@@ -5,6 +5,7 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
+
 class SWELLError(Exception):
 
     def __init__(self, message, logger=None):
@@ -17,11 +18,13 @@ class SWELLError(Exception):
 
 # -----------------------------------------------------------------------------
 
+
 class SWELLFileError(SWELLError):
 
     pass
 
 # -----------------------------------------------------------------------------
+
 
 class SWELLConfigError(SWELLError):
 
