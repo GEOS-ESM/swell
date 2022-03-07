@@ -86,14 +86,17 @@ def get_file_handler(config, **kwargs):
     """
 
     strict = kwargs.get('strict', True)
-    if not isinstance(config, list): raise SWELLConfigError(config)
+    if not isinstance(config, list):
+        raise SWELLConfigError(config)
 
     group = config[0]
     collection = group.get('copy_files',{}).get('directories',[])
-    if collection: return StageFileHandler(config, strict=strict)
+    if collection:
+        return StageFileHandler(config, strict=strict)
 
     collection = group.get('link_files',{}).get('directories',[])
-    if collection: return StageFileHandler(config, strict=strict)
+    if collection:
+        return StageFileHandler(config, strict=strict)
 
     return GetDataFileHandler(config, strict=strict)
 
@@ -128,24 +131,28 @@ class FileHandler(object):
 
         if fc is None:
             for fc in self.list(True):
-                if not self.is_ready(fc): return False
+                if not self.is_ready(fc):
+                    return False
             return True
 
-        if fc.num_files() < fc.min_count: return False
+        if fc.num_files() < fc.min_count:
+            return False
 
         for srcfile, dstfile in fc:
 
-            if not os.path.isfile(srcfile): continue
+            if not os.path.isfile(srcfile):
+                continue
 
             mt = dt.datetime.fromtimestamp(os.stat(srcfile).st_mtime)
             now = dt.datetime.now()
             age = (now - mt).total_seconds()
 
-            if age < fc.min_age: return False
+            if age < fc.min_age:
+                return False
 
         return True
 
-#------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 
     def get(self, fc=None):
         """Retrieves the files in the specified file collection.
@@ -249,14 +256,16 @@ class StageFileHandler(FileHandler):
         """
 
         listing = []
-        if self.listing and not force: return copy.deepcopy(self.listing)
+        if self.listing and not force:
+            return copy.deepcopy(self.listing)
 
         for collection in self.config:
 
             for directive, entry in iter(collection.items()):
 
                 link = False
-                if directive == 'link_files': link = True
+                if directive == 'link_files':
+                    link = True
 
                 fc = FileCollection({'link': link})
                 files = entry['directories']
@@ -306,7 +315,8 @@ class GetDataFileHandler(FileHandler):
         """
 
         listing = []
-        if self.listing and not force: return copy.deepcopy(self.listing)
+        if self.listing and not force:
+            return copy.deepcopy(self.listing)
 
         for collection in self.config:
 
@@ -333,7 +343,8 @@ class GetDataFileHandler(FileHandler):
                 for src in paths:
 
                     srcfile = os.path.join(src, args[0])
-                    if os.path.isabs(args[0]): srcfile = args[0]
+                    if os.path.isabs(args[0]):
+                        srcfile = args[0]
 
                     filelist = glob.glob(srcfile)
                     found = found or filelist
@@ -343,7 +354,8 @@ class GetDataFileHandler(FileHandler):
                         dstfile = args[1]
                         bname = os.path.basename(srcfile)
 
-                        if not dstfile: dstfile = bname
+                        if not dstfile:
+                            dstfile = bname
                         if not os.path.isabs(dstfile) and dst:
                             dstfile = os.path.join(dst, dstfile)
 
