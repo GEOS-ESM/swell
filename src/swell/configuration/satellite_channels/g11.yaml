@@ -1,10 +1,13 @@
 imgr:
-- begin date: '2006-06-30T00:00:00'
+- active_date_range:
+    begin: '2006-06-30T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment
 sndr:
-- begin date: '2006-06-22T00:00:00'
+- active_date_range:
+    begin: '2006-06-22T00:00:00'
+    final: '2007-03-31T18:00:00'
   channels:
   - '1'
   - '2'
@@ -17,18 +20,21 @@ sndr:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2007-03-31T18:00:00'
-- begin date: '2007-04-01T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-04-01T00:00:00'
+    final: '2007-12-03T18:00:00'
   channels: []
-  comments: '# switch to single fov/indiv. detectors on 1 Apr 2007'
-  end date: '2007-12-03T18:00:00'
+  comment: '# switch to single fov/indiv. detectors on 1 Apr 2007'
 sndrD1:
-- begin date: '2007-03-20T18:00:00'
+- active_date_range:
+    begin: '2007-03-20T18:00:00'
+    final: '2007-03-31T18:00:00'
   channels: []
-  comments: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
-  end date: '2007-03-31T18:00:00'
-- begin date: '2007-04-01T00:00:00'
+  comment: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
+- active_date_range:
+    begin: '2007-04-01T00:00:00'
+    final: '2007-12-04T18:00:00'
   channels:
   - '1'
   - '2'
@@ -41,13 +47,15 @@ sndrD1:
   - '10'
   - '11'
   - '12'
-  comments: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
-  end date: '2007-12-04T18:00:00'
-- begin date: '2007-12-05T00:00:00'
+  comment: '# g11 mislabeled as g10 in 1x1 files until 20070320/18z'
+- active_date_range:
+    begin: '2007-12-05T00:00:00'
+    final: '2007-12-10T18:00:00'
   channels: []
-  comments: '# error with g10 labeled with g11 sat id'
-  end date: '2007-12-10T18:00:00'
-- begin date: '2007-12-11T00:00:00'
+  comment: '# error with g10 labeled with g11 sat id'
+- active_date_range:
+    begin: '2007-12-11T00:00:00'
+    final: '2011-12-05T18:00:00'
   channels:
   - '1'
   - '2'
@@ -60,14 +68,16 @@ sndrD1:
   - '10'
   - '11'
   - '12'
-  comments: '# 5 Dec 2011 -> GOES-15 became ops GOES-West'
-  end date: '2011-12-05T18:00:00'
+  comment: '# 5 Dec 2011 -> GOES-15 became ops GOES-West'
 sndrD2:
-- begin date: '2007-03-20T18:00:00'
+- active_date_range:
+    begin: '2007-03-20T18:00:00'
+    final: '2007-03-31T18:00:00'
   channels: []
-  comments: '# Kept passive till 1 Apr transition'
-  end date: '2007-03-31T18:00:00'
-- begin date: '2007-04-01T00:00:00'
+  comment: '# Kept passive till 1 Apr transition'
+- active_date_range:
+    begin: '2007-04-01T00:00:00'
+    final: '2007-12-04T18:00:00'
   channels:
   - '1'
   - '2'
@@ -80,13 +90,15 @@ sndrD2:
   - '10'
   - '11'
   - '12'
-  comments: '# becomes active on 1 Apr'
-  end date: '2007-12-04T18:00:00'
-- begin date: '2007-12-05T00:00:00'
+  comment: '# becomes active on 1 Apr'
+- active_date_range:
+    begin: '2007-12-05T00:00:00'
+    final: '2007-12-10T18:00:00'
   channels: []
-  comments: '# turn off g11 until fixed @ NESDIS 2007/12/11 00z'
-  end date: '2007-12-10T18:00:00'
-- begin date: '2007-12-11T00:00:00'
+  comment: '# turn off g11 until fixed @ NESDIS 2007/12/11 00z'
+- active_date_range:
+    begin: '2007-12-11T00:00:00'
+    final: '2011-12-05T18:00:00'
   channels:
   - '1'
   - '2'
@@ -99,14 +111,16 @@ sndrD2:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2011-12-05T18:00:00'
+  comment: no comment
 sndrD3:
-- begin date: '2007-03-20T18:00:00'
+- active_date_range:
+    begin: '2007-03-20T18:00:00'
+    final: '2007-03-31T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2007-03-31T18:00:00'
-- begin date: '2007-04-01T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-04-01T00:00:00'
+    final: '2007-12-04T18:00:00'
   channels:
   - '1'
   - '2'
@@ -119,13 +133,15 @@ sndrD3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2007-12-04T18:00:00'
-- begin date: '2007-12-05T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-12-05T00:00:00'
+    final: '2007-12-10T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2007-12-10T18:00:00'
-- begin date: '2007-12-11T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-12-11T00:00:00'
+    final: '2011-12-05T18:00:00'
   channels:
   - '1'
   - '2'
@@ -138,14 +154,16 @@ sndrD3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2011-12-05T18:00:00'
+  comment: no comment
 sndrD4:
-- begin date: '2007-03-20T18:00:00'
+- active_date_range:
+    begin: '2007-03-20T18:00:00'
+    final: '2007-03-31T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2007-03-31T18:00:00'
-- begin date: '2007-04-01T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-04-01T00:00:00'
+    final: '2007-12-04T18:00:00'
   channels:
   - '1'
   - '2'
@@ -158,13 +176,15 @@ sndrD4:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2007-12-04T18:00:00'
-- begin date: '2007-12-05T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-12-05T00:00:00'
+    final: '2007-12-10T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2007-12-10T18:00:00'
-- begin date: '2007-12-11T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-12-11T00:00:00'
+    final: '2011-12-05T18:00:00'
   channels:
   - '1'
   - '2'
@@ -177,5 +197,4 @@ sndrD4:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2011-12-05T18:00:00'
+  comment: no comment

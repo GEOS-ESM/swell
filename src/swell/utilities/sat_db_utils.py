@@ -10,6 +10,7 @@
 import os
 import pandas as pd
 import numpy as np
+from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
 from swell.utilities.instr_state_machine import InstrStateMachine
 
@@ -42,7 +43,7 @@ def read_sat_db(path_to_sat_db, column_names):
                     'instr': '',
                     'channel_num': 0,
                     'channels': [],
-                    'comments': ''
+                    'comment': ''
                 }, ignore_index=True)
 
                 df['sat'][idx] = line_parts[0]
@@ -59,7 +60,7 @@ def read_sat_db(path_to_sat_db, column_names):
                     comment_str = ' '.join(comment)
                     # accounting for no comment
                     if(len(comment_str) != 1):
-                        df['comments'][idx] = comment_str
+                        df['comment'][idx] = comment_str
                 else:
                     channel_list = line_parts[7:]
 
@@ -72,11 +73,13 @@ def read_sat_db(path_to_sat_db, column_names):
 # --------------------------------------------------------------------------------------------------
 
 
-def run_sat_db_process(git_out_dir, logger):
+def run_sat_db_process(git_out_dir, logger=None):
 
     # Process satellite database files in GEOS-ESM and return dataframe
     # -----------------------------------------------------------------------
 
+    if logger==None:
+        logger = Logger('RunSatDBProcess')
     git_repo = 'https://github.com/GEOS-ESM/GEOSana_GridComp.git'
     git_branch = 'develop'
     git_out_path = os.path.join(git_out_dir, 'GEOSana_GridComp')
@@ -86,7 +89,7 @@ def run_sat_db_process(git_out_dir, logger):
     path_to_sat_db = os.path.join(git_out_path, 'GEOSaana_GridComp', 'GSI_GridComp', 'mksi', 'sidb')
 
     column_names = ['sat', 'start', 'end', 'instr', 'channel_num',
-                           'channels', 'comments']
+                           'channels', 'comment']
     df = read_sat_db(path_to_sat_db, column_names)
     final_df = pd.DataFrame(columns=column_names)
 

@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2000-11-05T00:00:00'
+- active_date_range:
+    begin: '2000-11-05T00:00:00'
+    final: '2000-12-31T18:00:00'
   channels:
   - '4'
   - '5'
@@ -12,9 +14,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# M2: redundant entry intentional. Observations'
-  end date: '2000-12-31T18:00:00'
-- begin date: '2001-01-01T00:00:00'
+  comment: '# M2: redundant entry intentional. Observations'
+- active_date_range:
+    begin: '2001-01-01T00:00:00'
+    final: '2001-01-10T18:00:00'
   channels:
   - '4'
   - '5'
@@ -27,13 +30,15 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2001-01-10T18:00:00'
-- begin date: '2001-01-11T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2001-01-11T00:00:00'
+    final: '2001-01-11T18:00:00'
   channels: []
-  comments: '# amsua: all noisy'
-  end date: '2001-01-11T18:00:00'
-- begin date: '2001-01-12T00:00:00'
+  comment: '# amsua: all noisy'
+- active_date_range:
+    begin: '2001-01-12T00:00:00'
+    final: '2002-09-06T18:00:00'
   channels:
   - '4'
   - '5'
@@ -46,18 +51,20 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2002-09-06T18:00:00'
-- begin date: '2002-09-07T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2002-09-07T00:00:00'
+    final: '2002-09-07T18:00:00'
   channels:
   - '4'
   - '5'
   - '6'
   - '7'
   - '8'
-  comments: '# amsua: ch9-14 noisy'
-  end date: '2002-09-07T18:00:00'
-- begin date: '2002-09-08T00:00:00'
+  comment: '# amsua: ch9-14 noisy'
+- active_date_range:
+    begin: '2002-09-08T00:00:00'
+    final: '2002-11-20T18:00:00'
   channels:
   - '4'
   - '5'
@@ -70,13 +77,15 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2002-11-20T18:00:00'
-- begin date: '2002-11-21T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2002-11-21T00:00:00'
+    final: '2002-11-27T18:00:00'
   channels: []
-  comments: '# amsua: all channels on ecmwf blacklist'
-  end date: '2002-11-27T18:00:00'
-- begin date: '2002-11-28T00:00:00'
+  comment: '# amsua: all channels on ecmwf blacklist'
+- active_date_range:
+    begin: '2002-11-28T00:00:00'
+    final: '2003-05-12T06:00:00'
   channels:
   - '4'
   - '5'
@@ -89,9 +98,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2003-05-12T06:00:00'
-- begin date: '2003-05-12T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2003-05-12T12:00:00'
+    final: '2004-06-16T18:00:00'
   channels:
   - '4'
   - '5'
@@ -103,9 +113,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# amsua: ch9 noisy'
-  end date: '2004-06-16T18:00:00'
-- begin date: '2004-06-17T00:00:00'
+  comment: '# amsua: ch9 noisy'
+- active_date_range:
+    begin: '2004-06-17T00:00:00'
+    final: '2005-01-14T18:00:00'
   channels:
   - '4'
   - '5'
@@ -115,61 +126,70 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# amsua: ch9 & ch10-11 noisy'
-  end date: '2005-01-14T18:00:00'
-- begin date: '2005-01-15T00:00:00'
+  comment: '# amsua: ch9 & ch10-11 noisy'
+- active_date_range:
+    begin: '2005-01-15T00:00:00'
+    final: '2007-01-29T12:00:00'
   channels:
   - '4'
   - '5'
   - '6'
   - '7'
   - '8'
-  comments: '# amsua: ch 9-14 noisy'
-  end date: '2007-01-29T12:00:00'
-- begin date: '2007-01-29T18:00:00'
+  comment: '# amsua: ch 9-14 noisy'
+- active_date_range:
+    begin: '2007-01-29T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# amsua: ch4 noisy; QC affected; turn off all'
-  end date: '2100-12-31T18:00:00'
+  comment: '# amsua: ch4 noisy; QC affected; turn off all'
 amsub:
-- begin date: '2000-11-05T00:00:00'
+- active_date_range:
+    begin: '2000-11-05T00:00:00'
+    final: '2000-12-31T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: '# M2: redundant entry intentional. Observations'
-  end date: '2000-12-31T18:00:00'
-- begin date: '2001-01-01T00:00:00'
+  comment: '# M2: redundant entry intentional. Observations'
+- active_date_range:
+    begin: '2001-01-01T00:00:00'
+    final: '2009-04-16T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: no comment
-  end date: '2009-04-16T18:00:00'
-- begin date: '2009-04-17T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2009-04-17T00:00:00'
+    final: '2009-04-15T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2009-04-15T18:00:00'
-- begin date: '2009-04-16T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2009-04-16T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# amsub: noisy since 20090416'
-  end date: '2100-12-31T18:00:00'
+  comment: '# amsub: noisy since 20090416'
 avhrr3:
-- begin date: '2001-03-01T18:00:00'
+- active_date_range:
+    begin: '2001-03-01T18:00:00'
+    final: '2005-04-30T18:00:00'
   channels:
   - '4'
   - '5'
-  comments: no comment
-  end date: '2005-04-30T18:00:00'
+  comment: no comment
 hirs3:
-- begin date: '2000-11-05T00:00:00'
+- active_date_range:
+    begin: '2000-11-05T00:00:00'
+    final: '2001-02-15T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2001-02-15T18:00:00'
-- begin date: '2001-02-16T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2001-02-16T00:00:00'
+    final: '2002-04-05T06:00:00'
   channels:
   - '2'
   - '3'
@@ -181,13 +201,15 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2002-04-05T06:00:00'
-- begin date: '2002-04-05T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2002-04-05T12:00:00'
+    final: '2002-04-05T12:00:00'
   channels: []
-  comments: '# hirs3: all noisy'
-  end date: '2002-04-05T12:00:00'
-- begin date: '2002-04-05T18:00:00'
+  comment: '# hirs3: all noisy'
+- active_date_range:
+    begin: '2002-04-05T18:00:00'
+    final: '2004-05-20T18:00:00'
   channels:
   - '2'
   - '3'
@@ -199,9 +221,9 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2004-05-20T18:00:00'
-- begin date: '2004-05-21T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2004-05-21T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# hirs3: most channels noisy'
-  end date: '2100-12-31T18:00:00'
+  comment: '# hirs3: most channels noisy'

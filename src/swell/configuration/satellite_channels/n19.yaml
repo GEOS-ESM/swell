@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2009-04-14T00:00:00'
+- active_date_range:
+    begin: '2009-04-14T00:00:00'
+    final: '2009-12-15T06:00:00'
   channels:
   - '4'
   - '5'
@@ -12,9 +14,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# M2: redundant entry intentional. Observations'
-  end date: '2009-12-15T06:00:00'
-- begin date: '2009-12-15T12:00:00'
+  comment: '# M2: redundant entry intentional. Observations'
+- active_date_range:
+    begin: '2009-12-15T12:00:00'
+    final: '2009-12-21T18:00:00'
   channels:
   - '4'
   - '5'
@@ -27,9 +30,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2009-12-21T18:00:00'
-- begin date: '2009-12-22T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2009-12-22T00:00:00'
+    final: '2014-01-28T18:00:00'
   channels:
   - '4'
   - '5'
@@ -41,9 +45,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch8 noisy (noise started on 12/21/2009)'
-  end date: '2014-01-28T18:00:00'
-- begin date: '2014-01-29T00:00:00'
+  comment: '# ch8 noisy (noise started on 12/21/2009)'
+- active_date_range:
+    begin: '2014-01-29T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
@@ -54,21 +59,24 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# per NCEP r35918'
-  end date: '2100-12-31T18:00:00'
+  comment: '# per NCEP r35918'
 avhrr3:
-- begin date: '2009-04-14T18:00:00'
+- active_date_range:
+    begin: '2009-04-14T18:00:00'
+    final: '2021-09-18T06:00:00'
   channels: []
-  comments: no comment
-  end date: '2021-09-18T06:00:00'
-- begin date: '2021-09-18T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2021-09-18T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
-  comments: '# n18 off n19 on'
-  end date: '2100-12-31T18:00:00'
+  comment: '# n18 off n19 on'
 hirs4:
-- begin date: '2009-04-14T00:00:00'
+- active_date_range:
+    begin: '2009-04-14T00:00:00'
+    final: '2009-12-15T06:00:00'
   channels:
   - '2'
   - '3'
@@ -80,9 +88,10 @@ hirs4:
   - '10'
   - '11'
   - '12'
-  comments: '# M2: redundant entry intentional. Observations'
-  end date: '2009-12-15T06:00:00'
-- begin date: '2009-12-15T12:00:00'
+  comment: '# M2: redundant entry intentional. Observations'
+- active_date_range:
+    begin: '2009-12-15T12:00:00'
+    final: '2013-07-05T18:00:00'
   channels:
   - '2'
   - '3'
@@ -94,14 +103,15 @@ hirs4:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2013-07-05T18:00:00'
-- begin date: '2013-07-06T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2013-07-06T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# sounding channels noise increase - cloud screening'
-  end date: '2100-12-31T18:00:00'
+  comment: '# sounding channels noise increase - cloud screening'
 mhs:
-- begin date: '2009-04-14T12:00:00'
+- active_date_range:
+    begin: '2009-04-14T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment

@@ -1,5 +1,7 @@
 atms:
-- begin date: '2011-11-16T00:00:00'
+- active_date_range:
+    begin: '2011-11-16T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '5'
   - '6'
@@ -18,10 +20,11 @@ atms:
   - '20'
   - '21'
   - '22'
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment
 cris-fsr:
-- begin date: '2017-10-20T00:00:00'
+- active_date_range:
+    begin: '2017-10-20T00:00:00'
+    final: '2019-03-25T18:00:00'
   channels:
   - '57'
   - '58'
@@ -229,13 +232,15 @@ cris-fsr:
   - '626'
   - '646'
   - '659'
-  comments: no comment
-  end date: '2019-03-25T18:00:00'
-- begin date: '2019-03-26T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2019-03-26T00:00:00'
+    final: '2019-04-16T12:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2019-04-16T12:00:00'
-- begin date: '2019-04-16T18:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2019-04-16T18:00:00'
+    final: '2019-06-24T12:00:00'
   channels:
   - '57'
   - '58'
@@ -451,13 +456,15 @@ cris-fsr:
   - '1008'
   - '1022'
   - '1058'
-  comments: no comment
-  end date: '2019-06-24T12:00:00'
-- begin date: '2019-06-24T18:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2019-06-24T18:00:00'
+    final: '2019-06-25T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2019-06-25T18:00:00'
-- begin date: '2019-06-26T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2019-06-26T00:00:00'
+    final: '2021-05-21T18:00:00'
   channels:
   - '57'
   - '58'
@@ -566,9 +573,10 @@ cris-fsr:
   - '1008'
   - '1022'
   - '1058'
-  comments: no comment
-  end date: '2021-05-21T18:00:00'
-- begin date: '2021-05-22T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2021-05-22T00:00:00'
+    final: '2021-10-07T12:00:00'
   channels:
   - '57'
   - '58'
@@ -784,9 +792,10 @@ cris-fsr:
   - '1008'
   - '1022'
   - '1058'
-  comments: no comment
-  end date: '2021-10-07T12:00:00'
-- begin date: '2021-10-07T18:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2021-10-07T18:00:00'
+    final: '2999-12-31T18:00:00'
   channels:
   - '57'
   - '58'
@@ -895,5 +904,4 @@ cris-fsr:
   - '1008'
   - '1022'
   - '1058'
-  comments: no comment
-  end date: '2999-12-31T18:00:00'
+  comment: no comment

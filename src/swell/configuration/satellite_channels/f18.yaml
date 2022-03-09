@@ -1,5 +1,7 @@
 ssmis:
-- begin date: '2009-12-15T00:00:00'
+- active_date_range:
+    begin: '2009-12-15T00:00:00'
+    final: '2015-06-28T12:00:00'
   channels:
   - '3'
   - '4'
@@ -8,9 +10,10 @@ ssmis:
   - '7'
   - '23'
   - '24'
-  comments: '# 56.4GHz oscillator failure 20150628 - no T channels after that date'
-  end date: '2015-06-28T12:00:00'
-- begin date: '2015-06-28T18:00:00'
+  comment: '# 56.4GHz oscillator failure 20150628 - no T channels after that date'
+- active_date_range:
+    begin: '2015-06-28T18:00:00'
+    final: '2999-12-31T18:00:00'
   channels:
   - '3'
   - '4'
@@ -19,5 +22,4 @@ ssmis:
   - '7'
   - '23'
   - '24'
-  comments: no comment
-  end date: '2999-12-31T18:00:00'
+  comment: no comment

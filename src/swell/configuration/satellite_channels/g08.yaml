@@ -1,5 +1,7 @@
 sndr:
-- begin date: '1994-04-13T00:00:00'
+- active_date_range:
+    begin: '1994-04-13T00:00:00'
+    final: '2003-04-01T18:00:00'
   channels:
   - '1'
   - '2'
@@ -12,5 +14,4 @@ sndr:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2003-04-01T18:00:00'
+  comment: no comment

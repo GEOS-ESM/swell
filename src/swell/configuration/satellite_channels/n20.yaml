@@ -1,5 +1,7 @@
 atms:
-- begin date: '2018-05-10T12:00:00'
+- active_date_range:
+    begin: '2018-05-10T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '5'
   - '6'
@@ -18,10 +20,11 @@ atms:
   - '20'
   - '21'
   - '22'
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment
 cris-fsr:
-- begin date: '2018-02-17T00:00:00'
+- active_date_range:
+    begin: '2018-02-17T00:00:00'
+    final: '2999-12-31T18:00:00'
   channels:
   - '57'
   - '58'
@@ -130,5 +133,4 @@ cris-fsr:
   - '1008'
   - '1022'
   - '1058'
-  comments: no comment
-  end date: '2999-12-31T18:00:00'
+  comment: no comment

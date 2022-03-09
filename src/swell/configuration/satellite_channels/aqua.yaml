@@ -1,5 +1,7 @@
 airs:
-- begin date: '2002-10-12T00:00:00'
+- active_date_range:
+    begin: '2002-10-12T00:00:00'
+    final: '2016-09-25T00:00:00'
   channels:
   - '7'
   - '15'
@@ -118,9 +120,10 @@ airs:
   - '1918'
   - '1924'
   - '1928'
-  comments: no comment
-  end date: '2016-09-25T00:00:00'
-- begin date: '2013-02-01T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2013-02-01T00:00:00'
+    final: '2013-09-17T18:00:00'
   channels:
   - '7'
   - '15'
@@ -238,9 +241,10 @@ airs:
   - '1918'
   - '1924'
   - '1928'
-  comments: '# 110 - ch 375 is consistent in time'
-  end date: '2013-09-17T18:00:00'
-- begin date: '2013-09-18T00:00:00'
+  comment: '# 110 - ch 375 is consistent in time'
+- active_date_range:
+    begin: '2013-09-18T00:00:00'
+    final: '2016-09-25T00:00:00'
   channels: &id001
   - '7'
   - '15'
@@ -357,17 +361,20 @@ airs:
   - '1918'
   - '1924'
   - '1928'
-  comments: '# 110 - ch 321 became noisy'
-  end date: '2016-09-25T00:00:00'
-- begin date: '2016-09-28T12:00:00'
+  comment: '# 110 - ch 321 became noisy'
+- active_date_range:
+    begin: '2016-09-28T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels: *id001
-  comments: '# 0'
-  end date: '2100-12-31T18:00:00'
-- begin date: '2101-01-01T00:00:00'
+  comment: '# 0'
+- active_date_range:
+    begin: '2101-01-01T00:00:00'
+    final: '2022-01-11T12:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2022-01-11T12:00:00'
-- begin date: '2022-01-11T18:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2022-01-11T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '257'
   - '261'
@@ -377,10 +384,11 @@ airs:
   - '295'
   - '299'
   - '310'
-  comments: '# 100'
-  end date: '2100-12-31T18:00:00'
+  comment: '# 100'
 amsua:
-- begin date: '2002-10-12T00:00:00'
+- active_date_range:
+    begin: '2002-10-12T00:00:00'
+    final: '2007-11-02T12:00:00'
   channels:
   - '4'
   - '5'
@@ -392,9 +400,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2007-11-02T12:00:00'
-- begin date: '2007-11-02T18:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2007-11-02T18:00:00'
+    final: '2016-09-23T12:00:00'
   channels:
   - '6'
   - '8'
@@ -404,9 +413,9 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch4 noisy; QC affected ; turn off ch1-5'
-  end date: '2016-09-23T12:00:00'
-- begin date: '2016-09-23T18:00:00'
+  comment: '# ch4 noisy; QC affected ; turn off ch1-5'
+- active_date_range:
+    begin: '2016-09-23T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# chs1-2 detector failure, cannot QC'
-  end date: '2100-12-31T18:00:00'
+  comment: '# chs1-2 detector failure, cannot QC'

@@ -1,9 +1,12 @@
 sndrD1:
-- begin date: '2010-03-04T00:00:00'
+- active_date_range:
+    begin: '2010-03-04T00:00:00'
+    final: '2011-12-06T18:00:00'
   channels: []
-  comments: '# Passive till Operational GOES-West'
-  end date: '2011-12-06T18:00:00'
-- begin date: '2011-12-07T00:00:00'
+  comment: '# Passive till Operational GOES-West'
+- active_date_range:
+    begin: '2011-12-07T00:00:00'
+    final: '2020-03-02T18:00:00'
   channels:
   - '1'
   - '2'
@@ -16,14 +19,16 @@ sndrD1:
   - '10'
   - '11'
   - '12'
-  comments: '# GOES-15 became ops GOES-West on 5 Dec 2011'
-  end date: '2020-03-02T18:00:00'
+  comment: '# GOES-15 became ops GOES-West on 5 Dec 2011'
 sndrD2:
-- begin date: '2010-03-04T00:00:00'
+- active_date_range:
+    begin: '2010-03-04T00:00:00'
+    final: '2011-12-06T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2011-12-06T18:00:00'
-- begin date: '2011-12-07T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2011-12-07T00:00:00'
+    final: '2020-03-02T18:00:00'
   channels:
   - '1'
   - '2'
@@ -36,14 +41,16 @@ sndrD2:
   - '10'
   - '11'
   - '12'
-  comments: '# GOES-17 (no sounder) operational in 2019,'
-  end date: '2020-03-02T18:00:00'
+  comment: '# GOES-17 (no sounder) operational in 2019,'
 sndrD3:
-- begin date: '2010-03-04T00:00:00'
+- active_date_range:
+    begin: '2010-03-04T00:00:00'
+    final: '2011-12-06T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2011-12-06T18:00:00'
-- begin date: '2011-12-07T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2011-12-07T00:00:00'
+    final: '2020-03-02T18:00:00'
   channels:
   - '1'
   - '2'
@@ -56,14 +63,16 @@ sndrD3:
   - '10'
   - '11'
   - '12'
-  comments: '# last G15 data on 20200302'
-  end date: '2020-03-02T18:00:00'
+  comment: '# last G15 data on 20200302'
 sndrD4:
-- begin date: '2010-03-04T00:00:00'
+- active_date_range:
+    begin: '2010-03-04T00:00:00'
+    final: '2011-12-06T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2011-12-06T18:00:00'
-- begin date: '2011-12-07T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2011-12-07T00:00:00'
+    final: '2020-03-02T18:00:00'
   channels:
   - '1'
   - '2'
@@ -76,5 +85,4 @@ sndrD4:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2020-03-02T18:00:00'
+  comment: no comment

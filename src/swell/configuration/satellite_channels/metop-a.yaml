@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2007-05-21T00:00:00'
+- active_date_range:
+    begin: '2007-05-21T00:00:00'
+    final: '2009-01-15T06:00:00'
   channels:
   - '4'
   - '5'
@@ -12,9 +14,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2009-01-15T06:00:00'
-- begin date: '2009-01-15T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2009-01-15T12:00:00'
+    final: '2014-08-29T18:00:00'
   channels:
   - '4'
   - '5'
@@ -26,9 +29,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch7 noisy'
-  end date: '2014-08-29T18:00:00'
-- begin date: '2014-08-30T00:00:00'
+  comment: '# ch7 noisy'
+- active_date_range:
+    begin: '2014-08-30T00:00:00'
+    final: '2021-09-18T06:00:00'
   channels:
   - '4'
   - '5'
@@ -39,25 +43,29 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch7,8 noisy'
-  end date: '2021-09-18T06:00:00'
-- begin date: '2021-09-18T12:00:00'
+  comment: '# ch7,8 noisy'
+- active_date_range:
+    begin: '2021-09-18T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment
 avhrr3:
-- begin date: '2008-08-01T00:00:00'
+- active_date_range:
+    begin: '2008-08-01T00:00:00'
+    final: '2021-09-18T06:00:00'
   channels:
   - '4'
   - '5'
-  comments: no comment
-  end date: '2021-09-18T06:00:00'
-- begin date: '2021-09-18T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2021-09-18T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# MetOp-A off MetOp-B on'
-  end date: '2100-12-31T18:00:00'
+  comment: '# MetOp-A off MetOp-B on'
 hirs4:
-- begin date: '2007-05-21T00:00:00'
+- active_date_range:
+    begin: '2007-05-21T00:00:00'
+    final: '2015-11-16T18:00:00'
   channels:
   - '2'
   - '3'
@@ -69,14 +77,16 @@ hirs4:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2015-11-16T18:00:00'
-- begin date: '2015-11-17T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2015-11-17T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# ch1-10 became noisy, 4-5 esp.'
-  end date: '2100-12-31T18:00:00'
+  comment: '# ch1-10 became noisy, 4-5 esp.'
 iasi:
-- begin date: '2008-08-01T00:00:00'
+- active_date_range:
+    begin: '2008-08-01T00:00:00'
+    final: '2021-09-08T06:00:00'
   channels:
   - '16'
   - '38'
@@ -219,19 +229,20 @@ iasi:
   - '1626'
   - '1643'
   - '1671'
-  comments: '# 0'
-  end date: '2021-09-08T06:00:00'
+  comment: '# 0'
 mhs:
-- begin date: '2007-05-21T00:00:00'
+- active_date_range:
+    begin: '2007-05-21T00:00:00'
+    final: '2019-04-14T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: no comment
-  end date: '2019-04-14T18:00:00'
-- begin date: '2019-04-15T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2019-04-15T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# ch 2 noisy'
-  end date: '2100-12-31T18:00:00'
+  comment: '# ch 2 noisy'

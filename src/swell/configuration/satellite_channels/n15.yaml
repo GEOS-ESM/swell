@@ -1,5 +1,7 @@
 amsua:
-- begin date: '1998-11-01T00:00:00'
+- active_date_range:
+    begin: '1998-11-01T00:00:00'
+    final: '1999-01-01T00:00:00'
   channels:
   - '4'
   - '5'
@@ -12,13 +14,15 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '1999-01-01T00:00:00'
-- begin date: '1999-01-01T06:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1999-01-01T06:00:00'
+    final: '1999-01-01T06:00:00'
   channels: []
-  comments: '# amsua: all noisy'
-  end date: '1999-01-01T06:00:00'
-- begin date: '1999-01-01T12:00:00'
+  comment: '# amsua: all noisy'
+- active_date_range:
+    begin: '1999-01-01T12:00:00'
+    final: '2000-10-29T18:00:00'
   channels:
   - '4'
   - '5'
@@ -31,9 +35,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: no comment
-  end date: '2000-10-29T18:00:00'
-- begin date: '2000-10-30T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2000-10-30T00:00:00'
+    final: '2002-03-31T18:00:00'
   channels:
   - '4'
   - '5'
@@ -45,9 +50,10 @@ amsua:
   - '11'
   - '12'
   - '13'
-  comments: '# amsua: bad ch14 (ch11?)'
-  end date: '2002-03-31T18:00:00'
-- begin date: '2002-04-01T00:00:00'
+  comment: '# amsua: bad ch14 (ch11?)'
+- active_date_range:
+    begin: '2002-04-01T00:00:00'
+    final: '2014-10-17T18:00:00'
   channels:
   - '4'
   - '5'
@@ -58,9 +64,10 @@ amsua:
   - '10'
   - '12'
   - '13'
-  comments: '# amsua: bad ch11 & ch14'
-  end date: '2014-10-17T18:00:00'
-- begin date: '2014-10-18T00:00:00'
+  comment: '# amsua: bad ch11 & ch14'
+- active_date_range:
+    begin: '2014-10-18T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
@@ -70,35 +77,40 @@ amsua:
   - '10'
   - '12'
   - '13'
-  comments: '# amsua: bad ch6, 11, 14. Ch6 disabled on'
-  end date: '2100-12-31T18:00:00'
+  comment: '# amsua: bad ch6, 11, 14. Ch6 disabled on'
 amsub:
-- begin date: '1998-11-01T00:00:00'
+- active_date_range:
+    begin: '1998-11-01T00:00:00'
+    final: '2006-02-16T00:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: no comment
-  end date: '2006-02-16T00:00:00'
-- begin date: '2006-02-16T06:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2006-02-16T06:00:00'
+    final: '2011-03-28T06:00:00'
   channels: []
-  comments: '# ch4 noisy, turn off all channels (consistent'
-  end date: '2011-03-28T06:00:00'
-- begin date: '2011-03-28T12:00:00'
+  comment: '# ch4 noisy, turn off all channels (consistent'
+- active_date_range:
+    begin: '2011-03-28T12:00:00'
+    final: '2011-03-28T18:00:00'
   channels: []
-  comments: '# amsub: scan motor failed'
-  end date: '2011-03-28T18:00:00'
+  comment: '# amsub: scan motor failed'
 avhrr3:
-- begin date: '1998-10-01T18:00:00'
+- active_date_range:
+    begin: '1998-10-01T18:00:00'
+    final: '2012-02-15T18:00:00'
   channels:
   - '4'
   - '5'
-  comments: no comment
-  end date: '2012-02-15T18:00:00'
+  comment: no comment
 hirs3:
-- begin date: '1998-07-02T00:00:00'
+- active_date_range:
+    begin: '1998-07-02T00:00:00'
+    final: '1998-10-06T00:00:00'
   channels:
   - '2'
   - '3'
@@ -110,13 +122,15 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '1998-10-06T00:00:00'
-- begin date: '1998-10-06T06:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1998-10-06T06:00:00'
+    final: '1998-10-06T06:00:00'
   channels: []
-  comments: '# hirs3: noisy'
-  end date: '1998-10-06T06:00:00'
-- begin date: '1998-10-06T12:00:00'
+  comment: '# hirs3: noisy'
+- active_date_range:
+    begin: '1998-10-06T12:00:00'
+    final: '1999-03-02T00:00:00'
   channels:
   - '2'
   - '3'
@@ -128,13 +142,15 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '1999-03-02T00:00:00'
-- begin date: '1999-03-02T06:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1999-03-02T06:00:00'
+    final: '1999-03-02T06:00:00'
   channels: []
-  comments: '# hirs3: all noisy'
-  end date: '1999-03-02T06:00:00'
-- begin date: '1999-03-02T12:00:00'
+  comment: '# hirs3: all noisy'
+- active_date_range:
+    begin: '1999-03-02T12:00:00'
+    final: '2000-02-18T18:00:00'
   channels:
   - '2'
   - '3'
@@ -146,13 +162,15 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2000-02-18T18:00:00'
-- begin date: '2000-02-19T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2000-02-19T00:00:00'
+    final: '2000-02-20T18:00:00'
   channels: []
-  comments: '# hirs3: all noisy'
-  end date: '2000-02-20T18:00:00'
-- begin date: '2000-02-21T00:00:00'
+  comment: '# hirs3: all noisy'
+- active_date_range:
+    begin: '2000-02-21T00:00:00'
+    final: '2000-06-06T18:00:00'
   channels:
   - '2'
   - '3'
@@ -164,9 +182,9 @@ hirs3:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '2000-06-06T18:00:00'
-- begin date: '2000-06-07T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2000-06-07T00:00:00'
+    final: '2009-06-02T18:00:00'
   channels: []
-  comments: '# hirs3: all noisy due to filter wheel problems'
-  end date: '2009-06-02T18:00:00'
+  comment: '# hirs3: all noisy due to filter wheel problems'

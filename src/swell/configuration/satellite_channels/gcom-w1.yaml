@@ -1,7 +1,8 @@
 amsr2:
-- begin date: '2019-01-01T00:00:00'
+- active_date_range:
+    begin: '2019-01-01T00:00:00'
+    final: '2999-12-31T18:00:00'
   channels:
   - '9'
   - '11'
-  comments: no comment
-  end date: '2999-12-31T18:00:00'
+  comment: no comment

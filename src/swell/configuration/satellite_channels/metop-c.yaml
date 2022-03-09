@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2019-09-17T00:00:00'
+- active_date_range:
+    begin: '2019-09-17T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
@@ -12,10 +14,11 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# active for parallel testing'
-  end date: '2100-12-31T18:00:00'
+  comment: '# active for parallel testing'
 iasi:
-- begin date: '2020-05-19T12:00:00'
+- active_date_range:
+    begin: '2020-05-19T12:00:00'
+    final: '2021-07-27T06:00:00'
   channels:
   - '16'
   - '38'
@@ -299,13 +302,15 @@ iasi:
   - '1626'
   - '1643'
   - '1671'
-  comments: '# 0'
-  end date: '2021-07-27T06:00:00'
-- begin date: '2021-07-27T12:00:00'
+  comment: '# 0'
+- active_date_range:
+    begin: '2021-07-27T12:00:00'
+    final: '2021-07-29T12:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2021-07-29T12:00:00'
-- begin date: '2021-07-29T18:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2021-07-29T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '16'
   - '38'
@@ -448,15 +453,15 @@ iasi:
   - '1626'
   - '1643'
   - '1671'
-  comments: '# 0'
-  end date: '2100-12-31T18:00:00'
+  comment: '# 0'
 mhs:
-- begin date: '2019-09-17T00:00:00'
+- active_date_range:
+    begin: '2019-09-17T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: '# active for parallel testing'
-  end date: '2100-12-31T18:00:00'
+  comment: '# active for parallel testing'

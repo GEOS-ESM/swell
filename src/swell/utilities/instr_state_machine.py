@@ -219,35 +219,71 @@ class InstrStateMachine:
 
         # Updates the return df based on parameters
 
+        #if(missing):
+        #    self.return_df = self.return_df.append({
+        #       "sat": row["sat"].values[0],
+        #       "start": missing_time['begin_time'],
+        #       "end": missing_time['end_time'],
+        #       "instr": row["instr"].values[0],
+        #       "channel_num": 0,
+        #       "channels": [],
+        #       "comment": "missing for this period",
+        #     }, ignore_index=True)
+
         if(missing):
             self.return_df = self.return_df.append({
                "sat": row["sat"].values[0],
-               "start": missing_time['begin_time'],
-               "end": missing_time['end_time'],
+               "active_date_range": {
+                   "begin": missing_time['begin_time'], 
+                   "final": missing_time['end_time']},
                "instr": row["instr"].values[0],
                "channel_num": 0,
                "channels": [],
-               "comments": "missing for this period",
+               "comment": "missing for this period"
              }, ignore_index=True)
+
+        #elif(no_comment):
+        #    self.return_df = self.return_df.append({
+        #       "sat": row["sat"].values[0],
+        #       "start": self.start_times[self.idx],
+        #       "end": self.end_times[self.idx],
+        #       "instr": row["instr"].values[0],
+        #       "channel_num": len(self.curr_channel_list),
+        #       "channels": self.curr_channel_list,
+        #       "comment": ""
+        #     }, ignore_index=True)
 
         elif(no_comment):
             self.return_df = self.return_df.append({
                "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
+               "active_date_range": {
+                   "begin": self.start_times[self.idx],                      
+                   "final": self.end_times[self.idx]},
                "instr": row["instr"].values[0],
                "channel_num": len(self.curr_channel_list),
                "channels": self.curr_channel_list,
-               "comments": ""
+               "comment": ""
              }, ignore_index=True)
+
+        #else:
+        #    self.return_df = self.return_df.append({
+        #       "sat": row["sat"].values[0],
+        #       "start": self.start_times[self.idx],
+        #       "end": self.end_times[self.idx],
+        #       "instr": row["instr"].values[0],
+        #       "channel_num": len(self.curr_channel_list),
+        #       "channels": self.curr_channel_list,
+        #       "comment": row["comment"].values[0],
+        #     }, ignore_index=True)
 
         else:
             self.return_df = self.return_df.append({
                "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
+               "active_date_range": {
+                   "begin": self.start_times[self.idx],         
+                   "final": self.end_times[self.idx]},
                "instr": row["instr"].values[0],
                "channel_num": len(self.curr_channel_list),
                "channels": self.curr_channel_list,
-               "comments": row["comments"].values[0],
+               "comment": row["comment"].values[0],
              }, ignore_index=True)

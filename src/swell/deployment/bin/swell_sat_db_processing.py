@@ -43,14 +43,17 @@ def make_yamls(final_df, output_dir):
             for idx, row in instr_df.iterrows():
 
                 row_dict = {}
-                row_dict['begin date'] = format_date(row['start'])
-                row_dict['end date'] = format_date(row['end'])
+                row['active_date_range']['begin'] = format_date(row['active_date_range']['begin'])
+                row['active_date_range']['final'] = format_date(row['active_date_range']['final'])	      
+                row_dict['active_date_range'] = row['active_date_range']
+                #row_dict['begin date'] = format_date(row['start'])
+                #row_dict['end date'] = format_date(row['end'])
                 row_dict['channels'] = row['channels']
 
-                if(row['comments']):
-                    row_dict['comments'] = row['comments']
+                if(row['comment']):
+                    row_dict['comment'] = row['comment']
                 else:
-                    row_dict['comments'] = 'no comment'
+                    row_dict['comment'] = 'no comment'
 
                 field_list.append(row_dict)
 
@@ -77,7 +80,8 @@ def main(config):
     with open(config, 'r') as ymlfile:
         config_dict = yaml.safe_load(ymlfile)
     user = os.environ['USER']
-    geos_sat_db_root = config_dict['geos_sat_db_root'].replace('${USER}', user)
+    #geos_sat_db_root = config_dict['geos_sat_db_root'].replace('${USER}', user)
+    geos_sat_db_root = config_dict['experiment_root'].replace('${USER}', user)
 
     try:
         os.makedirs(geos_sat_db_root)
@@ -85,7 +89,8 @@ def main(config):
         print('SATELLITE DATABASE DIRECTORY IS ALREADY GENERATED')
 
     yaml_out_dir = geos_sat_db_root + '/satdb_yamls'
-    git_out_dir = geos_sat_db_root + '/GEOSana_GridComp'
+    #git_out_dir = geos_sat_db_root + '/GEOSana_GridComp'
+    git_out_dir = geos_sat_db_root
 
     # run sat db processing util
     processed_data = run_sat_db_process(git_out_dir)

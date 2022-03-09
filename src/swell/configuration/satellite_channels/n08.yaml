@@ -1,5 +1,7 @@
 hirs2:
-- begin date: '1983-04-26T00:00:00'
+- active_date_range:
+    begin: '1983-04-26T00:00:00'
+    final: '1984-06-20T18:00:00'
   channels:
   - '2'
   - '3'
@@ -11,51 +13,59 @@ hirs2:
   - '10'
   - '11'
   - '12'
-  comments: no comment
-  end date: '1984-06-20T18:00:00'
-- begin date: '1984-06-21T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1984-06-21T00:00:00'
+    final: '1985-06-30T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '1985-06-30T18:00:00'
-- begin date: '1985-07-01T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '1985-07-01T00:00:00'
+    final: '1985-10-14T18:00:00'
   channels: []
-  comments: '# hirs2: none'
-  end date: '1985-10-14T18:00:00'
+  comment: '# hirs2: none'
 msu:
-- begin date: '1983-04-26T00:00:00'
+- active_date_range:
+    begin: '1983-04-26T00:00:00'
+    final: '1984-06-20T18:00:00'
   channels:
   - '2'
   - '3'
   - '4'
-  comments: no comment
-  end date: '1984-06-20T18:00:00'
-- begin date: '1984-06-21T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1984-06-21T00:00:00'
+    final: '1985-06-30T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '1985-06-30T18:00:00'
-- begin date: '1985-07-01T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '1985-07-01T00:00:00'
+    final: '1985-10-14T18:00:00'
   channels: []
-  comments: no comment
-  end date: '1985-10-14T18:00:00'
+  comment: no comment
 ssu:
-- begin date: '1983-04-26T00:00:00'
+- active_date_range:
+    begin: '1983-04-26T00:00:00'
+    final: '1983-09-13T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
-  comments: no comment
-  end date: '1983-09-13T18:00:00'
-- begin date: '1983-09-14T00:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '1983-09-14T00:00:00'
+    final: '1984-06-20T18:00:00'
   channels:
   - '1'
   - '2'
-  comments: '# ssu: ch3 failure (instrument malfunction)'
-  end date: '1984-06-20T18:00:00'
-- begin date: '1984-06-21T00:00:00'
+  comment: '# ssu: ch3 failure (instrument malfunction)'
+- active_date_range:
+    begin: '1984-06-21T00:00:00'
+    final: '1985-06-30T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '1985-06-30T18:00:00'
-- begin date: '1985-07-01T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '1985-07-01T00:00:00'
+    final: '1985-10-14T18:00:00'
   channels: []
-  comments: '# ssu: ch1 malfunction & ch3 failure'
-  end date: '1985-10-14T18:00:00'
+  comment: '# ssu: ch1 malfunction & ch3 failure'

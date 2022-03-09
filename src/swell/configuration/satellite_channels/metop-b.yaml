@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2013-02-13T00:00:00'
+- active_date_range:
+    begin: '2013-02-13T00:00:00'
+    final: '2016-09-24T18:00:00'
   channels:
   - '4'
   - '5'
@@ -12,9 +14,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# active for e512a_rt-parallel testing'
-  end date: '2016-09-24T18:00:00'
-- begin date: '2016-09-25T00:00:00'
+  comment: '# active for e512a_rt-parallel testing'
+- active_date_range:
+    begin: '2016-09-25T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '7'
   - '8'
@@ -24,26 +27,30 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch 15 failure, only assimilate upper channels'
-  end date: '2100-12-31T18:00:00'
+  comment: '# ch 15 failure, only assimilate upper channels'
 avhrr3:
-- begin date: '2013-02-13T00:00:00'
+- active_date_range:
+    begin: '2013-02-13T00:00:00'
+    final: '2021-09-18T06:00:00'
   channels: []
-  comments: no comment
-  end date: '2021-09-18T06:00:00'
-- begin date: '2021-09-18T12:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2021-09-18T12:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
-  comments: '# MetOp-A off MetOp-B on'
-  end date: '2100-12-31T18:00:00'
+  comment: '# MetOp-A off MetOp-B on'
 hirs4:
-- begin date: '2013-02-13T00:00:00'
+- active_date_range:
+    begin: '2013-02-13T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# not currently assimilated @ NCEP (20 Nov 13)'
-  end date: '2100-12-31T18:00:00'
+  comment: '# not currently assimilated @ NCEP (20 Nov 13)'
 iasi:
-- begin date: '2013-07-31T18:00:00'
+- active_date_range:
+    begin: '2013-07-31T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '16'
   - '38'
@@ -186,15 +193,15 @@ iasi:
   - '1626'
   - '1643'
   - '1671'
-  comments: '# 0'
-  end date: '2100-12-31T18:00:00'
+  comment: '# 0'
 mhs:
-- begin date: '2013-02-13T00:00:00'
+- active_date_range:
+    begin: '2013-02-13T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: '# active for e512a_rt-parallel testing'
-  end date: '2100-12-31T18:00:00'
+  comment: '# active for e512a_rt-parallel testing'

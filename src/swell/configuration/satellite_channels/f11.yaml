@@ -1,5 +1,7 @@
 ssmi:
-- begin date: '1991-12-05T00:00:00'
+- active_date_range:
+    begin: '1991-12-05T00:00:00'
+    final: '1999-12-18T18:00:00'
   channels:
   - '1'
   - '2'
@@ -8,5 +10,4 @@ ssmi:
   - '5'
   - '6'
   - '7'
-  comments: no comment
-  end date: '1999-12-18T18:00:00'
+  comment: no comment

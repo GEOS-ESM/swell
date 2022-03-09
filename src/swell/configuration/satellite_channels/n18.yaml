@@ -1,5 +1,7 @@
 amsua:
-- begin date: '2005-10-01T00:00:00'
+- active_date_range:
+    begin: '2005-10-01T00:00:00'
+    final: '2007-11-16T12:00:00'
   channels:
   - '4'
   - '5'
@@ -12,13 +14,15 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# M2: redundant entry intentional. Observations'
-  end date: '2007-11-16T12:00:00'
-- begin date: '2007-11-16T18:00:00'
+  comment: '# M2: redundant entry intentional. Observations'
+- active_date_range:
+    begin: '2007-11-16T18:00:00'
+    final: '2005-10-31T18:00:00'
   channels: []
-  comments: missing for this period
-  end date: '2005-10-31T18:00:00'
-- begin date: '2005-11-01T00:00:00'
+  comment: missing for this period
+- active_date_range:
+    begin: '2005-11-01T00:00:00'
+    final: '2007-11-16T12:00:00'
   channels:
   - '4'
   - '5'
@@ -31,9 +35,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# (old note)added all 14 back (see iuse-4.tbl)'
-  end date: '2007-11-16T12:00:00'
-- begin date: '2007-11-16T18:00:00'
+  comment: '# (old note)added all 14 back (see iuse-4.tbl)'
+- active_date_range:
+    begin: '2007-11-16T18:00:00'
+    final: '2015-09-22T18:00:00'
   channels:
   - '4'
   - '5'
@@ -45,9 +50,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# amsua: 9 bad, added all 14 back'
-  end date: '2015-09-22T18:00:00'
-- begin date: '2015-09-23T00:00:00'
+  comment: '# amsua: 9 bad, added all 14 back'
+- active_date_range:
+    begin: '2015-09-23T00:00:00'
+    final: '2015-10-12T18:00:00'
   channels:
   - '4'
   - '5'
@@ -58,9 +64,10 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch 8 too noisy, keep ch5 for now'
-  end date: '2015-10-12T18:00:00'
-- begin date: '2015-10-13T00:00:00'
+  comment: '# ch 8 too noisy, keep ch5 for now'
+- active_date_range:
+    begin: '2015-10-13T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '6'
@@ -70,27 +77,29 @@ amsua:
   - '12'
   - '13'
   - '14'
-  comments: '# ch 5 noisier'
-  end date: '2100-12-31T18:00:00'
+  comment: '# ch 5 noisier'
 avhrr3:
-- begin date: '2005-05-20T18:00:00'
+- active_date_range:
+    begin: '2005-05-20T18:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '4'
   - '5'
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment
 hirs4:
-- begin date: '2005-11-01T00:00:00'
+- active_date_range:
+    begin: '2005-11-01T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels: []
-  comments: '# hirs4: most IR channels erratic quality'
-  end date: '2100-12-31T18:00:00'
+  comment: '# hirs4: most IR channels erratic quality'
 mhs:
-- begin date: '2005-11-01T00:00:00'
+- active_date_range:
+    begin: '2005-11-01T00:00:00'
+    final: '2100-12-31T18:00:00'
   channels:
   - '1'
   - '2'
   - '3'
   - '4'
   - '5'
-  comments: no comment
-  end date: '2100-12-31T18:00:00'
+  comment: no comment

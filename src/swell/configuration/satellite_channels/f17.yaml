@@ -1,5 +1,7 @@
 ssmis:
-- begin date: '2006-12-12T00:00:00'
+- active_date_range:
+    begin: '2006-12-12T00:00:00'
+    final: '2015-08-06T00:00:00'
   channels:
   - '3'
   - '5'
@@ -12,9 +14,10 @@ ssmis:
   - '7'
   - '23'
   - '24'
-  comments: no comment
-  end date: '2015-08-06T00:00:00'
-- begin date: '2015-08-06T06:00:00'
+  comment: no comment
+- active_date_range:
+    begin: '2015-08-06T06:00:00'
+    final: '2999-12-31T18:00:00'
   channels:
   - '3'
   - '5'
@@ -22,5 +25,4 @@ ssmis:
   - '7'
   - '23'
   - '24'
-  comments: '# large bias in ch3'
-  end date: '2999-12-31T18:00:00'
+  comment: '# large bias in ch3'
