@@ -1,0 +1,109 @@
+hirs2:
+- begin date: '1988-10-12T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '1994-12-04T18:00:00'
+- begin date: '1994-12-05T00:00:00'
+  channels: []
+  comments: missing for this period
+  end date: '1997-07-14T18:00:00'
+- begin date: '1997-07-15T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '1999-02-28T18:00:00'
+msu:
+- begin date: '1988-11-08T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1989-03-15T18:00:00'
+- begin date: '1989-03-16T00:00:00'
+  channels:
+  - '2'
+  - '4'
+  comments: '# msu: ch3 noisy'
+  end date: '1989-04-16T18:00:00'
+- begin date: '1989-04-17T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1993-07-07T00:00:00'
+- begin date: '1993-07-07T06:00:00'
+  channels: []
+  comments: '# msu: all channels noisy'
+  end date: '1993-07-07T06:00:00'
+- begin date: '1993-07-07T12:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1995-04-10T18:00:00'
+- begin date: '1995-04-11T00:00:00'
+  channels: []
+  comments: missing for this period
+  end date: '1997-07-14T18:00:00'
+- begin date: '1997-07-15T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1999-02-25T18:00:00'
+- begin date: '1999-02-26T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '1999-02-27T18:00:00'
+ssu:
+- begin date: '1988-09-28T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  comments: no comment
+  end date: '1994-12-31T18:00:00'
+- begin date: '1995-01-01T00:00:00'
+  channels: []
+  comments: missing for this period
+  end date: '1997-07-14T18:00:00'
+- begin date: '1997-07-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  comments: no comment
+  end date: '1998-10-31T18:00:00'
+- begin date: '1998-11-01T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  comments: '# Ch. 3 disabled to be consistent w/ N14 change'
+  end date: '1999-02-25T18:00:00'
+- begin date: '1999-02-26T00:00:00'
+  channels: []
+  comments: '# SSU data held passive. This may be worth reevaluating'
+  end date: '2004-06-15T18:00:00'
