@@ -175,6 +175,7 @@ R2D2:
 obs_experiment: x0044
 update channels from database: false
 use geos satellite channel database: true
+crtm_coeff_dir: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
 
 OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml
