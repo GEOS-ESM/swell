@@ -12,7 +12,7 @@ obs operator:
   obs options:
     Sensor_ID: seviri_m11
     EndianType: little_endian
-    CoefficientPath: $(jedi_build_dir)/ufo/test/Data/
+    CoefficientPath: $(crtm_coeff_dir)
 obs bias:
   input file: $(cycle_dir)/seviri_m11.{{background_time}}.satbias.nc4
   variational bc:
