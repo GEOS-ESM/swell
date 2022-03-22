@@ -180,6 +180,7 @@ crtm_coeff_dir: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gs
 OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/airs_aqua.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/amsr2_gcom-w1.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/amsua_aqua.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/amsua_metop-a.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/amsua_metop-b.yaml
