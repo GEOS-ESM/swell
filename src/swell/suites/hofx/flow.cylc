@@ -89,11 +89,11 @@
     [[ObsCorrelationScatterDriver]]
         script = "swell_task ObsCorrelationScatterDriver $config -d $datetime"
 
-    [[SaveObsDiags]] #TODO
-        script = "sleep 10; echo this task will save the observation output"
+    [[SaveObsDiags]]
+        script = "swell_task SaveObsDiags $config -d $datetime"
 
-    [[CleanCycle]] #TODO
-        script = "sleep 10; echo this task will remove files associated with the cycle"
+    [[CleanCycle]]
+        script = "swell_task CleanCycle $config -d $datetime"
 
     [[CleanExperiment]] #TODO
         script = "sleep 10; echo this task will remove files associated with the entire experiment"
