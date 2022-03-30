@@ -9,14 +9,14 @@ executable: fv3jedi_hofx.x
 suite:
   platform: nccs_discover
   intial cylc point: 2020-12-15T00
-  final cylc point: 2020-12-15T00
+  final cylc point: 2020-12-15T06
   runahead limit: PT24H
   suite name: hofx
   scheduling:
     - task: Default
       nodes: 1
       account: g0613
-      execution_time_limit: PT10M
+      execution_time_limit: PT1H
       qos: debug
       constraint: hasw
       platform: nccs_discover
@@ -25,6 +25,7 @@ suite:
       ntasks_per_node: 28
     - task: RunJediExecutable
       ntasks_per_node: 24
+      execution_time_limit: PT1H
 
 # data assimilation window
 window_type: 4D
@@ -173,6 +174,9 @@ R2D2:
 # Observations
 # ------------
 obs_experiment: x0044
+update channels from database: false
+use geos satellite channel database: true
+crtm_coeff_dir: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
 
 OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml

@@ -14,5 +14,9 @@ jobs:
       with:
         python-version: '3.9'
         cache: 'pip'
+
     - run: pip install -r requirements.txt
+      timeout-minutes: 1
+
     - run: python3 pycodestyle_run.py
+      timeout-minutes: 2

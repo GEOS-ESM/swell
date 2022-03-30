@@ -1,0 +1,34 @@
+hirs2:
+- begin date: '1986-11-25T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '1991-09-01T18:00:00'
+msu:
+- begin date: '1986-11-25T00:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1987-10-12T06:00:00'
+- begin date: '1987-10-12T12:00:00'
+  channels: []
+  comments: '# msu: all channels noisy'
+  end date: '1987-10-12T12:00:00'
+- begin date: '1987-10-12T18:00:00'
+  channels:
+  - '2'
+  - '3'
+  - '4'
+  comments: no comment
+  end date: '1991-09-01T18:00:00'

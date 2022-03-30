@@ -1,0 +1,85 @@
+imgr:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2100-12-31T18:00:00'
+sndrD1:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: '# Passive till Operational GOES-East'
+  end date: '2010-04-14T18:00:00'
+- begin date: '2010-04-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# GOES-13 became ops GOES-East on 14 Apr 2010'
+  end date: '2015-11-20T12:00:00'
+sndrD2:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2010-04-14T18:00:00'
+- begin date: '2010-04-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# start a day later....'
+  end date: '2015-11-20T12:00:00'
+sndrD3:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2010-04-14T18:00:00'
+- begin date: '2010-04-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: no comment
+  end date: '2015-11-20T12:00:00'
+sndrD4:
+- begin date: '2006-06-30T00:00:00'
+  channels: []
+  comments: no comment
+  end date: '2010-04-14T18:00:00'
+- begin date: '2010-04-15T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '10'
+  - '11'
+  - '12'
+  comments: '# filter wheel failure ceased operations 20 Nov 2015'
+  end date: '2015-11-20T12:00:00'
