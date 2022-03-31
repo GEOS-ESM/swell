@@ -10,6 +10,7 @@ ioda instrument names:
   - amsua_n19
   - atms_n20
   - atms_npp
+  - amsr2_gcom-w1
   - avhrr3_metop-a
   - avhrr3_n18
   - avhrr3_n19
