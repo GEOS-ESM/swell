@@ -1,4 +1,6 @@
 ioda instrument names:
+  - abi_g16
+  - ahi_himawari8
   - aircraft
   - airs_aqua
   - amsua_aqua
@@ -16,13 +18,18 @@ ioda instrument names:
   - avhrr3_n19
   - cris-fsr_n20
   - cris-fsr_npp
-  - gpm_gmi
+  - gmi_gpm
   - gnssrobndnbam
+  - gome_metop-a
+  - hirs4_metop-a
+  - hirs4_metop-b
   - iasi_metop-a
   - iasi_metop-b
+  - mhs_metop-a
   - mhs_metop-b
   - mhs_metop-c
   - mhs_n19
+  - mls55_aura
   - omi_aura
   - ompsnp_npp
   - ompstc8_npp
