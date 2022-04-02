@@ -15,7 +15,8 @@ from swell.install_path import swell_install_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
 from swell.utilities.dictionary_utilities import resolve_definitions
-from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files
+from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files, \
+                                           set_swell_path_in_modules, create_modules_csh
 from swell.deployment.yaml_exploder import recursive_yaml_expansion
 from swell.deployment.prep_suite import prepare_suite
 
@@ -62,7 +63,11 @@ def main(config, clean):
     if clean:
         logger.input('Removing existing experiment directory ' + experiment_dir)
         logger.info('removing' + experiment_dir)
-        shutil.rmtree(experiment_dir)
+        try:
+            shutil.rmtree(experiment_dir)
+        except Exception as e:
+            logger.info(f'Failed to remove the existing directory, with excpetion: {e}. Continuing')
+
 
     # Create the experiment directory
     # -------------------------------
@@ -98,6 +103,14 @@ def main(config, clean):
     # Copy files to the suite directory
     # ---------------------------------
     copy_suite_files(logger, experiment_dict)
+
+    # Set the swell paths in the modules file
+    # ---------------------------------------
+    set_swell_path_in_modules(logger, experiment_dict)
+
+    # Create csh modules file for csh users to use when debugging
+    # -----------------------------------------------------------
+    create_modules_csh(logger, experiment_dict)
 
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------

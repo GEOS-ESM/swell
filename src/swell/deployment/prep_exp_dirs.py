@@ -10,9 +10,12 @@
 
 import importlib
 import os
+import pathlib
 import shutil
 
+from swell.install_path import swell_install_path
 from swell.suites.suites import return_suite_path
+from swell.utilities.string_utils import replace_vars
 
 
 # --------------------------------------------------------------------------------------------------
@@ -72,3 +75,73 @@ def copy_suite_files(logger, experiment_dict):
 
 
 # --------------------------------------------------------------------------------------------------
+
+def set_swell_path_in_modules(logger, experiment_dict):
+
+    # Extract config
+    # --------------
+    suite_dir = experiment_dict['suite_dir']
+
+    # Modules file
+    # ------------
+    modules_file = os.path.join(suite_dir, 'modules')
+
+    # Swell bin path
+    # --------------
+    swell_bin_path = shutil.which("swell_task")
+    swell_bin_path = "/".join(list(swell_bin_path.split('/')[0:-1]))
+
+    # Swell lib path
+    # --------------
+    swell_lib_path = swell_install_path()
+    swell_lib_path = "/".join(list(swell_lib_path.split('/')[0:-1]))
+
+    # Dictionary of definitions
+    # -------------------------
+    swell_paths = {}
+    swell_paths['swell_bin_path'] = swell_bin_path
+    swell_paths['swell_lib_path'] = swell_lib_path
+
+    # Open the file
+    # -------------
+    with open(modules_file, 'r') as modules_file_open:
+        modules_file_str = modules_file_open.read()
+        modules_file_str = replace_vars(modules_file_str, **swell_paths)
+
+    # Overwrite the file
+    # ------------------
+    with open(modules_file, 'w') as modules_file_open:
+        modules_file_open.write(modules_file_str)
+
+# --------------------------------------------------------------------------------------------------
+
+def create_modules_csh(logger, experiment_dict):
+
+    # Extract config
+    # --------------
+    suite_dir = experiment_dict['suite_dir']
+
+    # Modules file
+    # ------------
+    modules_file = os.path.join(suite_dir, 'modules')
+
+    # Open the file
+    # -------------
+    with open(modules_file, 'r') as modules_file_open:
+        modules_file_str = modules_file_open.read()
+
+    # Replace some things
+    # -------------------
+    modules_file_str = modules_file_str.replace('export', 'setenv')
+    modules_file_str = modules_file_str.replace('bash', 'csh')
+    modules_file_str = modules_file_str.replace('=', ' ')
+
+    modules_file_str = modules_file_str.replace('PYTHONPATH /', 'set PYTHONPATH = (/')
+    modules_file_str = modules_file_str.replace('PATH /', 'set PATH = (/')
+    modules_file_str = modules_file_str.replace(':$PYTHONPATH', ' $PYTHONPATH)')
+    modules_file_str = modules_file_str.replace(':$PATH', ' $PATH)')
+
+    # Overwrite the file
+    # ------------------
+    with open(modules_file+'-csh', 'w') as modules_file_open:
+        modules_file_open.write(modules_file_str)
