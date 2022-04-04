@@ -25,5 +25,5 @@ export DHJEDIOPT=/discover/nobackup/drholdaw/JediOpt/
 module use -a $DHJEDIOPT/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.0
-module load eva/1.1.0
-module load swell/1.0.1
+module load eva/1.1.1
+module load swell/1.0.3

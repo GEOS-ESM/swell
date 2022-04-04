@@ -16,7 +16,7 @@ suite:
     - task: Default
       nodes: 1
       account: g0613
-      execution_time_limit: PT10M
+      execution_time_limit: PT1H
       qos: debug
       constraint: hasw
       platform: nccs_discover
@@ -25,6 +25,7 @@ suite:
       ntasks_per_node: 28
     - task: RunJediExecutable
       ntasks_per_node: 24
+      execution_time_limit: PT1H
 
 # data assimilation window
 window_type: 4D
