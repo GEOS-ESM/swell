@@ -16,7 +16,6 @@ import glob
 
 class CleanCycle(taskBase):
 
-
     """Cleans current cycle based on list defined in the configuration file
 
        Parameters
@@ -33,7 +32,7 @@ class CleanCycle(taskBase):
         cycle_dir = self.config.get("cycle_dir")
         clean_list = cfg.get('CLEAN')
 
-        if os.path.isdir(cycle_dir):                
+        if os.path.isdir(cycle_dir):
 
             # Remove all specified files
             for pattern in clean_list:
