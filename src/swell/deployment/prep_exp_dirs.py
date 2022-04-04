@@ -76,6 +76,7 @@ def copy_suite_files(logger, experiment_dict):
 
 # --------------------------------------------------------------------------------------------------
 
+
 def set_swell_path_in_modules(logger, experiment_dict):
 
     # Extract config
@@ -89,12 +90,12 @@ def set_swell_path_in_modules(logger, experiment_dict):
     # Swell bin path
     # --------------
     swell_bin_path = shutil.which("swell_task")
-    swell_bin_path = "/".join(list(swell_bin_path.split('/')[0:-1]))
+    swell_bin_path = os.path.split(swell_bin_path)[0]
 
     # Swell lib path
     # --------------
     swell_lib_path = swell_install_path()
-    swell_lib_path = "/".join(list(swell_lib_path.split('/')[0:-1]))
+    swell_lib_path = os.path.split(swell_lib_path)[0]
 
     # Dictionary of definitions
     # -------------------------
@@ -113,7 +114,9 @@ def set_swell_path_in_modules(logger, experiment_dict):
     with open(modules_file, 'w') as modules_file_open:
         modules_file_open.write(modules_file_str)
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 def create_modules_csh(logger, experiment_dict):
 
@@ -135,13 +138,16 @@ def create_modules_csh(logger, experiment_dict):
     modules_file_str = modules_file_str.replace('export', 'setenv')
     modules_file_str = modules_file_str.replace('bash', 'csh')
     modules_file_str = modules_file_str.replace('=', ' ')
-
-    modules_file_str = modules_file_str.replace('PYTHONPATH /', 'set PYTHONPATH = (/')
-    modules_file_str = modules_file_str.replace('PATH /', 'set PATH = (/')
+    modules_file_str = modules_file_str.replace(':', ' ')
+    modules_file_str = modules_file_str.replace('PYTHONPATH=', 'set PYTHONPATH = (')
+    modules_file_str = modules_file_str.replace('PATH=', 'set PATH = (')
     modules_file_str = modules_file_str.replace(':$PYTHONPATH', ' $PYTHONPATH)')
     modules_file_str = modules_file_str.replace(':$PATH', ' $PATH)')
 
     # Overwrite the file
     # ------------------
-    with open(modules_file+'-csh', 'w') as modules_file_open:
+    with open(modules_file+'.csh', 'w') as modules_file_open:
         modules_file_open.write(modules_file_str)
+
+
+# --------------------------------------------------------------------------------------------------

@@ -68,7 +68,6 @@ def main(config, clean):
         except Exception as e:
             logger.info(f'Failed to remove the existing directory, with excpetion: {e}. Continuing')
 
-
     # Create the experiment directory
     # -------------------------------
     logger.info('Creating experiment directory: '+experiment_dir)
