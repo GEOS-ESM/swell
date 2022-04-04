@@ -12,7 +12,7 @@ import os
 import yaml
 
 from swell.tasks.base.task_base import taskBase
-from eva.utilities import ioda_definitions
+from swell.utilities.observations import find_instrument_from_string
 from eva.eva_base import eva
 
 
@@ -51,7 +51,7 @@ class ObsCorrelationScatterDriver(taskBase):
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Get instrument name
-            instrument, instrument_long = ioda_definitions.find_instrument_from_string(obs_file)
+            instrument = find_instrument_from_string(obs_file, self.logger)
 
             # Create the dictionary to pass to the diagnostic tool
             # ----------------------------------------------------
