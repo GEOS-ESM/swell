@@ -147,11 +147,33 @@ def main(config, clean):
     with open(output_file_name, 'w') as output_file:
         yaml.dump(experiment_dict, output_file, default_flow_style=False)
 
+    # Create full path to the r2d2 config file
+    # ----------------------------------------
+    r2d2_conf_path = os.path.join(experiment_dict['suite_dir'], 'r2d2_config.yaml')
+
     # Write R2D2_CONFIG to modules
     # ----------------------------
-    r2d2_config_path = os.path.join(experiment_dict['suite_dir'], 'r2d2_config.yaml')
     with open(os.path.join(experiment_dict['suite_dir'], 'modules'), 'a') as module_file:
-        module_file.write('export R2D2_CONFIG={}'.format(r2d2_config_path))
+        module_file.write('export R2D2_CONFIG={}'.format(r2d2_conf_path))
+
+    # Open the r2d2 file to dictionary
+    # ------------------------------------
+    with open(r2d2_conf_path, 'r') as r2d2_file:
+        r2d2_conf = yaml.safe_load(r2d2_file)
+
+    # Extract local path variable and replace with value from config
+    # --------------------------------------------------------------
+    element = r2d2_conf['databases']['local']['root']
+    element = element.replace("$", "")
+    element = element.replace("{", "")
+    element = element.replace("}", "")
+
+    r2d2_conf['databases']['local']['root'] = experiment_dict[element]
+
+    # Write out the final r2d2 yaml file
+    # ----------------------------------
+    with open(r2d2_conf_path, 'w') as r2d2_outfile:
+        yaml.dump(r2d2_conf, r2d2_outfile, default_flow_style=False)
 
     # Write out launch command for convenience
     # ----------------------------------------

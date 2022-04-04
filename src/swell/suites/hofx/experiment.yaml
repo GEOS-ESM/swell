@@ -200,3 +200,7 @@ OBSERVATIONS:
   #- yaml::$(swell_dir)/configuration/observation_operators/sfc.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/sfcship.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/vadwind.yaml
+
+CLEAN:
+  - $(cycle_dir)/*.nc4
+  - $(cycle_dir)/*.txt
