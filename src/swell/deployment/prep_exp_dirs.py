@@ -97,11 +97,16 @@ def set_swell_path_in_modules(logger, experiment_dict):
     swell_lib_path = swell_install_path()
     swell_lib_path = os.path.split(swell_lib_path)[0]
 
+    # Swell suite path
+    # ----------------
+    swell_sui_path = return_suite_path()
+
     # Dictionary of definitions
     # -------------------------
     swell_paths = {}
     swell_paths['swell_bin_path'] = swell_bin_path
     swell_paths['swell_lib_path'] = swell_lib_path
+    swell_paths['swell_sui_path'] = swell_sui_path
 
     # Open the file
     # -------------
@@ -131,23 +136,36 @@ def create_modules_csh(logger, experiment_dict):
     # Open the file
     # -------------
     with open(modules_file, 'r') as modules_file_open:
-        modules_file_str = modules_file_open.read()
+        modules_file_lines = modules_file_open.readlines()
 
     # Replace some things
     # -------------------
-    modules_file_str = modules_file_str.replace('export', 'setenv')
-    modules_file_str = modules_file_str.replace('bash', 'csh')
-    modules_file_str = modules_file_str.replace('=', ' ')
-    modules_file_str = modules_file_str.replace(':', ' ')
-    modules_file_str = modules_file_str.replace('PYTHONPATH=', 'set PYTHONPATH = (')
-    modules_file_str = modules_file_str.replace('PATH=', 'set PATH = (')
-    modules_file_str = modules_file_str.replace(':$PYTHONPATH', ' $PYTHONPATH)')
-    modules_file_str = modules_file_str.replace(':$PATH', ' $PATH)')
+    for idx, modules_file_line in enumerate(modules_file_lines):
+
+        # 'bash' to 'csh'
+        if 'bash' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('bash', 'csh')
+
+        # Export to setenv
+        if 'export' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('export', 'setenv')
+            modules_file_lines[idx] = modules_file_lines[idx].replace('=', ' ')
+
+        # Set PYTHONPATH
+        if 'PYTHONPATH=' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('PYTHONPATH=',
+                                                                      'setenv PYTHONPATH ')
+
+        # Set path
+        if 'PATH=' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('PATH=', 'set path = (')
+            modules_file_lines[idx] = modules_file_lines[idx].replace(':$PATH', ' $path)')
 
     # Overwrite the file
     # ------------------
-    with open(modules_file+'.csh', 'w') as modules_file_open:
-        modules_file_open.write(modules_file_str)
+    with open(modules_file+'-csh', 'w') as modules_file_open:
+        for modules_file_line in modules_file_lines:
+            modules_file_open.write(modules_file_line)
 
 
 # --------------------------------------------------------------------------------------------------
