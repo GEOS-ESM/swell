@@ -43,7 +43,7 @@ obs operator:
   obs options:
     Sensor_ID: cris-fsr_n20
     EndianType: little_endian
-    CoefficientPath: $(jedi_build_dir)/ufo/test/Data/
+    CoefficientPath: $(crtm_coeff_dir)
 obs bias:
   input file: $(cycle_dir)/cris-fsr_n20.{{background_time}}.satbias.nc4
   variational bc:
