@@ -147,6 +147,12 @@ def main(config, clean):
     with open(output_file_name, 'w') as output_file:
         yaml.dump(experiment_dict, output_file, default_flow_style=False)
 
+    # Write R2D2_CONFIG to modules
+    # ----------------------------
+    r2d2_config_path = os.path.join(experiment_dict['suite_dir'], 'r2d2_config.yaml')
+    with open(os.path.join(experiment_dict['suite_dir'], 'modules'), 'a') as module_file:
+        module_file.write('export R2D2_CONFIG={}'.format(r2d2_config_path))
+
     # Write out launch command for convenience
     # ----------------------------------------
     logger.info(' ')

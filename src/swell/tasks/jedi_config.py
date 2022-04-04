@@ -180,3 +180,26 @@ class JediConfig(taskBase):
         # -----------------------------
         with open(jedi_conf_output, 'w') as outfile:
             yaml.dump(jedi_conf, outfile, default_flow_style=False)
+
+        # Create full path to the r2d2 config file
+        # ----------------------------------------
+        r2d2_conf_path = os.path.join(self.config.get("suite_dir"), "r2d2_config.yaml")
+
+        # Open the r2d2 file to dictionary
+        # ------------------------------------
+        with open(r2d2_conf_path, 'r') as r2d2_file:
+            r2d2_conf = yaml.safe_load(r2d2_file)
+
+        # Extract local path variable and replace with value from config
+        # --------------------------------------------------------------
+        element = r2d2_conf['databases']['local']['root']
+        element = element.replace("$", "")
+        element = element.replace("{", "")
+        element = element.replace("}", "")
+
+        r2d2_conf['databases']['local']['root'] = self.config.get(element)
+
+        # Write out the final r2d2 yaml file
+        # ----------------------------------
+        with open(r2d2_conf_path, 'w') as r2d2_outfile:
+            yaml.dump(r2d2_conf, r2d2_outfile, default_flow_style=False)

@@ -37,9 +37,6 @@
                           ObsCorrelationScatterDriver & SaveObsDiags => CleanCycle
                           #CleanCycle[-PT6H] => CleanCycle
                           """
-        R1/$ = """
-               CleanCycle => CleanExperiment
-               """
 
 # --------------------------------------------------------------------------------------------------
 
@@ -94,8 +91,5 @@
 
     [[CleanCycle]]
         script = "swell_task CleanCycle $config -d $datetime"
-
-    [[CleanExperiment]] #TODO
-        script = "sleep 10; echo this task will remove files associated with the entire experiment"
 
 # --------------------------------------------------------------------------------------------------
