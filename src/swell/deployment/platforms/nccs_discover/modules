@@ -1,6 +1,6 @@
 # Module initialization
 # ---------------------
-source $MODULESHOME/init/bash
+source /usr/share/lmod/lmod/init/bash
 
 # Purge modules
 # -------------
@@ -26,4 +26,10 @@ module use -a $DHJEDIOPT/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.0
 module load eva/1.1.1
-module load swell/1.0.3
+
+# Set the swell paths
+# -------------------
+PATH=$(swell_bin_path):$PATH
+PYTHONPATH=$(swell_lib_path):$PYTHONPATH
+export SUITEPATH=$(swell_sui_path)
+export SUITEPATHS=$(swell_sui_path)

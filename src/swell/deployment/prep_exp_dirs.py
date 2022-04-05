@@ -10,9 +10,12 @@
 
 import importlib
 import os
+import pathlib
 import shutil
 
+from swell.install_path import swell_install_path
 from swell.suites.suites import return_suite_path
+from swell.utilities.string_utils import replace_vars
 
 
 # --------------------------------------------------------------------------------------------------
@@ -69,6 +72,100 @@ def copy_suite_files(logger, experiment_dict):
         dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
         logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
         shutil.copy(src_path_file, dst_path_file)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def set_swell_path_in_modules(logger, experiment_dict):
+
+    # Extract config
+    # --------------
+    suite_dir = experiment_dict['suite_dir']
+
+    # Modules file
+    # ------------
+    modules_file = os.path.join(suite_dir, 'modules')
+
+    # Swell bin path
+    # --------------
+    swell_bin_path = shutil.which("swell_task")
+    swell_bin_path = os.path.split(swell_bin_path)[0]
+
+    # Swell lib path
+    # --------------
+    swell_lib_path = swell_install_path()
+    swell_lib_path = os.path.split(swell_lib_path)[0]
+
+    # Swell suite path
+    # ----------------
+    swell_sui_path = return_suite_path()
+
+    # Dictionary of definitions
+    # -------------------------
+    swell_paths = {}
+    swell_paths['swell_bin_path'] = swell_bin_path
+    swell_paths['swell_lib_path'] = swell_lib_path
+    swell_paths['swell_sui_path'] = swell_sui_path
+
+    # Open the file
+    # -------------
+    with open(modules_file, 'r') as modules_file_open:
+        modules_file_str = modules_file_open.read()
+        modules_file_str = replace_vars(modules_file_str, **swell_paths)
+
+    # Overwrite the file
+    # ------------------
+    with open(modules_file, 'w') as modules_file_open:
+        modules_file_open.write(modules_file_str)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def create_modules_csh(logger, experiment_dict):
+
+    # Extract config
+    # --------------
+    suite_dir = experiment_dict['suite_dir']
+
+    # Modules file
+    # ------------
+    modules_file = os.path.join(suite_dir, 'modules')
+
+    # Open the file
+    # -------------
+    with open(modules_file, 'r') as modules_file_open:
+        modules_file_lines = modules_file_open.readlines()
+
+    # Replace some things
+    # -------------------
+    for idx, modules_file_line in enumerate(modules_file_lines):
+
+        # 'bash' to 'csh'
+        if 'bash' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('bash', 'csh')
+
+        # Export to setenv
+        if 'export' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('export', 'setenv')
+            modules_file_lines[idx] = modules_file_lines[idx].replace('=', ' ')
+
+        # Set PYTHONPATH
+        if 'PYTHONPATH=' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('PYTHONPATH=',
+                                                                      'setenv PYTHONPATH ')
+
+        # Set path
+        if 'PATH=' in modules_file_line:
+            modules_file_lines[idx] = modules_file_lines[idx].replace('PATH=', 'set path = (')
+            modules_file_lines[idx] = modules_file_lines[idx].replace(':$PATH', ' $path)')
+
+    # Overwrite the file
+    # ------------------
+    with open(modules_file+'-csh', 'w') as modules_file_open:
+        for modules_file_line in modules_file_lines:
+            modules_file_open.write(modules_file_line)
 
 
 # --------------------------------------------------------------------------------------------------
