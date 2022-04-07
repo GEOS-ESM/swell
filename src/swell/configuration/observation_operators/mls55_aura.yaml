@@ -9,12 +9,19 @@ obs operator:
   name: VertInterp
   vertical coordinate: ["air_pressure"]
   geovals: [mole_fraction_of_ozone_in_air]
-#obs filters:
-#  # range sanity check
-#  - filter: Bounds Check
-#    filter variables:
-#    - name: mole_fraction_layer_ozone_in_air
-#    minvalue: 0
-#    maxvalue: 10000
-#    action:
-#      name: reject
+obs filters:
+  # range sanity check
+  - filter: Bounds Check
+    filter variables:
+    - name: mole_fraction_of_ozone_in_air
+    minvalue: 0
+    maxvalue: 10000
+    action:
+      name: reject
+  # threshold is really threshold*observation error (threshold= relative threshold)
+  - filter: Background Check
+    filter variables:
+    - name: mole_fraction_of_ozone_in_air
+    threshold: 5.0
+    action:
+      name: reject
