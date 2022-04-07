@@ -1,0 +1,27 @@
+obs space:
+  name: mls55_aura
+  obsdatain:
+    obsfile: $(cycle_dir)/mls55_aura.{{window_begin}}.nc4
+  obsdataout:
+    obsfile: $(cycle_dir)/$(experiment_id).mls55_aura.{{window_begin}}.nc4 
+  simulated variables: [mole_fraction_of_ozone_in_air]
+obs operator:
+  name: VertInterp
+  vertical coordinate: ["air_pressure"]
+  geovals: [mole_fraction_of_ozone_in_air]
+obs filters:
+  # range sanity check
+  - filter: Bounds Check
+    filter variables:
+    - name: mole_fraction_of_ozone_in_air
+    minvalue: 0
+    maxvalue: 10000
+    action:
+      name: reject
+  # threshold is really threshold*observation error (threshold= relative threshold)
+  - filter: Background Check
+    filter variables:
+    - name: mole_fraction_of_ozone_in_air
+    threshold: 5.0
+    action:
+      name: reject
