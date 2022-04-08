@@ -114,32 +114,27 @@ def main(config, clean):
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------
     # User chosen clones
-    needed_repos = []
-    bundle_repos = experiment_dict['build jedi']['bundle repos']
-    for bundle_repo in bundle_repos:
-        if 'clone on create' in bundle_repo.keys():
-            if bundle_repo['clone on create']:
-                needed_repos.append(bundle_repo['project'])
+    if 'build jedi' in experiment_dict:
+        if 'bundle repos' in experiment_dict['build jedi']:
+            needed_repos = []
+            bundle_repos = experiment_dict['build jedi']['bundle repos']
+            for bundle_repo in bundle_repos:
+                if 'clone on create' in bundle_repo.keys():
+                    if bundle_repo['clone on create']:
+                        needed_repos.append(bundle_repo['project'])
 
-    # Add any repos from lines with 'yaml::'
-    match_string = 'yaml::'
-    config_file = open(config, 'r')
-    for line in config_file:
-        if match_string in line:
-            # Extract repo name
-            needed_repos.append(line.partition(match_string)[2].split('/')[1])
-    # Remove duplicates
-    needed_repos = list(set(needed_repos))
+            # Remove duplicates
+            needed_repos = list(set(needed_repos))
 
-    # Clone only the needed repos
-    repo_dict = experiment_dict['build jedi']['bundle repos']
-    for d in repo_dict:
-        if d['project'] in needed_repos:
-            project = d['project']
-            git_url = d['git url']
-            branch = d['branch']
-            proj_dir = os.path.join(experiment_dict['bundle_dir'], project)
-            git_got(git_url, branch, proj_dir, logger)
+            # Clone only the needed repos
+            repo_dict = experiment_dict['build jedi']['bundle repos']
+            for d in repo_dict:
+                if d['project'] in needed_repos:
+                    project = d['project']
+                    git_url = d['git url']
+                    branch = d['branch']
+                    proj_dir = os.path.join(experiment_dict['bundle_dir'], project)
+                    git_got(git_url, branch, proj_dir, logger)
 
     # Expand yaml
     # -----------

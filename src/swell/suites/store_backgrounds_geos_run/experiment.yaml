@@ -1,0 +1,60 @@
+# Experiment name and location
+experiment_id: x0044-jedi-get_background
+experiment_root: /discover/nobackup/${USER}/JediExperiments/
+
+# suite configuration
+suite:
+  intial cylc point: 2020-12-14T06
+  final cylc point: 2020-12-16T12
+  runahead limit: PT24H
+  suite name: store_backgrounds_geos_run
+  platform: nccs_discover
+
+# GEOS experiment to get backgrounds from
+geos_experiment: x0044
+geos_bkg_tar_filename_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/rs/Y%Y/M%m/Revised/$(geos_experiment).trajrst.%Y%m%d_%Hz.tar
+geos_background_restart_offset: PT9H  # Time before middle of analysis window that bkg forecast began
+geos_bkg_filename_template: $(geos_experiment).traj_lcv_rst.%Y%m%d_%H%Mz.nc4  # Name for bkg files from GEOS
+jedi_bkg_filename_template: '%Y%m%d.%H%M%S.bkg.nc4'
+
+# data assimilation window (to determine which backgrounds are needed)
+window_type: 4D
+window_length: PT6H
+window_offset: PT3H
+analysis_forecast_window_offset: -PT3H
+pseudo_model_tstep: PT1H
+
+# backgrounds
+backgrounds:
+  background experiment: x0044    # Experiment that provides the background
+  background source: file         # Could be file or model
+  background schema: geos         # Schema for r2d2
+  background frequency: PT1H      # Frequency of background if coming from file
+
+# resolution
+horizontal_resolution: c360
+
+# JEDI Background
+# ---------------
+BACKGROUND:
+  filename: $(cycle_dir)/$(valid_date).$(file_type).nc4  # R2D2
+
+# R2D2 schema
+# -----------
+R2D2:
+  fetch:
+    an:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    bc:
+      - file_type: satbias
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).nc4
+      - file_type: tlapse
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).txt
+  store:
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'

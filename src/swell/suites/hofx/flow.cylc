@@ -8,7 +8,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc 8 suite for executing JEDI-based 4D h(x)
+# Cylc suite for executing JEDI-based 4D h(x)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -34,12 +34,9 @@
         T00,T06,T12,T18 = """
                           GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
                           => RunJediExecutable => MergeObsDiags =>
-                          ObsCorrelationScatterDriver & SaveObsDiags => CleanCycle
+                          ObsCorrelationScatterDriver #& SaveObsDiags => CleanCycle
                           #CleanCycle[-PT6H] => CleanCycle
                           """
-        R1/$ = """
-               CleanCycle => CleanExperiment
-               """
 
 # --------------------------------------------------------------------------------------------------
 
@@ -89,13 +86,10 @@
     [[ObsCorrelationScatterDriver]]
         script = "swell_task ObsCorrelationScatterDriver $config -d $datetime"
 
-    [[SaveObsDiags]] #TODO
-        script = "sleep 10; echo this task will save the observation output"
+    #[[SaveObsDiags]]
+    #    script = "swell_task SaveObsDiags $config -d $datetime"
 
-    [[CleanCycle]] #TODO
-        script = "sleep 10; echo this task will remove files associated with the cycle"
-
-    [[CleanExperiment]] #TODO
-        script = "sleep 10; echo this task will remove files associated with the entire experiment"
+    #[[CleanCycle]]
+    #    script = "swell_task CleanCycle $config -d $datetime"
 
 # --------------------------------------------------------------------------------------------------
