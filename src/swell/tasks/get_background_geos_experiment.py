@@ -62,7 +62,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # -------------------------
         with tarfile.open(traj_tar) as traj_tar_file:
             for member in traj_tar_file.getmembers():
-                if member.isreg(): # Only files
+                if member.isreg():  # Only files
 
                     # Extract files
                     # -------------
@@ -75,5 +75,6 @@ class GetBackgroundGeosExperiment(taskBase):
                     bkg_filename_jedi = bkg_filename_dt.strftime(bkg_filename_template_jedi)
                     os.rename(os.path.join(cycle_dir, member.name),
                               os.path.join(cycle_dir, bkg_filename_jedi))
+
 
 # --------------------------------------------------------------------------------------------------
