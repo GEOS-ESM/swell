@@ -31,9 +31,10 @@ class CleanCycle(taskBase):
         logger = self.logger
         cycle_dir = self.config.get("cycle_dir")
         clean_list = cfg.get('CLEAN')
+        current_dir = os.getcwd()
 
         if os.path.isdir(cycle_dir):
-
+            os.chdir(cycle_dir)
             # Remove all specified files
             for pattern in clean_list:
                 for file_to_delete in glob.glob(pattern):
@@ -43,3 +44,4 @@ class CleanCycle(taskBase):
             filename = 'cycle_done'
             cmd = 'touch ' + os.path.join(cycle_dir, filename)
             os.system(cmd)
+            os.chdir(current_dir)
