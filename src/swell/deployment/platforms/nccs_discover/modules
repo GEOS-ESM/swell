@@ -17,7 +17,7 @@ module load jedi/intel-impi/ecbuild35
 # ----------------------------------------
 export DHOPT=/discover/nobackup/drholdaw/opt/
 module use -a $DHOPT/modulefiles/core
-module load miniconda/3.9-cylc
+module load miniconda/3.9
 
 # Load workflow modules
 # ---------------------

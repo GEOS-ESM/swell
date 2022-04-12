@@ -205,5 +205,5 @@ OBSERVATIONS:
   #- yaml::$(swell_dir)/configuration/observation_operators/vadwind.yaml
 
 CLEAN:
-  - *.nc4
-  - *.txt
+  - '*.nc4'
+  - '*.txt'
