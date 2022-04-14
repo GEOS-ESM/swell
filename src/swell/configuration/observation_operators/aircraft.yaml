@@ -143,6 +143,7 @@ obs filters:
       options:
         test QCflag: PreQC
         inflate variables: [eastward_wind]
+        pressure: MetaData/air_pressure
   defer to post: true
 #
 - filter: BlackList
@@ -155,6 +156,7 @@ obs filters:
       options:
         test QCflag: PreQC
         inflate variables: [northward_wind]
+        pressure: MetaData/air_pressure
   defer to post: true
 #
 # If background check is largely different than obs, inflate ObsError
@@ -296,6 +298,7 @@ obs filters:
       options:
 #       test QCflag: PreQC
         inflate variables: [air_temperature]
+        pressure: MetaData/air_pressure
   defer to post: true
 #
 # If background check is largely different than obs, inflate ObsError
@@ -376,6 +379,7 @@ obs filters:
 #       options:
 #         test QCflag: PreQC
 #         inflate variables: [specific_humidity]
+#         pressure: MetaData/air_pressure
 #   defer to post: true
 # #
 # # If ObsError inflation factor is larger than threshold, reject obs
