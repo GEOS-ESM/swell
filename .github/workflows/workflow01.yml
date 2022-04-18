@@ -28,3 +28,5 @@ jobs:
       - name: run-task-workflow
         run: |
           source /etc/profile.d/modules.sh
+          source /discover/nobackup/jardizzo/JediOpt/install_modules
+          pip install --prefix=`pwd`/../install .
