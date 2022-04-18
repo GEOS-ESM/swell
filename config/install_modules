@@ -1,0 +1,4 @@
+export DHOPT=/discover/nobackup/drholdaw/opt/
+module use -a $DHOPT/modulefiles/core
+module purge
+module load miniconda/3.9
