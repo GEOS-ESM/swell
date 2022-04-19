@@ -38,10 +38,10 @@ class CleanCycle(taskBase):
             # Remove all specified files
             for pattern in clean_list:
                 if pattern == '*':
-                   continue
+                    continue
                 path_parts = os.path.split(pattern)
                 if path_parts[1] == '*':
-                   continue
+                    continue
                 else:
                     for file_to_delete in glob.glob(path_parts[1]):
                         os.remove(file_to_delete)

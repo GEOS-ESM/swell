@@ -172,26 +172,11 @@ def main(config, clean):
     # Open the r2d2 file to dictionary
     # ------------------------------------
     with open(r2d2_conf_path, 'r') as r2d2_file_open:
-        #r2d2_conf = yaml.safe_load(r2d2_file)
         r2d2_file_str = r2d2_file_open.read()
         r2d2_file_str = replace_vars(r2d2_file_str, **experiment_dict)
 
     with open(r2d2_conf_path, 'w') as r2d2_file_open:
         r2d2_file_open.write(r2d2_file_str)
-
-    # Extract local path variable and replace with value from config
-    # --------------------------------------------------------------
-    #element = r2d2_conf['databases']['local']['root']
-    #element = element.replace("$", "")
-    #element = element.replace("{", "")
-    #element = element.replace("}", "")
-
-    #r2d2_conf['databases']['local']['root'] = experiment_dict[element]
-
-    # Write out the final r2d2 yaml file
-    # ----------------------------------
-    #with open(r2d2_conf_path, 'w') as r2d2_outfile:
-    #    yaml.dump(r2d2_conf, r2d2_outfile, default_flow_style=False)
 
     # Write out launch command for convenience
     # ----------------------------------------
