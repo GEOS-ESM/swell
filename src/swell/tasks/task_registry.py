@@ -15,4 +15,6 @@ valid_tasks = [
   'MergeIodaFiles',
   'GetBackgroundGeosExperiment',
   'StoreBackground',
+  'CleanCycle',
+  'SaveObsDiags',
 ]

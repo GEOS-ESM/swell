@@ -86,10 +86,10 @@
     [[ObsCorrelationScatterDriver]]
         script = "swell_task ObsCorrelationScatterDriver $config -d $datetime"
 
-    #[[SaveObsDiags]]
-    #    script = "swell_task SaveObsDiags $config -d $datetime"
+    [[SaveObsDiags]]
+        script = "swell_task SaveObsDiags $config -d $datetime"
 
-    #[[CleanCycle]]
-    #    script = "swell_task CleanCycle $config -d $datetime"
+    [[CleanCycle]]
+        script = "swell_task CleanCycle $config -d $datetime"
 
 # --------------------------------------------------------------------------------------------------
