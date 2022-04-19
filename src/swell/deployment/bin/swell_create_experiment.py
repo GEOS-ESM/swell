@@ -58,6 +58,7 @@ def main(config, clean):
 
     # Add to dictionary
     experiment_dict.update({'experiment_dir': experiment_dir})
+    experiment_dict.update({'USERNAME': user})
 
     # Optionally clean up any existing directory
     # ------------------------------------------

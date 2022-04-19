@@ -153,7 +153,6 @@ MODEL:
 # R2D2 schema
 # -----------
 R2D2_LOCAL_PATH: /discover/nobackup/${USER}/R2D2DataStore/Local/
-USERNAME: ${USER}
 R2D2:
   fetch:
     an:
