@@ -1,21 +1,21 @@
 databases:
 
-  local:
+  $(USERNAME):
     class: LocalDB
-    root: ${R2D2_LOCAL_PATH}
+    root: $(R2D2_LOCAL_PATH)
     cache_fetch: false
 
-  shared:
+  gmao-shared:
     class: LocalDB
     root: /discover/nobackup/drholdaw/R2D2DataStore/Shared
     cache_fetch: false
 
 # when fetching data, in which order should the databases accessed?
 fetch_order:
-  - shared
+  - gmao-shared
 
 # when storing data, in which order should the databases accessed?
 store_order:
-  - local
+  - $(USERNAME)
 
-cache_name: local
+cache_name: $(USERNAME)

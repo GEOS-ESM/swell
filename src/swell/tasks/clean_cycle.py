@@ -37,8 +37,14 @@ class CleanCycle(taskBase):
             os.chdir(cycle_dir)
             # Remove all specified files
             for pattern in clean_list:
-                for file_to_delete in glob.glob(pattern):
-                    os.remove(file_to_delete)
+                if pattern == '*':
+                   continue
+                path_parts = os.path.split(pattern)
+                if path_parts[1] == '*':
+                   continue
+                else:
+                    for file_to_delete in glob.glob(path_parts[1]):
+                        os.remove(file_to_delete)
 
             # Save cycle_done file to cycle_dir
             filename = 'cycle_done'

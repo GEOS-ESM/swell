@@ -14,6 +14,7 @@ import yaml
 from swell.install_path import swell_install_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
+from swell.utilities.string_utils import replace_vars
 from swell.utilities.dictionary_utilities import resolve_definitions
 from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files, \
                                            set_swell_path_in_modules, create_modules_csh
@@ -170,22 +171,27 @@ def main(config, clean):
 
     # Open the r2d2 file to dictionary
     # ------------------------------------
-    with open(r2d2_conf_path, 'r') as r2d2_file:
-        r2d2_conf = yaml.safe_load(r2d2_file)
+    with open(r2d2_conf_path, 'r') as r2d2_file_open:
+        #r2d2_conf = yaml.safe_load(r2d2_file)
+        r2d2_file_str = r2d2_file_open.read()
+        r2d2_file_str = replace_vars(r2d2_file_str, **experiment_dict)
+
+    with open(r2d2_conf_path, 'w') as r2d2_file_open:
+        r2d2_file_open.write(r2d2_file_str)
 
     # Extract local path variable and replace with value from config
     # --------------------------------------------------------------
-    element = r2d2_conf['databases']['local']['root']
-    element = element.replace("$", "")
-    element = element.replace("{", "")
-    element = element.replace("}", "")
+    #element = r2d2_conf['databases']['local']['root']
+    #element = element.replace("$", "")
+    #element = element.replace("{", "")
+    #element = element.replace("}", "")
 
-    r2d2_conf['databases']['local']['root'] = experiment_dict[element]
+    #r2d2_conf['databases']['local']['root'] = experiment_dict[element]
 
     # Write out the final r2d2 yaml file
     # ----------------------------------
-    with open(r2d2_conf_path, 'w') as r2d2_outfile:
-        yaml.dump(r2d2_conf, r2d2_outfile, default_flow_style=False)
+    #with open(r2d2_conf_path, 'w') as r2d2_outfile:
+    #    yaml.dump(r2d2_conf, r2d2_outfile, default_flow_style=False)
 
     # Write out launch command for convenience
     # ----------------------------------------
