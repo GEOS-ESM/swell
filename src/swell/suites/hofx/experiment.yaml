@@ -54,7 +54,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/build-intel-impi-release-fv3/
+  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/
   build options:
     - release    # release, debug, relwithdebug
   packages:
@@ -100,8 +100,8 @@ build jedi:
 STAGE:
   - copy_files:
       directories:
-        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
-        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.0/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
     link_files:
       directories:
         - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.$(horizontal_resolution).nc4, $(stage_dir)/Data/bkg/]

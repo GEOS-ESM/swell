@@ -1,0 +1,32 @@
+# This is a basic workflow to help you get started with Actions
+
+name: workflow01
+
+# Controls when the workflow will run
+on:
+  # uncomment if we decide to run tests when merging to develeop branch
+  #push:
+    ## merges to develop branch
+    #branches: [develop]
+  pull_request:
+    # pull request to develop with a label
+    types: [labeled]
+    branches: [develop]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  Run-task-workflow:
+    if: ${{ github.event.label.name == 'run-ci-discover' }}
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: run-task-workflow
+        run: |
+          source /etc/profile.d/modules.sh
+          source /discover/nobackup/jardizzo/JediOpt/install_modules
+          pip install --prefix=/discover/nobackup/jardizzo/swell/install .
