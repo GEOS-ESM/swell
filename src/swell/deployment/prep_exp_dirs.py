@@ -53,7 +53,8 @@ def copy_suite_files(logger, experiment_dict):
     # Copy suite related files to the suite directory
     # -----------------------------------------------
     suite_path = return_suite_path()
-    for s in [os.path.join(suite_name, 'jedi_config.yaml'), os.path.join(suite_name, 'flow.cylc')]:
+    for s in [os.path.join(suite_name, 'jedi_config.yaml'), os.path.join(suite_name, 'flow.cylc'),
+              os.path.join(suite_name, 'r2d2_config.yaml')]:
         src_file = os.path.split(s)[1]
         src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
         dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
