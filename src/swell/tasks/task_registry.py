@@ -13,6 +13,8 @@ valid_tasks = [
   'RunJediExecutable',
   'ObsCorrelationScatterDriver',
   'MergeIodaFiles',
+  'GetBackgroundGeosExperiment',
+  'StoreBackground',
   'CleanCycle',
-  'SaveObsDiags'
+  'SaveObsDiags',
 ]

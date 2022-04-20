@@ -52,8 +52,6 @@ class JediConfig(taskBase):
 
         sat_db_yaml_loc = os.path.join(return_configuration_path(), 'satellite_channels')
 
-        print(sat_db_yaml_loc)
-
         cycle_dt = dt.strptime(time_window, '%Y-%m-%dT%H:%M:%SZ')
 
         if update_channels:

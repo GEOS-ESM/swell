@@ -8,7 +8,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc 8 suite for executing JEDI-based 4D h(x)
+# Cylc suite for executing JEDI-based 4D h(x)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@
         T00,T06,T12,T18 = """
                           GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
                           => RunJediExecutable => MergeObsDiags =>
-                          ObsCorrelationScatterDriver & SaveObsDiags => CleanCycle
+                          ObsCorrelationScatterDriver #& SaveObsDiags => CleanCycle
                           #CleanCycle[-PT6H] => CleanCycle
                           """
 
