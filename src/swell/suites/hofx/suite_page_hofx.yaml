@@ -1,0 +1,5 @@
+elements:
+  - name: Experiment ID
+    widget type: entry
+    default: ''
+    yaml key: experiment_id
