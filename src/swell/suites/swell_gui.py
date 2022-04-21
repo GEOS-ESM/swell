@@ -7,6 +7,7 @@ with open('setup.yaml', 'r') as yml:
 
 # Main Application/GUI class
 
+
 class Application(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
@@ -30,9 +31,9 @@ class Application(tk.Frame):
     def send_to_file(self):
         for entry in self.entries:
             field = entry[0]
-            text  = entry[1].get()
+            text = entry[1].get()
             print('%s: "%s"' % (field, text))
-            
+
     def check_widget_type(self, widget):
         self.widget = widget['name']
         if widget['widget type'] == 'entry':
@@ -49,10 +50,8 @@ class Application(tk.Frame):
             lab.pack(side=tk.LEFT)
             ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
             self.entries.append((entry, ent))
-        
-        
-    
-            
+
+
 root = tk.Tk()
 app = Application(master=root)
 app.mainloop()
