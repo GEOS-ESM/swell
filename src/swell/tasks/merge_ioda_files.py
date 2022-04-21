@@ -35,10 +35,23 @@ class MergeIodaFiles(taskBase):
         for ob_config in ob_configs:
 
             # Split the full path into path and filename
-            cycle_dir, obs_file = os.path.split(ob_config['obs space']['obsdataout']['obsfile'])
+            cycle_dir, obs_file_path = os.path.split(ob_config['obs space']['obsdataout']['obsfile'])
 
             # Get instrument name
+            obs_file = os.path.split(obs_file_path)
+            obs_file_base = os.path.splitext(obs_file)[0]
+            obs_file_extn = os.path.splitext(obs_file)[1]
+
+            filenames = glob.glob(os.path.join(cycle_dir, obs_file_base + '_*.nc4'))
+
+            print()
+
             print(obs_file)
+
+            print(os.path.split(obs_file))
+
+            exit()
+
             instrument = find_instrument_from_string(obs_file, self.logger)
 
             # Log the instrument being processed
