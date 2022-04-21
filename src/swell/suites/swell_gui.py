@@ -8,6 +8,7 @@ with open('hofx/suite_page_hofx.yaml', 'r') as yml:
 
 LARGEFONT = 14
 
+
 class tkinterApp(tk.Tk):
     # __init__ function for class tkinterApp
     def __init__(self, *args, **kwargs):
@@ -16,7 +17,7 @@ class tkinterApp(tk.Tk):
 
         # creating a container
         container = tk.Frame(self)
-        container.pack(side = "top", fill = "both", expand = True)
+        container.pack(side="top", fill="both", expand=True)
 
         self.geometry("800x350")
 
@@ -27,9 +28,10 @@ class tkinterApp(tk.Tk):
         # of the different page layouts
         for F in (StartPage, Model):
             frame = F(container, self)
-            # initializing frame of that object from startpage, page1, page2 respectively with for loop
+            # initializing frame of that object from
+            # startpage, page1, page2 respectively with for loop
             self.frames[F] = frame
-            frame.grid(row = 0, column = 0, sticky ="nsew")
+            frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
 
@@ -41,15 +43,16 @@ class tkinterApp(tk.Tk):
 
 # first window frame startpage
 
+
 class StartPage(tk.Frame):
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, parent)
-		
-		# Button to go to HofX Model
-		label = ttk.Label(self, text ="Startpage", font = LARGEFONT).pack()
-		button1 = ttk.Button(self, text ="HofX",
-		command = lambda : controller.show_frame(Model)).pack()
-	
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        # Button to go to HofX Model
+        label = ttk.Label(self, text="Startpage", font=LARGEFONT).pack()
+        button1 = ttk.Button(self, text="HofX",
+                             command=lambda: controller.show_frame(Model)).pack()
+
 
 # Main Application for Model Component
 
@@ -61,17 +64,17 @@ class Model(tk.Frame):
         self.drop_down_list = []
         for widget in widget_dict['elements']:
             self.check_widget_type(widget)
-        #controller.geometry('1000x500')
+        # controller.geometry('1000x500')
         # Make entries
         self.make_entry(parent)
         # Submit Button
         submit = ttk.Button(self, text='Generate YAML', command=self.send_to_file)
         submit.pack(side=tk.LEFT, padx=5, pady=5)
         # Back Button
-        backbutton = ttk.Button(self, text = "Back", command = lambda : controller.show_frame(StartPage))
+        backbutton = ttk.Button(self, text="Back", command=lambda: controller.show_frame(StartPage))
         backbutton.pack(side=tk.LEFT, padx=5, pady=5)
-        #quit = tk.Button(self, text='Quit', command=self.quit)
-        #quit.pack(side=tk.LEFT, padx=5, pady=5)
+        # quit = tk.Button(self, text='Quit', command=self.quit)
+        # quit.pack(side=tk.LEFT, padx=5, pady=5)
 
     def send_to_file(self):
         for entry in self.entries:
@@ -85,11 +88,11 @@ class Model(tk.Frame):
             self.entry_list.append(self.widget)
 
     def make_entry(self):
-        self.entries = [] # Move this up and make a master list of all widget values/selections
+        self.entries = []  # Move this up and make a master list of all widget values/selections
         for entry in self.entry_list:
             row = tk.Frame(self)
             lab = tk.Label(row, width=15, text=entry, anchor='w')
-            ent = tk.Entry(row, textvariable = tk.StringVar())
+            ent = tk.Entry(row, textvariable=tk.StringVar())
             row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
             lab.pack(side=tk.LEFT)
             ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
@@ -99,4 +102,3 @@ class Model(tk.Frame):
 # Driver Code
 app = tkinterApp()
 app.mainloop()
-
