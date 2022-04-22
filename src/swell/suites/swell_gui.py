@@ -10,7 +10,7 @@ LARGEFONT = 14
 
 
 class tkinterApp(tk.Tk):
-    # __init__ function for class tkinterApp
+
     def __init__(self, *args, **kwargs):
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
@@ -55,48 +55,67 @@ class StartPage(tk.Frame):
 
 
 # Main Application for Model Component
-
 class Model(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        # Create widgets/grid
-        self.entry_list = []
-        self.drop_down_list = []
+        self.widget_inputs = []
         for widget in widget_dict['elements']:
             self.check_widget_type(widget)
-        # controller.geometry('1000x500')
-        # Make entries
-        self.make_entry()
+
         # Submit Button
         submit = ttk.Button(self, text='Generate YAML', command=self.send_to_file)
         submit.pack(side=tk.LEFT, padx=5, pady=5)
         # Back Button
         backbutton = ttk.Button(self, text="Back", command=lambda: controller.show_frame(StartPage))
         backbutton.pack(side=tk.LEFT, padx=5, pady=5)
-        # quit = tk.Button(self, text='Quit', command=self.quit)
-        # quit.pack(side=tk.LEFT, padx=5, pady=5)
 
     def send_to_file(self):
-        for entry in self.entries:
-            field = entry[0]
-            text = entry[1].get()
-            print('%s: "%s"' % (field, text))
+        for widget in self.widget_inputs:
+            field = widget[0]['name']
+            value = widget[1].get()
+            print('%s: "%s"' % (field, value))
 
     def check_widget_type(self, widget):
-        self.widget = widget['name']
+        self.widget = widget
         if widget['widget type'] == 'entry':
-            self.entry_list.append(self.widget)
+            self.make_entry()
+        elif widget['widget type'] == 'radio button':
+            self.make_radio_btn()
+        elif widget['widget type'] == 'dropdown':
+            self.make_dropdown()
+        else:
+            print('Widget not defined')
 
     def make_entry(self):
-        self.entries = []  # Move this up and make a master list of all widget values/selections
-        for entry in self.entry_list:
-            row = tk.Frame(self)
-            lab = tk.Label(row, width=15, text=entry, anchor='w')
-            ent = tk.Entry(row, textvariable=tk.StringVar())
-            row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-            lab.pack(side=tk.LEFT)
-            ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
-            self.entries.append((entry, ent))
+        row = tk.Frame(self)
+        lab = tk.Label(row, width=15, text=self.widget['name'], anchor='w')
+        ent = tk.Entry(row)
+        row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        lab.pack(side=tk.LEFT)
+        ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
+        self.widget_inputs.append((self.widget, ent))
+
+    def make_radio_btn(self):
+        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
+        v = tk.IntVar()
+        v.set(1)
+        options = self.widget['options']
+        for option in options:
+            tk.Radiobutton(self,
+                           text=option['name'],
+                           padx=20,
+                           variable=v,
+                           value=option['value']).pack(anchor=tk.W)
+
+        self.widget_inputs.append((self.widget, v))
+
+    def make_dropdown(self):
+        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
+
+        clicked = tk.StringVar()
+        clicked.set(self.widget['options'][0])
+        tk.OptionMenu(self, clicked, *self.widget['options']).pack()
+        self.widget_inputs.append((self.widget, clicked))
 
 
 # Driver Code
