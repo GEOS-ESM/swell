@@ -133,6 +133,7 @@ class Model(tk.Frame):
             w.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
             self.widget_inputs.append((self.widget, w))
 
+
 # Driver Code
 app = tkinterApp()
 app.mainloop()
