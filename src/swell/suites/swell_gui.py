@@ -19,6 +19,7 @@ class Application(tk.Frame):
         self.entry_list = []
         self.dropdown_list = []
         self.radio_btn_list = []
+        self.check_btn_list = []
         for widget in widget_dict['elements']:
             self.check_widget_type(widget)
         # Make entries
@@ -27,6 +28,8 @@ class Application(tk.Frame):
         self.make_radio_btns()
         # Make drop downs
         self.make_dropdowns()
+        # Make check buttons
+        self.make_check_btns()
 
         # Create Final Buttons
         b1 = tk.Button(root, text='Generate YAML', command=self.send_to_file)
@@ -56,6 +59,8 @@ class Application(tk.Frame):
             self.radio_btn_list.append(self.widget)
         elif widget['widget type'] == 'dropdown':
             self.dropdown_list.append(self.widget)
+        elif widget['widget type'] == 'check button':
+            self.check_btn_list.append(self.widget)
         else:
             print('Widget not defined')
 
@@ -103,6 +108,9 @@ class Application(tk.Frame):
             tk.OptionMenu(root , clicked , *dropdown['options']).pack()
 
             self.dropdowns.append((dropdown['name'], clicked))
+
+    def make_check_btns(self):
+        self.check_btns = []
 
 
 
