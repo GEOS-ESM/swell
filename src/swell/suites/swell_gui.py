@@ -83,6 +83,8 @@ class Model(tk.Frame):
             self.make_radio_btn()
         elif widget['widget type'] == 'dropdown':
             self.make_dropdown()
+        elif widget['widget type'] == 'check button':
+            self.make_check_button()
         else:
             print('Widget not defined')
 
@@ -116,6 +118,20 @@ class Model(tk.Frame):
         clicked.set(self.widget['options'][0])
         tk.OptionMenu(self, clicked, *self.widget['options']).pack()
         self.widget_inputs.append((self.widget, clicked))
+
+    def make_check_button(self):
+
+        name = self.widget.get('name', '')
+        options = self.widget.get('options', [])
+
+        tk.Label(self, width=15, text=name, anchor='w')
+
+        for option in options:
+            v = tk.IntVar()
+            v.set(1)
+            w = tk.Checkbutton(self, text=option, variable=v)
+            w.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+            self.widget_inputs.append((self.widget, w))
 
 
 # Driver Code
