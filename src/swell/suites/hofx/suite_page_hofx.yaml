@@ -40,7 +40,11 @@ elements:
   - name: Select satellite channels from database?
     key: update channels from database
     widget type: radio button
-    options: ['Yes', 'No']
+    options:
+        - name: 'No'
+          value: 1
+        - name: 'Yes'
+          value: 2
   - name: Observation operators
     key: OBSERVATIONS
     widget type: check button
