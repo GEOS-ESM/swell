@@ -19,7 +19,7 @@ class tkinterApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
-        self.geometry("800x350")
+        self.geometry("600x500")
 
         # initializing frames to an empty array
         self.frames = {}
@@ -66,7 +66,7 @@ class Model(tk.Frame):
             self.check_widget_type(widget)
         # controller.geometry('1000x500')
         # Make entries
-        self.make_entry(parent)
+        self.make_entry()
         # Submit Button
         submit = ttk.Button(self, text='Generate YAML', command=self.send_to_file)
         submit.pack(side=tk.LEFT, padx=5, pady=5)
