@@ -8,8 +8,9 @@ with open('hofx/suite_page_hofx.yaml', 'r') as yml:
 
 LARGEFONT = 14
 
+
 class tkinterApp(tk.Tk):
-    # __init__ function for class tkinterApp
+
     def __init__(self, *args, **kwargs):
         # __init__ function for class Tk
         tk.Tk.__init__(self, *args, **kwargs)
@@ -52,8 +53,8 @@ class StartPage(tk.Frame):
         button1 = ttk.Button(self, text="HofX",
                              command=lambda: controller.show_frame(Model)).pack()
 
-# Main Application for Model Component
 
+# Main Application for Model Component
 class Model(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -95,32 +96,25 @@ class Model(tk.Frame):
         self.widget_inputs.append((self.widget, ent))
 
     def make_radio_btn(self):
-        tk.Label(self,
-            text=self.widget['name'],
-            justify = tk.LEFT,
-            padx = 5).pack()
+        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
         v = tk.IntVar()
         v.set(1)
         options = self.widget['options']
         for option in options:
             tk.Radiobutton(self,
-                text=option['name'],
-                padx = 20,
-                variable=v,
-                value=option['value']).pack(anchor=tk.W)
+                           text=option['name'],
+                           padx=20,
+                           variable=v,
+                           value=option['value']).pack(anchor=tk.W)
 
         self.widget_inputs.append((self.widget, v))
 
-
     def make_dropdown(self):
-        tk.Label(self,
-            text=self.widget['name'],
-            justify = tk.LEFT,
-            padx = 5).pack()
+        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
 
         clicked = tk.StringVar()
-        clicked.set( self.widget['options'][0] )
-        tk.OptionMenu(self, clicked , *self.widget['options']).pack()
+        clicked.set(self.widget['options'][0])
+        tk.OptionMenu(self, clicked, *self.widget['options']).pack()
         self.widget_inputs.append((self.widget, clicked))
 
 
