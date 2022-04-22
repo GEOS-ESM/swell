@@ -18,7 +18,7 @@ class tkinterApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
-        self.geometry("800x350")
+        self.geometry("600x500")
 
         # initializing frames to an empty array
         self.frames = {}
