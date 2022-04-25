@@ -124,14 +124,18 @@ class Model(tk.Frame):
         name = self.widget.get('name', '')
         options = self.widget.get('options', [])
 
-        tk.Label(self, width=15, text=name, anchor='w')
+        lab = tk.Label(self, text=name, justify=tk.LEFT, padx=5)
+        lab.pack(side=tk.TOP, anchor=tk.W)
 
+        vlist = []
         for option in options:
             v = tk.IntVar()
             v.set(1)
             w = tk.Checkbutton(self, text=option, variable=v)
-            w.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
-            self.widget_inputs.append((self.widget, w))
+            w.pack(side=tk.TOP, padx=5, pady=5, anchor=tk.W)
+            vlist.append(v)
+
+        self.widget_inputs.append((self.widget, vlist))
 
 
 # Driver Code
