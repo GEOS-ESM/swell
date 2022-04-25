@@ -14,6 +14,7 @@ import yaml
 from swell.install_path import swell_install_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
+from swell.utilities.string_utils import replace_vars
 from swell.utilities.dictionary_utilities import resolve_definitions
 from swell.deployment.prep_exp_dirs import add_dir_to_conf_mkdir, copy_suite_files, \
                                            set_swell_path_in_modules, create_modules_csh
@@ -57,6 +58,7 @@ def main(config, clean):
 
     # Add to dictionary
     experiment_dict.update({'experiment_dir': experiment_dir})
+    experiment_dict.update({'USERNAME': user})
 
     # Optionally clean up any existing directory
     # ------------------------------------------
@@ -114,32 +116,27 @@ def main(config, clean):
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------
     # User chosen clones
-    needed_repos = []
-    bundle_repos = experiment_dict['build jedi']['bundle repos']
-    for bundle_repo in bundle_repos:
-        if 'clone on create' in bundle_repo.keys():
-            if bundle_repo['clone on create']:
-                needed_repos.append(bundle_repo['project'])
+    if 'build jedi' in experiment_dict:
+        if 'bundle repos' in experiment_dict['build jedi']:
+            needed_repos = []
+            bundle_repos = experiment_dict['build jedi']['bundle repos']
+            for bundle_repo in bundle_repos:
+                if 'clone on create' in bundle_repo.keys():
+                    if bundle_repo['clone on create']:
+                        needed_repos.append(bundle_repo['project'])
 
-    # Add any repos from lines with 'yaml::'
-    match_string = 'yaml::'
-    config_file = open(config, 'r')
-    for line in config_file:
-        if match_string in line:
-            # Extract repo name
-            needed_repos.append(line.partition(match_string)[2].split('/')[1])
-    # Remove duplicates
-    needed_repos = list(set(needed_repos))
+            # Remove duplicates
+            needed_repos = list(set(needed_repos))
 
-    # Clone only the needed repos
-    repo_dict = experiment_dict['build jedi']['bundle repos']
-    for d in repo_dict:
-        if d['project'] in needed_repos:
-            project = d['project']
-            git_url = d['git url']
-            branch = d['branch']
-            proj_dir = os.path.join(experiment_dict['bundle_dir'], project)
-            git_got(git_url, branch, proj_dir, logger)
+            # Clone only the needed repos
+            repo_dict = experiment_dict['build jedi']['bundle repos']
+            for d in repo_dict:
+                if d['project'] in needed_repos:
+                    project = d['project']
+                    git_url = d['git url']
+                    branch = d['branch']
+                    proj_dir = os.path.join(experiment_dict['bundle_dir'], project)
+                    git_got(git_url, branch, proj_dir, logger)
 
     # Expand yaml
     # -----------
@@ -158,6 +155,24 @@ def main(config, clean):
     output_file_name = os.path.join(experiment_dict['suite_dir'], 'experiment-filled.yaml')
     with open(output_file_name, 'w') as output_file:
         yaml.dump(experiment_dict, output_file, default_flow_style=False)
+
+    # Create full path to the r2d2 config file
+    # ----------------------------------------
+    r2d2_conf_path = os.path.join(experiment_dict['suite_dir'], 'r2d2_config.yaml')
+
+    # Write R2D2_CONFIG to modules
+    # ----------------------------
+    with open(os.path.join(experiment_dict['suite_dir'], 'modules'), 'a') as module_file:
+        module_file.write('export R2D2_CONFIG={}'.format(r2d2_conf_path))
+
+    # Open the r2d2 file to dictionary
+    # ------------------------------------
+    with open(r2d2_conf_path, 'r') as r2d2_file_open:
+        r2d2_file_str = r2d2_file_open.read()
+        r2d2_file_str = replace_vars(r2d2_file_str, **experiment_dict)
+
+    with open(r2d2_conf_path, 'w') as r2d2_file_open:
+        r2d2_file_open.write(r2d2_file_str)
 
     # Write out launch command for convenience
     # ----------------------------------------
