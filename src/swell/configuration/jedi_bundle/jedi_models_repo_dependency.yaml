@@ -1,0 +1,108 @@
+# Jedi source code repos
+# ----------------------
+jedi repos:
+  crtm:
+    url: https://github.com/jcsda-internal/crtm.git
+    branch: release/crtm_jedi
+  femps:
+    url: https://github.com/jcsda/femps.git
+    branch: develop
+  fms:
+    url: https://github.com/jcsda/FMS.git
+    branch: release-stable
+  fv3:
+    url: https://github.com/jcsda/GFDL_atmos_cubed_sphere.git
+    branch: release-stable
+  fv3-jedi:
+    url: https://github.com/jcsda/fv3-jedi.git
+    branch: develop
+  fv3-jedi-lm:
+    url: https://github.com/jcsda/fv3-jedi-linearmodel.git
+    branch: develop
+  gsw:
+    url: https://github.com/jcsda-internal/GSW-Fortran.git
+    branch: develop
+  ioda:
+    url: https://github.com/jcsda/ioda.git
+    branch: develop
+  iodaconv:
+    url: https://github.com/JCSDA-internal/ioda-converters.git
+    branch: develop
+  jedicmake:
+    url: https://github.com/jcsda/jedi-cmake.git
+    branch: develop
+  mom6:
+    url: https://github.com/jcsda/MOM6.git
+    branch: main-ecbuild
+  oops:
+    url: https://github.com/jcsda/oops.git
+    branch: develop
+  saber:
+    url: https://github.com/jcsda/saber.git
+    branch: develop
+  soca:
+    url: https://github.com/jcsda/soca.git
+    branch: develop
+  ufo:
+    url: https://github.com/jcsda/ufo.git
+    branch: develop
+
+# Jedi repos containing the test data
+# -----------------------------------
+jedi test data repos:
+  ioda-data:
+     url: https://github.com/JCSDA-internal/ioda-data.git
+     branch: develop
+  ufo-data:
+     url: https://github.com/JCSDA-internal/ufo-data.git
+     branch: develop
+  fv3-jedi-data:
+     url: https://github.com/JCSDA-internal/fv3-jedi-data.git
+     branch: develop
+  saber-data:
+     url: https://github.com/JCSDA-internal/saber-data.git
+     branch: develop
+
+
+bundles:
+
+  # Atmospheric meteorology
+  # -----------------------
+  atmosphere meteorology:
+    target: fv3-jedi
+    dependencies:
+      - femps
+      - fv3-jedi-lm
+      - fv3
+      - fms
+      - ufo
+      - ioda
+      - saber
+      - oops
+      - crtm
+      - gsibclim
+      - jedicmake
+
+  # Ocean, seaice wave
+  # ------------------
+  marine:
+    target: soca
+    dependencies:
+      - mom6
+      - fms
+      - ufo
+      - ioda
+      - saber
+      - oops
+      - crtm
+      - gsw
+      - jedicmake
+
+  # IODA converters
+  # ---------------
+  ioda converters:
+    target: iodaconv
+    dependencies:
+      - ioda
+      - oops
+      - jedicmake
