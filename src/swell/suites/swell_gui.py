@@ -6,6 +6,7 @@ import yaml
 with open('hofx/suite_page_hofx.yaml', 'r') as yml:
     widget_dict = yaml.safe_load(yml)
 
+
 class tkinterApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -40,13 +41,15 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
+
 # Landing Page
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         # Button to go to HofX Model
-        label = ttk.Label(self, text="Startpage", font=controller.LARGEFONT).pack()
+        label = ttk.Label(self, text="Startpage",
+                          font=controller.LARGEFONT).pack()
         button1 = ttk.Button(self, text="HofX",
                              command=lambda: controller.show_frame(Model)).pack()
 
