@@ -6,9 +6,6 @@ import yaml
 with open('hofx/suite_page_hofx.yaml', 'r') as yml:
     widget_dict = yaml.safe_load(yml)
 
-LARGEFONT = 14
-
-
 class tkinterApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -19,7 +16,9 @@ class tkinterApp(tk.Tk):
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
+        # Set aesthetics
         self.geometry("600x500")
+        self.LARGEFONT = 18
 
         # initializing frames to an empty array
         self.frames = {}
@@ -41,15 +40,13 @@ class tkinterApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-# first window frame startpage
-
-
+# Landing Page
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
         # Button to go to HofX Model
-        label = ttk.Label(self, text="Startpage", font=LARGEFONT).pack()
+        label = ttk.Label(self, text="Startpage", font=controller.LARGEFONT).pack()
         button1 = ttk.Button(self, text="HofX",
                              command=lambda: controller.show_frame(Model)).pack()
 
@@ -70,10 +67,13 @@ class Model(tk.Frame):
         backbutton.pack(side=tk.LEFT, padx=5, pady=5)
 
     def send_to_file(self):
+        yaml_dict = {}
         for widget in self.widget_inputs:
             field = widget[0]['name']
             value = widget[1].get()
-            print('%s: "%s"' % (field, value))
+            yaml_dict[field] = value
+        with open('gui_experiment.yaml', 'w') as outfile:
+            yaml.dump(yaml_dict, outfile, default_flow_style=False)
 
     def check_widget_type(self, widget):
         self.widget = widget
@@ -88,7 +88,7 @@ class Model(tk.Frame):
 
     def make_entry(self):
         row = tk.Frame(self)
-        lab = tk.Label(row, width=15, text=self.widget['name'], anchor='w')
+        lab = tk.Label(row, width=20, text=self.widget['name'], anchor='w')
         ent = tk.Entry(row)
         row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
         lab.pack(side=tk.LEFT)
@@ -111,7 +111,6 @@ class Model(tk.Frame):
 
     def make_dropdown(self):
         tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
-
         clicked = tk.StringVar()
         clicked.set(self.widget['options'][0])
         tk.OptionMenu(self, clicked, *self.widget['options']).pack()
