@@ -33,6 +33,3 @@ obs bias:
     - name: scan_angle
       order: 2
     - name: scan_angle
-  obs filters:
-  - filter: GOMsaver
-    filename: $(cycle_dir)/$(experiment_id).amsua_n19.geovals.{{window_begin}}.nc4

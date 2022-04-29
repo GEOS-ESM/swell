@@ -10,8 +10,10 @@
 
 from swell.tasks.base.task_base import taskBase
 from swell.configuration.configuration import return_configuration_path
+from swell.utilities.observations import find_instrument_from_string
 from swell.utilities.sat_db_utils import run_sat_db_process
 
+import copy
 import os
 import re
 import yaml
@@ -139,6 +141,27 @@ class JediConfig(taskBase):
                         self.logger.info('sat {} and instr {} are not in the sat database'.
                                          format(sat, instr))
                         continue
+
+        # Add section for saving the GeoVaLs if necessary
+        # -----------------------------------------------
+        save_geovals = self.config.get("save_geovals", False)
+        if save_geovals:
+            save_geovals_dict = {}
+            save_geovals_dict['filter'] = 'GOMsaver'
+
+            for ob in obs:
+                # Extract normal output filename
+                cycle_dir, obs_file = os.path.split(ob['obs space']['obsdataout']['obsfile'])
+                # Append instrument name with geovals
+                instrument = find_instrument_from_string(obs_file, self.logger)
+                geovals_file = obs_file.replace(instrument, instrument+'.geovals')
+                # Update the filter dictionary
+                save_geovals_dict['filename'] = os.path.join(cycle_dir, geovals_file)
+                # Extract filters and append
+                filters = ob.get('obs filters', [])
+                filters.append(save_geovals_dict)
+                # Put dictionary into the filter config
+                ob['obs filters'] = copy.deepcopy(filters)
 
         # Set full path to the templated config file
         # ------------------------------------------
