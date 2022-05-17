@@ -18,7 +18,8 @@ class tkinterApp(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
 
         # Set aesthetics
-        self.geometry("500x700")
+
+        self.geometry("600x500")
         self.LARGEFONT = 18
 
         # initializing frames to an empty array
