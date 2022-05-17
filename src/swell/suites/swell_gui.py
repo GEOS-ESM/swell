@@ -18,6 +18,7 @@ class tkinterApp(tk.Tk):
         container.pack(side="top", fill="both", expand=True)
 
         # Set aesthetics
+
         self.geometry("600x500")
         self.LARGEFONT = 18
 
@@ -51,7 +52,8 @@ class StartPage(tk.Frame):
         label = ttk.Label(self, text="Startpage",
                           font=controller.LARGEFONT).pack()
         button1 = ttk.Button(self, text="HofX",
-                             command=lambda: controller.show_frame(Model)).pack()
+                             command=lambda:
+                             controller.show_frame(Model)).pack()
 
 
 # Main Application for Model Component
@@ -63,20 +65,29 @@ class Model(tk.Frame):
             self.check_widget_type(widget)
 
         # Submit Button
-        submit = ttk.Button(self, text='Generate YAML', command=self.send_to_file)
+        submit = ttk.Button(self, text='Generate YAML',
+                            command=self.send_to_file)
         submit.pack(side=tk.LEFT, padx=5, pady=5)
         # Back Button
-        backbutton = ttk.Button(self, text="Back", command=lambda: controller.show_frame(StartPage))
+        backbutton = ttk.Button(self, text="Back",
+                                command=lambda:
+                                controller.show_frame(StartPage))
         backbutton.pack(side=tk.LEFT, padx=5, pady=5)
 
     def send_to_file(self):
-        yaml_dict = {}
+        self.yaml_dict = {}
+        self.cb_dict = {}
         for widget in self.widget_inputs:
             field = widget[0]['name']
-            value = widget[1].get()
-            yaml_dict[field] = value
+            if widget[0]['widget type'] == 'check button':
+                self.check_checks(widget)
+                value = self.cb_dict
+            else:
+                value = widget[1].get()
+                self.yaml_dict[field] = value
+            self.yaml_dict[field] = value
         with open('gui_experiment.yaml', 'w') as outfile:
-            yaml.dump(yaml_dict, outfile, default_flow_style=False)
+            yaml.dump(self.yaml_dict, outfile, default_flow_style=False)
 
     def check_widget_type(self, widget):
         self.widget = widget
@@ -101,7 +112,8 @@ class Model(tk.Frame):
         self.widget_inputs.append((self.widget, ent))
 
     def make_radio_btn(self):
-        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
+        tk.Label(self, text=self.widget['name'],
+                 justify=tk.LEFT, padx=5).pack()
         v = tk.IntVar()
         v.set(1)
         options = self.widget['options']
@@ -115,7 +127,8 @@ class Model(tk.Frame):
         self.widget_inputs.append((self.widget, v))
 
     def make_dropdown(self):
-        tk.Label(self, text=self.widget['name'], justify=tk.LEFT, padx=5).pack()
+        tk.Label(self, text=self.widget['name'],
+                 justify=tk.LEFT, padx=5).pack()
         clicked = tk.StringVar()
         clicked.set(self.widget['options'][0])
         tk.OptionMenu(self, clicked, *self.widget['options']).pack()
@@ -138,6 +151,10 @@ class Model(tk.Frame):
             vlist.append(v)
 
         self.widget_inputs.append((self.widget, vlist))
+
+    def check_checks(self, check_button):
+        for i, opt in enumerate(check_button[0]['options']):
+            self.cb_dict[opt] = check_button[1][i].get()
 
 
 # Driver Code
