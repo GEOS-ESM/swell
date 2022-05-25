@@ -1,6 +1,6 @@
 # Experiment name and location
-experiment_id: x0044-jedi
-experiment_root: /discover/nobackup/${USER}/JediExperiments/
+experiment_id: swell-experiment
+experiment_root: /discover/nobackup/${USER}/SwellExperiments/
 
 # suite and executable
 executable: fv3jedi_hofx.x
