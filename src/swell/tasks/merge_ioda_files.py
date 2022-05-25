@@ -42,11 +42,10 @@ class MergeIodaFiles(taskBase):
             config = yaml.safe_load(jedi_config_string)
 
         # Dictionary with observation config
-        ob_configs = config.get('observations')
-
+        observers = config['observations']['observers']
 
         # Loop over observations
-        for ob_config in ob_configs:
+        for observer in observers:
 
             # Dataset to hold the concatenated files for both observations and geovals
             ds_all = xr.Dataset()
@@ -60,14 +59,14 @@ class MergeIodaFiles(taskBase):
             data_to_write = False
 
             # Split the full obs output path into path and filename
-            cycle_dir, obs_file = os.path.split(ob_config['obs space']['obsdataout']['obsfile'])
+            cycle_dir, obs_file = os.path.split(observer['obs space']['obsdataout']['obsfile'])
 
             # Read in the observation output files if the pool is larger than 1
             # -----------------------------------------------------------------
 
             # Check IO pool and skip merge if ioda output a single file
             try:
-                max_pool_size = 1 #ob_config['obs space']['io pool']['max pool size']
+                max_pool_size = observer['obs space']['io pool']['max pool size']
             except Exception:
                 max_pool_size = None
 
@@ -108,7 +107,7 @@ class MergeIodaFiles(taskBase):
                         if 'nlocs' in coord_name:
                             nlocs_final = nlocs_start + len(nds[coord_name][:].data)
                             coord_data_dict[coord_name] = range(nlocs_start, nlocs_final)
-                            nlocs_start = nlocs_final + 1
+                            nlocs_start = nlocs_final
 
                         # Set nvars to integer
                         if 'nvars' in coord_name:
@@ -163,7 +162,7 @@ class MergeIodaFiles(taskBase):
             if save_geovals:
 
                 # Loop over filters, find geoval saver and extract filename
-                for obs_filter in ob_config['obs filters']:
+                for obs_filter in observer['obs filters']:
                     if obs_filter['filter'] == 'GOMsaver':
                         cycle_dir, geovals_file = os.path.split(obs_filter['filename'])
                         break
@@ -199,7 +198,7 @@ class MergeIodaFiles(taskBase):
                             if 'nlocs' in dim:
                                 nlocs_final = nlocs_start + ds_geovals.dims[dim]
                                 coord_data_dict[dim] = range(nlocs_start, nlocs_final)
-                                nlocs_start = nlocs_final + 1
+                                nlocs_start = nlocs_final
 
                         ds_geovals = ds_geovals.assign_coords(coords=coord_data_dict)
 
@@ -260,18 +259,9 @@ class MergeIodaFiles(taskBase):
 
                 # Loop over datavars
                 # ------------------
-                ds_all_data_vars = list(ds_all.data_vars)
-
-                print(len(ds_all_data_vars), len(units))
-
-                for n in range(len(ds_all_data_vars)):
-                    data_var = ds_all_data_vars[n]
-                    data_var_array = ds_all[data_var]
-                    type = str(data_var_array.dtype)
-                    nctype = type_dict[type]
-                    coord_array = list(data_var_array.coords)
-                    if 'nchans' in coord_array:
-                        coord_array.reverse()  # TODO: this seems hacky. Is there a better way?
+                for n, data_var in enumerate(list(ds_all.data_vars)):
+                    nctype = type_dict[str(ds_all[data_var].dtype)]
+                    coord_array = list(ds_all[data_var].coords)
                     cor_val = ncfile.createVariable(data_var, nctype, (coord_array))
                     if len(coord_array) == 1:
                         cor_val[:] = ds_all[data_var].values

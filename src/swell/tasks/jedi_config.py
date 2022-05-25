@@ -34,6 +34,27 @@ def ranges(i):
 
 class JediConfig(taskBase):
 
+    def replace_jedi_conf(self, jedi_config):
+
+        # Loop over dictionary and replace if element_template is a dictionary
+        for key, element_template in jedi_config.items():
+            if isinstance(element_template, dict):
+                self.replace_jedi_conf(element_template)
+            else:
+                # Strip special characters from element
+                element = copy.deepcopy(element_template)
+                element = element.replace("$", "")
+                element = element.replace("{", "")
+                element = element.replace("}", "")
+
+                try:
+                    # Replace with element from filled config
+                    #element_template = self.config.get(element)
+                    jedi_config[key] = self.config.get(element)
+                except KeyError:
+                    # If element not in experiment config remove
+                    del element_template
+
     def execute(self):
 
         """Generates the yaml configuration needed to run the JEDI executable.
@@ -174,16 +195,7 @@ class JediConfig(taskBase):
 
         # Loop over the dictionary and replace elements
         # ---------------------------------------------
-        for key in jedi_conf:
-
-            # Strip special characters from element
-            element = jedi_conf[key]
-            element = element.replace("$", "")
-            element = element.replace("{", "")
-            element = element.replace("}", "")
-
-            # Replace with element from filled config
-            jedi_conf[key] = self.config.get(element)
+        self.replace_jedi_conf(jedi_conf)
 
         # Remove some keys that do not pass yaml validation
         # -------------------------------------------------

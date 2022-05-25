@@ -67,7 +67,7 @@ class DeployWorkflow():
 
         # Launch the job monitor
         self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
-        self.logger.info('TUI can be relaunched with:'')
+        self.logger.info('TUI can be relaunched with:')
         self.logger.info('  cylc tui ' + self.experiment_name)
         subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
