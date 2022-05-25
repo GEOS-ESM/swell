@@ -49,7 +49,6 @@ class JediConfig(taskBase):
 
                 try:
                     # Replace with element from filled config
-                    #element_template = self.config.get(element)
                     jedi_config[key] = self.config.get(element)
                 except KeyError:
                     # If element not in experiment config remove
