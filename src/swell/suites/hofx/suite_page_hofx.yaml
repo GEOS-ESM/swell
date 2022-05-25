@@ -1,0 +1,51 @@
+elements:
+  - name: Experiment ID
+    key: experiment_id
+    widget type: entry
+    default: None
+  - name: Experiment Root
+    key: experiment_root
+    widget type: entry
+  - name: Compute Platform
+    key: platform
+    widget type: dropdown
+    options: [nccs_discover]
+  - name: Intital time
+    key: intial cylc point
+    widget type: entry
+  - name: Final time
+    key: final cylc point
+    widget type: entry
+  - name: Experiment that provides backgrounds
+    key:
+      backgrounds: background experiment
+    widget type: entry
+  - name: Horizontal resolution
+    key: horizontal_resolution
+    widget type: dropdown
+    options: [c12, c360]
+  - name: Number of processors in the x direction
+    key: npx_proc
+    widget type: entry
+  - name: Number of processors in the y direction
+    key: npy_proc
+    widget type: entry
+  - name: Jedi Build directory
+    key:
+      build jedi: existing build directory
+    widget type: entry
+  - name: Observation provider
+    key: obs_experiment
+    widget type: entry
+  - name: Select satellite channels from database?
+    key: update channels from database
+    widget type: radio button
+    options:
+        - name: 'No'
+          value: 1
+        - name: 'Yes'
+          value: 2
+  - name: Observation operators
+    key: OBSERVATIONS
+    widget type: check button
+    options: [aircraft, amsua_n19]
