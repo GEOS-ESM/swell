@@ -100,7 +100,7 @@ build jedi:
 STAGE:
   - copy_files:
       directories:
-        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/fv3-jedi/test/Data/fieldsets/*, $(stage_dir)/Data/fieldsets/]
+        - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/fv3-jedi/test/Data/fieldmetadata/*, $(stage_dir)/Data/fieldmetadata/]
         - [/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/fv3-jedi/test/Data/fv3files/*, $(stage_dir)/Data/fv3files/]
     link_files:
       directories:
@@ -117,9 +117,7 @@ GEOMETRY:
   npx: $(npx)
   npy: $(npy)
   npz: $(npz)
-  fieldsets:
-    - fieldset: '$(stage_dir)/Data/fieldsets/dynamics.yaml'
-    - fieldset: '$(stage_dir)/Data/fieldsets/ufo.yaml'
+  field metadata override: '$(stage_dir)/Data/fieldmetadata/geos.yaml'
 
 # JEDI Background
 # ---------------
@@ -150,6 +148,13 @@ MODEL:
                     bstar,zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,stype,vfrac,sheleg,
                     ts,soilt,soilm,u10m,v10m]
 
+# Variable change between model and GeoVars
+# -----------------------------------------
+MODELGETVALUES:
+  get values:
+    variable change:
+      variable change name: Model2GeoVaLs
+
 # R2D2 schema
 # -----------
 R2D2_LOCAL_PATH: /discover/nobackup/${USER}/R2D2DataStore/Local/
@@ -178,6 +183,8 @@ obs_experiment: x0044
 update channels from database: false
 use geos satellite channel database: true
 crtm_coeff_dir: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
+save_geovals: true
+time_interpolation: linear  # linear or nearest
 
 OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/aircraft.yaml

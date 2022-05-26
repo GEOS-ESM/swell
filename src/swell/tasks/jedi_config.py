@@ -10,8 +10,10 @@
 
 from swell.tasks.base.task_base import taskBase
 from swell.configuration.configuration import return_configuration_path
+from swell.utilities.observations import find_instrument_from_string
 from swell.utilities.sat_db_utils import run_sat_db_process
 
+import copy
 import os
 import re
 import yaml
@@ -31,6 +33,26 @@ def ranges(i):
 
 
 class JediConfig(taskBase):
+
+    def replace_jedi_conf(self, jedi_config):
+
+        # Loop over dictionary and replace if element_template is a dictionary
+        for key, element_template in jedi_config.items():
+            if isinstance(element_template, dict):
+                self.replace_jedi_conf(element_template)
+            else:
+                # Strip special characters from element
+                element = copy.deepcopy(element_template)
+                element = element.replace("$", "")
+                element = element.replace("{", "")
+                element = element.replace("}", "")
+
+                try:
+                    # Replace with element from filled config
+                    jedi_config[key] = self.config.get(element)
+                except KeyError:
+                    # If element not in experiment config remove
+                    del element_template
 
     def execute(self):
 
@@ -140,6 +162,27 @@ class JediConfig(taskBase):
                                          format(sat, instr))
                         continue
 
+        # Add section for saving the GeoVaLs if necessary
+        # -----------------------------------------------
+        save_geovals = self.config.get("save_geovals", False)
+        if save_geovals:
+            save_geovals_dict = {}
+            save_geovals_dict['filter'] = 'GOMsaver'
+
+            for ob in obs:
+                # Extract normal output filename
+                cycle_dir, obs_file = os.path.split(ob['obs space']['obsdataout']['obsfile'])
+                # Append instrument name with geovals
+                instrument = find_instrument_from_string(obs_file, self.logger)
+                geovals_file = obs_file.replace(instrument, instrument+'.geovals')
+                # Update the filter dictionary
+                save_geovals_dict['filename'] = os.path.join(cycle_dir, geovals_file)
+                # Extract filters and append
+                filters = ob.get('obs filters', [])
+                filters.append(save_geovals_dict)
+                # Put dictionary into the filter config
+                ob['obs filters'] = copy.deepcopy(filters)
+
         # Set full path to the templated config file
         # ------------------------------------------
         jedi_conf_path = os.path.join(self.config.get("suite_dir"), "jedi_config.yaml")
@@ -151,16 +194,7 @@ class JediConfig(taskBase):
 
         # Loop over the dictionary and replace elements
         # ---------------------------------------------
-        for key in jedi_conf:
-
-            # Strip special characters from element
-            element = jedi_conf[key]
-            element = element.replace("$", "")
-            element = element.replace("{", "")
-            element = element.replace("}", "")
-
-            # Replace with element from filled config
-            jedi_conf[key] = self.config.get(element)
+        self.replace_jedi_conf(jedi_conf)
 
         # Remove some keys that do not pass yaml validation
         # -------------------------------------------------
