@@ -34,8 +34,7 @@
         T00,T06,T12,T18 = """
                           GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
                           => RunJediExecutable => MergeObsDiags =>
-                          ObsCorrelationScatterDriver #& SaveObsDiags => CleanCycle
-                          #CleanCycle[-PT6H] => CleanCycle
+                          ObsCorrelationScatterDriver & SaveObsDiags => CleanCycle
                           """
 
 # --------------------------------------------------------------------------------------------------

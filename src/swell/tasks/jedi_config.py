@@ -42,7 +42,7 @@ class JediConfig(taskBase):
                 self.replace_jedi_conf(element_template)
             else:
                 # Strip special characters from element
-                element = copy.deepcopy(element_template)
+                element = element_template
                 element = element.replace("$", "")
                 element = element.replace("{", "")
                 element = element.replace("}", "")
