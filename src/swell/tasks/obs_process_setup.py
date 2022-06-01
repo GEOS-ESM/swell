@@ -12,7 +12,7 @@ from datetime import datetime as dt
 import isodate
 import os
 import tarfile
-
+import glob
 from swell.tasks.base.task_base import taskBase
 
 
@@ -34,7 +34,8 @@ class ObsProcessSetup(taskBase):
 
         # Path to ioda-converters install
         # -------------------------------
-        iodabin='/discover/nobackup/drholdaw/JediOpt/src/ioda-bundle/develop/build/bin/'
+        # iodabin='/discover/nobackup/drholdaw/JediOpt/src/ioda-bundle/develop/build-gni-impi/bin/'
+        iodabin = '/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/bin/'
 
         # Current cycle time (middle of the window)
         # -----------------------------------------
@@ -59,14 +60,18 @@ class ObsProcessSetup(taskBase):
         # ------------------------
         geos_experiment  = self.config.get('geos_experiment')
         obs_dir_template = self.config.get('geos_obs_dir_template')        
+        obs_dir = current_cycle_dt.strftime(obs_dir_template)
 
         # Copy obs files to cycle directory
         # ---------------------------------
-        for filename in os.listdir(obs_dir_template + '/*ges*nc4'):
-           os.system('ln -sf ' + filename + ' ' + cycle_dir + '/' + filename)
+        for filepath in list(glob.glob(obs_dir + '/*ges*nc4')):
+           #for filename in os.listdir(obs_dir + '/*ges*nc4'):
+           #if fnmatchh.fnmatch(filename)
+           filename = os.path.basename(filepath)
+           os.system('ln -sf ' + filepath + ' ' + cycle_dir + '/' + filename)
 
         # Run proc_gsi_ncdiag
         # ---------------------------------
-        os.system('python $iodabin/proc_gsi_ncdiag.py -n 1 -o ' + out_dir + ' ' + cycle_dir)
+        os.system('python ' + iodabin + '/proc_gsi_ncdiag.py -o ' + out_dir + ' ' + cycle_dir)
 
 # --------------------------------------------------------------------------------------------------
