@@ -120,13 +120,13 @@ class MergeIodaFiles(taskBase):
                     for group in list(nds.groups):
 
                         # Open group
-                        with xr.open_dataset(filename, group=group, mask_and_scale=False) as ds_group:
+                        with xr.open_dataset(filename, group=group, mask_and_scale=False) as ds_grp:
 
                             # Read all the variables in the group
-                            for variable in list(ds_group.variables):
+                            for variable in list(ds_grp.variables):
 
                                 # Put variables into dataset named group/variable
-                                ds_obs[group+'/'+variable] = ds_group[variable]
+                                ds_obs[group+'/'+variable] = ds_grp[variable]
 
                                 # Save units, fillvalue and coordinates
                                 if ifile == 0:
@@ -283,7 +283,6 @@ class MergeIodaFiles(taskBase):
                     else:
                         self.logger.abort('In merge_ioda_files the dimension of the variable ' +
                                           'is not supported')
-
 
                 # Close file
                 ncfile.close()

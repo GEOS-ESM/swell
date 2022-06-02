@@ -50,7 +50,7 @@ def replace_vars(s, **defs):
     # Resolve special variables: $[var] (list)
     for var in re.findall(r'\$\[(\w+)\]', expr):
         if var in defs:
-            list2str = ','.join(map(str,defs[var]))
+            list2str = ','.join(map(str, defs[var]))
             expr = re.sub(r'\$\['+var+r'\]', '['+list2str+']', expr)
 
     # Resolve defs
