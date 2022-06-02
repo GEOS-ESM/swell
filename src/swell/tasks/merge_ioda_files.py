@@ -120,7 +120,7 @@ class MergeIodaFiles(taskBase):
                     for group in list(nds.groups):
 
                         # Open group
-                        with xr.open_dataset(filename, group=group) as ds_group:
+                        with xr.open_dataset(filename, group=group, mask_and_scale=False) as ds_group:
 
                             # Read all the variables in the group
                             for variable in list(ds_group.variables):
@@ -253,6 +253,7 @@ class MergeIodaFiles(taskBase):
                 # TODO: this seems hacky. Is there a better way?
                 type_dict = {}
                 type_dict['datetime64[ns]'] = 'int64'
+                type_dict['int32'] = 'int32'
                 type_dict['float32'] = 'float32'
                 type_dict['float64'] = 'float64'
                 type_dict['object'] = str
@@ -262,7 +263,19 @@ class MergeIodaFiles(taskBase):
                 for n, data_var in enumerate(list(ds_all.data_vars)):
                     nctype = type_dict[str(ds_all[data_var].dtype)]
                     coord_array = list(ds_all[data_var].coords)
-                    cor_val = ncfile.createVariable(data_var, nctype, (coord_array))
+                    if fillvalues[n] != '':
+                        cor_val = ncfile.createVariable(data_var, nctype, (coord_array),
+                                                        fill_value=fillvalues[n])
+                    else:
+                        cor_val = ncfile.createVariable(data_var, nctype, (coord_array))
+
+                    # Write metadata
+                    if coordinates[n] != '':
+                        cor_val.coordinates = coordinates[n]
+                    if units[n] != '':
+                        cor_val.units = units[n]
+
+                    # Write data
                     if len(coord_array) == 1:
                         cor_val[:] = ds_all[data_var].values
                     elif len(coord_array) == 2:
@@ -270,13 +283,7 @@ class MergeIodaFiles(taskBase):
                     else:
                         self.logger.abort('In merge_ioda_files the dimension of the variable ' +
                                           'is not supported')
-                    # Write metadata
-                    if units[n] != '':
-                        cor_val.units = units[n]
-                    if coordinates[n] != '':
-                        cor_val.coordinates = coordinates[n]
-                    if fillvalues[n] != '':
-                        cor_val._fillValues = fillvalues[n]
+
 
                 # Close file
                 ncfile.close()

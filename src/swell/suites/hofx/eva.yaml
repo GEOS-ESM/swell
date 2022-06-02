@@ -1,0 +1,206 @@
+diagnostics:
+
+- data:
+    type: IodaObsSpace
+    datasets:
+
+      - name: experiment
+        filenames:
+          - ${obs_path_file}
+        channels: &channels $(channels)
+        groups:
+          - name: ObsValue
+            variables: &variables $[simulated_variables]
+          - name: GsiHofXBc
+          - name: GsiEffectiveQC
+          - name: hofx
+          - name: EffectiveQC
+          - name: MetaData
+
+  transforms:
+
+    # Generate omb for GSI
+    - transform: arithmetic
+      new name: experiment::ObsValueMinusGsiHofXBc::${variable}
+      equals: experiment::ObsValue::${variable}-experiment::GsiHofXBc::${variable}
+      for:
+        variable: *variables
+
+    # Generate omb for JEDI
+    - transform: arithmetic
+      new name: experiment::ObsValueMinusHofx::${variable}
+      equals: experiment::ObsValue::${variable}-experiment::hofx::${variable}
+      for:
+        variable: *variables
+
+    # Generate hofx that passed QC for JEDI
+    - transform: accept where
+      new name: experiment::hofxPassedQc::${variable}
+      starting field: experiment::hofx::${variable}
+      where:
+        - experiment::EffectiveQC::${variable} == 0
+      for:
+        variable: *variables
+
+    # Generate GSI hofx that passed JEDI QC
+    - transform: accept where
+      new name: experiment::GsiHofXBcPassedQc::${variable}
+      starting field: experiment::GsiHofXBc::${variable}
+      where:
+        - experiment::EffectiveQC::${variable} == 0
+      for:
+        variable: *variables
+
+    # Generate omb that passed QC for JEDI
+    - transform: accept where
+      new name: experiment::ObsValueMinushofxPassedQc::${variable}
+      starting field: experiment::ObsValueMinusHofx::${variable}
+      where:
+        - experiment::EffectiveQC::${variable} == 0
+      for:
+        variable: *variables
+
+    # Generate omb that passed QC for GSI
+    - transform: accept where
+      new name: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+      starting field: experiment::ObsValueMinusGsiHofXBc::${variable}
+      where:
+        - experiment::EffectiveQC::${variable} == 0
+      for:
+        variable: *variables
+
+  graphics:
+
+    # JEDI h(x) vs Observations
+    # -------------------------
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      figure:
+        layout: [1,1]
+        title: 'Observations vs. JEDI h(x) | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/jedi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
+      plots:
+        - add_xlabel: 'Observation Value'
+          add_ylabel: 'JEDI h(x)'
+          add_grid:
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Scatter
+            comparison:
+             - experiment::ObsValue::${variable}
+             - experiment::hofx::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'black'
+            label: 'JEDI h(x) versus obs (all obs)'
+          - type: Scatter
+            comparison:
+             - experiment::ObsValue::${variable}
+             - experiment::hofxPassedQc::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'red'
+            label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+
+    # GSI h(x) vs Observations
+    # -------------------------
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      figure:
+        layout: [1,1]
+        title: 'Observations vs. GSI h(x) | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
+      plots:
+        - add_xlabel: 'Observation Value'
+          add_ylabel: 'GSI h(x)'
+          add_grid:
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Scatter
+            comparison:
+             - experiment::ObsValue::${variable}
+             - experiment::GsiHofXBc::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'black'
+            label: 'GSI h(x) versus obs (all obs)'
+          - type: Scatter
+            comparison:
+             - experiment::ObsValue::${variable}
+             - experiment::GsiHofXBcPassedQc::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'red'
+            label: 'GSI h(x) versus obs (passed QC in JEDI)'
+
+    # JEDI h(x) vs GSI h(x)
+    # ---------------------
+
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      figure:
+        layout: [1,1]
+        title: 'JEDI h(x) vs. GSI h(x) | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_hofx_vs_jedi_hofx_$(instrument)_${variable}${channel}.png
+      plots:
+        - add_xlabel: 'GSI h(x)'
+          add_ylabel: 'JEDI h(x)'
+          add_grid:
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Scatter
+            comparison:
+             - experiment::GsiHofXBc::${variable}
+             - experiment::hofx::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'black'
+            label: 'JEDI h(x) versus GSI h(x)'
+          - type: Scatter
+            comparison:
+             - experiment::GsiHofXBcPassedQc::${variable}
+             - experiment::hofxPassedQc::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'red'
+            label: 'JEDI h(x) versus GSI h(x) (passed QC in JEDI)'
+
+    # JEDI omb vs GSI omb
+    # ---------------------
+
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      figure:
+        layout: [1,1]
+        title: 'JEDI omb vs. GSI omb| $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_omb_vs_jedi_omb_$(instrument)_${variable}${channel}.png
+      plots:
+        - add_xlabel: 'GSI observation minus h(x)'
+          add_ylabel: 'JEDI observation minus h(x)'
+          add_grid:
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Scatter
+            comparison:
+             - experiment::ObsValueMinusGsiHofXBc::${variable}
+             - experiment::ObsValueMinusHofx::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'black'
+            label: 'GSI omb vs JEDI omb (all obs)'
+          - type: Scatter
+            comparison:
+             - experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+             - experiment::ObsValueMinushofxPassedQc::${variable}
+            channel: ${channel}
+            markersize: 5
+            color: 'red'
+            label: 'GSI omb vs JEDI omb (passed QC in JEDI)'

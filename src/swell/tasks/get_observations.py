@@ -8,6 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
+
 from swell.tasks.base.task_base import taskBase
 from r2d2 import fetch
 
@@ -58,6 +60,9 @@ class GetObservations(taskBase):
                   type='ob',
                   experiment=experiment)
 
+            # Change permission
+            os.chmod(target_file, 0o644)
+
             # Fetch bias correction files
             # ---------------------------
             if 'obs bias' not in ob:
@@ -75,6 +80,9 @@ class GetObservations(taskBase):
                   experiment=experiment,
                   file_type='satbias')
 
+            # Change permission
+            os.chmod(target_file, 0o644)
+
             # Tlapse
             for target_file in self.get_tlapse_files(ob):
 
@@ -87,6 +95,9 @@ class GetObservations(taskBase):
                       type='bc',
                       experiment=experiment,
                       file_type='tlapse')
+
+                # Change permission
+                os.chmod(target_file, 0o644)
 
     # ----------------------------------------------------------------------------------------------
 

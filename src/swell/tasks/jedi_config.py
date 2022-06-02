@@ -183,6 +183,23 @@ class JediConfig(taskBase):
                 # Put dictionary into the filter config
                 ob['obs filters'] = copy.deepcopy(filters)
 
+        # Add section for time interpolation
+        # ----------------------------------
+        time_interpolation_type = 'nearest'
+        window_type = self.config.get('window_type', '4D')
+        if window_type == '4D':
+            time_interpolation_type = 'linear'
+
+            # User can override the window guided behavior (if 4D)
+            time_interpolation_type = self.config.get('time_interpolation', time_interpolation_type)
+
+        get_values_dict = {}
+        get_values_dict['time interpolation'] = time_interpolation_type
+
+        # Add to obs operator config
+        for ob in obs:
+            ob['get values'] = get_values_dict
+
         # Set full path to the templated config file
         # ------------------------------------------
         jedi_conf_path = os.path.join(self.config.get("suite_dir"), "jedi_config.yaml")
