@@ -37,6 +37,7 @@ setuptools.setup(
         'pycodestyle>=2.8.0',
         'pandas>=1.1.3',
         'isodate>=0.5.4',
+        'xarray>=0.11.3',
     ],
     package_data={
         '': [

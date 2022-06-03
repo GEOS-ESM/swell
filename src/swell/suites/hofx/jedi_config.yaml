@@ -8,4 +8,7 @@ model:
 initial condition:
   '{{BACKGROUND}}'
 observations:
-  ${OBSERVATIONS}
+  get values:
+    ${MODELGETVALUES}
+  observers:
+    ${OBSERVATIONS}
