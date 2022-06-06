@@ -262,7 +262,7 @@ class MergeIodaFiles(taskBase):
                 # ------------------
                 for n, data_var in enumerate(list(ds_all.data_vars)):
                     nctype = type_dict[str(ds_all[data_var].dtype)]
-                    coord_array = list(ds_all[data_var].coords)
+                    coord_array = list(ds_all[data_var].sizes)
                     if fillvalues[n] != '':
                         cor_val = ncfile.createVariable(data_var, nctype, (coord_array),
                                                         fill_value=fillvalues[n])
