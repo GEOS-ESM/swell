@@ -105,13 +105,15 @@ def remove_matching_keys(d, key):
 
         d.pop(key, None)
 
-        for k,v in iter(d.items()):
-            if not isinstance(v, Hashable): remove_matching_keys(v, key)
+        for k, v in iter(d.items()):
+            if not isinstance(v, Hashable):
+                remove_matching_keys(v, key)
 
     elif isinstance(d, list):
 
         for v in d:
-            if not isinstance(v, Hashable): remove_matching_keys(v, key)
+            if not isinstance(v, Hashable):
+                remove_matching_keys(v, key)
 
 
 # --------------------------------------------------------------------------------------------------
