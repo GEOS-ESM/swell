@@ -10,6 +10,7 @@
 import re
 import string
 import yaml
+from collections.abc import Hashable
 
 from swell.utilities.string_utils import replace_vars
 
@@ -89,71 +90,28 @@ def replace_vars_dict(d, **defs):
 # --------------------------------------------------------------------------------------------------
 
 
-def dict_iterate_and_remove(d, key_to_remove, found):
+def remove_matching_keys(d, key):
+    """
+    Recursively locates and removes all dictionary items matching the supplied key.
+    Parameters
+    ----------
+    d : root node, required
+        traversable data structure (dictionary or list) to be searched.
+    key: string, required
+         Key to be removed
+    """
 
     if isinstance(d, dict):
 
-        for key, value in d.items():
+        d.pop(key, None)
 
-            if key == key_to_remove:
-                # To prevent changing the dictionary size within the loop we
-                # have to return up to the level above. As such this routine
-                # needs to be called repeatedly until the key to be removed
-                # is no longer found. The found list provides a mutable entity
-                # to track that the routine changes the dictionary in some way.
-                del d[key]
-                found.append(True)
-                return
+        for k,v in iter(d.items()):
+            if not isinstance(v, Hashable): remove_matching_keys(v, key)
 
-            if isinstance(value, dict):
+    elif isinstance(d, list):
 
-                dict_iterate_and_remove(value, key_to_remove, found)
-
-            elif isinstance(value, list):
-
-                for value_item in value:
-
-                    dict_iterate_and_remove(value_item, key_to_remove, found)
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def remove_matching_keys(d, key_to_remove, logger):
-    """
-    Removes all matching keys from a dictionary. Done by converting to string and going line by line
-    If 'key:' is found in the line it will remove that line
-
-    Parameters
-    ----------
-    d : dictionary, required
-        Dictionary to be modified
-    key: string, required
-         Key to be removed where ever found in the file
-
-    Returns
-    -------
-    d_new: dictionary
-           Dictionary with matching keys removed
-    """
-
-    # List that will be appended by the search
-    found = []
-
-    # Max number of times to call the removal routine
-    max_tries = 100
-    for i in range(1, max_tries+1):
-        found_len_prev = len(found)
-        dict_iterate_and_remove(d, key_to_remove, found)
-        if len(found) == found_len_prev:
-            i = 0
-            break
-
-    # Issue abort if the maximum number of tries was reached.
-    if i == max_tries:
-        logger.abort('In remove_matching_keys the maximum tries to remove the key was reached.')
-
-    return d
+        for v in d:
+            if not isinstance(v, Hashable): remove_matching_keys(v, key)
 
 
 # --------------------------------------------------------------------------------------------------

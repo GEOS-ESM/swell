@@ -71,8 +71,8 @@ class EvaDriver(taskBase):
 
             # Remove channel keys if not needed
             if not need_channels:
-                eva_dict = remove_matching_keys(eva_dict, 'channel', self.logger)
-                eva_dict = remove_matching_keys(eva_dict, 'channels', self.logger)
+                remove_matching_keys(eva_dict, 'channel')
+                remove_matching_keys(eva_dict, 'channels')
 
             # Write eva dictionary to file
             # ----------------------------
