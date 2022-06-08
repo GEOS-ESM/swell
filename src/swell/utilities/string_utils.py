@@ -47,6 +47,12 @@ def replace_vars(s, **defs):
         if var in defs:
             expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
 
+    # Resolve special variables: $[var] (list)
+    for var in re.findall(r'\$\[(\w+)\]', expr):
+        if var in defs:
+            list2str = ','.join(map(str, defs[var]))
+            expr = re.sub(r'\$\['+var+r'\]', '['+list2str+']', expr)
+
     # Resolve defs
     s_interp = string.Template(expr).safe_substitute(defs)
 

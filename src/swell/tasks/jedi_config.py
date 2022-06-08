@@ -42,7 +42,7 @@ class JediConfig(taskBase):
                 self.replace_jedi_conf(element_template)
             else:
                 # Strip special characters from element
-                element = copy.deepcopy(element_template)
+                element = element_template
                 element = element.replace("$", "")
                 element = element.replace("{", "")
                 element = element.replace("}", "")
@@ -182,6 +182,23 @@ class JediConfig(taskBase):
                 filters.append(save_geovals_dict)
                 # Put dictionary into the filter config
                 ob['obs filters'] = copy.deepcopy(filters)
+
+        # Add section for time interpolation
+        # ----------------------------------
+        time_interpolation_type = 'nearest'
+        window_type = self.config.get('window_type', '4D')
+        if window_type == '4D':
+            time_interpolation_type = 'linear'
+
+            # User can override the window guided behavior (if 4D)
+            time_interpolation_type = self.config.get('time_interpolation', time_interpolation_type)
+
+        get_values_dict = {}
+        get_values_dict['time interpolation'] = time_interpolation_type
+
+        # Add to obs operator config
+        for ob in obs:
+            ob['get values'] = get_values_dict
 
         # Set full path to the templated config file
         # ------------------------------------------
