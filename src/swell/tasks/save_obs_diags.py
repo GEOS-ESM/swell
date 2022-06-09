@@ -27,7 +27,7 @@ class SaveObsDiags(taskBase):
 
         # Parse config
         # ------------
-        experiment = cfg.get('obs_experiment')
+        experiment = cfg.get('experiment_id')
         window_begin = cfg.get('window_begin')
         background_time = cfg.get('background_time')
         obs = cfg.get('OBSERVATIONS')
@@ -41,10 +41,9 @@ class SaveObsDiags(taskBase):
             name = ob['obs space']['name']
             source_file = ob['obs space']['obsdataout']['obsfile']
 
-            store(
-                date=window_begin,
-                provider='ncdiag',
-                source_file=source_file,
-                obs_type=name,
-                type='ob',
-                experiment=experiment)
+            store(date=window_begin,
+                  provider='ncdiag',
+                  source_file=source_file,
+                  obs_type=name,
+                  type='ob',
+                  experiment=experiment)
