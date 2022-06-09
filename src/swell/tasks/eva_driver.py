@@ -51,7 +51,6 @@ class EvaDriver(taskBase):
             ioda_name = find_instrument_from_string(obs_file, self.logger)
             full_name = ioda_name_to_long_name(ioda_name, self.logger)
 
-
             # Log the operator being worked on
             # --------------------------------
             info_string = 'Running Eva for ' + full_name
