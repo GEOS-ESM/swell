@@ -10,7 +10,7 @@ on:
     #branches: [develop]
   pull_request:
     # pull request to develop with a label
-    types: [labeled]
+   # types: [labeled]
     branches: [develop]
 
 defaults:
@@ -19,8 +19,9 @@ defaults:
 
 jobs:
   Run-task-workflow:
-    if: ${{ github.event.label.name == 'run-ci-discover' }}
+   # if: ${{ github.event.label.name == 'run-ci-discover' }}
     runs-on: self-hosted
+    environment: runners
     steps:
       - name: checkout
         uses: actions/checkout@v3
