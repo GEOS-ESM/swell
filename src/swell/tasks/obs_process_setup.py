@@ -31,21 +31,23 @@ class ObsProcessSetup(taskBase):
              See the taskBase constructor for more information.
         """
 
-
         # Path to ioda-converters install
         # -------------------------------
-        # iodabin='/discover/nobackup/drholdaw/JediOpt/src/ioda-bundle/develop/build-gni-impi/bin/'
-        iodabin = '/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/bin/'
+        # define iodabin in experiment file
+        iodabin = self.config.get('iodabin')
 
         # Current cycle time (middle of the window)
         # -----------------------------------------
         current_cycle = self.config.get('current_cycle')
         current_cycle_dt = dt.strptime(current_cycle, self.config.dt_format)
 
-        # Hours before middle of window that forecast began
-        # -------------------------------------------------
-        #forecast_offset = isodate.parse_duration(self.config.get('geos_background_restart_offset'))
-        #forecast_rst_dt = current_cycle_dt - forecast_offset
+        # Set time windows for R2D2 
+        # ------------------------
+        obs_offset = isodate.parse_duration(self.config.get('geos_obs_offset'))
+        obs_r2d2_dt = current_cycle_dt - obs_offset
+
+        satbias_offset = isodate.parse_duration(self.config.get('geos_satbias_offset'))
+        satbias_r2d2_dt = current_cycle_dt - satbias_offset
 
         # Create cycle directory if needed
         # --------------------------------
@@ -59,19 +61,92 @@ class ObsProcessSetup(taskBase):
         # Geos experiment settings
         # ------------------------
         geos_experiment  = self.config.get('geos_experiment')
-        obs_dir_template = self.config.get('geos_obs_dir_template')        
+        obs_dir_template = self.config.get('geos_obs_dir_template')
+        combined_obs_template = self.config.get('combined_obs_template')
+        sondes_obs_template = self.config.get('sondes_obs_template')
+        sondes_obs_template_rename = self.config.get('sondes_obs_template_rename')
+        sfcship_obs_template = self.config.get('sfcship_obs_template')
+        sfcship_obs_template_rename = self.config.get('sfcship_obs_template_rename')
+        r2d2_obs_standard_template = self.config.get('r2d2_obs_standard_template')
+        satbias_org_template = self.config.get('satbias_org_template')
+        satbias_template = self.config.get('satbias_template')
+        satbiaspc_template = self.config.get('satbiaspc_template')
+        satbias_dir_template = self.config.get('satbias_dir_template')
+        tlapse_template = self.config.get('tlapse_template')
+        r2d2_satbias_template = self.config.get('r2d2_satbias_template')
+
         obs_dir = current_cycle_dt.strftime(obs_dir_template)
+        satbias_dir = current_cycle_dt.strftime(satbias_dir_template)
+        combined_obs = current_cycle_dt.strftime(combined_obs_template)
+        sondes_obs = current_cycle_dt.strftime(sondes_obs_template)
+        sondes_obs_rename = current_cycle_dt.strftime(sondes_obs_template_rename)
+        sfcship_obs = current_cycle_dt.strftime(sfcship_obs_template)
+        sfcship_obs_rename = current_cycle_dt.strftime(sfcship_obs_template_rename)
+        r2d2_obs_standard = obs_r2d2_dt.strftime(r2d2_obs_standard_template)
+        satbias_org = obs_r2d2_dt.strftime(satbias_org_template)
+        satbias = obs_r2d2_dt.strftime(satbias_template)
+        satbiaspc = obs_r2d2_dt.strftime(satbiaspc_template)
+        tlapse_name = satbias_r2d2_dt.strftime(tlapse_template)
+        r2d2_satbias = satbias_r2d2_dt.strftime(r2d2_satbias_template)
 
         # Copy obs files to cycle directory
         # ---------------------------------
         for filepath in list(glob.glob(obs_dir + '/*ges*nc4')):
-           #for filename in os.listdir(obs_dir + '/*ges*nc4'):
-           #if fnmatchh.fnmatch(filename)
            filename = os.path.basename(filepath)
            os.system('ln -sf ' + filepath + ' ' + cycle_dir + '/' + filename)
 
         # Run proc_gsi_ncdiag
         # ---------------------------------
+        # try these without the python calls
         os.system('python ' + iodabin + '/proc_gsi_ncdiag.py -o ' + out_dir + ' ' + cycle_dir)
+
+        # Combine conventional types
+        # --------------------------
+        conv_types = ['aircraft_', 'rass_', 'sfc_', 'sfcship_', 'sondes_']
+        for conv_type in conv_types:
+            file_list_str = ''
+            for file_name in glob.glob(out_dir + conv_type + '*'):
+                file_list_str = file_list_str + file_name + ' '
+            print(file_list_str)
+            os.system('python ' + iodabin + '/combine_obsspace.py -i ' + file_list_str + ' -o ' + out_dir + '/' + conv_type  + combined_obs)
+            #remove files
+            os.system('rm ' + file_list_str)            
+
+        # Rename some files
+        # -----------------
+        os.system('mv ' + out_dir + '/' + sondes_obs + ' ' + out_dir + '/' + sondes_obs_rename)
+        os.system('mv ' + out_dir + '/' + sfcship_obs + ' ' + out_dir + '/' + sfcship_obs_rename)
+
+        # Rename the files with R2D2 standard
+        # -----------------------------------
+        os.system('rename _' + combined_obs + ' ' + r2d2_obs_standard + ' ' + out_dir + '/*')        
+
+        # Handle satbias
+        # --------------
+        satbias_out_dir = out_dir + '/satbias/'
+        os.system('mkdir -p ' + satbias_out_dir)
+        os.system('tar -xvf ' + satbias_dir + satbias_org + ' ' + satbias_out_dir + satbias + ' ' + satbias_out_dir + satbiaspc)
+        os.system('ln -sf ' + satbias_out_dir + satbias + ' ana_satbias_rst.txt')
+        os.system('ln -sf ' + satbias_out_dir + satbiaspc +  ' ana_satbiaspc_rst.txt')
+
+        sensors = ['airs_aqua', 'amsua_aqua', 'amsua_metop-a', 'amsua_metop-b', 'amsua_metop-c',
+                   'amsua_n15', 'amsua_n18', 'amsua_n19', 'atms_n20', 'atms_npp', 'avhrr3_metop-a', 
+                   'avhrr3_metop-b', 'avhrr3_n18', 'avhrr3_n19', 'cris-fsr_npp', 'cris-fsr_n20', 
+                   'gmi_gpm', 'hirs4_metop-a', 'hirs4_n18', 'hirs4_n19', 'iasi_metop-a', 'iasi_metop-b', 
+                   'mhs_metop-a', 'mhs_metop-b', 'mhs_metop-c', 'mhs_n19', 'seviri_m08', 'ssmis_f17',
+                   'ssmis_f18']
+        for sensor in sensors:
+           os.system('grep -i ' + sensor + """ ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
+        
+        os.system('cd ' + satbias_out_dir)
+        # module unload core/anaconda/3.8
+        os.system(iodabin + '/satbias2ioda.x /discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml')
+
+        os.system('rename satbias_ gsi.' + geos_experiment + '.bc. *nc4')
+        os.system('rename .nc4 ' +  r2d2_satbias + ' *nc4')
+        os.system('mv *satbias ' + out_dir)
+        os.system('cd ../')
+        #os.system('rm -rf ' + satbias_out_dir)
+
 
 # --------------------------------------------------------------------------------------------------

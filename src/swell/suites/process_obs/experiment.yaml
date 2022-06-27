@@ -12,11 +12,23 @@ suite:
 
 # GEOS experiment to get backgrounds from
 geos_experiment: x0044
+iodabin: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/bin/
 geos_obs_dir_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/obs/Y%Y/M%m/D%d/H%H/
-#geos_bkg_tar_filename_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/rs/Y%Y/M%m/Revised/$(geos_experiment).trajrst.%Y%m%d_%Hz.tar
-#geos_background_restart_offset: PT9H  # Time before middle of analysis window that bkg forecast began
-#geos_bkg_filename_template: $(geos_experiment).traj_lcv_rst.%Y%m%d_%H%Mz.nc4  # Name for bkg files from GEOS
-#jedi_bkg_filename_template: '%Y%m%d.%H%M%S.bkg.nc4'
+satbias_dir_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/rs/Y%Y/M%m/
+combined_obs_template: obs_%Y%m%d%H.nc4
+sondes_obs_template: sondes_obs_%Y%m%d%H.nc4
+sondes_obs_template_rename: radiosonde_obs_%Y%m%d%H.nc4
+sfcship_obs_template: sfcship_obs_%Y%m%d%H.nc4
+sfcship_obs_template_rename: ship_obs_%Y%m%d%H.nc4
+r2d2_obs_standard_template: .%Y-%m-%dT%H:00:00Z.nc4
+geos_obs_offset: PT3H
+geos_satbias_offset: PT6H
+#gnssro_inputbufr: /archive/input/dao_ops/obs/flk/ncep_g5obs/bufr/GPSRO/Y%Y/M%m/gdas1.${yyyy:2:4}%m%d.t%Hz.gpsro.tm00.bufr_d #FIX YEAR
+satbias_org_template: $(geos_experiment).rst.%Y%m%d_%Hz.tar
+satbias_template: $(geos_experiment).ana_satbias_rst.%Y%m%d_%Hz.txt
+satbiaspc_template: $(geos_experiment).ana_satbiaspc_rst.%Y%m%d_%Hz.txt
+tlapse_template: .%Y-%m-%dT%H:00:00Z.tlapse
+r2d2_satbias_template: .%Y-%m-%dT%H:00:00Z.satbias
 
 # data assimilation window (to determine which backgrounds are needed)
 window_type: 4D
