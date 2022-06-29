@@ -200,6 +200,7 @@ OBSERVATIONS:
   - yaml::$(swell_dir)/configuration/observation_operators/amsua_n18.yaml
   - yaml::$(swell_dir)/configuration/observation_operators/amsua_n19.yaml
   - yaml::$(swell_dir)/configuration/observation_operators/gmi_gpm.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/amsr2_gcom-w1.yaml
 
   # Ozone
   - yaml::$(swell_dir)/configuration/observation_operators/mls55_aura.yaml
@@ -207,7 +208,6 @@ OBSERVATIONS:
 
 
   #- yaml::$(swell_dir)/configuration/observation_operators/airs_aqua.yaml
-  #- yaml::$(swell_dir)/configuration/observation_operators/amsr2_gcom-w1.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/cris-fsr_n20.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/cris-fsr_npp.yaml
   #- yaml::$(swell_dir)/configuration/observation_operators/iasi_metop-a.yaml
