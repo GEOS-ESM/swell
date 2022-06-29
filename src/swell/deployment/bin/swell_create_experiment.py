@@ -109,10 +109,6 @@ def main(config, clean):
     # ---------------------------------------
     set_swell_path_in_modules(logger, experiment_dict)
 
-    # Create csh modules file for csh users to use when debugging
-    # -----------------------------------------------------------
-    create_modules_csh(logger, experiment_dict)
-
     # Clone the git repos needed for the yaml file explosion
     # ------------------------------------------------------
     # User chosen clones
@@ -173,6 +169,10 @@ def main(config, clean):
 
     with open(r2d2_conf_path, 'w') as r2d2_file_open:
         r2d2_file_open.write(r2d2_file_str)
+
+    # Create csh modules file for csh users to use when debugging
+    # -----------------------------------------------------------
+    create_modules_csh(logger, experiment_dict)
 
     # Write out launch command for convenience
     # ----------------------------------------
