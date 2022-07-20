@@ -14,7 +14,7 @@ import os
 import tarfile
 import glob
 from swell.tasks.base.task_base import taskBase
-
+from r2d2 import store
 
 # --------------------------------------------------------------------------------------------------
 
@@ -76,7 +76,7 @@ class ObsProcessSetup(taskBase):
         r2d2_satbias_template = self.config.get('r2d2_satbias_template')
 
         obs_dir = current_cycle_dt.strftime(obs_dir_template)
-        satbias_dir = current_cycle_dt.strftime(satbias_dir_template)
+        satbias_dir = obs_r2d2_dt.strftime(satbias_dir_template)
         combined_obs = current_cycle_dt.strftime(combined_obs_template)
         sondes_obs = current_cycle_dt.strftime(sondes_obs_template)
         sondes_obs_rename = current_cycle_dt.strftime(sondes_obs_template_rename)
@@ -125,9 +125,11 @@ class ObsProcessSetup(taskBase):
         # --------------
         satbias_out_dir = out_dir + '/satbias/'
         os.system('mkdir -p ' + satbias_out_dir)
-        os.system('tar -xvf ' + satbias_dir + satbias_org + ' ' + satbias_out_dir + satbias + ' ' + satbias_out_dir + satbiaspc)
-        os.system('ln -sf ' + satbias_out_dir + satbias + ' ana_satbias_rst.txt')
-        os.system('ln -sf ' + satbias_out_dir + satbiaspc +  ' ana_satbiaspc_rst.txt')
+
+        print('tar -xvf ' + satbias_dir + satbias_org + ' -C ' + satbias_out_dir + ' ' + satbias + ' ' + satbiaspc)
+        os.system('tar -xvf ' + satbias_dir + satbias_org + ' -C ' + satbias_out_dir + ' ' + satbias + ' ' + satbiaspc)
+        os.system('ln -sf ' + satbias_out_dir + satbias + ' ' + satbias_out_dir + 'ana_satbias_rst.txt')
+        os.system('ln -sf ' + satbias_out_dir + satbiaspc + ' ' + satbias_out_dir  + 'ana_satbiaspc_rst.txt')
 
         sensors = ['airs_aqua', 'amsua_aqua', 'amsua_metop-a', 'amsua_metop-b', 'amsua_metop-c',
                    'amsua_n15', 'amsua_n18', 'amsua_n19', 'atms_n20', 'atms_npp', 'avhrr3_metop-a', 
@@ -136,17 +138,62 @@ class ObsProcessSetup(taskBase):
                    'mhs_metop-a', 'mhs_metop-b', 'mhs_metop-c', 'mhs_n19', 'seviri_m08', 'ssmis_f17',
                    'ssmis_f18']
         for sensor in sensors:
-           os.system('grep -i ' + sensor + """ ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
+           print('grep -i ' + sensor + ' ' + satbias_out_dir + """ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
+           os.system('grep -i ' + sensor + ' ' + satbias_out_dir + """ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
         
-        os.system('cd ' + satbias_out_dir)
-        # module unload core/anaconda/3.8
-        os.system(iodabin + '/satbias2ioda.x /discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml')
+        os.system('module unload core/anaconda/3.8')
+        # Make satbias converter part of swell
+        os.system('cp ' + '/discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml ' + satbias_out_dir)
+        print(iodabin + '/satbias2ioda.x' + satbias_out_dir + 'satbias_converter.yaml')
+        os.chdir(satbias_out_dir)
+        os.system(iodabin + '/satbias2ioda.x satbias_converter.yaml')        
 
         os.system('rename satbias_ gsi.' + geos_experiment + '.bc. *nc4')
         os.system('rename .nc4 ' +  r2d2_satbias + ' *nc4')
-        os.system('mv *satbias ' + out_dir)
-        os.system('cd ../')
-        #os.system('rm -rf ' + satbias_out_dir)
+        os.system('mv ' + satbias_out_dir + '*satbias ' + out_dir)
+        os.system('mv ' + satbias_out_dir + '*tlapse ' + out_dir)
+        os.chdir(out_dir)
+        os.system('rm -rf ' + satbias_out_dir)
 
+        # Call R2D2 to store files
+        # ------------------------
+
+        # Perform store of observations
+        for filepath in list(glob.glob(out_dir + '/*nc4')):
+           source_file = os.path.basename(filepath)
+           filename_parts = source_file.split('.')
+           name = filename_parts[0]
+           store(date=obs_r2d2_dt,
+               source_file=source_file,
+               provider='ncdiag',
+               obs_type=name,
+               type='ob',
+               experiment=geos_experiment)
+
+        # Perform store of satbias
+        for filepath in list(glob.glob(out_dir + '/*satbias')):
+           source_file = os.path.basename(filepath)
+           filename_parts = source_file.split('.')
+           name = filename_parts[3]
+           store(date=satbias_r2d2_dt,
+               source_file=source_file,
+               provider='gsi',
+               obs_type=name,
+               type='bc',
+               experiment=geos_experiment,
+               file_type='satbias')
+
+        # Perform store of tlapse
+        for filepath in list(glob.glob(out_dir + '/*tlapse')):
+           source_file = os.path.basename(filepath)
+           filename_parts = source_file.split('.')
+           name = filename_parts[3]
+           store(date=satbias_r2d2_dt,
+               source_file=source_file,
+               provider='gsi',
+               obs_type=name,
+               type='bc',
+               experiment=geos_experiment,
+               file_type='tlapse')
 
 # --------------------------------------------------------------------------------------------------
