@@ -4,8 +4,8 @@ experiment_root: /discover/nobackup/${USER}/JediExperiments/
 
 # suite configuration
 suite:
-  intial cylc point: 2020-12-14T06
-  final cylc point: 2020-12-14T12
+  intial cylc point: 2020-12-14T00
+  final cylc point: 2020-12-15T00
   runahead limit: PT24H
   suite name: process_obs
   platform: nccs_discover
@@ -22,7 +22,7 @@ sfcship_obs_template: sfcship_obs_%Y%m%d%H.nc4
 sfcship_obs_template_rename: ship_obs_%Y%m%d%H.nc4
 r2d2_obs_standard_template: .%Y-%m-%dT%H:00:00Z.nc4
 geos_obs_offset: PT3H
-geos_satbias_offset: PT6H
+geos_satbias_offset: PT9H
 #gnssro_inputbufr: /archive/input/dao_ops/obs/flk/ncep_g5obs/bufr/GPSRO/Y%Y/M%m/gdas1.${yyyy:2:4}%m%d.t%Hz.gpsro.tm00.bufr_d #FIX YEAR
 satbias_org_template: $(geos_experiment).rst.%Y%m%d_%Hz.tar
 satbias_template: $(geos_experiment).ana_satbias_rst.%Y%m%d_%Hz.txt
