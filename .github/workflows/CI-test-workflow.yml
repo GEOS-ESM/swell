@@ -14,4 +14,3 @@ defaults:
 jobs:
   CI-test-workflow:
     uses: GEOS-ESM/CI-workflows-test/.github/workflows/swell-workflow01.yml@main
-          
