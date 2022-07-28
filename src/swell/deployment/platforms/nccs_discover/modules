@@ -13,11 +13,18 @@ module use $OPT/modulefiles/apps
 module use $OPT/modulefiles/core
 module load jedi/intel-impi/ecbuild35
 
+# Ioda converters module
+# ----------------------
+export jedibuild=/discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release
+export LD_LIBRARY_PATH=$jedibuild/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$jedibuild/lib/python3.8:$PYTHONPATH
+export PYTHONPATH=$jedibuild/lib/python3.8/pyioda:$PYTHONPATH
+
 # Python module with workflow dependencies
 # ----------------------------------------
-export DHOPT=/discover/nobackup/drholdaw/opt/
-module use -a $DHOPT/modulefiles/core
-module load miniconda/3.9
+#export DHOPT=/discover/nobackup/drholdaw/opt/
+#module use -a $DHOPT/modulefiles/core
+#module load miniconda/3.9
 
 # Load workflow modules
 # ---------------------
