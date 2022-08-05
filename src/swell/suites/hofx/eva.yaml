@@ -222,15 +222,17 @@ diagnostics:
 
     # Observations
     - batch figure:
+        variables: *variables
         channels: *channels
       dynamic options:
-        - type: vminvmax
+        - type: vminvmaxcmap
           channel: ${channel}
-          data variable: experiment::MetaData::ObsValue
+          data variable: experiment::ObsValue::${variable}
       figure:
+        figure size: [20,10]
         layout: [1,1]
         title: 'Observations | $(instrument_title) | Obs Value'
-        output name: $(cycle_dir)/eva/$(instrument)/map_plots/obs_value${channel}/observations_$(instrument)_obs_value${channel}.png
+        output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/observations_$(instrument)_${variable}${channel}.png
       plots:
         - mapping:
             projection: plcarr
@@ -246,23 +248,24 @@ diagnostics:
             latitude:
               variable: experiment::MetaData::latitude
             data:
-              variable: experiment::MetaData::ObsValue
+              variable: experiment::ObsValue::${variable}
             markersize: 2
             label: ObsValue
             colorbar: true
-            cmap: $(dynamic_cmap)
-            vmin: $(dynamic_vmin)
-            vmax: $(dynamic_vmax)
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
 
     # omb jedi
     - batch figure:
         variables: *variables
         channels: *channels
       dynamic options:
-        - type: vminvmax
+        - type: vminvmaxcmap
           channel: ${channel}
-          data variable: experiment::ObsValueMinusHofx::$(variable)
+          data variable: experiment::ObsValueMinusHofx::${variable}
       figure:
+        figure size: [20,10]
         layout: [1,1]
         title: 'JEDI OmB | $(instrument_title) | ${variable_title}'
         output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/omb_jedi_$(instrument)_${variable}${channel}.png
@@ -281,23 +284,24 @@ diagnostics:
             latitude:
               variable: experiment::MetaData::latitude
             data:
-              variable: experiment::ObsValueMinusHofx::$(variable)
+              variable: experiment::ObsValueMinusHofx::${variable}
             markersize: 2
-            label: '$(variable)'
+            label: '${variable}'
             colorbar: true
-            cmap: $(dynamic_cmap)
-            vmin: $(dynamic_vmin)
-            vmax: $(dynamic_vmax)
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
 
     # omb gsi
     - batch figure:
         variables: *variables
         channels: *channels
       dynamic options:
-        - type: vminvmax
+        - type: vminvmaxcmap
           channel: ${channel}
-          data variable: experiment::ObsValueMinusGsiHofXBc::$(variable)
+          data variable: experiment::ObsValueMinusGsiHofXBc::${variable}
       figure:
+        figure size: [20,10]
         layout: [1,1]
         title: 'GSI OmB | $(instrument_title) | ${variable_title}'
         output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/omb_gsi_$(instrument)_${variable}${channel}.png
@@ -316,23 +320,24 @@ diagnostics:
             latitude:
               variable: experiment::MetaData::latitude
             data:
-              variable: experiment::ObsValueMinusGsiHofXBc::$(variable)
+              variable: experiment::ObsValueMinusGsiHofXBc::${variable}
             markersize: 2
-            label: '$(variable)'
+            label: '${variable}'
             colorbar: true
-            cmap: $(dynamic_cmap)
-            vmin: $(dynamic_vmin)
-            vmax: $(dynamic_vmax)
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
 
     # hofx difference
     - batch figure:
         variables: *variables
         channels: *channels
       dynamic options:
-        - type: vminvmax
+        - type: vminvmaxcmap
           channel: ${channel}
-          data variable: experiment::HofxMinusGsiHofXBc::$(variable)
+          data variable: experiment::HofxMinusGsiHofXBc::${variable}
       figure:
+        figure size: [20,10]
         layout: [1,1]
         title: 'Hofx Difference | $(instrument_title) | ${variable_title}'
         output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/hofx_difference_$(instrument)_${variable}${channel}.png
@@ -351,13 +356,13 @@ diagnostics:
             latitude:
               variable: experiment::MetaData::latitude
             data:
-              variable: experiment::HofxMinusGsiHofXBc::$(variable)
+              variable: experiment::HofxMinusGsiHofXBc::${variable}
             markersize: 2
-            label: '$(variable)'
+            label: '${variable}'
             colorbar: true
-            cmap: $(dynamic_cmap)
-            vmin: $(dynamic_vmin)
-            vmax: $(dynamic_vmax)
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
 
 # Histogram plots
 # ---------------
@@ -370,7 +375,7 @@ diagnostics:
         - type: histogram_bins
           channel: ${channel}
           number of bins rule: sturges
-          data variable: experiment::ObsValueMinusHofx::$(variable)
+          data variable: experiment::ObsValueMinusHofx::${variable}
       figure:
         layout: [1,1]
         title: 'JEDI omb vs. GSI omb | $(instrument_title) | ${variable_title}'
@@ -387,7 +392,7 @@ diagnostics:
               channel: ${channel}
             color: 'blue'
             label: 'GSI omb (all obs)'
-            bins: $(dynamic_bins)
+            bins: ${dynamic_bins}
             alpha: 0.5
           - type: Histogram
             data:
@@ -395,5 +400,5 @@ diagnostics:
               channel: ${channel}
             color: 'red'
             label: 'JEDI omb (all obs)'
-            bins: $(dynamic_bins)
+            bins: ${dynamic_bins}
             alpha: 0.5
