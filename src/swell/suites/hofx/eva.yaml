@@ -249,6 +249,7 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::ObsValue::${variable}
+              channel: ${channel}
             markersize: 2
             label: ObsValue
             colorbar: true
@@ -285,6 +286,7 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::ObsValueMinusHofx::${variable}
+              channel: ${channel}
             markersize: 2
             label: '${variable}'
             colorbar: true
@@ -321,6 +323,7 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+              channel: ${channel}
             markersize: 2
             label: '${variable}'
             colorbar: true
@@ -357,6 +360,7 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::HofxMinusGsiHofXBc::${variable}
+              channel: ${channel}
             markersize: 2
             label: '${variable}'
             colorbar: true
