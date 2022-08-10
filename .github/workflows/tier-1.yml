@@ -1,0 +1,16 @@
+# Tier-1 Workflows
+
+name: Tier-1
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [develop]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  CodeBuild:
+    uses: GEOS-ESM/CI-workflows-test/.github/workflows/swell-workflow01.yml@main
