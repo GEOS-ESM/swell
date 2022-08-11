@@ -1,6 +1,7 @@
 from swell.configuration.configuration import return_configuration_path
 import os
 
+
 def retrieve_obs_list:
     obs_ops_path = return_configuration_path()+'/observation_operators/'
     obs_ops_list = []

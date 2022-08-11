@@ -41,7 +41,7 @@ class ObsProcessSetup(taskBase):
         current_cycle = self.config.get('current_cycle')
         current_cycle_dt = dt.strptime(current_cycle, self.config.dt_format)
 
-        # Set time windows for R2D2 
+        # Set time windows for R2D2
         # ------------------------
         obs_offset = isodate.parse_duration(self.config.get('geos_obs_offset'))
         obs_r2d2_dt = current_cycle_dt - obs_offset
@@ -60,7 +60,7 @@ class ObsProcessSetup(taskBase):
 
         # Geos experiment settings
         # ------------------------
-        geos_experiment  = self.config.get('geos_experiment')
+        geos_experiment = self.config.get('geos_experiment')
         obs_dir_template = self.config.get('geos_obs_dir_template')
         combined_obs_template = self.config.get('combined_obs_template')
         sondes_obs_template = self.config.get('sondes_obs_template')
@@ -92,8 +92,8 @@ class ObsProcessSetup(taskBase):
         # Copy obs files to cycle directory
         # ---------------------------------
         for filepath in list(glob.glob(obs_dir + '/*ges*nc4')):
-           filename = os.path.basename(filepath)
-           os.system('ln -sf ' + filepath + ' ' + cycle_dir + '/' + filename)
+            filename = os.path.basename(filepath)
+            os.system('ln -sf ' + filepath + ' ' + cycle_dir + '/' + filename)
 
         # Run proc_gsi_ncdiag
         # ---------------------------------
@@ -107,10 +107,10 @@ class ObsProcessSetup(taskBase):
             file_list_str = ''
             for file_name in glob.glob(out_dir + conv_type + '*'):
                 file_list_str = file_list_str + file_name + ' '
-            print(file_list_str)
-            os.system('python ' + iodabin + '/combine_obsspace.py -i ' + file_list_str + ' -o ' + out_dir + '/' + conv_type  + combined_obs)
-            #remove files
-            os.system('rm ' + file_list_str)            
+            os.system('python ' + iodabin + '/combine_obsspace.py -i '
+                      + file_list_str + ' -o ' + out_dir + '/' + conv_type + combined_obs)
+            # remove files
+            os.system('rm ' + file_list_str)
 
         # Rename some files
         # -----------------
@@ -119,37 +119,40 @@ class ObsProcessSetup(taskBase):
 
         # Rename the files with R2D2 standard
         # -----------------------------------
-        os.system('rename _' + combined_obs + ' ' + r2d2_obs_standard + ' ' + out_dir + '/*')        
+        os.system('rename _' + combined_obs + ' ' + r2d2_obs_standard + ' ' + out_dir + '/*')
 
         # Handle satbias
         # --------------
         satbias_out_dir = out_dir + '/satbias/'
         os.system('mkdir -p ' + satbias_out_dir)
 
-        print('tar -xvf ' + satbias_dir + satbias_org + ' -C ' + satbias_out_dir + ' ' + satbias + ' ' + satbiaspc)
-        os.system('tar -xvf ' + satbias_dir + satbias_org + ' -C ' + satbias_out_dir + ' ' + satbias + ' ' + satbiaspc)
-        os.system('ln -sf ' + satbias_out_dir + satbias + ' ' + satbias_out_dir + 'ana_satbias_rst.txt')
-        os.system('ln -sf ' + satbias_out_dir + satbiaspc + ' ' + satbias_out_dir  + 'ana_satbiaspc_rst.txt')
+        os.system('tar -xvf ' + satbias_dir + satbias_org + ' -C '
+                  + satbias_out_dir + ' ' + satbias + ' ' + satbiaspc)
+        os.system('ln -sf ' + satbias_out_dir + satbias + ' '
+                  + satbias_out_dir + 'ana_satbias_rst.txt')
+        os.system('ln -sf ' + satbias_out_dir + satbiaspc + ' '
+                  + satbias_out_dir + 'ana_satbiaspc_rst.txt')
 
         sensors = ['airs_aqua', 'amsua_aqua', 'amsua_metop-a', 'amsua_metop-b', 'amsua_metop-c',
-                   'amsua_n15', 'amsua_n18', 'amsua_n19', 'atms_n20', 'atms_npp', 'avhrr3_metop-a', 
-                   'avhrr3_metop-b', 'avhrr3_n18', 'avhrr3_n19', 'cris-fsr_npp', 'cris-fsr_n20', 
-                   'gmi_gpm', 'hirs4_metop-a', 'hirs4_n18', 'hirs4_n19', 'iasi_metop-a', 'iasi_metop-b', 
-                   'mhs_metop-a', 'mhs_metop-b', 'mhs_metop-c', 'mhs_n19', 'seviri_m08', 'ssmis_f17',
-                   'ssmis_f18']
+                   'amsua_n15', 'amsua_n18', 'amsua_n19', 'atms_n20', 'atms_npp', 'avhrr3_metop-a',
+                   'avhrr3_metop-b', 'avhrr3_n18', 'avhrr3_n19', 'cris-fsr_npp', 'cris-fsr_n20',
+                   'gmi_gpm', 'hirs4_metop-a', 'hirs4_n18', 'hirs4_n19', 'iasi_metop-a',
+                   'iasi_metop-b', 'mhs_metop-a', 'mhs_metop-b', 'mhs_metop-c', 'mhs_n19',
+                   'seviri_m08', 'ssmis_f17', 'ssmis_f18']
         for sensor in sensors:
-           print('grep -i ' + sensor + ' ' + satbias_out_dir + """ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
-           os.system('grep -i ' + sensor + ' ' + satbias_out_dir + """ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """ + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
-        
+            os.system('grep -i ' + sensor + ' ' + satbias_out_dir
+                      + """ana_satbias_rst.txt | awk '{print $2" "$3" "$4}' > """
+                      + satbias_out_dir + 'gsi.' + geos_experiment + '.bc.' + sensor + tlapse_name)
+
         os.system('module unload core/anaconda/3.8')
         # Make satbias converter part of swell
-        os.system('cp ' + '/discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml ' + satbias_out_dir)
-        print(iodabin + '/satbias2ioda.x' + satbias_out_dir + 'satbias_converter.yaml')
+        os.system('cp ' + '/discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml '
+                  + satbias_out_dir)
         os.chdir(satbias_out_dir)
-        os.system(iodabin + '/satbias2ioda.x satbias_converter.yaml')        
+        os.system(iodabin + '/satbias2ioda.x satbias_converter.yaml')
 
         os.system('rename satbias_ gsi.' + geos_experiment + '.bc. *nc4')
-        os.system('rename .nc4 ' +  r2d2_satbias + ' *nc4')
+        os.system('rename .nc4 ' + r2d2_satbias + ' *nc4')
         os.system('mv ' + satbias_out_dir + '*satbias ' + out_dir)
         os.system('mv ' + satbias_out_dir + '*tlapse ' + out_dir)
         os.chdir(out_dir)
@@ -160,40 +163,40 @@ class ObsProcessSetup(taskBase):
 
         # Perform store of observations
         for filepath in list(glob.glob(out_dir + '/*nc4')):
-           source_file = os.path.basename(filepath)
-           filename_parts = source_file.split('.')
-           name = filename_parts[0]
-           store(date=obs_r2d2_dt,
-               source_file=source_file,
-               provider='ncdiag',
-               obs_type=name,
-               type='ob',
-               experiment=geos_experiment)
+            source_file = os.path.basename(filepath)
+            filename_parts = source_file.split('.')
+            name = filename_parts[0]
+            store(date=obs_r2d2_dt,
+                  source_file=source_file,
+                  provider='ncdiag',
+                  obs_type=name,
+                  type='ob',
+                  experiment=geos_experiment)
 
         # Perform store of satbias
         for filepath in list(glob.glob(out_dir + '/*satbias')):
-           source_file = os.path.basename(filepath)
-           filename_parts = source_file.split('.')
-           name = filename_parts[3]
-           store(date=satbias_r2d2_dt,
-               source_file=source_file,
-               provider='gsi',
-               obs_type=name,
-               type='bc',
-               experiment=geos_experiment,
-               file_type='satbias')
+            source_file = os.path.basename(filepath)
+            filename_parts = source_file.split('.')
+            name = filename_parts[3]
+            store(date=satbias_r2d2_dt,
+                  source_file=source_file,
+                  provider='gsi',
+                  obs_type=name,
+                  type='bc',
+                  experiment=geos_experiment,
+                  file_type='satbias')
 
         # Perform store of tlapse
         for filepath in list(glob.glob(out_dir + '/*tlapse')):
-           source_file = os.path.basename(filepath)
-           filename_parts = source_file.split('.')
-           name = filename_parts[3]
-           store(date=satbias_r2d2_dt,
-               source_file=source_file,
-               provider='gsi',
-               obs_type=name,
-               type='bc',
-               experiment=geos_experiment,
-               file_type='tlapse')
+            source_file = os.path.basename(filepath)
+            filename_parts = source_file.split('.')
+            name = filename_parts[3]
+            store(date=satbias_r2d2_dt,
+                  source_file=source_file,
+                  provider='gsi',
+                  obs_type=name,
+                  type='bc',
+                  experiment=geos_experiment,
+                  file_type='tlapse')
 
 # --------------------------------------------------------------------------------------------------
