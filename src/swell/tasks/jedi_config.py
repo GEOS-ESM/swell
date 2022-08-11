@@ -42,7 +42,7 @@ class JediConfig(taskBase):
                 self.replace_jedi_conf(element_template)
             else:
                 # Strip special characters from element
-                element = copy.deepcopy(element_template)
+                element = element_template
                 element = element.replace("$", "")
                 element = element.replace("{", "")
                 element = element.replace("}", "")
@@ -117,9 +117,9 @@ class JediConfig(taskBase):
                                 begin = dt.strptime(instr_dict[ind]['begin date'],
                                                     '%Y-%m-%dT%H:%M:%S')
                                 end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
-                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                if ((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
-                            assert(instr_ind != 999)
+                            assert (instr_ind != 999)
                             instr_ch_list = instr_dict[ind]['channels']
 
                         else:
@@ -135,9 +135,9 @@ class JediConfig(taskBase):
                             for ind in range(len(instr_df)):
                                 begin = dt.strptime(instr_df['start'][ind], '%Y%m%d%H%M%S')
                                 end = dt.strptime(instr_df['end'][ind], '%Y%m%d%H%M%S')
-                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                if ((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
-                            assert(instr_ind != 999)
+                            assert (instr_ind != 999)
                             instr_ch_list = instr_df['channels'][ind]
 
                         # Process instrument channel list into ranges
@@ -146,7 +146,7 @@ class JediConfig(taskBase):
                         ch_ranges = list(ranges(instr_ch_list))
                         new_ch_str = ''
                         for ch_range in ch_ranges:
-                            if(ch_range[0] != ch_range[1]):
+                            if (ch_range[0] != ch_range[1]):
                                 new_ch_str = new_ch_str + str(ch_range[0]) + '-' + \
                                              str(ch_range[1]) + ','
                             else:
@@ -182,6 +182,23 @@ class JediConfig(taskBase):
                 filters.append(save_geovals_dict)
                 # Put dictionary into the filter config
                 ob['obs filters'] = copy.deepcopy(filters)
+
+        # Add section for time interpolation
+        # ----------------------------------
+        time_interpolation_type = 'nearest'
+        window_type = self.config.get('window_type', '4D')
+        if window_type == '4D':
+            time_interpolation_type = 'linear'
+
+            # User can override the window guided behavior (if 4D)
+            time_interpolation_type = self.config.get('time_interpolation', time_interpolation_type)
+
+        get_values_dict = {}
+        get_values_dict['time interpolation'] = time_interpolation_type
+
+        # Add to obs operator config
+        for ob in obs:
+            ob['get values'] = get_values_dict
 
         # Set full path to the templated config file
         # ------------------------------------------

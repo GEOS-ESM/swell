@@ -19,7 +19,7 @@ def check_end_times(end_times):
     for end_time in end_times:
         # note that python datetime does not allow for times with hour = 24
         hour = end_time[8:10]
-        if(hour == '24'):
+        if (hour == '24'):
             # subtract 6 hours
             tmp = int(end_time) - 60000
             new_end_times.append(str(tmp))
@@ -68,9 +68,9 @@ class InstrStateMachine:
 
         start_time_df = self.instr_df.loc[self.instr_df["start"] == self.start_times[self.idx]]
         n_curr_start_rows = len(start_time_df)
-        assert(n_curr_start_rows != 0)
+        assert (n_curr_start_rows != 0)
 
-        if(n_curr_start_rows == 1):
+        if (n_curr_start_rows == 1):
             self.curr_channel_list = start_time_df["channels"].values[0]
             self.state_two()
         else:
@@ -103,7 +103,7 @@ class InstrStateMachine:
         end_times = rows["end"].values
         other_end_times = end_times[end_times != end_times[0]]
 
-        if(other_end_times):
+        if (other_end_times):
 
             first_end = other_end_times[0]
             first_end_row = self.instr_df.loc[self.instr_df["end"] == first_end]
@@ -126,7 +126,7 @@ class InstrStateMachine:
         # go to state 2
 
         # return if end of df is reached
-        if(self.idx == len(self.start_times)):
+        if (self.idx == len(self.start_times)):
             return
 
         # Get current and main start and end time
@@ -136,7 +136,7 @@ class InstrStateMachine:
         main_start = self.start_times[self.main_idx]
         main_end = self.end_times[self.main_idx]
 
-        if((int(curr_start) > int(main_start)) and (int(curr_end) <= int(main_end))):
+        if ((int(curr_start) > int(main_start)) and (int(curr_end) <= int(main_end))):
             self.state_four()
         else:
             self.state_two()
@@ -151,10 +151,10 @@ class InstrStateMachine:
         row_channel_list = row["channels"].values[0]
 
         # if these are the same, the logic is off
-        assert(len(row_channel_list) != len(self.compare_channels))
+        assert (len(row_channel_list) != len(self.compare_channels))
         self.curr_channel_list = self.main_channel_list
 
-        if(len(row_channel_list) > len(self.compare_channels)):
+        if (len(row_channel_list) > len(self.compare_channels)):
             # turn on
             turn_on = list(set(row_channel_list) - set(self.compare_channels))
             self.curr_channel_list += turn_on
@@ -174,11 +174,11 @@ class InstrStateMachine:
         # condition one. Otherwise, go to state 6. If there's no next
         # then return.
 
-        assert(self.idx != 0)
-        if(self.idx == len(self.start_times)):
+        assert (self.idx != 0)
+        if (self.idx == len(self.start_times)):
             return
         else:
-            assert(self.end_times[self.idx-1] != self.start_times[self.idx])
+            assert (self.end_times[self.idx-1] != self.start_times[self.idx])
 
             prev_end_dt = dt.strptime(self.end_times[self.idx-1], '%Y%m%d%H%M%S')
             next_start_dt = dt.strptime(self.start_times[self.idx], '%Y%m%d%H%M%S')
@@ -219,7 +219,7 @@ class InstrStateMachine:
 
         # Updates the return df based on parameters
 
-        if(missing):
+        if (missing):
             self.return_df = self.return_df.append({
                "sat": row["sat"].values[0],
                "start": missing_time['begin_time'],
@@ -230,7 +230,7 @@ class InstrStateMachine:
                "comments": "missing for this period",
              }, ignore_index=True)
 
-        elif(no_comment):
+        elif (no_comment):
             self.return_df = self.return_df.append({
                "sat": row["sat"].values[0],
                "start": self.start_times[self.idx],
