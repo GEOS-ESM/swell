@@ -53,11 +53,16 @@ def copy_suite_files(logger, experiment_dict):
 
     # Copy suite related files to the suite directory
     # -----------------------------------------------
+    suite_files = [
+      'jedi_config.yaml',
+      'flow.cylc',
+      'eva.yaml',
+    ]
+
     suite_path = return_suite_path()
-    for s in [os.path.join(suite_name, 'jedi_config.yaml'), os.path.join(suite_name, 'flow.cylc')]:
-        src_file = os.path.split(s)[1]
-        src_path_file = os.path.join(suite_path, os.path.split(s)[0], src_file)
-        dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
+    for suite_file in suite_files:
+        src_path_file = os.path.join(suite_path, suite_name, suite_file)
+        dst_path_file = os.path.join(suite_dir, suite_file)
         if os.path.exists(src_path_file):
             logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
             shutil.copy(src_path_file, dst_path_file)

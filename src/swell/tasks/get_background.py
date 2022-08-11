@@ -143,3 +143,6 @@ class GetBackground(taskBase):
                           resolution=cfg.get('horizontal_resolution'),
                           type='fc',
                           experiment=bkg_info['background experiment'])
+
+                    # Change permission
+                    os.chmod(target_file, 0o644)

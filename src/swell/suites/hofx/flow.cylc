@@ -34,8 +34,7 @@
         T00,T06,T12,T18 = """
                           GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
                           => RunJediExecutable => MergeObsDiags =>
-                          ObsCorrelationScatterDriver #& SaveObsDiags => CleanCycle
-                          #CleanCycle[-PT6H] => CleanCycle
+                          EvaDriver & SaveObsDiags => CleanCycle
                           """
 
 # --------------------------------------------------------------------------------------------------
@@ -83,8 +82,8 @@
     [[MergeObsDiags]]
         script = "swell_task MergeIodaFiles $config -d $datetime"
 
-    [[ObsCorrelationScatterDriver]]
-        script = "swell_task ObsCorrelationScatterDriver $config -d $datetime"
+    [[EvaDriver]]
+        script = "swell_task EvaDriver $config -d $datetime"
 
     [[SaveObsDiags]]
         script = "swell_task SaveObsDiags $config -d $datetime"
