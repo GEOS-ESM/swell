@@ -33,6 +33,13 @@ diagnostics:
       for:
         variable: *variables
 
+    # Generate hofx difference
+    - transform: arithmetic
+      new name: experiment::HofxMinusGsiHofXBc::${variable}
+      equals: experiment::hofx::${variable}-experiment::GsiHofXBc::${variable}
+      for:
+        variable: *variables
+
     # Generate hofx that passed QC for JEDI
     - transform: accept where
       new name: experiment::hofxPassedQc::${variable}
@@ -71,15 +78,17 @@ diagnostics:
 
   graphics:
 
-    # JEDI h(x) vs Observations
+    # Correlation scatter plots
     # -------------------------
+
+    # JEDI h(x) vs Observations
     - batch figure:
         variables: *variables
         channels: *channels
       figure:
         layout: [1,1]
         title: 'Observations vs. JEDI h(x) | $(instrument_title) | ${variable_title}'
-        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/jedi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
+        output name: $(cycle_dir)/eva/$(instrument)/correlation_scatter/${variable}${channel}/jedi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
       plots:
         - add_xlabel: 'Observation Value'
           add_ylabel: 'JEDI h(x)'
@@ -107,14 +116,13 @@ diagnostics:
             label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
     # GSI h(x) vs Observations
-    # -------------------------
     - batch figure:
         variables: *variables
         channels: *channels
       figure:
         layout: [1,1]
         title: 'Observations vs. GSI h(x) | $(instrument_title) | ${variable_title}'
-        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
+        output name: $(cycle_dir)/eva/$(instrument)/correlation_scatter/${variable}${channel}/gsi_hofx_vs_obs_$(instrument)_${variable}${channel}.png
       plots:
         - add_xlabel: 'Observation Value'
           add_ylabel: 'GSI h(x)'
@@ -142,15 +150,13 @@ diagnostics:
             label: 'GSI h(x) versus obs (passed QC in JEDI)'
 
     # JEDI h(x) vs GSI h(x)
-    # ---------------------
-
     - batch figure:
         variables: *variables
         channels: *channels
       figure:
         layout: [1,1]
         title: 'JEDI h(x) vs. GSI h(x) | $(instrument_title) | ${variable_title}'
-        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_hofx_vs_jedi_hofx_$(instrument)_${variable}${channel}.png
+        output name: $(cycle_dir)/eva/$(instrument)/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi_hofx_$(instrument)_${variable}${channel}.png
       plots:
         - add_xlabel: 'GSI h(x)'
           add_ylabel: 'JEDI h(x)'
@@ -178,15 +184,13 @@ diagnostics:
             label: 'JEDI h(x) versus GSI h(x) (passed QC in JEDI)'
 
     # JEDI omb vs GSI omb
-    # ---------------------
-
     - batch figure:
         variables: *variables
         channels: *channels
       figure:
         layout: [1,1]
-        title: 'JEDI omb vs. GSI omb| $(instrument_title) | ${variable_title}'
-        output name: $(cycle_dir)/eva/$(instrument)/${variable}${channel}/gsi_omb_vs_jedi_omb_$(instrument)_${variable}${channel}.png
+        title: 'JEDI omb vs. GSI omb | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/correlation_scatter/${variable}${channel}/gsi_omb_vs_jedi_omb_$(instrument)_${variable}${channel}.png
       plots:
         - add_xlabel: 'GSI observation minus h(x)'
           add_ylabel: 'JEDI observation minus h(x)'
@@ -212,3 +216,193 @@ diagnostics:
             markersize: 5
             color: 'red'
             label: 'GSI omb vs JEDI omb (passed QC in JEDI)'
+
+# Map plots
+# ---------
+
+    # Observations
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      dynamic options:
+        - type: vminvmaxcmap
+          channel: ${channel}
+          data variable: experiment::ObsValue::${variable}
+      figure:
+        figure size: [20,10]
+        layout: [1,1]
+        title: 'Observations | $(instrument_title) | Obs Value'
+        output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/observations_$(instrument)_${variable}${channel}.png
+      plots:
+        - mapping:
+            projection: plcarr
+            domain: global
+          add_map_features: ['coastline']
+          add_colorbar:
+            label: ObsValue
+          add_grid:
+          layers:
+          - type: MapScatter
+            longitude:
+              variable: experiment::MetaData::longitude
+            latitude:
+              variable: experiment::MetaData::latitude
+            data:
+              variable: experiment::ObsValue::${variable}
+              channel: ${channel}
+            markersize: 2
+            label: ObsValue
+            colorbar: true
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
+
+    # omb jedi
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      dynamic options:
+        - type: vminvmaxcmap
+          channel: ${channel}
+          data variable: experiment::ObsValueMinusHofx::${variable}
+      figure:
+        figure size: [20,10]
+        layout: [1,1]
+        title: 'JEDI OmB | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/omb_jedi_$(instrument)_${variable}${channel}.png
+      plots:
+        - mapping:
+            projection: plcarr
+            domain: global
+          add_map_features: ['coastline']
+          add_colorbar:
+            label: '${variable}'
+          add_grid:
+          layers:
+          - type: MapScatter
+            longitude:
+              variable: experiment::MetaData::longitude
+            latitude:
+              variable: experiment::MetaData::latitude
+            data:
+              variable: experiment::ObsValueMinusHofx::${variable}
+              channel: ${channel}
+            markersize: 2
+            label: '${variable}'
+            colorbar: true
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
+
+    # omb gsi
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      dynamic options:
+        - type: vminvmaxcmap
+          channel: ${channel}
+          data variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+      figure:
+        figure size: [20,10]
+        layout: [1,1]
+        title: 'GSI OmB | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/omb_gsi_$(instrument)_${variable}${channel}.png
+      plots:
+        - mapping:
+            projection: plcarr
+            domain: global
+          add_map_features: ['coastline']
+          add_colorbar:
+            label: '${variable}'
+          add_grid:
+          layers:
+          - type: MapScatter
+            longitude:
+              variable: experiment::MetaData::longitude
+            latitude:
+              variable: experiment::MetaData::latitude
+            data:
+              variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+              channel: ${channel}
+            markersize: 2
+            label: '${variable}'
+            colorbar: true
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
+
+    # hofx difference
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      dynamic options:
+        - type: vminvmaxcmap
+          channel: ${channel}
+          data variable: experiment::HofxMinusGsiHofXBc::${variable}
+      figure:
+        figure size: [20,10]
+        layout: [1,1]
+        title: 'Hofx Difference | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/map_plots/${variable}${channel}/hofx_difference_$(instrument)_${variable}${channel}.png
+      plots:
+        - mapping:
+            projection: plcarr
+            domain: global
+          add_map_features: ['coastline']
+          add_colorbar:
+            label: '${variable}'
+          add_grid:
+          layers:
+          - type: MapScatter
+            longitude:
+              variable: experiment::MetaData::longitude
+            latitude:
+              variable: experiment::MetaData::latitude
+            data:
+              variable: experiment::HofxMinusGsiHofXBc::${variable}
+              channel: ${channel}
+            markersize: 2
+            label: '${variable}'
+            colorbar: true
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
+
+# Histogram plots
+# ---------------
+
+    # omb vs omb
+    - batch figure:
+        variables: *variables
+        channels: *channels
+      dynamic options:
+        - type: histogram_bins
+          channel: ${channel}
+          number of bins rule: sturges
+          data variable: experiment::ObsValueMinusHofx::${variable}
+      figure:
+        layout: [1,1]
+        title: 'JEDI omb vs. GSI omb | $(instrument_title) | ${variable_title}'
+        output name: $(cycle_dir)/eva/$(instrument)/histograms/${variable}${channel}/gsi_omb_vs_jedi_omb_$(instrument)_${variable}${channel}.png
+      plots:
+        - add_xlabel: 'Observation minus h(x)'
+          add_ylabel: 'Count'
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Histogram
+            data:
+              variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+              channel: ${channel}
+            color: 'blue'
+            label: 'GSI omb (all obs)'
+            bins: ${dynamic_bins}
+            alpha: 0.5
+          - type: Histogram
+            data:
+              variable: experiment::ObsValueMinusHofx::${variable}
+              channel: ${channel}
+            color: 'red'
+            label: 'JEDI omb (all obs)'
+            bins: ${dynamic_bins}
+            alpha: 0.5

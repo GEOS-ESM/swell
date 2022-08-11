@@ -47,7 +47,7 @@ def make_yamls(final_df, output_dir):
                 row_dict['end date'] = format_date(row['end'])
                 row_dict['channels'] = row['channels']
 
-                if(row['comments']):
+                if (row['comments']):
                     row_dict['comments'] = row['comments']
                 else:
                     row_dict['comments'] = 'no comment'

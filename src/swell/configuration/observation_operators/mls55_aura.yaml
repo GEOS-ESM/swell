@@ -7,8 +7,7 @@ obs space:
   simulated variables: [mole_fraction_of_ozone_in_air]
 obs operator:
   name: VertInterp
-  vertical coordinate: ["air_pressure"]
-  geovals: [mole_fraction_of_ozone_in_air]
+  vertical coordinate: air_pressure
 obs filters:
   # range sanity check
   - filter: Bounds Check

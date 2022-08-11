@@ -54,7 +54,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/
+  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
   build options:
     - release    # release, debug, relwithdebug
   packages:
@@ -151,9 +151,8 @@ MODEL:
 # Variable change between model and GeoVars
 # -----------------------------------------
 MODELGETVALUES:
-  get values:
-    variable change:
-      variable change name: Model2GeoVaLs
+  variable change:
+    variable change name: Model2GeoVaLs
 
 # R2D2 schema
 # -----------

@@ -1,18 +1,15 @@
----
-
-# Based on code from https://github.com/marketplace/actions/yaml-lint
-
-name: Yaml Lint
+name: YAML Coding Norms
 
 on:
   pull_request:
-      types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+      types: [opened, synchronize, reopened]
 
 # This validation is equivalent to running on the command line:
 #   yamllint -d relaxed --no-warnings
 # and is controlled by the .yamllint.yml file
 jobs:
   validate-YAML:
+    name: Check YAML Coding Norms
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
