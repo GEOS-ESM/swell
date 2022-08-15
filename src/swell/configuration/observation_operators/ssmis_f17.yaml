@@ -90,7 +90,7 @@ obs filters:
 #      name: water_area_fraction@GeoVaLs
 #    minvalue: 0.99
 #  action:
-#    name: reject    
+#    name: reject
 #step3:
 - filter: Difference Check
   filter variables:

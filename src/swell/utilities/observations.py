@@ -38,8 +38,8 @@ def find_instrument_from_string(full_string, logger):
     # Loop over list of valid names
     obs_ioda_name_found = None
     for obs_ioda_name in obs_ioda_names:
-        if obs_ioda_name in full_string:
-            obs_ioda_name_found = obs_ioda_name
+        if obs_ioda_name['ioda name'] in full_string:
+            obs_ioda_name_found = obs_ioda_name['ioda name']
 
     # Check something found
     if obs_ioda_name_found is None:
@@ -49,6 +49,42 @@ def find_instrument_from_string(full_string, logger):
 
     # Return found value
     return obs_ioda_name_found
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def ioda_name_to_long_name(ioda_name, logger):
+
+    # Get configuration path
+    configuration_path = return_configuration_path()
+
+    # Insturment list yaml
+    obs_ioda_names_file = os.path.join(configuration_path, 'observation_ioda_names.yaml')
+
+    # Open file and convert to dictionary
+    with open(obs_ioda_names_file, 'r') as obs_ioda_names_str:
+        obs_ioda_names_dict = yaml.safe_load(obs_ioda_names_str)
+
+    # Get the list of ioda instrument names
+    obs_ioda_names = obs_ioda_names_dict['ioda instrument names']
+
+    # Loop over list of valid names
+    found = True
+    for obs_ioda_name in obs_ioda_names:
+        if ioda_name == obs_ioda_name['ioda name']:
+            long_name = obs_ioda_name['full name']
+            found = True
+            break
+
+    # Check something found
+    if not found:
+        logger.abort('In find_instrument_from_string the string ' + full_string + 'does not ' +
+                     f'contain one of the valid instruments: {obs_ioda_names} . Additional ' +
+                     'instruments can be added to swell/configuration/observation_ioda_names.yaml')
+
+    # Return found value
+    return long_name
 
 
 # --------------------------------------------------------------------------------------------------

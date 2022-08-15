@@ -11,7 +11,7 @@ valid_tasks = [
   'JediConfig',
   'GetBackground',
   'RunJediExecutable',
-  'ObsCorrelationScatterDriver',
+  'EvaDriver',
   'MergeIodaFiles',
   'GetBackgroundGeosExperiment',
   'StoreBackground',

@@ -6,30 +6,28 @@ source /usr/share/lmod/lmod/init/bash
 # -------------
 module purge
 
-# JEDI Modules
-# ------------
-export OPT=/discover/swdev/jcsda/modules
-module use $OPT/modulefiles/apps
-module use $OPT/modulefiles/core
-module load jedi/intel-impi/ecbuild35
-
-# Python module with workflow dependencies
-# ----------------------------------------
-export DHOPT=/discover/nobackup/drholdaw/opt/
-module use -a $DHOPT/modulefiles/core
-module load miniconda/3.9
+# Spack stack modules
+# -------------------
+module use /discover/swdev/jcsda/spack-stack/modulefiles
+module load miniconda/3.9.7
+module load ecflow/5.8.4
+module use /gpfsm/dswdev/jcsda/spack-stack/spack-stack-v1/envs/skylab-1.0.2-intel-2022.0.1/install/modulefiles/Core
+module load stack-intel/2022.0.1
+module load stack-intel-oneapi-mpi/2021.5.0
+module load stack-python/3.9.7
+module load jedi-ewok-env/1.0.0
+module load jedi-fv3-env/1.0.0
+module load nco/5.0.6
+module load sp/2.3.3
 
 # Load workflow modules
 # ---------------------
-export DHJEDIOPT=/discover/nobackup/drholdaw/JediOpt/
-module use -a $DHJEDIOPT/modulefiles/core
+module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.5
-module load eva/1.1.1
+module load eva/1.2.2
 
 # Set the swell paths
 # -------------------
 PATH=$(swell_bin_path):$PATH
 PYTHONPATH=$(swell_lib_path):$PYTHONPATH
-export SUITEPATH=$(swell_sui_path)
-export SUITEPATHS=$(swell_sui_path)
