@@ -12,7 +12,7 @@ suite:
 
 # GEOS experiment to get backgrounds from
 geos_experiment: x0044
-iodabin: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.5/build-intel-impi-release/bin/
+iodabin: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/bin/
 geos_obs_dir_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/obs/Y%Y/M%m/D%d/H%H/
 satbias_dir_template: /discover/nobackup/projects/gmao/dadev/rtodling/archive/$(geos_experiment)/rs/Y%Y/M%m/
 combined_obs_template: obs_%Y%m%d%H.nc4
