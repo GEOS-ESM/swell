@@ -149,10 +149,12 @@ class ObsProcessSetup(taskBase):
         os.system('cp ' + '/discover/nobackup/asewnath/jedi_scripts/satbias_converter.yaml '
                   + satbias_out_dir)
         os.chdir(satbias_out_dir)
+        print(iodabin + '/satbias2ioda.x satbias_converter.yaml')
         os.system(iodabin + '/satbias2ioda.x satbias_converter.yaml')
 
         os.system('rename satbias_ gsi.' + geos_experiment + '.bc. *nc4')
         os.system('rename .nc4 ' + r2d2_satbias + ' *nc4')
+
         os.system('mv ' + satbias_out_dir + '*satbias ' + out_dir)
         os.system('mv ' + satbias_out_dir + '*tlapse ' + out_dir)
         os.chdir(out_dir)
@@ -198,5 +200,4 @@ class ObsProcessSetup(taskBase):
                   type='bc',
                   experiment=geos_experiment,
                   file_type='tlapse')
-
 # --------------------------------------------------------------------------------------------------
