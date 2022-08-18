@@ -40,4 +40,4 @@ obs filters:
   - name: integrated_layer_ozone_in_air
   threshold: 5.0
   action:
-    name: reject  
+    name: reject

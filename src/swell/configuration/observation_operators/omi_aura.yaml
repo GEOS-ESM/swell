@@ -43,7 +43,7 @@ obs filters:
   minvalue: 3
   maxvalue: 24
   action:
-    name: reject     
+    name: reject
 
  # Gross check
 - filter: Background Check
@@ -52,4 +52,3 @@ obs filters:
   threshold: 5.0
   action:
     name: reject
-
