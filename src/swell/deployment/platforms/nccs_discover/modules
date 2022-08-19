@@ -20,6 +20,9 @@ module load jedi-fv3-env/1.0.0
 module load nco/5.0.6
 module load sp/2.3.3
 
+module use -a /discover/nobackup/drholdaw/JediSwell/bundle/modulefiles/compiler/intel/2022.0.1/
+module load jedi-swell/1.0.7
+
 # Load workflow modules
 # ---------------------
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
