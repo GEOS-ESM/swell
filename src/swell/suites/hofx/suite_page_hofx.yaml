@@ -7,14 +7,18 @@ elements:
     key: experiment_root
     widget type: entry
   - name: Compute Platform
-    key: platform
+    key:
+      suite:
+        scheduling: platform
     widget type: dropdown
     options: [nccs_discover]
   - name: Intital time
-    key: intial cylc point
+    key:
+      suite: intial cylc point
     widget type: entry
   - name: Final time
-    key: final cylc point
+    key:
+      suite: final cylc point
     widget type: entry
   - name: Experiment that provides backgrounds
     key:
@@ -48,4 +52,4 @@ elements:
   - name: Observation operators
     key: OBSERVATIONS
     widget type: check button
-    options: [aircraft, amsua_n19]
+    options: [aircraft, airs_aqua, amsr2_gcom-w1, amsua_aqua, amsua_metop-a, amsua_metop-b, amsua_metop-c, amsua_n15, amsua_n18, amsua_n19]
