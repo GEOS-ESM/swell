@@ -13,8 +13,8 @@ window_type:
   type: drop-list
 
 # Observation to list
-observations:
-  default value: ['amsua_n19', 'aircraft']
-  question: Enter the experiment ID
+models:
+  default value: ['atmosphere']
+  question: Select models to use
   options: use_method
-  type: check-list
+  type: check-box
