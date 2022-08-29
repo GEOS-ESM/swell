@@ -15,5 +15,5 @@ suite_to_run:
   default value: hofx
   question: Choose the suite to run
   options: use_method
-  type: yaml
+  type: yaml-drop-list
 
