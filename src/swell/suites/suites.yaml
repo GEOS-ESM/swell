@@ -1,0 +1,19 @@
+# Experiment name
+experiment_id:
+  default_value: swell-experiment
+  question: Enter the experiment ID
+  type: string
+
+# Location to store the experiment
+experiment_root:
+  default_value: /discover/nobackup/${USER}/SwellExperiments/
+  question: Enter the path where experiment will be staged
+  type: string
+
+# Type of suite to run
+suite_to_run:
+  default value: hofx
+  question: Choose the suite to run
+  options: use_method
+  type: yaml
+

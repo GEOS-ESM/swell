@@ -1,0 +1,20 @@
+# What kind of coupling is needed
+coupling_style:
+  default_value: uncoupled
+  question: What kind of coupling would you like to run with?
+  options: ['uncoupled', 'weakly coupled', 'strongly coupled']
+  type:
+
+# Window type
+window_type:
+  default value: swell-experiment
+  question: Enter the experiment ID
+  options: ['4D', '3D']
+  type: drop-list
+
+# Observation to list
+observations:
+  default value: ['amsua_n19', 'aircraft']
+  question: Enter the experiment ID
+  options: use_method
+  type: check-list
