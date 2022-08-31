@@ -12,8 +12,8 @@ experiment_root:
 
 # Type of suite to run
 suite_to_run:
-  default value: hofx
+  default_value: hofx
   question: Choose the suite to run
   options: use_method
-  type: yaml-drop-list
+  type: file-drop-list
 

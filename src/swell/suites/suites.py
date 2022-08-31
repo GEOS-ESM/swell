@@ -15,31 +15,48 @@ import importlib
 # --------------------------------------------------------------------------------------------------
 
 
-class suites():
+class Suites():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, method, logger):
+    def __init__(self, method, logger, config_file):
 
-        self.method = method
+        self.method = method.lower()  # Ignore any user input cases
         self.logger = logger
 
+        # Assert valid method
+        # -------------------
+        valid_tasks = ['default', 'gui', 'cli']
+        if self.method not in valid_tasks:
+            logger.abort(f'In Suites constructor method \'{self.method}\' not one of the valid ' +
+                         f'tasks {valid_tasks}')
+
+        # Convert config file to dictionary
+        # ---------------------------------
+        with open(top_level_configuration_file, 'r') as ymlfile:
+            top_level_dictionary = yaml.safe_load(ymlfile)
+
+        # Set the object that will be used to populate dictionary options
+        # ---------------------------------------------------------------
+        PrepUsing = getattr(importlib.import_module('swell.suites.prep_using_'+self.method),
+                            'PrepUsing'+self.method.capitalize())
+        self.prep_using = PrepUsing(self.logger, base_path)
+
+
     # ----------------------------------------------------------------------------------------------
 
-    def prep_suite_config(self):
+    def stepper():
 
-        # Import the chosen method
-        # ------------------------
-        method_class = getattr(importlib.import_module('swell.suites.prep_using_'+self.method),
-                               'prep_suite_config')
+        print('Nothing yet')
 
-        # Initiate the class
-        # ------------------
-        method_obj = method_class(logger)
+    # ----------------------------------------------------------------------------------------------
+
+
+    def prep_suite_config(self, top_level_dictionary):
 
         # Call the config prep step
         # -------------------------
-        method_obj.execute()
+        self.prep_using.execute(top_level_dictionary)
 
 # --------------------------------------------------------------------------------------------------
 
