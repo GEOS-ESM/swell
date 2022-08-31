@@ -25,7 +25,7 @@ class PrepUsingBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def execute(self, top_level_dictionary):
+    def execute(self, input_dictionary, experiment_dictionary):
         pass
 
 
