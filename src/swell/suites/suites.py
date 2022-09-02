@@ -31,38 +31,28 @@ class Suites():
             logger.abort(f'In Suites constructor method \'{self.method}\' not one of the valid ' +
                          f'tasks {valid_tasks}')
 
-        # Convert config file to dictionary
-        # ---------------------------------
-        with open(top_level_configuration_file, 'r') as ymlfile:
-            top_level_dictionary = yaml.safe_load(ymlfile)
-
         # Set the object that will be used to populate dictionary options
         # ---------------------------------------------------------------
         PrepUsing = getattr(importlib.import_module('swell.suites.prep_using_'+self.method),
                             'PrepUsing'+self.method.capitalize())
-        self.prep_using = PrepUsing(self.logger, base_path)
-
-
-    # ----------------------------------------------------------------------------------------------
-
-    def stepper():
-
-        print('Nothing yet')
+        self.prep_using = PrepUsing(self.logger, config_file)
 
     # ----------------------------------------------------------------------------------------------
 
-
-    def prep_suite_config(self, top_level_dictionary):
+    def prep_suite_config(self):
 
         # Call the config prep step
         # -------------------------
-        self.prep_using.execute(top_level_dictionary)
+        self.prep_using.execute()
+
+        # Final experiment dictionary
+
+        print(self.prep_using.experiment_dict)
 
 # --------------------------------------------------------------------------------------------------
 
 
 def return_suite_path():
     return os.path.split(__file__)[0]
-
 
 # --------------------------------------------------------------------------------------------------

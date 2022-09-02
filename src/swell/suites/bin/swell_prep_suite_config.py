@@ -30,12 +30,9 @@ def main(method, top_level_configuration_file):
     suite_config = Suites(method, logger, top_level_configuration_file)
 
 
-
-
-
     # Run method to generate the experiment config file
     # -------------------------------------------------
-    suite_config.prep_suite_config(top_level_dictionary)
+    suite_config.prep_suite_config()
 
 
 # --------------------------------------------------------------------------------------------------

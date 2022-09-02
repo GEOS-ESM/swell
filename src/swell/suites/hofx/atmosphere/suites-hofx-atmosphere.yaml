@@ -1,0 +1,12 @@
+# Observations
+horizontal_resolution:
+  default_value: c360
+  question: What resolution for the atmospheric background?
+  options: ['c180', 'c360', 'c700']
+  type: drop-list
+
+observations:
+  default_value: [amsua_n19]
+  question: Select atmospheric observations.
+  options: use_method
+  type: check-list
