@@ -10,7 +10,9 @@
 
 import os
 import importlib
+import yaml
 
+from swell.utilities.dictionary_utilities import get_element
 
 # --------------------------------------------------------------------------------------------------
 
@@ -45,9 +47,21 @@ class Suites():
         # -------------------------
         self.prep_using.execute()
 
-        # Final experiment dictionary
+        # Write final experiment dictionary
+        # ---------------------------------
+        experiment_id = get_element(self.logger, self.prep_using.experiment_dict, 'experiment_id')
+        experiment_rt = get_element(self.logger, self.prep_using.experiment_dict, 'experiment_root')
 
-        print(self.prep_using.experiment_dict)
+        experiment_rt = os.path.expandvars(experiment_rt)
+
+        # Make directory
+        experiment_root_id = os.path.join(experiment_rt, experiment_id)
+        os.makedirs(experiment_root_id, exist_ok=True)
+
+        # Write dictionary
+        exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
+        with open(exp_dict_file, 'w') as exp_dict_file_open:
+            yaml.dump(self.prep_using.experiment_dict, exp_dict_file_open, default_flow_style=False, sort_keys=False)
 
 # --------------------------------------------------------------------------------------------------
 

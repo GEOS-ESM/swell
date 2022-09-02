@@ -1,3 +1,15 @@
+# Cycle frequency
+cycle_times:
+  default_value: 00,12
+  question: List all cycle times, by middle of the window?
+  type: string
+
+# Runahead limit
+runahead_limit:
+  default_value: '24H'
+  question: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: string
+
 observations:
   default_value: [adt_3a]
   question: Select ocean observations.

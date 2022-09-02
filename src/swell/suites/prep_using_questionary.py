@@ -14,11 +14,11 @@ from swell.suites.prep_using_base import PrepUsingBase
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepUsingCli(PrepUsingBase):
+class PrepUsingQuestionary(PrepUsingBase):
 
-    def execute(self, top_level_dictionary):
+    def execute(self):
 
-        self.logger.info('This is where cli will do its work')
+        self.logger.info('This is where a Questionary interface will do its work')
 
 
 # --------------------------------------------------------------------------------------------------

@@ -1,3 +1,15 @@
+# Cycle start time
+start_cycle_time:
+  default_value: '2020-12-15T00:00:00Z'
+  question: What is the time of the first cycle (middle of the window)?
+  type: iso-datetime
+
+# Cycle final time
+final_cycle_time:
+  default_value: '2020-12-15T06:00:00Z'
+  question: What is the time of the final cycle (middle of the window)?
+  type: iso-datetime
+
 # What kind of coupling is needed
 coupling_style:
   default_value: uncoupled
@@ -5,24 +17,11 @@ coupling_style:
   options: ['uncoupled', 'weakly coupled', 'strongly coupled']
   type: check-list
 
-# Cycle start time
-start cycle time:
-  default_value: 2020-12-15T00:00:00Z
-  question: What is the time of the first cycle (middle of the window)?
-  type: iso-datetime
-
-# Cycle final time
-final cycle time:
-  default_value: 2020-12-15T06:00:00Z
-  question: What is the time of the final cycle (middle of the window)?
-  type: iso-datetime
-
-# Path to build of JEDI
-
-
 # Models to use
 models:
   default_value: ['atmosphere', 'ocean']
   question: Select models to use
   options: use_method
   type: file-check-list
+
+

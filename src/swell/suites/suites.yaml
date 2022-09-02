@@ -6,8 +6,15 @@ experiment_id:
 
 # Location to store the experiment
 experiment_root:
-  default_value: /discover/nobackup/${USER}/SwellExperiments/
+  default_value: $HOME/SwellExperiments
   question: Enter the path where experiment will be staged
+  type: string
+
+# Compute platform to use
+platform:
+  default_value: nccs_discover
+  question: Which compute platform do you wish to use?
+  options: use_method
   type: string
 
 # Type of suite to run

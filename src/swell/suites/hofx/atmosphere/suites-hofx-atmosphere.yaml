@@ -1,12 +1,36 @@
+# Cycle frequency
+cycle_times:
+  default_value: T00,T06,T12,T18
+  question: List all cycle times, by middle of the window?
+  type: iso-time
+
+# Window length
+cycle_times:
+  default_value: PT6H
+  question: Window length
+  type: iso-duration
+
+# Runahead limit
+runahead_limit:
+  default_value: 'PT12H'
+  question: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: iso-duration
+
 # Observations
 horizontal_resolution:
   default_value: c360
   question: What resolution for the atmospheric background?
   options: ['c180', 'c360', 'c700']
-  type: drop-list
+  type: drop-list-string
 
+# Observations
 observations:
   default_value: [amsua_n19]
   question: Select atmospheric observations.
   options: use_method
-  type: check-list
+  type: check-list-string
+
+fixed_options:
+  window_type: 4D       # 3D or 4D h(x)
+  window_offset: PT3H   # Time from beginning of window to the middle
+  analysis_forecast_window_offset: -PT3H

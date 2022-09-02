@@ -115,5 +115,20 @@ def remove_matching_keys(d, key):
             if not isinstance(v, Hashable):
                 remove_matching_keys(v, key)
 
+# --------------------------------------------------------------------------------------------------
+
+def get_element(logger, d, key, default = None):
+
+    # Check that key exists
+    if key not in d.keys():
+        if default is None:
+            logger.abort(f'Key {key} not found in the dictionary')
+        else:
+            element = default
+    else:
+        element = d[key]
+
+    return element
+
 
 # --------------------------------------------------------------------------------------------------

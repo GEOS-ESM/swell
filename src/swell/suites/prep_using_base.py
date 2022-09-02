@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from abc import ABC, abstractmethod
+import datetime
 import os
 import yaml
 
@@ -40,6 +41,9 @@ class PrepUsingBase(ABC):
         # Dictionary validation things
         self.valid_types = ['string', 'iso-datetime', 'drop-list', 'check-list', 'file-drop-list',
                             'file-check-list']
+
+        # Disallowed element types
+        self.dis_elem_types = [datetime.datetime, datetime.date]
 
     # ----------------------------------------------------------------------------------------------
 
@@ -102,6 +106,32 @@ class PrepUsingBase(ABC):
 
     def add_to_experiment_dictionary(self, key, element):
 
+        # Validate the element
+        # --------------------
+
+        # Ensure always a list to make following logic not need to check if list or not
+        if not isinstance(element, list):
+            element_items = [element]
+        else:
+            element_items = element
+
+        # Check for disallowed element types
+        for element_item in element_items:
+            element_item_type = type(element_item)
+            for dis_elem_type in self.dis_elem_types:
+                if isinstance(element_item, dis_elem_type):
+                    self.logger.abort(f'Element \'{element}\' has a type that is not permitted. ' +
+                                      f'Type is \'{dis_elem_type}\'. Try replacing with a string ' +
+                                      f'in the configuration file.')
+
+        # Validate the key
+        # ----------------
+
+        # Ensure there are no spaces in the key
+        if ' ' in key:
+            self.logger.abort(f'Key \'{key}\' contains a space. For consistency across the ' +
+                              f'configurations please avoid spaces and instead use _ if needed.')
+
         # Check that dictionary does not already contain the key
         if key in self.experiment_dict.keys():
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
@@ -110,9 +140,11 @@ class PrepUsingBase(ABC):
         if self.model is None:
             self.experiment_dict[key] = element
         else:
-            if self.model not in self.experiment_dict.keys():
-                self.experiment_dict[self.model] = {}
-            self.experiment_dict[self.model][key] = element
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+            if self.model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][self.model] = {}
+            self.experiment_dict['models'][self.model][key] = element
 
     # ----------------------------------------------------------------------------------------------
 

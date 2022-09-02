@@ -21,13 +21,11 @@ class PrepUsingDefault(PrepUsingBase):
 
     def execute(self, dictionary = None):
 
-        print('start')
-
         # Set dictionary to use in this scope
         if dictionary is None:
             dictionary = self.dictionary
 
-        for key in dictionary :
+        for key in dictionary:
 
             # Element dictionary
             el_dict = dictionary[key]
