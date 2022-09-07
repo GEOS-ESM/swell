@@ -17,4 +17,5 @@ valid_tasks = [
   'StoreBackground',
   'CleanCycle',
   'SaveObsDiags',
+  'ObsProcessSetup',
 ]

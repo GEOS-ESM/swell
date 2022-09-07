@@ -79,7 +79,7 @@ obs filters:
   test variables:
   - name: SunGlintAngle@ObsFunction
   minvalue: 20.0
-#  Ckeck CLW retrievals from observations 
+#  Ckeck CLW retrievals from observations
 - filter: Bounds Check
   filter variables:
   - name: brightness_temperature
@@ -157,7 +157,7 @@ obs filters:
             sys_bias: *amsr2_sys_bias
             clwret_types: [ObsValue, HofX]
         x0:    [ 0.05,  0.05, 0.05, 0.05, 0.10, 0.10,
-                 0.05,  0.05, 0.05, 0.05, 0.05, 0.05,       
+                 0.05,  0.05, 0.05, 0.05, 0.05, 0.05,
                  0.05,  0.05]
         x1:    [ 0.60,  0.60, 0.60, 0.60, 0.60, 0.50,
                  0.30,  0.30, 0.30, 0.30, 0.30, 0.30,

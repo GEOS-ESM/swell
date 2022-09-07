@@ -12,7 +12,7 @@ obs operator:
   linear obs operator:
     Absorbers: [H2O,O3,CO2]
   obs options:
-    Sensor_ID: amsua_n15
+    Sensor_ID: &Sensor_ID amsua_n15
     EndianType: little_endian
     CoefficientPath: $(crtm_coeff_dir)
 obs bias:
@@ -38,7 +38,7 @@ obs bias:
     - name: scan_angle
       order: 2
     - name: scan_angle
-  obs filters:
+obs filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
     filter variables:
@@ -196,5 +196,3 @@ obs bias:
     minvalue: 1.0e-12
     action:
       name: reject
-
-

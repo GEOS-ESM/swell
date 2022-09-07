@@ -4,7 +4,8 @@
 
 | Test      | Status  |
 | --------- | --------|
-| Python coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/codestyle.yml/badge.svg) |
+| Python coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg) |
+| YAML coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg) |
 
 ### Licence:
 

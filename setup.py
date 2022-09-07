@@ -16,9 +16,9 @@ import setuptools
 
 setuptools.setup(
     name='swell',
-    version='1.0.5',
+    version='1.0.7',
     author='NASA Global Modeling and Assimilation Office',
-    description='Workflow suites, tasks and configuraiton for coupled data assimilation',
+    description='Workflow suites, tasks and configuration for coupled data assimilation',
     url='https://github.com/danholdaway/swell',
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
@@ -33,9 +33,9 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'click',
-        'pyyaml>=5.4',
+        'pyyaml>=6.0',
         'pycodestyle>=2.8.0',
-        'pandas>=1.1.3',
+        'pandas>=1.4.0',
         'isodate>=0.5.4',
         'xarray>=0.11.3',
     ],

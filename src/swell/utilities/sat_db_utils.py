@@ -31,9 +31,9 @@ def read_sat_db(path_to_sat_db, column_names):
     idx = 0
     for line in lines:
         line_parts = line.split()
-        if(line_parts):
+        if (line_parts):
 
-            if(line_parts[0][0] != '#' and line_parts[0][0] != '\n'):
+            if (line_parts[0][0] != '#' and line_parts[0][0] != '\n'):
 
                 df = df.append({
                     'sat': '',
@@ -53,12 +53,12 @@ def read_sat_db(path_to_sat_db, column_names):
 
                 comment_present = next((i for i, x in enumerate(line_parts) if x == '#'), None)
 
-                if(comment_present):
+                if (comment_present):
                     channel_list = line_parts[7:comment_present]
                     comment = line_parts[comment_present:]
                     comment_str = ' '.join(comment)
                     # accounting for no comment
-                    if(len(comment_str) != 1):
+                    if (len(comment_str) != 1):
                         df['comments'][idx] = comment_str
                 else:
                     channel_list = line_parts[7:]

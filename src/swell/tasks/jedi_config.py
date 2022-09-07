@@ -117,9 +117,9 @@ class JediConfig(taskBase):
                                 begin = dt.strptime(instr_dict[ind]['begin date'],
                                                     '%Y-%m-%dT%H:%M:%S')
                                 end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
-                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                if ((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
-                            assert(instr_ind != 999)
+                            assert (instr_ind != 999)
                             instr_ch_list = instr_dict[ind]['channels']
 
                         else:
@@ -135,9 +135,9 @@ class JediConfig(taskBase):
                             for ind in range(len(instr_df)):
                                 begin = dt.strptime(instr_df['start'][ind], '%Y%m%d%H%M%S')
                                 end = dt.strptime(instr_df['end'][ind], '%Y%m%d%H%M%S')
-                                if((cycle_dt >= begin) and (cycle_dt < end)):
+                                if ((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
-                            assert(instr_ind != 999)
+                            assert (instr_ind != 999)
                             instr_ch_list = instr_df['channels'][ind]
 
                         # Process instrument channel list into ranges
@@ -146,7 +146,7 @@ class JediConfig(taskBase):
                         ch_ranges = list(ranges(instr_ch_list))
                         new_ch_str = ''
                         for ch_range in ch_ranges:
-                            if(ch_range[0] != ch_range[1]):
+                            if (ch_range[0] != ch_range[1]):
                                 new_ch_str = new_ch_str + str(ch_range[0]) + '-' + \
                                              str(ch_range[1]) + ','
                             else:
