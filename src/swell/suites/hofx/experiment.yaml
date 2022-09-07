@@ -204,6 +204,8 @@ OBSERVATIONS:
   # Ozone
   - yaml::$(swell_dir)/configuration/observation_operators/mls55_aura.yaml
   - yaml::$(swell_dir)/configuration/observation_operators/omi_aura.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/ompsnm_npp.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/ompslpnc_npp.yaml
 
 
   #- yaml::$(swell_dir)/configuration/observation_operators/airs_aqua.yaml
