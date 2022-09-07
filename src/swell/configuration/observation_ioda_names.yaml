@@ -65,8 +65,10 @@ ioda instrument names:
     full name: OMI (AURA)
   - ioda name: ompsnp_npp
     full name: OMPS Nadir Profile (NPP)
-  - ioda name: ompstc8_npp
-    full name: OMPSTC-8 (NPP)
+  - ioda name: ompslpnc_npp
+    full name: Limb Profiler (NPP)
+  - ioda name: ompsnm_npp
+    full name: OMPS Nadir Mapper (NPP)
   - ioda name: rass_tv
     full name: RASS Virtual Temperature
   - ioda name: satwind
