@@ -14,4 +14,7 @@ observations:
   default_value: [adt_3a]
   question: Select ocean observations.
   options: use_method
-  type: check-list
+  type: check-list-string
+
+fixed_options:
+  jedi_interface: soca

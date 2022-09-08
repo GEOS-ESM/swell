@@ -39,8 +39,8 @@ class PrepUsingBase(ABC):
         self.experiment_dict = {}
 
         # Dictionary validation things
-        self.valid_types = ['string', 'iso-datetime', 'drop-list', 'check-list', 'file-drop-list',
-                            'file-check-list']
+        self.valid_types = ['string', 'iso-datetime', 'iso-duration', 'drop-list-string',
+                            'check-list-string', 'file-drop-list', 'file-check-list']
 
         # Disallowed element types
         self.dis_elem_types = [datetime.datetime, datetime.date]
@@ -94,12 +94,12 @@ class PrepUsingBase(ABC):
         for required_key in required_keys:
             if required_key not in dictionary.keys():
                 self.logger.abort(f'Each section of the suites config files must contain the key ' +
-                                  f'\''+ required_key + '\'. Offending dictionary: \n {dictionary}')
+                                  f'\'{required_key}\'. Offending dictionary: \n {dictionary}')
 
         # Check that type is supported
         type = dictionary['type']
         if type not in self.valid_types:
-            self.logger.abort(f'Dictionary has a type \'{type}\' that is not one of the supported ' +
+            self.logger.abort(f'Dictionary has type \'{type}\' that is not one of the supported ' +
                               f'types: {self.valid_types}. Offending dictionary: \n {dictionary}')
 
     # ----------------------------------------------------------------------------------------------

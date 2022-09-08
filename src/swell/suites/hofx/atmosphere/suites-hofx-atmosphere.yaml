@@ -31,6 +31,8 @@ observations:
   type: check-list-string
 
 fixed_options:
+  jedi_interface: fv3-jedi
   window_type: 4D       # 3D or 4D h(x)
   window_offset: PT3H   # Time from beginning of window to the middle
   analysis_forecast_window_offset: -PT3H
+

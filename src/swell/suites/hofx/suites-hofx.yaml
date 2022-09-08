@@ -10,12 +10,28 @@ final_cycle_time:
   question: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
+# Jedi build system
+jedi_build_method:
+  default_value: use_existing
+  question: Create a new JEDI build or use an existing build?
+  options: ['create', 'use_existing']
+  type: drop-list-string
+
+# Existing JEDI build
+existing_build_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
+  question: Provide the path to an existing JEDI build directory
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
+
 # What kind of coupling is needed
 coupling_style:
   default_value: uncoupled
   question: What kind of coupling would you like to run with?
   options: ['uncoupled', 'weakly coupled', 'strongly coupled']
-  type: check-list
+  type: check-list-string
 
 # Models to use
 models:

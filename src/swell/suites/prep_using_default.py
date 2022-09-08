@@ -30,50 +30,69 @@ class PrepUsingDefault(PrepUsingBase):
             # Element dictionary
             el_dict = dictionary[key]
 
-            # Validate the element dictionary
-            self.validate_dictionary(el_dict)
+            if key != 'fixed_options':
 
-            # Extract type
-            type = el_dict['type']
+                # Validate the element dictionary
+                self.validate_dictionary(el_dict)
 
-            # If the type is not another file add to dictionary
-            if 'file' not in type:
+                # Extract type
+                type = el_dict['type']
 
-                # In this case the key is not expected to refer to a sub dictionary but have
-                # everything needed in the elements dictionary
-                self.add_to_experiment_dictionary(key, el_dict['default_value'])
+                # If the type is not another file add to dictionary
+                if 'file' not in type:
 
-            elif 'file-drop-list' in type:
+                    # Check that the key does not have a dependency
+                    depends_flag = True
+                    if 'depends' in el_dict.keys():
+                        dep_key = el_dict['depends']['key']
+                        dep_val = el_dict['depends']['value']
+                        if self.experiment_dict[dep_key] != dep_val:
+                            depends_flag = False
 
-                # In this case the key refers to a single sub dictionary that involves opening that
-                # dictionary and recursively calling this routine.
+                    # In this case the key is not expected to refer to a sub dictionary but have
+                    # everything needed in the elements dictionary
+                    if depends_flag:
+                        self.add_to_experiment_dictionary(key, el_dict['default_value'])
 
-                # First append the directory and filename to denote moving to the sub dictionary
-                self.append_directory_and_filename(el_dict['default_value'])
+                elif 'file-drop-list' in type:
 
-                # Open next level down dictionary and recursively add
-                self.execute(self.open_dictionary())
+                    # In this case the key refers to a single sub dictionary that involves opening that
+                    # dictionary and recursively calling this routine.
 
-                # As we come back from the sub dictionary subtract the directory and filename
-                self.subtract_directory_and_filename()
+                    # First append the directory and filename to denote moving to the sub dictionary
+                    self.append_directory_and_filename(el_dict['default_value'])
 
-            elif 'file-check-list' in type:
-
-                # In this case the key asks the user to provide a list of items that correspond to
-                # sub dictionaries. Inside a loop this method is called recursively.
-                options = el_dict['default_value']
-                for option in options:
-
-                    # If the key is models change the internal model to match this model
-                    if key == 'models':
-                        self.model = option
-
-                    self.append_directory_and_filename(option)
+                    # Open next level down dictionary and recursively add
                     self.execute(self.open_dictionary())
+
+                    # As we come back from the sub dictionary subtract the directory and filename
                     self.subtract_directory_and_filename()
 
-                    if key == 'models':
-                        self.model = None
+                elif 'file-check-list' in type:
+
+                    # In this case the key asks the user to provide a list of items that correspond to
+                    # sub dictionaries. Inside a loop this method is called recursively.
+                    options = el_dict['default_value']
+                    for option in options:
+
+                        # If the key is models change the internal model to match this model
+                        if key == 'models':
+                            self.model = option
+
+                        self.append_directory_and_filename(option)
+                        self.execute(self.open_dictionary())
+                        self.subtract_directory_and_filename()
+
+                        if key == 'models':
+                            self.model = None
+
+            else:
+
+                for fixed_key in el_dict:
+
+                    self.add_to_experiment_dictionary(fixed_key, el_dict[fixed_key])
+
+
 
         return
 
