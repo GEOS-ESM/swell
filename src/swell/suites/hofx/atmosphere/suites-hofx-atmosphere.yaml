@@ -2,11 +2,11 @@
 cycle_times:
   default_value: T00,T06,T12,T18
   question: List all cycle times, by middle of the window?
-  type: iso-time
+  type: iso-duration
 
 # Window length
-cycle_times:
-  default_value: PT6H
+window_length:
+  default_value: 'PT6H'
   question: Window length
   type: iso-duration
 
@@ -16,23 +16,46 @@ runahead_limit:
   question: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: iso-duration
 
-# Observations
+# Horizontal resolution
 horizontal_resolution:
-  default_value: c360
+  default_value: 'c360'
   question: What resolution for the atmospheric background?
-  options: ['c180', 'c360', 'c700']
+  options: ['c180', 'c360', 'c720']
   type: drop-list-string
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '72'
+  question: What vertical resolution for the atmospheric background?
+  options: ['72']
+  type: drop-list-string
+
+# Processor layout
+npx_proc:
+  default_value: '2'
+  question: What processor layout (x-direction)?
+  type: string
+npy_proc:
+  default_value: '2'
+  question: What processor layout (y-direction)?
+  type: string
 
 # Observations
 observations:
-  default_value: [amsua_n19]
+  default_value: ['amsua_n19']
   question: Select atmospheric observations.
   options: use_method
   type: check-list-string
 
+# Background
+
+
 fixed_options:
   jedi_interface: fv3-jedi
+  jedi_interface_swell: fv3-jedi-geos
+  jedi_executable: fv3jedi_hofx.x
   window_type: 4D       # 3D or 4D h(x)
   window_offset: PT3H   # Time from beginning of window to the middle
   analysis_forecast_window_offset: -PT3H
-
+  total_processors: 'eval($(npx_proc) * $(npy_proc) * 6)'
+  model: pseudo

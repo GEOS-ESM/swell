@@ -77,14 +77,14 @@ class PrepUsingDefault(PrepUsingBase):
 
                         # If the key is models change the internal model to match this model
                         if key == 'models':
-                            self.model = option
+                            self.update_model(option)
 
                         self.append_directory_and_filename(option)
                         self.execute(self.open_dictionary())
                         self.subtract_directory_and_filename()
 
                         if key == 'models':
-                            self.model = None
+                            self.update_model(None)
 
             else:
 

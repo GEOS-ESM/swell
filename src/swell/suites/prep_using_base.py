@@ -104,6 +104,23 @@ class PrepUsingBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def update_model(self, model):
+
+        if model is None:
+            self.model = None
+        else:
+            self.model = model
+
+            # If models list not already in the dictionary added
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+
+            # If specific model dictionary not added to the list of model then add it
+            if self.model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][self.model] = {}
+
+    # ----------------------------------------------------------------------------------------------
+
     def add_to_experiment_dictionary(self, key, element):
 
         # Validate the element
@@ -136,14 +153,22 @@ class PrepUsingBase(ABC):
         if key in self.experiment_dict.keys():
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
 
+        # Make sure the element was not already added
+        # -------------------------------------------
+        if self.model is None:
+            if key in self.experiment_dict.keys():
+                self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
+        else:
+            if key in self.experiment_dict['models'][self.model].keys():
+                self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
+
         # Add element
+        # -----------
         if self.model is None:
             self.experiment_dict[key] = element
+            print(key, self.experiment_dict.keys())
         else:
-            if 'models' not in self.experiment_dict.keys():
-                self.experiment_dict['models'] = {}
-            if self.model not in self.experiment_dict['models'].keys():
-                self.experiment_dict['models'][self.model] = {}
+            print(key, self.experiment_dict['models'][self.model].keys())
             self.experiment_dict['models'][self.model][key] = element
 
     # ----------------------------------------------------------------------------------------------

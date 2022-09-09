@@ -4,17 +4,36 @@ cycle_times:
   question: List all cycle times, by middle of the window?
   type: string
 
+# Window length
+window_length:
+  default_value: PT6H
+  question: Window length
+  type: iso-duration
+
 # Runahead limit
 runahead_limit:
   default_value: '24H'
   question: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: string
 
+# Observations
+horizontal_resolution:
+  default_value: '1'
+  question: What resolution for the ocean background (degrees)?
+  options: ['1/4', '1/2', '1']
+  type: drop-list-string
+
+# Observations
 observations:
   default_value: [adt_3a]
   question: Select ocean observations.
   options: use_method
   type: check-list-string
 
+# Options that are not included in any user input
 fixed_options:
   jedi_interface: soca
+  jedi_executable: soca_hofx.x
+  window_type: 3D       # 3D or 4D h(x)
+  window_offset: PT12H   # Time from beginning of window to the middle
+  analysis_forecast_window_offset: -PT12H
