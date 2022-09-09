@@ -1,0 +1,17 @@
+R2D2:
+  fetch:
+    an:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
+    bc:
+      - file_type: satbias
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).nc4
+      - file_type: tlapse
+        target_file: $(cycle_dir)/$(obs_type).$(date).$(file_type).txt
+  store:
+    fc:
+      - file_type: [bkg]
+        user_date_format: '%Y%m%d.%H%M%S'
