@@ -1,0 +1,17 @@
+# Tier-1 Workflows
+
+name: Tier-1
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [labeled]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  CodeBuild:
+    if: ${{ github.event.label.name == 'run-ci-discover (authorized users)' }}
+    uses: GEOS-ESM/CI-workflows-test/.github/workflows/swell-workflow01.yml@main
