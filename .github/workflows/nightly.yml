@@ -4,8 +4,7 @@ name: Tier-1
 
 on:
   pull_request:
-    branches: [develop]
-    types: [labeled]
+    types: [opened, synchronize, reopened]
 
 defaults:
   run:
