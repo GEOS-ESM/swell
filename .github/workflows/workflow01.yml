@@ -2,10 +2,12 @@
 
 name: Tier-1
 
+on: commit
+
 on:
   pull_request:
     branches: [develop]
-    types: [labeled]
+    types: [labeled, opened, reopened]
 
 defaults:
   run:
