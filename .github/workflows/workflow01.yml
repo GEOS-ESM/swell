@@ -2,10 +2,10 @@
 
 name: Tier-1
 
-on: issue_comment
-#  pull_request:
-#    branches: [develop]
-#    types: [labeled]
+on:
+  pull_request:
+    branches: [develop]
+    types: [labeled, unlabeled]
 
 defaults:
   run:
