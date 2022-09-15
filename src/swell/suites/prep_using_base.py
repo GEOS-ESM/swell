@@ -35,8 +35,11 @@ class PrepUsingBase(ABC):
         # Extension to use for dictionary files
         self.dictionary_extension = '.yaml'
 
-        # Experiment dictionary to be created by the subclass
+        # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
+
+        # Comment dictionary to be created and used to add comments to the experiment YAML
+        self.comment_dict = {}
 
         # Dictionary validation things
         self.valid_types = ['string', 'iso-datetime', 'iso-duration', 'drop-list-string',
@@ -173,6 +176,15 @@ class PrepUsingBase(ABC):
             self.experiment_dict[key] = element
         else:
             self.experiment_dict['models'][self.model][key] = element
+
+        # Add option
+        # ----------
+        if self.model is None:
+            option_key = key
+        else:
+            option_key = self.model + '.' + key
+        self.comment_dict[option_key] = prompt
+        option_value = prompt
 
     # ----------------------------------------------------------------------------------------------
 

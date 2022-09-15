@@ -63,6 +63,12 @@ class Suites():
         with open(exp_dict_file, 'w') as exp_dict_file_open:
             yaml.dump(self.prep_using.experiment_dict, exp_dict_file_open, default_flow_style=False, sort_keys=False)
 
+        # Add comments to dictionary
+        # --------------------------
+
+
+        print(self.prep_using.comment_dict)
+
 # --------------------------------------------------------------------------------------------------
 
 
