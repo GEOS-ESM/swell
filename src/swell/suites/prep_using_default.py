@@ -52,7 +52,7 @@ class PrepUsingDefault(PrepUsingBase):
                     # In this case the key is not expected to refer to a sub dictionary but have
                     # everything needed in the elements dictionary
                     if depends_flag:
-                        self.add_to_experiment_dictionary(key, el_dict['default_value'])
+                        self.add_to_experiment_dictionary(key, el_dict)
 
                 elif 'file-drop-list' in type:
 

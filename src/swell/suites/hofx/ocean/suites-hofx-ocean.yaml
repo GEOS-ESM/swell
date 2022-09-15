@@ -1,39 +1,49 @@
 # Cycle frequency
 cycle_times:
   default_value: 00,12
-  question: List all cycle times, by middle of the window?
+  prompt: List all cycle times, by middle of the window?
   type: string
 
 # Window length
 window_length:
   default_value: PT6H
-  question: Window length
+  prompt: Window length
   type: iso-duration
 
 # Runahead limit
 runahead_limit:
   default_value: '24H'
-  question: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: string
 
 # Observations
 horizontal_resolution:
   default_value: '1'
-  question: What resolution for the ocean background (degrees)?
+  prompt: What resolution for the ocean background (degrees)?
   options: ['1/4', '1/2', '1']
   type: drop-list-string
 
 # Observations
 observations:
   default_value: [adt_3a]
-  question: Select ocean observations.
+  prompt: Select ocean observations.
   options: use_method
   type: check-list-string
 
 # Options that are not included in any user input
 fixed_options:
-  jedi_interface: soca
-  jedi_executable: soca_hofx.x
-  window_type: 3D       # 3D or 4D h(x)
-  window_offset: PT12H   # Time from beginning of window to the middle
-  analysis_forecast_window_offset: -PT12H
+  jedi_interface:
+    default_value: soca
+    prompt: Name of the JEDI model interface repo
+  jedi_executable:
+    default_value: soca_hofx.x
+    prompt: soca-mom6-geos
+  window_type:
+    default_value: 3D
+    prompt: Window type (3D or 4D)
+  window_offset:
+    default_value: PT12H
+    prompt: Time from beginning to middle of the window
+  analysis_forecast_window_offset:
+    default_value: -PT12H
+    prompt: Time from the middle of the window when forecasts start

@@ -90,7 +90,7 @@ class PrepUsingBase(ABC):
     def validate_dictionary(self, dictionary):
 
         # Check for required key
-        required_keys = ['default_value', 'question', 'type']
+        required_keys = ['default_value', 'prompt', 'type']
         for required_key in required_keys:
             if required_key not in dictionary.keys():
                 self.logger.abort(f'Each section of the suites config files must contain the key ' +
@@ -121,7 +121,12 @@ class PrepUsingBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def add_to_experiment_dictionary(self, key, element):
+    def add_to_experiment_dictionary(self, key, element_dict):
+
+        # Set the element
+        # ---------------
+        element = element_dict['default_value']
+        prompt = element_dict['prompt']
 
         # Validate the element
         # --------------------
@@ -166,9 +171,7 @@ class PrepUsingBase(ABC):
         # -----------
         if self.model is None:
             self.experiment_dict[key] = element
-            print(key, self.experiment_dict.keys())
         else:
-            print(key, self.experiment_dict['models'][self.model].keys())
             self.experiment_dict['models'][self.model][key] = element
 
     # ----------------------------------------------------------------------------------------------

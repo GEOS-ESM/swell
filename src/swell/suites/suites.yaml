@@ -1,26 +1,26 @@
 # Experiment name
 experiment_id:
   default_value: swell-experiment
-  question: Enter the experiment ID
+  prompt: Enter the experiment ID
   type: string
 
 # Location to store the experiment
 experiment_root:
   default_value: $HOME/SwellExperiments
-  question: Enter the path where experiment will be staged
+  prompt: Enter the path where experiment will be staged
   type: string
 
 # Compute platform to use
 platform:
   default_value: nccs_discover
-  question: Which compute platform do you wish to use?
+  prompt: Which compute platform do you wish to use?
   options: use_method
   type: string
 
 # Type of suite to run
 suite_to_run:
   default_value: hofx
-  question: Choose the suite to run
+  prompt: Choose the suite to run
   options: use_method
   type: file-drop-list
 
