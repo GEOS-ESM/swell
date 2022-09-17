@@ -38,7 +38,7 @@ class PrepUsingBase(ABC):
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
 
-        # Comment dictionary to be created and used to add comments to the experiment YAML
+        # Comment dictionary to be created and used to add comments to config file
         self.comment_dict = {}
 
         # Dictionary validation things
@@ -182,9 +182,12 @@ class PrepUsingBase(ABC):
         if self.model is None:
             option_key = key
         else:
-            option_key = self.model + '.' + key
+            if 'models' not in self.comment_dict.keys():
+                self.comment_dict['models'] = 'List of model components'
+            if 'models.' + self.model not in self.comment_dict.keys():
+                self.comment_dict['models.' + self.model] = f'Options for the {self.model} model component'
+            option_key = 'models.' + self.model + '.' + key
         self.comment_dict[option_key] = prompt
-        option_value = prompt
 
     # ----------------------------------------------------------------------------------------------
 

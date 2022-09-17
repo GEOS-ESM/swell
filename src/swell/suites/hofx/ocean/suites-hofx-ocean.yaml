@@ -1,6 +1,6 @@
 # Cycle frequency
 cycle_times:
-  default_value: 00,12
+  default_value: ['T00', 'T12']
   prompt: List all cycle times, by middle of the window?
   type: string
 

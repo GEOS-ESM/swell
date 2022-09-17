@@ -132,3 +132,59 @@ def get_element(logger, d, key, default = None):
 
 
 # --------------------------------------------------------------------------------------------------
+
+
+def add_comments_to_dictionary(dictionary_string, comment_dictionary):
+
+    dict_str_items = dictionary_string.split('\n')
+
+    for key in comment_dictionary.keys():
+
+        print('\n')
+
+        print(key, comment_dictionary[key])
+        keys_hierarchy = key.split('.')
+        indent_ind = len(key.split('.')) - 1
+        indent = indent_ind*2*' '
+        print(indent_ind)
+
+        if indent_ind == 0:
+
+            for ind, dict_str_item in enumerate(dict_str_items):
+
+                if key + ':' in dict_str_item:
+
+                    dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
+                    break
+
+        else:
+
+            index_of_key = 0
+            for key_hierarchy in keys_hierarchy:
+
+                for line in range(index_of_key, len(dict_str_items)):
+
+                    if key_hierarchy + ':' in dict_str_items[line]:
+
+                        index_of_key = line
+
+                        break
+
+            dict_str_items.insert(max(0, index_of_key), '\n' + indent + '# ' + comment_dictionary[key])
+            #print(dict_str_items[index_of_key])
+
+
+
+
+
+
+
+
+
+
+    dictionary_string_with_comments = '\n'.join(dict_str_items)
+
+    return dictionary_string_with_comments
+
+
+# --------------------------------------------------------------------------------------------------

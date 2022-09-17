@@ -10,9 +10,11 @@
 
 import os
 import importlib
+import ruamel.yaml
+import sys
 import yaml
 
-from swell.utilities.dictionary_utilities import get_element
+from swell.utilities.dictionary_utilities import get_element, add_comments_to_dictionary
 
 # --------------------------------------------------------------------------------------------------
 
@@ -55,19 +57,28 @@ class Suites():
         experiment_rt = os.path.expandvars(experiment_rt)
 
         # Make directory
+        # --------------
         experiment_root_id = os.path.join(experiment_rt, experiment_id)
         os.makedirs(experiment_root_id, exist_ok=True)
 
-        # Write dictionary
-        exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
-        with open(exp_dict_file, 'w') as exp_dict_file_open:
-            yaml.dump(self.prep_using.experiment_dict, exp_dict_file_open, default_flow_style=False, sort_keys=False)
-
         # Add comments to dictionary
         # --------------------------
+        experiment_dict_string = yaml.dump(self.prep_using.experiment_dict,
+                                           default_flow_style=False, sort_keys=False)
+
+        experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
+                                                                     self.prep_using.comment_dict)
 
 
-        print(self.prep_using.comment_dict)
+        print('\nNEW DICT')
+        print(experiment_dict_string_comments)
+
+        # Write dictionary with ruamel.yaml to preserve comments
+        exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
+        experiment_dict_comments = ruamel.yaml.round_trip_load(experiment_dict_string_comments)
+        with open(exp_dict_file, 'w') as exp_dict_file_open:
+            ruamel.yaml.round_trip_dump(experiment_dict_comments, exp_dict_file_open)
+
 
 # --------------------------------------------------------------------------------------------------
 

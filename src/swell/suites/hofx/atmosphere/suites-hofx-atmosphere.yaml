@@ -1,6 +1,6 @@
 # Cycle frequency
 cycle_times:
-  default_value: T00,T06,T12,T18
+  default_value: ['T00', 'T06', 'T12', 'T18']
   prompt: List all cycle times, by middle of the window?
   type: iso-duration
 
@@ -69,7 +69,7 @@ fixed_options:
     default_value:  -PT3H
     prompt: Time from the middle of the window when forecasts start
   total_processors:
-    default_value:  'eval($(npx_proc) * $(npy_proc) * 6)'
+    default_value:  '$(npx_proc) * $(npy_proc) * 6'
     prompt: Equation to compute total number of processors
   model:
     default_value:  pseudo
