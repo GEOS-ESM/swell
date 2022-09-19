@@ -8,17 +8,17 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.suites.prep_using_base import PrepUsingBase
+from swell.deployment.prep_config_base import PrepConfigBase
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepUsingGui(PrepUsingBase):
+class PrepConfigCli(PrepConfigBase):
 
-    def execute(self, top_level_dictionary):
+    def execute(self):
 
-        self.logger.info('This is where gui will do its work')
+        self.logger.abort('This is where a cli interface will do its work')
 
 
 # --------------------------------------------------------------------------------------------------

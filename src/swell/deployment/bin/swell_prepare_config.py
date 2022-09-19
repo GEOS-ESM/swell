@@ -6,33 +6,25 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-import click
-import yaml
 
-from swell.suites.suites import Suites
-from swell.utilities.logger import Logger
+# --------------------------------------------------------------------------------------------------
+
+
+import click
+
+from swell.deployment.prep_config import prepare_config
+
 
 # --------------------------------------------------------------------------------------------------
 
 
 @click.command()
 @click.argument('method')
-@click.argument('top_level_configuration_file')
-def main(method, top_level_configuration_file):
-
-    # Create a logger
-    # ---------------
-    logger = Logger('SwellPrepSuiteConfig')
-
+def main(method):
 
     # Create suites object
     # --------------------
-    suite_config = Suites(method, logger, top_level_configuration_file)
-
-
-    # Run method to generate the experiment config file
-    # -------------------------------------------------
-    suite_config.prep_suite_config()
+    prepare_config(method)
 
 
 # --------------------------------------------------------------------------------------------------

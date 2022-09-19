@@ -13,8 +13,7 @@ import os
 import pathlib
 import shutil
 
-from swell.install_path import swell_install_path
-from swell.suites.suites import return_suite_path
+from swell.swell_path import get_swell_path
 from swell.utilities.string_utils import replace_vars
 
 
@@ -59,7 +58,7 @@ def copy_suite_files(logger, experiment_dict):
       'eva.yaml',
     ]
 
-    suite_path = return_suite_path()
+    suite_path = os.path.join(get_swell_path(), 'suites')
     for suite_file in suite_files:
         src_path_file = os.path.join(suite_path, suite_name, suite_file)
         dst_path_file = os.path.join(suite_dir, suite_file)
@@ -108,12 +107,12 @@ def set_swell_path_in_modules(logger, experiment_dict):
 
         # Swell lib path
         # --------------
-        swell_lib_path = swell_install_path()
+        swell_lib_path = get_swell_path()
         swell_lib_path = os.path.split(swell_lib_path)[0]
 
         # Swell suite path
         # ----------------
-        swell_sui_path = return_suite_path()
+        swell_sui_path = os.path.join(get_swell_path(), 'suites')
 
         # Dictionary of definitions
         # -------------------------

@@ -1,4 +1,4 @@
-# (C) Copyright 2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -8,17 +8,14 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.suites.prep_using_base import PrepUsingBase
+import os
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepUsingQuestionary(PrepUsingBase):
-
-    def execute(self):
-
-        self.logger.info('This is where a Questionary interface will do its work')
+def get_swell_path():
+    return os.path.split(__file__)[0]
 
 
 # --------------------------------------------------------------------------------------------------

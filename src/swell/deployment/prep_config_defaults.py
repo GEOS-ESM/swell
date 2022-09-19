@@ -11,15 +11,17 @@
 import os
 import yaml
 
-from swell.suites.prep_using_base import PrepUsingBase
+from swell.deployment.prep_config_base import PrepConfigBase
+
 
 # --------------------------------------------------------------------------------------------------
 
-class PrepUsingDefault(PrepUsingBase):
+
+class PrepConfigDefaults(PrepConfigBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, dictionary = None):
+    def execute(self, dictionary=None):
 
         # Set dictionary to use in this scope
         if dictionary is None:
@@ -56,8 +58,8 @@ class PrepUsingDefault(PrepUsingBase):
 
                 elif 'file-drop-list' in type:
 
-                    # In this case the key refers to a single sub dictionary that involves opening that
-                    # dictionary and recursively calling this routine.
+                    # In this case the key refers to a single sub dictionary that involves opening
+                    # that dictionary and recursively calling this routine.
 
                     # First append the directory and filename to denote moving to the sub dictionary
                     self.append_directory_and_filename(el_dict['default_value'])
@@ -70,8 +72,8 @@ class PrepUsingDefault(PrepUsingBase):
 
                 elif 'file-check-list' in type:
 
-                    # In this case the key asks the user to provide a list of items that correspond to
-                    # sub dictionaries. Inside a loop this method is called recursively.
+                    # In this case the key asks the user to provide a list of items that correspond
+                    # to sub dictionaries. Inside a loop this method is called recursively.
                     options = el_dict['default_value']
                     for option in options:
 
@@ -92,8 +94,7 @@ class PrepUsingDefault(PrepUsingBase):
 
                     self.add_to_experiment_dictionary(fixed_key, el_dict[fixed_key])
 
-
-
         return
+
 
 # --------------------------------------------------------------------------------------------------

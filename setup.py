@@ -53,9 +53,9 @@ setuptools.setup(
         'console_scripts': [
             'swell_task = swell.tasks.base.task_base:main',
             'swell_create_experiment = swell.deployment.bin.swell_create_experiment:main',
+            'swell_prepare_experiment_config = swell.deployment.bin.swell_prepare_config:main',
             'swell_launch_experiment = swell.deployment.bin.swell_launch_experiment:main',
             'swell_sat_db_processing = swell.deployment.bin.swell_sat_db_processing:main',
-            'swell_prep_suite_config = swell.suites.bin.swell_prep_suite_config:main',
         ],
     },
     )

@@ -4,18 +4,21 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 from abc import ABC, abstractmethod
 import datetime
 import os
 import yaml
 
-from swell.suites.suites import return_suite_path
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
-class PrepUsingBase(ABC):
+
+class PrepConfigBase(ABC):
 
     def __init__(self, logger, dictionary_file):
 
@@ -23,7 +26,7 @@ class PrepUsingBase(ABC):
         self.logger = logger
 
         # Get the path and filename of the dictionary
-        self.directory = return_suite_path()
+        self.directory = os.path.join(get_swell_path(), 'suites')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Dictionary
@@ -50,10 +53,10 @@ class PrepUsingBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def append_directory_and_filename(self, subname):
+    def append_directory_and_filename(self, sub_dict_name):
 
-        self.directory = os.path.join(self.directory, subname)
-        self.filename = self.filename + '-' + subname
+        self.directory = os.path.join(self.directory, sub_dict_name)
+        self.filename = self.filename + '-' + sub_dict_name
 
     # ----------------------------------------------------------------------------------------------
 
@@ -62,7 +65,7 @@ class PrepUsingBase(ABC):
         self.directory = os.path.dirname(self.directory)
         self.filename = '-'.join(self.filename.split('-')[0:-1])
 
-   # ----------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------
 
     def open_dictionary(self):
 
@@ -185,7 +188,8 @@ class PrepUsingBase(ABC):
             if 'models' not in self.comment_dict.keys():
                 self.comment_dict['models'] = 'List of model components'
             if 'models.' + self.model not in self.comment_dict.keys():
-                self.comment_dict['models.' + self.model] = f'Options for the {self.model} model component'
+                self.comment_dict['models.' + self.model] = f'Options for the {self.model} ' + \
+                                                            f'model component'
             option_key = 'models.' + self.model + '.' + key
         self.comment_dict[option_key] = prompt
 
@@ -196,5 +200,6 @@ class PrepUsingBase(ABC):
         pass
         # The subclass has to implement an execute method since this is how it is called into
         # action.
+
 
 # --------------------------------------------------------------------------------------------------

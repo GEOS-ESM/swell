@@ -11,7 +11,7 @@ import os
 import shutil
 import yaml
 
-from swell.install_path import swell_install_path
+from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
 from swell.utilities.git_utils import git_got
 from swell.utilities.string_utils import replace_vars
@@ -94,7 +94,7 @@ def main(config, clean):
 
     # Put the swell install path in to the config
     # -------------------------------------------
-    swell_dir = swell_install_path()
+    swell_dir = get_swell_path()
     add_dir_to_conf_mkdir(logger, experiment_dict, 'swell_dir', swell_dir, False)
 
     # Resolve all dictionary definitions
