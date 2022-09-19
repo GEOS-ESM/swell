@@ -63,10 +63,10 @@ def prepare_config(method):
     # Add comments to dictionary
     # --------------------------
     experiment_dict_string = yaml.dump(prep_using.experiment_dict,
-                                        default_flow_style=False, sort_keys=False)
+                                       default_flow_style=False, sort_keys=False)
 
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
-                                                                    prep_using.comment_dict)
+                                                                 prep_using.comment_dict)
 
     # Write dictionary with ruamel.yaml to preserve comments
     exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
