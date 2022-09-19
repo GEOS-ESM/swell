@@ -1,6 +1,6 @@
-# Tier-1 Workflows
+# Discover Nightly
 
-name: Tier-1
+name: discover-nightly
 
 on:
   pull_request:
@@ -11,5 +11,5 @@ defaults:
     shell: bash
 
 jobs:
-  CodeBuild:
+  run-discover-nightly:
     uses: GEOS-ESM/CI-workflows-test/.github/workflows/swell-workflow01.yml@main
