@@ -93,7 +93,7 @@ class taskFactory():
 # --------------------------------------------------------------------------------------------------
 
 
-def task_main(task, config, datetime):
+def task_main(task, config, datetime, model):
 
     # For security check that task is in the registry
     if task not in valid_tasks:
@@ -137,9 +137,10 @@ def task_main(task, config, datetime):
 @click.argument('task')
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None)
-def main(task, config, datetime):
+@click.option('-m', '--model', 'model', default='all')
+def main(task, config, datetime, model):
 
-    task_main(task, config, datetime)
+    task_main(task, config, datetime, model)
 
 
 # --------------------------------------------------------------------------------------------------
