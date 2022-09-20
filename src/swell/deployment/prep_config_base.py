@@ -186,7 +186,7 @@ class PrepConfigBase(ABC):
             option_key = key
         else:
             if 'models' not in self.comment_dict.keys():
-                self.comment_dict['models'] = 'List of model components'
+                self.comment_dict['models'] = 'Options for individual model components'
             if 'models.' + self.model not in self.comment_dict.keys():
                 self.comment_dict['models.' + self.model] = f'Options for the {self.model} ' + \
                                                             f'model component'

@@ -34,7 +34,7 @@ coupling_style:
   type: check-list-string
 
 # Models to use
-models:
+model_components:
   default_value: ['atmosphere', 'ocean']
   prompt: Select models to use
   options: use_method

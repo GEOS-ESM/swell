@@ -58,6 +58,9 @@ class PrepConfigDefaults(PrepConfigBase):
 
                 elif 'file-drop-list' in type:
 
+                    # Add the choice to the dictionary
+                    self.add_to_experiment_dictionary(key, el_dict)
+
                     # In this case the key refers to a single sub dictionary that involves opening
                     # that dictionary and recursively calling this routine.
 
@@ -72,20 +75,23 @@ class PrepConfigDefaults(PrepConfigBase):
 
                 elif 'file-check-list' in type:
 
+                    # Add the choice to the dictionary
+                    self.add_to_experiment_dictionary(key, el_dict)
+
                     # In this case the key asks the user to provide a list of items that correspond
                     # to sub dictionaries. Inside a loop this method is called recursively.
                     options = el_dict['default_value']
                     for option in options:
 
                         # If the key is models change the internal model to match this model
-                        if key == 'models':
+                        if key == 'model_components':
                             self.update_model(option)
 
                         self.append_directory_and_filename(option)
                         self.execute(self.open_dictionary())
                         self.subtract_directory_and_filename()
 
-                        if key == 'models':
+                        if key == 'model_components':
                             self.update_model(None)
 
             else:
