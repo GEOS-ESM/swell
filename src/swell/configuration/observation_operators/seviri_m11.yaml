@@ -1,9 +1,13 @@
 obs space:
   name: seviri_m11
   obsdatain:
-    obsfile: $(cycle_dir)/seviri_m11.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/seviri_m11.window_begin.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).seviri_m11.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).seviri_m11.window_begin.nc4
   simulated variables: [brightness_temperature]
   channels: &seviri_m11_channels 4-11
 obs operator:

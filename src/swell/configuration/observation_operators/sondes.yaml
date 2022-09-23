@@ -1,13 +1,17 @@
 obs space:
   name: sondes
   obsdatain:
-    obsfile: $(cycle_dir)/sondes.{{window_begin}}.nc4
-    obsgrouping:
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/sondes.window_begin.nc4
+      obsgrouping:
       group variables: ["station_id", "LaunchTime"]
       sort variable: "air_pressure"
       sort order: "descending"
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).sondes.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).sondes.window_begin.nc4
   simulated variables: [air_temperature, specific_humidity, eastward_wind, northward_wind, surface_pressure]
 obs operator:
   name: Composite

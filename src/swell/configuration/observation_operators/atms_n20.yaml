@@ -1,9 +1,13 @@
 obs space:
   name: atms_n20
   obsdatain:
-    obsfile: $(cycle_dir)/atms_n20.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/atms_n20.window_begin.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).atms_n20.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).atms_n20.window_begin.nc4
   simulated variables: [brightness_temperature]
   channels: &atms_n20_channels 1-22
 obs operator:

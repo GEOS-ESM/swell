@@ -1,9 +1,13 @@
 obs space:
   name: mhs_metop-c
   obsdatain:
-    obsfile: $(cycle_dir)/mhs_metop-c.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/mhs_metop-c.window_begin.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).mhs_metop-c.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).mhs_metop-c.window_begin.nc4
   simulated variables: [brightness_temperature]
   channels: &mhs_metop-c_channels 1-5
 obs operator:
