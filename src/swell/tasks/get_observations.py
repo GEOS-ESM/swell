@@ -50,7 +50,7 @@ class GetObservations(taskBase):
             # Fetch observation files
             # -----------------------
             name = ob['obs space']['name']
-            target_file = ob['obs space']['obsdatain']['obsfile']
+            target_file = ob['obs space']['obsdatain']['engine']['obsfile']
             logger.info("Processing observation file "+target_file)
 
             fetch(date=window_begin,

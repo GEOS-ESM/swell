@@ -171,7 +171,7 @@ class JediConfig(taskBase):
 
             for ob in obs:
                 # Extract normal output filename
-                cycle_dir, obs_file = os.path.split(ob['obs space']['obsdataout']['obsfile'])
+                cycle_dir, obs_file = os.path.split(ob['obs space']['obsdataout']['engine']['obsfile'])
                 # Append instrument name with geovals
                 instrument = find_instrument_from_string(obs_file, self.logger)
                 geovals_file = obs_file.replace(instrument, instrument+'.geovals')

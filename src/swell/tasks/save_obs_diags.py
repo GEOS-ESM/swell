@@ -39,7 +39,7 @@ class SaveObsDiags(taskBase):
             # Store observation files
             # -----------------------
             name = ob['obs space']['name']
-            source_file = ob['obs space']['obsdataout']['obsfile']
+            source_file = ob['obs space']['obsdataout']['engine']['obsfile']
 
             store(date=window_begin,
                   provider='ncdiag',
