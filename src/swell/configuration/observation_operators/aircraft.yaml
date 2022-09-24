@@ -6,7 +6,7 @@ obs space:
     engine:
       type: H5File
       obsfile: $(cycle_dir)/aircraft.window_begin.nc4
-      obsgrouping:
+    obsgrouping:
       group variables: ["station_id"]
       sort variable: "air_pressure"
       sort order: "descending"

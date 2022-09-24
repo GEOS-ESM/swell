@@ -4,7 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: $(cycle_dir)/gnssrobndnbam.window_begin.nc4
-      obsgrouping:
+    obsgrouping:
       group variables: [ 'record_number' ]
       sort variable: 'impact_height'
       sort order: 'ascending'
