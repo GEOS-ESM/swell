@@ -54,7 +54,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
+  existing build directory: /discover/nobackup/jardizzo/CI/swell/nightly/latest/jedi_build/build-intel-release
   build options:
     - release    # release, debug, relwithdebug
   packages:
