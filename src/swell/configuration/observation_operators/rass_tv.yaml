@@ -5,9 +5,9 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/rass_tv.window_begin.nc4
+      obsfile: $(cycle_dir)/rass_tv.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).rass_tv.window_begin.nc4
+      obsfile: $(cycle_dir)/$(experiment_id).rass_tv.{{window_begin}}.nc4
   simulated variables: [virtual_temperature]

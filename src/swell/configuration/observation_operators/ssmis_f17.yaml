@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/ssmis_f17.window_begin.nc4
+      obsfile: $(cycle_dir)/ssmis_f17.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).ssmis_f17.window_begin.nc4
+      obsfile: $(cycle_dir)/$(experiment_id).ssmis_f17.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &ssmis_f17_channels 1-24
 obs operator:

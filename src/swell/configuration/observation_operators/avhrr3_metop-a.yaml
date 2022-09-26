@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/avhrr3_metop-a.window_begin.nc4
+      obsfile: $(cycle_dir)/avhrr3_metop-a.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).avhrr3_metop-a.window_begin.nc4
+      obsfile: $(cycle_dir)/$(experiment_id).avhrr3_metop-a.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &avhrr3_metop-a_channels 3,4,5
 obs operator:
