@@ -23,11 +23,12 @@ from swell.utilities.logger import Logger
 
 class DeployWorkflow():
 
-    def __init__(self, suite_path, experiment_name):
+    def __init__(self, suite_path, experiment_name, no_detach):
 
         self.logger = Logger('DeployWorkflow')
         self.suite_path = suite_path
         self.experiment_name = experiment_name
+        self.no_detach = no_detach
 
     # ----------------------------------------------------------------------------------------------
 
@@ -50,27 +51,35 @@ class DeployWorkflow():
         subprocess.run(['cylc', 'install'], check=True)
 
         # Start the workflow
-        subprocess.run(['cylc', 'play', self.experiment_name], check=True)
 
-        # Pre TUI messages
-        self.logger.info(' ')
-        self.logger.info('Workflow is now running... ')
-        self.logger.info(' ')
-        self.logger.info('Use \'cylc scan\' to see running workflows.')
-        self.logger.info(' ')
-        self.logger.info('If the workflow needs to be stopped, close the TUI (if open)')
-        self.logger.info('by pressing \'q\' and issue either:')
-        self.logger.info('  cylc stop ' + self.experiment_name)
-        self.logger.info('or to kill running tasks and stop:')
-        self.logger.info('  cylc stop --kill ' + self.experiment_name)
-        self.logger.info(' ')
+        if self.no_detach:
 
-        # Launch the job monitor
-        self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
-        self.logger.info('TUI can be relaunched with:')
-        self.logger.info('  cylc tui ' + self.experiment_name)
-        subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
+            # Start the suite and wait for the workflow to complete.
+            subprocess.run(['cylc', 'play', '--no-detach', self.experiment_name], check=True)
 
+        else:
+
+            # Start the suite and return
+            subprocess.run(['cylc', 'play', self.experiment_name], check=True)
+
+            # Pre TUI messages
+            self.logger.info(' ')
+            self.logger.info('Workflow is now running... ')
+            self.logger.info(' ')
+            self.logger.info('Use \'cylc scan\' to see running workflows.')
+            self.logger.info(' ')
+            self.logger.info('If the workflow needs to be stopped, close the TUI (if open)')
+            self.logger.info('by pressing \'q\' and issue either:')
+            self.logger.info('  cylc stop ' + self.experiment_name)
+            self.logger.info('or to kill running tasks and stop:')
+            self.logger.info('  cylc stop --kill ' + self.experiment_name)
+            self.logger.info(' ')
+
+            # Launch the job monitor
+            self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
+            self.logger.info('TUI can be relaunched with:')
+            self.logger.info('  cylc tui ' + self.experiment_name)
+            subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -80,7 +89,9 @@ class DeployWorkflow():
               help='Directory containing the suite file needed by the workflow manager')
 @click.option('-w', '--workflow_manager', 'workflow_manager', default='cylc',
               help='Workflow manager to be used')
-def main(suite_path, workflow_manager):
+@click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False,
+              help='Tells workflow manager to block until complete')
+def main(suite_path, workflow_manager, no_detach):
 
     # Get the path to where the suite files are located
     # -------------------------------------------------
@@ -95,7 +106,7 @@ def main(suite_path, workflow_manager):
 
     # Create the deployment object
     # ----------------------------
-    deploy_workflow = DeployWorkflow(suite_path, experiment_name)
+    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach)
 
     # Write some info for the user
     # ----------------------------
