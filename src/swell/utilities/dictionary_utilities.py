@@ -14,6 +14,25 @@ from collections.abc import Hashable
 
 from swell.utilities.string_utils import replace_vars
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+def dict_get(logger, dictionary, key, default='NODEFAULT'):
+
+    if key in dictionary.keys():
+
+        return dictionary[key]
+
+    else:
+
+        if default == 'NODEFAULT':
+            logger.abort(f'In dict_get the key \'{key}\' was not found in the dictionary and no ' +
+                         f'default was provided.')
+        else:
+            return default
+
+
 # --------------------------------------------------------------------------------------------------
 
 

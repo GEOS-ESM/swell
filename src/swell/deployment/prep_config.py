@@ -54,6 +54,7 @@ def prepare_config(method):
     experiment_rt = get_element(logger, prep_using.experiment_dict, 'experiment_root')
 
     experiment_rt = os.path.expandvars(experiment_rt)
+    prep_using.experiment_dict['experiment_root'] = experiment_rt
 
     # Make directory
     # --------------
@@ -73,6 +74,7 @@ def prepare_config(method):
     experiment_dict_comments = ry.round_trip_load(experiment_dict_string_comments)
     with open(exp_dict_file, 'w') as exp_dict_file_open:
         ry.round_trip_dump(experiment_dict_comments, exp_dict_file_open)
+    logger.info(f'Prepared configuration file written to {exp_dict_file}')
 
 
 # --------------------------------------------------------------------------------------------------

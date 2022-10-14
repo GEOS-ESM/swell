@@ -1,8 +1,8 @@
 databases:
 
-  $(USERNAME):
+  ${USER}:
     class: LocalDB
-    root: $(R2D2_LOCAL_PATH)
+    root: $(r2d2_local_path)
     cache_fetch: false
 
   gmao-shared:
@@ -16,6 +16,6 @@ fetch_order:
 
 # when storing data, in which order should the databases accessed?
 store_order:
-  - $(USERNAME)
+  - ${USER}
 
-cache_name: $(USERNAME)
+cache_name: ${USER}

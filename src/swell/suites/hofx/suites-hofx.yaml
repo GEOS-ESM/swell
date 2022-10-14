@@ -26,6 +26,12 @@ existing_build_directory:
     key: jedi_build_method
     value: use_existing
 
+# R2D2 Configuration
+r2d2_local_path:
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local/
+  prompt: Enter the path where R2D2 will store experiment output
+  type: string
+
 # What kind of coupling is needed
 coupling_style:
   default_value: uncoupled
