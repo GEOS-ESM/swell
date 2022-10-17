@@ -54,7 +54,7 @@ processors:
   - 6
 
 build jedi:
-  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
+  existing build directory: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release
   build options:
     - release    # release, debug, relwithdebug
   packages:
@@ -122,7 +122,7 @@ GEOMETRY:
 # JEDI Background
 # ---------------
 BACKGROUND:
-  datetime: '{{local_background_time}}'
+  datetime: '{{local_background_time_iso}}'
   filetype: cube sphere history
   provider: geos
   datapath: ''
@@ -182,7 +182,7 @@ obs_experiment: x0044_jjin_20220520
 update channels from database: false
 use geos satellite channel database: true
 crtm_coeff_dir: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
-save_geovals: true
+save_geovals: false
 time_interpolation: linear  # linear or nearest
 
 OBSERVATIONS:
@@ -204,6 +204,8 @@ OBSERVATIONS:
   # Ozone
   - yaml::$(swell_dir)/configuration/observation_operators/mls55_aura.yaml
   - yaml::$(swell_dir)/configuration/observation_operators/omi_aura.yaml
+  - yaml::$(swell_dir)/configuration/observation_operators/ompsnm_npp.yaml
+  #- yaml::$(swell_dir)/configuration/observation_operators/ompslpnc_npp.yaml
 
 
   #- yaml::$(swell_dir)/configuration/observation_operators/airs_aqua.yaml

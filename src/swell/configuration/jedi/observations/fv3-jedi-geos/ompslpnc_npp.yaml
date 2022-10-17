@@ -1,17 +1,18 @@
 obs space:
-  name: mls55_aura
+  name: ompslpnc_npp
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/mls55_aura.{{window_begin}}.nc4
+      obsfile: $(cycle_dir)/ompslpnc_npp.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).mls55_aura.{{window_begin}}.nc4
+      obsfile: $(cycle_dir)/$(experiment_id).ompslpnc_npp.{{window_begin}}.nc4
   simulated variables: [mole_fraction_of_ozone_in_air]
 obs operator:
   name: VertInterp
-  vertical coordinate: air_pressure
+  vertical coordinate: ["air_pressure"]
+  geovals: [mole_fraction_of_ozone_in_air]
 obs filters:
   # range sanity check
   - filter: Bounds Check
