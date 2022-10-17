@@ -78,6 +78,7 @@ class Config(dict):
 
         # Standard datetime format for config
         self.dt_format = "%Y%m%dT%H%M%SZ"
+        self.dt_foriso = "%Y-%m-%dT%H:%M:%SZ"
 
         # Create list of definitions from top level of dictionary
         self.defs = {}
@@ -173,9 +174,11 @@ class Config(dict):
         window_dict['window_length'] = window_length
         window_dict['window_offset'] = window_offset
         window_dict['window_begin'] = window_begin_dto.strftime(self.dt_format)
+        window_dict['window_begin_iso'] = window_begin_dto.strftime(self.dt_foriso)
         window_dict['background_time'] = background_time_dto.strftime(self.dt_format)
 
         window_dict['local_background_time'] = local_background_time.strftime(self.dt_format)
+        window_dict['local_background_time_iso'] = local_background_time.strftime(self.dt_foriso)
 
         # Merge with self
         self.merge(window_dict)
