@@ -1,9 +1,13 @@
 obs space:
   name: iasi_metop-b
   obsdatain:
-    obsfile: $(cycle_dir)/iasi_metop-b.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/iasi_metop-b.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).iasi_metop-b.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).iasi_metop-b.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &iasi_metop-b_channels 16, 29, 32, 35, 38, 41, 44, 47, 49, 50, 51, 53,
             55, 56, 57, 59, 61, 62, 63, 66, 68, 70, 72, 74, 76, 78, 79, 81, 82, 83,
@@ -371,6 +375,7 @@ obs filters:
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels
+        sensor: *Sensor_ID
         obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
         obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
 #  Gross check

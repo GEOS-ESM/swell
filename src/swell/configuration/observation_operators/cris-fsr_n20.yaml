@@ -1,9 +1,13 @@
 obs space:
   name: cris-fsr_n20
   obsdatain:
-    obsfile: $(cycle_dir)/cris-fsr_n20.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/cris-fsr_n20.{{window_begin}}.nc4
   obsdataout:
-    obsfile: $(cycle_dir)/$(experiment_id).cris-fsr_n20.{{window_begin}}.nc4
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).cris-fsr_n20.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &cris-fsr_n20_channels 19, 24, 26, 27, 28, 31, 32, 33, 37, 39, 42, 44, 47, 49, 50,
             51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
@@ -310,6 +314,7 @@ obs filters:
       channels: *cris-fsr_n20_channels
       options:
         channels: *cris-fsr_n20_channels
+        sensor: *Sensor_ID
         obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
         obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
 #  Gross check

@@ -44,7 +44,7 @@ class EvaDriver(taskBase):
         for observer in observers:
 
             # Split the full path into path and filename
-            obs_path_file = observer['obs space']['obsdataout']['obsfile']
+            obs_path_file = observer['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Get instrument ioda and full name

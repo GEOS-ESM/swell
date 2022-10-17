@@ -74,7 +74,7 @@ class JediConfig(taskBase):
 
         sat_db_yaml_loc = os.path.join(return_configuration_path(), 'satellite_channels')
 
-        cycle_dt = dt.strptime(time_window, '%Y-%m-%dT%H:%M:%SZ')
+        cycle_dt = dt.strptime(time_window, '%Y%m%dT%H%M%SZ')
 
         if update_channels:
 
@@ -115,8 +115,8 @@ class JediConfig(taskBase):
                             instr_ind = 999
                             for ind in range(len(instr_dict)):
                                 begin = dt.strptime(instr_dict[ind]['begin date'],
-                                                    '%Y-%m-%dT%H:%M:%S')
-                                end = dt.strptime(instr_dict[ind]['end date'], '%Y-%m-%dT%H:%M:%S')
+                                                    '%Y%m%dT%H%M%S')
+                                end = dt.strptime(instr_dict[ind]['end date'], '%Y%m%dT%H%M%S')
                                 if ((cycle_dt >= begin) and (cycle_dt < end)):
                                     instr_ind = ind
                             assert (instr_ind != 999)
@@ -171,7 +171,8 @@ class JediConfig(taskBase):
 
             for ob in obs:
                 # Extract normal output filename
-                cycle_dir, obs_file = os.path.split(ob['obs space']['obsdataout']['obsfile'])
+                cycle_dir, obs_file = os.path.split(
+                    ob['obs space']['obsdataout']['engine']['obsfile'])
                 # Append instrument name with geovals
                 instrument = find_instrument_from_string(obs_file, self.logger)
                 geovals_file = obs_file.replace(instrument, instrument+'.geovals')
