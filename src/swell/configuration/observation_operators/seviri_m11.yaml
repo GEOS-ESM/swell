@@ -124,6 +124,7 @@ obs filters:
       channels: *seviri_m11_channels
       options:
         channels: *seviri_m11_channels
+        sensor: *Sensor_ID
         obserr_demisf: [0.01, 0.02, 0.02, 0.02, 0.02]
         obserr_dtempf: [0.50, 2.00, 3.00, 3.00, 5.00]
 # Useflag Check

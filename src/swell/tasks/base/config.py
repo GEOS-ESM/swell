@@ -77,7 +77,7 @@ class Config(dict):
         super().__init__(config)
 
         # Standard datetime format for config
-        self.dt_format = "%Y-%m-%dT%H:%M:%SZ"
+        self.dt_format = "%Y%m%dT%H%M%SZ"
 
         # Create list of definitions from top level of dictionary
         self.defs = {}

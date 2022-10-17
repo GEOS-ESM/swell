@@ -126,6 +126,7 @@ obs filters:
         channels: 1-15
         options:
           channels: 1-15
+          sensor: *Sensor_ID
           use_biasterm: true
           test_biasterm: ObsBiasTerm
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
