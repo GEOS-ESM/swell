@@ -10,12 +10,6 @@ window_length:
   prompt: Window length
   type: iso-duration
 
-# Runahead limit
-runahead_limit:
-  default_value: '24H'
-  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
-  type: string
-
 # Observations
 horizontal_resolution:
   default_value: '1'

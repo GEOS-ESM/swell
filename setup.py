@@ -33,10 +33,10 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'click',
+        'jinja2>=3.0.3',
         'pyyaml>=6.0',
         'pycodestyle>=2.8.0',
         'pandas>=1.4.0',
-        'ruamel.yaml',
         'isodate>=0.5.4',
         'xarray>=0.11.3',
     ],

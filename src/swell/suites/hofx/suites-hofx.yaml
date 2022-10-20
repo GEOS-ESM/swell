@@ -1,14 +1,20 @@
-# Cycle start time
-start_cycle_time:
+# Cycle start point
+start_cycle_point:
   default_value: '2020-12-15T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
-# Cycle final time
-final_cycle_time:
+# Cycle final point
+final_cycle_point:
   default_value: '2020-12-15T06:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
+
+# Run ahead limit for workflow
+runahead_limit:
+  default_value: 'PT12H'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: iso-duration
 
 # Jedi build system
 jedi_build_method:

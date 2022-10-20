@@ -51,15 +51,11 @@ def copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, plat
 # --------------------------------------------------------------------------------------------------
 
 
-def set_swell_path_in_modules(logger, experiment_dict):
-
-    # Extract config
-    # --------------
-    suite_dir = experiment_dict['suite_dir']
+def set_swell_path_in_modules(logger, exp_suite_path):
 
     # Modules file
     # ------------
-    modules_file = os.path.join(suite_dir, 'modules')
+    modules_file = os.path.join(exp_suite_path, 'modules')
 
     # Only do if the suite needs modules
     # ----------------------------------
@@ -101,15 +97,11 @@ def set_swell_path_in_modules(logger, experiment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_modules_csh(logger, experiment_dict):
-
-    # Extract config
-    # --------------
-    suite_dir = experiment_dict['suite_dir']
+def create_modules_csh(logger, exp_suite_path):
 
     # Modules file
     # ------------
-    modules_file = os.path.join(suite_dir, 'modules')
+    modules_file = os.path.join(exp_suite_path, 'modules')
 
     # Only do if the suite needs modules
     # ----------------------------------

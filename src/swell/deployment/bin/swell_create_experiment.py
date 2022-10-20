@@ -19,7 +19,7 @@ from swell.utilities.dictionary_utilities import resolve_definitions, dict_get
 from swell.deployment.prep_exp_dirs import copy_suite_and_platform_files, \
                                            set_swell_path_in_modules, create_modules_csh
 from swell.deployment.yaml_exploder import recursive_yaml_expansion
-from swell.deployment.prep_suite import prepare_suite
+from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -66,7 +66,6 @@ def main():
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
     copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform)
 
-
     # Create R2D2 database file
     # -------------------------
     r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
@@ -84,6 +83,14 @@ def main():
     with open(r2d2_conf_path, 'w') as r2d2_file_open:
         r2d2_file_open.write(r2d2_file_str)
 
+    # Set the swell paths in the modules file and create csh versions
+    # ---------------------------------------------------------------
+    set_swell_path_in_modules(logger, exp_suite_path)
+    create_modules_csh(logger, exp_suite_path)
+
+    # Set the jinja2 file for cylc
+    # ----------------------------
+    prepare_cylc_suite_jinja2(logger, exp_suite_path, experiment_dict)
 
     return
 

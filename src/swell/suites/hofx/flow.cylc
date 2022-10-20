@@ -8,34 +8,54 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based 4D h(x)
-
-# --------------------------------------------------------------------------------------------------
-
-%include "suite.jinja2"
+# Cylc suite for executing JEDI-based h(x)
 
 # --------------------------------------------------------------------------------------------------
 
 [scheduler]
     UTC mode = True
+    allow implicit tasks = False
 
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
 
-    initial cycle point = {{suite_properties["intial cylc point"]}}
-    final cycle point = {{suite_properties["final cylc point"]}}
-    runahead limit = {{suite_properties["runahead limit"]}}
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
 
     [[graph]]
         R1 = """
-             BuildJedi & Stage
-             """
-        T00,T06,T12,T18 = """
-                          GetBackground & GetObservations & JediConfig & BuildJedi[^] & Stage[^]
-                          => RunJediExecutable => MergeObsDiags =>
-                          EvaDriver & SaveObsDiags => CleanCycle
-                          """
+            {% for model_component in model_components %}
+                BuildJedi & StageJedi-{{model_component}}
+            {% endfor %}
+            """
+
+        {% for cycle_time in cycle_times %}
+
+            {{cycle_time.cycle_time}} = """
+
+            {% for model_component in model_components %}
+
+                {% if cycle_time[model_component] %}
+
+                    GetBackground-{{model_component}} &
+                    GetObservations-{{model_component}} &
+                    JediConfig-{{model_component}} &
+                    StageJedi-{{model_component}}[^] &
+                    BuildJedi[^]
+                    => RunJediExecutable-{{model_component}}
+                    => MergeObsDiags-{{model_component}}
+                    => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
+                    => CleanCycle
+
+                {% endif %}
+
+            {% endfor %}
+
+            """
+
+        {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,45 +68,49 @@
 
         [[[environment]]]
             datetime = $CYLC_TASK_CYCLE_POINT
-            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+            config   = $CYLC_SUITE_DEF_PATH/experiment-filled.yaml
 
     # Tasks
     # -----
-    [[Stage]]
-        script = "swell_task Stage $config"
-
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
 
-    [[GetBackground]]
-        script = "swell_task GetBackground $config -d $datetime"
+    {% for model_component in model_components %}
 
-    [[GetObservations]]
-        script = "swell_task GetObservations $config -d $datetime"
+        [[StageJedi-{{model_component}}]]
+            script = "swell_task Stage $config"
 
-    [[JediConfig]]
-        script = "swell_task JediConfig $config -d $datetime"
+        [[ GetBackground-{{model_component}} ]]
+            script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
 
-    [[RunJediExecutable]]
-        script = "swell_task RunJediExecutable $config -d $datetime"
-        platform = {{suite_properties["RunJediExecutable"]["platform"]}}
-        execution time limit = {{suite_properties["RunJediExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-            --account = {{suite_properties["RunJediExecutable"]["account"]}}
-            --qos = {{suite_properties["RunJediExecutable"]["qos"]}}
-            --constraint = {{suite_properties["RunJediExecutable"]["constraint"]}}
-            --job-name = RunJediExecutable
-            --nodes={{suite_properties["RunJediExecutable"]["nodes"]}}
-            --ntasks-per-node={{suite_properties["RunJediExecutable"]["ntasks_per_node"]}}
+        [[GetObservations-{{model_component}}]]
+            script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[MergeObsDiags]]
-        script = "swell_task MergeIodaFiles $config -d $datetime"
+        [[JediConfig-{{model_component}}]]
+            script = "swell_task JediConfig $config -d $datetime -m {{model_component}}"
 
-    [[EvaDriver]]
-        script = "swell_task EvaDriver $config -d $datetime"
+        [[RunJediExecutable-{{model_component}}]]
+            script = "swell_task RunJediExecutable $config -d $datetime -m {{model_component}}"
+            platform = {{platform}}
+            execution time limit = {{scheduling["RunJediExecutable"]["execution_time_limit"]}}
+            [[[directives]]]
+                --account = {{scheduling["RunJediExecutable"]["account"]}}
+                --qos = {{scheduling["RunJediExecutable"]["qos"]}}
+                --constraint = {{scheduling["RunJediExecutable"]["constraint"]}}
+                --job-name = RunJediExecutable
+                --nodes={{scheduling["RunJediExecutable"]["nodes"]}}
+                --ntasks-per-node={{scheduling["RunJediExecutable"]["ntasks_per_node"]}}
 
-    [[SaveObsDiags]]
-        script = "swell_task SaveObsDiags $config -d $datetime"
+        [[MergeObsDiags-{{model_component}}]]
+            script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
+
+        [[EvaDriver-{{model_component}}]]
+            script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
+
+        [[SaveObsDiags-{{model_component}}]]
+            script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    {% endfor %}
 
     [[CleanCycle]]
         script = "swell_task CleanCycle $config -d $datetime"
