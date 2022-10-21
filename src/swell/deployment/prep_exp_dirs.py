@@ -24,7 +24,7 @@ def copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, plat
 
     # Copy suite related files to the suite directory
     # -----------------------------------------------
-    suite_files = ['flow.cylc', 'eva.yaml']
+    suite_files = ['eva.yaml']
     for suite_file in suite_files:
         src_path_file = os.path.join(swell_suite_path, suite_file)
         dst_path_file = os.path.join(exp_suite_path, suite_file)

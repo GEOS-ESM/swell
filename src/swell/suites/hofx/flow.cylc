@@ -32,13 +32,9 @@
             """
 
         {% for cycle_time in cycle_times %}
-
             {{cycle_time.cycle_time}} = """
-
             {% for model_component in model_components %}
-
                 {% if cycle_time[model_component] %}
-
                     GetBackground-{{model_component}} &
                     GetObservations-{{model_component}} &
                     JediConfig-{{model_component}} &
@@ -47,12 +43,9 @@
                     => RunJediExecutable-{{model_component}}
                     => MergeObsDiags-{{model_component}}
                     => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
-                    => CleanCycle
-
+                    => CleanCycle-{{model_component}}
                 {% endif %}
-
             {% endfor %}
-
             """
 
         {% endfor %}
@@ -76,7 +69,6 @@
         script = "swell_task BuildJedi $config"
 
     {% for model_component in model_components %}
-
         [[StageJedi-{{model_component}}]]
             script = "swell_task Stage $config"
 
@@ -110,9 +102,9 @@
         [[SaveObsDiags-{{model_component}}]]
             script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
-    {% endfor %}
+        [[CleanCycle-{{model_component}}]]
+            script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
 
-    [[CleanCycle]]
-        script = "swell_task CleanCycle $config -d $datetime"
+    {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
