@@ -8,7 +8,7 @@
 
 
 import copy
-import datetime as pydatetime
+import datetime
 import glob
 import isodate
 import os
@@ -29,7 +29,7 @@ from swell.utilities.string_utils import replace_vars
 # --------------------------------------------------------------------------------------------------
 
 
-class Config(dict):
+class Config():
     """Provides methods for reading YAML files and managing configuration
        parameters.
 
@@ -50,7 +50,7 @@ class Config(dict):
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, input, logger):
+    def __init__(self, input_file, logger, datetime_in=None):
         """Reads YAML file(s) as a dictionary.
 
         Environment definitions and root-level YAML parameters are extracted to be
@@ -58,7 +58,7 @@ class Config(dict):
 
         Parameters
         ----------
-        input : string, required Name of YAML file(s)
+        input_file : string, required Name of YAML file(s)
 
         Returns
         -------
@@ -67,26 +67,70 @@ class Config(dict):
         """
 
         # Keep track of the input config file
-        self.input = input
+        self.__input_file__ = input_file
 
-        # Read the configuration yaml file(s)
-        with open(self.input, 'r') as ymlfile:
-            config = yaml.safe_load(ymlfile)
+        # Keep copy of owner's logger
+        self.__logger__ = logger
 
-        # Initialize the parent class with the config
-        super().__init__(config)
+        # Read the configuration yaml file
+        with open(self.__input_file__, 'r') as ymlfile:
+            self.__config__ = yaml.safe_load(ymlfile)
 
-        # Standard datetime format for config
-        self.dt_format = "%Y%m%dT%H%M%SZ"
-        self.dt_foriso = "%Y-%m-%dT%H:%M:%SZ"
+        # Swell datetime format (avoid colons in paths and filenames)
+        self.__datetime_swl_format__ = "%Y%m%dT%H%M%SZ"
+
+        # ISO datetime format
+        self.__datetime_iso_format__ = "%Y-%m-%dT%H:%M:%SZ"
+
+        # If datetime passed add some extra datetime parameters to config
+        if datetime_in is not None:
+            self.add_cycle_time_parameter(datetime_in.datetime)
+
+            if self.get('data_assimilation_run', False):
+                print('here')
+                self.add_data_assimilation_window_parameters()
 
         # Create list of definitions from top level of dictionary
-        self.defs = {}
-        self.defs.update({k: str(v) for k, v in iter(self.items())
-                         if not isinstance(v, dict) and not isinstance(v, list)})
+        #self.__defs__ = {}
+        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
+        #                     if not isinstance(v, dict) and not isinstance(v, list)})
 
-        # Keep copy of logger
-        self.logger = logger
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get(self, key, default='NODEFAULT'):
+
+        if key in self.__config__.keys():
+            return self.__config__[key]
+        else:
+            if default == 'NODEFAULT':
+                self.__logger__.abort(f'In config.get the key \'{key}\' was not found in the ' +
+                             f'configuration and no default was provided.')
+            else:
+                return default
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model(self, key, model, default='NODEFAULT'):
+
+        if key in self.__config__['models'][model].keys():
+            return self.__config__['models'][model][key]
+        else:
+            if default == 'NODEFAULT':
+                self.__logger__.abort(f'In config.get the key \'{key}\' was not found in the ' +
+                             f'configuration and no default was provided.')
+            else:
+                return default
+
+    # ----------------------------------------------------------------------------------------------
+
+    def put(self, key, value):
+        self.__config__[key] = value
+
+    # ----------------------------------------------------------------------------------------------
+
+    def put_model(self, key, value, model):
+        self.__config__['models'][model][key] = value
 
     # ----------------------------------------------------------------------------------------------
 
@@ -100,16 +144,16 @@ class Config(dict):
         """
 
         # Merge the other dictionary into self
-        self.update(other)
+        self.__config__.update(other)
 
         # Overwrite the top level definitions
-        self.defs.update({k: str(v) for k, v in iter(self.items())
-                         if not isinstance(v, dict) and not isinstance(v, list)})
+        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
+        #                     if not isinstance(v, dict) and not isinstance(v, list)})
 
     # ----------------------------------------------------------------------------------------------
 
-    def add_cyle_time_parameter(self, cycle_dt):
-        """ Add cyle time to the configuration
+    def add_cycle_time_parameter(self, cycle_dt):
+        """ Add cycle time to the configuration
 
         Parameters
         ----------
@@ -117,12 +161,8 @@ class Config(dict):
           Current cycle date/time as datetime object
         """
 
-        # Create new dictionary to hold cycle time
-        cycle_dict = {}
-        cycle_dict['current_cycle'] = cycle_dt.strftime(self.dt_format)
-
-        # Merge with self
-        self.merge(cycle_dict)
+        # Add cycle time to dictionary
+        self.put('current_cycle', cycle_dt.strftime(self.__datetime_swl_format__))
 
 # --------------------------------------------------------------------------------------------------
 
@@ -139,49 +179,56 @@ class Config(dict):
         """
 
         # Current cycle datetime object
-        current_cycle_dto = pydatetime.datetime.strptime(self.get('current_cycle'), self.dt_format)
+        current_cycle_dto = datetime.datetime.strptime(self.get('current_cycle'),
+                                                       self.__datetime_swl_format__)
 
-        # Type of data assimilation window (3D or 4D)
-        window_type = self.get('window_type', '4D')
+        # Loop over models
+        model_components = self.get('model_components')
 
-        # Extract window information and convert to duration
-        window_length = self.get('window_length', 'PT6H')
-        window_offset = self.get('window_offset', 'PT3H')
+        for model_component in model_components:
 
-        window_offset_dur = isodate.parse_duration(window_offset)
+            # Type of data assimilation window (3D or 4D)
+            window_type = self.get_model('window_type', model_component)
 
-        # Compute window beginning time
-        window_begin_dto = current_cycle_dto - window_offset_dur
+            # Extract window information and convert to duration
+            window_length = self.get_model('window_length', model_component)
+            window_offset = self.get_model('window_offset', model_component)
 
-        # Background time for satbias files
-        background_time_offset = self.get('background_time_offset', 'PT9H')
-        background_time_offset_dur = isodate.parse_duration(background_time_offset)
+            window_offset_dur = isodate.parse_duration(window_offset)
 
-        background_time_dto = current_cycle_dto - background_time_offset_dur
+            # Compute window beginning time
+            window_begin_dto = current_cycle_dto - window_offset_dur
 
-        # Background time for the window
-        if window_type == '4D':
-            local_background_time = window_begin_dto
-        elif window_type == '3D':
-            local_background_time = current_cycle_dto
-        else:
-            self.logger.abort("add_data_assimilation_window_parameters: window type must be " +
-                              "either 4D or 3D")
+            # Background time for satbias files
+            background_time_offset = self.get_model('background_time_offset', model_component)
+            background_time_offset_dur = isodate.parse_duration(background_time_offset)
 
-        # Create new dictionary with these items
-        window_dict = {}
-        window_dict['window_type'] = window_type
-        window_dict['window_length'] = window_length
-        window_dict['window_offset'] = window_offset
-        window_dict['window_begin'] = window_begin_dto.strftime(self.dt_format)
-        window_dict['window_begin_iso'] = window_begin_dto.strftime(self.dt_foriso)
-        window_dict['background_time'] = background_time_dto.strftime(self.dt_format)
+            background_time_dto = current_cycle_dto - background_time_offset_dur
 
-        window_dict['local_background_time'] = local_background_time.strftime(self.dt_format)
-        window_dict['local_background_time_iso'] = local_background_time.strftime(self.dt_foriso)
+            # Background time for the window
+            if window_type == '4D':
+                local_background_time = window_begin_dto
+            elif window_type == '3D':
+                local_background_time = current_cycle_dto
+            else:
+                self.__logger__.abort("add_data_assimilation_window_parameters: window type must be " +
+                                      "either 4D or 3D")
 
-        # Merge with self
-        self.merge(window_dict)
+            window_begin = window_begin_dto.strftime(self.__datetime_swl_format__)
+            window_begin_iso = window_begin_dto.strftime(self.__datetime_iso_format__)
+            background_time = background_time_dto.strftime(self.__datetime_swl_format__)
+            local_background_time_iso = local_background_time.strftime(self.__datetime_iso_format__)
+            local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
+
+            # Create new dictionary with these items
+            self.put_model('window_type', window_type, model_component)
+            self.put_model('window_length', window_length, model_component)
+            self.put_model('window_offset', window_offset, model_component)
+            self.put_model('window_begin', window_begin, model_component)
+            self.put_model('window_begin_iso', window_begin_iso, model_component)
+            self.put_model('background_time', background_time, model_component)
+            self.put_model('local_background_time', local_background_time, model_component)
+            self.put_model('local_background_time_iso', local_background_time_iso, model_component)
 
     # --------------------------------------------------------------------------------------------------
 
@@ -195,53 +242,16 @@ class Config(dict):
         """
 
         # Read input file as text file
-        with open(self.input) as f:
+        with open(self.__input_file__) as f:
             text = f.read()
 
         # Replace any unresolved variables in the file
-        text = replace_vars(text, **self.defs)
+        text = replace_vars(text, **self.__defs__)
 
         # Return a yaml
         resolved_dict = yaml.safe_load(text)
 
         # Merge dictionary
         self.merge(resolved_dict)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def overlay(self, hash, override=False, root=None):
-        """Combines two dictionaries.
-
-        This method recursively traverses the nodes of the dictionaries to
-        locate the appropriate insertion point at the leaf-nodes.
-
-        Parameters
-        ----------
-        hash : dict, required
-          New dictionary to be added
-
-        root : dict, private
-          Root node to add new values. This is set during recursion.
-
-        override : boolean, optional
-          Indicates whether existing dictionary entries should be overwritten.
-        """
-
-        if root is None:
-            root = self
-
-        for key in hash:
-
-            if key not in root:
-                if isinstance(hash[key], dict):
-                    root[key] = copy.deepcopy(hash[key])
-                else:
-                    root[key] = hash[key]
-            elif isinstance(hash[key], dict) and isinstance(root[key], dict):
-                self.overlay(hash[key], override, root[key])
-            else:
-                if override:
-                    root[key] = hash[key]
-
 
 # ----------------------------------------------------------------------------------------------

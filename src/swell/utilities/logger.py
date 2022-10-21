@@ -9,6 +9,7 @@
 
 import os
 import sys
+import textwrap
 
 
 # --------------------------------------------------------------------------------------------------
@@ -23,6 +24,9 @@ class Logger:
     def __init__(self, task_name):
 
         self.task_name = task_name
+
+        # Maximum length of lines
+        self.__maxlen__ = 100
 
         # Set default logging levels
         self.loggerdict = {'INFO': True,
@@ -43,8 +47,18 @@ class Logger:
 
     def send_message(self, level, message):
 
+        message_items = textwrap.wrap(message, self.__maxlen__, break_long_words=True)
+
+        for i in range(0, len(message_items)-1):
+            message_items[i] = message_items[i] + ' ...'
+
         if level == 'ABORT' or self.loggerdict[level]:
-            print(level+' '+self.task_name+': '+message)
+            first_line = True
+            for message_item in message_items:
+                if not first_line:
+                    message_item = ' ' + message_item
+                print(level+' '+self.task_name+': '+message_item)
+                first_line = False
 
     # ----------------------------------------------------------------------------------------------
 

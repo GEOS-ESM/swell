@@ -52,7 +52,8 @@ def main():
 
     # Make the suite directory
     # ------------------------
-    exp_suite_path = os.path.join(experiment_root, experiment_id, experiment_id+'-suite')
+    exp_path = os.path.join(experiment_root, experiment_id)
+    exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
     os.makedirs(exp_suite_path, 0o755, exist_ok=True)
 
     # Copy experiment file to suite dir
@@ -89,6 +90,12 @@ def main():
     # Set the jinja2 file for cylc
     # ----------------------------
     prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
+
+    # Copy config directory to experiment
+    # -----------------------------------
+    src = os.path.join(get_swell_path(), 'configuration')
+    dst = os.path.join(exp_path, 'configuration')
+    shutil.copytree(src, dst, dirs_exist_ok=True, ignore = shutil.ignore_patterns('*.py*', '*__*'))
 
     # Write out launch command for convenience
     # ----------------------------------------

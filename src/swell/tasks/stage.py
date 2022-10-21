@@ -33,8 +33,26 @@ class Stage(taskBase):
              See the taskBase constructor for more information.
         """
 
+        print(self.__config__.__config__)
+
+        return
+
+        # Name of JEDI interfaces
+        jedi_interface = self.config_get_model('jedi_interface')
+        jedi_interface_swell = self.config_get_model('jedi_interface_swell')
+
+        # Get stage configuration
+        swell_exp_config_path = self.get_swell_exp_config_path()
+
+        # Jedi stage configuration file
+        jedi_stage_config = os.path.join(swell_exp_config_path, 'jedi', jedi_interface,
+                                         jedi_interface_swell, 'model', 'stage.yaml')
+
+        # Open stage config file
+        stage_config = self.open_config_file(jedi)
+
         try:
-            fh = get_file_handler(self.config['STAGE'])
+            fh = get_file_handler(stage_config)
             if not fh.is_ready():
                 self.logger.abort('One or more files not ready')
             else:

@@ -1,3 +1,9 @@
+# Data assimilation run
+data_assimilation_run:
+  default_value: True
+  prompt: Is this a run involving data assimilation?
+  type: boolean
+
 # Cycle start point
 start_cycle_point:
   default_value: '2020-12-15T00:00:00Z'
