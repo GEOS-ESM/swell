@@ -50,7 +50,7 @@ class Config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, input_file, logger, datetime_in=None):
+    def __init__(self, input_file, logger, **kwargs):
         """Reads YAML file(s) as a dictionary.
 
         Environment definitions and root-level YAML parameters are extracted to be
@@ -76,6 +76,35 @@ class Config():
         with open(self.__input_file__, 'r') as ymlfile:
             self.__config__ = yaml.safe_load(ymlfile)
 
+        # Get model part of the config
+        self.__model__ = kwargs['model']
+        if self.__model__ is not None:
+            # Assert the model name is found in the config
+            if self.__model__ not in self.__config__['models'].keys():
+                self.__logger__.abort(f'Did not find the model \'{self.__model__}\' in the ' +
+                                      f'experiment configuration')
+            # Extract the model specific part of the config
+            model_config = self.__config__['models'][self.__model__]
+            # Remove the model specific part from the full config
+            del self.__config__['models']
+            del self.__config__['model_components']
+
+        # Assert that the full and model level configs have only unique keys
+        for key in self.__config__.keys():
+            if key in model_config.keys():
+                self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is also ' +
+                                      f'contained in the top level config.')
+
+        # Now merge the top level config and the model specific parts of the config. This prevents
+        # tasks from accessing the config associated with any model other than the one they are
+        # supposed to act upon.
+        self.__config__.update(model_config)
+
+        # Add the experiment directory to the configuration
+        experiment_root = self.get('experiment_root')
+        experiment_id = self.get('experiment_id')
+        self.__config__['experiment_dir'] = os.path.join(experiment_root, experiment_id)
+
         # Swell datetime format (avoid colons in paths and filenames)
         self.__datetime_swl_format__ = "%Y%m%dT%H%M%SZ"
 
@@ -83,8 +112,8 @@ class Config():
         self.__datetime_iso_format__ = "%Y-%m-%dT%H:%M:%SZ"
 
         # If datetime passed add some extra datetime parameters to config
-        if datetime_in is not None:
-            self.add_cycle_time_parameter(datetime_in.datetime)
+        if 'datetime_in' in kwargs:
+            self.add_cycle_time_parameter(kwargs['datetime_in'].datetime)
 
             if self.get('data_assimilation_run', False):
                 print('here')
@@ -111,26 +140,8 @@ class Config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model(self, key, model, default='NODEFAULT'):
-
-        if key in self.__config__['models'][model].keys():
-            return self.__config__['models'][model][key]
-        else:
-            if default == 'NODEFAULT':
-                self.__logger__.abort(f'In config.get the key \'{key}\' was not found in the ' +
-                             f'configuration and no default was provided.')
-            else:
-                return default
-
-    # ----------------------------------------------------------------------------------------------
-
     def put(self, key, value):
         self.__config__[key] = value
-
-    # ----------------------------------------------------------------------------------------------
-
-    def put_model(self, key, value, model):
-        self.__config__['models'][model][key] = value
 
     # ----------------------------------------------------------------------------------------------
 
@@ -182,53 +193,48 @@ class Config():
         current_cycle_dto = datetime.datetime.strptime(self.get('current_cycle'),
                                                        self.__datetime_swl_format__)
 
-        # Loop over models
-        model_components = self.get('model_components')
+        # Type of data assimilation window (3D or 4D)
+        window_type = self.get('window_type')
 
-        for model_component in model_components:
+        # Extract window information and convert to duration
+        window_length = self.get('window_length')
+        window_offset = self.get('window_offset')
 
-            # Type of data assimilation window (3D or 4D)
-            window_type = self.get_model('window_type', model_component)
+        window_offset_dur = isodate.parse_duration(window_offset)
 
-            # Extract window information and convert to duration
-            window_length = self.get_model('window_length', model_component)
-            window_offset = self.get_model('window_offset', model_component)
+        # Compute window beginning time
+        window_begin_dto = current_cycle_dto - window_offset_dur
 
-            window_offset_dur = isodate.parse_duration(window_offset)
+        # Background time for satbias files
+        background_time_offset = self.get('background_time_offset')
+        background_time_offset_dur = isodate.parse_duration(background_time_offset)
 
-            # Compute window beginning time
-            window_begin_dto = current_cycle_dto - window_offset_dur
+        background_time_dto = current_cycle_dto - background_time_offset_dur
 
-            # Background time for satbias files
-            background_time_offset = self.get_model('background_time_offset', model_component)
-            background_time_offset_dur = isodate.parse_duration(background_time_offset)
+        # Background time for the window
+        if window_type == '4D':
+            local_background_time = window_begin_dto
+        elif window_type == '3D':
+            local_background_time = current_cycle_dto
+        else:
+            self.__logger__.abort('add_data_assimilation_window_parameters: window type must be ' +
+                                  'either 4D or 3D')
 
-            background_time_dto = current_cycle_dto - background_time_offset_dur
+        window_begin = window_begin_dto.strftime(self.__datetime_swl_format__)
+        window_begin_iso = window_begin_dto.strftime(self.__datetime_iso_format__)
+        background_time = background_time_dto.strftime(self.__datetime_swl_format__)
+        local_background_time_iso = local_background_time.strftime(self.__datetime_iso_format__)
+        local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
 
-            # Background time for the window
-            if window_type == '4D':
-                local_background_time = window_begin_dto
-            elif window_type == '3D':
-                local_background_time = current_cycle_dto
-            else:
-                self.__logger__.abort("add_data_assimilation_window_parameters: window type must be " +
-                                      "either 4D or 3D")
-
-            window_begin = window_begin_dto.strftime(self.__datetime_swl_format__)
-            window_begin_iso = window_begin_dto.strftime(self.__datetime_iso_format__)
-            background_time = background_time_dto.strftime(self.__datetime_swl_format__)
-            local_background_time_iso = local_background_time.strftime(self.__datetime_iso_format__)
-            local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
-
-            # Create new dictionary with these items
-            self.put_model('window_type', window_type, model_component)
-            self.put_model('window_length', window_length, model_component)
-            self.put_model('window_offset', window_offset, model_component)
-            self.put_model('window_begin', window_begin, model_component)
-            self.put_model('window_begin_iso', window_begin_iso, model_component)
-            self.put_model('background_time', background_time, model_component)
-            self.put_model('local_background_time', local_background_time, model_component)
-            self.put_model('local_background_time_iso', local_background_time_iso, model_component)
+        # Create new dictionary with these items
+        self.put('window_type', window_type)
+        self.put('window_length', window_length)
+        self.put('window_offset', window_offset)
+        self.put('window_begin', window_begin)
+        self.put('window_begin_iso', window_begin_iso)
+        self.put('background_time', background_time)
+        self.put('local_background_time', local_background_time)
+        self.put('local_background_time_iso', local_background_time_iso)
 
     # --------------------------------------------------------------------------------------------------
 

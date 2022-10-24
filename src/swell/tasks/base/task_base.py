@@ -58,7 +58,8 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, self.__datetime__)
+        self.__config__ = Config(config_input, self.logger, datetime_in = self.__datetime__,
+                                 model = self.__model__)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -73,15 +74,6 @@ class taskBase(ABC):
     # Method to get something from config (with fail if not existing)
     def config_get(self, key, default='NODEFAULT'):
         return self.__config__.get(key, default)
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to get something from the model specific config (with fail if not existing)
-    def config_get_model(self, key):
-        if model is None:
-            self.logger.abort(f'The task base method \'config_get_model\' cannot be called' +
-                              f'when the model directive is not passed to the task.')
-        return dict_get(self.logger, self.__config__['models'][self.__model__], key)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -103,10 +95,10 @@ class taskBase(ABC):
     # Method to open a specific configuration file
     def __open_jedi_interface_config_file(self, model_or_obs, config_name):
         # JEDI interface name
-        jedi_interface = self.config_get_model('jedi_interface')
+        jedi_interface = self.config_get('jedi_interface')
 
         # Swell application name
-        jedi_interface_swell = self.config_get_model('jedi_interface_swell')
+        jedi_interface_swell = self.config_get('jedi_interface_swell')
 
         # Get experiment configuration path
         swell_exp_config_path = self.get_swell_exp_config_path()
