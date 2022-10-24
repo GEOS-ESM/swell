@@ -52,7 +52,7 @@ class DeployWorkflow():
 
         if self.log_path:
             # Add optional path for workflow engine logging.
-            option = "--symlink-dirs='log=" + self.log_path + "'"
+            option = '--symlink-dirs=run=' + self.log_path
             subprocess.run(['cylc', 'install', option], check=True)
         else:
             subprocess.run(['cylc', 'install'], check=True)
