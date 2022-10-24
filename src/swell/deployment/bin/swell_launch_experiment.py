@@ -115,7 +115,7 @@ def main(suite_path, workflow_manager, no_detach, log_path):
 
     # Create the deployment object
     # ----------------------------
-    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach)
+    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path)
 
     # Write some info for the user
     # ----------------------------
