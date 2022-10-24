@@ -29,9 +29,6 @@ fixed_options:
   jedi_interface:
     default_value: soca
     prompt: Name of the JEDI model interface repo
-  jedi_interface_swell:
-    default_value: geos-ocean
-    prompt: Name of the interface in swell
   jedi_executable:
     default_value: soca_hofx.x
     prompt: soca-mom6-geos

@@ -45,12 +45,16 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def send_message(self, level, message):
+    def send_message(self, level, message, wrap):
 
-        message_items = textwrap.wrap(message, self.__maxlen__, break_long_words=True)
-
-        for i in range(0, len(message_items)-1):
-            message_items[i] = message_items[i] + ' ...'
+        # Wrap the message if needed
+        if wrap:
+            message_items = textwrap.wrap(message, self.__maxlen__, break_long_words=True)
+            for i in range(0, len(message_items)-1):
+                message_items[i] = message_items[i] + ' ...'
+        else:
+            message_items = []
+            message_items.append(message)
 
         if level == 'ABORT' or self.loggerdict[level]:
             first_line = True
@@ -62,28 +66,37 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def info(self, message):
+    def info(self, message, wrap=True):
 
-        self.send_message('INFO', message)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def trace(self, message):
-
-        self.send_message('TRACE', message)
+        self.send_message('INFO', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def debug(self, message):
+    def trace(self, message, wrap=True):
 
-        self.send_message('DEBUG', message)
+        self.send_message('TRACE', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def abort(self, message):
+    def debug(self, message, wrap=True):
 
-        self.send_message('ABORT', message)
+        self.send_message('DEBUG', message, wrap)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def abort(self, message, wrap=True):
+
+        self.send_message('ABORT', message, wrap)
         sys.exit('ABORTING\n')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def assert_abort(self, condition, message, wrap=True):
+
+        if condition:
+            return
+        else:
+            self.abort(message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 

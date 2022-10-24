@@ -35,11 +35,10 @@ class GetBackground(taskBase):
         # Shortcuts to base objects
         # -------------------------
         cfg = self.config
-        logger = self.logger
 
         # Current cycle time object
         # -------------------------
-        current_cycle = cfg.get('current_cycle')
+        current_cycle = self.config_get('current_cycle')
         current_cycle_dto = dt.strptime(current_cycle, cfg.dt_format)
 
         # Get duration into forecast for first background file
@@ -84,7 +83,7 @@ class GetBackground(taskBase):
 
             # Check for a sensible frequency
             if (window_length_dur/bkg_freq_dur) % 2:
-                logger.abort('Window length not divisible by background frequency')
+                self.logger.abort('Window length not divisible by background frequency')
 
             # Loop over window
             start_date = current_cycle_dto - window_offset_dur
@@ -99,7 +98,7 @@ class GetBackground(taskBase):
 
         # Loop over background files in the R2D2 config and fetch
         # -------------------------------------------------------
-        logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
+        self.logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
 
         # Background dictionary from config
         background_dict = cfg.get('BACKGROUND')

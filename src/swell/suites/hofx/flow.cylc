@@ -41,7 +41,7 @@
                     StageJedi-{{model_component}}[^] &
                     BuildJedi[^]
                     => RunJediExecutable-{{model_component}}
-                    => MergeObsDiags-{{model_component}}
+                    => MergeIodaFiles-{{model_component}}
                     => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
                     => CleanCycle-{{model_component}}
                 {% endif %}
@@ -70,7 +70,7 @@
 
     {% for model_component in model_components %}
         [[StageJedi-{{model_component}}]]
-            script = "swell_task Stage $config"
+            script = "swell_task StageJedi $config"
 
         [[ GetBackground-{{model_component}} ]]
             script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
@@ -93,7 +93,7 @@
                 --nodes={{scheduling["RunJediExecutable"]["nodes"]}}
                 --ntasks-per-node={{scheduling["RunJediExecutable"]["ntasks_per_node"]}}
 
-        [[MergeObsDiags-{{model_component}}]]
+        [[MergeIodaFiles-{{model_component}}]]
             script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
 
         [[EvaDriver-{{model_component}}]]

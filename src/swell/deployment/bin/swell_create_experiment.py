@@ -101,7 +101,7 @@ def main():
     # ----------------------------------------
     logger.info(' ')
     logger.info('  Experiment successfully installed. To launch experiment use: ')
-    logger.info('  swell_launch_experiment --suite_path ' + exp_suite_path)
+    logger.info('  swell_launch_experiment --suite_path ' + exp_suite_path, False)
     logger.info(' ')
 
 

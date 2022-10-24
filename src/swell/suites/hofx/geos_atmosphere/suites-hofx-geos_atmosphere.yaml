@@ -47,9 +47,6 @@ fixed_options:
   jedi_interface:
     default_value: fv3-jedi
     prompt: Name of the JEDI model interface repo
-  jedi_interface_swell:
-    default_value: geos-atmosphere
-    prompt: Name of the interface in swell
   jedi_executable:
     default_value: fv3jedi_hofx.x
     prompt: Name of the executable from the interface

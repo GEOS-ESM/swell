@@ -6,15 +6,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
-import copy
 import datetime
-import glob
 import isodate
+import jinja2
 import os
-import string
-import re
-import json
 import yaml
 
 from swell.utilities.string_utils import replace_vars
@@ -116,7 +111,6 @@ class Config():
             self.add_cycle_time_parameter(kwargs['datetime_in'].datetime)
 
             if self.get('data_assimilation_run', False):
-                print('here')
                 self.add_data_assimilation_window_parameters()
 
         # Create list of definitions from top level of dictionary
@@ -142,6 +136,13 @@ class Config():
 
     def put(self, key, value):
         self.__config__[key] = value
+
+    # ----------------------------------------------------------------------------------------------
+
+    def use_config_to_template_string(self, string_in):
+
+        t = jinja2.Template(string_in, trim_blocks=True, lstrip_blocks=True)
+        return t.render(self.__config__)
 
     # ----------------------------------------------------------------------------------------------
 

@@ -16,6 +16,7 @@ import importlib
 import os
 import sys
 import time
+import yaml
 
 # local imports
 from swell.tasks.base.config import Config
@@ -94,20 +95,30 @@ class taskBase(ABC):
 
     # Method to open a specific configuration file
     def __open_jedi_interface_config_file(self, model_or_obs, config_name):
+
+        # Assert that the task has a model associated with it
+        self.logger.assert_abort(self.__model__ is not None,
+                                 'Task must have a model associated with it.')
+
         # JEDI interface name
         jedi_interface = self.config_get('jedi_interface')
-
-        # Swell application name
-        jedi_interface_swell = self.config_get('jedi_interface_swell')
 
         # Get experiment configuration path
         swell_exp_config_path = self.get_swell_exp_config_path()
 
         # Path to configuration file
-        jedi_stage_config = os.path.join(swell_exp_config_path, 'jedi', jedi_interface,
-                                         jedi_interface_swell, model_or_obs, config_name + '.yaml')
+        config_file = os.path.join(swell_exp_config_path, 'jedi', jedi_interface,
+                                   self.__model__, model_or_obs, config_name + '.yaml')
 
-        # Load file into dictionary
+        # Open file as a string
+        with open(config_file, 'r') as config_file_open:
+            config_file_str_templated = config_file_open.read()
+
+        # Fill templates in the configuration file using the config
+        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
+
+        # Convert string to dictionary
+        return yaml.safe_load(config_file_str)
 
     # ----------------------------------------------------------------------------------------------
 

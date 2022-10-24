@@ -22,10 +22,10 @@ from r2d2 import fetch
 # --------------------------------------------------------------------------------------------------
 
 
-class Stage(taskBase):
+class StageJedi(taskBase):
 
     def execute(self):
-        """Acquires listed files under the YAML STAGE directive.
+        """Acquires listed files under the configuration/jedi/interface/model/stage.yaml file.
 
            Parameters
            ----------
@@ -33,26 +33,14 @@ class Stage(taskBase):
              See the taskBase constructor for more information.
         """
 
-        print(self.__config__.__config__)
+        # Open the stage configuration file
+        # ---------------------------------
+        stage_dict = self.open_jedi_interface_model_config_file('stage')
 
-        return
-
-        # Name of JEDI interfaces
-        jedi_interface = self.config_get_model('jedi_interface')
-        jedi_interface_swell = self.config_get_model('jedi_interface_swell')
-
-        # Get stage configuration
-        swell_exp_config_path = self.get_swell_exp_config_path()
-
-        # Jedi stage configuration file
-        jedi_stage_config = os.path.join(swell_exp_config_path, 'jedi', jedi_interface,
-                                         jedi_interface_swell, 'model', 'stage.yaml')
-
-        # Open stage config file
-        stage_config = self.open_config_file(jedi)
-
+        # Run the file handler
+        # --------------------
         try:
-            fh = get_file_handler(stage_config)
+            fh = get_file_handler(stage_dict)
             if not fh.is_ready():
                 self.logger.abort('One or more files not ready')
             else:
