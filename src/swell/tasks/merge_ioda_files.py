@@ -59,7 +59,8 @@ class MergeIodaFiles(taskBase):
             data_to_write = False
 
             # Split the full obs output path into path and filename
-            cycle_dir, obs_file = os.path.split(observer['obs space']['obsdataout']['obsfile'])
+            cycle_dir, obs_file = os.path.split(
+                observer['obs space']['obsdataout']['engine']['obsfile'])
 
             # Read in the observation output files if the pool is larger than 1
             # -----------------------------------------------------------------

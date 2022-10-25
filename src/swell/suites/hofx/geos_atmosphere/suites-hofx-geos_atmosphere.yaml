@@ -1,0 +1,70 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  prompt: List all cycle times, by middle of the window?
+  type: iso-duration
+
+# Window length
+window_length:
+  default_value: 'PT6H'
+  prompt: Window length
+  type: iso-duration
+
+# Horizontal resolution
+horizontal_resolution:
+  default_value: 'c360'
+  prompt: What resolution for the atmospheric background?
+  options: ['c180', 'c360', 'c720']
+  type: drop-list-string
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '72'
+  prompt: What vertical resolution for the atmospheric background?
+  options: ['72']
+  type: drop-list-string
+
+# Processor layout
+npx_proc:
+  default_value: '2'
+  prompt: What processor layout (x-direction)?
+  type: string
+npy_proc:
+  default_value: '2'
+  prompt: What processor layout (y-direction)?
+  type: string
+
+# Observations
+observations:
+  default_value: ['amsua_n19']
+  prompt: Select atmospheric observations.
+  options: use_method
+  type: check-list-string
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  jedi_interface:
+    default_value: fv3-jedi
+    prompt: Name of the JEDI model interface repo
+  jedi_executable:
+    default_value: fv3jedi_hofx.x
+    prompt: Name of the executable from the interface
+  window_type:
+    default_value:  4D
+    prompt: Window type (3D or 4D)
+  window_offset:
+    default_value:  PT3H
+    prompt: Time from beginning to middle of the window
+  analysis_forecast_window_offset:
+    default_value:  -PT3H
+    prompt: Time from the middle of the window when forecasts start
+  total_processors:
+    default_value:  '$(npx_proc) * $(npy_proc) * 6'
+    prompt: Equation to compute total number of processors
+  model:
+    default_value:  pseudo
+    prompt: Type of model to use for 4D runs.
+  background_time_offset:
+    default_value:  PT9H
+    prompt: Time before the middle of the window that the background providing forecast began

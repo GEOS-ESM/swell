@@ -20,56 +20,21 @@ from swell.utilities.string_utils import replace_vars
 # --------------------------------------------------------------------------------------------------
 
 
-def add_dir_to_conf_mkdir(logger, experiment_dict, experiment_dict_key, experiment_sub_dir,
-                          make_dir=True):
-
-    # Get experiment directory
-    experiment_dir = experiment_dict['experiment_dir']
-    experiment_sub_dir_full = os.path.join(experiment_dir, experiment_sub_dir)
-
-    if make_dir:
-        # Make the new directory
-        os.makedirs(experiment_sub_dir_full, exist_ok=True)
-
-        # Set permissions
-        os.chmod(experiment_sub_dir_full, 0o755)
-
-    # Add the associated key to the dictionary
-    experiment_dict.update({experiment_dict_key: experiment_sub_dir_full})
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def copy_suite_files(logger, experiment_dict):
-
-    # Extract config
-    # --------------
-    suite_dir = experiment_dict['suite_dir']
-
-    suite_dict = experiment_dict['suite']
-    suite_name = suite_dict['suite name']
+def copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform=None):
 
     # Copy suite related files to the suite directory
     # -----------------------------------------------
-    suite_files = [
-      'jedi_config.yaml',
-      'flow.cylc',
-      'eva.yaml',
-    ]
-
-    suite_path = os.path.join(get_swell_path(), 'suites')
+    suite_files = ['eva.yaml']
     for suite_file in suite_files:
-        src_path_file = os.path.join(suite_path, suite_name, suite_file)
-        dst_path_file = os.path.join(suite_dir, suite_file)
+        src_path_file = os.path.join(swell_suite_path, suite_file)
+        dst_path_file = os.path.join(exp_suite_path, suite_file)
         if os.path.exists(src_path_file):
-            logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+            logger.trace(f'Copying {src_path_file} to {dst_path_file}')
             shutil.copy(src_path_file, dst_path_file)
 
     # Copy platform related files to the suite directory
     # --------------------------------------------------
-    if 'platform' in suite_dict:
-        platform = suite_dict['platform']
+    if platform is not None:
         plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
         return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
         platform_path = return_platform_install_path_call()
@@ -77,7 +42,7 @@ def copy_suite_files(logger, experiment_dict):
         for s in ['modules', 'r2d2_config.yaml']:
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
-            dst_path_file = os.path.join(suite_dir, '{}'.format(src_file))
+            dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
             if os.path.exists(src_path_file):
                 logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
                 shutil.copy(src_path_file, dst_path_file)
@@ -86,15 +51,11 @@ def copy_suite_files(logger, experiment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_swell_path_in_modules(logger, experiment_dict):
-
-    # Extract config
-    # --------------
-    suite_dir = experiment_dict['suite_dir']
+def set_swell_path_in_modules(logger, exp_suite_path):
 
     # Modules file
     # ------------
-    modules_file = os.path.join(suite_dir, 'modules')
+    modules_file = os.path.join(exp_suite_path, 'modules')
 
     # Only do if the suite needs modules
     # ----------------------------------
@@ -136,15 +97,11 @@ def set_swell_path_in_modules(logger, experiment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_modules_csh(logger, experiment_dict):
-
-    # Extract config
-    # --------------
-    suite_dir = experiment_dict['suite_dir']
+def create_modules_csh(logger, exp_suite_path):
 
     # Modules file
     # ------------
-    modules_file = os.path.join(suite_dir, 'modules')
+    modules_file = os.path.join(exp_suite_path, 'modules')
 
     # Only do if the suite needs modules
     # ----------------------------------

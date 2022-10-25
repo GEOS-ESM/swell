@@ -1,14 +1,26 @@
-# Cycle start time
-start_cycle_time:
+# Data assimilation run
+data_assimilation_run:
+  default_value: True
+  prompt: Is this a run involving data assimilation?
+  type: boolean
+
+# Cycle start point
+start_cycle_point:
   default_value: '2020-12-15T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
-# Cycle final time
-final_cycle_time:
+# Cycle final point
+final_cycle_point:
   default_value: '2020-12-15T06:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
+
+# Run ahead limit for workflow
+runahead_limit:
+  default_value: 'PT12H'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: iso-duration
 
 # Jedi build system
 jedi_build_method:
@@ -26,6 +38,12 @@ existing_build_directory:
     key: jedi_build_method
     value: use_existing
 
+# R2D2 Configuration
+r2d2_local_path:
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local/
+  prompt: Enter the path where R2D2 will store experiment output
+  type: string
+
 # What kind of coupling is needed
 coupling_style:
   default_value: uncoupled
@@ -35,7 +53,7 @@ coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['atmosphere', 'ocean']
+  default_value: ['geos_atmosphere', 'geos_ocean']
   prompt: Select models to use
   options: use_method
   type: file-check-list

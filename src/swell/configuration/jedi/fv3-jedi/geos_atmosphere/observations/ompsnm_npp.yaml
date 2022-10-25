@@ -1,0 +1,47 @@
+obs space:
+  name: ompsnm_npp
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/ompsnm_npp.{{window_begin}}.nc4
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: $(cycle_dir)/$(experiment_id).ompsnm_npp.{{window_begin}}.nc4
+  simulated variables: [integrated_layer_ozone_in_air]
+obs operator:
+  name: AtmVertInterpLay
+  geovals: [mole_fraction_of_ozone_in_air]
+  coefficients: [0.0078976797] # convert from ppmv to DU (Wargan approved value)
+  nlevels: [1]
+obs filters:
+- filter: Perform Action
+  filter variables:
+  - name: integrated_layer_ozone_in_air
+  action:
+    name: assign error
+    error parameter: 6.0
+ # range sanity check
+- filter: Bounds Check
+  filter variables:
+  - name: integrated_layer_ozone_in_air
+  minvalue: 0
+  maxvalue: 1000
+  action:
+    name: reject
+# Reject SZA > 84
+- filter: Bounds Check
+  filter variables:
+  - name: integrated_layer_ozone_in_air
+  test variables:
+  - name: solar_zenith_angle@MetaData
+  maxvalue: 84.
+  action:
+    name: reject
+# Gross check
+- filter: Background Check
+  filter variables:
+  - name: integrated_layer_ozone_in_air
+  threshold: 5.0
+  action:
+    name: reject

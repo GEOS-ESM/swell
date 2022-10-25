@@ -13,8 +13,8 @@ import string
 
 # --------------------------------------------------------------------------------------------------
 
-
 def replace_vars(s, **defs):
+
     """Interpolate/replace variables in string
 
     Resolved variable formats are: $var, {{var}} and $(var). Undefined
@@ -37,21 +37,11 @@ def replace_vars(s, **defs):
 
     expr = s
 
-    # Resolve special variables: {{var}}
-    for var in re.findall(r'{{(\w+)}}', expr):
-        if var in defs:
-            expr = re.sub(r'{{'+var+r'}}', defs[var], expr)
-
     # Resolve special variables: $(var)
     for var in re.findall(r'\$\((\w+)\)', expr):
         if var in defs:
             expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
 
-    # Resolve special variables: $[var] (list)
-    for var in re.findall(r'\$\[(\w+)\]', expr):
-        if var in defs:
-            list2str = ','.join(map(str, defs[var]))
-            expr = re.sub(r'\$\['+var+r'\]', '['+list2str+']', expr)
 
     # Resolve defs
     s_interp = string.Template(expr).safe_substitute(defs)

@@ -46,7 +46,7 @@ class PrepConfigBase(ABC):
 
         # Dictionary validation things
         self.valid_types = ['string', 'iso-datetime', 'iso-duration', 'drop-list-string',
-                            'check-list-string', 'file-drop-list', 'file-check-list']
+                            'check-list-string', 'file-drop-list', 'file-check-list', 'boolean']
 
         # Disallowed element types
         self.dis_elem_types = [datetime.datetime, datetime.date]
