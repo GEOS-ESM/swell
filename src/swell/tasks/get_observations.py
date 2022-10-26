@@ -33,25 +33,30 @@ class GetObservations(taskBase):
              "tlapse" files need to be fetched.
         """
 
-        cfg = self.config
-        logger = self.logger
-
         # Parse config
         # ------------
-        experiment = cfg.get('obs_experiment')
-        window_begin = cfg.get('window_begin')
-        background_time = cfg.get('background_time')
-        obs = cfg.get('OBSERVATIONS')
+        experiment = self.config_get('obs_experiment')
+        window_begin = self.config_get('window_begin')
+        background_time = self.config_get('background_time')
+        observations = self.config_get('observations')
 
         # Loop over observation operators
         # -------------------------------
-        for ob in obs:
+        for observation in observations:
+
+            # Open the observation operator dictionary
+            # ----------------------------------------
+            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+
+            print(observation_dict)
+
+            exit()
 
             # Fetch observation files
             # -----------------------
             name = ob['obs space']['name']
             target_file = ob['obs space']['obsdatain']['engine']['obsfile']
-            logger.info("Processing observation file "+target_file)
+            self.logger.info("Processing observation file "+target_file)
 
             fetch(date=window_begin,
                   target_file=target_file,
@@ -70,7 +75,7 @@ class GetObservations(taskBase):
 
             # Satbias
             target_file = ob['obs bias']['input file']
-            logger.info("Processing satbias file "+target_file)
+            self.logger.info("Processing satbias file "+target_file)
 
             fetch(date=background_time,
                   target_file=target_file,
@@ -86,7 +91,7 @@ class GetObservations(taskBase):
             # Tlapse
             for target_file in self.get_tlapse_files(ob):
 
-                logger.info("Processing tlapse file "+target_file)
+                self.logger.info("Processing tlapse file "+target_file)
 
                 fetch(date=background_time,
                       target_file=target_file,

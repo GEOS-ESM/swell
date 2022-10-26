@@ -2,10 +2,9 @@ datetime: '{{local_background_time}}'
 filetype: cube sphere history
 provider: geos
 datapath: ''
-filenames: [$(cycle_dir)/%yyyy%mm%dd.%hh%MM%ss.bkg.nc4,
-            $(stage_dir)/Data/bkg/geos.crtmsrf.$(horizontal_resolution).nc4]
+filenames: [{{cycle_dir}}/bkg.%yyyy%mm%dd.%hh%MM%ss.nc4,
+            {{experiment_dir}}/stage/Data/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4]
 state variables: [u,v,ua,va,t,delp,q,qi,ql,qr,qs,o3ppmv,phis,
                   qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
                   zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
                   stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]
-filename: $(cycle_dir)/$(valid_date).$(file_type).nc4  # R2D2

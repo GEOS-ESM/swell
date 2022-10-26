@@ -34,6 +34,18 @@ npy_proc:
   prompt: What processor layout (y-direction)?
   type: string
 
+# Backgrounds
+background_experiment:
+  default_value: x0044
+  prompt: Experiment providing the background files?
+  type: string
+
+# Observation experiment
+obs_experiment:
+  default_value: x0044_jjin_20220520
+  prompt: Database providing the observations?
+  type: string
+
 # Observations
 observations:
   default_value: ['amsua_n19']
@@ -53,6 +65,13 @@ fixed_options:
   window_type:
     default_value:  4D
     prompt: Window type (3D or 4D)
+  background_frequency:
+    default_value:  PT1H
+    prompt: 'Frequency of 4D backgrounds'
+  background_source:
+    default_value: file
+    prompt: 'Source of 4D background files (file or from model)'
+
   window_offset:
     default_value:  PT3H
     prompt: Time from beginning to middle of the window

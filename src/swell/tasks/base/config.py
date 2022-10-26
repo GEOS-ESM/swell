@@ -98,7 +98,8 @@ class Config():
         # Add the experiment directory to the configuration
         experiment_root = self.get('experiment_root')
         experiment_id = self.get('experiment_id')
-        self.__config__['experiment_dir'] = os.path.join(experiment_root, experiment_id)
+        experiment_dir = os.path.join(experiment_root, experiment_id)
+        self.__config__['experiment_dir'] = experiment_dir
 
         # Swell datetime format (avoid colons in paths and filenames)
         self.__datetime_swl_format__ = "%Y%m%dT%H%M%SZ"
@@ -141,26 +142,24 @@ class Config():
 
     def use_config_to_template_string(self, string_in):
 
-        t = jinja2.Template(string_in, trim_blocks=True, lstrip_blocks=True)
-        return t.render(self.__config__)
+        t = jinja2.Template(string_in, trim_blocks=True, lstrip_blocks=True,
+                            undefined=jinja2.StrictUndefined)
+        string_out = t.render(self.__config__)
+
+        self.__logger__.assert_abort('{{' not in string_out, f'In use_config_to_template_string ' +
+                                    f'the output string still contains template directives. ' +
+                                    f'{string_out}')
+
+        self.__logger__.assert_abort('}}' not in string_out, f'In use_config_to_template_string ' +
+                                    f'the output string still contains template directives. ' +
+                                    f'{string_out}')
+
+        return string_out
 
     # ----------------------------------------------------------------------------------------------
 
-    def merge(self, other):
-        """ Merge another dictionary with self
-
-        Parameters
-        ----------
-        other : dictionary, required
-          other dictionary to merge
-        """
-
-        # Merge the other dictionary into self
-        self.__config__.update(other)
-
-        # Overwrite the top level definitions
-        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
-        #                     if not isinstance(v, dict) and not isinstance(v, list)})
+    def get_datetime_format(self):
+        return self.__datetime_swl_format__
 
     # ----------------------------------------------------------------------------------------------
 
@@ -173,10 +172,21 @@ class Config():
           Current cycle date/time as datetime object
         """
 
-        # Add cycle time to dictionary
-        self.put('current_cycle', cycle_dt.strftime(self.__datetime_swl_format__))
+        # Add current cycle to the config
+        # -------------------------------
+        current_cycle = cycle_dt.strftime(self.__datetime_swl_format__)
+        self.put('current_cycle', current_cycle)
 
-# --------------------------------------------------------------------------------------------------
+        # Add cycle directory to config
+        # -----------------------------
+        cycle_dir = current_cycle
+        if self.__model__ is not None:
+            cycle_dir = cycle_dir + '-' + self.__model__
+        cycle_dir = os.path.join(self.__config__['experiment_dir'], 'run', cycle_dir)
+
+        self.put('cycle_dir', cycle_dir)
+
+    # ----------------------------------------------------------------------------------------------
 
     def add_data_assimilation_window_parameters(self):
         """ Defines cycle dependent parameters for the data assimilation window
@@ -237,28 +247,5 @@ class Config():
         self.put('local_background_time', local_background_time)
         self.put('local_background_time_iso', local_background_time_iso)
 
-    # --------------------------------------------------------------------------------------------------
-
-    def resolve_config_file(self):
-        """Resolves/interpolates all defined variables in the base configuration.
-
-        Returns
-        -------
-        d: dict
-          YAML dictionary with all defined variables interpolated.
-        """
-
-        # Read input file as text file
-        with open(self.__input_file__) as f:
-            text = f.read()
-
-        # Replace any unresolved variables in the file
-        text = replace_vars(text, **self.__defs__)
-
-        # Return a yaml
-        resolved_dict = yaml.safe_load(text)
-
-        # Merge dictionary
-        self.merge(resolved_dict)
 
 # ----------------------------------------------------------------------------------------------

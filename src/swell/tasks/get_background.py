@@ -32,26 +32,23 @@ class GetBackground(taskBase):
              See the taskBase constructor for more information.
         """
 
-        # Shortcuts to base objects
-        # -------------------------
-        cfg = self.config
-
         # Current cycle time object
         # -------------------------
         current_cycle = self.config_get('current_cycle')
-        current_cycle_dto = dt.strptime(current_cycle, cfg.dt_format)
+        current_cycle_dto = dt.strptime(current_cycle, self.get_datetime_format())
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
 
         # Parse config
-        window_type = cfg.get('window_type')
-        window_length = cfg.get('window_length')
-        window_offset = cfg.get('window_offset')
-
-        # Position relative to center of the window where forecast starts
-        forecast_offset = cfg.get('analysis_forecast_window_offset')
+        window_type = self.config_get('window_type')
+        window_length = self.config_get('window_length')
+        window_offset = self.config_get('window_offset')
+        background_source = self.config_get('background_source', 'file')
+        background_experiment = self.config_get('background_experiment')
+        horizontal_resolution = self.config_get('horizontal_resolution')
+        forecast_offset = self.config_get('analysis_forecast_window_offset')
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
@@ -74,11 +71,9 @@ class GetBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        bkg_info = cfg.get('backgrounds')
+        if window_type == "4D" and background_source == 'file':
 
-        if window_type == "4D" and bkg_info['background source'] == 'file':
-
-            bkg_freq = bkg_info['background frequency']
+            bkg_freq = self.config_get('background_frequency')
             bkg_freq_dur = isodate.parse_duration(bkg_freq)
 
             # Check for a sensible frequency
@@ -100,37 +95,26 @@ class GetBackground(taskBase):
         # -------------------------------------------------------
         self.logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
 
-        # Background dictionary from config
-        background_dict = cfg.get('BACKGROUND')
-
         # Get r2d2 dictionary
-        r2d2_dict = cfg.get('R2D2')
+        r2d2_dict = self.open_jedi_interface_model_config_file('r2d2')
 
         # Loop over fc
         for fc in r2d2_dict['fetch']['fc']:
 
             # Reset target file
-            target_file_template = os.path.split(background_dict['filename'])[1]
-
-            # Datetime format to use
-            user_date_format = fc['user_date_format']
+            target_file_template = fc['filename']
 
             # Loop over file types
             for file_type in fc['file_type']:
-
-                # Replace filetype in target_file_template
-                target_file_type_template = target_file_template.replace("$(file_type)", file_type)
 
                 # Looop over background steps
                 for bkg_step in bkg_steps:
 
                     # Set the datetime format for the output files
                     background_time = forecast_start_time + isodate.parse_duration(bkg_step)
-                    valid_time_str = background_time.strftime(user_date_format)
 
-                    # Set the target file name
-                    target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(cfg.get('cycle_dir'), target_file)
+                    # Set the datetime templating in the target file name
+                    target_file = background_time.strftime(target_file_template)
 
                     # Perform the fetch
                     fetch(date=forecast_start_time,
@@ -139,9 +123,9 @@ class GetBackground(taskBase):
                           file_type='bkg',
                           fc_date_rendering='analysis',
                           step=bkg_step,
-                          resolution=cfg.get('horizontal_resolution'),
+                          resolution=horizontal_resolution,
                           type='fc',
-                          experiment=bkg_info['background experiment'])
+                          experiment=background_experiment)
 
                     # Change permission
                     os.chmod(target_file, 0o644)

@@ -93,6 +93,12 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    # Method to get the Swell experiment configuration path
+    def get_datetime_format(self):
+        return self.__config__.get_datetime_format()
+
+    # ----------------------------------------------------------------------------------------------
+
     # Method to open a specific configuration file
     def __open_jedi_interface_config_file(self, model_or_obs, config_name):
 
@@ -116,6 +122,10 @@ class taskBase(ABC):
 
         # Fill templates in the configuration file using the config
         config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
+
+        print(' ')
+        print(config_file_str)
+        print(' ')
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)
