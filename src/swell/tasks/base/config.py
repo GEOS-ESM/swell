@@ -84,16 +84,16 @@ class Config():
             del self.__config__['models']
             del self.__config__['model_components']
 
-        # Assert that the full and model level configs have only unique keys
-        for key in self.__config__.keys():
-            if key in model_config.keys():
-                self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is also ' +
-                                      f'contained in the top level config.')
+            # Assert that the full and model level configs have only unique keys
+            for key in self.__config__.keys():
+                if key in model_config.keys():
+                    self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is ' +
+                                          f'also contained in the top level config.')
 
-        # Now merge the top level config and the model specific parts of the config. This prevents
-        # tasks from accessing the config associated with any model other than the one they are
-        # supposed to act upon.
-        self.__config__.update(model_config)
+            # Now merge the top level config and the model specific parts of the config. This prevents
+            # tasks from accessing the config associated with any model other than the one they are
+            # supposed to act upon.
+            self.__config__.update(model_config)
 
         # Add the experiment directory to the configuration
         experiment_root = self.get('experiment_root')
@@ -108,7 +108,7 @@ class Config():
         self.__datetime_iso_format__ = "%Y-%m-%dT%H:%M:%SZ"
 
         # If datetime passed add some extra datetime parameters to config
-        if 'datetime_in' in kwargs:
+        if 'datetime_in' in kwargs and kwargs['datetime_in'] is not None:
             self.add_cycle_time_parameter(kwargs['datetime_in'].datetime)
 
             if self.get('data_assimilation_run', False):

@@ -15,7 +15,7 @@ from swell.tasks.base.task_base import taskBase
 
 interface_executable = {
   'fv3-jedi-4D': 'fv3jedi_hofx.x',
-  'fv3-jedi-4D': 'fv3jedi_hofx_nomodel.x',
+  'fv3-jedi-3D': 'fv3jedi_hofx_nomodel.x',
   'soca-4D': 'soca_hofx.x',
   'soca-3D': 'soca_hofx3d.x',
 }
@@ -48,15 +48,10 @@ class RunJediHofxExecutable(taskBase):
         obs = self.config_get('observations')
         for ob in obs:
             # Get observation dictionary
-            ob_dict = self.open_jedi_interface_obs_config_file(ob)
-            # Add time interpolation for 4D windows
-            if window_type == '4D':
-                ob_dict['get values'] = {}
-                ob_dict['get values']['time interpolation'] = 'linear'
-            observations.append(ob_dict)
+            observations.append(self.open_jedi_interface_obs_config_file(ob))
         jedi_config_dict['observations']['observers'] = observations
 
-        # Model is a special case
+        # Forecast model is a special case
         model = self.config_get('model')
         model_dict = self.open_jedi_interface_model_config_file(model)
         jedi_config_dict['model'] = model_dict
@@ -78,6 +73,7 @@ class RunJediHofxExecutable(taskBase):
         jedi_interface = self.config_get('jedi_interface')
         window_type = self.config_get('window_type')
         model = self.config_get('window_type')
+        total_processors = self.config_get('total_processors')
 
         # Jedi configuration file
         # -----------------------
@@ -96,20 +92,16 @@ class RunJediHofxExecutable(taskBase):
         jedi_executable_path = os.path.join(experiment_dir, 'jedi_bundle', 'build', 'bin',
                                        jedi_executable)
 
-        exit()
-
         # Compute number of processors
         # ----------------------------
-        processors = self.config_get('processors')
-        np = 1
-        for processor in processors:
-            np = np * processor
+        np_string = self.use_config_to_template_string(total_processors)
+        np = eval(np_string)
 
         # Run the JEDI executable
         # -----------------------
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
-        command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_conf_output]
+        command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
 
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         while True:
@@ -124,4 +116,4 @@ class RunJediHofxExecutable(taskBase):
         if rc != 0:
             command_string = ' '.join(command)
             self.logger.abort('subprocess.run with command ' + command_string +
-                              ' failed to execute.')
+                              ' failed to execute.', False)

@@ -1,4 +1,4 @@
-datetime: '{{local_background_time}}'
+datetime: '{{local_background_time_iso}}'
 filetype: cube sphere history
 provider: geos
 datapath: ''

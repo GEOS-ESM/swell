@@ -31,7 +31,7 @@ jedi_build_method:
 
 # Existing JEDI build
 existing_build_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
   prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:

@@ -24,7 +24,6 @@ from swell.tasks.base.datetime import Datetime
 from swell.utilities.logger import Logger
 from swell.tasks.task_registry import valid_tasks
 from swell.tasks.utilities.utils import camelcase_to_underscore
-from swell.utilities.dictionary_utilities import dict_get
 
 
 # --------------------------------------------------------------------------------------------------
@@ -157,8 +156,28 @@ class taskBase(ABC):
 
     # Method to open a specific observation configuration file
     def open_jedi_interface_obs_config_file(self, config_name):
-        return self.__open_jedi_interface_config_file('observations', config_name)
+        obs_dict = self.__open_jedi_interface_config_file('observations', config_name)
 
+        # If 4D window then add time interpolation to the dictionary
+        if self.config_get('window_type') == '4D':
+            obs_dict['get values'] = {}
+            obs_dict['get values']['time interpolation'] = 'linear'
+
+        # Placeholder to add GeoVaLs saver filter
+
+        # Placeholder for IO pool things
+
+        return obs_dict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def use_config_to_template_string(self, string_in):
+        return self.__config__.use_config_to_template_string(string_in)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model(self):
+        return self.__model__
 
 # --------------------------------------------------------------------------------------------------
 

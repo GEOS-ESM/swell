@@ -16,7 +16,6 @@ import xarray as xr
 import yaml
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.observations import find_instrument_from_string
 
 
 # --------------------------------------------------------------------------------------------------
@@ -32,20 +31,14 @@ class MergeIodaFiles(taskBase):
 
         # Parse config
         cycle_dir = self.config_get('cycle_dir')
-        save_geovals = self.config_get("save_geovals", False)
-
-        # Config file used with jedi executable
-        jedi_config_file = os.path.join(cycle_dir, 'jedi_config.yaml')
-
-        # Read into dictionary
-        with open(jedi_config_file, 'r') as jedi_config_string:
-            jedi_config = yaml.safe_load(jedi_config_string)
-
-        # Dictionary with observation config
-        observers = jedi_config['observations']['observers']
+        save_geovals = self.config_get('save_geovals', False)
+        observations = self.config_get('observations')
 
         # Loop over observations
-        for observer in observers:
+        for observation in observations:
+
+            # Load the observation dictionary
+            observation_dict = self.open_jedi_interface_obs_config_file(observation)
 
             # Dataset to hold the concatenated files for both observations and geovals
             ds_all = xr.Dataset()
@@ -60,14 +53,14 @@ class MergeIodaFiles(taskBase):
 
             # Split the full obs output path into path and filename
             cycle_dir, obs_file = os.path.split(
-                observer['obs space']['obsdataout']['engine']['obsfile'])
+                observation_dict['obs space']['obsdataout']['engine']['obsfile'])
 
             # Read in the observation output files if the pool is larger than 1
             # -----------------------------------------------------------------
 
             # Check IO pool and skip merge if ioda output a single file
             try:
-                max_pool_size = observer['obs space']['io pool']['max pool size']
+                max_pool_size = observation_dict['obs space']['io pool']['max pool size']
             except Exception:
                 max_pool_size = None
 
@@ -76,8 +69,7 @@ class MergeIodaFiles(taskBase):
             else:
 
                 # Write info
-                instrument = find_instrument_from_string(obs_file, self.logger)
-                self.logger.info('Combining IODA output files for '+instrument+'.')
+                self.logger.info('Combining IODA output files for '+observation+'.')
 
                 # Split base and extension part of filename
                 obs_file_bse = os.path.splitext(obs_file)[0]
@@ -163,14 +155,13 @@ class MergeIodaFiles(taskBase):
             if save_geovals:
 
                 # Loop over filters, find geoval saver and extract filename
-                for obs_filter in observer['obs filters']:
+                for obs_filter in observation_dict['obs filters']:
                     if obs_filter['filter'] == 'GOMsaver':
                         cycle_dir, geovals_file = os.path.split(obs_filter['filename'])
                         break
 
                 # Write info
-                instrument = find_instrument_from_string(geovals_file, self.logger)
-                self.logger.info('Adding GeoVaLs for '+instrument+'.')
+                self.logger.info('Adding GeoVaLs for '+observation+'.')
 
                 # Split base and extension part of filename
                 gvals_file_bse = os.path.splitext(geovals_file)[0]
