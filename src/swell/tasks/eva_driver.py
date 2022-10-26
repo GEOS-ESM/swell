@@ -26,7 +26,7 @@ class EvaDriver(taskBase):
 
         # Parse config for jedi_config
         # ----------------------------
-        cycle_dir = self.config.get('cycle_dir')
+        cycle_dir = self.config_get('cycle_dir')
         jedi_config_file = os.path.join(cycle_dir, 'jedi_config.yaml')
         with open(jedi_config_file, 'r') as jedi_config_string:
             config = yaml.safe_load(jedi_config_string)

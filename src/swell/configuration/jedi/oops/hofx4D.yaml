@@ -1,0 +1,14 @@
+window begin: '{{window_begin_iso}}'
+window length: {{window_length}}
+forecast length: {{window_length}}
+geometry:
+  TASKFILLgeometry
+model:
+  TASKFILLmodel
+initial condition:
+  TASKFILLbackground
+observations:
+  get values:
+    TASKFILLgetvalues
+  observers:
+    TASKFILLobservations

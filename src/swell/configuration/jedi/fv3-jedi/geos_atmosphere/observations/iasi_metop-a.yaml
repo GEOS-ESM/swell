@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/iasi_metop-a.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/iasi_metop-a.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).iasi_metop-a.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/{{experiment_id}}.iasi_metop-a.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &iasi_metop-a_channels 16, 29, 32, 35, 38, 41, 44, 47, 49, 50, 51, 53,
             55, 56, 57, 59, 61, 62, 63, 66, 68, 70, 72, 74, 76, 78, 79, 81, 82, 83,
@@ -64,15 +64,15 @@ obs operator:
   obs options:
     Sensor_ID: iasi_metop-a
     EndianType: little_endian
-    CoefficientPath: $(crtm_coeff_dir)
+    CoefficientPath: {{crtm_coeff_dir}}
 obs bias:
-  input file: $(cycle_dir)/iasi_metop-a.{{background_time}}.satbias.nc4
+  input file: {{cycle_dir}}/iasi_metop-a.{{background_time}}.satbias.nc4
   variational bc:
     predictors:
     - name: constant
     - name: lapse_rate
       order: 2
-      tlapse: &iasi_metop-a_tlapse $(cycle_dir)/iasi_metop-a.{{background_time}}.tlapse.txt
+      tlapse: &iasi_metop-a_tlapse {{cycle_dir}}/iasi_metop-a.{{background_time}}.tlapse.txt
     - name: lapse_rate
       tlapse: *iasi_metop-a_tlapse
     - name: emissivity

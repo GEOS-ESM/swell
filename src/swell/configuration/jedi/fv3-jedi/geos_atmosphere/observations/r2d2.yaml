@@ -1,7 +1,0 @@
-fetch:
-  bc:
-    - file_type: satbias
-      target_file: {{cycle_dir}}/{{obs_type}}.$(date).$(file_type).nc4
-    - file_type: tlapse
-      target_file: {{cycle_dir}}/{{obs_type}}.$(date).$(file_type).txt
-

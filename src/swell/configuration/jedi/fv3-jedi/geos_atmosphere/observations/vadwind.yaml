@@ -5,7 +5,7 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/vadwind.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/vadwind.{{window_begin}}.nc4
     obsgrouping:
       group variables: ["station_id", "datetime"]
       sort variable: "air_pressure"
@@ -13,7 +13,7 @@ obs space:
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).vadwind.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/{{experiment_id}}.vadwind.{{window_begin}}.nc4
   simulated variables: [eastward_wind, northward_wind]
 #--------------------------------------------------------------------------------------------------------------------
 obs filters:

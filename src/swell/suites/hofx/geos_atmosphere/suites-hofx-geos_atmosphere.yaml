@@ -12,9 +12,9 @@ window_length:
 
 # Horizontal resolution
 horizontal_resolution:
-  default_value: 'c360'
-  prompt: What resolution for the atmospheric background?
-  options: ['c180', 'c360', 'c720']
+  default_value: '361'
+  prompt: What resolution for the atmospheric background (For c360 choose 361)?
+  options: ['181', '361', '721']
   type: drop-list-string
 
 # Vertical resolution
@@ -27,11 +27,11 @@ vertical_resolution:
 # Processor layout
 npx_proc:
   default_value: '2'
-  prompt: What processor layout (x-direction)?
+  prompt: What processor layout (x-direction) per cube face?
   type: string
 npy_proc:
   default_value: '2'
-  prompt: What processor layout (y-direction)?
+  prompt: What processor layout (y-direction) per cube face?
   type: string
 
 # Backgrounds
@@ -48,7 +48,24 @@ obs_experiment:
 
 # Observations
 observations:
-  default_value: ['amsua_n19']
+  default_value:
+  # Conventional
+  - aircraft
+  # Radiances
+  - amsua_n19
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - gmi_gpm
+  - amsr2_gcom-w1
+  # Ozone
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
   prompt: Select atmospheric observations.
   options: use_method
   type: check-list-string
@@ -71,7 +88,9 @@ fixed_options:
   background_source:
     default_value: file
     prompt: 'Source of 4D background files (file or from model)'
-
+  crtm_coeff_dir:
+    default_value: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
+    prompt: 'Directory containing the CRTM coefficient files'
   window_offset:
     default_value:  PT3H
     prompt: Time from beginning to middle of the window
@@ -82,8 +101,11 @@ fixed_options:
     default_value:  '$(npx_proc) * $(npy_proc) * 6'
     prompt: Equation to compute total number of processors
   model:
-    default_value:  pseudo
+    default_value:  pseudo-model
     prompt: Type of model to use for 4D runs.
   background_time_offset:
     default_value:  PT9H
     prompt: Time before the middle of the window that the background providing forecast began
+  clean_patterns:
+    default_value: ['*.nc4','*.txt']
+    prompt: 'Patterns for the files to remove after completing a cycle'

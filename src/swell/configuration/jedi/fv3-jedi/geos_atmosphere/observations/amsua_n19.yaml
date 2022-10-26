@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/amsua_n19.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/amsua_n19.{{window_begin}}.nc4
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).amsua_n19.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/{{experiment_id}}.amsua_n19.{{window_begin}}.nc4
   simulated variables: [brightness_temperature]
   channels: &amsua_n19_channels 1-15
 obs operator:
@@ -18,9 +18,9 @@ obs operator:
   obs options:
     Sensor_ID: &Sensor_ID amsua_n19
     EndianType: little_endian
-    CoefficientPath: $(crtm_coeff_dir)
+    CoefficientPath: {{crtm_coeff_dir}}
 obs bias:
-  input file: $(cycle_dir)/amsua_n19.{{background_time}}.satbias.nc4
+  input file: {{cycle_dir}}/amsua_n19.{{background_time}}.satbias.nc4
   channels without bc: 14
   variational bc:
     predictors:
@@ -31,7 +31,7 @@ obs bias:
       clwdif_ch314: 2
     - name: lapse_rate
       order: 2
-      tlapse: &amsua_n19_tlapse $(cycle_dir)/amsua_n19.{{background_time}}.tlapse.txt
+      tlapse: &amsua_n19_tlapse {{cycle_dir}}/amsua_n19.{{background_time}}.tlapse.txt
     - name: lapse_rate
       tlapse: *amsua_n19_tlapse
     - name: emissivity

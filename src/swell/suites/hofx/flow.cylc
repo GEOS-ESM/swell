@@ -37,7 +37,6 @@
                 {% if cycle_time[model_component] %}
                     GetBackground-{{model_component}} &
                     GetObservations-{{model_component}} &
-                    JediConfig-{{model_component}} &
                     StageJedi-{{model_component}}[^] &
                     BuildJedi[^]
                     => RunJediExecutable-{{model_component}}
@@ -77,9 +76,6 @@
 
         [[GetObservations-{{model_component}}]]
             script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
-
-        [[JediConfig-{{model_component}}]]
-            script = "swell_task JediConfig $config -d $datetime -m {{model_component}}"
 
         [[RunJediExecutable-{{model_component}}]]
             script = "swell_task RunJediExecutable $config -d $datetime -m {{model_component}}"

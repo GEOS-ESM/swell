@@ -123,9 +123,26 @@ class taskBase(ABC):
         # Fill templates in the configuration file using the config
         config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
 
-        print(' ')
-        print(config_file_str)
-        print(' ')
+        # Convert string to dictionary
+        return yaml.safe_load(config_file_str)
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to open a specific model configuration file
+    def open_jedi_oops_config_file(self, config_name):
+
+        # Get experiment configuration path
+        swell_exp_config_path = self.get_swell_exp_config_path()
+
+        # Path to configuration file
+        config_file = os.path.join(swell_exp_config_path, 'jedi', 'oops', config_name + '.yaml')
+
+        # Open file as a string
+        with open(config_file, 'r') as config_file_open:
+            config_file_str_templated = config_file_open.read()
+
+        # Fill templates in the configuration file using the config
+        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)

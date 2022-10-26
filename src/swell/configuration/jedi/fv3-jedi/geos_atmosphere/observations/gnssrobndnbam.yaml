@@ -3,7 +3,7 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/gnssrobndnbam.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/gnssrobndnbam.{{window_begin}}.nc4
     obsgrouping:
       group variables: [ 'record_number' ]
       sort variable: 'impact_height'
@@ -11,7 +11,7 @@ obs space:
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).gnssrobndnbam.{{window_begin}}.nc4
+      obsfile: {{cycle_dir}}/{{experiment_id}}.gnssrobndnbam.{{window_begin}}.nc4
   simulated variables: [bending_angle]
 obs operator:
   name: GnssroBndNBAM

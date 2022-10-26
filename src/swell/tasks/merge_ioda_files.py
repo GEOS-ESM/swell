@@ -31,18 +31,18 @@ class MergeIodaFiles(taskBase):
     def execute(self):
 
         # Parse config
-        cycle_dir = self.config.get('cycle_dir')
-        save_geovals = self.config.get("save_geovals", False)
+        cycle_dir = self.config_get('cycle_dir')
+        save_geovals = self.config_get("save_geovals", False)
 
         # Config file used with jedi executable
         jedi_config_file = os.path.join(cycle_dir, 'jedi_config.yaml')
 
         # Read into dictionary
         with open(jedi_config_file, 'r') as jedi_config_string:
-            config = yaml.safe_load(jedi_config_string)
+            jedi_config = yaml.safe_load(jedi_config_string)
 
         # Dictionary with observation config
-        observers = config['observations']['observers']
+        observers = jedi_config['observations']['observers']
 
         # Loop over observations
         for observer in observers:
