@@ -24,7 +24,7 @@ def main(method):
 
     # Create suites object
     # --------------------
-    prepare_config(method)
+    config_file = prepare_config(method)
 
 
 # --------------------------------------------------------------------------------------------------

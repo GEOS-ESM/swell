@@ -78,5 +78,7 @@ def prepare_config(method):
     exp_dict_file_open.close()
     logger.info(f'Prepared configuration file written to {exp_dict_file}')
 
+    return exp_dict_file
+
 
 # --------------------------------------------------------------------------------------------------

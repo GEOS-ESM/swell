@@ -44,7 +44,9 @@ setuptools.setup(
         '': [
                'deployment/platforms/*/modules*',
                'deployment/platforms/*/r2d2_config.yaml',
+               'suites/*',
                'suites/*/*',
+               'suites/*/*/*',
                'configuration/*.yaml',
                'configuration/*/*',
              ],

@@ -18,7 +18,7 @@ final_cycle_point:
 
 # Run ahead limit for workflow
 runahead_limit:
-  default_value: 'PT12H'
+  default_value: 'PT6H'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: iso-duration
 
@@ -53,7 +53,7 @@ coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['geos_atmosphere', 'geos_ocean']
+  default_value: ['geos_atmosphere']
   prompt: Select models to use
   options: use_method
   type: file-check-list

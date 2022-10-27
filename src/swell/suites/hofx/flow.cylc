@@ -60,7 +60,7 @@
 
         [[[environment]]]
             datetime = $CYLC_TASK_CYCLE_POINT
-            config   = $CYLC_SUITE_DEF_PATH/experiment-filled.yaml
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
 
     # Tasks
     # -----
