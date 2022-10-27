@@ -80,20 +80,25 @@ class Config():
                                       f'experiment configuration')
             # Extract the model specific part of the config
             model_config = self.__config__['models'][self.__model__]
-            # Remove the model specific part from the full config
+        else:
+            model_config = {}
+
+        # Remove the model specific part from the full config
+        if 'models' in self.__config__.keys():
             del self.__config__['models']
+        if 'model_components' in self.__config__.keys():
             del self.__config__['model_components']
 
-            # Assert that the full and model level configs have only unique keys
-            for key in self.__config__.keys():
-                if key in model_config.keys():
-                    self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is ' +
-                                          f'also contained in the top level config.')
+        # Assert that the full and model level configs have only unique keys
+        for key in self.__config__.keys():
+            if key in model_config.keys():
+                self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is ' +
+                                        f'also contained in the top level config.')
 
-            # Now merge the top level config and the model specific parts of the config. This prevents
-            # tasks from accessing the config associated with any model other than the one they are
-            # supposed to act upon.
-            self.__config__.update(model_config)
+        # Now merge the top level config and the model specific parts of the config. This prevents
+        # tasks from accessing the config associated with any model other than the one they are
+        # supposed to act upon.
+        self.__config__.update(model_config)
 
         # Add the experiment directory to the configuration
         experiment_root = self.get('experiment_root')

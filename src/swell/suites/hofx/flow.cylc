@@ -69,7 +69,7 @@
 
     {% for model_component in model_components %}
         [[StageJedi-{{model_component}}]]
-            script = "swell_task StageJedi $config"
+            script = "swell_task StageJedi $config -m {{model_component}}"
 
         [[ GetBackground-{{model_component}} ]]
             script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
