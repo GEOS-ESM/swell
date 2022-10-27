@@ -1,7 +1,0 @@
-elements:
-  - name: "Choose workflow to run"
-    widget type: dropdown
-    default: ''
-    options:
-      - hofx
-      - store_backgrounds_geos_run
