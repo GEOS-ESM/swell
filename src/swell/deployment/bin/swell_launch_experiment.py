@@ -23,12 +23,13 @@ from swell.utilities.logger import Logger
 
 class DeployWorkflow():
 
-    def __init__(self, suite_path, experiment_name, no_detach):
+    def __init__(self, suite_path, experiment_name, no_detach, log_path):
 
         self.logger = Logger('DeployWorkflow')
         self.suite_path = suite_path
         self.experiment_name = experiment_name
         self.no_detach = no_detach
+        self.log_path = log_path
 
     # ----------------------------------------------------------------------------------------------
 
@@ -48,7 +49,13 @@ class DeployWorkflow():
             os.environ['CYLC_CONF_PATH'] = self.suite_path
 
         # Install the suite
-        subprocess.run(['cylc', 'install'], check=True)
+
+        if self.log_path:
+            # Add optional path for workflow engine logging.
+            option = '--symlink-dirs=run=' + self.log_path
+            subprocess.run(['cylc', 'install', option], check=True)
+        else:
+            subprocess.run(['cylc', 'install'], check=True)
 
         # Start the workflow
 
@@ -91,7 +98,9 @@ class DeployWorkflow():
               help='Workflow manager to be used')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False,
               help='Tells workflow manager to block until complete')
-def main(suite_path, workflow_manager, no_detach):
+@click.option('-l', '--log_path', 'log_path', default=None,
+              help='Directory to receive workflow manager logging output')
+def main(suite_path, workflow_manager, no_detach, log_path):
 
     # Get the path to where the suite files are located
     # -------------------------------------------------
@@ -106,7 +115,7 @@ def main(suite_path, workflow_manager, no_detach):
 
     # Create the deployment object
     # ----------------------------
-    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach)
+    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path)
 
     # Write some info for the user
     # ----------------------------
