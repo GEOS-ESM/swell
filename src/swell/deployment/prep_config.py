@@ -17,7 +17,7 @@ import yaml
 
 from swell.utilities.logger import Logger
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary_utilities import dict_get, add_comments_to_dictionary
+from swell.utilities.dictionary import dict_get, add_comments_to_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 
 

@@ -20,7 +20,7 @@ from swell.deployment.prep_exp_dirs import copy_suite_and_platform_files, \
                                            set_swell_path_in_modules, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary_utilities import dict_get
+from swell.utilities.dictionary import dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
 
