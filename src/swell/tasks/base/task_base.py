@@ -58,8 +58,8 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, datetime_in = self.__datetime__,
-                                 model = self.__model__)
+        self.__config__ = Config(config_input, self.logger, datetime_in=self.__datetime__,
+                                 model=self.__model__)
 
     # ----------------------------------------------------------------------------------------------
 

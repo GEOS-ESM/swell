@@ -6,6 +6,10 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 import click
 import os
 import shutil
@@ -16,19 +20,24 @@ from swell.deployment.prep_exp_dirs import copy_suite_and_platform_files, \
                                            set_swell_path_in_modules, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
-from swell.utilities.string_utils import replace_vars
 from swell.utilities.dictionary_utilities import dict_get
+from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.logger import Logger
+
 
 # --------------------------------------------------------------------------------------------------
 
+
 @click.command()
-@click.option('-m', '--method', 'method', default='defaults', help='Method for configuration: ' + \
-                '[\'defaults\'], \'tui\' or \'existing\'. If using \'existing\' then the config ' + \
-                'argument must also be passed proving path to config.')
+@click.option('-m', '--method', 'method', default='defaults',
+              help='Method for configuration: [\'defaults\'], \'tui\' or \'existing\'. If using ' +
+                   '\'existing\' then the config argument must also be passed proving path to ' +
+                   'config.')
 @click.option('-c', '--config', 'config', default=None,
               help='Directory containing the suite file needed by the workflow manager')
-def main(method, config):
+@click.option('-t', '--cidi', 'ci_cd', default=False,
+              help='Setup experiment using continuous integration parameters')
+def main(method, config, ci_cd):
 
     # Create a logger
     # ---------------
@@ -41,12 +50,12 @@ def main(method, config):
                         f'options {method_options}.')
     if method == 'existing':
         logger.assert_abort(config is not None, f'If method is \'existing\' config path must be ' +
-                      f'present in the list of arguments')
+                            f'present in the list of arguments')
 
     # Generate the configuration file
     # -------------------------------
     if method != 'existing':
-        config_file = prepare_config(method)
+        config_file = prepare_config(method, ci_cd)
     else:
         config_file = config
 
@@ -54,6 +63,8 @@ def main(method, config):
     # --------------------
     with open(config_file, 'r') as ymlfile:
         experiment_dict = yaml.safe_load(ymlfile)
+
+    exit()
 
     # Extract from the config
     # -----------------------
@@ -89,7 +100,7 @@ def main(method, config):
     # Open the r2d2 file to dictionary
     with open(r2d2_conf_path, 'r') as r2d2_file_open:
         r2d2_file_str = r2d2_file_open.read()
-    r2d2_file_str = replace_vars(r2d2_file_str, **experiment_dict)
+    r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
     r2d2_file_str = os.path.expandvars(r2d2_file_str)
 
     with open(r2d2_conf_path, 'w') as r2d2_file_open:
@@ -110,7 +121,7 @@ def main(method, config):
     dst = os.path.join(exp_path, 'configuration')
     if os.path.exists(dst) and os.path.isdir(dst):
         shutil.rmtree(dst)
-    shutil.copytree(src, dst, ignore = shutil.ignore_patterns('*.py*', '*__*'))
+    shutil.copytree(src, dst, ignore=shutil.ignore_patterns('*.py*', '*__*'))
 
     # Write out launch command for convenience
     # ----------------------------------------

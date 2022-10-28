@@ -2,7 +2,7 @@ databases:
 
   ${USER}:
     class: LocalDB
-    root: $(r2d2_local_path)
+    root: {{r2d2_local_path}}
     cache_fetch: false
 
   gmao-shared:

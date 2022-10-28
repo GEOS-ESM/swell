@@ -4,6 +4,10 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 import os
 import subprocess
 import sys
@@ -11,7 +15,9 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 interface_executable = {
   'fv3-jedi-4D': 'fv3jedi_hofx.x',
@@ -20,7 +26,9 @@ interface_executable = {
   'soca-3D': 'soca_hofx3d.x',
 }
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 class RunJediHofxExecutable(taskBase):
 
@@ -61,7 +69,6 @@ class RunJediHofxExecutable(taskBase):
 
         return jedi_config_dict
 
-
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
@@ -90,7 +97,7 @@ class RunJediHofxExecutable(taskBase):
         # --------------------
         jedi_executable = interface_executable[jedi_interface + '-' + window_type]
         jedi_executable_path = os.path.join(experiment_dir, 'jedi_bundle', 'build', 'bin',
-                                       jedi_executable)
+                                            jedi_executable)
 
         # Compute number of processors
         # ----------------------------
@@ -117,3 +124,5 @@ class RunJediHofxExecutable(taskBase):
             command_string = ' '.join(command)
             self.logger.abort('subprocess.run with command ' + command_string +
                               ' failed to execute.', False)
+
+# --------------------------------------------------------------------------------------------------

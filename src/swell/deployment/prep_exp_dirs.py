@@ -14,7 +14,7 @@ import pathlib
 import shutil
 
 from swell.swell_path import get_swell_path
-from swell.utilities.string_utils import replace_vars
+from swell.utilities.jinja2 import template_string_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -86,7 +86,10 @@ def set_swell_path_in_modules(logger, exp_suite_path):
         # -------------
         with open(modules_file, 'r') as modules_file_open:
             modules_file_str = modules_file_open.read()
-            modules_file_str = replace_vars(modules_file_str, **swell_paths)
+
+        # Resolve templates
+        # -----------------
+        modules_file_str = template_string_jinja2(logger, modules_file_str, swell_paths)
 
         # Overwrite the file
         # ------------------

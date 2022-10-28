@@ -1,0 +1,6 @@
+default:
+  experiment_id: swell-{{suite_to_run}}
+  experiment_root: /discover/nobackup/${USER}/SwellExperiments
+ci_cd:
+  experiment_id: swell-cicd-{{suite_to_run}}-{{datetime}}
+  experiment_root: /discover/nobackup/gmao_ci/CI/swell/nightly

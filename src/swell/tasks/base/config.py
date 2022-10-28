@@ -8,11 +8,10 @@
 
 import datetime
 import isodate
-import jinja2
 import os
 import yaml
 
-from swell.utilities.string_utils import replace_vars
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 #  @package configuration
@@ -46,20 +45,6 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def __init__(self, input_file, logger, **kwargs):
-        """Reads YAML file(s) as a dictionary.
-
-        Environment definitions and root-level YAML parameters are extracted to be
-        used for variable interpolation within strings (see replace_vars()).
-
-        Parameters
-        ----------
-        input_file : string, required Name of YAML file(s)
-
-        Returns
-        -------
-        config : Config, dict
-          Config object
-        """
 
         # Keep track of the input config file
         self.__input_file__ = input_file
@@ -93,7 +78,7 @@ class Config():
         for key in self.__config__.keys():
             if key in model_config.keys():
                 self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is ' +
-                                        f'also contained in the top level config.')
+                                      f'also contained in the top level config.')
 
         # Now merge the top level config and the model specific parts of the config. This prevents
         # tasks from accessing the config associated with any model other than the one they are
@@ -119,12 +104,6 @@ class Config():
             if self.get('data_assimilation_run', False):
                 self.add_data_assimilation_window_parameters()
 
-        # Create list of definitions from top level of dictionary
-        #self.__defs__ = {}
-        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
-        #                     if not isinstance(v, dict) and not isinstance(v, list)})
-
-
     # ----------------------------------------------------------------------------------------------
 
     def get(self, key, default='NODEFAULT'):
@@ -134,7 +113,7 @@ class Config():
         else:
             if default == 'NODEFAULT':
                 self.__logger__.abort(f'In config.get the key \'{key}\' was not found in the ' +
-                             f'configuration and no default was provided.')
+                                      f'configuration and no default was provided.')
             else:
                 return default
 
@@ -147,19 +126,7 @@ class Config():
 
     def use_config_to_template_string(self, string_in):
 
-        t = jinja2.Template(string_in, trim_blocks=True, lstrip_blocks=True,
-                            undefined=jinja2.StrictUndefined)
-        string_out = t.render(self.__config__)
-
-        self.__logger__.assert_abort('{{' not in string_out, f'In use_config_to_template_string ' +
-                                    f'the output string still contains template directives. ' +
-                                    f'{string_out}')
-
-        self.__logger__.assert_abort('}}' not in string_out, f'In use_config_to_template_string ' +
-                                    f'the output string still contains template directives. ' +
-                                    f'{string_out}')
-
-        return string_out
+        return template_string_jinja2(self.__logger__, string_in, self.__config__)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -169,12 +136,8 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def add_cycle_time_parameter(self, cycle_dt):
-        """ Add cycle time to the configuration
-
-        Parameters
-        ----------
-        cycle_dt : datetime, required
-          Current cycle date/time as datetime object
+        """
+        Defines cycle time parameter and adds to config
         """
 
         # Add current cycle to the config
@@ -194,15 +157,8 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def add_data_assimilation_window_parameters(self):
-        """ Defines cycle dependent parameters for the data assimilation window
-
-        Parameters defined by this method are needed for resolving
-        time-dependent variables using the replace_vars() method.
-
-        Parameters
-        ----------
-        cycle_dt : datetime, required
-          Current cycle date/time as datetime object
+        """
+        Defines cycle dependent parameters for the data assimilation window and adds to config
         """
 
         # Current cycle datetime object

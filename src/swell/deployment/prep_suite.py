@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from jinja2 import Template
 import os
+
+from swell.utilities.jinja2 import template_string_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     render_dictionary['cycle_times'] = cycle_times_dict_list
 
-    # Add scheduling to the render dictionary
+    # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
     render_dictionary['scheduling'] = {}
     render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
@@ -58,8 +59,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Render the template
     # -------------------
-    t = Template(suite_file, trim_blocks=True, lstrip_blocks=True)
-    new_suite_file = t.render(render_dictionary)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)
 
     # Write suite file to experiment
     # ------------------------------

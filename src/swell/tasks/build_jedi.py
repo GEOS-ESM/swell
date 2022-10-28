@@ -69,7 +69,6 @@ class BuildJedi(taskBase):
             # Link existing build into the directory
             os.symlink(existing_build_directory, jedi_bundle_build_path)
 
-
         elif jedi_build_method == 'create':
 
             self.logger.abort(f'Building JEDI is not yet supported')

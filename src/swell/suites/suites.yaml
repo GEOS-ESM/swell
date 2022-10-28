@@ -6,7 +6,7 @@ experiment_id:
 
 # Location to store the experiment
 experiment_root:
-  default_value: /discover/nobackup/$USER/SwellExperiments
+  default_value: /home/$USER/SwellExperiments
   prompt: Enter the path where experiment will be staged
   type: string
 
