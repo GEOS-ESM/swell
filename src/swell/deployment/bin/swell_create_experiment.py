@@ -23,6 +23,7 @@ from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
+from swell.utilities.welcome_message import write_welcome_message
 
 
 # --------------------------------------------------------------------------------------------------
@@ -38,6 +39,10 @@ from swell.utilities.logger import Logger
 @click.option('-t', '--cidi', 'ci_cd', default=False,
               help='Setup experiment using continuous integration parameters')
 def main(method, config, ci_cd):
+
+    # Welcome message
+    # ---------------
+    write_welcome_message('Create Experiment')
 
     # Create a logger
     # ---------------
@@ -63,8 +68,6 @@ def main(method, config, ci_cd):
     # --------------------
     with open(config_file, 'r') as ymlfile:
         experiment_dict = yaml.safe_load(ymlfile)
-
-    exit()
 
     # Extract from the config
     # -----------------------

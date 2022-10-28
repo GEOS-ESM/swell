@@ -16,7 +16,7 @@ import subprocess
 
 # local imports
 from swell.utilities.logger import Logger
-
+from swell.utilities.welcome_message import write_welcome_message
 
 # --------------------------------------------------------------------------------------------------
 
@@ -92,6 +92,10 @@ class DeployWorkflow():
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False,
               help='Tells workflow manager to block until complete')
 def main(suite_path, workflow_manager, no_detach):
+
+    # Welcome message
+    # ---------------
+    write_welcome_message('Launch Experiment')
 
     # Get the path to where the suite files are located
     # -------------------------------------------------

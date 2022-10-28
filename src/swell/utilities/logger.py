@@ -29,7 +29,8 @@ class Logger:
         self.__maxlen__ = 100
 
         # Set default logging levels
-        self.loggerdict = {'INFO': True,
+        self.loggerdict = {'BLANK': True,
+                           'INFO': True,
                            'TRACE': False,
                            'DEBUG': False, }
 
@@ -56,12 +57,17 @@ class Logger:
             message_items = []
             message_items.append(message)
 
+        # Include level in the message
+        level_show = ''
+        if level != 'BLANK':
+            level_show = level_show+' '+self.task_name+': '
+
         if level == 'ABORT' or self.loggerdict[level]:
             first_line = True
             for message_item in message_items:
                 if not first_line:
                     message_item = ' ' + message_item
-                print(level+' '+self.task_name+': '+message_item)
+                print(level_show+message_item)
                 first_line = False
 
     # ----------------------------------------------------------------------------------------------
@@ -81,6 +87,12 @@ class Logger:
     def debug(self, message, wrap=True):
 
         self.send_message('DEBUG', message, wrap)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def blank(self, message, wrap=True):
+
+        self.send_message('BLANK', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
