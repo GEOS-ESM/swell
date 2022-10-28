@@ -39,7 +39,7 @@
                     GetObservations-{{model_component}} &
                     StageJedi-{{model_component}}[^] &
                     BuildJedi[^]
-                    => RunJediExecutable-{{model_component}}
+                    => RunJediHofxExecutable-{{model_component}}
                     => MergeIodaFiles-{{model_component}}
                     => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
                     => CleanCycle-{{model_component}}
@@ -77,17 +77,17 @@
         [[GetObservations-{{model_component}}]]
             script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
 
-        [[RunJediExecutable-{{model_component}}]]
-            script = "swell_task RunJediExecutable $config -d $datetime -m {{model_component}}"
+        [[RunJediHofxExecutable-{{model_component}}]]
+            script = "swell_task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
             platform = {{platform}}
-            execution time limit = {{scheduling["RunJediExecutable"]["execution_time_limit"]}}
+            execution time limit = {{scheduling["RunJediHofxExecutable"]["execution_time_limit"]}}
             [[[directives]]]
-                --account = {{scheduling["RunJediExecutable"]["account"]}}
-                --qos = {{scheduling["RunJediExecutable"]["qos"]}}
-                --constraint = {{scheduling["RunJediExecutable"]["constraint"]}}
-                --job-name = RunJediExecutable
-                --nodes={{scheduling["RunJediExecutable"]["nodes"]}}
-                --ntasks-per-node={{scheduling["RunJediExecutable"]["ntasks_per_node"]}}
+                --account = {{scheduling["RunJediHofxExecutable"]["account"]}}
+                --qos = {{scheduling["RunJediHofxExecutable"]["qos"]}}
+                --constraint = {{scheduling["RunJediHofxExecutable"]["constraint"]}}
+                --job-name = RunJediHofxExecutable
+                --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
+                --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
 
         [[MergeIodaFiles-{{model_component}}]]
             script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"

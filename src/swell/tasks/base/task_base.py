@@ -210,8 +210,7 @@ def task_main(task, config, datetime, model):
         for valid_task in valid_tasks:
             valid_task_logger.info('  ' + valid_task)
         valid_task_logger.info(' ')
-        valid_task_logger.info('ABORT: Task not found in task registry.')
-        sys.exit()
+        valid_task_logger.abort('ABORT: Task not found in task registry.')
 
     # Create the object
     constrc_start = time.perf_counter()

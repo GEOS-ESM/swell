@@ -48,13 +48,13 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # Add scheduling to the render dictionary
     # ---------------------------------------
     render_dictionary['scheduling'] = {}
-    render_dictionary['scheduling']['RunJediExecutable'] = {}
-    render_dictionary['scheduling']['RunJediExecutable']['execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediExecutable']['qos'] = 'debug'
-    render_dictionary['scheduling']['RunJediExecutable']['constraint'] = 'debug'
-    render_dictionary['scheduling']['RunJediExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediExecutable']['ntasks_per_node'] = 28
+    render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
+    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT1H'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'debug'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'hasw'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
 
     # Render the template
     # -------------------
