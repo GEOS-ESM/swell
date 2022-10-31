@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: {{cycle_dir}}/atms_npp.{{window_begin}}.nc4
+      obsfile: '{{cycle_dir}}/atms_npp.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: {{cycle_dir}}/{{experiment_id}}.atms_npp.{{window_begin}}.nc4
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.atms_npp.{{window_begin}}.nc4'
   simulated variables: [brightness_temperature]
   channels: &atms_npp_channels 1-22
 obs operator:
@@ -18,15 +18,15 @@ obs operator:
   obs options:
     Sensor_ID: atms_npp
     EndianType: little_endian
-    CoefficientPath: {{crtm_coeff_dir}}
+    CoefficientPath: '{{crtm_coeff_dir}}'
 obs bias:
-  input file: {{cycle_dir}}/atms_npp.{{background_time}}.satbias.nc4
+  input file: '{{cycle_dir}}/atms_npp.{{background_time}}.satbias.nc4'
   variational bc:
     predictors:
     - name: constant
     - name: lapse_rate
       order: 2
-      tlapse: &atms_npp_tlapse {{cycle_dir}}/atms_npp.{{background_time}}.tlapse.txt
+      tlapse: &atms_npp_tlapse '{{cycle_dir}}/atms_npp.{{background_time}}.tlapse.txt'
     - name: lapse_rate
       tlapse: *atms_npp_tlapse
     - name: emissivity

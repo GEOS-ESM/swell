@@ -88,7 +88,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png'
       plots:
         - add_xlabel: 'Observation Value'
           add_ylabel: 'JEDI h(x)'
@@ -122,7 +122,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'Observations vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png'
       plots:
         - add_xlabel: 'Observation Value'
           add_ylabel: 'GSI h(x)'
@@ -156,7 +156,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'JEDI h(x) vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi_hofx_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi_hofx_{{instrument}}_${variable}${channel}.png'
       plots:
         - add_xlabel: 'GSI h(x)'
           add_ylabel: 'JEDI h(x)'
@@ -190,7 +190,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'JEDI omb vs. GSI omb | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_omb_vs_jedi_omb_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_omb_vs_jedi_omb_{{instrument}}_${variable}${channel}.png'
       plots:
         - add_xlabel: 'GSI observation minus h(x)'
           add_ylabel: 'JEDI observation minus h(x)'
@@ -232,7 +232,7 @@ diagnostics:
         figure size: [20,10]
         layout: [1,1]
         title: 'Observations | {{instrument_title}} | Obs Value'
-        output name: {{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/observations_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/observations_{{instrument}}_${variable}${channel}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -269,7 +269,7 @@ diagnostics:
         figure size: [20,10]
         layout: [1,1]
         title: 'JEDI OmB | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/omb_jedi_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/omb_jedi_{{instrument}}_${variable}${channel}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -306,7 +306,7 @@ diagnostics:
         figure size: [20,10]
         layout: [1,1]
         title: 'GSI OmB | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/omb_gsi_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/omb_gsi_{{instrument}}_${variable}${channel}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -343,7 +343,7 @@ diagnostics:
         figure size: [20,10]
         layout: [1,1]
         title: 'Hofx Difference | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx_difference_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx_difference_{{instrument}}_${variable}${channel}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -383,7 +383,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'JEDI omb vs. GSI omb | {{instrument_title}} | ${variable_title}'
-        output name: {{cycle_dir}}/eva/{{instrument}}/histograms/${variable}${channel}/gsi_omb_vs_jedi_omb_{{instrument}}_${variable}${channel}.png
+        output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}${channel}/gsi_omb_vs_jedi_omb_{{instrument}}_${variable}${channel}.png'
       plots:
         - add_xlabel: 'Observation minus h(x)'
           add_ylabel: 'Count'
