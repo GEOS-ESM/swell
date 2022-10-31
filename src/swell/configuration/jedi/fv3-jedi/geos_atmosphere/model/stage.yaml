@@ -1,7 +1,7 @@
 - copy_files:
     directories:
-      - [/discover/nobackup/drholdaw/JediSwell/bundle/latest/fv3-jedi/test/Data/fieldmetadata/*, {{experiment_dir}}/stage/Data/fieldmetadata/]
-      - [/discover/nobackup/drholdaw/JediSwell/bundle/latest/fv3-jedi/test/Data/fv3files/*, {{experiment_dir}}/stage/Data/fv3files/]
+      - ['/discover/nobackup/drholdaw/JediSwell/bundle/latest/fv3-jedi/test/Data/fieldmetadata/*', '{{experiment_dir}}/stage/Data/fieldmetadata/']
+      - ['/discover/nobackup/drholdaw/JediSwell/bundle/latest/fv3-jedi/test/Data/fv3files/*', '{{experiment_dir}}/stage/Data/fv3files/']
   link_files:
     directories:
-      - [/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.{{horizontal_resolution}}.nc4, {{experiment_dir}}/stage/Data/bkg/]
+      - ['/discover/nobackup/drholdaw/JediData/GEOS_CRTM_Surface/geos.crtmsrf.{{horizontal_resolution}}.nc4', '{{experiment_dir}}/stage/Data/bkg/']
