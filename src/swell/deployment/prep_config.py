@@ -52,13 +52,12 @@ def platform_fill(logger, experiment_dict, ci_cd):
         dict_to_use = 'ci_cd'
 
         # Ensure environment variables are set
-        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ID') is not None, \
-                                'If running with CI/CD the environment variable ' +
-                                '${CICD_EXPERIMENT_ID} must be set.')
-        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ROOT') is not None, \
-                                'If running with CI/CD the environment variable ' +
-                                '${CICD_EXPERIMENT_ROOT} must be set.')
-
+        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ID') is not None,
+                            'If running with CI/CD the environment variable ' +
+                            '${CICD_EXPERIMENT_ID} must be set.')
+        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ROOT') is not None,
+                            'If running with CI/CD the environment variable ' +
+                            '${CICD_EXPERIMENT_ROOT} must be set.')
 
     # Update experiment dict
     experiment_dict_new = experiment_dict
