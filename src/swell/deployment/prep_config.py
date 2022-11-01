@@ -51,6 +51,15 @@ def platform_fill(logger, experiment_dict, ci_cd):
     if ci_cd:
         dict_to_use = 'ci_cd'
 
+        # Ensure environment variables are set
+        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ID') is not None, \
+                                'If running with CI/CD the environment variable ' +
+                                '${CICD_EXPERIMENT_ID} must be set.')
+        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ROOT') is not None, \
+                                'If running with CI/CD the environment variable ' +
+                                '${CICD_EXPERIMENT_ROOT} must be set.')
+
+
     # Update experiment dict
     experiment_dict_new = experiment_dict
     experiment_dict_new['experiment_id'] = platform_dict[dict_to_use]['experiment_id']
@@ -98,7 +107,9 @@ def prepare_config(method, ci_cd=False):
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_rt = dict_get(logger, experiment_dict, 'experiment_root')
 
+    experiment_id = os.path.expandvars(experiment_id)
     experiment_rt = os.path.expandvars(experiment_rt)
+    experiment_dict['experiment_id'] = experiment_id
     experiment_dict['experiment_root'] = experiment_rt
 
     # Make directory
