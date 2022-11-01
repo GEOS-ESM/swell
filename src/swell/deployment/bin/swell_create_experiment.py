@@ -31,9 +31,9 @@ from swell.utilities.welcome_message import write_welcome_message
 
 @click.command()
 @click.option('-m', '--method', 'method', default='defaults',
-              help='Method for configuration: [\'defaults\'], \'tui\' or \'existing\'. If using ' +
-                   '\'existing\' then the config argument must also be passed proving path to ' +
-                   'config.')
+              help='Method for configuration: [\'defaults\'] or \'tui\'. If the config argument ' +
+                   'is present then this argument will be ignored in favor of using the existing ' +
+                   'configuration file.')
 @click.option('-c', '--config', 'config', default=None,
               help='Directory containing the suite file needed by the workflow manager')
 @click.option('-t', '--cidi', 'ci_cd', default=False,
@@ -50,16 +50,13 @@ def main(method, config, ci_cd):
 
     # Check arguments
     # ---------------
-    method_options = ['defaults', 'tui', 'existing']
+    method_options = ['defaults', 'tui']
     logger.assert_abort(method in method_options, f'Method \'{method}\' is not one of the valid ' +
                         f'options {method_options}.')
-    if method == 'existing':
-        logger.assert_abort(config is not None, f'If method is \'existing\' config path must be ' +
-                            f'present in the list of arguments')
 
     # Generate the configuration file
     # -------------------------------
-    if method != 'existing':
+    if config is None:
         config_file = prepare_config(method, ci_cd)
     else:
         config_file = config

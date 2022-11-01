@@ -22,8 +22,8 @@ import yaml
 from swell.tasks.base.config import Config
 from swell.tasks.base.datetime import Datetime
 from swell.utilities.logger import Logger
-from swell.tasks.task_registry import valid_tasks
-from swell.tasks.utilities.utils import camelcase_to_underscore
+from swell.tasks.base.task_registry import valid_tasks
+from swell.tasks.base.utils import camelcase_to_underscore
 
 
 # --------------------------------------------------------------------------------------------------
