@@ -27,11 +27,8 @@ class CleanCycle(taskBase):
 
     def execute(self):
 
-        cfg = self.config
-        logger = self.logger
-        cycle_dir = self.config.get("cycle_dir")
-        clean_list = cfg.get('CLEAN')
-        current_dir = os.getcwd()
+        cycle_dir = self.config_get("cycle_dir")
+        clean_list = self.config_get('clean_patterns')
 
         if os.path.isdir(cycle_dir):
             os.chdir(cycle_dir)
@@ -50,4 +47,3 @@ class CleanCycle(taskBase):
             filename = 'cycle_done'
             cmd = 'touch ' + os.path.join(cycle_dir, filename)
             os.system(cmd)
-            os.chdir(current_dir)

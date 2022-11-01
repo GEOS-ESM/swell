@@ -11,10 +11,12 @@
 import os
 import yaml
 
-from swell.tasks.base.task_base import taskBase
-from swell.utilities.dictionary_utilities import remove_matching_keys, replace_vars_dict
-from swell.utilities.observations import find_instrument_from_string, ioda_name_to_long_name
 from eva.eva_base import eva
+
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.dictionary import remove_matching_keys
+from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.observations import ioda_name_to_long_name
 
 
 # --------------------------------------------------------------------------------------------------
@@ -26,29 +28,32 @@ class EvaDriver(taskBase):
 
         # Parse config for jedi_config
         # ----------------------------
-        cycle_dir = self.config.get('cycle_dir')
-        jedi_config_file = os.path.join(cycle_dir, 'jedi_config.yaml')
-        with open(jedi_config_file, 'r') as jedi_config_string:
-            config = yaml.safe_load(jedi_config_string)
+        cycle_dir = self.config_get('cycle_dir')
+        experiment_root = self.config_get('experiment_root')
+        experiment_id = self.config_get('experiment_id')
+        observations = self.config_get('observations')
 
-        # Dictionary with observation config (from config used in JEDI)
-        # -------------------------------------------------------------
-        observers = config['observations']['observers']
+        # Read Eva template file into dictionary
+        # --------------------------------------
+        exp_path = os.path.join(experiment_root, experiment_id)
+        exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
+        eva_config_file = os.path.join(exp_suite_path, 'eva.yaml')
+        with open(eva_config_file, 'r') as eva_config_file_open:
+            eva_str_template = eva_config_file_open.read()
 
-        # Eva configuration
-        # -----------------
-        eva_dict_template = self.config.get('EVA')
-
-        # Loop over observers
+        # Loop over observations
         # -------------------
-        for observer in observers:
+        for observation in observations:
+
+            # Load the observation dictionary
+            observation_dict = self.open_jedi_interface_obs_config_file(observation)
 
             # Split the full path into path and filename
-            obs_path_file = observer['obs space']['obsdataout']['engine']['obsfile']
+            obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Get instrument ioda and full name
-            ioda_name = find_instrument_from_string(obs_file, self.logger)
+            ioda_name = observation
             full_name = ioda_name_to_long_name(ioda_name, self.logger)
 
             # Log the operator being worked on
@@ -60,21 +65,24 @@ class EvaDriver(taskBase):
 
             # Create dictionary used to override the eva config
             eva_override = {}
+            eva_override['cycle_dir'] = cycle_dir
             eva_override['obs_path_file'] = obs_path_file
             eva_override['instrument'] = ioda_name
             eva_override['instrument_title'] = full_name
-            eva_override['simulated_variables'] = observer['obs space']['simulated variables']
+            eva_override['simulated_variables'] = \
+                observation_dict['obs space']['simulated variables']
 
-            if 'channels' in observer['obs space']:
+            if 'channels' in observation_dict['obs space']:
                 need_channels = True
-                eva_override['channels'] = observer['obs space']['channels']
+                eva_override['channels'] = observation_dict['obs space']['channels']
             else:
                 need_channels = False
                 eva_override['channels'] = ''
                 eva_override['channel'] = ''
 
             # Override the eva dictionary
-            eva_dict = replace_vars_dict(eva_dict_template, **eva_override)
+            eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
+            eva_dict = yaml.safe_load(eva_str)
 
             # Remove channel keys if not needed
             if not need_channels:

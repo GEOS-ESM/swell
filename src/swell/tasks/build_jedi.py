@@ -4,6 +4,10 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+
+# --------------------------------------------------------------------------------------------------
+
+
 import os
 import shutil
 import subprocess
@@ -18,107 +22,57 @@ from swell.utilities.git_utils import git_got
 class BuildJedi(taskBase):
 
     def execute(self):
-        """
-          Comment here
-        """
 
-        cfg = self.config
+        # Get the build method
+        # --------------------
+        jedi_build_method = self.config_get('jedi_build_method')
 
-        # Path to JEDI build
-        jedi_build_dir = self.config.get('jedi_build_dir')
+        # Get the experiment/jedi_bundle directory
+        # ----------------------------------------
+        swell_exp_path = self.get_swell_exp_path()
+        jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
+        jedi_bundle_build_path = os.path.join(jedi_bundle_path, 'build')
 
-        # Get path to jedi executable
-        if 'executable' in cfg.keys() and 'existing build directory' in cfg['build jedi'].keys():
+        # Make jedi_bundle directory
+        # --------------------------
+        os.makedirs(jedi_bundle_path, 0o755, exist_ok=True)
 
-            # Check for presence of required executable and link build directory
-            # ------------------------------------------------------------------
-            ex_build_dir = os.path.join(cfg['build jedi']['existing build directory'])
+        # Choice to link to existing build or build JEDI using jedi_bundle
+        # ----------------------------------------------------------------
+        if jedi_build_method == 'use_existing':
 
-            if os.path.exists(os.path.join(ex_build_dir, 'bin', cfg['executable'])):
-                self.logger.info("Suitable JEDI build found, linking build directory. Warning: " +
-                                 "problems will follow if the loaded modules are not consistent " +
-                                 "with those used to build this version of JEDI.")
+            # Get the existing build directory from the dictionary
+            existing_build_directory = self.config_get('existing_build_directory')
 
-                # Remove trailing slash if needed
-                if jedi_build_dir.endswith('/'):
-                    jedi_build_dir = jedi_build_dir[:-1]
+            # Assert that the existing build directory contains a bin directory
+            if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
+                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
+                                  f'directory is not found in the path ' +
+                                  f'\'{existing_build_directory}\'')
 
-                # Remove existing build path if present
-                if os.path.islink(jedi_build_dir):  # Is a link
-                    os.remove(jedi_build_dir)
-                elif os.path.isdir(jedi_build_dir):  # Is a directory
-                    shutil.rmtree(jedi_build_dir)
+            # Write warning to user
+            self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
+                             'problems will follow if the loaded modules are not consistent ' +
+                             'with those used to build this version of JEDI. Also note that ' +
+                             'this experiment may not be reproducible if the build changes.')
 
-                # Link directory
-                os.symlink(ex_build_dir, jedi_build_dir)
+            # Remove trailing slash if needed
+            if jedi_bundle_build_path.endswith('/'):
+                jedi_bundle_build_path = jedi_bundle_build_path[:-1]
 
-            else:
+            # Remove existing build path if present
+            if os.path.islink(jedi_bundle_build_path):  # Is a link
+                os.remove(jedi_bundle_build_path)
+            elif os.path.isdir(jedi_bundle_build_path):  # Is a directory
+                shutil.rmtree(jedi_bundle_build_path)
 
-                self.logger.abort('Existing JEDI build directory is provided but the executable' +
-                                  ' is not found in that directory')
+            # Link existing build into the directory
+            os.symlink(existing_build_directory, jedi_bundle_build_path)
+
+        elif jedi_build_method == 'create':
+
+            self.logger.abort(f'Building JEDI is not yet supported')
 
         else:
-
-            # Build the JEDI code
-            # -------------------
-            # No jedi executable was found
-            self.logger.info('No jedi executable found... \nBuilding Jedi...')
-
-            # Get bundle and suite directories
-            bundle_dir = cfg['bundle']
-            suite_dir = cfg['suite_dir']
-
-            # Get the repos from the repo dict and clone them if they haven't already been cloned
-            repo_dict = cfg['build jedi']['bundle repos']
-
-            # Prep ecbuild string
-            ecb_tmp = 'ecbuild_bundle( PROJECT {} GIT "https://github.com/{}/{}.git" ' + \
-                      'BRANCH {} UPDATE )\n'
-
-            # Prepare CMakeLists file
-            cmake_dst = os.path.join(bundle_dir, 'CMakeLists.txt')
-
-            # Template CMakeLists.txt
-            cmake = ['cmake_minimum_required( VERSION 3.12 FATAL_ERROR )\n',
-                     'find_package( ecbuild 3.5 REQUIRED HINTS ${CMAKE_CURRENT_SOURCE_DIR} ' +
-                     '${CMAKE_CURRENT_SOURCE_DIR}/../ecbuild)\n',
-                     'project( jedi-bundle VERSION 1.1.0 LANGUAGES C CXX Fortran )\n',
-                     'list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")\n',
-                     'include( ecbuild_bundle )\n',
-                     'set( ECBUILD_DEFAULT_BUILD_TYPE Release )\n',
-                     'set( ENABLE_MPI ON CACHE BOOL "Compile with MPI")\n',
-                     'ecbuild_bundle_initialize()\n',
-                     'ecbuild_bundle_finalize()\n']
-
-            # Iterate over repo dictionary
-            for d in repo_dict:
-                project = d['project']
-                org = d['git org']
-                repo = d['repo']
-                branch = d['branch']
-                proj_dir = os.path.join(bundle_dir, project)
-                cmake.insert(-4, ecb_tmp.format(project, org, repo, branch))
-                if not os.path.exists(proj_dir):
-                    self.logger.info('Cloning into {}...'.format(project))
-                    git_url = 'https://github.com/{}/{}.git'.format(org, repo)
-                    git_got(git_url, branch, proj_dir, self.logger)
-                else:
-                    self.logger.info('{} has already been cloned into bundle'.format(project))
-
-            # Write out new cmake lists file in bundle directory
-            with open(cmake_dst, 'w') as f:
-                f.writelines(cmake)
-
-            # Create and change into the build directory
-            if not os.path.exists(jedi_build_dir):
-                os.mkdir(jedi_build_dir)
-            os.chdir(jedi_build_dir)
-            self.logger.info('Starting Jedi build at {}'.format(os.getcwd()))
-
-            # Commands to build jedi
-            subprocess.run(['ecbuild -DMPIEXEC=$MPIEXEC {}'.format(bundle_dir)], shell=True)
-            # Format string used to be '../' so we need to point it directly to bundle
-            os.chdir('fv3-jedi/')
-            subprocess.run(['make -j6'], shell=True)
-
-            self.logger.info('Build Jedi is complete!')
+            self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
+                              f'experiment dictionary. Must be \'use_existing\' or \'create\'.')

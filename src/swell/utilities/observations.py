@@ -10,45 +10,7 @@
 import os
 import yaml
 
-from swell.configuration.configuration import return_configuration_path
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def find_instrument_from_string(full_string, logger):
-
-    # Get configuration path
-    configuration_path = return_configuration_path()
-
-    # Insturment list yaml
-    obs_ioda_names_file = os.path.join(configuration_path, 'observation_ioda_names.yaml')
-
-    # Open file and convert to dictionary
-    with open(obs_ioda_names_file, 'r') as obs_ioda_names_str:
-        obs_ioda_names_dict = yaml.safe_load(obs_ioda_names_str)
-
-    # Get the list of ioda instrument names
-    obs_ioda_names = obs_ioda_names_dict['ioda instrument names']
-
-    # Set default outputs
-    key = None
-    variable = None
-
-    # Loop over list of valid names
-    obs_ioda_name_found = None
-    for obs_ioda_name in obs_ioda_names:
-        if obs_ioda_name['ioda name'] in full_string:
-            obs_ioda_name_found = obs_ioda_name['ioda name']
-
-    # Check something found
-    if obs_ioda_name_found is None:
-        logger.abort('In find_instrument_from_string the string ' + full_string + 'does not ' +
-                     f'contain one of the valid instruments: {obs_ioda_names} . Additional ' +
-                     'instruments can be added to swell/configuration/observation_ioda_names.yaml')
-
-    # Return found value
-    return obs_ioda_name_found
+from swell.swell_path import get_swell_path
 
 
 # --------------------------------------------------------------------------------------------------
@@ -57,10 +19,10 @@ def find_instrument_from_string(full_string, logger):
 def ioda_name_to_long_name(ioda_name, logger):
 
     # Get configuration path
-    configuration_path = return_configuration_path()
+    jedi_configuration_path = os.path.join(get_swell_path(), 'configuration', 'jedi')
 
     # Insturment list yaml
-    obs_ioda_names_file = os.path.join(configuration_path, 'observation_ioda_names.yaml')
+    obs_ioda_names_file = os.path.join(jedi_configuration_path, 'observation_ioda_names.yaml')
 
     # Open file and convert to dictionary
     with open(obs_ioda_names_file, 'r') as obs_ioda_names_str:
@@ -79,7 +41,7 @@ def ioda_name_to_long_name(ioda_name, logger):
 
     # Check something found
     if not found:
-        logger.abort('In find_instrument_from_string the string ' + full_string + 'does not ' +
+        logger.abort('In ioda_name_to_long_name the string ' + full_string + 'does not ' +
                      f'contain one of the valid instruments: {obs_ioda_names} . Additional ' +
                      'instruments can be added to swell/configuration/observation_ioda_names.yaml')
 

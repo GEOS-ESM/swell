@@ -12,14 +12,14 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import os.path
 import setuptools
 
 setuptools.setup(
     name='swell',
-    version='1.0.8',
     author='NASA Global Modeling and Assimilation Office',
     description='Workflow suites, tasks and configuration for coupled data assimilation',
-    url='https://github.com/danholdaway/swell',
+    url='https://github.com/geos-esm/swell',
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     classifiers=[
@@ -33,6 +33,7 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'click',
+        'jinja2>=3.0.3',
         'pyyaml>=6.0',
         'pycodestyle>=2.8.0',
         'pandas>=1.4.0',
@@ -42,10 +43,15 @@ setuptools.setup(
     package_data={
         '': [
                'deployment/platforms/*/modules*',
-               'deployment/platforms/*/r2d2_config.yaml',
+               'deployment/platforms/*/*.yaml',
+               'suites/*',
                'suites/*/*',
-               'configuration/*.yaml',
+               'suites/*/*/*',
+               'configuration/*',
                'configuration/*/*',
+               'configuration/*/*/*',
+               'configuration/*/*/*/*',
+               'configuration/*/*/*/*/*',
              ],
     },
     include_package_data=True,
@@ -53,6 +59,7 @@ setuptools.setup(
         'console_scripts': [
             'swell_task = swell.tasks.base.task_base:main',
             'swell_create_experiment = swell.deployment.bin.swell_create_experiment:main',
+            'swell_prepare_experiment_config = swell.deployment.bin.swell_prepare_config:main',
             'swell_launch_experiment = swell.deployment.bin.swell_launch_experiment:main',
             'swell_sat_db_processing = swell.deployment.bin.swell_sat_db_processing:main',
         ],
