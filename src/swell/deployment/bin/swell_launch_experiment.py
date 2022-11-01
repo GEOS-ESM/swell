@@ -49,7 +49,6 @@ class DeployWorkflow():
             os.environ['CYLC_CONF_PATH'] = self.suite_path
 
         # Install the suite
-
         if self.log_path:
             # Add optional path for workflow engine logging.
             option = '--symlink-dirs=run=' + self.log_path
@@ -70,22 +69,28 @@ class DeployWorkflow():
             subprocess.run(['cylc', 'play', self.experiment_name], check=True)
 
             # Pre TUI messages
-            self.logger.info(' ')
+            self.logger.info(' ', False)
             self.logger.info('Workflow is now running... ')
-            self.logger.info(' ')
-            self.logger.info('Use \'cylc scan\' to see running workflows.')
-            self.logger.info(' ')
+            self.logger.info(' ', False)
+            self.logger.info('Use \'\u001b[32mcylc scan\033[0m\' to see running workflows.')
+            self.logger.info(' ', False)
             self.logger.info('If the workflow needs to be stopped, close the TUI (if open)')
             self.logger.info('by pressing \'q\' and issue either:')
-            self.logger.info('  cylc stop ' + self.experiment_name)
+            self.logger.info(' ', False)
+            self.logger.info('  \u001b[32mcylc stop ' + self.experiment_name + '\033[0m')
+            self.logger.info(' ', False)
             self.logger.info('or to kill running tasks and stop:')
-            self.logger.info('  cylc stop --kill ' + self.experiment_name)
-            self.logger.info(' ')
+            self.logger.info(' ', False)
+            self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name+ '\033[0m')
+            self.logger.info(' ', False)
 
             # Launch the job monitor
             self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
+            self.logger.info(' ', False)
             self.logger.info('TUI can be relaunched with:')
-            self.logger.info('  cylc tui ' + self.experiment_name)
+            self.logger.info(' ', False)
+            self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name+ '\033[0m')
+            self.logger.info(' ', False)
             subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
 # --------------------------------------------------------------------------------------------------
@@ -123,7 +128,8 @@ def main(suite_path, workflow_manager, no_detach, log_path):
 
     # Write some info for the user
     # ----------------------------
-    deploy_workflow.logger.info('Launching workflow defined by files in ' + suite_path + '``.')
+    deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.',
+                                False)
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
     deploy_workflow.logger.info('Workflow manager: ' + workflow_manager)
 
