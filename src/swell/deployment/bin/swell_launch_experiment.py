@@ -81,7 +81,7 @@ class DeployWorkflow():
             self.logger.info(' ', False)
             self.logger.info('or to kill running tasks and stop:')
             self.logger.info(' ', False)
-            self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name+ '\033[0m')
+            self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name + '\033[0m')
             self.logger.info(' ', False)
 
             # Launch the job monitor
@@ -89,7 +89,7 @@ class DeployWorkflow():
             self.logger.info(' ', False)
             self.logger.info('TUI can be relaunched with:')
             self.logger.info(' ', False)
-            self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name+ '\033[0m')
+            self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name + '\033[0m')
             self.logger.info(' ', False)
             subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
 
