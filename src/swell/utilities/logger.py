@@ -114,6 +114,6 @@ class Logger:
 
     def input(self, message):
 
-        input('INPUT '+self.task_name+': '+message + ". Press any key to continue...")
+        input(' '+self.task_name+': '+message + ". Press any key to continue...")
 
     # ----------------------------------------------------------------------------------------------
