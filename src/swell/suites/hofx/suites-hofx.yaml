@@ -53,7 +53,7 @@ coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['geos_atmosphere']
+  default_value: ['geos_ocean']
   prompt: Select models to use
   options: use_method
   type: file-check-list
