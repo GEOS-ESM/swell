@@ -2,20 +2,47 @@
 cycle_times:
   default_value: ['T00', 'T12']
   prompt: List all cycle times, by middle of the window?
-  type: string
+  type: iso-duration
 
 # Window length
 window_length:
-  default_value: PT6H
+  default_value: 'PT12H'
   prompt: Window length
   type: iso-duration
 
-# Observations
+# Geometry
+# Horizontal resolutions
+
 horizontal_resolution:
-  default_value: '1'
-  prompt: What resolution for the ocean background (degrees)?
-  options: ['1/4', '1/2', '1']
+  default_value: 'quarter'
+  prompt: What resolution for the hor. res (probably will become obsolete)?
   type: drop-list-string
+
+horizontal_resolution_x:
+  default_value: '1440'
+  prompt: How many East-West grids will you use?
+  options: ['1440', '360', '72']
+  type: drop-list-string
+
+horizontal_resolution_y:
+  default_value: '1080'
+  prompt: How many North-South grids will you use?
+  options: ['1080', '320', '35']
+  type: drop-list-string
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '75'
+  prompt: What vertical resolution for the ocean background?
+  options: ['75','25']
+  type: drop-list-string
+
+
+# Backgrounds
+background_experiment:
+  default_value: s2s
+  prompt: Experiment providing the background files?
+  type: string
 
 # Observations
 observations:

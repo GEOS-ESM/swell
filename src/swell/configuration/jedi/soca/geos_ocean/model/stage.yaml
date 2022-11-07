@@ -1,0 +1,7 @@
+- copy_files:
+    directories:
+      - ['/discover/nobackup/dardag/soca_inputs/static/common/*', '{{experiment_dir}}/stage/Data/fieldmetadata/']
+      - ['/discover/nobackup/dardag/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/socafiles/*', '{{experiment_dir}}/stage/Data/socafiles/']
+  link_files:
+    directories:
+      - ['/discover/nobackup/dardag/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/INPUT/*', '{{experiment_dir}}/stage/Data/gridfiles']

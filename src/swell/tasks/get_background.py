@@ -50,6 +50,7 @@ class GetBackground(taskBase):
         horizontal_resolution = self.config_get('horizontal_resolution')
         forecast_offset = self.config_get('analysis_forecast_window_offset')
 
+        
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
         window_offset_dur = isodate.parse_duration(window_offset)
@@ -117,15 +118,26 @@ class GetBackground(taskBase):
                     target_file = background_time.strftime(target_file_template)
 
                     # Perform the fetch
+                    # fetch(date=forecast_start_time,
+                    #       target_file=target_file,
+                    #       model='geos',
+                    #       file_type='bkg',
+                    #       fc_date_rendering='analysis',
+                    #       step=bkg_step,
+                    #       resolution=horizontal_resolution,
+                    #       type='fc',
+                    #       experiment=background_experiment)
                     fetch(date=forecast_start_time,
                           target_file=target_file,
-                          model='geos',
-                          file_type='bkg',
+                          model='mom6_cice6_UFS',
+                          file_type='MOM.res',
                           fc_date_rendering='analysis',
                           step=bkg_step,
-                          resolution=horizontal_resolution,
+                        #   resolution=horizontal_resolution,
                           type='fc',
                           experiment=background_experiment)
 
                     # Change permission
                     os.chmod(target_file, 0o644)
+
+

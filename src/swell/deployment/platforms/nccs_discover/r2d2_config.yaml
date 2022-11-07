@@ -2,7 +2,8 @@ databases:
 
   ${USER}:
     class: LocalDB
-    root: {{r2d2_local_path}}
+    # root: {{r2d2_local_path}}
+    root: /discover/nobackup/dardag/R2D2DataStore/Local
     cache_fetch: false
 
   gmao-shared:
@@ -12,7 +13,8 @@ databases:
 
 # when fetching data, in which order should the databases accessed?
 fetch_order:
-  - gmao-shared
+  - ${USER}
+  # - gmao-shared
 
 # when storing data, in which order should the databases accessed?
 store_order:
