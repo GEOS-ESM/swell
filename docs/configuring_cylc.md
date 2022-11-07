@@ -1,44 +1,13 @@
-# Configuring Cylc
+# Configuring `cylc`
 
-Before you can run a swell generated workflow it's necessary to configure Cylc. This is only done
-before the first run, or when the Cylc version needs to be updated or when the behavior of Cylc
-needs to be modified.
+Before you can run a swell generated workflow it's necessary to configure `cylc`. This is only done before the first run, or when the `cylc` version needs to be updated or when the behavior of `cylc` needs to be modified.
 
-Start by creating a file called `cylc` that is always visible in the path. A good choice is typically
-something like `$HOME/bin/cylc`, where `$HOME/bin` is always in the path. In this new file copy the
-below contents:
+For the first step of this configuration it is necessary to ensure `cylc` is immediately visible in your path when starting a new session. This is achieved by creating a file `$HOME/bin/cylc` (which is typically in the path). This file can then add additional things to the path to start `cylc`.
 
-```
-#!/usr/bin/env bash
+Additionally `cylc` uses a file called `$HOME/.cylc/flow/global.cylc` to control common aspects of the workflow system. The `cylc` documentation describes some of the things controlled by `global.cylc`.
 
-source $MODULESHOME/init/bash
 
-# Load cylc module
-export DHOPT=/discover/nobackup/drholdaw/opt/
-module use -a $DHOPT/modulefiles/core
-module load miniconda/3.9-cylc
-
-# Run cylc command
-cylc "$@"
-```
-
-The role of this file is to redirect each issuance of `cylc` through the version of Cylc loaded by
-the module. This saves you explicitly loading the module everywhere Cylc is needed and makes sure
-Cylc is accessible when the workflow is running. You can test that the above works properly by
-issuing `cylc --version`.
-
-Cylc uses a file called `$HOME/.cylc/flow/global.cylc` to control common aspects of the workflow
-system. Create this file and then fill it with the following:
-
-```
-[scheduler]
-  UTC mode = True
-  process pool timeout = PT10M
-  process pool size = 4
-
-[platforms]
-  [[nccs_discover]]
-    job runner = slurm
-    install target = localhost
-    hosts = localhost
-```
+---
+**WARNING:**
+The contents of the above two files will be platform specific.
+---

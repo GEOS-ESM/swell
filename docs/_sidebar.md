@@ -1,12 +1,18 @@
 - Getting started
 
   - [Installing swell](installing_swell.md)
-  - [Installing swell as a module](installing_swell_as_a_module.md)
-  - [Configuring Cylc](configuring_cylc.md)
+  - [Configuring `cylc`](configuring_cylc.md)
   - [Creating an experiment](creating_an_experiment.md)
   - [Launching an experiment](launching_an_experiment.md)
   - [Monitoring an experiment](monitoring_an_experiment.md)
   - [Modifying an experiment](modifying_an_experiment.md)
+
+
+- Platform specific instructions
+
+  - **Discover**
+    - [Installing swell](platforms/discover/installing_swell_discover.md)
+    - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)
 
 - Configuration files in swell
 
@@ -18,6 +24,8 @@
   - [Task infrastructure](task_infrastructure.md)
   - [Tasks](tasks.md)
 
-- [Useful links](useful_links.md)
+- Governance
 
-- [Release notes](release_notes.md)
+  - [Requirements](requirements.md)
+
+- [Useful links](useful_links.md)
