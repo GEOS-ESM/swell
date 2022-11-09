@@ -117,16 +117,6 @@ class GetBackground(taskBase):
                     # Set the datetime templating in the target file name
                     target_file = background_time.strftime(target_file_template)
 
-                    # Perform the fetch
-                    # fetch(date=forecast_start_time,
-                    #       target_file=target_file,
-                    #       model='geos',
-                    #       file_type='bkg',
-                    #       fc_date_rendering='analysis',
-                    #       step=bkg_step,
-                    #       resolution=horizontal_resolution,
-                    #       type='fc',
-                    #       experiment=background_experiment)
                     fetch(date=forecast_start_time,
                           target_file=target_file,
                           model='mom6_cice6_UFS',

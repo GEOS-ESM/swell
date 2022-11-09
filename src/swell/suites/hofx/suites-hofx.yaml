@@ -6,13 +6,13 @@ data_assimilation_run:
 
 # Cycle start point
 start_cycle_point:
-  default_value: '2005-01-01T21:00:00Z'
+  default_value: '2005-01-02T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
-  default_value: '2005-01-02T21:00:00Z'
+  default_value: '2005-01-0T00:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 

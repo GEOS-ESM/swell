@@ -55,7 +55,7 @@ class GetObservations(taskBase):
 
             fetch(date=window_begin,
                   target_file=target_file,
-                  provider='ncdiag',
+                  provider='odas',
                   obs_type=observation,
                   type='ob',
                   experiment=experiment)

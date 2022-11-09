@@ -2,7 +2,4 @@ datetime: '{{local_background_time_iso}}'
 provider: mom6_cice6_UFS
 datapath: ''
 filenames: ['{{cycle_dir}}/bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4']
-# state variables: [u,v,ua,va,t,delp,q,qi,ql,qr,qs,o3ppmv,phis,
-#                   qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
-#                   zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
-#                   stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]
+# state variables: [socn, tocn, ssh, hocn, uocn, vocn]
