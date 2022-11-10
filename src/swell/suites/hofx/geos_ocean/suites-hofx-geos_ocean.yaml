@@ -53,6 +53,8 @@ obs_experiment:
 observations:
   default_value: 
   - adt
+  - insitus
+  - insitut
   prompt: Select ocean observations.
   options: use_method
   type: check-list-string
@@ -82,9 +84,9 @@ fixed_options:
   total_processors:
     default_value:  '{{npx_proc}} * {{npy_proc}} * 6'
     prompt: Equation to compute total number of processors
-  model:
-    default_value:  ''
-    prompt: Type of model to use for 4D runs.
+  # model:
+  #   default_value:  'None'
+  #   prompt: Type of model to use for 4D runs.
   window_offset:
     # default_value:  PT3H
     default_value:  PT12H

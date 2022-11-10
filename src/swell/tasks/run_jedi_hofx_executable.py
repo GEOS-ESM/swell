@@ -60,9 +60,10 @@ class RunJediHofxExecutable(taskBase):
         jedi_config_dict['observations']['observers'] = observations
 
         # Forecast model is a special case
-        model = self.config_get('model')
-        model_dict = self.open_jedi_interface_model_config_file(model)
-        jedi_config_dict['model'] = model_dict
+        if window_type == "4D":
+            model = self.config_get('model')
+            model_dict = self.open_jedi_interface_model_config_file(model)
+            jedi_config_dict['model'] = model_dict
 
         # Read configs for the rest of the dictionary
         self.jedi_dictionary_iterator(jedi_config_dict)

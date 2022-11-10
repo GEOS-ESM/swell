@@ -1,9 +1,3 @@
 mom6_input_nml: '{{experiment_dir}}/stage/Data/socafiles/input.nml'
-# field table filename: '{{experiment_dir}}/stage/Data/fieldmetadata/field_table'
 fields metadata: '{{experiment_dir}}/stage/Data/fieldmetadata/fields_metadata.yaml'
 geom_grid_file: '{{experiment_dir}}/stage/Data/gridfiles/soca_gridspec.nc'
-
-# layout: [{{npx_proc}},{{npy_proc}}]
-# npx: {{horizontal_resolution_x}}
-# npy: {{horizontal_resolution_y}}
-# npz: {{vertical_resolution}}

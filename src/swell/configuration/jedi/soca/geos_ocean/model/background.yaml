@@ -1,5 +1,0 @@
-datetime: '{{local_background_time_iso}}'
-provider: mom6_cice6_UFS
-datapath: ''
-filenames: ['{{cycle_dir}}/bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4']
-# state variables: [socn, tocn, ssh, hocn, uocn, vocn]
