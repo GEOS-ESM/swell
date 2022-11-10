@@ -87,3 +87,10 @@ ioda instrument names:
     full name: SSMIS (DMSP-F17)
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
+# Ocean
+  - ioda name: adt
+    full name: Absolute Dynamic Topography
+  - ioda name: insitut
+    full name: Insitu Temperature
+  - ioda name: insitus
+    full name: Insitu Salinity
