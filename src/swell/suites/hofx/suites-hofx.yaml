@@ -29,6 +29,15 @@ jedi_build_method:
   options: ['create', 'use_existing']
   type: drop-list-string
 
+# Existing JEDI bundle directory
+existing_source_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
+  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
+
 # Existing JEDI build
 existing_build_directory:
   default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
@@ -53,7 +62,7 @@ coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['geos_ocean']
+  default_value: ['geos_atmosphere', 'geos_ocean']
   prompt: Select models to use
   options: use_method
   type: file-check-list

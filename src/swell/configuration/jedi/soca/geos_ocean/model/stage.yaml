@@ -1,7 +1,7 @@
 - copy_files:
     directories:
-      - ['/discover/nobackup/dardag/soca_inputs/static/common/*', '{{experiment_dir}}/stage/Data/fieldmetadata/']
-      - ['/discover/nobackup/dardag/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/socafiles/*', '{{experiment_dir}}/stage/Data/socafiles/']
+      - ['{{swell_static_files}}/jedi/soca/geos_ocean/soca_inputs/static/common/*', '{{experiment_dir}}/stage/soca/geos_ocean/fieldmetadata/']
+      - ['{{swell_static_files}}/jedi/soca/geos_ocean/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/socafiles/*', '{{experiment_dir}}/stage/soca/geos_ocean/socafiles/']
   link_files:
     directories:
-      - ['/discover/nobackup/dardag/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/INPUT/*', '{{experiment_dir}}/stage/Data/gridfiles']
+      - ['{{swell_static_files}}/jedi/soca/geos_ocean/soca_inputs/static/{{horizontal_resolution_x}}x{{horizontal_resolution_y}}x{{vertical_resolution}}/soca/INPUT/*', '{{experiment_dir}}/stage/soca/geos_ocean/gridfiles']

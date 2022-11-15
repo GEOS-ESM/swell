@@ -1,6 +1,8 @@
 default:
   experiment_id: swell-{{suite_to_run}}
   experiment_root: /discover/nobackup/${USER}/SwellExperiments
+  swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles
 ci_cd:
   experiment_id: ${CICD_EXPERIMENT_ID}-{{datetime}}
   experiment_root: ${CICD_EXPERIMENT_ROOT}
+  swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles

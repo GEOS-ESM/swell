@@ -24,7 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def platform_fill(logger, experiment_dict, ci_cd):
+def platform_fill(logger, experiment_dict, ci_cd, comment_dict):
 
     # Get platform
     platform = experiment_dict['platform']
@@ -64,7 +64,15 @@ def platform_fill(logger, experiment_dict, ci_cd):
     experiment_dict_new['experiment_id'] = platform_dict[dict_to_use]['experiment_id']
     experiment_dict_new['experiment_root'] = platform_dict[dict_to_use]['experiment_root']
 
-    return experiment_dict_new
+    # Add the swell static files path from the platform to the experiment dictionary
+    experiment_dict_new['swell_static_files'] = platform_dict[dict_to_use]['swell_static_files']
+
+    # Adjust comment dictionary
+    comment_dict_new = comment_dict
+    comment_dict_new['datetime'] = 'Datetime this file was created (auto added)'
+    comment_dict_new['swell_static_files'] = 'Path to static files needed by swell (auto added)'
+
+    return experiment_dict_new, comment_dict_new
 
 
 # --------------------------------------------------------------------------------------------------
@@ -99,7 +107,9 @@ def prepare_config(method, ci_cd=False):
 
     # Set platform specific entires
     # -----------------------------
-    experiment_dict = platform_fill(logger, prep_using.experiment_dict, ci_cd)
+    experiment_dict, comment_dict = platform_fill(logger, prep_using.experiment_dict, ci_cd,
+                                                  prep_using.comment_dict)
+
 
     # Write final experiment dictionary
     # ---------------------------------
@@ -121,7 +131,7 @@ def prepare_config(method, ci_cd=False):
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
-                                                                 prep_using.comment_dict)
+                                                                 comment_dict)
 
     # Dictionary file to write
     exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
