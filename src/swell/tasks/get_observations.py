@@ -36,6 +36,7 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         experiment = self.config_get('obs_experiment')
+        provider = self.config_get('obs_provider')
         window_begin = self.config_get('window_begin')
         background_time = self.config_get('background_time')
         observations = self.config_get('observations')
@@ -55,7 +56,7 @@ class GetObservations(taskBase):
 
             fetch(date=window_begin,
                   target_file=target_file,
-                  provider='odas',
+                  provider=provider,
                   obs_type=observation,
                   type='ob',
                   experiment=experiment)
