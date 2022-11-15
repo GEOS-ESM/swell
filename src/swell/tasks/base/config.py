@@ -194,11 +194,13 @@ class Config():
         window_begin_iso = window_begin_dto.strftime(self.__datetime_iso_format__)
         background_time = background_time_dto.strftime(self.__datetime_swl_format__)
         local_background_time_iso = local_background_time.strftime(self.__datetime_iso_format__)
+        local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
 
         # Create new dictionary with these items
         self.put('window_begin', window_begin)
         self.put('window_begin_iso', window_begin_iso)
         self.put('background_time', background_time)
+        self.put('local_background_time', local_background_time)
         self.put('local_background_time_iso', local_background_time_iso)
 
 
