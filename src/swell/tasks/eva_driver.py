@@ -33,11 +33,15 @@ class EvaDriver(taskBase):
         experiment_id = self.config_get('experiment_id')
         observations = self.config_get('observations')
 
+        # Get the model
+        # -------------
+        model = self.config_get('model')
+
         # Read Eva template file into dictionary
         # --------------------------------------
         exp_path = os.path.join(experiment_root, experiment_id)
         exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
-        eva_config_file = os.path.join(exp_suite_path, 'eva.yaml')
+        eva_config_file = os.path.join(exp_suite_path, f'eva-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 

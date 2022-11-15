@@ -19,18 +19,22 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
-
-def copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform=None):
+def copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components):
 
     # Copy suite related files to the suite directory
     # -----------------------------------------------
-    suite_files = ['eva.yaml']
-    for suite_file in suite_files:
-        src_path_file = os.path.join(swell_suite_path, suite_file)
-        dst_path_file = os.path.join(exp_suite_path, suite_file)
+    for model_component in model_components:
+        src_eva_file = f'eva.yaml'
+        dst_eva_file = f'eva-{model_component}.yaml'
+        src_path_file = os.path.join(swell_suite_path, model_component, src_eva_file)
+        dst_path_file = os.path.join(exp_suite_path, dst_eva_file)
         if os.path.exists(src_path_file):
             logger.trace(f'Copying {src_path_file} to {dst_path_file}')
             shutil.copy(src_path_file, dst_path_file)
+
+# --------------------------------------------------------------------------------------------------
+
+def copy_platform_files(logger, exp_suite_path, platform=None):
 
     # Copy platform related files to the suite directory
     # --------------------------------------------------

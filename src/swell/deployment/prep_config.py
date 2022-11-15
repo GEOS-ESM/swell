@@ -65,7 +65,7 @@ def platform_fill(logger, experiment_dict, ci_cd, comment_dict):
     experiment_dict_new['experiment_root'] = platform_dict[dict_to_use]['experiment_root']
 
     # Add the swell static files path from the platform to the experiment dictionary
-    experiment_dict_new['swell_static_files'] = platform_dict[dict_to_use]['swell_static_files']
+    experiment_dict_new['swell_static_files'] = platform_dict['default']['swell_static_files']
 
     # Adjust comment dictionary
     comment_dict_new = comment_dict
@@ -110,16 +110,16 @@ def prepare_config(method, ci_cd=False):
     experiment_dict, comment_dict = platform_fill(logger, prep_using.experiment_dict, ci_cd,
                                                   prep_using.comment_dict)
 
+    # Expand all environment vars in the dictionary
+    # ---------------------------------------------
+    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    experiment_dict_string = os.path.expandvars(experiment_dict_string)
+    experiment_dict = yaml.safe_load(experiment_dict_string)
 
     # Write final experiment dictionary
     # ---------------------------------
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_rt = dict_get(logger, experiment_dict, 'experiment_root')
-
-    experiment_id = os.path.expandvars(experiment_id)
-    experiment_rt = os.path.expandvars(experiment_rt)
-    experiment_dict['experiment_id'] = experiment_id
-    experiment_dict['experiment_root'] = experiment_rt
 
     # Make directory
     # --------------

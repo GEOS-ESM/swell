@@ -7,12 +7,9 @@ diagnostics:
       - name: experiment
         filenames:
           - {{obs_path_file}}
-        # channels: &channels {{channels}}
         groups:
           - name: ObsValue
             variables: &variables {{simulated_variables}}
-          #- name: GsiHofXBc
-          #- name: GsiEffectiveQC
           - name: hofx
           - name: EffectiveQC
           - name: MetaData
@@ -56,7 +53,7 @@ diagnostics:
       figure:
         layout: [1,1]
         title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
-        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
       plots:
         - add_xlabel: 'Observation Value'
           add_ylabel: 'JEDI h(x)'
@@ -69,7 +66,6 @@ diagnostics:
               variable: experiment::ObsValue::${variable}
             y:
               variable: experiment::hofx::${variable}
-            channel: ${channel}
             markersize: 5
             color: 'black'
             label: 'JEDI h(x) versus obs (all obs)'
@@ -78,7 +74,6 @@ diagnostics:
               variable: experiment::ObsValue::${variable}
             y:
               variable: experiment::hofxPassedQc::${variable}
-            channel: ${channel}
             markersize: 5
             color: 'red'
             label: 'JEDI h(x) versus obs (passed QC in JEDI)'
@@ -91,13 +86,12 @@ diagnostics:
         channels: *channels
       dynamic options:
         - type: vminvmaxcmap
-          channel: ${channel}
           data variable: experiment::ObsValue::${variable}
       figure:
         figure size: [20,10]
         layout: [1,1]
         title: 'Observations | {{instrument_title}} | Obs Value'
-        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/observations_{{instrument}}_${variable}${channel}.png'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/observations_{{instrument}}_${variable}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -114,7 +108,6 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::ObsValue::${variable}
-              channel: ${channel}
             markersize: 2
             label: ObsValue
             colorbar: true
@@ -128,13 +121,12 @@ diagnostics:
         channels: *channels
       dynamic options:
         - type: vminvmaxcmap
-          channel: ${channel}
           data variable: experiment::ObsValueMinusHofx::${variable}
       figure:
         figure size: [20,10]
         layout: [1,1]
         title: 'JEDI OmB | {{instrument_title}} | ${variable_title}'
-        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/omb_jedi_{{instrument}}_${variable}${channel}.png'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/omb_jedi_{{instrument}}_${variable}.png'
       plots:
         - mapping:
             projection: plcarr
@@ -151,14 +143,9 @@ diagnostics:
               variable: experiment::MetaData::latitude
             data:
               variable: experiment::ObsValueMinusHofx::${variable}
-              channel: ${channel}
             markersize: 2
             label: '${variable}'
             colorbar: true
             cmap: ${dynamic_cmap}
             vmin: ${dynamic_vmin}
             vmax: ${dynamic_vmax}
-
-
-# Histogram plots
-# ---------------
