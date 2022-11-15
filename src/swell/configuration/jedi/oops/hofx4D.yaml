@@ -1,3 +1,6 @@
+# Defines what model components (*.yaml files) will be written in config.
+# For instance, TASKFILLgeometry will utilize soca/model/geometry.yaml
+
 window begin: '{{window_begin_iso}}'
 window length: {{window_length}}
 forecast length: {{window_length}}

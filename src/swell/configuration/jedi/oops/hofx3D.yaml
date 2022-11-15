@@ -4,7 +4,7 @@
 geometry:
   TASKFILLgeometry
 state:
-  TASKFILLstate
+  TASKFILLbackground
 
 window begin: '{{window_begin_iso}}'
 window length: '{{window_length}}'
