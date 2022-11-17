@@ -32,6 +32,7 @@ def copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components):
             logger.trace(f'Copying {src_path_file} to {dst_path_file}')
             shutil.copy(src_path_file, dst_path_file)
 
+
 # --------------------------------------------------------------------------------------------------
 
 def copy_platform_files(logger, exp_suite_path, platform=None):
