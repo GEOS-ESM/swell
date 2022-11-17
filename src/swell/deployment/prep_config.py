@@ -116,16 +116,6 @@ def prepare_config(method, ci_cd=False):
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
 
-    # Write final experiment dictionary
-    # ---------------------------------
-    experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
-    experiment_rt = dict_get(logger, experiment_dict, 'experiment_root')
-
-    # Make directory
-    # --------------
-    experiment_root_id = os.path.join(experiment_rt, experiment_id)
-    os.makedirs(experiment_root_id, exist_ok=True)
-
     # Add comments to dictionary
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
@@ -134,14 +124,20 @@ def prepare_config(method, ci_cd=False):
                                                                  comment_dict)
 
     # Dictionary file to write
-    exp_dict_file = os.path.join(experiment_root_id, 'experiment.yaml')
+    # ------------------------
+    cwd = os.getcwd()
+    experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
+    exp_dict_file = os.path.join(cwd, f'experiment-{experiment_id}.yaml')
 
     # Write dictionary to YAML file
+    # -----------------------------
     exp_dict_file_open = open(exp_dict_file, "w")
     n = exp_dict_file_open.write(experiment_dict_string_comments)
     exp_dict_file_open.close()
     logger.info(f'Prepared configuration file written to {exp_dict_file}', False)
 
+    # Return path to dictionary file
+    # ------------------------------
     return exp_dict_file
 
 

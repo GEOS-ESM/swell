@@ -111,6 +111,12 @@ class RunJediHofxExecutable(taskBase):
 
         command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
 
+        # Move to the cycle directory
+        # ---------------------------
+        os.chdir(cycle_dir)
+
+        # Execute
+        # -------
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         while True:
             output = process.stdout.readline().decode()
@@ -120,7 +126,8 @@ class RunJediHofxExecutable(taskBase):
                 print(output.strip())
         rc = process.poll()
 
-        # Abort if the executable did not run successfully
+        # Abort task if the executable did not run successfully
+        # -----------------------------------------------------
         if rc != 0:
             command_string = ' '.join(command)
             self.logger.abort('subprocess.run with command ' + command_string +

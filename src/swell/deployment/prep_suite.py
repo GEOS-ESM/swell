@@ -52,7 +52,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
     render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'debug'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
     render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'hasw'
     render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24

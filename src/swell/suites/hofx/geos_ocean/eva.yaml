@@ -49,7 +49,6 @@ diagnostics:
     # JEDI h(x) vs Observations
     - batch figure:
         variables: *variables
-        channels: *channels
       figure:
         layout: [1,1]
         title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
@@ -83,7 +82,6 @@ diagnostics:
     # Observations
     - batch figure:
         variables: *variables
-        channels: *channels
       dynamic options:
         - type: vminvmaxcmap
           data variable: experiment::ObsValue::${variable}
@@ -118,7 +116,6 @@ diagnostics:
     # omb jedi
     - batch figure:
         variables: *variables
-        channels: *channels
       dynamic options:
         - type: vminvmaxcmap
           data variable: experiment::ObsValueMinusHofx::${variable}

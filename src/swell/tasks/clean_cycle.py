@@ -28,7 +28,11 @@ class CleanCycle(taskBase):
     def execute(self):
 
         cycle_dir = self.config_get("cycle_dir")
-        clean_list = self.config_get('clean_patterns')
+        clean_list = self.config_get('clean_patterns', None)
+
+        # If no cleaning requested then exit
+        if clean_list is None:
+            return
 
         if os.path.isdir(cycle_dir):
             os.chdir(cycle_dir)

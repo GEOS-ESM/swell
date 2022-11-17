@@ -35,7 +35,7 @@ class EvaDriver(taskBase):
 
         # Get the model
         # -------------
-        model = self.config_get('model')
+        model = self.get_model()
 
         # Read Eva template file into dictionary
         # --------------------------------------
