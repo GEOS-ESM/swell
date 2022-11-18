@@ -15,14 +15,14 @@ horizontal_resolution:
   default_value: 'c360'
   prompt: What resolution for the atmospheric background?
   options: ['c180', 'c360', 'c720']
-  type: drop-list-string
+  type: string-drop-list
 
 # Vertical resolution
 vertical_resolution:
   default_value: '72'
   prompt: What vertical resolution for the atmospheric background?
   options: ['72']
-  type: drop-list-string
+  type: string-drop-list
 
 # Processor layout
 npx_proc:
@@ -39,7 +39,7 @@ observations:
   default_value: ['amsua_n19']
   prompt: Select atmospheric observations.
   options: use_method
-  type: check-list-string
+  type: string-check-list
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------

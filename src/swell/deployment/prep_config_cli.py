@@ -7,6 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import glob
+import os
+import re
+import sys
 
 import questionary
 
@@ -20,14 +24,11 @@ class PrepConfigCli(PrepConfigBase):
 
     def execute(self, dictionary=None):
 
-        #def execute(self, dictionary=None):
-
         # Set dictionary to use in this scope
         if dictionary is None:
             dictionary = self.dictionary
 
         for key in dictionary:
-
             # Element dictionary
             el_dict = dictionary[key]
 
@@ -42,25 +43,27 @@ class PrepConfigCli(PrepConfigBase):
                 # If the type is not another file add to dictionary
                 if 'file' not in type:
 
+                    print('NEW KEY')
+
                     # Check that the key does not have a dependency
                     depends_flag = True
                     if 'depends' in el_dict.keys():
                         dep_key = el_dict['depends']['key']
                         dep_val = el_dict['depends']['value']
                         if self.experiment_dict[dep_key] != dep_val:
-                            #print(key, dep_key, dep_val)
                             depends_flag = False
 
                     # In this case the key is not expected to refer to a sub dictionary but have
                     # everything needed in the elements dictionary
                     if depends_flag:
-                        print(key, el_dict)
-                        self.check_widgets(key, el_dict)
+                        el_dict['default_value'] = self.check_widgets(key, el_dict)
                         self.add_to_experiment_dictionary(key, el_dict)
 
                 elif 'file-drop-list' in type:
 
                     # Add the choice to the dictionary
+                    # If you wanted more suite options, you'd need to add directories for them at the suites/ level
+                    el_dict['default_value'] = self.check_widgets(key, el_dict)
                     self.add_to_experiment_dictionary(key, el_dict)
 
                     # In this case the key refers to a single sub dictionary that involves opening
@@ -78,6 +81,7 @@ class PrepConfigCli(PrepConfigBase):
                 elif 'file-check-list' in type:
 
                     # Add the choice to the dictionary
+                    el_dict['default_value'] = self.check_widgets(key, el_dict)
                     self.add_to_experiment_dictionary(key, el_dict)
 
                     # In this case the key asks the user to provide a list of items that correspond
@@ -110,13 +114,121 @@ class PrepConfigCli(PrepConfigBase):
         default = val['default_value']
         if widget_type == 'string':
             answer = self.make_string_widget(quest, default, questionary.text)
+        elif 'drop-list' in widget_type:
+            if 'file' in widget_type:
+                options = 'file'
+            elif 'string' in widget_type:
+                options = val['options']
+            answer = self.make_drop_widget(quest, options, default, questionary.select)
+        elif widget_type == 'boolean':
+            answer = self.make_boolean(quest, default, questionary.confirm)
+        elif widget_type == 'iso-datetime':
+            answer = self.make_datetime(quest, default, questionary.text)
+        elif widget_type == 'iso-duration':
+            answer = self.make_duration(quest, default, questionary.text)
+        elif 'check-list' in widget_type:
+            if 'file' in widget_type:
+                options = 'file'
+            elif 'string' in widget_type:
+                options = val['options']
+            answer = self.make_check_widget(quest, options, default, questionary.checkbox)
         else:
-            answer = ''
+            answer = default
+
+
+        if answer in ['', []] and widget_type != 'file-check-list':
+            answer = default
 
         return answer
 
     def make_string_widget(self, quest, default, prompt):
-        answer = prompt(f"{quest}, e.g. {default}").ask()
+        answer = prompt(f"{quest} [{default}]", default = default).ask()
+
         return answer
+
+    def make_drop_widget(self, quest, options, default, prompt):
+        if options == 'file':
+            dir_list = os.listdir(self.directory)
+            new_path = os.path.join(self.directory, '*/')
+            suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            choices = suite_list
+        else:
+            if options == 'use_method':
+                options = [default]
+            choices = options
+        answer = prompt(quest, choices=choices, default=default).ask()
+        
+        return answer
+
+    def make_boolean(self, quest, default, prompt):
+        answer = prompt(quest, default = default, auto_enter = False).ask()
+
+        return answer
+
+    def make_datetime(self, quest, default, prompt):
+        
+        class dtValidator(questionary.Validator):
+            def validate(self, document):
+                r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')
+                if r.match(document.text) is None:
+                    raise questionary.ValidationError(
+                        message="Please enter a datetime with the following format: YYYY-MM-DDThh:mm:ssZ",
+                        cursor_position=len(document.text),
+                    )
+
+        answer = prompt(f"{quest}\n[format YYYY-MM-DDThh:mm:ssZ e.g. {default}]", default = default, validate=dtValidator).ask()
+
+        return answer
+
+    def make_duration(self, quest, default, prompt):
+        
+        class durValidator(questionary.Validator):
+            def validate(self, document):
+                r = re.compile('PT\d{1,2}H')
+                if r.match(document.text) is None:
+                    raise questionary.ValidationError(
+                        message="Please enter a duration with the following format: PThhH",
+                        cursor_position=len(document.text),
+                    )
+
+        if isinstance(default, list):
+            print('Fix iso duration validation')
+            answer_list = []
+            answer = ''
+            r = re.compile('T\d\d')
+            print(r.match('T00'), r.match('bar'))
+            while answer != 'q':
+                answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
+                                validate=lambda text: True if r.match(text) is not None or text=='q'\
+                                 else "Please enter a duration\
+                                 with the following format: Thh").ask()
+                if answer == 'q':
+                    pass
+                else:
+                    answer_list.append(answer)
+        elif isinstance(default, str):
+            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",  
+                            validate=durValidator).ask()
+
+        return answer
+
+    def make_check_widget(self, quest, options, default, prompt):
+        # Can use questionary Choice() operator instead of list of strings
+        # Check for defaults and use checked=True for each
+        if options == 'file':
+            dir_list = os.listdir(self.directory)
+            new_path = os.path.join(self.directory, '*/')
+            suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            choices = suite_list 
+            default = None
+        else:
+            # Why do file_check_list widgets have a use_method key?
+            if options == 'use_method':
+                choices = default
+                default = default[0]
+            print(choices, default, type(choices), type(default))
+        answer = prompt(quest, choices=choices, default=default).ask()
+        return answer
+
 
 # --------------------------------------------------------------------------------------------------
