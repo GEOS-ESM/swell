@@ -43,8 +43,6 @@ class PrepConfigCli(PrepConfigBase):
                 # If the type is not another file add to dictionary
                 if 'file' not in type:
 
-                    print('NEW KEY')
-
                     # Check that the key does not have a dependency
                     depends_flag = True
                     if 'depends' in el_dict.keys():
@@ -192,16 +190,13 @@ class PrepConfigCli(PrepConfigBase):
                     )
 
         if isinstance(default, list):
-            print('Fix iso duration validation')
             answer_list = []
             answer = ''
             r = re.compile('T\d\d')
-            print(r.match('T00'), r.match('bar'))
             while answer != 'q':
                 answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
                                 validate=lambda text: True if r.match(text) is not None or text=='q'\
-                                 else "Please enter a duration\
-                                 with the following format: Thh").ask()
+                                 else "Please enter a duration with the following format: Thh").ask()
                 if answer == 'q':
                     pass
                 else:
@@ -226,7 +221,6 @@ class PrepConfigCli(PrepConfigBase):
             if options == 'use_method':
                 choices = default
                 default = default[0]
-            print(choices, default, type(choices), type(default))
         answer = prompt(quest, choices=choices, default=default).ask()
         return answer
 
