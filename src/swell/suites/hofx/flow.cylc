@@ -27,7 +27,7 @@
     [[graph]]
         R1 = """
             {% for model_component in model_components %}
-                BuildJedi & StageJedi-{{model_component}}
+                BuildJedi => StageJedi-{{model_component}}
             {% endfor %}
             """
 
@@ -37,8 +37,7 @@
                 {% if cycle_time[model_component] %}
                     GetBackground-{{model_component}} &
                     GetObservations-{{model_component}} &
-                    StageJedi-{{model_component}}[^] &
-                    BuildJedi[^]
+                    StageJedi-{{model_component}}[^]
                     => RunJediHofxExecutable-{{model_component}}
                     => MergeIodaFiles-{{model_component}}
                     => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}

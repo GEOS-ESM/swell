@@ -16,7 +16,7 @@ import shutil
 import yaml
 
 from swell.deployment.prep_config import prepare_config
-from swell.deployment.prep_exp_dirs import copy_suite_and_platform_files, \
+from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
                                            set_swell_path_in_modules, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
@@ -87,7 +87,8 @@ def main(method, config, ci_cd):
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
-    copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform)
+    copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
+    copy_platform_files(logger, exp_suite_path, platform)
 
     # Create R2D2 database file
     # -------------------------

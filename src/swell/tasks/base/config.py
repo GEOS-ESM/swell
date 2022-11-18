@@ -168,10 +168,8 @@ class Config():
         # Type of data assimilation window (3D or 4D)
         window_type = self.get('window_type')
 
-        # Extract window information and convert to duration
-        window_length = self.get('window_length')
+        # Time from beginning of the window to the middle of the window
         window_offset = self.get('window_offset')
-
         window_offset_dur = isodate.parse_duration(window_offset)
 
         # Compute window beginning time
@@ -199,9 +197,6 @@ class Config():
         local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
 
         # Create new dictionary with these items
-        self.put('window_type', window_type)
-        self.put('window_length', window_length)
-        self.put('window_offset', window_offset)
         self.put('window_begin', window_begin)
         self.put('window_begin_iso', window_begin_iso)
         self.put('background_time', background_time)

@@ -19,6 +19,13 @@ from r2d2 import fetch
 
 # --------------------------------------------------------------------------------------------------
 
+r2d2_model_dict = {
+    'geos_atmosphere': 'geos',
+    'geos_ocean': 'mom6_cice6_UFS',
+}
+
+
+# --------------------------------------------------------------------------------------------------
 
 class GetBackground(taskBase):
 
@@ -52,22 +59,20 @@ class GetBackground(taskBase):
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
-        window_offset_dur = isodate.parse_duration(window_offset)
         forecast_offset_dur = isodate.parse_duration(forecast_offset)
 
-        # Depending on window type get the time of the background
-        if window_type == "3D":
-            # Single background at the middle of the window
-            fcst_length = window_length_dur - forecast_offset_dur
-            forecast_start_time = current_cycle_dto - fcst_length
-        elif window_type == "4D":
-            # Background at the start of the window
-            fcst_length = window_length_dur - forecast_offset_dur - window_offset_dur
-            forecast_start_time = current_cycle_dto - window_offset_dur - fcst_length
+        # Duration between the start of the forecast that generated the background and the middle of
+        # the current window
+        forecast_duration_for_background = window_length_dur - forecast_offset_dur
 
-        # Convert to ISO duration string
-        fcst_length_iso = isodate.duration_isoformat(fcst_length)
-        bkg_steps.append(fcst_length_iso)
+        # If the window type is 4D then remove the window offset as first background occurs at the
+        # beginning of the window
+        if window_type == "4D":
+            window_offset_dur = isodate.parse_duration(window_offset)
+            forecast_duration_for_background = forecast_duration_for_background - window_offset_dur
+
+        # Append the list of backgrounds to get with the first background
+        bkg_steps.append(isodate.duration_isoformat(forecast_duration_for_background))
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
@@ -87,9 +92,17 @@ class GetBackground(taskBase):
             loop_date = start_date + bkg_freq_dur
 
             while loop_date <= final_date:
-                duration_in = loop_date - start_date + fcst_length
+                duration_in = loop_date - start_date + forecast_duration_for_background
                 bkg_steps.append(isodate.duration_isoformat(duration_in))
                 loop_date += bkg_freq_dur
+
+        # Get the forecast start time
+        # ---------------------------
+        forecast_start_time = current_cycle_dto - window_length_dur + forecast_offset_dur
+
+        # Get name of this model component
+        # --------------------------------
+        model_component = self.get_model()
 
         # Loop over background files in the R2D2 config and fetch
         # -------------------------------------------------------
@@ -102,30 +115,28 @@ class GetBackground(taskBase):
         for fc in r2d2_dict['fetch']['fc']:
 
             # Reset target file
+            file_type = fc['file_type']
             target_file_template = fc['filename']
 
-            # Loop over file types
-            for file_type in fc['file_type']:
+            # Looop over background steps
+            for bkg_step in bkg_steps:
 
-                # Looop over background steps
-                for bkg_step in bkg_steps:
+                # Set the datetime format for the output files
+                background_time = forecast_start_time + isodate.parse_duration(bkg_step)
 
-                    # Set the datetime format for the output files
-                    background_time = forecast_start_time + isodate.parse_duration(bkg_step)
+                # Set the datetime templating in the target file name
+                target_file = background_time.strftime(target_file_template)
 
-                    # Set the datetime templating in the target file name
-                    target_file = background_time.strftime(target_file_template)
+                fetch(
+                    date=forecast_start_time,
+                    target_file=target_file,
+                    model=r2d2_model_dict[model_component],
+                    file_type=file_type,
+                    fc_date_rendering='analysis',
+                    step=bkg_step,
+                    resolution=horizontal_resolution,
+                    type='fc',
+                    experiment=background_experiment)
 
-                    # Perform the fetch
-                    fetch(date=forecast_start_time,
-                          target_file=target_file,
-                          model='geos',
-                          file_type='bkg',
-                          fc_date_rendering='analysis',
-                          step=bkg_step,
-                          resolution=horizontal_resolution,
-                          type='fc',
-                          experiment=background_experiment)
-
-                    # Change permission
-                    os.chmod(target_file, 0o644)
+                # Change permission
+                os.chmod(target_file, 0o644)

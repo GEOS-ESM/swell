@@ -1,0 +1,13 @@
+obs operator:
+  name: InsituTemperature
+obs space:
+  name: InsituTemperature
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/insitut.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.insitut.{{window_begin}}.nc4'
+  simulated variables: [sea_water_temperature]

@@ -12,6 +12,7 @@ databases:
 
 # when fetching data, in which order should the databases accessed?
 fetch_order:
+  - ${USER}
   - gmao-shared
 
 # when storing data, in which order should the databases accessed?

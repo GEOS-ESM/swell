@@ -60,9 +60,10 @@ class RunJediHofxExecutable(taskBase):
         jedi_config_dict['observations']['observers'] = observations
 
         # Forecast model is a special case
-        model = self.config_get('model')
-        model_dict = self.open_jedi_interface_model_config_file(model)
-        jedi_config_dict['model'] = model_dict
+        if window_type == "4D":
+            model = self.config_get('model')
+            model_dict = self.open_jedi_interface_model_config_file(model)
+            jedi_config_dict['model'] = model_dict
 
         # Read configs for the rest of the dictionary
         self.jedi_dictionary_iterator(jedi_config_dict)
@@ -110,6 +111,12 @@ class RunJediHofxExecutable(taskBase):
 
         command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
 
+        # Move to the cycle directory
+        # ---------------------------
+        os.chdir(cycle_dir)
+
+        # Execute
+        # -------
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
         while True:
             output = process.stdout.readline().decode()
@@ -119,7 +126,8 @@ class RunJediHofxExecutable(taskBase):
                 print(output.strip())
         rc = process.poll()
 
-        # Abort if the executable did not run successfully
+        # Abort task if the executable did not run successfully
+        # -----------------------------------------------------
         if rc != 0:
             command_string = ' '.join(command)
             self.logger.abort('subprocess.run with command ' + command_string +
