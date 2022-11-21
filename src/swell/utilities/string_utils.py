@@ -42,7 +42,6 @@ def replace_vars(s, **defs):
         if var in defs:
             expr = re.sub(r'\$\('+var+r'\)', defs[var], expr)
 
-
     # Resolve defs
     s_interp = string.Template(expr).safe_substitute(defs)
 
