@@ -33,30 +33,31 @@ class GetObservations(taskBase):
              "tlapse" files need to be fetched.
         """
 
-        cfg = self.config
-        logger = self.logger
-
         # Parse config
         # ------------
-        experiment = cfg.get('obs_experiment')
-        window_begin = cfg.get('window_begin')
-        background_time = cfg.get('background_time')
-        obs = cfg.get('OBSERVATIONS')
+        experiment = self.config_get('obs_experiment')
+        provider = self.config_get('obs_provider')
+        window_begin = self.config_get('window_begin')
+        background_time = self.config_get('background_time')
+        observations = self.config_get('observations')
 
         # Loop over observation operators
         # -------------------------------
-        for ob in obs:
+        for observation in observations:
+
+            # Open the observation operator dictionary
+            # ----------------------------------------
+            observation_dict = self.open_jedi_interface_obs_config_file(observation)
 
             # Fetch observation files
             # -----------------------
-            name = ob['obs space']['name']
-            target_file = ob['obs space']['obsdatain']['engine']['obsfile']
-            logger.info("Processing observation file "+target_file)
+            target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            self.logger.info("Processing observation file "+target_file)
 
             fetch(date=window_begin,
                   target_file=target_file,
-                  provider='ncdiag',
-                  obs_type=name,
+                  provider=provider,
+                  obs_type=observation,
                   type='ob',
                   experiment=experiment)
 
@@ -65,17 +66,17 @@ class GetObservations(taskBase):
 
             # Fetch bias correction files
             # ---------------------------
-            if 'obs bias' not in ob:
+            if 'obs bias' not in observation_dict:
                 continue
 
             # Satbias
-            target_file = ob['obs bias']['input file']
-            logger.info("Processing satbias file "+target_file)
+            target_file = observation_dict['obs bias']['input file']
+            self.logger.info("Processing satbias file "+target_file)
 
             fetch(date=background_time,
                   target_file=target_file,
                   provider='gsi',
-                  obs_type=name,
+                  obs_type=observation,
                   type='bc',
                   experiment=experiment,
                   file_type='satbias')
@@ -84,14 +85,14 @@ class GetObservations(taskBase):
             os.chmod(target_file, 0o644)
 
             # Tlapse
-            for target_file in self.get_tlapse_files(ob):
+            for target_file in self.get_tlapse_files(observation_dict):
 
-                logger.info("Processing tlapse file "+target_file)
+                self.logger.info("Processing tlapse file "+target_file)
 
                 fetch(date=background_time,
                       target_file=target_file,
                       provider='gsi',
-                      obs_type=name,
+                      obs_type=observation,
                       type='bc',
                       experiment=experiment,
                       file_type='tlapse')
@@ -101,11 +102,11 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, ob):
+    def get_tlapse_files(self, observation_dict):
 
-        # Function to locate instanses of tlapse in the obs operator config
+        # Function to locate instances of tlapse in the obs operator config
 
-        hash = ob
+        hash = observation_dict
         if 'obs bias' not in hash:
             return
 

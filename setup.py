@@ -12,14 +12,14 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import os.path
 import setuptools
 
 setuptools.setup(
     name='swell',
-    version='1.0.8',
     author='NASA Global Modeling and Assimilation Office',
     description='Workflow suites, tasks and configuration for coupled data assimilation',
-    url='https://github.com/danholdaway/swell',
+    url='https://github.com/geos-esm/swell',
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     classifiers=[
@@ -43,10 +43,15 @@ setuptools.setup(
     package_data={
         '': [
                'deployment/platforms/*/modules*',
-               'deployment/platforms/*/r2d2_config.yaml',
+               'deployment/platforms/*/*.yaml',
+               'suites/*',
                'suites/*/*',
-               'configuration/*.yaml',
+               'suites/*/*/*',
+               'configuration/*',
                'configuration/*/*',
+               'configuration/*/*/*',
+               'configuration/*/*/*/*',
+               'configuration/*/*/*/*/*',
              ],
     },
     include_package_data=True,

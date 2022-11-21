@@ -8,11 +8,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/sfc.{{window_begin}}.nc4
+      obsfile: '{{cycle_dir}}/sfc.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: $(cycle_dir)/$(experiment_id).sfc.{{window_begin}}.nc4
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.sfc.{{window_begin}}.nc4'
   simulated variables: [surface_pressure] #, air_temperature]
 obs filters:
 # Observation Range Sanity Check

@@ -1,0 +1,13 @@
+obs operator:
+  name: ADT
+obs space:
+  name: ADT
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/adt.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.adt.{{window_begin}}.nc4'
+  simulated variables: [absolute_dynamic_topography]

@@ -22,9 +22,8 @@ import yaml
 from swell.tasks.base.config import Config
 from swell.tasks.base.datetime import Datetime
 from swell.utilities.logger import Logger
-from swell.tasks.task_registry import valid_tasks
-from swell.tasks.utilities.utils import camelcase_to_underscore
-from swell.utilities.dictionary_utilities import dict_get
+from swell.tasks.base.task_registry import valid_tasks
+from swell.tasks.base.utils import camelcase_to_underscore
 
 
 # --------------------------------------------------------------------------------------------------
@@ -59,8 +58,8 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, datetime_in = self.__datetime__,
-                                 model = self.__model__)
+        self.__config__ = Config(config_input, self.logger, datetime_in=self.__datetime__,
+                                 model=self.__model__)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -90,6 +89,12 @@ class taskBase(ABC):
     def get_swell_exp_config_path(self):
         swell_exp_path = self.get_swell_exp_path()
         return os.path.join(swell_exp_path, 'configuration')
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to get the Swell experiment configuration path
+    def get_datetime_format(self):
+        return self.__config__.get_datetime_format()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -123,6 +128,27 @@ class taskBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     # Method to open a specific model configuration file
+    def open_jedi_oops_config_file(self, config_name):
+
+        # Get experiment configuration path
+        swell_exp_config_path = self.get_swell_exp_config_path()
+
+        # Path to configuration file
+        config_file = os.path.join(swell_exp_config_path, 'jedi', 'oops', config_name + '.yaml')
+
+        # Open file as a string
+        with open(config_file, 'r') as config_file_open:
+            config_file_str_templated = config_file_open.read()
+
+        # Fill templates in the configuration file using the config
+        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
+
+        # Convert string to dictionary
+        return yaml.safe_load(config_file_str)
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to open a specific model configuration file
     def open_jedi_interface_model_config_file(self, config_name):
         return self.__open_jedi_interface_config_file('model', config_name)
 
@@ -130,8 +156,28 @@ class taskBase(ABC):
 
     # Method to open a specific observation configuration file
     def open_jedi_interface_obs_config_file(self, config_name):
-        return self.__open_jedi_interface_config_file('observations', config_name)
+        obs_dict = self.__open_jedi_interface_config_file('observations', config_name)
 
+        # If 4D window then add time interpolation to the dictionary
+        if self.config_get('window_type') == '4D':
+            obs_dict['get values'] = {}
+            obs_dict['get values']['time interpolation'] = 'linear'
+
+        # Placeholder to add GeoVaLs saver filter
+
+        # Placeholder for IO pool things
+
+        return obs_dict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def use_config_to_template_string(self, string_in):
+        return self.__config__.use_config_to_template_string(string_in)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model(self):
+        return self.__model__
 
 # --------------------------------------------------------------------------------------------------
 
@@ -164,8 +210,7 @@ def task_main(task, config, datetime, model):
         for valid_task in valid_tasks:
             valid_task_logger.info('  ' + valid_task)
         valid_task_logger.info(' ')
-        valid_task_logger.info('ABORT: Task not found in task registry.')
-        sys.exit()
+        valid_task_logger.abort('ABORT: Task not found in task registry.')
 
     # Create the object
     constrc_start = time.perf_counter()

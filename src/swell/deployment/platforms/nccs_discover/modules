@@ -32,5 +32,5 @@ module load eva/1.2.2
 
 # Set the swell paths
 # -------------------
-PATH=$(swell_bin_path):$PATH
-PYTHONPATH=$(swell_lib_path):$PYTHONPATH
+PATH={{swell_bin_path}}:$PATH
+PYTHONPATH={{swell_lib_path}}:$PYTHONPATH

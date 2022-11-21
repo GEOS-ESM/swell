@@ -1,0 +1,3 @@
+mom6_input_nml: '{{experiment_dir}}/stage/soca/geos_ocean/socafiles/input.nml'
+fields metadata: '{{experiment_dir}}/stage/soca/geos_ocean/fieldmetadata/fields_metadata.yaml'
+geom_grid_file: '{{experiment_dir}}/stage/soca/geos_ocean/gridfiles/soca_gridspec.nc'

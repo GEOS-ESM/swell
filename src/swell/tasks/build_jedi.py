@@ -32,6 +32,7 @@ class BuildJedi(taskBase):
         swell_exp_path = self.get_swell_exp_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
         jedi_bundle_build_path = os.path.join(jedi_bundle_path, 'build')
+        jedi_bundle_source_path = os.path.join(jedi_bundle_path, 'source')
 
         # Make jedi_bundle directory
         # --------------------------
@@ -43,6 +44,9 @@ class BuildJedi(taskBase):
 
             # Get the existing build directory from the dictionary
             existing_build_directory = self.config_get('existing_build_directory')
+
+            # Get the existing bundle directory to get the source code
+            existing_source_directory = self.config_get('existing_source_directory')
 
             # Assert that the existing build directory contains a bin directory
             if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
@@ -60,15 +64,26 @@ class BuildJedi(taskBase):
             if jedi_bundle_build_path.endswith('/'):
                 jedi_bundle_build_path = jedi_bundle_build_path[:-1]
 
+            if jedi_bundle_source_path.endswith('/'):
+                jedi_bundle_source_path = jedi_bundle_source_path[:-1]
+
             # Remove existing build path if present
             if os.path.islink(jedi_bundle_build_path):  # Is a link
                 os.remove(jedi_bundle_build_path)
             elif os.path.isdir(jedi_bundle_build_path):  # Is a directory
                 shutil.rmtree(jedi_bundle_build_path)
 
+            # Remove existing source path if present
+            if os.path.islink(jedi_bundle_source_path):  # Is a link
+                os.remove(jedi_bundle_source_path)
+            elif os.path.isdir(jedi_bundle_source_path):  # Is a directory
+                shutil.rmtree(jedi_bundle_source_path)
+
             # Link existing build into the directory
             os.symlink(existing_build_directory, jedi_bundle_build_path)
 
+            # Link existing source into the directory
+            os.symlink(existing_source_directory, jedi_bundle_source_path)
 
         elif jedi_build_method == 'create':
 

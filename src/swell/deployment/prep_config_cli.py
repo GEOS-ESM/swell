@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+
 import glob
 import os
 import re
@@ -155,7 +156,7 @@ class PrepConfigCli(PrepConfigBase):
                 options = [default]
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
-        
+
         return answer
 
     def make_boolean(self, quest, default, prompt):
@@ -164,7 +165,7 @@ class PrepConfigCli(PrepConfigBase):
         return answer
 
     def make_datetime(self, quest, default, prompt):
-        
+
         class dtValidator(questionary.Validator):
             def validate(self, document):
                 r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')
@@ -179,7 +180,7 @@ class PrepConfigCli(PrepConfigBase):
         return answer
 
     def make_duration(self, quest, default, prompt):
-        
+
         class durValidator(questionary.Validator):
             def validate(self, document):
                 r = re.compile('PT\d{1,2}H')
@@ -202,7 +203,7 @@ class PrepConfigCli(PrepConfigBase):
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
-            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",  
+            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
                             validate=durValidator).ask()
 
         return answer
@@ -214,7 +215,7 @@ class PrepConfigCli(PrepConfigBase):
             dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
-            choices = suite_list 
+            choices = suite_list
             default = None
         else:
             # Why do file_check_list widgets have a use_method key?

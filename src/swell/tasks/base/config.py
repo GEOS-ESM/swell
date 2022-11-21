@@ -8,11 +8,10 @@
 
 import datetime
 import isodate
-import jinja2
 import os
 import yaml
 
-from swell.utilities.string_utils import replace_vars
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 #  @package configuration
@@ -46,20 +45,6 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def __init__(self, input_file, logger, **kwargs):
-        """Reads YAML file(s) as a dictionary.
-
-        Environment definitions and root-level YAML parameters are extracted to be
-        used for variable interpolation within strings (see replace_vars()).
-
-        Parameters
-        ----------
-        input_file : string, required Name of YAML file(s)
-
-        Returns
-        -------
-        config : Config, dict
-          Config object
-        """
 
         # Keep track of the input config file
         self.__input_file__ = input_file
@@ -80,15 +65,20 @@ class Config():
                                       f'experiment configuration')
             # Extract the model specific part of the config
             model_config = self.__config__['models'][self.__model__]
-            # Remove the model specific part from the full config
+        else:
+            model_config = {}
+
+        # Remove the model specific part from the full config
+        if 'models' in self.__config__.keys():
             del self.__config__['models']
+        if 'model_components' in self.__config__.keys():
             del self.__config__['model_components']
 
         # Assert that the full and model level configs have only unique keys
         for key in self.__config__.keys():
             if key in model_config.keys():
-                self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is also ' +
-                                      f'contained in the top level config.')
+                self.__logger__.abort(f'Model config contains the key \'{key}\'. Which is ' +
+                                      f'also contained in the top level config.')
 
         # Now merge the top level config and the model specific parts of the config. This prevents
         # tasks from accessing the config associated with any model other than the one they are
@@ -98,7 +88,8 @@ class Config():
         # Add the experiment directory to the configuration
         experiment_root = self.get('experiment_root')
         experiment_id = self.get('experiment_id')
-        self.__config__['experiment_dir'] = os.path.join(experiment_root, experiment_id)
+        experiment_dir = os.path.join(experiment_root, experiment_id)
+        self.__config__['experiment_dir'] = experiment_dir
 
         # Swell datetime format (avoid colons in paths and filenames)
         self.__datetime_swl_format__ = "%Y%m%dT%H%M%SZ"
@@ -107,17 +98,11 @@ class Config():
         self.__datetime_iso_format__ = "%Y-%m-%dT%H:%M:%SZ"
 
         # If datetime passed add some extra datetime parameters to config
-        if 'datetime_in' in kwargs:
+        if 'datetime_in' in kwargs and kwargs['datetime_in'] is not None:
             self.add_cycle_time_parameter(kwargs['datetime_in'].datetime)
 
             if self.get('data_assimilation_run', False):
                 self.add_data_assimilation_window_parameters()
-
-        # Create list of definitions from top level of dictionary
-        #self.__defs__ = {}
-        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
-        #                     if not isinstance(v, dict) and not isinstance(v, list)})
-
 
     # ----------------------------------------------------------------------------------------------
 
@@ -128,7 +113,7 @@ class Config():
         else:
             if default == 'NODEFAULT':
                 self.__logger__.abort(f'In config.get the key \'{key}\' was not found in the ' +
-                             f'configuration and no default was provided.')
+                                      f'configuration and no default was provided.')
             else:
                 return default
 
@@ -141,53 +126,39 @@ class Config():
 
     def use_config_to_template_string(self, string_in):
 
-        t = jinja2.Template(string_in, trim_blocks=True, lstrip_blocks=True)
-        return t.render(self.__config__)
+        return template_string_jinja2(self.__logger__, string_in, self.__config__)
 
     # ----------------------------------------------------------------------------------------------
 
-    def merge(self, other):
-        """ Merge another dictionary with self
-
-        Parameters
-        ----------
-        other : dictionary, required
-          other dictionary to merge
-        """
-
-        # Merge the other dictionary into self
-        self.__config__.update(other)
-
-        # Overwrite the top level definitions
-        #self.__defs__.update({k: str(v) for k, v in iter(self.items())
-        #                     if not isinstance(v, dict) and not isinstance(v, list)})
+    def get_datetime_format(self):
+        return self.__datetime_swl_format__
 
     # ----------------------------------------------------------------------------------------------
 
     def add_cycle_time_parameter(self, cycle_dt):
-        """ Add cycle time to the configuration
-
-        Parameters
-        ----------
-        cycle_dt : datetime, required
-          Current cycle date/time as datetime object
+        """
+        Defines cycle time parameter and adds to config
         """
 
-        # Add cycle time to dictionary
-        self.put('current_cycle', cycle_dt.strftime(self.__datetime_swl_format__))
+        # Add current cycle to the config
+        # -------------------------------
+        current_cycle = cycle_dt.strftime(self.__datetime_swl_format__)
+        self.put('current_cycle', current_cycle)
 
-# --------------------------------------------------------------------------------------------------
+        # Add cycle directory to config
+        # -----------------------------
+        cycle_dir = current_cycle
+        if self.__model__ is not None:
+            cycle_dir = cycle_dir + '-' + self.__model__
+        cycle_dir = os.path.join(self.__config__['experiment_dir'], 'run', cycle_dir)
+
+        self.put('cycle_dir', cycle_dir)
+
+    # ----------------------------------------------------------------------------------------------
 
     def add_data_assimilation_window_parameters(self):
-        """ Defines cycle dependent parameters for the data assimilation window
-
-        Parameters defined by this method are needed for resolving
-        time-dependent variables using the replace_vars() method.
-
-        Parameters
-        ----------
-        cycle_dt : datetime, required
-          Current cycle date/time as datetime object
+        """
+        Defines cycle dependent parameters for the data assimilation window and adds to config
         """
 
         # Current cycle datetime object
@@ -197,10 +168,8 @@ class Config():
         # Type of data assimilation window (3D or 4D)
         window_type = self.get('window_type')
 
-        # Extract window information and convert to duration
-        window_length = self.get('window_length')
+        # Time from beginning of the window to the middle of the window
         window_offset = self.get('window_offset')
-
         window_offset_dur = isodate.parse_duration(window_offset)
 
         # Compute window beginning time
@@ -228,37 +197,11 @@ class Config():
         local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
 
         # Create new dictionary with these items
-        self.put('window_type', window_type)
-        self.put('window_length', window_length)
-        self.put('window_offset', window_offset)
         self.put('window_begin', window_begin)
         self.put('window_begin_iso', window_begin_iso)
         self.put('background_time', background_time)
         self.put('local_background_time', local_background_time)
         self.put('local_background_time_iso', local_background_time_iso)
 
-    # --------------------------------------------------------------------------------------------------
-
-    def resolve_config_file(self):
-        """Resolves/interpolates all defined variables in the base configuration.
-
-        Returns
-        -------
-        d: dict
-          YAML dictionary with all defined variables interpolated.
-        """
-
-        # Read input file as text file
-        with open(self.__input_file__) as f:
-            text = f.read()
-
-        # Replace any unresolved variables in the file
-        text = replace_vars(text, **self.__defs__)
-
-        # Return a yaml
-        resolved_dict = yaml.safe_load(text)
-
-        # Merge dictionary
-        self.merge(resolved_dict)
 
 # ----------------------------------------------------------------------------------------------

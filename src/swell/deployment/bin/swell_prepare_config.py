@@ -13,6 +13,7 @@
 import click
 
 from swell.deployment.prep_config import prepare_config
+from swell.utilities.welcome_message import write_welcome_message
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,9 +23,13 @@ from swell.deployment.prep_config import prepare_config
 @click.argument('method')
 def main(method):
 
+    # Welcome message
+    # ---------------
+    write_welcome_message('Prepare Config')
+
     # Create suites object
     # --------------------
-    prepare_config(method)
+    config_file = prepare_config(method)
 
 
 # --------------------------------------------------------------------------------------------------
