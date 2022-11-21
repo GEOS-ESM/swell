@@ -29,19 +29,19 @@ jedi_build_method:
   options: ['create', 'use_existing']
   type: string-drop-list
 
-# Existing JEDI build
-existing_build_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
-  prompt: Provide the path to an existing JEDI build directory
+# Existing JEDI bundle directory
+existing_source_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
+  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
   type: string
   depends:
     key: jedi_build_method
     value: use_existing
 
-# Existing JEDI bundle directory
-existing_source_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
-  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+# Existing JEDI build
+existing_build_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
+  prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:
     key: jedi_build_method
