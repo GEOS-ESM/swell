@@ -15,7 +15,7 @@ platform:
   default_value: nccs_discover
   prompt: Which compute platform do you wish to use?
   options: use_method
-  type: string
+  type: string-drop-list
 
 # Type of suite to run
 suite_to_run:
