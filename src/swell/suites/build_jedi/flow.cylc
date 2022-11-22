@@ -1,0 +1,54 @@
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing JEDI-based h(x)
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    [[graph]]
+        R1 = """
+           CloneJedi => BuildJedi
+            """
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
+    [[BuildJedi]]
+        script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = PT2H
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
+            --job-name = SwellBuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+
+# --------------------------------------------------------------------------------------------------
