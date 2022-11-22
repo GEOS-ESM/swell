@@ -18,7 +18,7 @@ final_cycle_point:
 
 # Run ahead limit for workflow
 runahead_limit:
-  default_value: 'PT12H'
+  default_value: 'P4'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: iso-duration
 
@@ -29,9 +29,18 @@ jedi_build_method:
   options: ['create', 'use_existing']
   type: string-drop-list
 
+# Existing JEDI bundle directory
+existing_source_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
+  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
+
 # Existing JEDI build
 existing_build_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/1.0.7/build-intel-release/
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
   prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:
@@ -40,7 +49,7 @@ existing_build_directory:
 
 # R2D2 Configuration
 r2d2_local_path:
-  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local/
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 

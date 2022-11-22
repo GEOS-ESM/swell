@@ -22,28 +22,27 @@ class SaveObsDiags(taskBase):
 
     def execute(self):
 
-        cfg = self.config
-        logger = self.logger
-
         # Parse config
         # ------------
-        experiment = cfg.get('experiment_id')
-        window_begin = cfg.get('window_begin')
-        background_time = cfg.get('background_time')
-        obs = cfg.get('OBSERVATIONS')
+        experiment_id = self.config_get('experiment_id')
+        window_begin = self.config_get('window_begin')
+        observations = self.config_get('observations')
 
         # Loop over observation operators
         # -------------------------------
-        for ob in obs:
+        for observation in observations:
+
+            # Load the observation dictionary
+            observation_dict = self.open_jedi_interface_obs_config_file(observation)
 
             # Store observation files
             # -----------------------
-            name = ob['obs space']['name']
-            source_file = ob['obs space']['obsdataout']['engine']['obsfile']
+            name = observation_dict['obs space']['name']
+            source_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
 
             store(date=window_begin,
                   provider='ncdiag',
                   source_file=source_file,
                   obs_type=name,
                   type='ob',
-                  experiment=experiment)
+                  experiment=experiment_id)

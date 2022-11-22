@@ -14,23 +14,28 @@ import pathlib
 import shutil
 
 from swell.swell_path import get_swell_path
-from swell.utilities.string_utils import replace_vars
+from swell.utilities.jinja2 import template_string_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
 
-
-def copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform=None):
+def copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components):
 
     # Copy suite related files to the suite directory
     # -----------------------------------------------
-    suite_files = ['eva.yaml']
-    for suite_file in suite_files:
-        src_path_file = os.path.join(swell_suite_path, suite_file)
-        dst_path_file = os.path.join(exp_suite_path, suite_file)
+    for model_component in model_components:
+        src_eva_file = f'eva.yaml'
+        dst_eva_file = f'eva-{model_component}.yaml'
+        src_path_file = os.path.join(swell_suite_path, model_component, src_eva_file)
+        dst_path_file = os.path.join(exp_suite_path, dst_eva_file)
         if os.path.exists(src_path_file):
             logger.trace(f'Copying {src_path_file} to {dst_path_file}')
             shutil.copy(src_path_file, dst_path_file)
+
+
+# --------------------------------------------------------------------------------------------------
+
+def copy_platform_files(logger, exp_suite_path, platform=None):
 
     # Copy platform related files to the suite directory
     # --------------------------------------------------
@@ -86,7 +91,10 @@ def set_swell_path_in_modules(logger, exp_suite_path):
         # -------------
         with open(modules_file, 'r') as modules_file_open:
             modules_file_str = modules_file_open.read()
-            modules_file_str = replace_vars(modules_file_str, **swell_paths)
+
+        # Resolve templates
+        # -----------------
+        modules_file_str = template_string_jinja2(logger, modules_file_str, swell_paths)
 
         # Overwrite the file
         # ------------------

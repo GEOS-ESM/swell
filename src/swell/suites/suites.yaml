@@ -1,12 +1,12 @@
 # Experiment name
 experiment_id:
-  default_value: newconf
+  default_value: swell-experiment
   prompt: Enter the experiment ID
   type: string
 
 # Location to store the experiment
 experiment_root:
-  default_value: $HOME/SwellExperiments
+  default_value: /home/$USER/SwellExperiments
   prompt: Enter the path where experiment will be staged
   type: string
 

@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+
 import glob
 import os
 import re
@@ -60,7 +61,8 @@ class PrepConfigCli(PrepConfigBase):
                 elif 'file-drop-list' in type:
 
                     # Add the choice to the dictionary
-                    # If you wanted more suite options, you'd need to add directories for them at the suites/ level
+                    # If you wanted more suite options, you'd need to add directories for them at
+                    # the suites/ level
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
                     self.add_to_experiment_dictionary(key, el_dict)
 
@@ -133,14 +135,13 @@ class PrepConfigCli(PrepConfigBase):
         else:
             answer = default
 
-
         if answer in ['', []] and widget_type != 'file-check-list':
             answer = default
 
         return answer
 
     def make_string_widget(self, quest, default, prompt):
-        answer = prompt(f"{quest} [{default}]", default = default).ask()
+        answer = prompt(f"{quest} [{default}]", default=default).ask()
 
         return answer
 
@@ -155,34 +156,36 @@ class PrepConfigCli(PrepConfigBase):
                 options = [default]
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
-        
+
         return answer
 
     def make_boolean(self, quest, default, prompt):
-        answer = prompt(quest, default = default, auto_enter = False).ask()
+        answer = prompt(quest, default=default, auto_enter=False).ask()
 
         return answer
 
     def make_datetime(self, quest, default, prompt):
-        
+
         class dtValidator(questionary.Validator):
             def validate(self, document):
-                r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')
+                r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')  # noqa
                 if r.match(document.text) is None:
                     raise questionary.ValidationError(
-                        message="Please enter a datetime with the following format: YYYY-MM-DDThh:mm:ssZ",
+                        message="Please enter a datetime with the following format: " +
+                                "YYYY-MM-DDThh:mm:ssZ",
                         cursor_position=len(document.text),
                     )
 
-        answer = prompt(f"{quest}\n[format YYYY-MM-DDThh:mm:ssZ e.g. {default}]", default = default, validate=dtValidator).ask()
+        answer = prompt(f"{quest}\n[format YYYY-MM-DDThh:mm:ssZ e.g. {default}]", default=default,
+                        validate=dtValidator).ask()
 
         return answer
 
     def make_duration(self, quest, default, prompt):
-        
+
         class durValidator(questionary.Validator):
             def validate(self, document):
-                r = re.compile('PT\d{1,2}H')
+                r = re.compile('PT\d{1,2}H')  # noqa
                 if r.match(document.text) is None:
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
@@ -192,17 +195,18 @@ class PrepConfigCli(PrepConfigBase):
         if isinstance(default, list):
             answer_list = []
             answer = ''
-            r = re.compile('T\d\d')
+            r = re.compile('T\d\d')  # noqa
             while answer != 'q':
                 answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
-                                validate=lambda text: True if r.match(text) is not None or text=='q'\
-                                 else "Please enter a duration with the following format: Thh").ask()
+                                validate=lambda text: True if r.match(text) is not None or
+                                text == 'q'
+                                else "Please enter a duration with the following format: Thh").ask()
                 if answer == 'q':
                     pass
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
-            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",  
+            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
                             validate=durValidator).ask()
 
         return answer
@@ -214,7 +218,7 @@ class PrepConfigCli(PrepConfigBase):
             dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
-            choices = suite_list 
+            choices = suite_list
             default = None
         else:
             # Why do file_check_list widgets have a use_method key?

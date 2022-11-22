@@ -6,40 +6,64 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-import argparse
+
+# --------------------------------------------------------------------------------------------------
+
+
+import click
 import os
 import shutil
 import yaml
 
-from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
-from swell.utilities.string_utils import replace_vars
-from swell.utilities.dictionary_utilities import dict_get
-from swell.deployment.prep_exp_dirs import copy_suite_and_platform_files, \
+from swell.deployment.prep_config import prepare_config
+from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
                                            set_swell_path_in_modules, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
+from swell.swell_path import get_swell_path
+from swell.utilities.dictionary import dict_get
+from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.logger import Logger
+from swell.utilities.welcome_message import write_welcome_message
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+@click.command()
+@click.option('-m', '--method', 'method', default='defaults',
+              help='Method for configuration: [\'defaults\'] or \'tui\'. If the config argument ' +
+                   'is present then this argument will be ignored in favor of using the existing ' +
+                   'configuration file.')
+@click.option('-c', '--config', 'config', default=None,
+              help='Directory containing the suite file needed by the workflow manager')
+@click.option('-t', '--cidi', 'ci_cd', default=False,
+              help='Setup experiment using continuous integration parameters')
+def main(method, config, ci_cd):
 
-    # Arguments
-    # ---------
-    parser = argparse.ArgumentParser()
-    parser.add_argument('config', type=str, help='Configuration file with experiment options.')
-
-    args = parser.parse_args()
-    config = args.config
+    # Welcome message
+    # ---------------
+    write_welcome_message('Create Experiment')
 
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
 
+    # Check arguments
+    # ---------------
+    method_options = ['defaults', 'tui']
+    logger.assert_abort(method in method_options, f'Method \'{method}\' is not one of the valid ' +
+                        f'options {method_options}.')
+
+    # Generate the configuration file
+    # -------------------------------
+    if config is None:
+        config_file = prepare_config(method, ci_cd)
+    else:
+        config_file = config
+
     # Load experiment file
     # --------------------
-    with open(config, 'r') as ymlfile:
+    with open(config_file, 'r') as ymlfile:
         experiment_dict = yaml.safe_load(ymlfile)
 
     # Extract from the config
@@ -58,12 +82,13 @@ def main():
 
     # Copy experiment file to suite dir
     # ---------------------------------
-    shutil.copyfile(config, os.path.join(exp_suite_path, 'experiment.yaml'))
+    shutil.copyfile(config_file, os.path.join(exp_suite_path, 'experiment.yaml'))
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
-    copy_suite_and_platform_files(logger, swell_suite_path, exp_suite_path, platform)
+    copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
+    copy_platform_files(logger, exp_suite_path, platform)
 
     # Create R2D2 database file
     # -------------------------
@@ -76,7 +101,7 @@ def main():
     # Open the r2d2 file to dictionary
     with open(r2d2_conf_path, 'r') as r2d2_file_open:
         r2d2_file_str = r2d2_file_open.read()
-    r2d2_file_str = replace_vars(r2d2_file_str, **experiment_dict)
+    r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
     r2d2_file_str = os.path.expandvars(r2d2_file_str)
 
     with open(r2d2_conf_path, 'w') as r2d2_file_open:
@@ -95,7 +120,9 @@ def main():
     # -----------------------------------
     src = os.path.join(get_swell_path(), 'configuration')
     dst = os.path.join(exp_path, 'configuration')
-    shutil.copytree(src, dst, dirs_exist_ok=True, ignore = shutil.ignore_patterns('*.py*', '*__*'))
+    if os.path.exists(dst) and os.path.isdir(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst, ignore=shutil.ignore_patterns('*.py*', '*__*'))
 
     # Write out launch command for convenience
     # ----------------------------------------

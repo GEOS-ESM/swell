@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from jinja2 import Template
 import os
+
+from swell.utilities.jinja2 import template_string_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -45,21 +46,20 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     render_dictionary['cycle_times'] = cycle_times_dict_list
 
-    # Add scheduling to the render dictionary
+    # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
     render_dictionary['scheduling'] = {}
-    render_dictionary['scheduling']['RunJediExecutable'] = {}
-    render_dictionary['scheduling']['RunJediExecutable']['execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediExecutable']['qos'] = 'debug'
-    render_dictionary['scheduling']['RunJediExecutable']['constraint'] = 'debug'
-    render_dictionary['scheduling']['RunJediExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediExecutable']['ntasks_per_node'] = 28
+    render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
+    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT1H'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'hasw'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
 
     # Render the template
     # -------------------
-    t = Template(suite_file, trim_blocks=True, lstrip_blocks=True)
-    new_suite_file = t.render(render_dictionary)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)
 
     # Write suite file to experiment
     # ------------------------------

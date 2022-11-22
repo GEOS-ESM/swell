@@ -2,7 +2,7 @@ databases:
 
   ${USER}:
     class: LocalDB
-    root: $(r2d2_local_path)
+    root: {{r2d2_local_path}}
     cache_fetch: false
 
   gmao-shared:
@@ -12,6 +12,7 @@ databases:
 
 # when fetching data, in which order should the databases accessed?
 fetch_order:
+  - ${USER}
   - gmao-shared
 
 # when storing data, in which order should the databases accessed?
