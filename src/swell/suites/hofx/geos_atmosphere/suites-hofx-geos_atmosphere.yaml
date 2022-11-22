@@ -14,15 +14,15 @@ window_length:
 horizontal_resolution:
   default_value: '361'
   prompt: What resolution for the atmospheric background (For c360 choose 361)?
-  options: ['181', '361', '721']
-  type: drop-list-string
+  options: ['361']
+  type: string-drop-list
 
 # Vertical resolution
 vertical_resolution:
   default_value: '72'
   prompt: What vertical resolution for the atmospheric background?
   options: ['72']
-  type: drop-list-string
+  type: string-drop-list
 
 # Processor layout
 npx_proc:
@@ -68,7 +68,7 @@ observations:
   - ompsnm_npp
   prompt: Select atmospheric observations.
   options: use_method
-  type: check-list-string
+  type: string-check-list
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------

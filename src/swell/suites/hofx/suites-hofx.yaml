@@ -1,9 +1,3 @@
-# Data assimilation run
-data_assimilation_run:
-  default_value: True
-  prompt: Is this a run involving data assimilation?
-  type: boolean
-
 # Cycle start point
 start_cycle_point:
   default_value: '2020-12-15T00:00:00Z'
@@ -27,7 +21,7 @@ jedi_build_method:
   default_value: use_existing
   prompt: Create a new JEDI build or use an existing build?
   options: ['create', 'use_existing']
-  type: drop-list-string
+  type: string-drop-list
 
 # Existing JEDI bundle directory
 existing_source_directory:
@@ -53,13 +47,6 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
-# What kind of coupling is needed
-coupling_style:
-  default_value: uncoupled
-  prompt: What kind of coupling would you like to run with?
-  options: ['uncoupled', 'weakly coupled', 'strongly coupled']
-  type: check-list-string
-
 # Models to use
 model_components:
   default_value: ['geos_atmosphere', 'geos_ocean']
@@ -67,4 +54,9 @@ model_components:
   options: use_method
   type: file-check-list
 
+# Fixed options
+fixed_options:
+  data_assimilation_run:
+    default_value: true
+    prompt: Does this workflow include data assimilation?
 
