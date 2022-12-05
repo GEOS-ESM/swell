@@ -33,7 +33,8 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     model_components = dict_get(logger, experiment_dict, 'model_components', [])
     cycle_times = []
     for model_component in model_components:
-        cycle_times = list(set(cycle_times + experiment_dict['models'][model_component]['cycle_times']))
+        cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
+        cycle_times = list(set(cycle_times + cycle_times_mc))
     cycle_times.sort()
 
     cycle_times_dict_list = []

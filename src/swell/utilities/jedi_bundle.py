@@ -52,7 +52,7 @@ def link_path(source, target):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_jedi_bundle_config(bundles, path_to_source, path_to_build, cores_to_use_for_make = 6):
+def set_jedi_bundle_config(bundles, path_to_source, path_to_build, cores_to_use_for_make=6):
 
     # Start from the default jedi_bundle config file
     jedi_bundle_config = get_default_config()
