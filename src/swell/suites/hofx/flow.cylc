@@ -25,7 +25,7 @@
     [[graph]]
         R1 = """
             {% for model_component in model_components %}
-                BuildJedi => StageJedi-{{model_component}}
+                CloneJedi => BuildJedi => StageJedi-{{model_component}}
             {% endfor %}
             """
 
@@ -61,43 +61,54 @@
 
     # Tasks
     # -----
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
 
     {% for model_component in model_components %}
-        [[StageJedi-{{model_component}}]]
-            script = "swell_task StageJedi $config -m {{model_component}}"
+    [[StageJedi-{{model_component}}]]
+        script = "swell_task StageJedi $config -m {{model_component}}"
 
-        [[ GetBackground-{{model_component}} ]]
-            script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
+    [[ GetBackground-{{model_component}} ]]
+        script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
 
-        [[GetObservations-{{model_component}}]]
-            script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+    [[GetObservations-{{model_component}}]]
+        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
 
-        [[RunJediHofxExecutable-{{model_component}}]]
-            script = "swell_task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
-            platform = {{platform}}
-            execution time limit = {{scheduling["RunJediHofxExecutable"]["execution_time_limit"]}}
-            [[[directives]]]
-                --account = {{scheduling["RunJediHofxExecutable"]["account"]}}
-                --qos = {{scheduling["RunJediHofxExecutable"]["qos"]}}
-                --constraint = {{scheduling["RunJediHofxExecutable"]["constraint"]}}
-                --job-name = RunJediHofxExecutable
-                --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
-                --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
+    [[RunJediHofxExecutable-{{model_component}}]]
+        script = "swell_task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediHofxExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediHofxExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediHofxExecutable"]["qos"]}}
+            --constraint = {{scheduling["RunJediHofxExecutable"]["constraint"]}}
+            --job-name = RunJediHofxExecutable
+            --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
 
-        [[MergeIodaFiles-{{model_component}}]]
-            script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
+    [[MergeIodaFiles-{{model_component}}]]
+        script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
 
-        [[EvaDriver-{{model_component}}]]
-            script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
+    [[EvaDriver-{{model_component}}]]
+        script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
 
-        [[SaveObsDiags-{{model_component}}]]
-            script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+    [[SaveObsDiags-{{model_component}}]]
+        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
-        [[CleanCycle-{{model_component}}]]
-            script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
-
+    [[CleanCycle-{{model_component}}]]
+        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

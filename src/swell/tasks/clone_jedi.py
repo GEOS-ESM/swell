@@ -21,7 +21,7 @@ from swell.utilities.jedi_bundle import link_path
 # --------------------------------------------------------------------------------------------------
 
 
-class BuildJedi(taskBase):
+class CloneJedi(taskBase):
 
     def execute(self):
 
@@ -42,23 +42,11 @@ class BuildJedi(taskBase):
         # ----------------------------------------------------------------
         if jedi_build_method == 'use_existing':
 
-            # Get the existing build directory from the dictionary
-            existing_build_directory = self.config_get('existing_build_directory')
-
-            # Assert that the existing build directory contains a bin directory
-            if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
-                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
-                                  f'directory is not found in the path ' +
-                                  f'\'{existing_build_directory}\'')
-
-            # Write warning to user
-            self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
-                             'problems will follow if the loaded modules are not consistent ' +
-                             'with those used to build this version of JEDI. Also note that ' +
-                             'this experiment may not be reproducible if the build changes.')
+            # Get the existing bundle directory to get the source code
+            existing_source_directory = self.config_get('existing_source_directory')
 
             # Link the source code directory
-            link_path(existing_build_directory, jedi_bundle_build_path)
+            link_path(existing_source_directory, jedi_bundle_source_path)
 
         elif jedi_build_method == 'create':
 
@@ -74,10 +62,10 @@ class BuildJedi(taskBase):
 
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(bundles, jedi_bundle_source_path,
-                                                      jedi_bundle_build_path, 24)
+                                                      jedi_bundle_build_path)
 
             # Perform the clone of JEDI repos
-            execute_tasks(['configure', 'make'], jedi_bundle_dict)
+            execute_tasks(['clone'], jedi_bundle_dict)
 
         else:
 

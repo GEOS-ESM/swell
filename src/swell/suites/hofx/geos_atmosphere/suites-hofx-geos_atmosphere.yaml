@@ -73,12 +73,6 @@ observations:
 # Fixed options (user not prompted for these)
 # -------------------------------------------
 fixed_options:
-  jedi_interface:
-    default_value: fv3-jedi
-    prompt: Name of the JEDI model interface repo
-  jedi_executable:
-    default_value: fv3jedi_hofx.x
-    prompt: Name of the executable from the interface
   window_type:
     default_value:  4D
     prompt: Window type (3D or 4D)

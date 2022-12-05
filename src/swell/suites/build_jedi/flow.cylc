@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based h(x)
+# Cylc suite for building the JEDI code
 
 # --------------------------------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
         platform = {{platform}}
-        execution time limit = PT2H
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
             --account = {{scheduling["BuildJedi"]["account"]}}
             --qos = {{scheduling["BuildJedi"]["qos"]}}

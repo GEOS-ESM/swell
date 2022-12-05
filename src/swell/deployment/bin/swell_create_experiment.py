@@ -72,7 +72,7 @@ def main(method, config, ci_cd):
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
     platform = dict_get(logger, experiment_dict, 'platform', None)
     suite_to_run = dict_get(logger, experiment_dict, 'suite_to_run')
-    model_components = dict_get(logger, experiment_dict, 'model_components')
+    model_components = dict_get(logger, experiment_dict, 'model_components', None)
 
     # Make the suite directory
     # ------------------------
@@ -87,25 +87,29 @@ def main(method, config, ci_cd):
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
-    copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
     copy_platform_files(logger, exp_suite_path, platform)
+
+    if model_components is not None:
+        copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
 
     # Create R2D2 database file
     # -------------------------
-    r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
+    data_assimilation_run = dict_get(logger, experiment_dict, 'data_assimilation_run', False)
+    if data_assimilation_run:
+        r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
 
-    # Write R2D2_CONFIG to modules
-    with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
-        module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
+        # Write R2D2_CONFIG to modules
+        with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
+            module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
 
-    # Open the r2d2 file to dictionary
-    with open(r2d2_conf_path, 'r') as r2d2_file_open:
-        r2d2_file_str = r2d2_file_open.read()
-    r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
-    r2d2_file_str = os.path.expandvars(r2d2_file_str)
+        # Open the r2d2 file to dictionary
+        with open(r2d2_conf_path, 'r') as r2d2_file_open:
+            r2d2_file_str = r2d2_file_open.read()
+        r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
+        r2d2_file_str = os.path.expandvars(r2d2_file_str)
 
-    with open(r2d2_conf_path, 'w') as r2d2_file_open:
-        r2d2_file_open.write(r2d2_file_str)
+        with open(r2d2_conf_path, 'w') as r2d2_file_open:
+            r2d2_file_open.write(r2d2_file_str)
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
