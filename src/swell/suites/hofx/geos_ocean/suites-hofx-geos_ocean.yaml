@@ -58,12 +58,6 @@ npy_proc:
 # Fixed options (user not prompted for these)
 # -------------------------------------------
 fixed_options:
-  jedi_interface:
-    default_value: soca
-    prompt: Name of the JEDI model interface repo
-  jedi_executable:
-    default_value: soca_hofx.x
-    prompt: soca-mom6-geos
   window_type:
     default_value: 3D
     prompt: Window type (3D or 4D)

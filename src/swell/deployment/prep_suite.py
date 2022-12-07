@@ -10,6 +10,7 @@
 
 import os
 
+from swell.utilities.dictionary import dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 
 
@@ -29,19 +30,21 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
+    model_components = dict_get(logger, experiment_dict, 'model_components', [])
     cycle_times = []
-    for model in experiment_dict['model_components']:
-        cycle_times = list(set(cycle_times + experiment_dict['models'][model]['cycle_times']))
+    for model_component in model_components:
+        cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
+        cycle_times = list(set(cycle_times + cycle_times_mc))
     cycle_times.sort()
 
     cycle_times_dict_list = []
     for cycle_time in cycle_times:
         cycle_time_dict = {}
         cycle_time_dict['cycle_time'] = cycle_time
-        for model in experiment_dict['model_components']:
-            cycle_time_dict[model] = False
-            if cycle_time in experiment_dict['models'][model]['cycle_times']:
-                cycle_time_dict[model] = True
+        for model_component in model_components:
+            cycle_time_dict[model_component] = False
+            if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
+                cycle_time_dict[model_component] = True
         cycle_times_dict_list.append(cycle_time_dict)
 
     render_dictionary['cycle_times'] = cycle_times_dict_list
@@ -50,12 +53,20 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # ---------------------------------------
     render_dictionary['scheduling'] = {}
     render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
-    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT1H'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
     render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
     render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
     render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'hasw'
     render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['BuildJedi'] = {}
+    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT4H'
+    render_dictionary['scheduling']['BuildJedi']['account'] = 'g0613'
+    render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['BuildJedi']['constraint'] = 'hasw'
+    render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
+    render_dictionary['scheduling']['BuildJedi']['ntasks_per_node'] = 24
 
     # Render the template
     # -------------------
