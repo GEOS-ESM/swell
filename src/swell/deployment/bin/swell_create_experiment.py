@@ -36,7 +36,7 @@ from swell.utilities.welcome_message import write_welcome_message
                    'configuration file.')
 @click.option('-c', '--config', 'config', default=None,
               help='Directory containing the suite file needed by the workflow manager')
-@click.option('-t', '--cidi', 'ci_cd', default=False,
+@click.option('-t', '--cicd', 'ci_cd', is_flag=True, default=False,
               help='Setup experiment using continuous integration parameters')
 def main(method, config, ci_cd):
 
