@@ -20,7 +20,7 @@ module load jedi-fv3-env/1.0.0
 module load nco/5.0.6
 module load sp/2.3.3
 
-module use -a /discover/nobackup/drholdaw/JediSwell/bundle/modulefiles/compiler/intel/2022.0.1/
+module use -a /discover/nobackup/gmao_ci/swell/nightly/modulefiles/
 module load jedi-swell/latest
 
 # Load workflow modules
