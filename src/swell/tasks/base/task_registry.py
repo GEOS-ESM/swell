@@ -20,7 +20,7 @@ valid_tasks = [
   'ObsProcessSetup',
   'BuildGeos',
   'CloneGeos',
-  'GenerateBClimBump',
+  'GenerateBClimatology',
   'GetGeosRestarts',
   'RunGeos',
   'RunJediVarExecutable',
