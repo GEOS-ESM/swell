@@ -18,4 +18,11 @@ valid_tasks = [
   'CleanCycle',
   'SaveObsDiags',
   'ObsProcessSetup',
+  'BuildGeos',
+  'CloneGeos',
+  'GenerateBClimBump',
+  'GetGeosRestarts',
+  'RunGeos',
+  'RunJediVarExecutable',
+  'SetupGeosExperiment',
 ]
