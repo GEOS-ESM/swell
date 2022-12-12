@@ -12,7 +12,7 @@ from swell.tasks.base.task_base import taskBase
 # --------------------------------------------------------------------------------------------------
 
 
-class GenerateBClimBump(taskBase):
+class GenerateBClimatology(taskBase):
 
     def execute(self):
 
