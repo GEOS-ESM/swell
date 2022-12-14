@@ -2,9 +2,14 @@
 
 name: discover-nightly
 
+#on:
+#  pull_request:
+#    types: [opened, synchronize, reopened]
+
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  schedule:
+    # Runs every day at 00 UTC (see https://crontab.guru)
+    - cron: '5 3 * * *'
 
 defaults:
   run:
