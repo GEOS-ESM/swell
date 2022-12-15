@@ -83,7 +83,7 @@ fixed_options:
     default_value: file
     prompt: 'Source of 4D background files (file or from model)'
   crtm_coeff_dir:
-    default_value: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_4dvar/gsi/etc/fix_ncep20210525/REL-2.2.3-r60152_local-rev_5/CRTM_Coeffs/Little_Endian/
+    default_value: {{crtm_coeff_dir}}
     prompt: 'Directory containing the CRTM coefficient files'
   window_offset:
     default_value:  PT3H

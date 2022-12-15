@@ -108,6 +108,8 @@ class RunJediHofxExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
+        total_processors = total_processors.replace('npx_proc', str(npx_proc))
+        total_processors = total_processors.replace('npy_proc', str(npy_proc))
         np = eval(total_processors)
 
         # Run the JEDI executable

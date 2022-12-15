@@ -45,7 +45,7 @@ def main(config):
     # Generate the configuration file
     # -------------------------------
     if config is None:
-        config_file = prepare_config('cli', None, None)
+        config_file = prepare_config('cli', 'hofx', 'nccs_discover', False)
     else:
         config_file = config
 
