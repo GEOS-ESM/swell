@@ -43,7 +43,7 @@ existing_build_directory:
 
 # R2D2 Configuration
 r2d2_local_path:
-  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
+  default_value: {{r2d2_local_path}}
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 

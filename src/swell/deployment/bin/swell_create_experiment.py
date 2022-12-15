@@ -30,15 +30,9 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-m', '--method', 'method', default='defaults',
-              help='Method for configuration: [\'defaults\'] or \'tui\'. If the config argument ' +
-                   'is present then this argument will be ignored in favor of using the existing ' +
-                   'configuration file.')
-@click.option('-c', '--config', 'config', default=None,
-              help='Directory containing the suite file needed by the workflow manager')
-@click.option('-t', '--cicd', 'ci_cd', is_flag=True, default=False,
-              help='Setup experiment using continuous integration parameters')
-def main(method, config, ci_cd):
+@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
+              'experiment. If not passed questions will be presented for setting up an experiment.')
+def main(config):
 
     # Welcome message
     # ---------------
@@ -48,16 +42,10 @@ def main(method, config, ci_cd):
     # ---------------
     logger = Logger('SwellCreateExperiment')
 
-    # Check arguments
-    # ---------------
-    method_options = ['defaults', 'tui']
-    logger.assert_abort(method in method_options, f'Method \'{method}\' is not one of the valid ' +
-                        f'options {method_options}.')
-
     # Generate the configuration file
     # -------------------------------
     if config is None:
-        config_file = prepare_config(method, ci_cd)
+        config_file = prepare_config('cli', None, None)
     else:
         config_file = config
 

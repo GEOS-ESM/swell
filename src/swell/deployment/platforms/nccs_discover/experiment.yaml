@@ -1,9 +1,5 @@
-default:
-  experiment_id: swell-{{suite_to_run}}
-  experiment_root: /discover/nobackup/${USER}/SwellExperiments
-  swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles
-  r2d2_local_path: /discover/nobackup/${USER}/R2D2DataStore/Local
-ci_cd:
-  experiment_id: ${CICD_EXPERIMENT_ID}
-  experiment_root: ${CICD_EXPERIMENT_ROOT}
-
+experiment_id: swell-{{suite_to_run}}
+experiment_root: /discover/nobackup/${USER}/SwellExperiments
+platform: nccs_discover
+swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles
+r2d2_local_path: /discover/nobackup/${USER}/R2D2DataStore/Local

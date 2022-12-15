@@ -20,8 +20,16 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.argument('method')
-def main(method):
+@click.option('-m', '--input_method', 'input_method', default='defaults', help='Method by which to ' +
+              'create the YAML configuration file. Valid choices: \'defaults\', \'cli\'.')
+@click.option('-s', '--suite', 'suite', default='hofx', help='If using defaults for input_method ' +
+              'this option is used to determine which suite to obtain the defaults for.')
+@click.option('-p', '--platform', 'platform', default='nccs_discover', help='If using defaults ' +
+              'for input_method this option is used to determine which platform to use for ' +
+              'platform specific defaults.')
+@click.option('-o', '--override', 'override', default=None, help='After generating the config ' +
+              'file parameters inside can be overridden using value from the override config file.')
+def main(input_method, suite, platform, override):
 
     # Welcome message
     # ---------------
@@ -29,7 +37,7 @@ def main(method):
 
     # Create suites object
     # --------------------
-    config_file = prepare_config(method)
+    config_file = prepare_config(input_method, suite, platform, override)
 
 
 # --------------------------------------------------------------------------------------------------

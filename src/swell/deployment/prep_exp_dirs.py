@@ -40,9 +40,8 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
     # Copy platform related files to the suite directory
     # --------------------------------------------------
     if platform is not None:
-        plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
-        return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
-        platform_path = return_platform_install_path_call()
+        swell_lib_path = get_swell_path()
+        platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
         for s in ['modules', 'r2d2_config.yaml']:
             src_file = os.path.split(s)[1]
