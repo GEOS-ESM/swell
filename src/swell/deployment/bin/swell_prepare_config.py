@@ -20,8 +20,8 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-m', '--input_method', 'input_method', default='defaults', help='Method by which to ' +
-              'create the YAML configuration file. Valid choices: \'defaults\', \'cli\'.')
+@click.option('-m', '--input_method', 'input_method', default='defaults', help='Method by which ' +
+              'to create the YAML configuration file. Valid choices: \'defaults\', \'cli\'.')
 @click.option('-s', '--suite', 'suite', default='hofx', help='If using defaults for input_method ' +
               'this option is used to determine which suite to obtain the defaults for.')
 @click.option('-p', '--platform', 'platform', default='nccs_discover', help='If using defaults ' +
