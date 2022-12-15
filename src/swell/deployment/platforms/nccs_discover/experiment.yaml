@@ -5,4 +5,4 @@ swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles
 r2d2_local_path: /discover/nobackup/${USER}/R2D2DataStore/Local
 existing_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
 existing_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
-crtm_coeff_dir: /discover/nobackup/projects/gmao/obsdev/wgu/crtm_REL-2.4.0_emc/fix/SpcCoeff/Little_Endian/
+crtm_coeff_dir: /discover/nobackup/drholdaw/SwellStaticFiles/jedi/crtm_coefficients/2.4/
