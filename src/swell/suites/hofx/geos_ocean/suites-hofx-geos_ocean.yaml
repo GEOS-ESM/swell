@@ -47,11 +47,11 @@ observations:
 
   # Processor layout
 npx_proc:
-  default_value: '2'
+  default_value: '12'
   prompt: What processor layout (x-direction) per cube face?
   type: string
 npy_proc:
-  default_value: '2'
+  default_value: '1'
   prompt: What processor layout (y-direction) per cube face?
   type: string
 
@@ -62,7 +62,7 @@ fixed_options:
     default_value: 3D
     prompt: Window type (3D or 4D)
   total_processors:
-    default_value:  '{{npx_proc}} * {{npy_proc}} * 6'
+    default_value:  '{{npx_proc}} * {{npy_proc}}'
     prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT6H
@@ -79,6 +79,9 @@ fixed_options:
   background_source:
     default_value: file
     prompt: 'Source of the background files (file or from model)'
+  background_error_model:
+    default_value: bump
+    prompt: 'Method for calculating background error covariance'
   obs_provider:
     default_value: odas
     prompt: Database providing the observations.
