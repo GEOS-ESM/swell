@@ -4,14 +4,11 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-
 # -----------------------------------------------
 import os
 import shutil
 
 from swell.tasks.base.task_base import taskBase
-# from swell.utilities.filehandler import *
-# from swell.utilities.exceptions import *
 
 # --------------------------------------------------------------------------------------------------
 
@@ -21,6 +18,7 @@ class GenerateBClimatology(taskBase):
         """Acquires B Matrix files 
 
             TODO: Generate Bump files for any np if not created already
+            TODO: get config instead of 'soca' in the b_dir
 
            Parameters
            ----------
@@ -36,6 +34,7 @@ class GenerateBClimatology(taskBase):
         cycle_dir = self.config_get('cycle_dir')
 
         if background_error_model == 'bump':
+            
             # Folder name contains both horizontal and vertical resolutions 
             # ----------------------------
             resolution = horizontal_resolution + 'x' + vertical_resolution
@@ -49,30 +48,18 @@ class GenerateBClimatology(taskBase):
             # --------------------------------
             model_component = self.get_model()
 
-            # jedi_interface = self.config_get('jedi_interface')
-
             # Load experiment file
             # --------------------
             b_dir = os.path.join(swell_static_files, 'jedi', 'soca', model_component, 
                         background_error_model,'climatological',resolution,str(np))
             
+            d_dir = os.path.join(cycle_dir,'background_error_model')
+
             self.logger.info('  Copying BUMP files from: '+b_dir)
-            shutil.copytree(b_dir, '/discover/nobackup/dardag/scratch/',
-                        dirs_exist_ok=True)         
+            shutil.copytree(b_dir, d_dir, dirs_exist_ok=True)       
+
         else:
-            self.logger.abort('  Background error model is not ready')
-
-        exit()
-        # Run the file handler
-        # --------------------
-        try:
-            fh = get_file_handler(stage_dict)
-            if not fh.is_ready():
-                self.logger.abort('One or more files not ready')
-            else:
-                fh.get()
-        except SWELLError as e:
-            self.logger.abort(str(e))
-
+            
+            self.logger.abort('  Unknown background error model')
 
 # --------------------------------------------------------------------------------------------------
