@@ -30,6 +30,12 @@ background_experiment:
   prompt: Experiment providing the background files?
   type: string
 
+# Analysis
+analysis_variables:
+  default_value: [socn, tocn, ssh, hocn]
+  prompt: Variables to be assimilated?
+  type: string
+
 obs_experiment:
   default_value: s2s
   prompt: Database providing the observations?
