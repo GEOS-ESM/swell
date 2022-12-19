@@ -20,7 +20,7 @@ final_cycle_point:
 runahead_limit:
   default_value: 'P4'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
-  type: iso-duration
+  type: string
 
 # Jedi build system
 jedi_build_method:
@@ -63,7 +63,7 @@ coupling_style:
 # Models to use
 model_components:
   default_value: ['geos_atmosphere', 'geos_ocean']
-  prompt: Select models to use
+  prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
 

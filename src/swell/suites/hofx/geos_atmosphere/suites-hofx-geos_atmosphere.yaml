@@ -2,7 +2,8 @@
 cycle_times:
   default_value: ['T00', 'T06', 'T12', 'T18']
   prompt: List all cycle times, by middle of the window?
-  type: iso-duration
+  options: ['T00', 'T06', 'T12', 'T18']
+  type: string-check-list
 
 # Window length
 window_length:

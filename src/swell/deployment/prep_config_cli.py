@@ -29,6 +29,8 @@ class PrepConfigCli(PrepConfigBase):
         if dictionary is None:
             dictionary = self.dictionary
 
+        print(f"Now editing the {self.directory.split('/')[-1]} YAML file.")
+
         for key in dictionary:
             # Element dictionary
             el_dict = dictionary[key]
@@ -65,6 +67,7 @@ class PrepConfigCli(PrepConfigBase):
                     # the suites/ level
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
                     self.add_to_experiment_dictionary(key, el_dict)
+                    self.before_next()
 
                     # In this case the key refers to a single sub dictionary that involves opening
                     # that dictionary and recursively calling this routine.
@@ -109,6 +112,7 @@ class PrepConfigCli(PrepConfigBase):
         return
 
     def check_widgets(self, key, val):
+        print('\n')
         widget_type = val['type']
         quest = val['prompt']
         default = val['default_value']
@@ -119,7 +123,7 @@ class PrepConfigCli(PrepConfigBase):
                 options = 'file'
             elif 'string' in widget_type:
                 options = val['options']
-            answer = self.make_drop_widget(quest, options, default, questionary.select)
+            answer = self.make_drop_widget(key, quest, options, default, questionary.select)
         elif widget_type == 'boolean':
             answer = self.make_boolean(quest, default, questionary.confirm)
         elif widget_type == 'iso-datetime':
@@ -145,15 +149,18 @@ class PrepConfigCli(PrepConfigBase):
 
         return answer
 
-    def make_drop_widget(self, quest, options, default, prompt):
+    def make_drop_widget(self, method, quest, options, default, prompt):
         if options == 'file':
-            dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
             choices = suite_list
         else:
             if options == 'use_method':
-                options = [default]
+                if 'platform' in method:
+                    method_dir = 'deployment/platforms/'
+                new_path = os.path.join(os.path.dirname(self.directory), method_dir, '*/')
+                suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+                options = suite_list
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
 
@@ -221,12 +228,32 @@ class PrepConfigCli(PrepConfigBase):
             choices = suite_list
             default = None
         else:
-            # Why do file_check_list widgets have a use_method key?
             if options == 'use_method':
                 choices = default
                 default = default[0]
-        answer = prompt(quest, choices=choices, default=default).ask()
+            else:
+                choices = options
+                if default is None:
+                    pass
+                else:
+                    default = default[0]
+        answer = prompt(quest, choices=choices, 
+                        default=default, 
+                        validate=lambda text: True if text != [] 
+                        else 'Please select one option').ask()
         return answer
+
+    def before_next(self):
+        changer = self.make_boolean('Do you wish to change any of your entries?', False, questionary.confirm) 
+        if changer:
+            print('changing')
+            change_keys = self.make_check_widget('Which elements would you like to change?', keys, None, questionary.checkbox)
+            #changed_dict = {}
+            for k in change_keys:
+                changed_dict = self.dictionary[k]
+                changed_dict['default_value'] = self.check_widgets(k, changed_dict)
+                self.update_experiment_dictionary(k, changed_dict)
+        return None
 
 
 # --------------------------------------------------------------------------------------------------

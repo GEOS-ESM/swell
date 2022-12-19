@@ -195,6 +195,11 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def update_experiment_dictionary(self, key, new_element_dict):
+        self.experiment_dict[key] = new_element_dict
+
+    # ----------------------------------------------------------------------------------------------
+
     @abstractmethod
     def execute(self):
         pass
