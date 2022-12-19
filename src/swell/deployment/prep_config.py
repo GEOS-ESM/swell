@@ -24,7 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def platform_fill(logger, experiment_dict, ci_cd, comment_dict):
+def platform_fill(logger, method, experiment_dict, ci_cd, comment_dict):
 
     # Get platform
     platform = experiment_dict['platform']
@@ -36,15 +36,14 @@ def platform_fill(logger, experiment_dict, ci_cd, comment_dict):
     with open(platform_exp_file, 'r') as platform_exp_file_open:
         platform_exp_templated = platform_exp_file_open.read()
 
-    # Create a template dictionary
-    temp_experiment_dict = experiment_dict
-    temp_experiment_dict['datetime'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
-
     # Resolve any templates
-    platform_exp_str = template_string_jinja2(logger, platform_exp_templated, temp_experiment_dict)
+    platform_exp_str = template_string_jinja2(logger, platform_exp_templated, experiment_dict)
 
     # Load to dictionary
     platform_dict = yaml.safe_load(platform_exp_str)
+
+    # Copy experiment dictionary
+    experiment_dict_new = experiment_dict
 
     # Set platform dictionary to use
     dict_to_use = 'default'
@@ -59,18 +58,20 @@ def platform_fill(logger, experiment_dict, ci_cd, comment_dict):
                             'If running with CI/CD the environment variable ' +
                             '${CICD_EXPERIMENT_ROOT} must be set.')
 
-    # Update experiment dict
-    experiment_dict_new = experiment_dict
-    experiment_dict_new['experiment_id'] = platform_dict[dict_to_use]['experiment_id']
-    experiment_dict_new['experiment_root'] = platform_dict[dict_to_use]['experiment_root']
+        # Always update the experiment ID and roo if CI/CD
+        experiment_dict_new['experiment_id'] = platform_dict['ci_cd']['experiment_id']
+        experiment_dict_new['experiment_root'] = platform_dict['ci_cd']['experiment_root']
+
+    # Update experiment root if default method
+    if method == 'defaults':
+        experiment_dict_new['experiment_root'] = platform_dict[dict_to_use]['experiment_root']
 
     # Add the swell static files path from the platform to the experiment dictionary
     experiment_dict_new['swell_static_files'] = platform_dict['default']['swell_static_files']
 
     # Adjust comment dictionary
     comment_dict_new = comment_dict
-    comment_dict_new['datetime'] = 'Datetime this file was created (auto added)'
-    comment_dict_new['swell_static_files'] = 'Path to static files needed by swell (auto added)'
+    comment_dict_new['swell_static_files'] = 'Path to static files used by swell (auto added)'
 
     return experiment_dict_new, comment_dict_new
 
@@ -105,10 +106,20 @@ def prepare_config(method, ci_cd=False):
     # -------------------------
     prep_using.execute()
 
+    # Copy the experiment dictionary
+    # ------------------------------
+    experiment_dict = prep_using.experiment_dict
+    comment_dict = prep_using.comment_dict
+
+    # Add the datetime to the dictionary
+    # ----------------------------------
+    experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
+    comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
+
     # Set platform specific entires
     # -----------------------------
-    experiment_dict, comment_dict = platform_fill(logger, prep_using.experiment_dict, ci_cd,
-                                                  prep_using.comment_dict)
+    experiment_dict, comment_dict = platform_fill(logger, method, experiment_dict, ci_cd,
+                                                  comment_dict)
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
@@ -127,7 +138,7 @@ def prepare_config(method, ci_cd=False):
     # ------------------------
     cwd = os.getcwd()
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
-    exp_dict_file = os.path.join(cwd, f'experiment-{experiment_id}.yaml')
+    exp_dict_file = os.path.join(cwd, f'{experiment_id}.yaml')
 
     # Write dictionary to YAML file
     # -----------------------------

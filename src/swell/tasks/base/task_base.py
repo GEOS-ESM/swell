@@ -105,14 +105,11 @@ class taskBase(ABC):
         self.logger.assert_abort(self.__model__ is not None,
                                  'Task must have a model associated with it.')
 
-        # JEDI interface name
-        jedi_interface = self.config_get('jedi_interface')
-
         # Get experiment configuration path
         swell_exp_config_path = self.get_swell_exp_config_path()
 
         # Path to configuration file
-        config_file = os.path.join(swell_exp_config_path, 'jedi', jedi_interface,
+        config_file = os.path.join(swell_exp_config_path, 'jedi', 'interfaces',
                                    self.__model__, model_or_obs, config_name + '.yaml')
 
         # Open file as a string
@@ -135,6 +132,34 @@ class taskBase(ABC):
 
         # Path to configuration file
         config_file = os.path.join(swell_exp_config_path, 'jedi', 'oops', config_name + '.yaml')
+
+        # Open file as a string
+        with open(config_file, 'r') as config_file_open:
+            config_file_str_templated = config_file_open.read()
+
+        # Fill templates in the configuration file using the config
+        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
+
+        # Convert string to dictionary
+        return yaml.safe_load(config_file_str)
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to open a specific model configuration file metadata
+    def open_jedi_interface_meta_config_file(self, model=None):
+
+        # Set model to the actual model if needed
+        if model is None:
+            self.logger.assert_abort(self.__model__ is not None,
+                                     'Task must have a model associated with it.')
+            model = self.__model__
+
+        # Get experiment configuration path
+        swell_exp_config_path = self.get_swell_exp_config_path()
+
+        # Path to configuration file
+        config_file = os.path.join(swell_exp_config_path, 'jedi', 'interfaces',
+                                   model, model + '.yaml')
 
         # Open file as a string
         with open(config_file, 'r') as config_file_open:

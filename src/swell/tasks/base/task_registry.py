@@ -8,6 +8,7 @@ valid_tasks = [
   'StageJedi',
   'GetObservations',
   'BuildJedi',
+  'CloneJedi',
   'GetBackground',
   'RunJediHofxExecutable',
   'EvaDriver',

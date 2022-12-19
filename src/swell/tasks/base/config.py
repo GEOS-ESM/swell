@@ -71,8 +71,6 @@ class Config():
         # Remove the model specific part from the full config
         if 'models' in self.__config__.keys():
             del self.__config__['models']
-        if 'model_components' in self.__config__.keys():
-            del self.__config__['model_components']
 
         # Assert that the full and model level configs have only unique keys
         for key in self.__config__.keys():

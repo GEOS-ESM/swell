@@ -78,7 +78,6 @@ class RunJediHofxExecutable(taskBase):
         # ----------------------------
         cycle_dir = self.config_get('cycle_dir')
         experiment_dir = self.config_get('experiment_dir')
-        jedi_interface = self.config_get('jedi_interface')
         window_type = self.config_get('window_type')
         model = self.config_get('window_type')
         total_processors = self.config_get('total_processors')
@@ -93,6 +92,11 @@ class RunJediHofxExecutable(taskBase):
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+
+        # Get the JEDI interface for this model component
+        # -----------------------------------------------
+        model_component_meta = self.open_jedi_interface_meta_config_file()
+        jedi_interface = model_component_meta['jedi_interface']
 
         # Jedi executable name
         # --------------------

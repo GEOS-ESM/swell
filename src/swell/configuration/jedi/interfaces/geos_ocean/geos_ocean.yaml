@@ -1,0 +1,5 @@
+jedi_interface: soca
+executables:
+  hofx3d: soca_hofx3d.x
+  hofx: soca_hofx.x
+  var: soca_var.x
