@@ -106,6 +106,7 @@ class GenerateBClimatology(taskBase):
             # Jedi configuration file
             # -----------------------
             jedi_config_file = os.path.join(cycle_dir, 'jedi_bump_config.yaml')
+
             # Generate the JEDI configuration file for running the executable
             # ---------------------------------------------------------------
             jedi_config_dict = self.generate_jedi_config()
@@ -128,7 +129,9 @@ class GenerateBClimatology(taskBase):
             # Move to the cycle directory
             # ---------------------------
             os.chdir(cycle_dir)
-            os.mkdir('backgrond_error_model')
+            if not os.path.exists('background_error_model'):
+                os.mkdir('background_error_model')
+
             # Execute
             # -------
             process = subprocess.Popen(command, stdout=subprocess.PIPE)
