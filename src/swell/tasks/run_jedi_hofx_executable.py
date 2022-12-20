@@ -80,6 +80,8 @@ class RunJediHofxExecutable(taskBase):
         experiment_dir = self.config_get('experiment_dir')
         window_type = self.config_get('window_type')
         model = self.config_get('window_type')
+        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
+        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
         total_processors = self.config_get('total_processors')
 
         # Jedi configuration file
@@ -106,8 +108,9 @@ class RunJediHofxExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
-        np_string = self.use_config_to_template_string(total_processors)
-        np = eval(np_string)
+        total_processors = total_processors.replace('npx_proc', str(npx_proc))
+        total_processors = total_processors.replace('npy_proc', str(npy_proc))
+        np = eval(total_processors)
 
         # Run the JEDI executable
         # -----------------------
