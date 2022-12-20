@@ -53,59 +53,47 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
-        """Acquires B Matrix files 
+    def initialize_background(self):
 
-            TODO: Generate Bump files for any np if not created already
+        if self.background_error_model == 'bump':
+            return self.generate_bump()
+        else:
+            self.logger.abort('  Unknown background error model')
 
-           Parameters
-           ----------
-             All inputs are extracted from the JEDI experiment file configuration.
-             See the taskBase constructor for more information.
-        """
+    def generate_bump(self):
 
-        total_processors = self.config_get('total_processors')
-        swell_static_files = self.config_get('swell_static_files')
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        vertical_resolution = self.config_get('vertical_resolution')
-        background_error_model = self.config_get('background_error_model')
-        cycle_dir = self.config_get('cycle_dir')
-        experiment_dir = self.config_get('experiment_dir')
+        # Folder name contains both horizontal and vertical resolutions 
+        # ----------------------------
+        resolution = self.horizontal_resolution + 'x' + self.vertical_resolution
 
-        # Get the JEDI interface for this model component
-        # -----------------------------------------------
-        model_component_meta = self.open_jedi_interface_meta_config_file()
-        jedi_interface = model_component_meta['jedi_interface']
+        # Compute number of processors
+        # ----------------------------
+        np_string = self.use_config_to_template_string(self.total_processors)
+        np = eval(np_string)
+        
+        # Get the name of the model component
+        # --------------------------------
+        model_component = self.get_model()
 
-        if background_error_model == 'bump':
-            
-            # Folder name contains both horizontal and vertical resolutions 
-            # ----------------------------
-            resolution = horizontal_resolution + 'x' + vertical_resolution
+        # Load experiment file
+        # --------------------
+        b_dir = os.path.join(self.swell_static_files, 'jedi', self.jedi_interface, 
+                    model_component, self.background_error_model, 'climatological', 
+                        resolution,str(np))
+        
+        d_dir = os.path.join(self.cycle_dir,'background_error_model')
 
-            # Compute number of processors
-            # ----------------------------
-            np_string = self.use_config_to_template_string(total_processors)
-            np = eval(np_string)
-            
-            # Get the name of the model component
-            # --------------------------------
-            model_component = self.get_model()
-
-            # Load experiment file
-            # --------------------
-            b_dir = os.path.join(swell_static_files, 'jedi', jedi_interface, 
-                        model_component, background_error_model, 'climatological', 
-                            resolution,str(np))
-            
-            d_dir = os.path.join(cycle_dir,'background_error_model')
-
+        try:
             self.logger.info('  Copying BUMP files from: '+b_dir)
-            # shutil.copytree(b_dir, d_dir, dirs_exist_ok=True)
+            shutil.copytree(b_dir, d_dir, dirs_exist_ok=True)
 
+        except:
+            
+            self.logger.info('  Copying failed, generating BUMP files.')
+            
             # Jedi configuration file
             # -----------------------
-            jedi_config_file = os.path.join(cycle_dir, 'jedi_bump_config.yaml')
+            jedi_config_file = os.path.join(self.cycle_dir, 'jedi_bump_config.yaml')
 
             # Generate the JEDI configuration file for running the executable
             # ---------------------------------------------------------------
@@ -116,8 +104,8 @@ class GenerateBClimatology(taskBase):
 
             # Jedi executable name
             # --------------------
-            jedi_executable = interface_executable[jedi_interface]
-            jedi_executable_path = os.path.join(experiment_dir, 'jedi_bundle', 
+            jedi_executable = interface_executable[self.jedi_interface]
+            jedi_executable_path = os.path.join(self.experiment_dir, 'jedi_bundle', 
                         'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
@@ -128,7 +116,7 @@ class GenerateBClimatology(taskBase):
             
             # Move to the cycle directory
             # ---------------------------
-            os.chdir(cycle_dir)
+            os.chdir(self.cycle_dir)
             if not os.path.exists('background_error_model'):
                 os.mkdir('background_error_model')
 
@@ -150,8 +138,43 @@ class GenerateBClimatology(taskBase):
                 self.logger.abort('subprocess.run with command ' + command_string +
                                 ' failed to execute.', False)
 
-        else:
+        return 
+
+    # ----------------------------------------------------------------------------------------------
+
+    def execute(self):
+        """Acquires B Matrix files 
+
+            Works for background error model(s): 
             
-            self.logger.abort('  Unknown background error model')
+            - Bump:
+
+            Tries fetching existing bump files (contingent upon the number of
+            total processors), creates new ones in 'cycle_dir' otherwise.
+
+            - TODO GSI:
+
+        Parameters
+        ----------
+            All inputs are extracted from the JEDI experiment file configuration.
+            See the taskBase constructor for more information.
+        """
+        
+        self.total_processors = self.config_get('total_processors')
+        self.swell_static_files = self.config_get('swell_static_files')
+        self.horizontal_resolution = self.config_get('horizontal_resolution')
+        self.vertical_resolution = self.config_get('vertical_resolution')
+        self.cycle_dir = self.config_get('cycle_dir')
+        self.experiment_dir = self.config_get('experiment_dir')
+
+        # Get the JEDI interface for this model component
+        # -----------------------------------------------
+        model_component_meta = self.open_jedi_interface_meta_config_file()
+        self.jedi_interface = model_component_meta['jedi_interface']
+
+        # Obtain and initialize proper error model
+        # -----------------------------------------------
+        self.background_error_model = self.config_get('background_error_model')
+        self.initialize_background()
 
 # --------------------------------------------------------------------------------------------------
