@@ -22,6 +22,7 @@ interface_executable = {
 
 # --------------------------------------------------------------------------------------------------
 
+
 class GenerateBClimatology(taskBase):
 
     def jedi_dictionary_iterator(self, jedi_config_dict):
@@ -62,7 +63,7 @@ class GenerateBClimatology(taskBase):
 
     def generate_bump(self):
 
-        # Folder name contains both horizontal and vertical resolutions 
+        # Folder name contains both horizontal and vertical resolutions
         # ----------------------------
         resolution = self.horizontal_resolution + 'x' + self.vertical_resolution
 
@@ -70,27 +71,26 @@ class GenerateBClimatology(taskBase):
         # ----------------------------
         np_string = self.use_config_to_template_string(self.total_processors)
         np = eval(np_string)
-        
+
         # Get the name of the model component
         # --------------------------------
         model_component = self.get_model()
 
         # Load experiment file
         # --------------------
-        b_dir = os.path.join(self.swell_static_files, 'jedi', self.jedi_interface, 
-                    model_component, self.background_error_model, 'climatological', 
-                        resolution,str(np))
-        
-        d_dir = os.path.join(self.cycle_dir,'background_error_model')
+        b_dir = os.path.join(self.swell_static_files, 'jedi', self.jedi_interface,
+                             model_component, self.background_error_model, 'climatological',
+                             resolution, str(np))
+
+        d_dir = os.path.join(self.cycle_dir, 'background_error_model')
 
         try:
             self.logger.info('  Copying BUMP files from: '+b_dir)
             shutil.copytree(b_dir, d_dir, dirs_exist_ok=True)
 
-        except:
-            
+        except Exception:
             self.logger.info('  Copying failed, generating BUMP files.')
-            
+
             # Jedi configuration file
             # -----------------------
             jedi_config_file = os.path.join(self.cycle_dir, 'jedi_bump_config.yaml')
@@ -98,22 +98,22 @@ class GenerateBClimatology(taskBase):
             # Generate the JEDI configuration file for running the executable
             # ---------------------------------------------------------------
             jedi_config_dict = self.generate_jedi_config()
-            
+
             with open(jedi_config_file, 'w') as jedi_config_file_open:
                 yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
             # Jedi executable name
             # --------------------
             jedi_executable = interface_executable[self.jedi_interface]
-            jedi_executable_path = os.path.join(self.experiment_dir, 'jedi_bundle', 
-                        'build', 'bin', jedi_executable)
+            jedi_executable_path = os.path.join(self.experiment_dir, 'jedi_bundle',
+                                                'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
             # -----------------------
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
             command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
-            
+
             # Move to the cycle directory
             # ---------------------------
             os.chdir(self.cycle_dir)
@@ -136,19 +136,15 @@ class GenerateBClimatology(taskBase):
             if rc != 0:
                 command_string = ' '.join(command)
                 self.logger.abort('subprocess.run with command ' + command_string +
-                                ' failed to execute.', False)
-
-        return 
+                                  ' failed to execute.', False)
+        return
 
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
-        """Acquires B Matrix files 
+        """Acquires B Matrix files for background error model(s):
 
-            Works for background error model(s): 
-            
             - Bump:
-
             Tries fetching existing bump files (contingent upon the number of
             total processors), creates new ones in 'cycle_dir' otherwise.
 
@@ -159,7 +155,7 @@ class GenerateBClimatology(taskBase):
             All inputs are extracted from the JEDI experiment file configuration.
             See the taskBase constructor for more information.
         """
-        
+
         self.total_processors = self.config_get('total_processors')
         self.swell_static_files = self.config_get('swell_static_files')
         self.horizontal_resolution = self.config_get('horizontal_resolution')
