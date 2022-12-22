@@ -44,7 +44,7 @@ class GenerateBClimatology(taskBase):
 
         # Create dictionary from the templated JEDI config file
         # ---------------------------------------------------------
-        jedi_config_dict = self.open_jedi_oops_config_file('bump')
+        jedi_config_dict = self.open_jedi_oops_config_file('StaticBInit')
 
         # Read configs for the rest of the dictionary
         # -------------------------------------------

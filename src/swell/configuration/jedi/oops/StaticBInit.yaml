@@ -3,10 +3,8 @@
 
 geometry:
   TASKFILLgeometry
-
 analysis variables: {{analysis_variables}}
-
 background:
   TASKFILLbackground
 background error:
-  TASKFILLbclimatology
+  TASKFILLbackground_error_init

@@ -1,0 +1,62 @@
+# Cycle start point
+start_cycle_point:
+  default_value: '2020-12-15T00:00:00Z'
+  prompt: What is the time of the first cycle (middle of the window)?
+  type: iso-datetime
+
+# Cycle final point
+final_cycle_point:
+  default_value: '2020-12-15T06:00:00Z'
+  prompt: What is the time of the final cycle (middle of the window)?
+  type: iso-datetime
+
+# Run ahead limit for workflow
+runahead_limit:
+  default_value: 'P4'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: iso-duration
+
+# Jedi build system
+jedi_build_method:
+  default_value: use_existing
+  prompt: Create a new JEDI build or use an existing build?
+  options: ['create', 'use_existing']
+  type: string-drop-list
+
+# Existing JEDI bundle directory
+existing_source_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
+  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
+
+# Existing JEDI build
+existing_build_directory:
+  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
+  prompt: Provide the path to an existing JEDI build directory
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
+
+# R2D2 Configuration
+r2d2_local_path:
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
+  prompt: Enter the path where R2D2 will store experiment output
+  type: string
+
+# Models to use
+model_components:
+  default_value: ['geos_ocean']
+  prompt: Select models to use
+  options: use_method
+  type: file-check-list
+
+# Fixed options
+fixed_options:
+  data_assimilation_run:
+    default_value: true
+    prompt: Does this workflow include data assimilation?
+

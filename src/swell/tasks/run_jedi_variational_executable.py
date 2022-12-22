@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,32 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
-import os
-import subprocess
-import sys
-import yaml
-
 from swell.tasks.base.run_jedi_executable_base import RunJediExecutableBase
 
-
 # --------------------------------------------------------------------------------------------------
 
 
-interface_executable = {
-  'fv3-jedi-4D': 'fv3jedi_hofx.x',
-  'fv3-jedi-3D': 'fv3jedi_hofx_nomodel.x',
-  'soca-4D': 'soca_hofx.x',
-  'soca-3D': 'soca_hofx3d.x',
-}
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-class RunJediHofXExecutable(RunJediExecutableBase):
-
-    # ----------------------------------------------------------------------------------------------
+class RunJediVariationalExecutable(RunJediExecutableBase):
 
     def execute(self):
 
@@ -46,7 +26,7 @@ class RunJediHofXExecutable(RunJediExecutableBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(cycle_dir, 'jedi_hofx_config.yaml')
+        jedi_config_file = os.path.join(cycle_dir, 'jedi_variational_config.yaml')
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
@@ -75,5 +55,6 @@ class RunJediHofXExecutable(RunJediExecutableBase):
         # -----------------------
         self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file):
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+
 
 # --------------------------------------------------------------------------------------------------

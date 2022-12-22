@@ -1,0 +1,105 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00', 'T12']
+  prompt: List all ocean cycle times, by middle of the window?
+  type: iso-duration
+
+# Window length
+window_length:
+  default_value: 'PT12H'
+  prompt: Window length for ocean data assimilation
+  type: iso-duration
+
+# Horizontal resolution
+horizontal_resolution:
+  default_value: '1440x1080'
+  prompt: What resolution for the hor. res (probably will become obsolete)?
+  options: ['1440x1080']
+  type: string-drop-list
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '75'
+  prompt: What vertical resolution for the ocean background?
+  options: ['75']
+  type: string-drop-list
+
+# Backgrounds
+background_experiment:
+  default_value: s2s
+  prompt: Experiment providing the background files?
+  type: string
+
+# Analysis
+analysis_variables:
+  default_value: [socn, tocn, ssh, hocn]
+  prompt: Variables to be assimilated?
+  type: string
+
+obs_experiment:
+  default_value: s2s
+  prompt: Database providing the observations?
+  type: string
+
+# Observations
+observations:
+  default_value:
+  - adt
+  - insitus
+  - insitut
+  prompt: Select ocean observations.
+  options: use_method
+  type: string-check-list
+
+  # Processor layout
+npx_proc:
+  default_value: '12'
+  prompt: What processor layout (x-direction) per cube face?
+  type: string
+npy_proc:
+  default_value: '1'
+  prompt: What processor layout (y-direction) per cube face?
+  type: string
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  window_type:
+    default_value: 3D
+    prompt: Window type (3D or 4D)
+  minimizer:
+    default_value: RPCG
+    prompt: Minimizer to use for gradient descent
+  number_of_iterations:
+    default_value: 10
+    prompt: Number of iterations to use in the minimization
+  gradient_norm_reduction:
+    default_value: 1e-10
+    prompt: Threshold for convergence of the minimization
+  total_processors:
+    default_value:  '{{npx_proc}} * {{npy_proc}}'
+    prompt: Equation to compute total number of processors
+  window_offset:
+    default_value:  PT6H
+    prompt: Time from beginning to middle of the window
+  analysis_forecast_window_offset:
+    default_value:  -PT6H
+    prompt: Time from the middle of the window when forecasts start
+  background_time_offset:
+    default_value:  PT9H
+    prompt: Time before the middle of the window that the background providing forecast began
+  background_frequency:
+    default_value:  PT1H
+    prompt: 'Frequency of 4D backgrounds'
+  background_source:
+    default_value: file
+    prompt: 'Source of the background files (file or from model)'
+  background_error_model:
+    default_value: bump
+    prompt: 'Method for calculating background error covariance'
+  obs_provider:
+    default_value: odas
+    prompt: Database providing the observations.
+  clean_patterns:
+    default_value: ['*.nc4','*.txt']
+    prompt: 'Patterns for the files to remove after completing a cycle'
