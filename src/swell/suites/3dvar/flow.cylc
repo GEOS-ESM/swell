@@ -35,6 +35,7 @@
                 {% if cycle_time[model_component] %}
                     GetBackground-{{model_component}} &
                     GetObservations-{{model_component}} &
+                    GenerateBClimatology-{{model_component}} &
                     StageJedi-{{model_component}}[^]
                     => RunJediVariationalExecutable-{{model_component}}
                     => MergeIodaFiles-{{model_component}}
@@ -84,6 +85,9 @@
 
     [[GetObservations-{{model_component}}]]
         script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+
+    [[GenerateBClimatology-{{model_component}}]]
+        script = "swell_task GenerateBClimatology $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
