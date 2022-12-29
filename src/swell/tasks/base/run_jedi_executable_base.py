@@ -12,7 +12,8 @@ from abc import ABC, abstractmethod
 
 
 from swell.tasks.base.task_base import taskBase
-
+import os
+import subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -30,13 +31,31 @@ class RunJediExecutableBase(taskBase):
 
     def jedi_dictionary_iterator(self, jedi_config_dict):
 
-        # Loop over dictionary and replace if value is a dictionary
+        # Loop over dictionary and replace if value is a dictionary, meanwhile
+        # check list objects for TASKFILL entries
+        # -----------------------------------------------------------
+
         for key, value in jedi_config_dict.items():
             if isinstance(value, dict):
                 self.jedi_dictionary_iterator(value)
+
+            elif isinstance(value,list):
+                for item in value:
+                    if isinstance(item, dict):
+                        self.jedi_dictionary_iterator(item)
+
             else:
                 if 'TASKFILL' in value:
                     value_file = value.replace('TASKFILL', '')
+                    if 'observations' in jedi_config_dict:
+                        if 'observers' in jedi_config_dict['observations']:
+                            observations = []
+                            obs = self.config_get('observations')
+                            for ob in obs:
+                                # Get observation dictionary
+                                observations.append(self.open_jedi_interface_obs_config_file(ob))
+                            jedi_config_dict['observations']['observers'] = observations
+                
                     value_dict = self.open_jedi_interface_model_config_file(value_file)
                     jedi_config_dict[key] = value_dict
 

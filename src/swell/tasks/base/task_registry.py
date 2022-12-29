@@ -10,7 +10,7 @@ valid_tasks = [
   'BuildJedi',
   'CloneJedi',
   'GetBackground',
-  'RunJediHofXExecutable',
+  'RunJediHofxExecutable',
   'RunJediVariationalExecutable',
   'EvaDriver',
   'MergeIodaFiles',

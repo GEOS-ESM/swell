@@ -9,23 +9,22 @@ cost function:
     TASKFILLbackground
   background error:
     TASKFILLbackground_error
-  # observations:
-  #   observers:
-  #     TASKFILLobservations
+  observations:
+    observers:
+      TASKFILLobservations
 variational:
   minimizer:
-    {{minimizer}}
+    algorithm: {{minimizer}}
   iterations:
-  - ninner: {{number_of_iterations}}
-    gradient norm reduction: {{gradient_norm_reduction}}
-    geometry:
-      TASKFILLgeometry_inner
+  - geometry: TASKFILLgeometry_inner
+    gradient norm reduction: '{{gradient_norm_reduction}}'
+    ninner: '{{number_of_iterations}}'
     diagnostics:
       departures: ombg
 final:
   diagnostics:
     departures: oman
   prints:
-    frequency: PT3H
+    frequency: PT3H  #TODO: Define this as a default value in suite config
 output:
   TASKFILLanalysis

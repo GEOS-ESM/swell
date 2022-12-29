@@ -73,7 +73,7 @@ class RunJediHofXExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file):
+        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------

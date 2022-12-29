@@ -19,7 +19,7 @@ platform:
 
 # Type of suite to run
 suite_to_run:
-  default_value: hofx
+  default_value: 3dvar
   prompt: Choose the suite to run
   options: use_method
   type: file-drop-list
