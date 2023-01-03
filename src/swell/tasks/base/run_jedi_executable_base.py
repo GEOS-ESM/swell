@@ -32,7 +32,7 @@ class RunJediExecutableBase(taskBase):
     def jedi_dictionary_iterator(self, jedi_config_dict):
 
         # Loop over dictionary and replace if value is a dictionary, meanwhile
-        # check list objects for TASKFILL entries
+        # inquire list objects for dictionary items.
         # -----------------------------------------------------------
 
         for key, value in jedi_config_dict.items():

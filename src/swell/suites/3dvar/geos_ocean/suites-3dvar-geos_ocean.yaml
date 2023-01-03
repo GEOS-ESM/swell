@@ -53,11 +53,11 @@ observations:
 
   # Processor layout
 npx_proc:
-  default_value: '12'
+  default_value: '24'
   prompt: What processor layout (x-direction) per cube face?
   type: string
 npy_proc:
-  default_value: '1'
+  default_value: '15'
   prompt: What processor layout (y-direction) per cube face?
   type: string
 

@@ -1,6 +1,6 @@
 # Experiment name
 experiment_id:
-  default_value: swell-experiment
+  default_value: var3d
   prompt: Enter the experiment ID
   type: string
 

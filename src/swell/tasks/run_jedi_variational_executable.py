@@ -60,7 +60,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
         # ----------------------------
         np_string = self.use_config_to_template_string(total_processors)
         np = eval(np_string)
-        # exit()
+
         # Run the JEDI executable
         # -----------------------
         self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file)
