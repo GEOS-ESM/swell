@@ -30,7 +30,7 @@ interface_executable = {
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediHofXExecutable(RunJediExecutableBase):
+class RunJediHofxExecutable(RunJediExecutableBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -42,6 +42,7 @@ class RunJediHofXExecutable(RunJediExecutableBase):
         experiment_dir = self.config_get('experiment_dir')
         window_type = self.config_get('window_type')
         model = self.config_get('window_type')
+        suite_to_run = self.config_get('suite_to_run')
         total_processors = self.config_get('total_processors')
 
         # Jedi configuration file
@@ -50,7 +51,7 @@ class RunJediHofXExecutable(RunJediExecutableBase):
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
-        jedi_config_dict = self.generate_jedi_config(window_type)
+        jedi_config_dict = self.generate_jedi_config(suite_to_run,window_type)
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)

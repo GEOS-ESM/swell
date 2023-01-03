@@ -25,6 +25,7 @@ class RunJediExecutableBase(taskBase):
     @abstractmethod
     def execute(self):
         # This class does not execute, it provides helper function for the children
+        # ------------------------------------------------------------------------
         pass
 
     # ----------------------------------------------------------------------------------------------
@@ -63,7 +64,10 @@ class RunJediExecutableBase(taskBase):
 
     def generate_jedi_config(self, jedi_application, window_type):
 
+        jedi_application=jedi_application+window_type
+
         # Create dictionary from the templated JEDI config file
+        # -----------------------------------------------------
         jedi_config_dict = self.open_jedi_oops_config_file(jedi_application)
 
         # Observations is a special case. Add to dictionary if needed
