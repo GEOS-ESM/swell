@@ -48,6 +48,8 @@ class RunJediExecutableBase(taskBase):
             else:
                 if 'TASKFILL' in value:
                     value_file = value.replace('TASKFILL', '')
+                    # Observations is a special case. Add to dictionary if needed
+                    # -----------------------------------------------------------
                     if 'observations' in jedi_config_dict:
                         if 'observers' in jedi_config_dict['observations']:
                             observations = []
@@ -56,7 +58,6 @@ class RunJediExecutableBase(taskBase):
                                 # Get observation dictionary
                                 observations.append(self.open_jedi_interface_obs_config_file(ob))
                             jedi_config_dict['observations']['observers'] = observations
-                
                     value_dict = self.open_jedi_interface_model_config_file(value_file)
                     jedi_config_dict[key] = value_dict
 
@@ -64,11 +65,18 @@ class RunJediExecutableBase(taskBase):
 
     def generate_jedi_config(self, jedi_application, window_type):
 
-        jedi_application=jedi_application+window_type
+        # Var suite names are handled in variational executable
+        # -----------------------------------------------------
+        if 'var' not in jedi_application:
+            jedi_application=jedi_application+window_type
 
         # Create dictionary from the templated JEDI config file
         # -----------------------------------------------------
         jedi_config_dict = self.open_jedi_oops_config_file(jedi_application)
+
+        # Read configs for the rest of the dictionary
+        # -------------------------------------------
+        self.jedi_dictionary_iterator(jedi_config_dict)
 
         # Observations is a special case. Add to dictionary if needed
         # -----------------------------------------------------------
@@ -88,8 +96,6 @@ class RunJediExecutableBase(taskBase):
             model_dict = self.open_jedi_interface_model_config_file(model)
             jedi_config_dict['model'] = model_dict
 
-        # Read configs for the rest of the dictionary
-        self.jedi_dictionary_iterator(jedi_config_dict)
 
         return jedi_config_dict
 
