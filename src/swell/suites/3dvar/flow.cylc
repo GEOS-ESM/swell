@@ -35,8 +35,8 @@
                 {% if cycle_time[model_component] %}
                     GetBackground-{{model_component}} &
                     GetObservations-{{model_component}} &
-                    GenerateBClimatology-{{model_component}} &
                     StageJedi-{{model_component}}[^]
+                    => GenerateBClimatology-{{model_component}}
                     => RunJediVariationalExecutable-{{model_component}}
                     => MergeIodaFiles-{{model_component}}
                     => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
@@ -88,6 +88,12 @@
 
     [[GenerateBClimatology-{{model_component}}]]
         script = "swell_task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        [[[directives]]]
+            --account = {{scheduling["GenerateBClimatology"]["account"]}}
+            --qos = {{scheduling["GenerateBClimatology"]["qos"]}}
+            --job-name = GenerateBClimatology
+            --nodes={{scheduling["GenerateBClimatology"]["nodes"]}}
+            --ntasks-per-node={{scheduling["GenerateBClimatology"]["ntasks_per_node"]}}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"

@@ -59,6 +59,13 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
 
+    render_dictionary['scheduling']['GenerateBClimatology'] = {}
+    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT15M'
+    render_dictionary['scheduling']['GenerateBClimatology']['account'] = 'g0613'
+    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 15
+    render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
+    
     render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
     render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
@@ -67,7 +74,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 24
 
     render_dictionary['scheduling']['BuildJedi'] = {}
-    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT4H'
+    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT2H'
     render_dictionary['scheduling']['BuildJedi']['account'] = 'g0613'
     render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
     render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
