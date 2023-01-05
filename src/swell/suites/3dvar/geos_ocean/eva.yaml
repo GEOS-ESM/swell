@@ -14,35 +14,35 @@ diagnostics:
           - name: hofx1
           - name: ombg
           - name: oman
-          # - name: EffectiveQC
-          # - name: MetaData
+          - name: MetaData
+          - name: EffectiveQC0
 
-  # transforms:
+  transforms:
 
-  #   # Generate omb for JEDI
-  #   - transform: arithmetic
-  #     new name: experiment::ObsValueMinusHofx::${variable}
-  #     equals: experiment::ObsValue::${variable}-experiment::hofx::${variable}
-  #     for:
-  #       variable: *variables
+    # Generate Increment for JEDI
+    - transform: arithmetic
+      new name: experiment::increment::${variable}
+      equals: experiment::ombg::${variable}-experiment::oman::${variable}
+      for:
+        variable: *variables
 
-  #   # Generate hofx that passed QC for JEDI
-  #   - transform: accept where
-  #     new name: experiment::hofxPassedQc::${variable}
-  #     starting field: experiment::hofx::${variable}
-  #     where:
-  #       - experiment::EffectiveQC::${variable} == 0
-  #     for:
-  #       variable: *variables
+    # Generate hofx that passed QC for JEDI
+    - transform: accept where
+      new name: experiment::hofx0PassedQc::${variable}
+      starting field: experiment::hofx0::${variable}
+      where:
+        - experiment::EffectiveQC0::${variable} == 0
+      for:
+        variable: *variables
 
-  #   # Generate omb that passed QC for JEDI
-  #   - transform: accept where
-  #     new name: experiment::ObsValueMinushofxPassedQc::${variable}
-  #     starting field: experiment::ObsValueMinusHofx::${variable}
-  #     where:
-  #       - experiment::EffectiveQC::${variable} == 0
-  #     for:
-  #       variable: *variables
+    # Generate obs that passed QC for JEDI
+    - transform: accept where
+      new name: experiment::ObsValuePassedQc::${variable}
+      starting field: experiment::ObsValue::${variable}
+      where:
+        - experiment::EffectiveQC0::${variable} == 0
+      for:
+        variable: *variables
 
   graphics:
 
@@ -67,7 +67,7 @@ diagnostics:
             x:
               variable: experiment::ObsValue::${variable}
             y:
-              variable: experiment::hofx0::${variable}
+              variable: experiment::hofx0PassedQc::${variable}
             markersize: 5
             color: 'black'
             label: 'JEDI h(x) versus obs (all obs)'
@@ -93,18 +93,19 @@ diagnostics:
       plots:
         - add_xlabel: 'Difference in T [Celcius]'
           add_ylabel: 'Count'
+          set_xlim: [-10,10]
           add_legend:
             loc: 'upper left'
           statistics:
             data:
-              variable: experiment::ObsValue::${variable}
+              variable: experiment::oman::${variable}
             statistic list:
             - n
             - min
             - mean
             - max
             - std
-            # - name
+            - name
             kwargs:
               fontsize: 6
           layers:
@@ -115,6 +116,7 @@ diagnostics:
             label: 'observations minus background '
             bins: 100
             alpha: 0.5
+            range: [-10,10]
           - type: Histogram
             data:
               variable: experiment::oman::${variable}
@@ -123,73 +125,40 @@ diagnostics:
             bins: 100
             alpha: 0.5
             range: [-10,10]
-# # Map plots
-# # ---------
 
-#     # Observations
-#     - batch figure:
-#         variables: *variables
-#       dynamic options:
-#         - type: vminvmaxcmap
-#           data variable: experiment::ObsValue::${variable}
-#       figure:
-#         figure size: [20,10]
-#         layout: [1,1]
-#         title: 'Observations | {{instrument_title}} | Obs Value'
-#         output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/observations_{{instrument}}_${variable}.png'
-#       plots:
-#         - mapping:
-#             projection: plcarr
-#             domain: global
-#           add_map_features: ['coastline']
-#           add_colorbar:
-#             label: ObsValue
-#           add_grid:
-#           layers:
-#           - type: MapScatter
-#             longitude:
-#               variable: experiment::MetaData::longitude
-#             latitude:
-#               variable: experiment::MetaData::latitude
-#             data:
-#               variable: experiment::ObsValue::${variable}
-#             markersize: 2
-#             label: ObsValue
-#             colorbar: true
-#             cmap: ${dynamic_cmap}
-#             vmin: ${dynamic_vmin}
-#             vmax: ${dynamic_vmax}
+    # Map plots
+    # ---------
+    # Increment
+    - batch figure:
+        variables: *variables
+      dynamic options:
+        - type: vminvmaxcmap
+          data variable: experiment::ObsValue::${variable}
+      figure:
+        figure size: [20,10]
+        layout: [1,1]
+        title: 'Increment | {{instrument_title}} | Obs Value'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/observations_{{instrument}}_${variable}.png'
+      plots:
+        - mapping:
+            projection: plcarr
+            domain: global
+          add_map_features: ['coastline']
+          add_colorbar:
+            label: ObsValue
+          add_grid:
+          layers:
+          - type: MapScatter
+            longitude:
+              variable: experiment::MetaData::longitude
+            latitude:
+              variable: experiment::MetaData::latitude
+            data:
+              variable: experiment::increment::${variable}
+            markersize: 2
+            label: ObsValue
+            colorbar: true
+            cmap: ${dynamic_cmap}
+            vmin: ${dynamic_vmin}
+            vmax: ${dynamic_vmax}
 
-#     # omb jedi
-#     - batch figure:
-#         variables: *variables
-#       dynamic options:
-#         - type: vminvmaxcmap
-#           data variable: experiment::ObsValueMinusHofx::${variable}
-#       figure:
-#         figure size: [20,10]
-#         layout: [1,1]
-#         title: 'JEDI OmB | {{instrument_title}} | ${variable_title}'
-#         output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/omb_jedi_{{instrument}}_${variable}.png'
-#       plots:
-#         - mapping:
-#             projection: plcarr
-#             domain: global
-#           add_map_features: ['coastline']
-#           add_colorbar:
-#             label: '${variable}'
-#           add_grid:
-#           layers:
-#           - type: MapScatter
-#             longitude:
-#               variable: experiment::MetaData::longitude
-#             latitude:
-#               variable: experiment::MetaData::latitude
-#             data:
-#               variable: experiment::ObsValueMinusHofx::${variable}
-#             markersize: 2
-#             label: '${variable}'
-#             colorbar: true
-#             cmap: ${dynamic_cmap}
-#             vmin: ${dynamic_vmin}
-#             vmax: ${dynamic_vmax}

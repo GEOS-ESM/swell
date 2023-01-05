@@ -13,7 +13,6 @@ from abc import ABC, abstractmethod
 
 from swell.tasks.base.task_base import taskBase
 import os
-import json
 import subprocess
 
 # --------------------------------------------------------------------------------------------------
@@ -31,7 +30,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def jedi_dictionary_iterator(self, jedi_config_dict):
+    def jedi_dictionary_iterator(self, jedi_config_dict, window_type):
 
         # Loop over dictionary and replace if value is a dictionary, meanwhile
         # inquire list objects for dictionary items.
@@ -39,18 +38,33 @@ class RunJediExecutableBase(taskBase):
 
         for key, value in jedi_config_dict.items():
             if isinstance(value, dict):
-                self.jedi_dictionary_iterator(value)
+                self.jedi_dictionary_iterator(value,window_type)
 
             elif isinstance(value,list):
                 for item in value:
                     if isinstance(item, dict):
-                        self.jedi_dictionary_iterator(item)
+                        self.jedi_dictionary_iterator(item,window_type)
 
             else:
                 if 'TASKFILL' in value:
                     value_file = value.replace('TASKFILL', '')
                     value_dict = self.open_jedi_interface_model_config_file(value_file)
                     jedi_config_dict[key] = value_dict
+
+                elif 'SPECIAL' in value:
+                    value_special = value.replace('SPECIAL', '')
+                    if value_special == 'observations':
+                        observations = []
+                        obs = self.config_get('observations')
+                        for ob in obs:
+                            # Get observation dictionary
+                            observations.append(self.open_jedi_interface_obs_config_file(ob))
+                        jedi_config_dict[key] = observations
+
+                    elif value_special == 'model' and window_type == '4D':
+                        model = self.config_get('model')
+                        model_dict = self.open_jedi_interface_model_config_file(model)
+                        jedi_config_dict[key] = model_dict
 
     # ----------------------------------------------------------------------------------------------
 
@@ -67,37 +81,7 @@ class RunJediExecutableBase(taskBase):
 
         # Read configs for the rest of the dictionary
         # -------------------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict)
-
-        # COST FUNCTION Observations is a special case. Add to dictionary if needed
-        # -----------------------------------------------------------
-        if 'cost function' in jedi_config_dict: 
-            if 'observations' in jedi_config_dict['cost function']:
-                if 'observers' in jedi_config_dict['cost function']['observations']:
-                    observations = []
-                    obs = self.config_get('observations')
-                    for ob in obs:
-                        # Get observation dictionary
-                        observations.append(self.open_jedi_interface_obs_config_file(ob))
-                    jedi_config_dict['cost function']['observations']['observers'] = observations
-
-        # Observations is a special case. Add to dictionary if needed
-        # -----------------------------------------------------------
-        if 'observations' in jedi_config_dict:
-            if 'observers' in jedi_config_dict['observations']:
-                observations = []
-                obs = self.config_get('observations')
-                for ob in obs:
-                    # Get observation dictionary
-                    observations.append(self.open_jedi_interface_obs_config_file(ob))
-                jedi_config_dict['observations']['observers'] = observations
-
-        # Forecast model is a special case.  Add to dictionary if needed
-        # --------------------------------------------------------------
-        if window_type == "4D" and 'model' in jedi_config_dict:
-            model = self.config_get('model')
-            model_dict = self.open_jedi_interface_model_config_file(model)
-            jedi_config_dict['model'] = model_dict
+        self.jedi_dictionary_iterator(jedi_config_dict,window_type)
 
         return jedi_config_dict
 
@@ -114,7 +98,7 @@ class RunJediExecutableBase(taskBase):
         # Move to the cycle directory
         # ---------------------------
         os.chdir(cycle_dir)
-
+        
         # Execute
         # -------
         process = subprocess.Popen(command, stdout=subprocess.PIPE)

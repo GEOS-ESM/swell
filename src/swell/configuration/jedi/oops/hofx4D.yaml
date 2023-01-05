@@ -7,11 +7,11 @@ forecast length: {{window_length}}
 geometry:
   TASKFILLgeometry
 model:
-  SPECIALCASEmodel
+  SPECIALmodel
 initial condition:
   TASKFILLbackground
 observations:
   get values:
     TASKFILLgetvalues
   observers:
-    SPECIALCASEobservations
+    SPECIALobservations
