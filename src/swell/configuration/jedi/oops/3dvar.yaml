@@ -11,7 +11,7 @@ cost function:
     TASKFILLbackground_error
   observations:
     observers:
-      TASKFILLobservations
+      SPECIALobservations
 variational:
   minimizer:
     algorithm: {{minimizer}}

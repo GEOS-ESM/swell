@@ -15,7 +15,7 @@ diagnostics:
           - name: ombg
           - name: oman
           # - name: EffectiveQC
-          - name: MetaData
+          # - name: MetaData
 
   # transforms:
 
@@ -73,12 +73,56 @@ diagnostics:
             label: 'JEDI h(x) versus obs (all obs)'
           - type: Scatter
             x:
-              variable: experiment::ombg::${variable}
+              variable: experiment::ObsValue::${variable}
             y:
-              variable: experiment::oman::${variable}
+              variable: experiment::hofx1::${variable}
             markersize: 5
             color: 'red'
             label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+
+    # Histogram plots
+    # ---------------
+
+    # JEDI h(x) vs Observations
+    - batch figure:
+        variables: *variables
+      figure:
+        layout: [1,1]
+        title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
+      plots:
+        - add_xlabel: 'Difference in T [Celcius]'
+          add_ylabel: 'Count'
+          add_legend:
+            loc: 'upper left'
+          statistics:
+            data:
+              variable: experiment::ObsValue::${variable}
+            statistic list:
+            - n
+            - min
+            - mean
+            - max
+            - std
+            # - name
+            kwargs:
+              fontsize: 6
+          layers:
+          - type: Histogram
+            data:
+              variable: experiment::ombg::${variable}
+            color: 'red'
+            label: 'observations minus background '
+            bins: 100
+            alpha: 0.5
+          - type: Histogram
+            data:
+              variable: experiment::oman::${variable}
+            color: 'blue'
+            label: 'observations minus analysis'
+            bins: 100
+            alpha: 0.5
+            range: [-10,10]
 # # Map plots
 # # ---------
 

@@ -1,12 +1,12 @@
 # Cycle frequency
 cycle_times:
-  default_value: ['T00', 'T12']
+  default_value: ['T12']
   prompt: List all ocean cycle times, by middle of the window?
   type: iso-duration
 
 # Window length
 window_length:
-  default_value: 'PT12H'
+  default_value: 'P1D'
   prompt: Window length for ocean data assimilation
   type: iso-duration
 
@@ -37,16 +37,38 @@ analysis_variables:
   type: string
 
 obs_experiment:
-  default_value: s2s
+  default_value: s2s_v1
   prompt: Database providing the observations?
   type: string
 
 # Observations
 observations:
   default_value:
-  - adt
-  - insitus
-  - insitut
+  # Godas (NOAA) - Some of them give FillValue 999 warning
+  # - adt_3a_egm2008
+  # - adt_3b_egm2008
+  # - adt_c2_egm2008
+  # - adt_coperl4 (non eixsting obs?)
+  # - adt_j3_egm2008
+  # - adt_sa_egm2008
+
+
+  - sst_ostia
+  # - salt_profile_fnmoc
+  # - sss_smos_esa
+  # - sss_trak_fnmoc
+  # - sst_gmi_l3u
+  # - sst_ship_fnmoc
+  # - sst_trak_fnmoc
+  # - temp_profile_fnmoc
+
+  # Issues with the ObsValue
+  # - sst_amsr2_l3u
+
+  # ODAS (NASA)
+  # - adt
+  # - insitus
+  # - insitut
   prompt: Select ocean observations.
   options: use_method
   type: string-check-list
@@ -71,7 +93,7 @@ fixed_options:
     default_value: RPCG
     prompt: Minimizer to use for gradient descent
   number_of_iterations:
-    default_value: 10
+    default_value: 30
     prompt: Number of iterations to use in the minimization
   gradient_norm_reduction:
     default_value: 1e-10
@@ -80,13 +102,13 @@ fixed_options:
     default_value:  '{{npx_proc}} * {{npy_proc}}'
     prompt: Equation to compute total number of processors
   window_offset:
-    default_value:  PT6H
+    default_value:  PT12H
     prompt: Time from beginning to middle of the window
   analysis_forecast_window_offset:
-    default_value:  -PT6H
+    default_value:  -PT12H
     prompt: Time from the middle of the window when forecasts start
   background_time_offset:
-    default_value:  PT9H
+    default_value:  PT18H
     prompt: Time before the middle of the window that the background providing forecast began
   background_frequency:
     default_value:  PT1H
@@ -98,7 +120,7 @@ fixed_options:
     default_value: bump
     prompt: 'Method for calculating background error covariance'
   obs_provider:
-    default_value: odas
+    default_value: gdas_marine
     prompt: Database providing the observations.
   clean_patterns:
     default_value: ['*.nc4','*.txt']

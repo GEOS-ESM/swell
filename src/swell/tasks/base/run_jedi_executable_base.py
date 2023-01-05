@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 
 from swell.tasks.base.task_base import taskBase
 import os
+import json
 import subprocess
 
 # --------------------------------------------------------------------------------------------------
@@ -48,16 +49,6 @@ class RunJediExecutableBase(taskBase):
             else:
                 if 'TASKFILL' in value:
                     value_file = value.replace('TASKFILL', '')
-                    # Observations is a special case. Add to dictionary if needed
-                    # -----------------------------------------------------------
-                    if 'observations' in jedi_config_dict:
-                        if 'observers' in jedi_config_dict['observations']:
-                            observations = []
-                            obs = self.config_get('observations')
-                            for ob in obs:
-                                # Get observation dictionary
-                                observations.append(self.open_jedi_interface_obs_config_file(ob))
-                            jedi_config_dict['observations']['observers'] = observations
                     value_dict = self.open_jedi_interface_model_config_file(value_file)
                     jedi_config_dict[key] = value_dict
 
@@ -78,6 +69,18 @@ class RunJediExecutableBase(taskBase):
         # -------------------------------------------
         self.jedi_dictionary_iterator(jedi_config_dict)
 
+        # COST FUNCTION Observations is a special case. Add to dictionary if needed
+        # -----------------------------------------------------------
+        if 'cost function' in jedi_config_dict: 
+            if 'observations' in jedi_config_dict['cost function']:
+                if 'observers' in jedi_config_dict['cost function']['observations']:
+                    observations = []
+                    obs = self.config_get('observations')
+                    for ob in obs:
+                        # Get observation dictionary
+                        observations.append(self.open_jedi_interface_obs_config_file(ob))
+                    jedi_config_dict['cost function']['observations']['observers'] = observations
+
         # Observations is a special case. Add to dictionary if needed
         # -----------------------------------------------------------
         if 'observations' in jedi_config_dict:
@@ -95,7 +98,6 @@ class RunJediExecutableBase(taskBase):
             model = self.config_get('model')
             model_dict = self.open_jedi_interface_model_config_file(model)
             jedi_config_dict['model'] = model_dict
-
 
         return jedi_config_dict
 

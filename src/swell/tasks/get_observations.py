@@ -40,6 +40,7 @@ class GetObservations(taskBase):
         window_begin = self.config_get('window_begin')
         background_time = self.config_get('background_time')
         observations = self.config_get('observations')
+        window_length = self.config_get('window_length')
 
         # Loop over observation operators
         # -------------------------------
@@ -58,6 +59,7 @@ class GetObservations(taskBase):
                   target_file=target_file,
                   provider=provider,
                   obs_type=observation,
+                  time_window=window_length,
                   type='ob',
                   experiment=experiment)
 
