@@ -38,12 +38,12 @@ class RunJediExecutableBase(taskBase):
 
         for key, value in jedi_config_dict.items():
             if isinstance(value, dict):
-                self.jedi_dictionary_iterator(value,window_type)
+                self.jedi_dictionary_iterator(value, window_type)
 
-            elif isinstance(value,list):
+            elif isinstance(value, list):
                 for item in value:
                     if isinstance(item, dict):
-                        self.jedi_dictionary_iterator(item,window_type)
+                        self.jedi_dictionary_iterator(item, window_type)
 
             else:
                 if 'TASKFILL' in value:
@@ -73,7 +73,7 @@ class RunJediExecutableBase(taskBase):
         # Var suite names are handled in variational executable
         # -----------------------------------------------------
         if 'var' not in jedi_application:
-            jedi_application=jedi_application+window_type
+            jedi_application = jedi_application + window_type
 
         # Create dictionary from the templated JEDI config file
         # -----------------------------------------------------
@@ -81,7 +81,7 @@ class RunJediExecutableBase(taskBase):
 
         # Read configs for the rest of the dictionary
         # -------------------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict,window_type)
+        self.jedi_dictionary_iterator(jedi_config_dict, window_type)
 
         return jedi_config_dict
 
@@ -98,7 +98,7 @@ class RunJediExecutableBase(taskBase):
         # Move to the cycle directory
         # ---------------------------
         os.chdir(cycle_dir)
-        
+
         # Execute
         # -------
         process = subprocess.Popen(command, stdout=subprocess.PIPE)

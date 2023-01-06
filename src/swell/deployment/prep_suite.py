@@ -65,7 +65,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
     render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 15
     render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
-    
+
     render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
     render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'

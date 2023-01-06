@@ -11,4 +11,4 @@ window length: '{{window_length}}'
 
 observations:
   observers:
-    SPECIALCASEobservations
+    SPECIALobservations

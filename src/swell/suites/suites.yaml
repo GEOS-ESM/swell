@@ -1,6 +1,6 @@
 # Experiment name
 experiment_id:
-  default_value: var3d
+  default_value: hofx
   prompt: Enter the experiment ID
   type: string
 
@@ -19,7 +19,7 @@ platform:
 
 # Type of suite to run
 suite_to_run:
-  default_value: 3dvar
+  default_value: hofx
   prompt: Choose the suite to run
   options: use_method
   type: file-drop-list

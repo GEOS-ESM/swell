@@ -51,7 +51,7 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
-        jedi_config_dict = self.generate_jedi_config(suite_to_run,window_type)
+        jedi_config_dict = self.generate_jedi_config(suite_to_run, window_type)
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)

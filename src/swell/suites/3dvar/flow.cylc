@@ -88,6 +88,8 @@
 
     [[GenerateBClimatology-{{model_component}}]]
         script = "swell_task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
         [[[directives]]]
             --account = {{scheduling["GenerateBClimatology"]["account"]}}
             --qos = {{scheduling["GenerateBClimatology"]["qos"]}}
