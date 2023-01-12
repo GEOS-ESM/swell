@@ -7,19 +7,18 @@ covariance model: 'SocaError'
 analysis variables: {{analysis_variables}}
 date: '{{local_background_time_iso}}'
 bump:
-  verbosity: 'main'
-  datadir: '{{cycle_dir}}/background_error_model'
-  method: 'cor'
-  strategy: 'specific_univariate'
-  new_nicas: 1
-  write_nicas_local: 1
-  mask_check: 1
-  resol: 20.0
-  network: 0
+  io:
+    data directory: '{{cycle_dir}}/background_error_model'
+  drivers:
+    multivariate strategy: 'specific_univariate'
+    compute nicas: true
+    write local nicas: true
+  model:
+    do not cross mask boundaries: true
+  nicas:
+    resolution: 6.0
 correlation:
 - name: 'ocn'
-  base value: 300.0e3
-  rossby mult: 1.0
-  min grid mult: 2.0
-  min value: 200.0e3
+  base value: 840336.134453782
+  rossby mult: 0.280112045
   variables: {{analysis_variables}}
