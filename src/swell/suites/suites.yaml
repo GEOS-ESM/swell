@@ -1,6 +1,6 @@
 # Experiment name
 experiment_id:
-  default_value: swell-experiment
+  default_value: hofx
   prompt: Enter the experiment ID
   type: string
 
@@ -23,4 +23,3 @@ suite_to_run:
   prompt: Choose the suite to run
   options: use_method
   type: file-drop-list
-
