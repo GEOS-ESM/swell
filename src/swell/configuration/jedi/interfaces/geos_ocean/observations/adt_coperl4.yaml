@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.adt_coperl4.{{window_begin}}.nc4'
-  simulated variables: [absolute_dynamic_topography]
+  simulated variables: [absoluteDynamicTopography]
 obs operator:
   name: ADT
 obs error:
@@ -23,21 +23,21 @@ obs filters:
 # - *obs_land_mask
 # - filter: Domain Check
 #   where:
-#   - variable: {name: sea_area_fraction@GeoVaLs}
+#   - variable: {name: GeoVaLs}/sea_area_fraction
 #     minvalue: 0.9
 # Reject obs where ocean fraction is < 90%
 - filter: Domain Check
   action:
     name: reject
   where:
-  - variable: {name: sea_area_fraction@GeoVaLs}
+  - variable: {name: GeoVaLs}/sea_area_fraction
     minvalue: 0.9
 # Passivate obs where ocean fraction is > 90%
 - filter: Domain Check
   action:
     name: passivate
   where:
-  - variable: {name: sea_area_fraction@GeoVaLs}
+  - variable: {name: GeoVaLs}/sea_area_fraction
     maxvalue: 0.9
 # Reject obs outside of [-4.0m,4.0m]
 - filter: Bounds Check
@@ -47,5 +47,5 @@ obs filters:
   maxvalue: 4.0
 - filter: Domain Check
   where:
-  - variable: {name: distance_from_coast@GeoVaLs}
+  - variable: {name: GeoVaLs}/distance_from_coast
     minvalue: 100e3

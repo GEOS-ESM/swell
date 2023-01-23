@@ -10,4 +10,4 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.insitut.{{window_begin}}.nc4'
-  simulated variables: [sea_water_temperature]
+  simulated variables: [waterTemperature]

@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sss_smos_esa.{{window_begin}}.nc4'
-  simulated variables: [sea_surface_salinity]
+  simulated variables: [seaSurfaceSalinity]
 obs operator:
   name: Identity
 obs error:
@@ -23,7 +23,7 @@ obs filters:
 # - *obs_land_mask
 - filter: Domain Check
   where:
-  - variable: {name: sea_area_fraction@GeoVaLs}
+  - variable: {name: GeoVaLs}/sea_area_fraction
     minvalue: 0.9
 - filter: Bounds Check
   minvalue: 0.1
@@ -34,15 +34,15 @@ obs filters:
   action:
     name: passivate
   where:
-  - variable: {name: sea_surface_temperature@GeoVaLs}
+  - variable: {name: GeoVaLs}/sea_surface_temperature
     minvalue: 10.0
 - filter: Domain Check
   action:
     name: reject
   where:
-  - variable: {name: sea_surface_salinity@ObsError}
+  - variable: {name: ObsError}/seaSurfaceSalinity
     maxvalue: 0.87
 - filter: Domain Check
   where:
-  - variable: {name: distance_from_coast@GeoVaLs}
+  - variable: {name: GeoVaLs}/distance_from_coast
     minvalue: 100e3
