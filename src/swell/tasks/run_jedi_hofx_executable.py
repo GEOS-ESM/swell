@@ -49,6 +49,10 @@ class RunJediHofxExecutable(RunJediExecutableBase):
         # -----------------------
         jedi_config_file = os.path.join(cycle_dir, 'jedi_hofx_config.yaml')
 
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.txt')
+
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
         jedi_config_dict = self.generate_jedi_config(suite_to_run, window_type)
@@ -74,7 +78,7 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file)
+        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file, output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------
