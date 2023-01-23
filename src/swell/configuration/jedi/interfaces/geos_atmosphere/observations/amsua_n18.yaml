@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n18.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &amsua_n18_channels 1-15
 obs operator:
   name: CRTM
@@ -25,7 +25,7 @@ obs bias:
   variational bc:
     predictors:
     - name: constant
-    - name: cloud_liquid_water
+    - name: cloudWaterContent
       sensor: AMSUA
       clwdif_ch238: 1
       clwdif_ch314: 2
@@ -46,10 +46,10 @@ obs filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-6,15
     test variables:
-    - name: ObsValue/brightness_temperature
+    - name: ObsValue/brightnessTemperature
       channels: 1-6,15
     treat missing as out of bounds: true
     minvalue: 100.0
@@ -59,17 +59,17 @@ obs filters:
 # All channels unreasonable values check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     minvalue: 100.0
     maxvalue: 500.0
 #  Hydrometeor Check (cloud/precipitation affected chanels)
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     test variables:
-    - name: HydrometeorCheckAMSUAclr@ObsFunction
+    - name: ObsFunction/HydrometeorCheckAMSUAclr
       channels: 1-15
       options:
         sensor: *Sensor_ID
@@ -81,7 +81,7 @@ obs filters:
 # Assign obs error
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     action:
       name: assign error
@@ -92,12 +92,12 @@ obs filters:
 # Topography check
   - filter: BlackList
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorTopoRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTopoRad
         channels: 1-15
         options:
           sensor: *Sensor_ID
@@ -105,24 +105,24 @@ obs filters:
 # Transmittance Top Check
   - filter: BlackList
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorTransmitTopRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
         channels: 1-15
         options:
           channels: 1-15
 # Surface Jacobian check
   - filter: BlackList
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     action:
       name: inflate error
       inflation variable:
-        name: ObsErrorFactorSurfJacobianRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
         channels: 1-15
         options:
           channels: 1-15
@@ -134,25 +134,25 @@ obs filters:
 # Gross check
   - filter: Background Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     function absolute threshold:
-    - name: ObsErrorBoundMW@ObsFunction
+    - name: ObsFunction/ObsErrorBoundMW
       channels: 1-15
       options:
         sensor: *Sensor_ID
         channels: 1-15
         obserr_bound_latitude:
-          name: ObsErrorFactorLatRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorLatRad
           options:
             latitude_parameters: [25.0, 0.25, 0.04, 3.0]
         obserr_bound_transmittop:
-          name: ObsErrorFactorTransmitTopRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
           channels: 1-15
           options:
             channels: 1-15
         obserr_bound_topo:
-          name: ObsErrorFactorTopoRad@ObsFunction
+          name: ObsFunction/ObsErrorFactorTopoRad
           channels: 1-15
           options:
             channels: 1-15
@@ -169,10 +169,10 @@ obs filters:
 # Inter-channel check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     test variables:
-    - name: InterChannelConsistencyCheck@ObsFunction
+    - name: ObsFunction/InterChannelConsistencyCheck
       channels: 1-15
       options:
         channels: 1-15
@@ -187,10 +187,10 @@ obs filters:
 #  Useflag check
   - filter: Bounds Check
     filter variables:
-    - name: brightness_temperature
+    - name: brightnessTemperature
       channels: 1-15
     test variables:
-    - name: ChannelUseflagCheckRad@ObsFunction
+    - name: ObsFunction/ChannelUseflagCheckRad
       channels: 1-15
       options:
         channels: 1-15

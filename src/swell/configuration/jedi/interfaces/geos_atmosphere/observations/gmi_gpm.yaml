@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gmi_gpm.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &gmi_gpm_channels 1-13
 obs operator:
   name: CRTM
@@ -37,71 +37,71 @@ obs bias:
 ##  - name: cosine_of_latitude_times_orbit_node
 ##  - name: sine_of_latitude
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 4
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 3
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 2
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
 obs filters:
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-9
   minvalue: 50.0
   maxvalue: 320.0
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 10,11,12,13
   minvalue: 70.0
   maxvalue: 320.0
 - filter: Domain Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-13
   where:
   - variable:
-      name: scan_position@MetaData
+      name: MetaData/sensorScanPosition
     minvalue: 5
     maxvalue: 70
   - variable:
-      name: latitude@MetaData
+      name: MetaData/latitude
     minvalue: -55.0
     maxvalue: 55.0
   - variable:
-      name: height_above_mean_sea_level@MetaData
+      name: MetaData/height
     maxvalue: 2000
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     minvalue: 0.99
   - variable:
-      name: surface_temperature_where_sea@GeoVaLs
+      name: GeoVaLs/surface_temperature_where_sea
     minvalue: 275
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 5,6,7,10,12,13
   where:
   - variable:
-      name: latitude@MetaData
+      name: MetaData/latitude
     minvalue: -25.0
     maxvalue: 0.0
   - variable:
-      name: longitude@MetaData
+      name: MetaData/longitude
     minvalue: 25.0
     maxvalue: 40.0
 #  CLW Retrieval Check from ObsValue
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-13
   test variables:
-  - name: CLWRetMW@ObsFunction
+  - name: ObsFunction/CLWRetMW
     options:
       clwret_ch37v: 6
       clwret_ch37h: 7
@@ -112,10 +112,10 @@ obs filters:
 #  Ckeck CLW retrievals from Hofx
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-13
   test variables:
-  - name: CLWRetMW@ObsFunction
+  - name: ObsFunction/CLWRetMW
     options:
       clwret_ch37v: 6
       clwret_ch37h: 7
@@ -126,17 +126,17 @@ obs filters:
 # Assign observational error in all-sky DA.
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 5,6,7,10,12,13
   action:
     name: assign error
     error function:
-      name: ObsErrorModelRamp@ObsFunction
+      name: ObsFunction/ObsErrorModelRamp
       channels: 5,6,7,10,12,13
       options:
         channels: 5,6,7,10,12,13
         xvar:
-          name: CLWRetSymmetricMW@ObsFunction
+          name: ObsFunction/CLWRetSymmetricMW
           options:
             clwret_ch37v: 6
             clwret_ch37h: 7
@@ -156,6 +156,6 @@ obs filters:
 - filter: Background Check
   apply at iterations: 0, 1
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 5,6,7,10,12,13
   threshold: 2.0

@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.seviri_m11.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &seviri_m11_channels 4-11
 obs operator:
   name: CRTM
@@ -29,21 +29,21 @@ obs bias:
       tlapse: *seviri_m11_tlapse
     - name: emissivity
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 4
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 3
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 2
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
 obs filters:
 #  Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   minvalue: 50.00001
   maxvalue: 449.99999
@@ -53,61 +53,61 @@ obs filters:
 # ch2 and ch3 in GSI should be the original seviri ch5 and ch6
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 4,7-11
   where:
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
 # Do not use ch5,6 over snow
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   where:
   - variable:
-      name: surface_snow_area_fraction@GeoVaLs
+      name: GeoVaLs/surface_snow_area_fraction
     minvalue: 0.01
 # Do not use ch5,6 over ice
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   where:
   - variable:
-      name: ice_area_fraction@GeoVaLs
+      name: GeoVaLs/ice_area_fraction
     minvalue: 0.01
 # Do not use over mixed surface
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   where:
   - variable:
-      name: land_area_fraction@GeoVaLs
+      name: GeoVaLs/land_area_fraction
     maxvalue: 0.99
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
   - variable:
-      name: ice_area_fraction@GeoVaLs
+      name: GeoVaLs/ice_area_fraction
     maxvalue: 0.99
   - variable:
-      name: surface_snow_area_fraction@GeoVaLs
+      name: GeoVaLs/surface_snow_area_fraction
     maxvalue: 0.99
 # QC_terrain: If seviri and terrain height > 1km. do not use
 - filter: Domain Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   where:
   - variable:
-      name: surface_geopotential_height@GeoVaLs
+      name: GeoVaLs/surface_geopotential_height
     maxvalue: 1000.0
 # Gross check
 - filter: Background Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   absolute threshold: 2.0
   action:
@@ -115,12 +115,12 @@ obs filters:
 #  Surface Jacobians Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorSurfJacobianRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorSurfJacobianRad
       channels: *seviri_m11_channels
       options:
         channels: *seviri_m11_channels
@@ -130,10 +130,10 @@ obs filters:
 # Useflag Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *seviri_m11_channels
   test variables:
-  - name: ChannelUseflagCheckRad@ObsFunction
+  - name: ObsFunction/ChannelUseflagCheckRad
     channels: *seviri_m11_channels
     options:
       channels: *seviri_m11_channels

@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.mls55_aura.{{window_begin}}.nc4'
-  simulated variables: [mole_fraction_of_ozone_in_air]
+  simulated variables: [ozoneLayer]
 obs operator:
   name: VertInterp
   vertical coordinate: air_pressure
@@ -16,7 +16,7 @@ obs filters:
   # range sanity check
   - filter: Bounds Check
     filter variables:
-    - name: mole_fraction_of_ozone_in_air
+    - name: ozoneLayer
     minvalue: 0
     maxvalue: 10000
     action:
@@ -24,7 +24,7 @@ obs filters:
   # threshold is really threshold*observation error (threshold= relative threshold)
   - filter: Background Check
     filter variables:
-    - name: mole_fraction_of_ozone_in_air
+    - name: ozoneLayer
     threshold: 5.0
     action:
       name: reject
