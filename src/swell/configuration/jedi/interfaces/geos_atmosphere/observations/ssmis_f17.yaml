@@ -22,7 +22,7 @@ obs bias:
   variational bc:
     predictors:
     - name: constant
-    - name: cloudWaterContent
+    - name: cloud_liquid_water
       satellite: SSMIS
       ch19h: 12
       ch19v: 13

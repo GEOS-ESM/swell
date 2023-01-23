@@ -1,5 +1,6 @@
 obs operator:
   name: SfcPCorrected
+  observation alias file: {{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml
   da_psfc_scheme: UKMO
 obs space:
   name: sfcship

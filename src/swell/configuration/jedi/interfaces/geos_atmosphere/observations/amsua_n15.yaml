@@ -25,7 +25,7 @@ obs bias:
   variational bc:
     predictors:
     - name: constant
-    - name: cloudWaterContent
+    - name: cloud_liquid_water
       sensor: AMSUA
       clwdif_ch238: 1
       clwdif_ch314: 2
