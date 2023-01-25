@@ -67,7 +67,7 @@ class CloneJedi(taskBase):
             # Perform the clone of JEDI repos
             try:
                 execute_tasks(['clone'], jedi_bundle_dict)
-            except:
+            except Exception:
                 self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
 
         else:
