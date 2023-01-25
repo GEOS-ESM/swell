@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import importlib
 import os
 import pathlib
@@ -55,7 +56,7 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_swell_path_in_modules(logger, exp_suite_path):
+def template_modules_file(logger, experiment_dict, exp_suite_path):
 
     # Modules file
     # ------------
@@ -81,10 +82,10 @@ def set_swell_path_in_modules(logger, exp_suite_path):
 
         # Dictionary of definitions
         # -------------------------
-        swell_paths = {}
-        swell_paths['swell_bin_path'] = swell_bin_path
-        swell_paths['swell_lib_path'] = swell_lib_path
-        swell_paths['swell_sui_path'] = swell_sui_path
+        modules_dict = copy.copy(experiment_dict)
+        modules_dict['swell_bin_path'] = swell_bin_path
+        modules_dict['swell_lib_path'] = swell_lib_path
+        modules_dict['swell_sui_path'] = swell_sui_path
 
         # Open the file
         # -------------
@@ -93,7 +94,7 @@ def set_swell_path_in_modules(logger, exp_suite_path):
 
         # Resolve templates
         # -----------------
-        modules_file_str = template_string_jinja2(logger, modules_file_str, swell_paths)
+        modules_file_str = template_string_jinja2(logger, modules_file_str, modules_dict)
 
         # Overwrite the file
         # ------------------

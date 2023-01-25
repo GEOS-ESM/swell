@@ -14,6 +14,7 @@ obs operator:
   geovals: [mole_fraction_of_ozone_in_air]
   coefficients: [0.0078976797] # convert from ppmv to DU (Wargan approved value)
   nlevels: [1]
+  observation alias file: {{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml
 obs filters:
 - filter: Perform Action
   filter variables:

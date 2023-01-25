@@ -20,15 +20,17 @@ module load jedi-fv3-env/1.0.0
 module load nco/5.0.6
 module load sp/2.3.3
 
-module use -a /discover/nobackup/gmao_ci/swell/nightly/modulefiles/
-module load jedi-swell/latest
+# Add IODA to PYTHONPATH in case it is needed
+# -------------------------------------------
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
 
 # Load workflow modules
 # ---------------------
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.5
-module load eva/1.2.2
+module load eva/1.3.2
 module load jedi_bundle/1.0.7
 
 # Set the swell paths

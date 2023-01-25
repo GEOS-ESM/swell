@@ -17,7 +17,7 @@ import yaml
 
 from swell.deployment.prep_config import prepare_config
 from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
-                                           set_swell_path_in_modules, create_modules_csh
+                                           template_modules_file, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get
@@ -101,7 +101,7 @@ def main(config):
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
-    set_swell_path_in_modules(logger, exp_suite_path)
+    template_modules_file(logger, experiment_dict, exp_suite_path)
     create_modules_csh(logger, exp_suite_path)
 
     # Set the jinja2 file for cylc

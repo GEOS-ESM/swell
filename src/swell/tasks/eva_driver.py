@@ -14,7 +14,7 @@ import yaml
 from eva.eva_base import eva
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.dictionary import remove_matching_keys
+from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 
@@ -56,6 +56,12 @@ class EvaDriver(taskBase):
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
+            # Append obs file with _0000
+            obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
+            obs_path_file = obs_path_file_name + '_0000' + obs_path_file_ext
+
+            print('obs_path_file', obs_path_file)
+
             # Get instrument ioda and full name
             ioda_name = observation
             full_name = ioda_name_to_long_name(ioda_name, self.logger)
@@ -92,6 +98,7 @@ class EvaDriver(taskBase):
             if not need_channels:
                 remove_matching_keys(eva_dict, 'channel')
                 remove_matching_keys(eva_dict, 'channels')
+                eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')
 
             # Write eva dictionary to file
             # ----------------------------

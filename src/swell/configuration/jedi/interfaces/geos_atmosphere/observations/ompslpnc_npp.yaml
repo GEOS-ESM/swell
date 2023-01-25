@@ -13,6 +13,7 @@ obs operator:
   name: VertInterp
   vertical coordinate: ["air_pressure"]
   geovals: [mole_fraction_of_ozone_in_air]
+  observation alias file: {{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml
 obs filters:
   # range sanity check
   - filter: Bounds Check

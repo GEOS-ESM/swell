@@ -29,5 +29,11 @@ variable maps:
     alias: sea_water_salinity
   - name: seaSurfaceTemperature
     alias: sea_surface_temperature
-  - name: ozoneProfile
+  - name: ozoneLayer
     alias: mole_fraction_of_ozone_in_air
+  - name: ozoneTotal
+    alias: integrated_layer_ozone_in_air
+  # This came from fv3-jedi but not sure it is needed and it seems to be the same maping as
+  # ozoneLayer
+  #- name: ozoneProfile
+  #  alias: mole_fraction_of_ozone_in_air

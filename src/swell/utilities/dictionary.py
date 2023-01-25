@@ -104,3 +104,15 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
 
 # --------------------------------------------------------------------------------------------------
+
+
+def replace_string_in_dictionary(dictionary, string_in, string_out):
+
+    # Convert dictionary to string
+    dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
+
+    # Replace string in the dictionary
+    dictionary_string = dictionary_string.replace(string_in, string_out)
+
+    # Convert back to dictionary
+    return yaml.safe_load(dictionary_string)
