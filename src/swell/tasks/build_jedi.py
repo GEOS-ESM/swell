@@ -57,12 +57,15 @@ class BuildJedi(taskBase):
                                                       jedi_bundle_build_path, 24)
 
             # Perform the clone of JEDI repos
-            execute_tasks(['configure', 'make'], jedi_bundle_dict)
+            try:
+                execute_tasks(['configure', 'make'], jedi_bundle_dict)
+            except:
+                self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
 
         else:
 
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
-                              f'experiment dictionary. Must be \'use_existing\' or \'create\'.')
+                              f'experiment dictionary. Must be \'create\'.')
 
 
 # --------------------------------------------------------------------------------------------------

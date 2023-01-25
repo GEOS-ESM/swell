@@ -63,7 +63,7 @@ class BuildJediByLinking(taskBase):
         else:
 
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
-                              f'experiment dictionary. Must be \'use_existing\' or \'create\'.')
+                              f'experiment dictionary. Must be \'use_existing\'.')
 
 
 # --------------------------------------------------------------------------------------------------

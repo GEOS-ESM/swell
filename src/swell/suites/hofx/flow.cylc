@@ -30,10 +30,10 @@
             CloneJedi
 
             # Build JEDI source code by linking
-            CloneJedi => BuildJediByLinking
+            CloneJedi => BuildJediByLinking?
 
             # If not able to link to build create the build
-            #BuildJediByLinking:fail? => BuildJedi
+            BuildJediByLinking:fail? => BuildJedi
 
             {% for model_component in model_components %}
             # Stage JEDI static files
@@ -54,7 +54,7 @@
             GetObservations-{{model_component}}
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^] => RunJediHofxExecutable-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
@@ -95,17 +95,17 @@
     [[BuildJediByLinking]]
         script = "swell_task BuildJediByLinking $config"
 
-#    [[BuildJedi]]
-#        script = "swell_task BuildJedi $config"
-#        platform = {{platform}}
-#        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
-#        [[[directives]]]
-#            --account = {{scheduling["BuildJedi"]["account"]}}
-#            --qos = {{scheduling["BuildJedi"]["qos"]}}
-#            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
-#            --job-name = BuildJedi
-#            --nodes={{scheduling["BuildJedi"]["nodes"]}}
-#            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+    [[BuildJedi]]
+        script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
