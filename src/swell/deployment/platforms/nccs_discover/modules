@@ -37,3 +37,9 @@ module load jedi_bundle/1.0.7
 # -------------------
 PATH={{swell_bin_path}}:$PATH
 PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
+
+# Unlimited Stacksize
+# -------------------
+ulimit -S -s unlimited
+ulimit -S -v unlimited
+umask 022
