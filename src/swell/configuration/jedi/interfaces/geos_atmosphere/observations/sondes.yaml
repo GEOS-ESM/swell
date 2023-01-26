@@ -1,6 +1,5 @@
 obs space:
   name: sondes
-  observation alias file: {{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml
   obsdatain:
     engine:
       type: H5File
@@ -18,6 +17,7 @@ obs operator:
   name: Composite
   components:
    - name: VertInterp
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
      variables:
      - name: airTemperature
      - name: specificHumidity

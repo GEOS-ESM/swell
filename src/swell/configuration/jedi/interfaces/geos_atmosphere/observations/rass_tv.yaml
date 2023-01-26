@@ -1,6 +1,6 @@
 obs operator:
   name: VertInterp
-  observation alias file: {{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs space:
   name: rass_tv
   obsdatain:
