@@ -1,5 +1,6 @@
 obs operator:
   name: MarineVertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs space:
   name: InsituSalinity
   obsdatain:
@@ -10,4 +11,4 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.insitus.{{window_begin}}.nc4'
-  simulated variables: [sea_water_salinity]
+  simulated variables: [salinity]

@@ -42,7 +42,7 @@ background_experiment:
 
 # Observation experiment
 obs_experiment:
-  default_value: x0044_jjin_20220520
+  default_value: x0044_v3
   prompt: Experiment providing the observations?
   type: string
 

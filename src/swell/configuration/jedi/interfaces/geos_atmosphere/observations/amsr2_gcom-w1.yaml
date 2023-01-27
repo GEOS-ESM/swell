@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsr2_gcom-w1.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &amsr2_gcom-w1_channels 1-14
 obs operator:
   name: CRTM
@@ -34,62 +34,62 @@ obs bias:
       tlapse: *amsr2_gcom-w1_tlapse
     - name: emissivity
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 4
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 3
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
       order: 2
     - name: scan_angle
-      var_name: scan_position
+      var_name: sensorScanPosition
 obs filters:
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   minvalue: 50.0
   maxvalue: 340.0
 - filter: Domain Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   where:
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     minvalue: 0.999
   - variable:
-      name: surface_temperature_where_sea@GeoVaLs
+      name: GeoVaLs/surface_temperature_where_sea
     minvalue: 275
   - variable:
-      name: surface_wind_speed@GeoVaLs
+      name: GeoVaLs/surface_wind_speed
     maxvalue: 12
   - variable:
-      name: latitude@MetaData
+      name: MetaData/latitude
     minvalue: -60.0
     maxvalue: 60.0
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   test variables:
-  - name: TotalColumnVaporGuess@ObsFunction
+  - name: ObsFunction/TotalColumnVaporGuess
   minvalue: 10.0
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   test variables:
-  - name: SunGlintAngle@ObsFunction
+  - name: ObsFunction/SunGlintAngle
   minvalue: 20.0
 #  Ckeck CLW retrievals from observations
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   test variables:
-  - name: CLWRetMW@ObsFunction
+  - name: ObsFunction/CLWRetMW
     options:
       clwret_ch18v: 7
       clwret_ch18h: 8
@@ -104,10 +104,10 @@ obs filters:
 #  Ckeck CLW retrievals from HofX
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   test variables:
-  - name: CLWRetMW@ObsFunction
+  - name: ObsFunction/CLWRetMW
     options:
       clwret_ch18v: 7
       clwret_ch18h: 8
@@ -118,10 +118,10 @@ obs filters:
   maxvalue: 1.0
 - filter: Difference Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   value:
-    name: CLWRetMW@ObsFunction
+    name: ObsFunction/CLWRetMW
     options:
       clwret_ch18v: 7
       clwret_ch18h: 8
@@ -130,7 +130,7 @@ obs filters:
       sys_bias: *amsr2_sys_bias
       clwret_types: [ObsValue]
   reference:
-    name: CLWRetMW@ObsFunction
+    name: ObsFunction/CLWRetMW
     options:
       clwret_ch18v: 7
       clwret_ch18h: 8
@@ -142,17 +142,17 @@ obs filters:
   maxvalue: 0.5
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   action:
     name: assign error
     error function:
-      name: ObsErrorModelRamp@ObsFunction
+      name: ObsFunction/ObsErrorModelRamp
       channels: 1-14
       options:
         channels: 1-14
         xvar:
-          name: CLWRetSymmetricMW@ObsFunction
+          name: ObsFunction/CLWRetSymmetricMW
           options:
             clwret_ch18v: 7
             clwret_ch18h: 8
@@ -175,7 +175,7 @@ obs filters:
 - filter: Background Check
   apply at iterations: 0, 1
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1-14
   threshold: 2.0
   action:
@@ -183,7 +183,7 @@ obs filters:
 - filter: Background Check
   apply at iterations: 0, 1
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 7-10
   absolute threshold: 30
   action:
@@ -191,7 +191,7 @@ obs filters:
 - filter: Background Check
   apply at iterations: 0, 1
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 11-14
   absolute threshold: 50
   action:

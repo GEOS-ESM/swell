@@ -13,12 +13,12 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sfc.{{window_begin}}.nc4'
-  simulated variables: [surface_pressure] #, air_temperature]
+  simulated variables: [stationPressure] #, airTemperature]
 obs filters:
 # Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   minvalue: 37499
   maxvalue: 106999
   action:
@@ -31,53 +31,53 @@ obs filters:
 # Assign obsError.
 - filter: BlackList
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: assign error
     error parameter: 120             # 120 Pa (1.2mb)
 #
 - filter: BlackList
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: assign error
     error function:
-      name: ObsErrorModelStepwiseLinear@ObsFunction
+      name: ObsFunction/ObsErrorModelStepwiseLinear
       options:
         xvar:
-          name: surface_pressure@ObsValue
+          name: ObsValue/stationPressure
         xvals: [80000, 75000]
         errors: [110, 120]
   where:
   - variable:
-      name: surface_pressure@ObsType
+      name: ObsType/stationPressure
     is_in: 181          # Type is SYNOP
 #
 - filter: BlackList
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: assign error
     error function:
-      name: ObsErrorModelStepwiseLinear@ObsFunction
+      name: ObsFunction/ObsErrorModelStepwiseLinear
       options:
         xvar:
-          name: surface_pressure@ObsValue
+          name: ObsValue/stationPressure
         xvals: [85000, 80000]
         errors: [120, 140]
   where:
   - variable:
-      name: surface_pressure@ObsType
+      name: ObsType/stationPressure
     is_in: 187          # Type is METAR
 #
 # Inflate ObsError as it is done with GSI
 - filter: BlackList
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorSfcPressure@ObsFunction
+      name: ObsFunction/ObsErrorFactorSfcPressure
       options:
 #       original_obserr: ObsError
         error_min: 100         # 1 mb
@@ -87,38 +87,38 @@ obs filters:
 # If the ObsError is inflated too much, reject the obs
 - filter: Bounds Check
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: reject
   maxvalue: 3.6
   test variables:
-  - name: ObsErrorFactorQuotient@ObsFunction
+  - name: ObsFunction/ObsErrorFactorQuotient
     options:
       numerator:
-        name: surface_pressure@ObsErrorData   # After inflation step
+        name: ObsErrorData/stationPressure   # After inflation step
       denominator:
-        name: surface_pressure@ObsError
+        name: ObsError/stationPressure
   defer to post: true
   where:
   - variable:
-      name: surface_pressure@ObsType
+      name: ObsType/stationPressure
     is_in: 181          # Type is SYNOP
 #
 - filter: Bounds Check
   filter variables:
-  - name: surface_pressure
+  - name: stationPressure
   action:
     name: reject
   maxvalue: 4.0
   test variables:
-  - name: ObsErrorFactorQuotient@ObsFunction
+  - name: ObsFunction/ObsErrorFactorQuotient
     options:
       numerator:
-        name: surface_pressure@ObsErrorData   # After inflation step
+        name: ObsErrorData/stationPressure   # After inflation step
       denominator:
-        name: surface_pressure@ObsError
+        name: ObsError/stationPressure
   defer to post: true
   where:
   - variable:
-      name: surface_pressure@ObsType
+      name: ObsType/stationPressure
     is_in: 187          # Type is METAR

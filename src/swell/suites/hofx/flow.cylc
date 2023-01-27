@@ -24,26 +24,54 @@
 
     [[graph]]
         R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
             {% for model_component in model_components %}
-                CloneJedi => BuildJedi => StageJedi-{{model_component}}
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}}
             {% endfor %}
-            """
+        """
 
         {% for cycle_time in cycle_times %}
-            {{cycle_time.cycle_time}} = """
-            {% for model_component in model_components %}
-                {% if cycle_time[model_component] %}
-                    GetBackground-{{model_component}} &
-                    GetObservations-{{model_component}} &
-                    StageJedi-{{model_component}}[^]
-                    => RunJediHofxExecutable-{{model_component}}
-                    => MergeIodaFiles-{{model_component}}
-                    => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
-                    => CleanCycle-{{model_component}}
-                {% endif %}
-            {% endfor %}
-            """
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Get background
+            GetBackground-{{model_component}}
 
+            # Get observations
+            GetObservations-{{model_component}}
+
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+
+            # Evadriver
+            RunJediHofxExecutable-{{model_component}} => EvaDriver-{{model_component}}
+
+            # Save observations
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
+        {% endif %}
+        {% endfor %}
+        """
         {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
@@ -63,6 +91,9 @@
     # -----
     [[CloneJedi]]
         script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
 
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
@@ -97,9 +128,6 @@
             --job-name = RunJediHofxExecutable
             --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
-
-    [[MergeIodaFiles-{{model_component}}]]
-        script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
 
     [[EvaDriver-{{model_component}}]]
         script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
