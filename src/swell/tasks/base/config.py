@@ -65,6 +65,8 @@ class Config():
                                       f'experiment configuration')
             # Extract the model specific part of the config
             model_config = self.__config__['models'][self.__model__]
+            # Add model component to config
+            self.__config__['model_component'] = self.__model__
         else:
             model_config = {}
 

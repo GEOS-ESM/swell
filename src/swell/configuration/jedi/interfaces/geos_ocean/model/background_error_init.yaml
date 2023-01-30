@@ -10,7 +10,7 @@ bump:
   io:
     data directory: '{{cycle_dir}}/background_error_model'
   drivers:
-    multivariate strategy: 'specific_univariate'
+    multivariate strategy: 'univariate'
     compute nicas: true
     write local nicas: true
   model:

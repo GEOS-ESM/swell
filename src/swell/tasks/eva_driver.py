@@ -56,6 +56,10 @@ class EvaDriver(taskBase):
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
+            # Append obs file with _0000
+            obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
+            obs_path_file = obs_path_file_name + '_0000' + obs_path_file_ext
+
             # Get instrument ioda and full name
             ioda_name = observation
             full_name = ioda_name_to_long_name(ioda_name, self.logger)

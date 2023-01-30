@@ -11,7 +11,7 @@ bump:
   io:
     data directory: '{{cycle_dir}}/background_error_model/'
   drivers:
-    multivariate strategy: 'specific_univariate'
+    multivariate strategy: 'univariate'
     read local nicas: true
 correlation:
 - name: 'ocn'
