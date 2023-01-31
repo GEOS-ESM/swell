@@ -21,4 +21,3 @@ variable maps:
     alias: sea_surface_biomass_in_p_units
   - name: waveHeightSignificant
     alias: sea_surface_wave_significant_height
-  
