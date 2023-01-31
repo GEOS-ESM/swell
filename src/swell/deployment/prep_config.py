@@ -24,62 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def platform_fill(logger, method, experiment_dict, ci_cd, comment_dict):
-
-    # Get platform
-    platform = experiment_dict['platform']
-
-    # Open platform experiment.yaml
-    platform_exp_file = os.path.join(get_swell_path(), 'deployment', 'platforms', platform,
-                                     'experiment.yaml')
-
-    with open(platform_exp_file, 'r') as platform_exp_file_open:
-        platform_exp_templated = platform_exp_file_open.read()
-
-    # Resolve any templates
-    platform_exp_str = template_string_jinja2(logger, platform_exp_templated, experiment_dict)
-
-    # Load to dictionary
-    platform_dict = yaml.safe_load(platform_exp_str)
-
-    # Copy experiment dictionary
-    experiment_dict_new = experiment_dict
-
-    # Set platform dictionary to use
-    dict_to_use = 'default'
-    if ci_cd:
-        dict_to_use = 'ci_cd'
-
-        # Ensure environment variables are set
-        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ID') is not None,
-                            'If running with CI/CD the environment variable ' +
-                            '${CICD_EXPERIMENT_ID} must be set.')
-        logger.assert_abort(os.environ.get('CICD_EXPERIMENT_ROOT') is not None,
-                            'If running with CI/CD the environment variable ' +
-                            '${CICD_EXPERIMENT_ROOT} must be set.')
-
-        # Always update the experiment ID and roo if CI/CD
-        experiment_dict_new['experiment_id'] = platform_dict['ci_cd']['experiment_id']
-        experiment_dict_new['experiment_root'] = platform_dict['ci_cd']['experiment_root']
-
-    # Update experiment root if default method
-    if method == 'defaults':
-        experiment_dict_new['experiment_root'] = platform_dict[dict_to_use]['experiment_root']
-
-    # Add the swell static files path from the platform to the experiment dictionary
-    experiment_dict_new['swell_static_files'] = platform_dict['default']['swell_static_files']
-
-    # Adjust comment dictionary
-    comment_dict_new = comment_dict
-    comment_dict_new['swell_static_files'] = 'Path to static files used by swell (auto added)'
-
-    return experiment_dict_new, comment_dict_new
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def prepare_config(method, ci_cd=False):
+def prepare_config(method, suite, platform, override):
 
     # Create a logger
     # ---------------
@@ -91,7 +36,7 @@ def prepare_config(method, ci_cd=False):
 
     # Assert valid method
     # -------------------
-    valid_tasks = ['defaults', 'gui', 'cli']
+    valid_tasks = ['defaults', 'cli']
     if method not in valid_tasks:
         logger.abort(f'In Suites constructor method \'{method}\' not one of the valid ' +
                      f'tasks {valid_tasks}')
@@ -100,7 +45,7 @@ def prepare_config(method, ci_cd=False):
     # ---------------------------------------------------------------
     PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
                         'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file)
+    prep_using = PrepUsing(logger, config_file, suite, platform)
 
     # Call the config prep step
     # -------------------------
@@ -116,16 +61,24 @@ def prepare_config(method, ci_cd=False):
     experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
     comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
 
-    # Set platform specific entires
-    # -----------------------------
-    experiment_dict, comment_dict = platform_fill(logger, method, experiment_dict, ci_cd,
-                                                  comment_dict)
-
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
+
+    # Override config with kay value pairs coming from override YAML
+    # --------------------------------------------------------------
+    if override is not None:
+
+        # Open override dictionary
+        with open(override, 'r') as override_open:
+            override_dict = yaml.safe_load(override_open)
+
+        overridable_keys = ['experiment_id', 'experiment_root']
+        for overridable_key in overridable_keys:
+            if overridable_key in override_dict:
+                experiment_dict[overridable_key] = override_dict[overridable_key]
 
     # Add comments to dictionary
     # --------------------------

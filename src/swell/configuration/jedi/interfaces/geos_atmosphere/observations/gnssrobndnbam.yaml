@@ -5,14 +5,14 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/gnssrobndnbam.{{window_begin}}.nc4'
     obsgrouping:
-      group variables: [ 'record_number' ]
-      sort variable: 'impact_height'
+      group variables: [ 'sequenceNumber' ]
+      sort variable: 'impactHeightRO'
       sort order: 'ascending'
   obsdataout:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gnssrobndnbam.{{window_begin}}.nc4'
-  simulated variables: [bending_angle]
+  simulated variables: [bendingAngle]
 obs operator:
   name: GnssroBndNBAM
   obs options:
@@ -23,27 +23,27 @@ obs operator:
 obs filters:
 - filter: Domain Check
   filter variables:
-  - name: [bending_angle]
+  - name: [bendingAngle]
   where:
   - variable:
-      name: impact_height@MetaData
+      name: MetaData/impactHeightRO
     minvalue: 0
     maxvalue: 50000
 - filter: Bounds Check
   filter variables:
-  - name: [bending_angle]
+  - name: [bendingAngle]
   where:
   - variable:
-      name: occulting_sat_id@MetaData
+      name: MetaData/satelliteIdentifier
     is_in: 3-5
   test variables:
-  - name: impact_height@MetaData
+  - name: MetaData/impactHeightRO
   minvalue: 8000
 - filter: ROobserror
   filter variables:
-  - name: bending_angle
+  - name: bendingAngle
   errmodel: NBAM
 - filter: Background Check RONBAM
   filter variables:
-  - name: [bending_angle]
+  - name: [bendingAngle]
   threshold: 3

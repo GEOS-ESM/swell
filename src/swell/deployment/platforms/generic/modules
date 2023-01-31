@@ -1,0 +1,5 @@
+# --------------------------------------------------------------------------------------------------
+# There are no modules for the generic platform. User is responsible for setting up the environment
+# for themselves. We might want to come up with something better if this is ever needed more.
+# Perhaps users can provide a path to an environment file or directory containing platform files?
+# --------------------------------------------------------------------------------------------------

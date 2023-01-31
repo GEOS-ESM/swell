@@ -8,23 +8,24 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.omi_aura.{{window_begin}}.nc4'
-  simulated variables: [integrated_layer_ozone_in_air]
+  simulated variables: [ozoneTotal]
 obs operator:
   name: AtmVertInterpLay
   geovals: [mole_fraction_of_ozone_in_air]
   coefficients: [0.0078976797] # convert from ppmv to DU (Wargan approved value)
   nlevels: [1]
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs filters:
 - filter: Perform Action
   filter variables:
-  - name: integrated_layer_ozone_in_air
+  - name: ozoneTotal
   action:
     name: assign error
     error parameter: 6.0
  # range sanity check
 - filter: Bounds Check
   filter variables:
-  - name: integrated_layer_ozone_in_air
+  - name: ozoneTotal
   minvalue: 0
   maxvalue: 1000
   action:
@@ -32,18 +33,18 @@ obs filters:
 # Reject SZA > 84
 - filter: Bounds Check
   filter variables:
-  - name: integrated_layer_ozone_in_air
+  - name: ozoneTotal
   test variables:
-  - name: solar_zenith_angle@MetaData
+  - name: MetaData/solarZenithAngle
   maxvalue: 84.
   action:
     name: reject
 # Reject rows 25+ (somewhat stringent but thats what we do in GEOS)
 - filter: Bounds Check
   filter variables:
-  - name: integrated_layer_ozone_in_air
+  - name: ozoneTotal
   test variables:
-  - name: scan_position@MetaData
+  - name: MetaData/sensorScanPosition
   minvalue: 3
   maxvalue: 24
   action:
@@ -52,7 +53,7 @@ obs filters:
  # Gross check
 - filter: Background Check
   filter variables:
-  - name: integrated_layer_ozone_in_air
+  - name: ozoneTotal
   threshold: 5.0
   action:
     name: reject
