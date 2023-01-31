@@ -87,7 +87,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def run_executable(self, cycle_dir, np, jedi_executable_path, jedi_config_file):
+    def run_executable(self, cycle_dir, np, jedi_executable_path, jedi_config_file, output_log):
 
         # Run the JEDI executable
         # -----------------------
@@ -99,6 +99,13 @@ class RunJediExecutableBase(taskBase):
         # ---------------------------
         os.chdir(cycle_dir)
 
+        # Prepare output file
+        # -------------------
+        if os.path.exists(output_log):
+            os.remove(output_log)
+        output_log_h = open(output_log, 'w')
+        self.logger.info(f'Output log being written to: {output_file}')
+
         # Execute
         # -------
         process = subprocess.Popen(command, stdout=subprocess.PIPE)
@@ -107,8 +114,13 @@ class RunJediExecutableBase(taskBase):
             if output == '' and process.poll() is not None:
                 break
             if output:
-                print(output.strip())
+                # Write line of output to file
+                output_log_h.write(f'{output.strip()}\n')
         rc = process.poll()
+
+        # Close the log file
+        # ------------------
+        output_log_h.close()
 
         # Abort task if the executable did not run successfully
         # -----------------------------------------------------

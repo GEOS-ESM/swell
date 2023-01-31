@@ -39,6 +39,10 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
         # -----------------------
         jedi_config_file = os.path.join(cycle_dir, 'jedi_variational_config.yaml')
 
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(cycle_dir, 'jedi_variational_log.txt')
+
         # Get the JEDI interface for this model component
         # -----------------------------------------------
         model_component_meta = self.open_jedi_interface_meta_config_file()
@@ -63,7 +67,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file)
+        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file, output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 

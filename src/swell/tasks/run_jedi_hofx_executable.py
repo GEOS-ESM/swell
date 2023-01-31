@@ -43,11 +43,17 @@ class RunJediHofxExecutable(RunJediExecutableBase):
         window_type = self.config_get('window_type')
         model = self.config_get('window_type')
         suite_to_run = self.config_get('suite_to_run')
+        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
+        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
         total_processors = self.config_get('total_processors')
 
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(cycle_dir, 'jedi_hofx_config.yaml')
+
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.txt')
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
@@ -69,12 +75,13 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Compute number of processors
         # ----------------------------
-        np_string = self.use_config_to_template_string(total_processors)
-        np = eval(np_string)
+        total_processors = total_processors.replace('npx_proc', str(npx_proc))
+        total_processors = total_processors.replace('npy_proc', str(npy_proc))
+        np = eval(total_processors)
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file)
+        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file, output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------

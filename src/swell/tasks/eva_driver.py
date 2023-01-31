@@ -14,7 +14,7 @@ import yaml
 from eva.eva_base import eva
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.dictionary import remove_matching_keys
+from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 
@@ -96,6 +96,7 @@ class EvaDriver(taskBase):
             if not need_channels:
                 remove_matching_keys(eva_dict, 'channel')
                 remove_matching_keys(eva_dict, 'channels')
+                eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')
 
             # Write eva dictionary to file
             # ----------------------------

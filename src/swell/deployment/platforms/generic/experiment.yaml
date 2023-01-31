@@ -1,0 +1,8 @@
+experiment_id: swell-{{suite_to_run}}
+experiment_root: /home/$USER/SwellExperiments
+platform: generic
+swell_static_files: /home/$USER/SwellStaticFiles
+r2d2_local_path: /home/${USER}/R2D2DataStore/Local
+existing_source_directory: /home/$USER/latest/jedi_build/
+existing_build_directory: /home/$USER/build-intel-release/
+crtm_coeff_dir: /home/$USER/CRTM_Coeffs/2.4/Little_Endian/
