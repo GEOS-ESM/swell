@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import importlib
 import os
 import pathlib
@@ -40,9 +41,8 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
     # Copy platform related files to the suite directory
     # --------------------------------------------------
     if platform is not None:
-        plat_mod = importlib.import_module('swell.deployment.platforms.'+platform+'.install_path')
-        return_platform_install_path_call = getattr(plat_mod, 'return_platform_install_path')
-        platform_path = return_platform_install_path_call()
+        swell_lib_path = get_swell_path()
+        platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
         for s in ['modules', 'r2d2_config.yaml']:
             src_file = os.path.split(s)[1]
@@ -56,7 +56,7 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_swell_path_in_modules(logger, exp_suite_path):
+def template_modules_file(logger, experiment_dict, exp_suite_path):
 
     # Modules file
     # ------------
@@ -82,10 +82,10 @@ def set_swell_path_in_modules(logger, exp_suite_path):
 
         # Dictionary of definitions
         # -------------------------
-        swell_paths = {}
-        swell_paths['swell_bin_path'] = swell_bin_path
-        swell_paths['swell_lib_path'] = swell_lib_path
-        swell_paths['swell_sui_path'] = swell_sui_path
+        modules_dict = copy.copy(experiment_dict)
+        modules_dict['swell_bin_path'] = swell_bin_path
+        modules_dict['swell_lib_path'] = swell_lib_path
+        modules_dict['swell_sui_path'] = swell_sui_path
 
         # Open the file
         # -------------
@@ -94,7 +94,7 @@ def set_swell_path_in_modules(logger, exp_suite_path):
 
         # Resolve templates
         # -----------------
-        modules_file_str = template_string_jinja2(logger, modules_file_str, swell_paths)
+        modules_file_str = template_string_jinja2(logger, modules_file_str, modules_dict)
 
         # Overwrite the file
         # ------------------

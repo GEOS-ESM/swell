@@ -53,7 +53,7 @@ observations:
 
   # Processor layout
 npx_proc:
-  default_value: '12'
+  default_value: '24'
   prompt: What processor layout (x-direction) per cube face?
   type: string
 npy_proc:
@@ -68,7 +68,7 @@ fixed_options:
     default_value: 3D
     prompt: Window type (3D or 4D)
   total_processors:
-    default_value:  '{{npx_proc}} * {{npy_proc}}'
+    default_value:  'npx_proc * npy_proc'
     prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT6H

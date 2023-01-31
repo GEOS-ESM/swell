@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.iasi_metop-b.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &iasi_metop-b_channels 16, 29, 32, 35, 38, 41, 44, 47, 49, 50, 51, 53,
             55, 56, 57, 59, 61, 62, 63, 66, 68, 70, 72, 74, 76, 78, 79, 81, 82, 83,
             84, 85, 86, 87, 89, 92, 93, 95, 97, 99, 101, 103, 104, 106, 109, 110,
@@ -87,7 +87,7 @@ obs filters:
 #  Wavenumber Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 7024, 7027, 7029, 7032, 7038, 7043, 7046, 7049, 7069, 7072,
               7076, 7081, 7084, 7089, 7099, 7209, 7222, 7231, 7235, 7247,
               7267, 7269, 7284, 7389, 7419, 7423, 7424, 7426, 7428, 7431,
@@ -96,28 +96,28 @@ obs filters:
               8055, 8078
   where:
   - variable:
-      name: solar_zenith_angle@MetaData
+      name: MetaData/solarZenithAngle
     maxvalue: 88.9999
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     minvalue: 1.0e-12
   action:
     name: reject
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorWavenumIR@ObsFunction
+      name: ObsFunction/ObsErrorFactorWavenumIR
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels
 #  Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   minvalue: 50.00001
   maxvalue: 449.99999
@@ -126,12 +126,12 @@ obs filters:
 #  Topography Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorTopoRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorTopoRad
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels
@@ -139,22 +139,22 @@ obs filters:
 #  Transmittance Top Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorTransmitTopRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorTransmitTopRad
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels
 #  Cloud Detection Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   test variables:
-  - name: CloudDetectMinResidualIR@ObsFunction
+  - name: ObsFunction/CloudDetectMinResidualIR
     channels: *iasi_metop-b_channels
     options:
       channels: *iasi_metop-b_channels
@@ -289,10 +289,10 @@ obs filters:
 #  NSST Retrieval Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   test variables:
-  - name: NearSSTRetCheckIR@ObsFunction
+  - name: ObsFunction/NearSSTRetCheckIR
     channels: *iasi_metop-b_channels
     options:
       channels: *iasi_metop-b_channels
@@ -366,12 +366,12 @@ obs filters:
 #  Surface Jacobians Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorSurfJacobianRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorSurfJacobianRad
       channels: *iasi_metop-b_channels
       options:
         channels: *iasi_metop-b_channels
@@ -381,19 +381,19 @@ obs filters:
 #  Gross check
 - filter: Background Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   function absolute threshold:
-  - name: ObsErrorBoundIR@ObsFunction
+  - name: ObsFunction/ObsErrorBoundIR
     channels: *iasi_metop-b_channels
     options:
       channels: *iasi_metop-b_channels
       obserr_bound_latitude:
-        name: ObsErrorFactorLatRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorLatRad
         options:
           latitude_parameters: [25.0, 0.5, 0.04, 1.0]
       obserr_bound_transmittop:
-        name: ObsErrorFactorTransmitTopRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
         channels: *iasi_metop-b_channels
         options:
           channels: *iasi_metop-b_channels
@@ -464,10 +464,10 @@ obs filters:
 #  Useflag Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *iasi_metop-b_channels
   test variables:
-  - name: ChannelUseflagCheckRad@ObsFunction
+  - name: ObsFunction/ChannelUseflagCheckRad
     channels: *iasi_metop-b_channels
     options:
       channels: *iasi_metop-b_channels
