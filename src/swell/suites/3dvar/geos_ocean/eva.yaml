@@ -27,12 +27,21 @@ diagnostics:
       for:
         variable: *variables
 
-    # Generate hofx that passed QC for JEDI
+    # Generate hofx0 that passed QC for JEDI
     - transform: accept where
       new name: experiment::hofx0PassedQc::${variable}
       starting field: experiment::hofx0::${variable}
       where:
         - experiment::EffectiveQC0::${variable} == 0
+      for:
+        variable: *variables
+
+    # Generate hofx1 that passed QC for JEDI
+    - transform: accept where
+      new name: experiment::hofx1PassedQc::${variable}
+      starting field: experiment::hofx1::${variable}
+      where:
+        - experiment::EffectiveQC1::${variable} == 0
       for:
         variable: *variables
 
@@ -45,7 +54,6 @@ diagnostics:
       for:
         variable: *variables
 
-    # TODO:  #crashes if EffectiveQC1
     # Generate oman that passed QC for JEDI
     - transform: accept where
       new name: experiment::omanPassedQc::${variable}
@@ -70,35 +78,35 @@ diagnostics:
     # -------------------------
 
     # JEDI h(x) vs Observations
-    # - batch figure:
-    #     variables: *variables
-    #   figure:
-    #     layout: [1,1]
-    #     title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
-    #     output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
-    #   plots:
-    #     - add_xlabel: 'Observation Value'
-    #       add_ylabel: 'JEDI h(x)'
-    #       add_grid:
-    #       add_legend:
-    #         loc: 'upper left'
-    #       layers:
-    #       - type: Scatter
-    #         x:
-    #           variable: experiment::ObsValue::${variable}
-    #         y:
-    #           variable: experiment::hofx0PassedQc::${variable}
-    #         markersize: 5
-    #         color: 'black'
-    #         label: 'JEDI h(x) versus obs (all obs)'
-    #       - type: Scatter
-    #         x:
-    #           variable: experiment::ObsValue::${variable}
-    #         y:
-    #           variable: experiment::hofx1::${variable}
-    #         markersize: 5
-    #         color: 'red'
-    #         label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+    - batch figure:
+        variables: *variables
+      figure:
+        layout: [1,1]
+        title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
+      plots:
+        - add_xlabel: 'Observation Value'
+          add_ylabel: 'JEDI h(x)'
+          add_grid:
+          add_legend:
+            loc: 'upper left'
+          layers:
+          - type: Scatter
+            x:
+              variable: experiment::ObsValue::${variable}
+            y:
+              variable: experiment::hofx0PassedQc::${variable}
+            markersize: 5
+            color: 'black'
+            label: 'JEDI h(x) versus obs (all obs)'
+          - type: Scatter
+            x:
+              variable: experiment::ObsValue::${variable}
+            y:
+              variable: experiment::hofx1::${variable}
+            markersize: 5
+            color: 'red'
+            label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
     # Histogram plots
     # ---------------
@@ -108,21 +116,21 @@ diagnostics:
         variables: *variables
       dynamic options:
         - type: histogram_bins
-          data variable: experiment::oman::${variable}
+          data variable: experiment::omanPassedQc::${variable}
           number of bins rule: 'rice'
       figure:
         layout: [1,1]
-        title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title} | ${dynamic_bins}'
-        output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
+        title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
+        output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/ombg_oman_{{instrument}}_${variable}.png'
       plots:
-        - add_xlabel: 'Difference in T [Celcius]'
+        - add_xlabel: 'Difference'
           add_ylabel: 'Count'
-          set_xlim: [-10, 10]
+          set_xlim: [-3, 3]
           add_legend:
             loc: 'upper left'
           statistics:
             data:
-              variable: experiment::oman::${variable}
+              variable: experiment::omanPassedQc::${variable}
             statistic list:
             - n
             - min
@@ -136,23 +144,19 @@ diagnostics:
           - type: Histogram
             data:
               variable: experiment::ombgPassedQc::${variable}
-              # variable: experiment::ombg::${variable}
             color: 'red'
             label: 'observations minus background '
-            bins: 250
+            bins: ${dynamic_bins}
             alpha: 0.5
             density: true
-            # range: [-10, 10]
           - type: Histogram
             data:
               variable: experiment::omanPassedQc::${variable}
-              # variable: experiment::oman::${variable}
             color: 'blue'
             label: 'observations minus analysis'
-            bins: 250
+            bins: ${dynamic_bins}
             alpha: 0.5
             density: true
-            # range: [-10, 10]
 
     # Map plots
     # ---------
@@ -162,7 +166,6 @@ diagnostics:
       dynamic options:
         - type: vminvmaxcmap
           data variable: experiment::ombgPassedQc::${variable}
-          # number_of_stdv: 
       figure:
         figure size: [20,10]
         layout: [2,1]
@@ -218,7 +221,6 @@ diagnostics:
       dynamic options:
         - type: vminvmaxcmap
           data variable: experiment::EffectiveQC1::${variable}
-          # number_of_stdv: 
       figure:
         figure size: [20,10]
         layout: [1,1]
@@ -252,7 +254,6 @@ diagnostics:
       dynamic options:
         - type: vminvmaxcmap
           data variable: experiment::increment::${variable}
-          # number_of_stdv: 
       figure:
         figure size: [20,10]
         layout: [1,1]
