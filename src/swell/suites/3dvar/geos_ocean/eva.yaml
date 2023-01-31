@@ -59,7 +59,7 @@ diagnostics:
       new name: experiment::omanPassedQc::${variable}
       starting field: experiment::oman::${variable}
       where:
-        - experiment::EffectiveQC1::${variable} == 0                 
+        - experiment::EffectiveQC1::${variable} == 0
       for:
         variable: *variables
 
