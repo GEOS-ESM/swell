@@ -13,6 +13,7 @@ obs space:
   simulated variables: [seaSurfaceSalinity]
 obs operator:
   name: Identity
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs error:
   covariance model: diagonal
 # _letkf: &letkf
@@ -25,7 +26,7 @@ obs filters:
 # - *obs_land_mask
 - filter: Domain Check
   where:
-  - variable: {name: GeoVaLs}/sea_area_fraction
+  - variable: {name: GeoVaLs/sea_area_fraction}
     minvalue: 0.9
 - filter: Bounds Check
   minvalue: 0.1
@@ -36,16 +37,16 @@ obs filters:
   action:
     name: passivate
   where:
-  - variable: {name: GeoVaLs}/sea_surface_temperature
+  - variable: {name: GeoVaLs/sea_surface_temperature}
     minvalue: 10.0
 # Passivate obs where ocean fraction is > 90%
 - filter: Domain Check
   action:
     name: passivate
   where:
-  - variable: {name: GeoVaLs}/sea_area_fraction
+  - variable: {name: GeoVaLs/sea_area_fraction}
     maxvalue: 0.9
 - filter: Domain Check
   where:
-  - variable: {name: GeoVaLs}/distance_from_coast
+  - variable: {name: GeoVaLs/distance_from_coast}
     minvalue: 100e3
