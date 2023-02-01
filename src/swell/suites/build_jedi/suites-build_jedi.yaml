@@ -22,3 +22,13 @@ existing_build_directory:
   depends:
     key: jedi_build_method
     value: use_existing
+
+# Bundles to build
+bundles:
+  default_value: ['fv3-jedi', 'soca', 'iodaconv']
+  prompt: List the bundles that you wish to build
+  type: string-check-list
+  options: use_method  # This method would ask jedi_bundle for the default bundles
+  depends:
+    key: jedi_build_method
+    value: create
