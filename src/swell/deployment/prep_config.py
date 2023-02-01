@@ -24,7 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override):
+def prepare_config(method, suite, platform, override=None):
 
     # Create a logger
     # ---------------
