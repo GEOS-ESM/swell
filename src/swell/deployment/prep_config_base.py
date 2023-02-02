@@ -15,32 +15,27 @@ import pathlib
 import yaml
 
 from swell.swell_path import get_swell_path
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
 
 class PrepConfigBase(ABC):
 
-    def __init__(self, logger, dictionary_file):
+    def __init__(self, logger, dictionary_file, suite, platform):
 
         # Store a logger for all to use
         self.logger = logger
 
-        # Get the path to the swell source code
-        self.install_path = pathlib.Path(__file__).parent.parent.resolve()
+        # Swell install path
+        swell_path = get_swell_path()
 
         # Get the path and filename of the dictionary
-        self.directory = os.path.join(get_swell_path(), 'suites')
+        self.directory = os.path.join(swell_path, 'suites')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
-
-        # Dictionary
-        self.dictionary = self.read_dictionary_file(dictionary_file)
 
         # Keep track of the model, atmosphere, ocean etc
         self.model = None
-
-        # Extension to use for dictionary files
-        self.dictionary_extension = '.yaml'
 
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
@@ -54,6 +49,27 @@ class PrepConfigBase(ABC):
 
         # Disallowed element types
         self.dis_elem_types = [datetime.datetime, datetime.date]
+
+        # Track the suite and platform that the user may input through the prepare_config path
+        user_inputs_dict = {}
+        user_inputs_dict['suite_to_run'] = suite
+        user_inputs_dict['platform'] = platform
+
+        # Open the platform specific defaults
+        platform_dict_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
+                                          'experiment.yaml')
+        with open(platform_dict_file, 'r') as platform_dict_file_open:
+            platform_dict_str = platform_dict_file_open.read()
+
+        # Render the templates in the platform dictionary using user inputs
+        platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
+
+        # Dictionary of templates to use whenever opening a file
+        self.template_dictionary = yaml.safe_load(platform_dict_str)
+        self.template_dictionary.update(user_inputs_dict)
+
+        # Starting dictionary
+        self.dictionary = self.read_dictionary_file(dictionary_file)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -74,7 +90,7 @@ class PrepConfigBase(ABC):
     def open_dictionary(self):
 
         # Append the filename according the type of files
-        filename_ext = os.path.join(self.directory, self.filename + self.dictionary_extension)
+        filename_ext = os.path.join(self.directory, self.filename + '.yaml')
 
         # Open file into dictionary
         dictionary = self.read_dictionary_file(filename_ext)
@@ -89,11 +105,16 @@ class PrepConfigBase(ABC):
 
     def read_dictionary_file(self, dictionary_file):
 
-        # Open file and load as dictionary
+        # Open file as a string
         with open(dictionary_file, 'r') as dictionary_file_open:
-            dictionary = yaml.safe_load(dictionary_file_open)
+            dictionary_str = dictionary_file_open.read()
 
-        return dictionary
+        # Render the templates using the template dictionary
+        dictionary_str = template_string_jinja2(self.logger, dictionary_str,
+                                                self.template_dictionary)
+
+        # Convert string to dictionary
+        return yaml.safe_load(dictionary_str)
 
     # ----------------------------------------------------------------------------------------------
 

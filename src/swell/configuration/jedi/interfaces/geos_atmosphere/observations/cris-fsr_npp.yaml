@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.cris-fsr_npp.{{window_begin}}.nc4'
-  simulated variables: [brightness_temperature]
+  simulated variables: [brightnessTemperature]
   channels: &cris-fsr_npp_channels 19, 24, 26, 27, 28, 31, 32, 33, 37, 39, 42, 44, 47, 49, 50,
             51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
             69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86,
@@ -70,34 +70,34 @@ obs filters:
 #  Wavenumber Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981,
               1982, 1983, 1984, 1985, 1986, 1987, 2119, 2140, 2143, 2147,
               2153, 2158, 2161, 2168, 2171, 2175, 2182
   where:
   - variable:
-      name: solar_zenith_angle@MetaData
+      name: MetaData/solarZenithAngle
     maxvalue: 88.9999
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     minvalue: 1.0e-12
   action:
     name: reject
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorWavenumIR@ObsFunction
+      name: ObsFunction/ObsErrorFactorWavenumIR
       channels: *cris-fsr_npp_channels
       options:
         channels: *cris-fsr_npp_channels
 #  Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   minvalue: 50.00001
   maxvalue: 449.99999
@@ -106,12 +106,12 @@ obs filters:
 #  Topography Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorTopoRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorTopoRad
       channels: *cris-fsr_npp_channels
       options:
         channels: *cris-fsr_npp_channels
@@ -119,22 +119,22 @@ obs filters:
 #  Transmittance Top Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorTransmitTopRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorTransmitTopRad
       channels: *cris-fsr_npp_channels
       options:
         channels: *cris-fsr_npp_channels
 #  Cloud Detection Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   test variables:
-  - name: CloudDetectMinResidualIR@ObsFunction
+  - name: ObsFunction/CloudDetectMinResidualIR
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
@@ -233,23 +233,23 @@ obs filters:
 # Surface Temperature Jacobian Check over Land
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   where:
   - variable:
-      name: water_area_fraction@GeoVaLs
+      name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
   test variables:
-  - name: brightness_temperature_jacobian_surface_temperature@ObsDiag
+  - name: ObsDiag/brightnessTemperature_jacobian_surface_temperature
     channels: *cris-fsr_npp_channels
   maxvalue: 0.2
 #  NSST Retrieval Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   test variables:
-  - name: NearSSTRetCheckIR@ObsFunction
+  - name: ObsFunction/NearSSTRetCheckIR
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
@@ -305,12 +305,12 @@ obs filters:
 #  Surface Jacobians Check
 - filter: BlackList
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorSurfJacobianRad@ObsFunction
+      name: ObsFunction/ObsErrorFactorSurfJacobianRad
       channels: *cris-fsr_npp_channels
       options:
         channels: *cris-fsr_npp_channels
@@ -320,19 +320,19 @@ obs filters:
 #  Gross check
 - filter: Background Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   function absolute threshold:
-  - name: ObsErrorBoundIR@ObsFunction
+  - name: ObsFunction/ObsErrorBoundIR
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
       obserr_bound_latitude:
-        name: ObsErrorFactorLatRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorLatRad
         options:
           latitude_parameters: [25.0, 0.5, 0.04, 1.0]
       obserr_bound_transmittop:
-        name: ObsErrorFactorTransmitTopRad@ObsFunction
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
         channels: *cris-fsr_npp_channels
         options:
           channels: *cris-fsr_npp_channels
@@ -385,10 +385,10 @@ obs filters:
 #  Useflag Check
 - filter: Bounds Check
   filter variables:
-  - name: brightness_temperature
+  - name: brightnessTemperature
     channels: *cris-fsr_npp_channels
   test variables:
-  - name: ChannelUseflagCheckRad@ObsFunction
+  - name: ObsFunction/ChannelUseflagCheckRad
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels

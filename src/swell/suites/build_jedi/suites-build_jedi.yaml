@@ -1,13 +1,13 @@
 # Jedi build system
 jedi_build_method:
-  default_value: use_existing
+  default_value: create
   prompt: Create a new JEDI build or use an existing build?
   options: ['create', 'use_existing']
   type: string-drop-list
 
 # Existing JEDI bundle directory
 existing_source_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/
+  default_value: {{existing_source_directory}}
   prompt: Provide the path to an existing JEDI bundle directory containing source code repos
   type: string
   depends:
@@ -16,9 +16,19 @@ existing_source_directory:
 
 # Existing JEDI build
 existing_build_directory:
-  default_value: /discover/nobackup/drholdaw/JediSwell/bundle/latest/build-intel-release/
+  default_value: {{existing_build_directory}}
   prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:
     key: jedi_build_method
     value: use_existing
+
+# Bundles to build
+bundles:
+  default_value: ['fv3-jedi', 'soca', 'iodaconv']
+  prompt: List the bundles that you wish to build
+  type: string-check-list
+  options: use_method  # This method would ask jedi_bundle for the default bundles
+  depends:
+    key: jedi_build_method
+    value: create

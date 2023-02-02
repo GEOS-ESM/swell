@@ -17,7 +17,7 @@ import yaml
 
 from swell.deployment.prep_config import prepare_config
 from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
-                                           set_swell_path_in_modules, create_modules_csh
+                                           template_modules_file, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get
@@ -30,15 +30,9 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-m', '--method', 'method', default='defaults',
-              help='Method for configuration: [\'defaults\'] or \'tui\'. If the config argument ' +
-                   'is present then this argument will be ignored in favor of using the existing ' +
-                   'configuration file.')
-@click.option('-c', '--config', 'config', default=None,
-              help='Directory containing the suite file needed by the workflow manager')
-@click.option('-t', '--cidi', 'ci_cd', default=False,
-              help='Setup experiment using continuous integration parameters')
-def main(method, config, ci_cd):
+@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
+              'experiment. If not passed questions will be presented for setting up an experiment.')
+def main(config):
 
     # Welcome message
     # ---------------
@@ -48,16 +42,10 @@ def main(method, config, ci_cd):
     # ---------------
     logger = Logger('SwellCreateExperiment')
 
-    # Check arguments
-    # ---------------
-    method_options = ['defaults', 'tui']
-    logger.assert_abort(method in method_options, f'Method \'{method}\' is not one of the valid ' +
-                        f'options {method_options}.')
-
     # Generate the configuration file
     # -------------------------------
     if config is None:
-        config_file = prepare_config(method, ci_cd)
+        config_file = prepare_config('cli', 'hofx', 'nccs_discover')
     else:
         config_file = config
 
@@ -113,7 +101,7 @@ def main(method, config, ci_cd):
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
-    set_swell_path_in_modules(logger, exp_suite_path)
+    template_modules_file(logger, experiment_dict, exp_suite_path)
     create_modules_csh(logger, exp_suite_path)
 
     # Set the jinja2 file for cylc

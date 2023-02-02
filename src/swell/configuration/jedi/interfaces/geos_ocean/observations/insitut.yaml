@@ -1,5 +1,6 @@
 obs operator:
   name: InsituTemperature
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs space:
   name: InsituTemperature
   obsdatain:
@@ -10,4 +11,4 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.insitut.{{window_begin}}.nc4'
-  simulated variables: [sea_water_temperature]
+  simulated variables: [waterTemperature]

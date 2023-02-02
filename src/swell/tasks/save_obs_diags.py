@@ -40,6 +40,10 @@ class SaveObsDiags(taskBase):
             name = observation_dict['obs space']['name']
             source_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
 
+            # Append obs file with _0000
+            source_file_name, source_file_ext = os.path.splitext(source_file)
+            source_file = source_file_name + '_0000' + source_file_ext
+
             store(date=window_begin,
                   provider='ncdiag',
                   source_file=source_file,
