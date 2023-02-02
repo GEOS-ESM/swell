@@ -11,6 +11,7 @@
 from abc import ABC, abstractmethod
 import datetime
 import os
+import pathlib
 import yaml
 
 from swell.swell_path import get_swell_path
@@ -24,6 +25,9 @@ class PrepConfigBase(ABC):
 
         # Store a logger for all to use
         self.logger = logger
+
+        # Get the path to the swell source code
+        self.install_path = pathlib.Path(__file__).parent.parent.resolve()
 
         # Get the path and filename of the dictionary
         self.directory = os.path.join(get_swell_path(), 'suites')

@@ -252,6 +252,9 @@ class PrepConfigCli(PrepConfigBase):
             if options == 'use_method':
                 choices = default
                 default = default[0]
+                if self.model is not None:
+                    files = glob.glob(os.path.join(self.install_path, 'configuration/jedi/interfaces', self.model, 'observations/*.yaml'))
+                    choices = [x.split('/')[-1].split('.')[0] for x in files]
             else:
                 choices = options
                 if default is None:
