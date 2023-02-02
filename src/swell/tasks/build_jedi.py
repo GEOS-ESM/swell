@@ -43,7 +43,6 @@ class BuildJedi(taskBase):
         if jedi_build_method == 'create':
 
             # Determine which bundles need to be build
-            bundles = get_bundles()
             model_components = self.config_get('model_components', None)
             if model_components is not None:
                 bundles = []
@@ -51,6 +50,9 @@ class BuildJedi(taskBase):
                     # Open the metadata config for interface
                     meta = self.open_jedi_interface_meta_config_file(model_component)
                     bundles.append(meta['jedi_interface'])
+            else:
+                bundles_default = get_bundles()
+                bundles = self.config_get('bundles', bundles_default)
 
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(bundles, jedi_bundle_source_path,
