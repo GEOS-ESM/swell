@@ -195,8 +195,11 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def update_experiment_dictionary(self, key, new_element_dict):
-        self.experiment_dict[key] = new_element_dict
+    def update_experiment_dictionary(self, key, new_value):
+        if self.model is not None:
+            self.experiment_dict['models'][self.model][key] = new_value
+        else:
+            self.experiment_dict[key] = new_value
 
     # ----------------------------------------------------------------------------------------------
 

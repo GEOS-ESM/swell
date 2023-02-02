@@ -31,6 +31,16 @@ class PrepConfigCli(PrepConfigBase):
 
         print(f"Now editing the {self.directory.split('/')[-1]} YAML file.")
 
+        # try remove fixed options in key list, then have if to check end_key from that list.
+        self.dictionary = self.open_dictionary()
+        key_list = list(self.dictionary.keys())
+        if 'fixed_options' in key_list:
+            fixed_idx = key_list.index('fixed_options')
+            key_list.pop(fixed_idx)
+        end_key = key_list[-1]
+
+        self.key_list = key_list
+
         for key in dictionary:
             # Element dictionary
             el_dict = dictionary[key]
@@ -58,6 +68,10 @@ class PrepConfigCli(PrepConfigBase):
                     # everything needed in the elements dictionary
                     if depends_flag:
                         el_dict['default_value'] = self.check_widgets(key, el_dict)
+                        if key == end_key:
+                            change_check = self.before_next()
+                            if isinstance(change_check, dict):
+                                el_dict = change_check
                         self.add_to_experiment_dictionary(key, el_dict)
 
                 elif 'file-drop-list' in type:
@@ -65,9 +79,11 @@ class PrepConfigCli(PrepConfigBase):
                     # Add the choice to the dictionary
                     # If you wanted more suite options, you'd need to add directories for them at
                     # the suites/ level
-                    el_dict['default_value'] = self.check_widgets(key, el_dict)
+                    el_dict['default_value'] = self.check_widgets(key, el_dict) 
+                    change_check = self.before_next()
+                    if isinstance(change_check, dict):
+                        el_dict = change_check
                     self.add_to_experiment_dictionary(key, el_dict)
-                    self.before_next()
 
                     # In this case the key refers to a single sub dictionary that involves opening
                     # that dictionary and recursively calling this routine.
@@ -85,6 +101,9 @@ class PrepConfigCli(PrepConfigBase):
 
                     # Add the choice to the dictionary
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
+                    change_check = self.before_next()
+                    if isinstance(change_check, dict):
+                        el_dict = change_check
                     self.add_to_experiment_dictionary(key, el_dict)
 
                     # In this case the key asks the user to provide a list of items that correspond
@@ -141,6 +160,10 @@ class PrepConfigCli(PrepConfigBase):
 
         if answer in ['', []] and widget_type != 'file-check-list':
             answer = default
+
+        if answer == 'EXIT':
+            print('Exiting swell prepper...')
+            sys.exit()
 
         return answer
 
@@ -207,20 +230,18 @@ class PrepConfigCli(PrepConfigBase):
                 answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
                                 validate=lambda text: True if r.match(text) is not None or
                                 text == 'q'
-                                else "Please enter a duration with the following format: Thh").ask()
+                                else "Please enter a duration with the following format: Thh", default=default).ask()
                 if answer == 'q':
                     pass
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
             answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
-                            validate=durValidator).ask()
+                            validate=durValidator, default=default).ask()
 
         return answer
 
     def make_check_widget(self, quest, options, default, prompt):
-        # Can use questionary Choice() operator instead of list of strings
-        # Check for defaults and use checked=True for each
         if options == 'file':
             dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
@@ -246,13 +267,19 @@ class PrepConfigCli(PrepConfigBase):
     def before_next(self):
         changer = self.make_boolean('Do you wish to change any of your entries?', False, questionary.confirm) 
         if changer:
-            print('changing')
+            keys = self.key_list
             change_keys = self.make_check_widget('Which elements would you like to change?', keys, None, questionary.checkbox)
-            #changed_dict = {}
             for k in change_keys:
                 changed_dict = self.dictionary[k]
-                changed_dict['default_value'] = self.check_widgets(k, changed_dict)
-                self.update_experiment_dictionary(k, changed_dict)
-        return None
+                new_default_value = self.check_widgets(k, changed_dict)
+                if 'file' in changed_dict['type']:
+                    changed_dict['default_value'] = new_default_value
+                    return changed_dict
+                elif k == self.key_list[-1]:
+                    changed_dict['default_value'] = new_default_value
+                    return changed_dict
+                else:
+                    self.update_experiment_dictionary(k, new_default_value)
+            return None
 
 # --------------------------------------------------------------------------------------------------
