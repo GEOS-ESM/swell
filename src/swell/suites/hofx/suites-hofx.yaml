@@ -14,7 +14,7 @@ final_cycle_point:
 runahead_limit:
   default_value: 'P4'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
-  type: iso-duration
+  type: string
 
 # Jedi build system
 jedi_build_method:
@@ -47,10 +47,17 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
+# What kind of coupling is needed
+coupling_style:
+  default_value: uncoupled
+  prompt: What kind of coupling would you like to run with?
+  options: ['uncoupled', 'weakly coupled', 'strongly coupled']
+  type: string-drop-list
+
 # Models to use
 model_components:
   default_value: ['geos_atmosphere', 'geos_ocean']
-  prompt: Select models to use
+  prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
 

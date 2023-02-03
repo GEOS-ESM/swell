@@ -16,7 +16,7 @@ import sys
 import questionary
 
 from swell.deployment.prep_config_base import PrepConfigBase
-
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -28,6 +28,18 @@ class PrepConfigCli(PrepConfigBase):
         # Set dictionary to use in this scope
         if dictionary is None:
             dictionary = self.dictionary
+
+        print(f"Now editing the {self.directory.split('/')[-1]} YAML file.")
+
+        # Get final key in yaml before fixed options
+        self.dictionary = self.open_dictionary()
+        key_list = list(self.dictionary.keys())
+        if 'fixed_options' in key_list:
+            fixed_idx = key_list.index('fixed_options')
+            key_list.pop(fixed_idx)
+        end_key = key_list[-1]
+
+        self.key_list = key_list
 
         for key in dictionary:
             # Element dictionary
@@ -56,6 +68,10 @@ class PrepConfigCli(PrepConfigBase):
                     # everything needed in the elements dictionary
                     if depends_flag:
                         el_dict['default_value'] = self.check_widgets(key, el_dict)
+                        if key == end_key:
+                            change_check = self.before_next()
+                            if isinstance(change_check, dict):
+                                el_dict = change_check
                         self.add_to_experiment_dictionary(key, el_dict)
 
                 elif 'file-drop-list' in type:
@@ -64,6 +80,9 @@ class PrepConfigCli(PrepConfigBase):
                     # If you wanted more suite options, you'd need to add directories for them at
                     # the suites/ level
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
+                    change_check = self.before_next()
+                    if isinstance(change_check, dict):
+                        el_dict = change_check
                     self.add_to_experiment_dictionary(key, el_dict)
 
                     # In this case the key refers to a single sub dictionary that involves opening
@@ -82,6 +101,9 @@ class PrepConfigCli(PrepConfigBase):
 
                     # Add the choice to the dictionary
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
+                    change_check = self.before_next()
+                    if isinstance(change_check, dict):
+                        el_dict = change_check
                     self.add_to_experiment_dictionary(key, el_dict)
 
                     # In this case the key asks the user to provide a list of items that correspond
@@ -109,6 +131,7 @@ class PrepConfigCli(PrepConfigBase):
         return
 
     def check_widgets(self, key, val):
+        print('\n')
         widget_type = val['type']
         quest = val['prompt']
         default = val['default_value']
@@ -119,7 +142,7 @@ class PrepConfigCli(PrepConfigBase):
                 options = 'file'
             elif 'string' in widget_type:
                 options = val['options']
-            answer = self.make_drop_widget(quest, options, default, questionary.select)
+            answer = self.make_drop_widget(key, quest, options, default, questionary.select)
         elif widget_type == 'boolean':
             answer = self.make_boolean(quest, default, questionary.confirm)
         elif widget_type == 'iso-datetime':
@@ -138,6 +161,10 @@ class PrepConfigCli(PrepConfigBase):
         if answer in ['', []] and widget_type != 'file-check-list':
             answer = default
 
+        if answer == 'EXIT':
+            print('Exiting swell prepper...')
+            sys.exit()
+
         return answer
 
     def make_string_widget(self, quest, default, prompt):
@@ -145,15 +172,22 @@ class PrepConfigCli(PrepConfigBase):
 
         return answer
 
-    def make_drop_widget(self, quest, options, default, prompt):
+    def make_drop_widget(self, method, quest, options, default, prompt):
         if options == 'file':
-            dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            # Make sure no python directories are included
+            suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
             choices = suite_list
         else:
             if options == 'use_method':
-                options = [default]
+                if 'platform' in method:
+                    method_dir = 'deployment/platforms/'
+                new_path = os.path.join(os.path.dirname(self.directory), method_dir, '*/')
+                suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+                # Make sure no python directories are included
+                suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
+                options = suite_list
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
 
@@ -200,20 +234,19 @@ class PrepConfigCli(PrepConfigBase):
                 answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
                                 validate=lambda text: True if r.match(text) is not None or
                                 text == 'q'
-                                else "Please enter a duration with the following format: Thh").ask()
+                                else "Please enter a duration with the following format: Thh",
+                                default=default).ask()
                 if answer == 'q':
                     pass
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
             answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
-                            validate=durValidator).ask()
+                            validate=durValidator, default=default).ask()
 
         return answer
 
     def make_check_widget(self, quest, options, default, prompt):
-        # Can use questionary Choice() operator instead of list of strings
-        # Check for defaults and use checked=True for each
         if options == 'file':
             dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
@@ -221,12 +254,50 @@ class PrepConfigCli(PrepConfigBase):
             choices = suite_list
             default = None
         else:
-            # Why do file_check_list widgets have a use_method key?
             if options == 'use_method':
                 choices = default
                 default = default[0]
-        answer = prompt(quest, choices=choices, default=default).ask()
+                if self.model is not None:
+                    files = glob.glob(os.path.join(self.install_path,
+                                                   'configuration/jedi/interfaces',
+                                                   self.model,
+                                                   'observations/*.yaml'))
+                    # Do not include obsop_name_map.yaml in the list of observations
+                    files = list(filter(lambda a: 'obsop_name_map' not in a, files))
+                    choices = [x.split('/')[-1].split('.')[0] for x in files]
+            else:
+                choices = options
+                if default is None:
+                    pass
+                else:
+                    default = default[0]
+        answer = prompt(quest, choices=choices,
+                        default=default,
+                        validate=lambda text: True if text != []
+                        else 'Please select one option').ask()
         return answer
 
+    def before_next(self):
+        changer = self.make_boolean('Do you wish to change any of your entries?',
+                                    False,
+                                    questionary.confirm)
+        if changer:
+            keys = self.key_list
+            change_keys = self.make_check_widget('Which elements would you like to change?',
+                                                 keys,
+                                                 None,
+                                                 questionary.checkbox)
+            for k in change_keys:
+                changed_dict = self.dictionary[k]
+                new_default_value = self.check_widgets(k, changed_dict)
+                if 'file' in changed_dict['type']:
+                    changed_dict['default_value'] = new_default_value
+                    return changed_dict
+                elif k == self.key_list[-1]:
+                    changed_dict['default_value'] = new_default_value
+                    return changed_dict
+                else:
+                    self.update_experiment_dictionary(k, new_default_value)
+            return None
 
 # --------------------------------------------------------------------------------------------------
