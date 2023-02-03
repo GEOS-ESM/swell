@@ -79,7 +79,7 @@ class PrepConfigCli(PrepConfigBase):
                     # Add the choice to the dictionary
                     # If you wanted more suite options, you'd need to add directories for them at
                     # the suites/ level
-                    el_dict['default_value'] = self.check_widgets(key, el_dict) 
+                    el_dict['default_value'] = self.check_widgets(key, el_dict)
                     change_check = self.before_next()
                     if isinstance(change_check, dict):
                         el_dict = change_check
@@ -176,6 +176,8 @@ class PrepConfigCli(PrepConfigBase):
         if options == 'file':
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            # Make sure no python directories are included
+            suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
             choices = suite_list
         else:
             if options == 'use_method':
@@ -183,6 +185,8 @@ class PrepConfigCli(PrepConfigBase):
                     method_dir = 'deployment/platforms/'
                 new_path = os.path.join(os.path.dirname(self.directory), method_dir, '*/')
                 suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+                # Make sure no python directories are included
+                suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
                 options = suite_list
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
@@ -261,14 +265,14 @@ class PrepConfigCli(PrepConfigBase):
                     pass
                 else:
                     default = default[0]
-        answer = prompt(quest, choices=choices, 
-                        default=default, 
-                        validate=lambda text: True if text != [] 
+        answer = prompt(quest, choices=choices,
+                        default=default,
+                        validate=lambda text: True if text != []
                         else 'Please select one option').ask()
         return answer
 
     def before_next(self):
-        changer = self.make_boolean('Do you wish to change any of your entries?', False, questionary.confirm) 
+        changer = self.make_boolean('Do you wish to change any of your entries?', False, questionary.confirm)
         if changer:
             keys = self.key_list
             change_keys = self.make_check_widget('Which elements would you like to change?', keys, None, questionary.checkbox)
