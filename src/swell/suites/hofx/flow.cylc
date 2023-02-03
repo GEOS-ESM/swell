@@ -59,14 +59,14 @@
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
-            # Evadriver
-            RunJediHofxExecutable-{{model_component}} => EvaDriver-{{model_component}}
+            # EvaObservations
+            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
             RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
-            EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
 
         {% endif %}
@@ -127,8 +127,8 @@
             --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
 
-    [[EvaDriver-{{model_component}}]]
-        script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
+    [[EvaObservations-{{model_component}}]]
+        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"

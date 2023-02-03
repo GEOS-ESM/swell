@@ -97,7 +97,7 @@ fixed_options:
     default_value: 1e-10
     prompt: Threshold for convergence of the minimization
   total_processors:
-    default_value:  '{{npx_proc}} * {{npy_proc}}'
+    default_value:  'npx_proc * npy_proc'
     prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT12H

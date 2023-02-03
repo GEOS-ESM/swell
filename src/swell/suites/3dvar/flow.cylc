@@ -24,27 +24,62 @@
 
     [[graph]]
         R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
             {% for model_component in model_components %}
-                CloneJedi => BuildJedi => StageJedi-{{model_component}}
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}}
             {% endfor %}
-            """
+        """
 
         {% for cycle_time in cycle_times %}
-            {{cycle_time.cycle_time}} = """
-            {% for model_component in model_components %}
-                {% if cycle_time[model_component] %}
-                    GetBackground-{{model_component}} &
-                    GetObservations-{{model_component}} &
-                    StageJedi-{{model_component}}[^]
-                    => GenerateBClimatology-{{model_component}}
-                    => RunJediVariationalExecutable-{{model_component}}
-                    => MergeIodaFiles-{{model_component}}
-                    => EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}}
-                    => CleanCycle-{{model_component}}
-                {% endif %}
-            {% endfor %}
-            """
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Get background
+            GetBackground-{{model_component}}
 
+            # Get observations
+            GetObservations-{{model_component}}
+
+            # GenerateBClimatology
+            StageJedi-{{model_component}}[^] => GenerateBClimatology-{{model_component}}
+            GetBackground-{{model_component}} => GenerateBClimatology-{{model_component}}
+
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+
+            # EvaObservations
+            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            RunJediHofxExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # Save observations
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
+        {% endif %}
+        {% endfor %}
+        """
         {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
@@ -111,8 +146,11 @@
     [[MergeIodaFiles-{{model_component}}]]
         script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
 
-    [[EvaDriver-{{model_component}}]]
-        script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaObservations-{{model_component}}]]
+        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
