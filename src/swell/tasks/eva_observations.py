@@ -41,7 +41,7 @@ class EvaDriver(taskBase):
         # --------------------------------------
         exp_path = os.path.join(experiment_root, experiment_id)
         exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
-        eva_config_file = os.path.join(exp_suite_path, f'eva-{model}.yaml')
+        eva_config_file = os.path.join(exp_suite_path, f'eva_observations-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 

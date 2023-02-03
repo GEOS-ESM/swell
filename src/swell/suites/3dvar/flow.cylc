@@ -58,20 +58,20 @@
             GetBackground-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GenerateBClimatology-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # EvaJediLog
-            RunJediHofxExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
 
             # Save observations
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
@@ -99,6 +99,9 @@
     # -----
     [[CloneJedi]]
         script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
 
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
