@@ -16,7 +16,7 @@ import sys
 import questionary
 
 from swell.deployment.prep_config_base import PrepConfigBase
-
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -176,6 +176,8 @@ class PrepConfigCli(PrepConfigBase):
         if options == 'file':
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            # Make sure no python directories are included
+            suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
             choices = suite_list
         else:
             if options == 'use_method':
@@ -183,6 +185,8 @@ class PrepConfigCli(PrepConfigBase):
                     method_dir = 'deployment/platforms/'
                 new_path = os.path.join(os.path.dirname(self.directory), method_dir, '*/')
                 suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+                # Make sure no python directories are included
+                suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
                 options = suite_list
             choices = options
         answer = prompt(quest, choices=choices, default=default).ask()
@@ -258,6 +262,8 @@ class PrepConfigCli(PrepConfigBase):
                                                    'configuration/jedi/interfaces',
                                                    self.model,
                                                    'observations/*.yaml'))
+                    # Do not include obsop_name_map.yaml in the list of observations
+                    files = list(filter(lambda a: 'obsop_name_map' not in a, files))
                     choices = [x.split('/')[-1].split('.')[0] for x in files]
             else:
                 choices = options

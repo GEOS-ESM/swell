@@ -21,7 +21,7 @@ from swell.utilities.jedi_bundle import link_path
 # --------------------------------------------------------------------------------------------------
 
 
-class CloneJedi(taskBase):
+class BuildJediByLinking(taskBase):
 
     def execute(self):
 
@@ -42,40 +42,28 @@ class CloneJedi(taskBase):
         # ----------------------------------------------------------------
         if jedi_build_method == 'use_existing':
 
-            # Get the existing bundle directory to get the source code
-            existing_source_directory = self.config_get('existing_source_directory')
+            # Get the existing build directory from the dictionary
+            existing_build_directory = self.config_get('existing_build_directory')
+
+            # Assert that the existing build directory contains a bin directory
+            if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
+                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
+                                  f'directory is not found in the path ' +
+                                  f'\'{existing_build_directory}\'')
+
+            # Write warning to user
+            self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
+                             'problems will follow if the loaded modules are not consistent ' +
+                             'with those used to build this version of JEDI. Also note that ' +
+                             'this experiment may not be reproducible if the build changes.')
 
             # Link the source code directory
-            link_path(existing_source_directory, jedi_bundle_source_path)
-
-        elif jedi_build_method == 'create':
-
-            # Determine which bundles need to be build
-            model_components = self.config_get('model_components', None)
-            if model_components is not None:
-                bundles = []
-                for model_component in model_components:
-                    # Open the metadata config for interface
-                    meta = self.open_jedi_interface_meta_config_file(model_component)
-                    bundles.append(meta['jedi_interface'])
-            else:
-                bundles_default = get_bundles()
-                bundles = self.config_get('bundles', bundles_default)
-
-            # Generate the build dictionary
-            jedi_bundle_dict = set_jedi_bundle_config(bundles, jedi_bundle_source_path,
-                                                      jedi_bundle_build_path)
-
-            # Perform the clone of JEDI repos
-            try:
-                execute_tasks(['clone'], jedi_bundle_dict)
-            except Exception:
-                self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
+            link_path(existing_build_directory, jedi_bundle_build_path)
 
         else:
 
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
-                              f'experiment dictionary. Must be \'use_existing\' or \'create\'.')
+                              f'experiment dictionary. Must be \'use_existing\'.')
 
 
 # --------------------------------------------------------------------------------------------------

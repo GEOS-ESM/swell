@@ -19,8 +19,10 @@
 
     [[graph]]
         R1 = """
-           CloneJedi => BuildJedi
-            """
+           CloneJedi => BuildJediByLinking?
+
+           BuildJediByLinking:fail? => BuildJedi
+        """
 
 # --------------------------------------------------------------------------------------------------
 
@@ -38,6 +40,9 @@
     # -----
     [[CloneJedi]]
         script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
 
     [[BuildJedi]]
         script = "swell_task BuildJedi $config"
