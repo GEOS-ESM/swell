@@ -31,7 +31,7 @@ class PrepConfigCli(PrepConfigBase):
 
         print(f"Now editing the {self.directory.split('/')[-1]} YAML file.")
 
-        # try remove fixed options in key list, then have if to check end_key from that list.
+        # Get final key in yaml before fixed options
         self.dictionary = self.open_dictionary()
         key_list = list(self.dictionary.keys())
         if 'fixed_options' in key_list:
@@ -79,7 +79,7 @@ class PrepConfigCli(PrepConfigBase):
                     # Add the choice to the dictionary
                     # If you wanted more suite options, you'd need to add directories for them at
                     # the suites/ level
-                    el_dict['default_value'] = self.check_widgets(key, el_dict) 
+                    el_dict['default_value'] = self.check_widgets(key, el_dict)
                     change_check = self.before_next()
                     if isinstance(change_check, dict):
                         el_dict = change_check
@@ -230,7 +230,8 @@ class PrepConfigCli(PrepConfigBase):
                 answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
                                 validate=lambda text: True if r.match(text) is not None or
                                 text == 'q'
-                                else "Please enter a duration with the following format: Thh", default=default).ask()
+                                else "Please enter a duration with the following format: Thh",
+                                default=default).ask()
                 if answer == 'q':
                     pass
                 else:
@@ -253,7 +254,10 @@ class PrepConfigCli(PrepConfigBase):
                 choices = default
                 default = default[0]
                 if self.model is not None:
-                    files = glob.glob(os.path.join(self.install_path, 'configuration/jedi/interfaces', self.model, 'observations/*.yaml'))
+                    files = glob.glob(os.path.join(self.install_path,
+                                                   'configuration/jedi/interfaces',
+                                                   self.model,
+                                                   'observations/*.yaml'))
                     choices = [x.split('/')[-1].split('.')[0] for x in files]
             else:
                 choices = options
@@ -261,17 +265,22 @@ class PrepConfigCli(PrepConfigBase):
                     pass
                 else:
                     default = default[0]
-        answer = prompt(quest, choices=choices, 
-                        default=default, 
-                        validate=lambda text: True if text != [] 
+        answer = prompt(quest, choices=choices,
+                        default=default,
+                        validate=lambda text: True if text != []
                         else 'Please select one option').ask()
         return answer
 
     def before_next(self):
-        changer = self.make_boolean('Do you wish to change any of your entries?', False, questionary.confirm) 
+        changer = self.make_boolean('Do you wish to change any of your entries?',
+                                    False,
+                                    questionary.confirm)
         if changer:
             keys = self.key_list
-            change_keys = self.make_check_widget('Which elements would you like to change?', keys, None, questionary.checkbox)
+            change_keys = self.make_check_widget('Which elements would you like to change?',
+                                                 keys,
+                                                 None,
+                                                 questionary.checkbox)
             for k in change_keys:
                 changed_dict = self.dictionary[k]
                 new_default_value = self.check_widgets(k, changed_dict)
