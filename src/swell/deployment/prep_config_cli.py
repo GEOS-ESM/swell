@@ -259,7 +259,7 @@ class PrepConfigCli(PrepConfigBase):
                 if self.model is not None:
                     files = glob.glob(os.path.join(get_swell_path(), 'configuration/jedi/interfaces', self.model, 'observations/*.yaml'))
                     # Do not include obsop_name_map.yaml in the list of observations
-                    files = list(filter(lambda a: a != 'obsop_name_map', files))
+                    files = list(filter(lambda a: 'obsop_name_map' not in a, files))
                     choices = [x.split('/')[-1].split('.')[0] for x in files]
             else:
                 choices = options
