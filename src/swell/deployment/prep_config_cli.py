@@ -16,7 +16,7 @@ import sys
 import questionary
 
 from swell.deployment.prep_config_base import PrepConfigBase
-
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -257,7 +257,9 @@ class PrepConfigCli(PrepConfigBase):
                 choices = default
                 default = default[0]
                 if self.model is not None:
-                    files = glob.glob(os.path.join(self.install_path, 'configuration/jedi/interfaces', self.model, 'observations/*.yaml'))
+                    files = glob.glob(os.path.join(get_swell_path(), 'configuration/jedi/interfaces', self.model, 'observations/*.yaml'))
+                    # Do not include obsop_name_map.yaml in the list of observations
+                    files = list(filter(lambda a: a != 'obsop_name_map', files))
                     choices = [x.split('/')[-1].split('.')[0] for x in files]
             else:
                 choices = options
