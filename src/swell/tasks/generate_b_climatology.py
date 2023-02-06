@@ -57,6 +57,7 @@ class GenerateBClimatology(taskBase):
     def initialize_background(self):
 
         if self.background_error_model == 'bump':
+
             return self.generate_bump()
         else:
             self.logger.abort('  Unknown background error model')
@@ -67,11 +68,6 @@ class GenerateBClimatology(taskBase):
         # ----------------------------
         resolution = self.horizontal_resolution + 'x' + self.vertical_resolution
 
-        # Compute number of processors
-        # ----------------------------
-        np_string = self.use_config_to_template_string(self.total_processors)
-        np = eval(np_string)
-
         # Get the name of the model component
         # --------------------------------
         model_component = self.get_model()
@@ -80,7 +76,7 @@ class GenerateBClimatology(taskBase):
         # --------------------
         b_dir = os.path.join(self.swell_static_files, 'jedi', self.jedi_interface,
                              model_component, self.background_error_model, 'climatological',
-                             resolution, str(np))
+                             resolution, str(self.np))
 
         d_dir = os.path.join(self.cycle_dir, 'background_error_model')
 
@@ -110,9 +106,9 @@ class GenerateBClimatology(taskBase):
 
             # Run the JEDI executable
             # -----------------------
-            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            self.logger.info('Running '+jedi_executable_path+' with '+str(self.np)+' processors.')
 
-            command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
+            command = ['mpirun', '-np', str(self.np), jedi_executable_path, jedi_config_file]
 
             # Move to the cycle directory
             # ---------------------------
@@ -162,11 +158,19 @@ class GenerateBClimatology(taskBase):
         self.vertical_resolution = self.config_get('vertical_resolution')
         self.cycle_dir = self.config_get('cycle_dir')
         self.experiment_dir = self.config_get('experiment_dir')
+        self.npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
+        self.npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
         model_component_meta = self.open_jedi_interface_meta_config_file()
         self.jedi_interface = model_component_meta['jedi_interface']
+
+        # Compute number of processors
+        # ----------------------------
+        self.total_processors = self.total_processors.replace('npx_proc', str(self.npx_proc))
+        self.total_processors = self.total_processors.replace('npy_proc', str(self.npy_proc))
+        self.np = eval(self.total_processors)
 
         # Obtain and initialize proper error model
         # -----------------------------------------------
