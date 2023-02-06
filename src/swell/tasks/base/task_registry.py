@@ -23,6 +23,7 @@ valid_tasks = [
   'BuildGeos',
   'CloneGeos',
   'GenerateBClimatology',
+  'GenerateBClimatologyByLinking',
   'GetGeosRestarts',
   'RunGeos',
   'RunJediVarExecutable',

@@ -204,6 +204,15 @@ class taskBase(ABC):
     def get_model(self):
         return self.__model__
 
+    # ----------------------------------------------------------------------------------------------
+
+    def get_cycle_dir(self):
+        cycle_dir = self.__config__.get('cycle_dir', None)
+        if cycle_dir is None:
+            self.logger.abort('Do not call get_cycle_dir when the task is run without time')
+        return cycle_dir
+
+
 # --------------------------------------------------------------------------------------------------
 
 
