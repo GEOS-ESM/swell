@@ -2,14 +2,9 @@
 
 name: discover-nightly
 
-#on:
-#  pull_request:
-#    types: [opened, synchronize, reopened]
-
 on:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '0,15,30,45 * * * *'
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 defaults:
   run:
