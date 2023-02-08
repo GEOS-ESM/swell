@@ -82,9 +82,10 @@ def link_file_existing_link_ok(logger, source_path_file, target_path_file):
         if os.path.islink(target_path_file):
             os.remove(target_path_file)
         else:
-            logger.abort(f'In link_file_with_overwrite when linking source file {source_path_file}' +
-                         f'to {target_path_file} a file was already found that is not a symbolic' +
-                         f' link. This code will not replace concrete files with symbolic links.')
+            logger.abort(f'In link_file_with_overwrite when linking source file ' +
+                         f'{source_path_file} to {target_path_file} a file was already found ' +
+                         f'that is not a symbolic link. This code will not replace concrete ' +
+                         f'files with symbolic links.')
 
     # Create symbolic link
     logger.info(f'Linking {source_path_file} to {target_path_file}')

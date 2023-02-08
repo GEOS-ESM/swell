@@ -46,11 +46,11 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Source path base the part that looks like /path/to/static_background_error_model/
         source_path_base = os.path.join('jedi', 'interfaces', self.get_model(), 'model',
-                                     'static_background_error', static_background_error_model)
+                                        'static_background_error', static_background_error_model)
 
         # Model specific part of the path, i.e. anything that goes between the base path above,
         # and the actual files that need to be linked into the directory.
-        if  static_background_error_model == 'bump':
+        if static_background_error_model == 'bump':
             source_path_model = self.append_source_path_bump()
         else:
             self.logger.abort("Only bump is currently supported")
