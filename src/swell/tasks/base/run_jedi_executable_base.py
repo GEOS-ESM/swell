@@ -104,7 +104,7 @@ class RunJediExecutableBase(taskBase):
         if os.path.exists(output_log):
             os.remove(output_log)
         output_log_h = open(output_log, 'w')
-        self.logger.info(f'Output log being written to: {output_file}')
+        self.logger.info(f'Output log being written to: {output_log}')
 
         # Execute
         # -------

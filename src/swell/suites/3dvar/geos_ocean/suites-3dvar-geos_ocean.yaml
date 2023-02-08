@@ -12,9 +12,9 @@ window_length:
 
 # Horizontal resolution
 horizontal_resolution:
-  default_value: '1440x1080'
+  default_value: '360x320'
   prompt: What resolution for the hor. res (probably will become obsolete)?
-  options: ['1440x1080']
+  options: ['360x320', '1440x1080']
   type: string-drop-list
 
 # Vertical resolution
@@ -91,7 +91,7 @@ fixed_options:
     default_value: RPCG
     prompt: Minimizer to use for gradient descent
   number_of_iterations:
-    default_value: 30
+    default_value: 5
     prompt: Number of iterations to use in the minimization
   gradient_norm_reduction:
     default_value: 1e-10
