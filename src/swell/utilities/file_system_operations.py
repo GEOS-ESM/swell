@@ -39,12 +39,9 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
                      f'directories being searched were found to exist. Directories: {source_paths}')
 
     # Second sweep to establish if directories contain files
-    print('found_paths', found_paths)
     found_files = False
     for ind, source_path in enumerate(source_paths):
-        print("AAA", ind, source_path, found_paths[ind])
         if found_paths[ind]:
-            print('found_path', source_path)
             source_path_files = os.listdir(source_path)
             if source_path_files:
                 found_files = True
