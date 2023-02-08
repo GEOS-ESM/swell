@@ -5,7 +5,7 @@ diagnostics:
 - data:
     type: JediLog
     collection_name: jedi_log_test
-    jedi_log_to_parse: {{cycle_dir}}/jedi_variational_log.txt
+    jedi_log_to_parse: '{{cycle_dir}}/jedi_variational_log.txt'
     data_to_parse:
       convergence: true
 
@@ -14,7 +14,7 @@ diagnostics:
           layout: [3,1]
           figure size: [12,10]
           title: 'Gradient and Norm Reduction Plots RPCG'
-          output name: {{cycle_dir}}/eva/jedi_log/convergence/norm_gradient_reduction.png
+          output name: '{{cycle_dir}}/eva/jedi_log/convergence/norm_gradient_reduction.png'
         plots:
           - add_xlabel: 'Total inner iteration number'
             add_ylabel: 'Gradient reduction'
