@@ -53,7 +53,7 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.txt')
+        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.log')
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------

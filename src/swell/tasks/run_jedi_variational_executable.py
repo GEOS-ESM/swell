@@ -43,7 +43,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(cycle_dir, 'jedi_variational_log.txt')
+        output_log_file = os.path.join(cycle_dir, 'jedi_variational_log.log')
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------

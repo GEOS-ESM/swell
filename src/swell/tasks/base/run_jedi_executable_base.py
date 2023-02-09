@@ -114,6 +114,8 @@ class RunJediExecutableBase(taskBase):
             if output == '' and process.poll() is not None:
                 break
             if output:
+                # Write line of output to screen for tailing
+                print(output.strip())
                 # Write line of output to file
                 output_log_h.write(f'{output.strip()}\n')
         rc = process.poll()

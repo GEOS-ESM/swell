@@ -53,9 +53,13 @@
             # Get observations
             GetObservations-{{model_component}}
 
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
@@ -109,6 +113,9 @@
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
         script = "swell_task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
 
     [[ GetBackground-{{model_component}} ]]
         script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"

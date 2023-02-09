@@ -30,12 +30,6 @@ background_experiment:
   prompt: Experiment providing the background files?
   type: string
 
-# Analysis
-analysis_variables:
-  default_value: [socn, tocn, ssh, hocn]
-  prompt: Variables to be assimilated?
-  type: string
-
 obs_experiment:
   default_value: s2s
   prompt: Database providing the observations?
@@ -85,12 +79,9 @@ fixed_options:
   background_source:
     default_value: file
     prompt: 'Source of the background files (file or from model)'
-  background_error_model:
-    default_value: bump
-    prompt: 'Method for calculating background error covariance'
   obs_provider:
     default_value: odas
     prompt: Database providing the observations.
   clean_patterns:
-    default_value: ['*.nc4','*.txt']
+    default_value: ['*.nc4','*.txt','*MOM*','logfile.*.out']
     prompt: 'Patterns for the files to remove after completing a cycle'
