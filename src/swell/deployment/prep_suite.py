@@ -52,26 +52,6 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
     render_dictionary['scheduling'] = {}
-    render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
-    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
-
-    render_dictionary['scheduling']['GenerateBClimatology'] = {}
-    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT15M'
-    render_dictionary['scheduling']['GenerateBClimatology']['account'] = 'g0613'
-    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 15
-    render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
-
-    render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 15
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 24
 
     render_dictionary['scheduling']['BuildJedi'] = {}
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT2H'
@@ -79,6 +59,41 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
     render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
     render_dictionary['scheduling']['BuildJedi']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['BuildGeos'] = {}
+    render_dictionary['scheduling']['BuildGeos']['execution_time_limit'] = 'PT1H'
+    render_dictionary['scheduling']['BuildGeos']['account'] = 'g0613'
+    render_dictionary['scheduling']['BuildGeos']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['BuildGeos']['nodes'] = 1
+    render_dictionary['scheduling']['BuildGeos']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['GenerateBClimatology'] = {}
+    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT15M'
+    render_dictionary['scheduling']['GenerateBClimatology']['account'] = 'g0613'
+    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 1
+    render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
+    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 24
+
+    render_dictionary['scheduling']['RunGeosExecutable'] = {}
+    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['RunGeosExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunGeosExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunGeosExecutable']['ntasks_per_node'] = 24
 
     # Render the template
     # -------------------

@@ -11,6 +11,7 @@
 from abc import ABC, abstractmethod
 import datetime
 import os
+import pathlib
 import yaml
 
 from swell.swell_path import get_swell_path
@@ -216,6 +217,14 @@ class PrepConfigBase(ABC):
                                                             f'model component'
             option_key = 'models.' + self.model + '.' + key
         self.comment_dict[option_key] = prompt
+
+    # ----------------------------------------------------------------------------------------------
+
+    def update_experiment_dictionary(self, key, new_value):
+        if self.model is not None:
+            self.experiment_dict['models'][self.model][key] = new_value
+        else:
+            self.experiment_dict[key] = new_value
 
     # ----------------------------------------------------------------------------------------------
 

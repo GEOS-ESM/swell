@@ -1,8 +1,9 @@
 # Cycle frequency
 cycle_times:
   default_value: ['T00', 'T12']
-  prompt: List all ocean cycle times, by middle of the window?
-  type: iso-duration
+  prompt: List all cycle times, by middle of the window?
+  options: ['T00', 'T12']
+  type: string-check-list
 
 # Window length
 window_length:
@@ -14,14 +15,13 @@ window_length:
 horizontal_resolution:
   default_value: '1440x1080'
   prompt: What resolution for the hor. res (probably will become obsolete)?
-  options: ['1440x1080']
-  type: string-drop-list
+  type: string
 
 # Vertical resolution
 vertical_resolution:
   default_value: '75'
   prompt: What vertical resolution for the ocean background?
-  options: ['75']
+  options: ['75','25']
   type: string-drop-list
 
 # Backgrounds
@@ -51,7 +51,7 @@ observations:
   options: use_method
   type: string-check-list
 
-  # Processor layout
+# Processor layout
 npx_proc:
   default_value: '24'
   prompt: What processor layout (x-direction) per cube face?

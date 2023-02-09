@@ -1,0 +1,114 @@
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing Geos forecast
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
+
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Get background
+            GetRestart-{{model_component}}
+
+            # Run Geos hofx executable
+            BuildGeosByLinking[^]? | BuildGeos[^]  => PrepGeosRunDir
+            GetRestart-{{model_component}} => PrepGeosRunDir
+
+            # Run Geos Executable
+            PrepGeosRunDir => RunGeosExecutable
+
+            # Save restart
+            RunGeosExecutable => SaveRestart-{{model_component}}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneGeos]]
+        script = "swell_task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell_task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell_task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildGeos"]["account"]}}
+            --qos = {{scheduling["BuildGeos"]["qos"]}}
+            --job-name = BuildGeos
+            --nodes={{scheduling["BuildGeos"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
+
+    [[PrepGeosRunDir]]
+        script = "swell_task PrepGeosRunDir $config"
+
+    {% for model_component in model_components %}
+    [[GetRestart-{{model_component}}]]
+        script = "swell_task GetRestart $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
+    {% endfor %}
+
+    [[RunGeosExecutable]]
+        script = "swell_task RunGeosExecutable $config -d $datetime"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunGeosExecutable"]["account"]}}
+            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
+            --job-name = RunGeosExecutable
+            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
+
+# --------------------------------------------------------------------------------------------------

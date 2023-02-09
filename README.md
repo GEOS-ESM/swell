@@ -6,6 +6,7 @@
 | --------- | --------|
 | Python coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg) |
 | YAML coding norms | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg) |
+| NCCS Discover Nightly | ![Status](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml/badge.svg) |
 
 ### Licence:
 

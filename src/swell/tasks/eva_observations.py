@@ -22,7 +22,7 @@ from swell.utilities.observations import ioda_name_to_long_name
 # --------------------------------------------------------------------------------------------------
 
 
-class EvaDriver(taskBase):
+class EvaObservations(taskBase):
 
     def execute(self):
 

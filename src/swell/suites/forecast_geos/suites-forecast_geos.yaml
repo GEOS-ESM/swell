@@ -16,29 +16,29 @@ runahead_limit:
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: string
 
-# Jedi build system
-jedi_build_method:
+# Geos build system
+geos_build_method:
   default_value: use_existing
-  prompt: Create a new JEDI build or use an existing build?
+  prompt: Create a new GEOS build or use an existing build?
   options: ['create', 'use_existing']
   type: string-drop-list
 
-# Existing JEDI bundle directory
+# Existing Geos bundle directory
 existing_source_directory:
   default_value: {{existing_source_directory}}
-  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+  prompt: Provide the path to an existing GEOS bundle directory containing source code repos
   type: string
   depends:
-    key: jedi_build_method
+    key: geos_build_method
     value: use_existing
 
-# Existing JEDI build
+# Existing GEOS build
 existing_build_directory:
   default_value: {{existing_build_directory}}
-  prompt: Provide the path to an existing JEDI build directory
+  prompt: Provide the path to an existing GEOS build directory
   type: string
   depends:
-    key: jedi_build_method
+    key: geos_build_method
     value: use_existing
 
 # R2D2 Configuration
@@ -48,10 +48,10 @@ r2d2_local_path:
   type: string
 
 # What kind of coupling is needed
-coupling_style:
+model_coupling_style:
   default_value: uncoupled
   prompt: What kind of coupling would you like to run with?
-  options: ['uncoupled', 'weakly coupled', 'strongly coupled']
+  options: ['uncoupled', 'coupled']
   type: string-drop-list
 
 # Models to use
@@ -60,10 +60,4 @@ model_components:
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
-
-# Fixed options
-fixed_options:
-  data_assimilation_run:
-    default_value: true
-    prompt: Does this workflow include data assimilation?
 

@@ -14,11 +14,11 @@ from swell.tasks.base.task_base import taskBase
 # --------------------------------------------------------------------------------------------------
 
 
-class CloneGeos(taskBase):
+class GetRestart(taskBase):
 
     def execute(self):
 
-        self.logger.info('CloneGeos')
+        self.logger.info('GetRestart')
 
 
 # --------------------------------------------------------------------------------------------------

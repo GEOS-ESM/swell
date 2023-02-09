@@ -20,7 +20,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-class EvaDriver(taskBase):
+class EvaJediLog(taskBase):
 
     def execute(self):
 
