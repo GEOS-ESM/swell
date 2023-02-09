@@ -5,7 +5,7 @@ diagnostics:
 - data:
     type: JediLog
     collection_name: jedi_log_test
-    jedi_log_to_parse: '{{cycle_dir}}/jedi_variational_log.txt'
+    jedi_log_to_parse: '{{cycle_dir}}/jedi_variational_log.log'
     data_to_parse:
       convergence: true
 

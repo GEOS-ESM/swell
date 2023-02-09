@@ -28,7 +28,7 @@ linear variable change:
     efold_z: 2500.0       # [m]
 
   - linear variable change name: BkgErrGODAS
-    sst_bgerr_file: '{{experiment_dir}}/stage/soca/geos_ocean/fieldmetadata/godas_sst_bgerr.nc'
+    sst_bgerr_file: '{{cycle_dir}}/soca/godas_sst_bgerr.nc'
     t_min: 0.1
     t_max: 2.0
     t_dz:  20.0

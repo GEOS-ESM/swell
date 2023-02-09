@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based h(x)
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -59,10 +59,10 @@
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
-            # Run Jedi hofx executable
+            # Run Jedi variational executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
