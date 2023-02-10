@@ -1,8 +1,3 @@
-# TODO: this file probably needs a different name (bump_*)
-
-# ERROR: This order is not protected after processed by Swell, hence
-# creating a different config file (I saw model: online entry for bump)
-# model: online entry was encountered during execution with swell
 covariance model: 'SocaError'
 analysis variables: {{analysis_variables}}
 date: '{{local_background_time_iso}}'

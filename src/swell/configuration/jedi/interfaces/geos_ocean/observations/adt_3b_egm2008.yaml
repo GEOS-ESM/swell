@@ -14,7 +14,6 @@ obs operator:
 obs error:
   covariance model: diagonal
 obs filters:
-# - *obs_land_mask
 - filter: Domain Check
   where:
   - variable: {name: GeoVaLs/sea_area_fraction}
