@@ -1,5 +1,5 @@
 date: '{{local_background_time_iso}}'
 read_from_file: 1
-basename: '{{cycle_dir}}/'
+basename: './'
 ocn_filename: 'MOM6.res.{{local_background_time}}.nc'
-state variables: [socn, tocn, ssh, hocn, uocn, vocn]
+state variables: [socn, tocn, ssh, hocn, mld, layer_depth]

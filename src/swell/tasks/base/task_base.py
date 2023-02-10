@@ -112,6 +112,10 @@ class taskBase(ABC):
         config_file = os.path.join(swell_exp_config_path, 'jedi', 'interfaces',
                                    self.__model__, model_or_obs, config_name + '.yaml')
 
+        # Check that config file exists
+        if not os.path.exists(config_file):
+            return None
+
         # Open file as a string
         with open(config_file, 'r') as config_file_open:
             config_file_str_templated = config_file_open.read()
@@ -183,6 +187,10 @@ class taskBase(ABC):
     def open_jedi_interface_obs_config_file(self, config_name):
         obs_dict = self.__open_jedi_interface_config_file('observations', config_name)
 
+        # Check that a config file was opened
+        if obs_dict is None:
+            return None
+
         # If 4D window then add time interpolation to the dictionary
         if self.config_get('window_type') == '4D':
             obs_dict['get values'] = {}
@@ -203,6 +211,23 @@ class taskBase(ABC):
 
     def get_model(self):
         return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def is_datetime_dependent(self):
+        if self.__datetime__ is None:
+            return False
+        else:
+            return True
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_cycle_dir(self):
+        cycle_dir = self.__config__.get('cycle_dir', None)
+        if cycle_dir is None:
+            self.logger.abort('Do not call get_cycle_dir when the task is run without time')
+        return cycle_dir
+
 
 # --------------------------------------------------------------------------------------------------
 

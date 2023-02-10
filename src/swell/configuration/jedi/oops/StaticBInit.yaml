@@ -3,12 +3,8 @@
 
 geometry:
   TASKFILLgeometry
-state:
+analysis variables: {{analysis_variables}}
+background:
   TASKFILLbackground
-
-window begin: '{{window_begin_iso}}'
-window length: '{{window_length}}'
-
-observations:
-  observers:
-    SPECIALobservations
+background error:
+  TASKFILLbackground_error_init

@@ -9,6 +9,7 @@
 
 
 import copy
+import glob
 import importlib
 import os
 import pathlib
@@ -25,13 +26,19 @@ def copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components):
     # Copy suite related files to the suite directory
     # -----------------------------------------------
     for model_component in model_components:
-        src_eva_file = f'eva.yaml'
-        dst_eva_file = f'eva-{model_component}.yaml'
-        src_path_file = os.path.join(swell_suite_path, model_component, src_eva_file)
-        dst_path_file = os.path.join(exp_suite_path, dst_eva_file)
-        if os.path.exists(src_path_file):
-            logger.trace(f'Copying {src_path_file} to {dst_path_file}')
-            shutil.copy(src_path_file, dst_path_file)
+        # Path to where eva files are
+        eva_config_path = os.path.join(swell_suite_path, model_component)
+        # All eva files
+        eva_files = glob.glob(os.path.join(eva_config_path, 'eva*.yaml'))
+        # Loop over eva files and copy with model name appended
+        for eva_file in eva_files:
+            eva_file_basename = os.path.basename(eva_file)
+            eva_file_basename = os.path.splitext(eva_file_basename)[0]
+            dst_eva_file = f'{eva_file_basename}-{model_component}.yaml'
+            dst_path_file = os.path.join(exp_suite_path, dst_eva_file)
+            if os.path.exists(eva_file):
+                logger.trace(f'Copying {eva_file} to {dst_path_file}')
+                shutil.copy(eva_file, dst_path_file)
 
 
 # --------------------------------------------------------------------------------------------------

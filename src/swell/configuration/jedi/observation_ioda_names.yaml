@@ -88,9 +88,39 @@ ioda instrument names:
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
 # Ocean
+  - ioda name: adt_3a_egm2008
+    full name: ADT 3a (EGM2008)
+  - ioda name: adt_3b_egm2008
+    full name: ADT 3b (EGM2008)
+  - ioda name: adt_c2_egm2008
+    full name: ADT c2 (EGM2008)
+  - ioda name: adt_coperl4
+    full name: ADT Copernicus Level-4
+  - ioda name: adt_j3_egm2008
+    full name: ADT j3 (EGM2008)
+  - ioda name: adt_sa_egm2008
+    full name: ADT sa (EGM2008)
   - ioda name: adt
-    full name: Absolute Dynamic Topography
-  - ioda name: insitut
-    full name: Insitu Temperature
+    full name: ADT
   - ioda name: insitus
     full name: Insitu Salinity
+  - ioda name: insitut
+    full name: Insitu Temperature
+  - ioda name: salt_profile_fnmoc
+    full name: FNMOC (In-situ Salinity)
+  - ioda name: sss_smos_esa
+    full name: ESA SMOS (SSS)
+  - ioda name: sss_trak_fnmoc
+    full name: FNMOC (SSS)
+  - ioda name: sst_amsr2_l3u
+    full name: AMSR2 (SST)
+  - ioda name: sst_gmi_l3u
+    full name: GMI (SST)
+  - ioda name: sst_ostia
+    full name: OSTIA (SST)
+  - ioda name: sst_ship_fnmoc
+    full name: FNMOC Ship (SST)
+  - ioda name: sst_trak_fnmoc
+    full name: FNMOC (SST)
+  - ioda name: temp_profile_fnmoc
+    full name: FNMOC (In-situ Temperature)
