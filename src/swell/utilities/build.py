@@ -16,22 +16,22 @@ from jedi_bundle.bin.jedi_bundle import get_default_config, get_bundles
 # --------------------------------------------------------------------------------------------------
 
 
-def build_and_source_dirs(jedi_bundle_path):
+def build_and_source_dirs(package_path):
 
-    # Make jedi_bundle directory
-    # --------------------------
-    os.makedirs(jedi_bundle_path, 0o755, exist_ok=True)
+    # Make package directory
+    # ----------------------
+    os.makedirs(package_path, 0o755, exist_ok=True)
 
-    jedi_bundle_build_path = os.path.join(jedi_bundle_path, 'build')
-    jedi_bundle_source_path = os.path.join(jedi_bundle_path, 'source')
+    package_build_path = os.path.join(package_path, 'build')
+    package_source_path = os.path.join(package_path, 'source')
 
     # Remove trailing slash if needed
-    if jedi_bundle_build_path.endswith('/'):
-        jedi_bundle_build_path = jedi_bundle_build_path[:-1]
-    if jedi_bundle_source_path.endswith('/'):
-        jedi_bundle_source_path = jedi_bundle_source_path[:-1]
+    if package_build_path.endswith('/'):
+        package_build_path = package_build_path[:-1]
+    if package_source_path.endswith('/'):
+        package_source_path = package_source_path[:-1]
 
-    return jedi_bundle_build_path, jedi_bundle_source_path
+    return package_build_path, package_source_path
 
 
 # --------------------------------------------------------------------------------------------------

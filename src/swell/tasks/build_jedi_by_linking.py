@@ -14,8 +14,7 @@ from jedi_bundle.bin.jedi_bundle import execute_tasks
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.git_utils import git_got
-from swell.utilities.jedi_bundle import set_jedi_bundle_config, get_bundles, build_and_source_dirs
-from swell.utilities.jedi_bundle import link_path
+from swell.utilities.build import build_and_source_dirs, link_path
 
 
 # --------------------------------------------------------------------------------------------------
