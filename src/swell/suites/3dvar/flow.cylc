@@ -116,6 +116,7 @@
             --job-name = BuildJedi
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
@@ -143,6 +144,7 @@
             --job-name = RunJediVariationalExecutable
             --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
 
     [[MergeIodaFiles-{{model_component}}]]
         script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"

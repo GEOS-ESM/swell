@@ -109,6 +109,7 @@
             --job-name = BuildJedi
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
@@ -133,6 +134,7 @@
             --job-name = RunJediHofxExecutable
             --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediHofxExecutable"]["constraint"]}}
 
     [[EvaObservations-{{model_component}}]]
         script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
