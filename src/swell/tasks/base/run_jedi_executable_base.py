@@ -9,11 +9,11 @@
 
 
 from abc import ABC, abstractmethod
-
+import os
 
 from swell.tasks.base.task_base import taskBase
-import os
-import subprocess
+from swell.utilities.shell_commands import run_track_log_subprocess
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -99,36 +99,9 @@ class RunJediExecutableBase(taskBase):
         # ---------------------------
         os.chdir(cycle_dir)
 
-        # Prepare output file
-        # -------------------
-        if os.path.exists(output_log):
-            os.remove(output_log)
-        output_log_h = open(output_log, 'w')
-        self.logger.info(f'Output log being written to: {output_log}')
+        # Run command
+        # -----------
+        run_track_log_subprocess(logger, command, output_log=output_log):
 
-        # Execute
-        # -------
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        while True:
-            output = process.stdout.readline().decode()
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                # Write line of output to screen for tailing
-                print(output.strip())
-                # Write line of output to file
-                output_log_h.write(f'{output.strip()}\n')
-        rc = process.poll()
-
-        # Close the log file
-        # ------------------
-        output_log_h.close()
-
-        # Abort task if the executable did not run successfully
-        # -----------------------------------------------------
-        if rc != 0:
-            command_string = ' '.join(command)
-            self.logger.abort('subprocess.run with command ' + command_string +
-                              ' failed to execute.', False)
 
 # --------------------------------------------------------------------------------------------------

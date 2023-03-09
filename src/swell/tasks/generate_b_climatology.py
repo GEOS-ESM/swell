@@ -7,11 +7,11 @@
 # -----------------------------------------------
 import os
 import shutil
-import subprocess
 
 import yaml
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.shell_commands import run_track_log_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -118,21 +118,8 @@ class GenerateBClimatology(taskBase):
 
             # Execute
             # -------
-            process = subprocess.Popen(command, stdout=subprocess.PIPE)
-            while True:
-                output = process.stdout.readline().decode()
-                if output == '' and process.poll() is not None:
-                    break
-                if output:
-                    print(output.strip())
-            rc = process.poll()
+            run_track_log_subprocess(self.logger, command)
 
-            # Abort task if the executable did not run successfully
-            # -----------------------------------------------------
-            if rc != 0:
-                command_string = ' '.join(command)
-                self.logger.abort('subprocess.run with command ' + command_string +
-                                  ' failed to execute.', False)
         return
 
     # ----------------------------------------------------------------------------------------------

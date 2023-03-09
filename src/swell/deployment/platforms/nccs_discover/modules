@@ -31,6 +31,11 @@ module load sp/2.3.3
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
 
+# Load GMAO modules
+# -----------------
+module use -a /discover/swdev/gmao_SIteam/modulefiles-SLES12
+module load other/mepo
+
 # Load workflow modules
 # ---------------------
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core

@@ -13,7 +13,6 @@ import os
 from jedi_bundle.bin.jedi_bundle import execute_tasks
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.git_utils import git_got
 from swell.utilities.build import build_and_source_dirs, link_path
 
 

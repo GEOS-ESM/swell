@@ -8,7 +8,49 @@
 
 
 import os
-import subprocess
+
+from swell.utilities.shell_commands import run_subprocess_dev_null
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def git_change_branch(logger, git_branch, out_dir):
+
+    # Change to a specific branch
+    # ---------------------------
+    cwd = os.getcwd()
+    os.chdir(out_dir)
+    logger.info('Checking out branch/tag/commit ' + git_branch)
+
+    # Change branch
+    command = ['git', 'checkout', git_branch]
+    run_subprocess_dev_null(logger, command)
+
+    # Go back to previous directory
+    os.chdir(cwd)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def git_clone(logger, git_url, git_branch, out_dir, change_branch = False):
+
+    # Clone repo at git_url to out_dir
+    # --------------------------------
+    if not os.path.exists(out_dir):
+
+        # Clone the repo
+        command = ['git', 'clone', '-b', git_branch, git_url, out_dir]
+        run_subprocess_dev_null(logger, command)
+
+    else:
+
+        logger.info('Directory ' + out_dir + ' already exists so ' + git_url + ' not cloned.')
+        if change_branch:
+            logger.info('Will instead attempt to change to requested branch.')
+            git_change_branch(logger, git_branch, out_dir)
+
 
 
 # --------------------------------------------------------------------------------------------------
@@ -25,12 +67,7 @@ def git_got(git_url, git_branch, out_dir, logger):
 
         # Clone the repo
         logger.info('Attempting Git clone of ' + git_url + ' to ' + out_dir)
-        try:
-            subprocess.run(['git', 'clone', git_url, out_dir], check=True,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except subprocess.CalledProcessError:
-            subprocess.run(['git', 'clone', git_url, out_dir])
-            logger.abort('Git clone failed in git_got.')
+        run_subprocess_dev_null(logger, ['git', 'clone', git_url, out_dir])
 
     else:
 
@@ -40,12 +77,7 @@ def git_got(git_url, git_branch, out_dir, logger):
     # ------------------------------------------------------------
     os.chdir(out_dir)
     logger.info('Checking out branch/tag/commit ' + git_branch)
-    try:
-        subprocess.run(['git', 'checkout', git_branch], check=True, stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        subprocess.run(['git', 'checkout', git_branch])
-        logger.abort('Git checkout of branch ' + git_branch + ' failed in git_got. ')
+    run_subprocess_dev_null(logger, ['git', 'checkout', git_branch])
 
 
 # --------------------------------------------------------------------------------------------------

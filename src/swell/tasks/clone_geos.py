@@ -14,7 +14,8 @@ import urllib.request
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs, link_path
-
+from swell.utilities.git_utils import git_clone
+from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -46,32 +47,26 @@ class CloneGeos(taskBase):
             # Link the source code directory
             link_path(existing_geos_gcm_source_path, geos_gcm_source_path)
 
-        elif geos_build_method == 'clone_tag':
+        elif geos_build_method == 'create':
 
+            # Get tag to build
             geos_gcm_tag = self.config_get('geos_gcm_tag')
 
             # Make sure tag is prepended with 'v'
             if geos_gcm_tag[0] != 'v':
                 geos_gcm_tag = 'v' + geos_gcm_tag
 
-            # Set location of tag
-            tag_tar_source = f'https://github.com/GEOS-ESM/GEOSgcm/archive/refs/tags' + \
-                             f'/{geos_gcm_tag}.tar.gz'
+            # Clone repo
+            git_url = 'https://github.com/GEOS-ESM/GEOSgcm'
+            source_dir = os.path.join(geos_gcm_path, 'source')
+            git_clone(self.logger, git_url, geos_gcm_tag, source_dir, change_branch=True)
 
-            # Destination
-            tag_tar_target = os.path.join(geos_gcm_path, geos_gcm_tag)
-
-            # Download the tag
-            urllib.request.urlretrieve(tag_location, tag_tar_target)
-
-            # Un-tar
-            tag_tar_target_h = tarfile.open(tag_tar_target)
-            tag_tar_target_h.extractall(geos_gcm_source_path)
-            tag_tar_target_h.close()
-
-            # Remove the tar file
-            if os.path.exists(tag_tar_target):
-                os.remove(tag_tar_target)
+            # Use mepo to recursively clone the other needed repos
+            cwd = os.getcwd()
+            os.chdir(source_dir)
+            self.logger.info('Cloning GEOS repos using mepo')
+            run_subprocess(self.logger, ['mepo', 'clone'])
+            os.chdir(cwd)
 
         else:
 
