@@ -58,7 +58,7 @@ class BuildGeos(taskBase):
                     f'module list \n' + \
                     f'cmake -DBASEDIR=$BASEDIR/Linux -DCMAKE_Fortran_COMPILER=ifort ' + \
                     f'-DCMAKE_INSTALL_PREFIX={geos_gcm_install_path} {geos_gcm_source_path} \n' + \
-                    f'make -j24'
+                    f'make -j24 install'
 
         create_executable_file(self.logger, make_file_name, make_file)
 
