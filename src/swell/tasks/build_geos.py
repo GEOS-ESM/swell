@@ -40,7 +40,7 @@ class BuildGeos(taskBase):
         # ----------------------------------------
         if not geos_build_method == 'create':
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
-                                          f'experiment dictionary. Must be \'create\'.')
+                              f'experiment dictionary. Must be \'create\'.')
 
         # Create script that encapsulates the steps of building GEOS
         # ----------------------------------------------------------

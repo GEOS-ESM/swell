@@ -34,7 +34,7 @@ def git_change_branch(logger, git_branch, out_dir):
 # --------------------------------------------------------------------------------------------------
 
 
-def git_clone(logger, git_url, git_branch, out_dir, change_branch = False):
+def git_clone(logger, git_url, git_branch, out_dir, change_branch=False):
 
     # Clone repo at git_url to out_dir
     # --------------------------------
@@ -50,7 +50,6 @@ def git_clone(logger, git_url, git_branch, out_dir, change_branch = False):
         if change_branch:
             logger.info('Will instead attempt to change to requested branch.')
             git_change_branch(logger, git_branch, out_dir)
-
 
 
 # --------------------------------------------------------------------------------------------------

@@ -23,8 +23,7 @@ def run_track_log_subprocess(logger, command, output_log=None):
         if os.path.exists(output_log):
             os.remove(output_log)
         output_log_h = open(output_log, 'w')
-        logger.info(f'Output log (from run_and_track_subprocess) being written to: '
-                         f'{output_log}')
+        logger.info(f'Output log (from run_and_track_subprocess) being written to: {output_log}')
 
     # Run commands and print output to screen
     # ---------------------------------------
