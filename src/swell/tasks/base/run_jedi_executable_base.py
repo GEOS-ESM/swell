@@ -101,7 +101,7 @@ class RunJediExecutableBase(taskBase):
 
         # Run command
         # -----------
-        run_track_log_subprocess(logger, command, output_log=output_log):
+        run_track_log_subprocess(self.logger, command, output_log=output_log)
 
 
 # --------------------------------------------------------------------------------------------------
