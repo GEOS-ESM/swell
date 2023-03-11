@@ -54,7 +54,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling'] = {}
 
     render_dictionary['scheduling']['BuildJedi'] = {}
-    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['BuildJedi']['account'] = 'g0613'
     render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
     render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
