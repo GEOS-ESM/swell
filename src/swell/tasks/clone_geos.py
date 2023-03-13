@@ -42,10 +42,10 @@ class CloneGeos(taskBase):
         if geos_build_method == 'use_existing':
 
             # Get the existing bundle directory to get the source code
-            existing_geos_gcm_source_path = self.config_get('existing_geos_gcm_source_path')
+            existing_geos_source_directory = self.config_get('existing_geos_source_directory')
 
             # Link the source code directory
-            link_path(existing_geos_gcm_source_path, geos_gcm_source_path)
+            link_path(existing_geos_source_directory, geos_gcm_source_path)
 
         elif geos_build_method == 'create':
 

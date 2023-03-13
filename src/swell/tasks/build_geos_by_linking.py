@@ -41,13 +41,13 @@ class BuildGeosByLinking(taskBase):
                               f'experiment dictionary. Must be \'use_existing\'.')
 
         # Get the existing build directory from the dictionary
-        existing_geos_gcm_build_path = self.config_get('existing_geos_gcm_build_path')
+        existing_geos_build_directory = self.config_get('existing_geos_build_directory')
 
         # Assert that the existing build directory contains a bin directory
-        if not os.path.exists(os.path.join(existing_geos_gcm_build_path, 'bin')):
+        if not os.path.exists(os.path.join(existing_geos_build_directory, 'bin')):
             self.logger.abort(f'Existing GEOS build directory is provided but a bin ' +
                               f'directory is not found in the path ' +
-                              f'\'{existing_geos_gcm_build_path}\'')
+                              f'\'{existing_geos_build_directory}\'')
 
         # Write warning to user
         self.logger.info('Suitable GEOS build found, linking build directory. Warning: ' +
@@ -56,7 +56,7 @@ class BuildGeosByLinking(taskBase):
                          'this experiment may not be reproducible if the build changes.')
 
         # Link the source code directory
-        link_path(existing_geos_gcm_build_path, geos_gcm_build_path)
+        link_path(existing_geos_build_directory, geos_gcm_build_path)
 
 
 # --------------------------------------------------------------------------------------------------

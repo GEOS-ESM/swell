@@ -23,18 +23,18 @@ geos_build_method:
   options: ['create', 'use_existing']
   type: string-drop-list
 
-# Existing Geos bundle directory
-existing_source_directory:
-  default_value: {{existing_source_directory}}
+# Existing GEOS source directory
+existing_geos_source_directory:
+  default_value: {{existing_geos_source_directory}}
   prompt: Provide the path to an existing GEOS bundle directory containing source code repos
   type: string
   depends:
     key: geos_build_method
     value: use_existing
 
-# Existing GEOS build
-existing_build_directory:
-  default_value: {{existing_build_directory}}
+# Existing GEOS build directory
+existing_geos_build_directory:
+  default_value: {{existing_geos_build_directory}}
   prompt: Provide the path to an existing GEOS build directory
   type: string
   depends:

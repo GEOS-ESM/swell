@@ -18,7 +18,7 @@ class PrepGeosRunDir(taskBase):
 
     def execute(self):
 
-        self.logger.info('PrepGeosRunDir')
+        self.logger.info('Preparing GEOS Forecast directory..')
 
 
 # --------------------------------------------------------------------------------------------------
