@@ -5,6 +5,8 @@ name: discover-nightly
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  label:
+    types: [created, deleted]
 
 defaults:
   run:
