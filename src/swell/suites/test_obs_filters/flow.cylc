@@ -1,0 +1,126 @@
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing UFO ObsFilters tests
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+            # Task triggers
+            # -------------
+            # Get GeoVaLs
+            GetGeovals
+
+            # Get observations
+            GetObservations
+
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
+            GetGeovals => RunJediTestObsFiltersExecutable
+            GetObservations => RunJediTestObsFiltersExecutable
+
+            # EvaObservations
+            RunJediTestObsFiltersExecutable => EvaObservations
+
+            # Save observations
+            RunJediTestObsFiltersExecutable => SaveObsDiags
+
+            # Clean up large files
+            EvaObservations & SaveObsDiags => CleanCycle
+
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
+
+    [[ GetGeovals ]]
+        script = "swell_task GetGeovals $config -d $datetime -m ufo"
+
+    [[GetObservations]]
+        script = "swell_task GetObservations $config -d $datetime -m ufo"
+
+    [[RunJediTestObsFiltersExecutable]]
+        script = "swell_task RunJediTestObsFiltersExecutable $config -d $datetime -m ufo"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediTestObsFiltersExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediTestObsFiltersExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediTestObsFiltersExecutable"]["qos"]}}
+            --job-name = RunJediTestObsFiltersExecutable
+            --nodes={{scheduling["RunJediTestObsFiltersExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediTestObsFiltersExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediTestObsFiltersExecutable"]["constraint"]}}
+
+    [[EvaObservations]]
+        script = "swell_task EvaObservations $config -d $datetime -m ufo"
+
+    [[SaveObsDiags]]
+        script = "swell_task SaveObsDiags $config -d $datetime -m ufo"
+
+    [[CleanCycle]]
+        script = "swell_task CleanCycle $config -d $datetime -m ufo"
+
+# --------------------------------------------------------------------------------------------------
