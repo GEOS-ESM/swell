@@ -10,7 +10,6 @@
 
 from swell.tasks.base.task_base import taskBase
 
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -19,6 +18,12 @@ class RunGeosExecutable(taskBase):
     def execute(self):
 
         self.logger.info('RunGeosExecutable')
+
+        # GEOS executable 
+        # ---------------
+        geos_executable = 'GEOSgcm.x'
+        geos_executable_path = os.path.join(experiment_dir, 'GEOSgcm', 'build', 
+                                        'bin', geos_executable)
 
 
 # --------------------------------------------------------------------------------------------------

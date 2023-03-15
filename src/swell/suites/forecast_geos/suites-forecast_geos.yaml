@@ -1,12 +1,14 @@
 # Cycle start point
 start_cycle_point:
-  default_value: '2020-12-15T00:00:00Z'
+  # default_value: '2020-12-15T00:00:00Z'
+  default_value: '2021-06-30T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
-  default_value: '2020-12-15T06:00:00Z'
+  # default_value: '2020-12-15T06:00:00Z'
+  default_value: '2021-06-30T18:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
@@ -56,8 +58,7 @@ model_coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['geos_atmosphere', 'geos_ocean']
+  default_value: ['geos_ocean']
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
-

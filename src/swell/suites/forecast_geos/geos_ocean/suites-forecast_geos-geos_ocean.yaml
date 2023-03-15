@@ -1,6 +1,28 @@
 # Cycle frequency
 cycle_times:
-  default_value: ['T00', 'T06', 'T12', 'T18']
+  default_value: ['T00', 'T12']
   prompt: List all cycle times, by middle of the window?
-  options: ['T00', 'T06', 'T12', 'T18']
+  options: ['T00', 'T12']
   type: string-check-list
+
+# Horizontal resolution
+horizontal_resolution:
+  default_value: '72x36'
+  prompt: What horizontal resolution will be used for the GEOS forecast?
+  options: ['72x36', '1440x1080']
+  type: string-drop-list
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '50'
+  prompt: What vertical resolution will be used for the GEOS forecast?
+  options: ['50', '75']
+  type: string-drop-list
+
+# TODO: Atmospheric resolution, we should have pre-defined atm/ocn combinations 
+# # Horizontal resolution
+# horizontal_resolution:
+#   default_value: '361'
+#   prompt: What resolution for the atmospheric background (For c360 choose 361)?
+#   options: ['181', '361', '721']
+#   type: string-drop-list
