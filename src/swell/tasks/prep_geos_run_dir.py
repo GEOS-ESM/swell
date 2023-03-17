@@ -10,7 +10,7 @@
 import shutil, os
 
 from swell.tasks.base.task_base import taskBase
-
+from swell.tasks import StageJedi
 
 # --------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ class PrepGeosRunDir(taskBase):
 
         # Folder name contains both horizontal and vertical resolutions
         # ----------------------------
-        resolution = self.horizontal_resolution + 'x' + self.vertical_resolution
+        resolution = self.ocn_horizontal_resolution + 'x' + self.ocn_vertical_resolution
 
         # Load experiment file
         # --------------------
@@ -56,16 +56,27 @@ class PrepGeosRunDir(taskBase):
             See the taskBase constructor for more information.
         """
 
-        self.horizontal_resolution = self.config_get('horizontal_resolution')
-        self.vertical_resolution = self.config_get('vertical_resolution')
+        self.ocn_horizontal_resolution = self.config_get('ocn_horizontal_resolution')
+        self.ocn_vertical_resolution = self.config_get('ocn_vertical_resolution')
         self.swell_static_files = self.config_get('swell_static_files')
         self.cycle_dir = self.config_get('cycle_dir')
+        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
+        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
+        total_processors = self.config_get('total_processors')
         self.experiment_dir = self.config_get('experiment_dir')
 
         self.logger.info('Preparing GEOS Forecast directory, copying scratch' +
         ' directory')
 
-        self.fetch_scratch()
+        # Compute number of processors
+        # ----------------------------
+        total_processors = total_processors.replace('npx_proc', str(npx_proc))
+        total_processors = total_processors.replace('npy_proc', str(npy_proc))
+        np = eval(total_processors)
+
+        print(self.cycle_dir)
+        exit()
+        # self.fetch_scratch()
 
 
 # --------------------------------------------------------------------------------------------------

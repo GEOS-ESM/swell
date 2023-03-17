@@ -1,0 +1,3 @@
+- copy_files:
+    directories:
+      - ['{{swell_static_files}}/jedi/interfaces/geos_coupled/common/RC/*', '{{cycle_dir}}/RC']

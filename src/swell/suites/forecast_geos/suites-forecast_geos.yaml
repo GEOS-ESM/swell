@@ -58,7 +58,7 @@ model_coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['geos_ocean']
+  default_value: ['geos_coupled']
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
