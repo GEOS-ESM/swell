@@ -9,8 +9,6 @@
 
 
 import os
-import subprocess
-import sys
 import yaml
 
 from swell.tasks.base.run_jedi_executable_base import RunJediExecutableBase
