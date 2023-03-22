@@ -45,6 +45,26 @@ geos_gcm_tag:
   options: ['v10.25.1']
   type: string-drop-list
 
+# GEOS boundary conditions and settings, taken from the gcm_run.j script
+
+geos_bcsdir:
+  default_value: /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds
+  prompt: Where would you like to source GEOS BCSDIR?
+  options: ['/discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds']
+  type: string-drop-list
+
+geos_chmdir:
+  default_value: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
+  prompt: Where would you like to source GEOS CHMDIR?
+  options: ['/discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3']
+  type: string-drop-list
+
+geos_bcrslv:
+  default_value: CF0012x6C_DE0360xPE0180
+  prompt: Where would you like to source GEOS BCRSLV?
+  options: ['CF0012x6C_DE0360xPE0180']
+  type: string-drop-list
+
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------

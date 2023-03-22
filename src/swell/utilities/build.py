@@ -26,10 +26,8 @@ def build_and_source_dirs(package_path):
     package_source_path = os.path.join(package_path, 'source')
 
     # Remove trailing slash if needed
-    if package_build_path.endswith('/'):
-        package_build_path = package_build_path[:-1]
-    if package_source_path.endswith('/'):
-        package_source_path = package_source_path[:-1]
+    package_build_path = package_build_path.rstrip('/')
+    package_source_path = package_source_path.rstrip('/')
 
     return package_build_path, package_source_path
 

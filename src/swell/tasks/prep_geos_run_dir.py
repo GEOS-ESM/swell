@@ -10,50 +10,69 @@
 import shutil, os
 
 from swell.tasks.base.task_base import taskBase
-from swell.tasks import StageJedi
 
 # --------------------------------------------------------------------------------------------------
 
 
 class PrepGeosRunDir(taskBase):
 
-    def fetch_scratch(self):
+    def fetch_to_cycle(self, src_dir, dst_dir=None):
+
+        # Destination is always (time dependent) cycle_dir
+        # --------------------------------------------------
+        dst_dir = self.cycle_dir
+
+        try:
+            if not os.path.isfile(src_dir):
+                self.logger.info(' Fetching files from: '+src_dir)
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+            else:
+                self.logger.info(' Fetching file: '+src_dir)
+                shutil.copy(src_dir, dst_dir)
+
+        except Exception as e:
+            print(str(e))
+            self.logger.abort('Copying failed, see if source files exists')
+
+    def get_static(self):
 
         # Folder name contains both horizontal and vertical resolutions
         # ----------------------------
         resolution = self.ocn_horizontal_resolution + 'x' + self.ocn_vertical_resolution
 
-        # Load experiment file
-        # --------------------
-        b_dir = os.path.join(self.swell_static_files, 'jedi', 'geos', 'static', 
-                            resolution, 'scratch')
+        geos_install_path = os.path.join(self.experiment_dir, 'GEOSgcm/source/install/bin')
 
-        d_dir = os.path.join(self.cycle_dir, 'scratch')
+        src_dirs = []
 
-        try:
-            self.logger.info('  Copying scratch folder from: '+b_dir)
-            shutil.copytree(b_dir, d_dir, dirs_exist_ok=True, symlinks=True)
+        # Create list of common source dirs
+        # ---------------------------------
+        src_dirs.append(os.path.join(self.swell_static_files, 'geos', 'static', 
+                            resolution))
+        src_dirs.append(os.path.join(self.swell_static_files, 'geos', 'static', 
+                            'common/RC'))
+        src_dirs.append(os.path.join(geos_install_path,'bundleParser.py'))
 
-        except Exception:
-            self.logger.abort('Copying scratch failed, see if the folder exists')
+        for src_dir in src_dirs:
+            self.fetch_to_cycle(src_dir)
 
     def execute(self):
 
         """Obtains necessary directories from the Static Swell directory (as 
         defined by 'swell_static_files'):
 
-            - scratch:
-            Copies the scratch directory created by the gcm_run.j script,
-            right before GEOS run is executed. The scratch directory should 
-            match the horizontal and vertical resolutions defined in the 
-            forecast_geos suite.
+            - fetch_to_cycle:
+            Copies source files required for GEOS forecast to time dependent 
+            cycle_dir.
 
-            - TODO GSI:
+            - fetch_to_cycle:
+            Copies source files required for GEOS forecast to time dependent 
+            cycle_dir.
+
+            - TODO: source files to -> {src_dir}
 
         Parameters
         ----------
-            All inputs are extracted from the JEDI experiment file configuration.
-            See the taskBase constructor for more information.
+            All inputs are extracted from the suite configurations.
         """
 
         self.ocn_horizontal_resolution = self.config_get('ocn_horizontal_resolution')
@@ -65,8 +84,8 @@ class PrepGeosRunDir(taskBase):
         total_processors = self.config_get('total_processors')
         self.experiment_dir = self.config_get('experiment_dir')
 
-        self.logger.info('Preparing GEOS Forecast directory, copying scratch' +
-        ' directory')
+        self.logger.info('Preparing GEOS Forecast directory')
+
 
         # Compute number of processors
         # ----------------------------
@@ -74,9 +93,10 @@ class PrepGeosRunDir(taskBase):
         total_processors = total_processors.replace('npy_proc', str(npy_proc))
         np = eval(total_processors)
 
-        print(self.cycle_dir)
-        exit()
-        # self.fetch_scratch()
+
+        # Get static files
+        # ----------------
+        self.get_static()
 
 
 # --------------------------------------------------------------------------------------------------
