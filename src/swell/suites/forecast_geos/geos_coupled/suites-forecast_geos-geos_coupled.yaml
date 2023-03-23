@@ -49,22 +49,36 @@ geos_gcm_tag:
 
 geos_bcsdir:
   default_value: /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds
-  prompt: Where would you like to source GEOS BCSDIR?
+  prompt: Where to source GEOS BCSDIR?
   options: ['/discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds']
   type: string-drop-list
 
 geos_chmdir:
   default_value: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
-  prompt: Where would you like to source GEOS CHMDIR?
+  prompt: Where to source GEOS CHMDIR?
   options: ['/discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3']
   type: string-drop-list
 
 geos_bcrslv:
   default_value: CF0012x6C_DE0360xPE0180
-  prompt: Where would you like to source GEOS BCRSLV?
+  prompt: Where to source GEOS BCRSLV?
   options: ['CF0012x6C_DE0360xPE0180']
   type: string-drop-list
 
+# TODO: Could this be reduced further with horizontal grid resolutions?
+geos_abcsdir:
+  default_value: /discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/Icarus-NLv3/MOM6/CF0012x6C_TM0072xTM0036
+  prompt: Where to source GEOS atmospheric BCs?
+  options: ['/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/Icarus-NLv3/MOM6/CF0012x6C_TM0072xTM0036']
+  type: string-drop-list
+
+geos_obcsdir:
+  default_value: /discover/nobackup/projects/gmao/ssd/aogcm/ocean_bcs/MOM6/
+  prompt: Where to source GEOS ocean BCs?
+  options: ['/discover/nobackup/projects/gmao/ssd/aogcm/ocean_bcs/MOM6/']
+  type: string-drop-list
+
+# setenv OBCSDIR  ${OGCM_IM}x${OGCM_JM}
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------

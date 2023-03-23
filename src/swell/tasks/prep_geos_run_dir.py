@@ -7,7 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import shutil, os
+import shutil, os, glob
 
 from swell.tasks.base.task_base import taskBase
 
@@ -16,23 +16,53 @@ from swell.tasks.base.task_base import taskBase
 
 class PrepGeosRunDir(taskBase):
 
-    def fetch_to_cycle(self, src_dir, dst_dir=None):
+    #TODO: this dict could be kept out of this code
+    # ---------------------------------------------
+    def get_bcs(self):
 
-        # Destination is always (time dependent) cycle_dir
-        # --------------------------------------------------
-        dst_dir = self.cycle_dir
+        geos_bcsdir = self.config_get('geos_bcsdir')
+        geos_chmdir = self.config_get('geos_chmdir')
+        geos_bcrslv = self.config_get('geos_bcrslv')
+        geos_abcsdir = self.config_get('geos_abcsdir')
+        geos_obcsdir = self.config_get('geos_obcsdir')
 
-        try:
-            if not os.path.isfile(src_dir):
-                self.logger.info(' Fetching files from: '+src_dir)
-                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+        self.bcs_dict = {
+        os.path.join(geos_bcsdir,'Shared','pchem.species.Clim_Prod_Loss.z_721x72.nc4'): 
+                    'species.data',
+        os.path.join(geos_bcsdir,'Shared','*bin'): '',
+        # os.path.join(geos_chmdir,'*'): os.path.join(self.cycle_dir,'ExtData'),
+        os.path.join(geos_bcsdir,'Shared','*c2l*.nc4'): '',
+        }
+
+    def get_dynamic(self):
+
+        for src, dst in self.bcs_dict.items():
+            if "*" in src:
+
+                # Copy src files to cycle directory
+                # ---------------------------------
+                self.logger.info(' Linking file(s) from: '+src)
+                for filepath in list(glob.glob(src)):
+                    filename = os.path.basename(filepath)
+                    if len(dst) > 0:
+                        os.makedirs(dst, 0o755, exist_ok=True)
+                        try:
+                            os.system('ln -sf ' + filepath + ' ' + dst + '/' + filename)
+                        except Exception:
+                            self.logger.abort('Linking failed, see if source files exists')
+                        continue
+
+                    try:
+                        os.system('ln -sf ' + filepath + ' ' + self.cycle_dir + '/' + filename)
+                    except Exception:
+                        self.logger.abort('Linking failed, see if source files exists')
             else:
-                self.logger.info(' Fetching file: '+src_dir)
-                shutil.copy(src_dir, dst_dir)
+                self.logger.info(' Linking file: '+src)
+                try:
+                    os.system('ln -sf ' + src + ' ' + self.cycle_dir + '/' + dst)
+                except Exception:
+                    self.logger.abort('Linking failed, see if source file exists')
 
-        except Exception as e:
-            print(str(e))
-            self.logger.abort('Copying failed, see if source files exists')
 
     def get_static(self):
 
@@ -54,6 +84,23 @@ class PrepGeosRunDir(taskBase):
 
         for src_dir in src_dirs:
             self.fetch_to_cycle(src_dir)
+
+    def fetch_to_cycle(self, src_dir, dst_dir=None):
+
+        # Destination is always (time dependent) cycle_dir
+        # --------------------------------------------------
+        dst_dir = self.cycle_dir
+
+        try:
+            if not os.path.isfile(src_dir):
+                self.logger.info(' Fetching files from: '+src_dir)
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+            else:
+                self.logger.info(' Fetching file: '+src_dir)
+                shutil.copy(src_dir, dst_dir)
+
+        except Exception:
+            self.logger.abort('Copying failed, see if source files exists')
 
     def execute(self):
 
@@ -93,10 +140,17 @@ class PrepGeosRunDir(taskBase):
         total_processors = total_processors.replace('npy_proc', str(npy_proc))
         np = eval(total_processors)
 
-
         # Get static files
         # ----------------
         self.get_static()
+
+        # Get boundary conditions
+        # ----------------
+        self.get_bcs()
+
+        # Get dynamic files
+        # ----------------
+        self.get_dynamic()
 
 
 # --------------------------------------------------------------------------------------------------
