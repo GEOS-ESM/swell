@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import shutil, os, glob
+from datetime import datetime as dt
 
 from swell.tasks.base.task_base import taskBase
 
@@ -16,23 +17,86 @@ from swell.tasks.base.task_base import taskBase
 
 class PrepGeosRunDir(taskBase):
 
-    #TODO: this dict could be kept out of this code
-    # ---------------------------------------------
+    #TODO: this dict could be kept outside of this code
+    # -------------------------------------------------
     def get_bcs(self):
 
         geos_bcsdir = self.config_get('geos_bcsdir')
         geos_chmdir = self.config_get('geos_chmdir')
         geos_bcrslv = self.config_get('geos_bcrslv')
         geos_abcsdir = self.config_get('geos_abcsdir')
-        geos_obcsdir = self.config_get('geos_obcsdir')
+        geos_obcsdir = os.path.join(self.config_get('geos_obcsdir'), self.ocn_horizontal_resolution)
+
+        AGCM_IM = self.config_get('AGCM_IM')
+        AGCM_JM = self.config_get('AGCM_JM')
+
+        # Current cycle time object, useful for temporal BC constraints
+        # -------------------------------------------------------------
+        current_cycle = self.config_get('current_cycle')
+        cc_dto = dt.strptime(current_cycle, "%Y%m%dT%H%M%SZ")
+
+        pchem_clim_years = self.config_get('pchem_clim_years')
+
+        pchem = {
+            '1': 'pchem.species.Clim_Prod_Loss.z_721x72.nc4',
+            '228': 'pchem.species.CMIP-5.1870-2097.z_91x72.nc4',
+            '3': 'pchem.species.CMIP-6.wH2OandPL.1850s.z_91x72.nc4',
+            '39': 'pchem.species.CMIP-5.MERRA2OX.197902-201706.z_91x72.nc4',
+        }
+
+        # MERRA2OX contains data only for a certain time window
+        # -----------------------------------------------------
+        d1 = dt.strptime('021979', '%m%Y')
+        d2 = dt.strptime('062017', '%m%Y')
+
+        if pchem_clim_years == '39' and (cc_dto > d2 or cc_dto < d1):
+            self.logger.abort('MERRA2OX data non existent for the current cycle')
 
         self.bcs_dict = {
-        os.path.join(geos_bcsdir,'Shared','pchem.species.Clim_Prod_Loss.z_721x72.nc4'): 
+        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
+                    'tile.data',
+        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
+                    'runoff.bin',
+        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
+                    'SEAWIFS_KPAR_mon_clim.data',
+        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
+        os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
+        os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
                     'species.data',
-        os.path.join(geos_bcsdir,'Shared','*bin'): '',
-        # os.path.join(geos_chmdir,'*'): os.path.join(self.cycle_dir,'ExtData'),
-        os.path.join(geos_bcsdir,'Shared','*c2l*.nc4'): '',
+        os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
+        os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
+        os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
+        os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
+        os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
+        os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.dat',
+        os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
+        os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
+        os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
+        os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"): 
+                    'topo_dynave.data',
+        os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"): 
+                    'topo_gwdvar.data',
+        os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"): 
+                    'topo_trbvar.data',
         }
+
+        #Conditional BCs that don't break the model
+        # ------------------------------------------
+        conditional_bcs = {
+        os.path.join(geos_bcsdir, geos_bcrslv, f"Gnomonic_{geos_bcrslv}.dat"): '',
+        }
+
+        for src, dst in conditional_bcs.items():
+            if os.path.isfile(src):
+                self.logger.info(' Including conditional file: ' + src)
+                self.bcs_dict.update({
+                    src: dst, 
+                    })
+
+        # Fetch more resolution dependent files
+        # -------------------------------------
+        self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
+                            os.path.join(self.cycle_dir,'INPUT'))
 
     def get_dynamic(self):
 
@@ -41,7 +105,7 @@ class PrepGeosRunDir(taskBase):
 
                 # Copy src files to cycle directory
                 # ---------------------------------
-                self.logger.info(' Linking file(s) from: '+src)
+                self.logger.info(' Linking file(s) from: ' + src)
                 for filepath in list(glob.glob(src)):
                     filename = os.path.basename(filepath)
                     if len(dst) > 0:
@@ -57,7 +121,7 @@ class PrepGeosRunDir(taskBase):
                     except Exception:
                         self.logger.abort('Linking failed, see if source files exists')
             else:
-                self.logger.info(' Linking file: '+src)
+                self.logger.info(' Linking file: ' + src)
                 try:
                     os.system('ln -sf ' + src + ' ' + self.cycle_dir + '/' + dst)
                 except Exception:
@@ -87,9 +151,10 @@ class PrepGeosRunDir(taskBase):
 
     def fetch_to_cycle(self, src_dir, dst_dir=None):
 
-        # Destination is always (time dependent) cycle_dir
-        # --------------------------------------------------
-        dst_dir = self.cycle_dir
+        # Destination is always (time dependent) cycle_dir if None
+        # --------------------------------------------------------
+        if dst_dir is None:
+            dst_dir = self.cycle_dir
 
         try:
             if not os.path.isfile(src_dir):
@@ -104,18 +169,23 @@ class PrepGeosRunDir(taskBase):
 
     def execute(self):
 
-        """Obtains necessary directories from the Static Swell directory (as 
-        defined by 'swell_static_files'):
+        """Obtains necessary directories and files from the static directories 
+        (most are defined in gcm_run.j script):
 
-            - fetch_to_cycle:
+            - get_bcs:
+            Defines boundary conditions for different components of the coupled
+            system and creates a bc dictionary.
+
+            - get_dynamic:
+            Links dynamic boundary conditions defined by the get_bcs method
+
+            - get_static:
             Copies source files required for GEOS forecast to time dependent 
             cycle_dir.
 
             - fetch_to_cycle:
             Copies source files required for GEOS forecast to time dependent 
             cycle_dir.
-
-            - TODO: source files to -> {src_dir}
 
         Parameters
         ----------
@@ -126,19 +196,9 @@ class PrepGeosRunDir(taskBase):
         self.ocn_vertical_resolution = self.config_get('ocn_vertical_resolution')
         self.swell_static_files = self.config_get('swell_static_files')
         self.cycle_dir = self.config_get('cycle_dir')
-        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
-        total_processors = self.config_get('total_processors')
         self.experiment_dir = self.config_get('experiment_dir')
 
         self.logger.info('Preparing GEOS Forecast directory')
-
-
-        # Compute number of processors
-        # ----------------------------
-        total_processors = total_processors.replace('npx_proc', str(npx_proc))
-        total_processors = total_processors.replace('npy_proc', str(npy_proc))
-        np = eval(total_processors)
 
         # Get static files
         # ----------------

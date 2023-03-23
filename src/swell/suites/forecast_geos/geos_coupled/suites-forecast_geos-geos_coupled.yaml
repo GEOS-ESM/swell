@@ -19,14 +19,25 @@ ocn_vertical_resolution:
   options: ['50', '75']
   type: string-drop-list
 
-# TODO: Atmospheric resolution, we should have pre-defined atm/ocn combinations 
-# # Horizontal resolution
-# horizontal_resolution:
-#   default_value: '361'
-#   prompt: What resolution for the atmospheric background (For c360 choose 361)?
-#   options: ['181', '361', '721']
-#   type: string-drop-list
+# Atmospheric Model Configuration Parameters
 
+AGCM_IM:
+  default_value: '12'
+  prompt: Pick x resolution for the atmospheric model
+  options: ['12', '90', '180']
+  type: string-drop-list
+
+AGCM_JM:
+  default_value: '72'
+  prompt: Pick y resolution for the atmospheric model (Default = 6 * AGCM_IM)
+  options: ['72', '540', '1080']
+  type: string-drop-list
+
+pchem_clim_years:
+  default_value: '1'
+  prompt: Pick Pchem option (Some are time constrained)
+  options: ['1', '228', '3', '39']
+  type: string-drop-list
 
   # Processor layout
 npx_proc:
