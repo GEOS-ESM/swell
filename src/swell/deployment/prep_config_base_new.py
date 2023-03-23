@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 import datetime
 import os
 import pathlib
+import re
 import yaml
 
 from swell.swell_path import get_swell_path
@@ -31,12 +32,13 @@ class PrepConfigBase(ABC):
         swell_path = get_swell_path()
         self.install_path = swell_path
 
-        # Get the path and filename of the dictionary
-        self.directory = os.path.join(swell_path, 'suites')
+        # Get the path and filename of the suite dictionary
+        self.directory = os.path.join(swell_path, 'suites_new')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Keep track of the model, atmosphere, ocean etc
         self.model = None
+        self.model_task = False
 
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
@@ -56,21 +58,41 @@ class PrepConfigBase(ABC):
         user_inputs_dict['suite_to_run'] = suite
         user_inputs_dict['platform'] = platform
 
+        # Track the keys added to the experiment dictionary
+        #self.exec_keys = []
+
         # Open the platform specific defaults
         platform_dict_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
                                           'experiment.yaml')
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
 
+
         # Render the templates in the platform dictionary using user inputs
         platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
 
         # Dictionary of templates to use whenever opening a file
-        self.template_dictionary = yaml.safe_load(platform_dict_str)
-        self.template_dictionary.update(user_inputs_dict)
+        self.platform_template_dictionary = yaml.safe_load(platform_dict_str)
+        self.platform_template_dictionary.update(user_inputs_dict)
 
         # Starting dictionary
         self.dictionary = self.read_dictionary_file(dictionary_file)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_model_template(self, model):
+        swell_path = self.install_path
+        task_file = camel_to_snake('GetBackground')
+
+        # Open model specific defaults
+        model_inputs_dict_file = os.path.join(swell_path, 'configuration',
+                                       'jedi/interfaces/' + model,
+                                       'tasks', task_file + '.yaml')
+
+        with open(model_inputs_dict_file, 'r') as model_inputs_open:
+            model_template_dictionary = yaml.safe_load(model_inputs_open.read())
+
+        return model_template_dictionary
 
     # ----------------------------------------------------------------------------------------------
 
@@ -110,9 +132,15 @@ class PrepConfigBase(ABC):
         with open(dictionary_file, 'r') as dictionary_file_open:
             dictionary_str = dictionary_file_open.read()
 
+        if self.model_task:
+            template_dictionary = self.set_model_template(self.model_name)
+        else:
+            template_dictionary = self.platform_template_dictionary
+
+
         # Render the templates using the template dictionary
         dictionary_str = template_string_jinja2(self.logger, dictionary_str,
-                                                self.template_dictionary)
+                                                template_dictionary)
 
         # Convert string to dictionary
         return yaml.safe_load(dictionary_str)
@@ -155,6 +183,7 @@ class PrepConfigBase(ABC):
 
     def add_to_experiment_dictionary(self, key, element_dict):
 
+
         # Set the element
         # ---------------
         element = element_dict['default_value']
@@ -189,6 +218,15 @@ class PrepConfigBase(ABC):
         # Check that dictionary does not already contain the key
         if key in self.experiment_dict.keys():
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
+
+        # Check if models key is present in experiment dictionary
+        if self.model is not None:
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+
+            # If specific model dictionary not added to the list of model then add it
+            if self.model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][self.model] = {}
 
         # Make sure the element was not already added
         # -------------------------------------------
@@ -229,6 +267,30 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def get_tasks(self, task_list, task_type):
+        tasks_path = os.path.join(self.install_path, 'tasks/')
+        task_collector = {}
+        if task_type == 'base':
+            self.model_task = False
+        elif task_type == 'model':
+            self.model_task = True
+        for t in task_list:
+            name = t
+            name = camel_to_snake(name)
+            t = name
+            task_file = t + '.yaml'
+            task_dict = self.read_dictionary_file(os.path.join(tasks_path, task_file))
+            if 'task_prerequisites' in task_dict.keys():
+                for pr in task_dict['task_prerequisites']:
+                    pr = camel_to_snake(pr)
+                    if pr in task_collector.keys():
+                        task_dict.pop('task_prerequisites')
+                    else:
+                        print('ABORT')
+            if task_dict:
+                task_collector[t] = task_dict
+        return task_collector
+
     @abstractmethod
     def execute(self):
         pass
@@ -237,3 +299,7 @@ class PrepConfigBase(ABC):
 
 
 # --------------------------------------------------------------------------------------------------
+
+def camel_to_snake(s):
+    new_string = re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+    return new_string

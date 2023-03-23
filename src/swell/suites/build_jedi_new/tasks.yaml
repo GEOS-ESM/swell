@@ -1,0 +1,4 @@
+tasks:
+    - CloneJedi
+    - BuildJediByLinking
+    - BuildJedi

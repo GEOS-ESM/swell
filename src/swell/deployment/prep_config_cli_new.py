@@ -15,7 +15,7 @@ import sys
 
 import questionary
 
-from swell.deployment.prep_config_base import PrepConfigBase
+from swell.deployment.prep_config_base_new import PrepConfigBase
 from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
@@ -33,22 +33,53 @@ class PrepConfigCli(PrepConfigBase):
 
         # Get final key in yaml before fixed options
         self.dictionary = self.open_dictionary()
+
         key_list = list(self.dictionary.keys())
+
+        new_dictionary = {}
+        for i, key in enumerate(key_list):
+            if 'tasks' in key:
+                if 'model' not in key:
+                    task_collector = self.get_tasks(self.dictionary['tasks'], 'base')
+                    for task in task_collector:
+                        for element in task_collector[task]:
+                            new_dictionary[element] = task_collector[task][element]
+                elif 'model' in key:
+                    if 'models' not in new_dictionary.keys():
+                        new_dictionary['models'] = {}
+                    model_list = self.model_check()
+                    for model in model_list:
+                        self.model_name = model
+                        new_dictionary['models'][model] = {}
+                        task_collector = self.get_tasks(self.dictionary['model_tasks'], 'model')
+                        for task in task_collector:
+                            for element in task_collector[task]:
+                                new_dictionary['models'][model][element] = task_collector[task][element]
+                key_list = list(new_dictionary.keys())
+                self.dictionary = new_dictionary
+            else:
+                new_dictionary[key] = self.dictionary[key]
+        dictionary = new_dictionary
+
+        del(new_dictionary)
+
+        end_key = None
+
         if 'fixed_options' in key_list:
             fixed_idx = key_list.index('fixed_options')
             key_list.pop(fixed_idx)
         end_key = key_list[-1]
+ 
+        # Reset key list so fixed options is removed
+        self.exec_keys = []
 
-        self.key_list = key_list
-
-        for key in dictionary:
-            # Element dictionary
-            el_dict = dictionary[key]
+        def key_passer(key, el_dict):
 
             if key != 'fixed_options':
 
                 # Validate the element dictionary
-                self.validate_dictionary(el_dict)
+                if key != 'tasks':
+                    self.validate_dictionary(el_dict)
 
                 # Extract type
                 type = el_dict['type']
@@ -63,11 +94,15 @@ class PrepConfigCli(PrepConfigBase):
                         dep_val = el_dict['depends']['value']
                         if self.experiment_dict[dep_key] != dep_val:
                             depends_flag = False
+                            if key == end_key:
+                                change_check = self.before_next()
 
                     # In this case the key is not expected to refer to a sub dictionary but have
                     # everything needed in the elements dictionary
                     if depends_flag:
                         el_dict['default_value'] = self.check_widgets(key, el_dict)
+                        # Register the added experiment element key
+                        self.exec_keys.append(key)
                         if key == end_key:
                             change_check = self.before_next()
                             if isinstance(change_check, dict):
@@ -80,53 +115,44 @@ class PrepConfigCli(PrepConfigBase):
                     # If you wanted more suite options, you'd need to add directories for them at
                     # the suites/ level
                     el_dict['default_value'] = self.check_widgets(key, el_dict)
+
+                    # Register the added experiment element key
+                    self.exec_keys.append(key)
+
+                    # Check if the user wants to change any answers
                     change_check = self.before_next()
                     if isinstance(change_check, dict):
                         el_dict = change_check
                     self.add_to_experiment_dictionary(key, el_dict)
 
-                    # In this case the key refers to a single sub dictionary that involves opening
-                    # that dictionary and recursively calling this routine.
-
-                    # First append the directory and filename to denote moving to the sub dictionary
-                    self.append_directory_and_filename(el_dict['default_value'])
+                    # Go into directory based on drop_list method
+                    if 'suite' in key:
+                        self.directory = os.path.join(self.directory, key)
+                        self.filename = el_dict['default_value']
 
                     # Open next level down dictionary and recursively add
                     self.execute(self.open_dictionary())
 
-                    # As we come back from the sub dictionary subtract the directory and filename
-                    self.subtract_directory_and_filename()
-
-                elif 'file-check-list' in type:
-
-                    # Add the choice to the dictionary
-                    el_dict['default_value'] = self.check_widgets(key, el_dict)
-                    change_check = self.before_next()
-                    if isinstance(change_check, dict):
-                        el_dict = change_check
-                    self.add_to_experiment_dictionary(key, el_dict)
-
-                    # In this case the key asks the user to provide a list of items that correspond
-                    # to sub dictionaries. Inside a loop this method is called recursively.
-                    options = el_dict['default_value']
-                    for option in options:
-
-                        # If the key is models change the internal model to match this model
-                        if key == 'model_components':
-                            self.update_model(option)
-
-                        self.append_directory_and_filename(option)
-                        self.execute(self.open_dictionary())
-                        self.subtract_directory_and_filename()
-
-                        if key == 'model_components':
-                            self.update_model(None)
-
-            else:
+            elif key == 'fixed_options':
 
                 for fixed_key in el_dict:
 
                     self.add_to_experiment_dictionary(fixed_key, el_dict[fixed_key])
+
+            return
+
+        for key in dictionary:
+            # Element dictionary
+            if key == 'models':
+                for m in dictionary[key]:
+                    self.model = m
+                    for k in dictionary[key][m]:
+                        el_dict = dictionary[key][m][k]
+                        key_passer(k, el_dict)
+            else:
+                self.model = None
+                el_dict = dictionary[key]
+                key_passer(key, el_dict)
 
         return
 
@@ -174,8 +200,8 @@ class PrepConfigCli(PrepConfigBase):
 
     def make_drop_widget(self, method, quest, options, default, prompt):
         if options == 'file':
-            new_path = os.path.join(self.directory, '*/')
-            suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
+            new_path = os.path.join(self.directory, method, '*.yaml')
+            suite_list = [x.split('/')[-1].split('.')[0] for x in glob.glob(new_path)]
             # Make sure no python directories are included
             suite_list = list(filter(lambda a: a != '__pycache__', suite_list))
             choices = suite_list
@@ -203,7 +229,7 @@ class PrepConfigCli(PrepConfigBase):
         class dtValidator(questionary.Validator):
             def validate(self, document):
                 r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')  # noqa
-                if r.match(document.text) is None:
+                if r.match(document.text) is None and document.text != 'EXIT':
                     raise questionary.ValidationError(
                         message="Please enter a datetime with the following format: " +
                                 "YYYY-MM-DDThh:mm:ssZ",
@@ -220,7 +246,7 @@ class PrepConfigCli(PrepConfigBase):
         class durValidator(questionary.Validator):
             def validate(self, document):
                 r = re.compile('PT\d{1,2}H')  # noqa
-                if r.match(document.text) is None:
+                if r.match(document.text) is None and document.text != 'EXIT':
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
                         cursor_position=len(document.text),
@@ -282,7 +308,14 @@ class PrepConfigCli(PrepConfigBase):
                                     False,
                                     questionary.confirm)
         if changer:
-            keys = self.key_list
+            keys = self.exec_keys
+            #print(keys, '\n', self.dictionary.keys(), '\n')
+            for k in keys:
+                if k not in list(self.dictionary.keys()):
+                    non_exec_idx = keys.index(k)
+                    keys.pop(non_exec_idx)
+            #print(keys)
+            # Show user key change options and retrieve new values
             change_keys = self.make_check_widget('Which elements would you like to change?',
                                                  keys,
                                                  None,
@@ -293,12 +326,25 @@ class PrepConfigCli(PrepConfigBase):
                 if 'file' in changed_dict['type']:
                     changed_dict['default_value'] = new_default_value
                     return changed_dict
-                elif k == self.key_list[-1]:
+                elif k == self.exec_keys[-1]:
                     changed_dict['default_value'] = new_default_value
                     return changed_dict
                 else:
                     self.update_experiment_dictionary(k, new_default_value)
             return None
+
+    def model_check(self):
+        model_options = glob.glob(os.path.join(self.install_path, 'configuration',
+                                       'jedi/interfaces/', '*/'))
+
+        model_options = [x.split('/')[-2] for x in model_options]
+
+        selected_models = self.make_check_widget('Which models?', model_options, default=['geos_ocean'], prompt=questionary.checkbox)
+
+        if 'None' in selected_models:
+            selected_models = []
+
+        return selected_models
 
 # --------------------------------------------------------------------------------------------------
 

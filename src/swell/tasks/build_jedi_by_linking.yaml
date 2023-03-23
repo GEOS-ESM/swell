@@ -1,0 +1,11 @@
+task_prerequisites:
+  - CloneJedi
+
+existing_build_directory:
+  default_value: {{existing_build_directory}}
+  prompt: Provide the path to an existing JEDI build directory
+  type: string
+  depends:
+    task: CloneJedi
+    key: jedi_build_method
+    value: use_existing

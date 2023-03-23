@@ -1,0 +1,7 @@
+tasks:
+    - CloneJedi
+    - BuildJediByLinking
+    - BuildJedi
+
+model_tasks:
+    - GetBackground

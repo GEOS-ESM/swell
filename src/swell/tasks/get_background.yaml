@@ -1,0 +1,6 @@
+# Horizontal resolution
+horizontal_resolution:
+  default_value: '{{horizontal_resolution}}'
+  prompt: What resolution for the hor. res (probably will become obsolete)?
+  options: {{horizontal_resolution_options}}
+  type: string-drop-list
