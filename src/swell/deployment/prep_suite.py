@@ -101,6 +101,14 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunGeosExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunGeosExecutable']['constraint'] = 'cas'
 
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable'] = {}
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['execution_time_limit'] = 'PT30M'
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['ntasks_per_node'] = 1
+    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['constraint'] = 'cas'
+
     # Render the template
     # -------------------
     new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)

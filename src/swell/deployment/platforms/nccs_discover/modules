@@ -30,6 +30,9 @@ module load sp/2.3.3
 # -------------------------------------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
+
+export PYTHONPATH=$PYTHONPATH:/path/to/clone/iodaconv/src
 
 # Load GMAO modules
 # -----------------

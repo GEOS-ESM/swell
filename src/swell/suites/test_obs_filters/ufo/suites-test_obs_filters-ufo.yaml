@@ -1,0 +1,52 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  prompt: List all cycle times, by middle of the window?
+  options: ['T00', 'T06', 'T12', 'T18']
+  type: string-check-list
+
+# Window length
+window_length:
+  default_value: 'PT6H'
+  prompt: Window length
+  type: iso-duration
+
+# Observations
+observations:
+  default_value:
+  - aircraft
+  - amsua_n19
+  prompt: Select observations to run with.
+  options: use_method
+  type: string-check-list
+
+# Path to GSI ncdiags
+path_to_gsi_diags:
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ncdiag/'
+  prompt: Path to where the ncdiags will be held
+  type: string
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  crtm_coeff_dir:
+    default_value: {{crtm_coeff_dir}}
+    prompt: 'Directory containing the CRTM coefficient files'
+  total_processors:
+    default_value:  1
+    prompt: Equation to compute total number of processors
+  clean_patterns:
+    default_value: ['*.nc4','*.txt','logfile.*.out']
+    prompt: 'Patterns for the files to remove after completing a cycle'
+
+
+  # Needed because of config gen
+  window_type:
+    default_value:  4D
+    prompt: Window type (3D or 4D)
+  window_offset:
+    default_value:  PT3H
+    prompt: Time from beginning to middle of the window
+  background_time_offset:
+    default_value:  PT9H
+    prompt: Time before the middle of the window that the background providing forecast began
