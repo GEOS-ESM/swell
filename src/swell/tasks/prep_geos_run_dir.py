@@ -13,7 +13,7 @@ import glob
 
 from datetime import datetime as dt
 
-from swell.tasks.base.geos_tasks_run_executable_base import GeosTasksRunExecutableBase
+from swell.tasks.base.geos_tasks_run_executable_base import *
 
 
 # --------------------------------------------------------------------------------------------------
@@ -57,25 +57,25 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             self.logger.abort('MERRA2OX data non existent for the current cycle')
 
         self.bcs_dict = {
-        # os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
-        #             'tile.data',
-        # os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
-        #             'runoff.bin',
-        # os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
-        #             'SEAWIFS_KPAR_mon_clim.data',
-        # os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
-        # os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
-        # os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
-        #             'species.data',
-        # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
-        # os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
-        # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
-        # os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
-        # os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
-        # os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
-        # os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
-        # os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
-        # os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
+        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
+                    'tile.data',
+        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
+                    'runoff.bin',
+        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
+                    'SEAWIFS_KPAR_mon_clim.data',
+        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
+        os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
+        os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
+                    'species.data',
+        os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
+        os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
+        os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
+        os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
+        os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
+        os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
+        os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
+        os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
+        os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
         os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"): 
                     'topo_dynave.data',
         os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"): 
@@ -102,11 +102,15 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
                             os.path.join(self.cycle_dir,'INPUT'))
 
-        agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        # agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        
         cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
-        print(cap_dict)
-        exit()
-                            
+        chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
+
+        # Rename GEOS Chem files
+        # ----------------------
+        self.geos_chem_rename(chem_dict)
+
     # ----------------------------------------------------------------------------------------------
 
     def get_dynamic(self):
