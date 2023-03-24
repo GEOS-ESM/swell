@@ -7,15 +7,19 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import shutil, os, glob
+import shutil
+import os
+import glob
+
 from datetime import datetime as dt
 
-from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.geos_tasks_run_executable_base import GeosTasksRunExecutableBase
+
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepGeosRunDir(taskBase):
+class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     #TODO: this dict could be kept outside of this code
     # -------------------------------------------------
@@ -53,25 +57,25 @@ class PrepGeosRunDir(taskBase):
             self.logger.abort('MERRA2OX data non existent for the current cycle')
 
         self.bcs_dict = {
-        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
-                    'tile.data',
-        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
-                    'runoff.bin',
-        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
-                    'SEAWIFS_KPAR_mon_clim.data',
-        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
-        os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
-        os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
-                    'species.data',
-        os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
-        os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
-        os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
-        os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
-        os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
-        os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.dat',
-        os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
-        os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
-        os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
+        # os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
+        #             'tile.data',
+        # os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
+        #             'runoff.bin',
+        # os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
+        #             'SEAWIFS_KPAR_mon_clim.data',
+        # os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
+        # os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
+        # os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
+        #             'species.data',
+        # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
+        # os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
+        # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
+        # os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
+        # os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
+        # os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
+        # os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
+        # os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
+        # os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
         os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"): 
                     'topo_dynave.data',
         os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"): 
@@ -97,6 +101,13 @@ class PrepGeosRunDir(taskBase):
         # -------------------------------------
         self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
                             os.path.join(self.cycle_dir,'INPUT'))
+
+        agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
+        print(cap_dict)
+        exit()
+                            
+    # ----------------------------------------------------------------------------------------------
 
     def get_dynamic(self):
 
@@ -127,6 +138,7 @@ class PrepGeosRunDir(taskBase):
                 except Exception:
                     self.logger.abort('Linking failed, see if source file exists')
 
+    # ----------------------------------------------------------------------------------------------
 
     def get_static(self):
 
@@ -149,6 +161,8 @@ class PrepGeosRunDir(taskBase):
         for src_dir in src_dirs:
             self.fetch_to_cycle(src_dir)
 
+    # ----------------------------------------------------------------------------------------------
+
     def fetch_to_cycle(self, src_dir, dst_dir=None):
 
         # Destination is always (time dependent) cycle_dir if None
@@ -158,14 +172,16 @@ class PrepGeosRunDir(taskBase):
 
         try:
             if not os.path.isfile(src_dir):
-                self.logger.info(' Fetching files from: '+src_dir)
+                self.logger.info(' Copying files from: '+src_dir)
                 shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
             else:
-                self.logger.info(' Fetching file: '+src_dir)
+                self.logger.info(' Copying file: '+src_dir)
                 shutil.copy(src_dir, dst_dir)
 
         except Exception:
             self.logger.abort('Copying failed, see if source files exists')
+
+    # ----------------------------------------------------------------------------------------------
 
     def execute(self):
 
