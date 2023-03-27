@@ -33,6 +33,12 @@ AGCM_JM:
   options: ['72', '540', '1080']
   type: string-drop-list
 
+AGCM_LM:
+  default_value: '72'
+  prompt: Pick the number of vertical layers for the atmospheric model
+  options: ['72']
+  type: string-drop-list
+
 pchem_clim_years:
   default_value: '1'
   prompt: Pick Pchem option (Some are time constrained)
@@ -74,6 +80,12 @@ geos_bcrslv:
   default_value: CF0012x6C_DE0360xPE0180
   prompt: Where to source GEOS BCRSLV?
   options: ['CF0012x6C_DE0360xPE0180']
+  type: string-drop-list
+
+emissions:
+  default_value: AMIP_EMISSIONS
+  prompt: What GEOS emission to use?
+  options: ['AMIP_EMISSIONS']
   type: string-drop-list
 
 # TODO: Could this be reduced further with horizontal grid resolutions?

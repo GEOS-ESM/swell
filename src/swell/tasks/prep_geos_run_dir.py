@@ -7,7 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import shutil
 import os
 import glob
 
@@ -15,11 +14,31 @@ from datetime import datetime as dt
 
 from swell.tasks.base.geos_tasks_run_executable_base import *
 
-
 # --------------------------------------------------------------------------------------------------
 
 
 class PrepGeosRunDir(GeosTasksRunExecutableBase):
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_amip_emission(self):
+
+        # Taken from gcm_run.j:
+
+        # Before 2000-03-01, we need to use AMIP.20C which has different
+        # emissions (HFED instead of QFED) valid before 2000-03-01. Note
+        # that if you make a change to anything in /RC/AMIP or /RC/AMIP.20C, 
+        # you might need to make a change in the other directory to be 
+        # consistent. Some files in AMIP.20C are symlinks to that in AMIP but 
+        # others are not.
+
+        # AMIP EMISSIONS Transition window
+        # -----------------------------------------------------
+        d1 = dt.strptime('01032000', '%d%m%Y')
+
+        AGCM_LM = self.config_get('AGCM_LM')
+
+    # ----------------------------------------------------------------------------------------------
 
     #TODO: this dict could be kept outside of this code
     # -------------------------------------------------
@@ -33,11 +52,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         AGCM_IM = self.config_get('AGCM_IM')
         AGCM_JM = self.config_get('AGCM_JM')
-
-        # Current cycle time object, useful for temporal BC constraints
-        # -------------------------------------------------------------
-        current_cycle = self.config_get('current_cycle')
-        cc_dto = dt.strptime(current_cycle, "%Y%m%dT%H%M%SZ")
 
         pchem_clim_years = self.config_get('pchem_clim_years')
 
@@ -53,7 +67,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         d1 = dt.strptime('021979', '%m%Y')
         d2 = dt.strptime('062017', '%m%Y')
 
-        if pchem_clim_years == '39' and (cc_dto > d2 or cc_dto < d1):
+        if pchem_clim_years == '39' and (self.cc_dto > d2 or self.cc_dto < d1):
             self.logger.abort('MERRA2OX data non existent for the current cycle')
 
         self.bcs_dict = {
@@ -101,15 +115,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # -------------------------------------
         self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
                             os.path.join(self.cycle_dir,'INPUT'))
-
-        # agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
-        
-        cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
-        chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
-
-        # Rename GEOS Chem files
-        # ----------------------
-        self.geos_chem_rename(chem_dict)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -167,26 +172,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def fetch_to_cycle(self, src_dir, dst_dir=None):
-
-        # Destination is always (time dependent) cycle_dir if None
-        # --------------------------------------------------------
-        if dst_dir is None:
-            dst_dir = self.cycle_dir
-
-        try:
-            if not os.path.isfile(src_dir):
-                self.logger.info(' Copying files from: '+src_dir)
-                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
-            else:
-                self.logger.info(' Copying file: '+src_dir)
-                shutil.copy(src_dir, dst_dir)
-
-        except Exception:
-            self.logger.abort('Copying failed, see if source files exists')
-
-    # ----------------------------------------------------------------------------------------------
-
     def execute(self):
 
         """Obtains necessary directories and files from the static directories 
@@ -220,6 +205,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         self.logger.info('Preparing GEOS Forecast directory')
 
+        # Current cycle time object, useful for temporal BC constraints
+        # -------------------------------------------------------------
+        self.current_cycle = self.config_get('current_cycle')
+        self.cc_dto = dt.strptime(self.current_cycle, "%Y%m%dT%H%M%SZ")
+
         # Get static files
         # ----------------
         self.get_static()
@@ -231,6 +221,27 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Get dynamic files
         # ----------------
         self.get_dynamic()
+
+        
+        # Parse .rc files
+        # ----------------
+        # agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
+        self.rc_assign(cap_dict, 'EXTDATA2G_TRUE') 
+
+        # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
+        # ----------------------------------------------------------------
+        emissions = self.config_get('emissions')
+
+        # If AMIP_EMISSIONS
+        # -----------------
+        if emissions == 'AMIP_EMISSIONS':
+            self.get_amip_emission()
+
+        # Rename GEOS Chem files
+        # ----------------------
+        chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
+        self.geos_chem_rename(chem_dict)
 
 
 # --------------------------------------------------------------------------------------------------

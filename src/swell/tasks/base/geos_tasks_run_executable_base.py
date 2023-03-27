@@ -8,10 +8,12 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import shutil
 
 from abc import ABC, abstractmethod
 
 from swell.tasks.base.task_base import taskBase
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -28,33 +30,31 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def rc_to_bool(self, rcdict):
+    def fetch_to_cycle(self, src_dir, dst_dir=None):
 
-        # .rc files have switch values in .TRUE. or .FALSE. format.
-        # This method converts it to python boolean and assumes only two types
-        # of input. It can also accept faulty formats (i.e., .True. , .False) 
-        # ----------------------------------------------------------------------
+        self.cycle_dir = self.config_get('cycle_dir')
 
-        for key, value in rcdict.items():
-            if rcdict[key].strip('.').lower() == 'true':
-                rcdict[key] = True
-            elif rcdict[key].strip('.').lower() == 'false':
-                rcdict[key] = False
+        # Destination is always (time dependent) cycle_dir if None
+        # --------------------------------------------------------
+        if dst_dir is None:
+            dst_dir = self.cycle_dir
+
+        try:
+            if not os.path.isfile(src_dir):
+                self.logger.info(' Copying files from: '+src_dir)
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
             else:
-                continue
+                self.logger.info(' Copying file: '+src_dir)
+                shutil.copy(src_dir, dst_dir)
 
-        return rcdict
-        # for key, value in rcdict.items():
-        #     rcdict[key] = rcdict[key] == '.TRUE.'
-        
-        # exit()
-        # return rcdict
+        except Exception:
+            self.logger.abort('Copying failed, see if source files exists')
 
     # ----------------------------------------------------------------------------------------------
 
     def geos_chem_rename(self, rcdict):
 
-        # Some files are renamed according to bool. swithfes in GEOS_ChemGridComp.rc 
+        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc 
         # -------------------------------------------------------------------------
 
         # Convert rc bool.s to python 
@@ -132,14 +132,47 @@ class GeosTasksRunExecutableBase(taskBase):
                 rcdict[key] = value
 
         return rcdict
-#                 # Check if the key matches the string we're looking for
-#                 # -----------------------------------------------------
-#                 print(key)
-#                 print(singlekey)
-#                 if getkey and key == singlekey:
-#                     # Store the value and return
-#                     # --------------------------
-# ]                    print(value)
-#                     rcdict[singlekey] = value
+    #                 # Check if the key matches the string we're looking for
+    #                 # -----------------------------------------------------
+    #                 print(key)
+    #                 print(singlekey)
+    #                 if getkey and key == singlekey:
+    #                     # Store the value and return
+    #                     # --------------------------
+    #                     print(value)
+    #                     rcdict[singlekey] = value
 
-# --------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------
+
+    def rc_assign(self, rcdict, key_inquiry):
+
+        # Some of the gcm_run.j steps involve setting environment values using
+        # .rc files. These files may or may not have some of the key values used
+        # for environment setting. Hence, they will be assigned 'False'.
+        # ----------------------------------------------------------------------
+
+        # Check if the 'key_inquiry' exists in the dictionary
+        # ----------------------------------------------------
+        if key_inquiry not in rcdict:
+            rcdict.setdefault(key_inquiry, False)
+
+    # --------------------------------------------------------------------------------------------------
+
+    def rc_to_bool(self, rcdict):
+
+        # .rc files have switch values in .TRUE. or .FALSE. format.
+        # This method converts it to python boolean and assumes only two types
+        # of input. It can also accept faulty formats (i.e., .True. , .False) 
+        # ----------------------------------------------------------------------
+
+        for key, value in rcdict.items():
+            if rcdict[key].strip('.').lower() == 'true':
+                rcdict[key] = True
+            elif rcdict[key].strip('.').lower() == 'false':
+                rcdict[key] = False
+            else:
+                continue
+
+        return rcdict
+
+    # ----------------------------------------------------------------------------------------------
