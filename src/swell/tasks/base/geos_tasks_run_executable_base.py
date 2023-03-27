@@ -175,4 +175,23 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
+    # --------------------------------------------------------------------------------------------------
+
+    def replace_str(self, filename, instr, outstr):
+
+        # Replacing string values
+        # ------------------------
+
+        with open(os.path.join(self.cycle_dir,filename), 'r') as file:
+            # Find and replace the contents of the file
+            # -----------------------------------------
+            file_contents = file.read()
+            try:
+                modified_contents = file_contents.replace(instr, outstr)
+            except Exception:
+                self.logger.abort('Modifying file failed. GCM wont execute')
+
+        with open(os.path.join(self.cycle_dir,filename), 'w') as file:
+            file.write(modified_contents)
+
     # ----------------------------------------------------------------------------------------------

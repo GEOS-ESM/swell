@@ -32,11 +32,27 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # consistent. Some files in AMIP.20C are symlinks to that in AMIP but 
         # others are not.
 
-        # AMIP EMISSIONS Transition window
-        # -----------------------------------------------------
+        # AMIP EMISSIONS Transition window and no of vertical layers
+        # ----------------------------------------------------------
         d1 = dt.strptime('01032000', '%d%m%Y')
-
         AGCM_LM = self.config_get('AGCM_LM')
+
+        if not self.cap_dict['EXTDATA2G_TRUE']:
+            src_dir = os.path.join(self.cycle_dir, 'AMIP','*')
+            if self.cc_dto < d1:
+                src_dir = os.path.join(self.cycle_dir, 'AMIP.20C','*')
+
+            for filepath in list(glob.glob(src_dir)):
+                filename = os.path.basename(filepath)
+                self.fetch_to_cycle(filepath)
+
+                # Replace source according to number of atm. vertical layers
+                # ----------------------------------------------------------
+                if(AGCM_LM != '72'):
+                    self.logger.info(f"No. atm. vertical layers is {AGCM_LM} not 72")
+                    self.logger.info('Modifying AMIP file ' + filename)
+                    self.replace_str(os.path.join(self.cycle_dir, filename), 'L72', 'L' + str(AGCM_LM))
+                    self.replace_str(os.path.join(self.cycle_dir, filename), 'z72', 'z' + str(AGCM_LM))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -188,10 +204,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             Copies source files required for GEOS forecast to time dependent 
             cycle_dir.
 
-            - fetch_to_cycle:
-            Copies source files required for GEOS forecast to time dependent 
-            cycle_dir.
-
         Parameters
         ----------
             All inputs are extracted from the suite configurations.
@@ -214,27 +226,18 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ----------------
         self.get_static()
 
-        # Get boundary conditions
-        # ----------------
-        self.get_bcs()
-
-        # Get dynamic files
-        # ----------------
-        self.get_dynamic()
-
-        
         # Parse .rc files
         # ----------------
         # agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
-        cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
-        self.rc_assign(cap_dict, 'EXTDATA2G_TRUE') 
+        self.cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
+        self.rc_assign(self.cap_dict, 'EXTDATA2G_TRUE') 
 
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # ----------------------------------------------------------------
         emissions = self.config_get('emissions')
 
-        # If AMIP_EMISSIONS
-        # -----------------
+        # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
+        # ------------------------------------------------------------------
         if emissions == 'AMIP_EMISSIONS':
             self.get_amip_emission()
 
@@ -242,6 +245,19 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ----------------------
         chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
         self.geos_chem_rename(chem_dict)
+
+        # Rename GEOS Chem files
+        # ----------------------
+        chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
+        self.geos_chem_rename(chem_dict)
+
+        # Get boundary conditions
+        # ----------------
+        self.get_bcs()
+
+        # Get dynamic files
+        # ----------------
+        self.get_dynamic()
 
 
 # --------------------------------------------------------------------------------------------------
