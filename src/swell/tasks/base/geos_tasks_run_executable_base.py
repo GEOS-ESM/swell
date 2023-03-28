@@ -9,10 +9,12 @@
 
 import os
 import shutil
+import subprocess
 
 from abc import ABC, abstractmethod
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 # --------------------------------------------------------------------------------------------------
@@ -49,6 +51,29 @@ class GeosTasksRunExecutableBase(taskBase):
 
         except Exception:
             self.logger.abort('Copying failed, see if source files exists')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def exec_python(self, script_src, script, input = '', dev = False):
+
+        # Source g5_modules then execute py scripts
+        # -----------------------------------------
+
+        # This allows executing python scripts within the cycle_dir
+        # ---------------------------------------------------------
+        if dev:
+            os.chdir(self.cycle_dir)
+
+        # Define the command to source the Bash script and run the Python command
+        # -----------------------------------------------------------------------
+        command = [
+            f'source {script_src}/g5_modules.sh && ' + \
+            f'python {script_src}/{script} {input}'
+        ]
+
+        # Run the command using subprocess. No need for logger here
+        # ---------------------------------------------------------
+        subprocess.run(command, shell=True)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -132,8 +157,9 @@ class GeosTasksRunExecutableBase(taskBase):
                 rcdict[key] = value
 
         return rcdict
-    #                 # Check if the key matches the string we're looking for
-    #                 # -----------------------------------------------------
+    #                 # TODO: Check if the key matches the string we're looking for
+    #                 # might be obsolete?
+    #                   # -----------------------------------------------------
     #                 print(key)
     #                 print(singlekey)
     #                 if getkey and key == singlekey:
@@ -195,3 +221,26 @@ class GeosTasksRunExecutableBase(taskBase):
             file.write(modified_contents)
 
     # ----------------------------------------------------------------------------------------------
+
+    def run_executable(self, cycle_dir, np, geos_executable_path, geos_source, output_log):
+
+        # Run the GEOS executable
+        # -----------------------
+        self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
+
+        command = [
+            f'source {geos_source} && ' + \
+            f' mpirun -np {np} {geos_executable_path} '  + \
+            f'--logging_config \'logging.yaml\''
+        ]
+
+        # Move to the cycle directory
+        # ---------------------------
+        os.chdir(cycle_dir)
+
+        # Run command
+        # -----------
+        run_track_log_subprocess(self.logger, command, output_log=output_log)
+
+
+# --------------------------------------------------------------------------------------------------

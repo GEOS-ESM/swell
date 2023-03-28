@@ -34,7 +34,7 @@ AGCM_JM:
   type: string-drop-list
 
 AGCM_LM:
-  default_value: '90'
+  default_value: '72'
   prompt: Pick the number of vertical layers for the atmospheric model
   options: ['72']
   type: string-drop-list

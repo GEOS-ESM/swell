@@ -37,6 +37,19 @@ class GetRestart(taskBase):
             shutil.copy(filepath, os.path.join(self.cycle_dir,filename))
             dst_dir = self.cycle_dir
 
+        src = os.path.join(self.swell_static_files, 'geos', 'static', 
+                            'rst_20210630_060000_72x36x50/tile.bin')
+    
+        self.logger.info(' Copying file: ' + src)
+        shutil.copy(src, os.path.join(self.cycle_dir,'tile.bin'))
+
+        src = os.path.join(self.swell_static_files, 'geos', 'static', 
+                            'rst_20210630_060000_72x36x50/MOM.res.nc')
+    
+        self.logger.info(' Copying file: ' + src)
+        shutil.copy(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
+
+
         # Fetch more resolution dependent files
         # -------------------------------------
         
