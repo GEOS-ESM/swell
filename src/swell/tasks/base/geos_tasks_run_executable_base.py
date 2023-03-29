@@ -10,6 +10,8 @@
 import os
 import shutil
 import subprocess
+from datetime import datetime
+import isodate
 
 from abc import ABC, abstractmethod
 
@@ -170,6 +172,31 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def previous_cycle(self, cycle_dir, forecast_duration):
+
+        # Basename consists of swell datetime and model
+        # ---------------------------------------------
+        basename = os.path.basename(cycle_dir)
+        dt_str = basename.split('-')[0]
+        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
+
+        # Modify datetime by subtracting forecast duration
+        # -----------------------------------------------
+        modified_dt_obj = dt_obj - isodate.parse_duration(forecast_duration)
+
+        # Replace datetime section in the basename with the modified datetime string
+        # -----------------------------------------------------------------
+        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
+        modified_basename = basename.replace(dt_str, modified_dt_str)
+
+        # Create new file path with modified basename
+        # --------------------------------------------
+        previous_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
+
+        return previous_cycle_dir
+
+    # ----------------------------------------------------------------------------------------------
+
     def rc_assign(self, rcdict, key_inquiry):
 
         # Some of the gcm_run.j steps involve setting environment values using
@@ -229,10 +256,9 @@ class GeosTasksRunExecutableBase(taskBase):
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
         command = [
-            f'source {geos_source} && ' + \
-            f' mpirun -np {np} {geos_executable_path} '  + \
-            f'--logging_config \'logging.yaml\''
-        ]
+            'source', f'{geos_source}', '&&',
+            'mpirun', '-np', str(np), f'{geos_executable_path}',
+            '--logging_config', 'logging.yaml' ]
 
         # Move to the cycle directory
         # ---------------------------
@@ -241,6 +267,5 @@ class GeosTasksRunExecutableBase(taskBase):
         # Run command
         # -----------
         run_track_log_subprocess(self.logger, command, output_log=output_log)
-
 
 # --------------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ forecast_duration:
 
 # Run ahead limit for workflow
 runahead_limit:
-  default_value: 'P2'
+  default_value: 'P4'
   prompt: Since this suite is cycling choose how many hours the workflow can run ahead?
   type: string
 
