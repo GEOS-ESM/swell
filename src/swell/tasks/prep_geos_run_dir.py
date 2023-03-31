@@ -9,6 +9,7 @@
 
 import os
 import glob
+import json #ERASE THIS AT THE END
 
 from datetime import datetime as dt
 
@@ -25,16 +26,22 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Generate ExtData.rc according to emissions and EXTDATA2G options
         # This is likely change with *.yaml vs *.rc considerations
-        # ----------------------------------------------------------------
+        # 'w' option overwrites the contents or creates a new file
+        # --------------------------------------------------------
 
-        if not self.cap_dict['EXTDATA2G_TRUE']:
+        if not self.cap_dict['USE_EXTDATA2G']:
             # Switch to MODIS v6.1 data after Nov 2021
             # ----------------------------------------
             d1 = dt.strptime('01112021', '%d%m%Y')
 
             if self.emissions == 'OPS_EMISSIONS' and self.cc_dto < d1:
-                #TODO: Only relevant if EXTDATA2G is false
-                self.logger.abort('This setting is not developed yet.')
+                #TODO: Only relevant if EXTDATA2G is false, relevant section 
+                #from gcm_run.j:
+                   #if ( ${EMISSIONS} == OPS_EMISSIONS && ${MODIS_Transition_Date} <= $nymdc ) then
+                   #cat $extdata_files | sed 's|\(qfed2.emis_.*\).006.|\1.061.|g' > ExtData.rc
+                   #else
+                self.logger.abort('This setting is not developed yet. See ' 
+                                'code for details')
             
             else:
                 rc_paths = os.path.join(self.cycle_dir,'*_ExtData.rc')
@@ -42,8 +49,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                     for filepath in list(glob.glob(rc_paths)):
                         with open(filepath, 'r') as file:
                             extdata.write(file.read())
-
-        if self.cap_dict['EXTDATA2G_TRUE']:
+        else:
             self.exec_python(self.geosbin, 'construct_extdata_yaml_list.py', 
                             './GEOS_ChemGridComp.rc', True)
             open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w').close()
@@ -51,6 +57,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
     # ----------------------------------------------------------------------------------------------
 
     def get_amip_emission(self):
+
+        # Select proper AMIP GOCART Emission RC Files
+        # -------------------------------------------
 
         # Taken from gcm_run.j:
 
@@ -61,44 +70,53 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # consistent. Some files in AMIP.20C are symlinks to that in AMIP but 
         # others are not.
 
-        # AMIP EMISSIONS Transition window and no of vertical layers
-        # ----------------------------------------------------------
+        # AMIP EMISSIONS Transition window and number of vertical layers
+        # --------------------------------------------------------------
         d1 = dt.strptime('01032000', '%d%m%Y')
-        AGCM_LM = self.config_get('AGCM_LM')
+        AGCM_LM = self.agcm_dict['AGCM_LM']
 
-        if not self.cap_dict['EXTDATA2G_TRUE']:
-            src_dir = os.path.join(self.cycle_dir, 'AMIP','*')
+        src_dir = os.path.join(self.cycle_dir, 'AMIP','*')
+
+        if not self.cap_dict['USE_EXTDATA2G']:
             if self.cc_dto < d1:
                 src_dir = os.path.join(self.cycle_dir, 'AMIP.20C','*')
 
-            for filepath in list(glob.glob(src_dir)):
-                filename = os.path.basename(filepath)
-                self.fetch_to_cycle(filepath)
+        for filepath in list(glob.glob(src_dir)):
+            filename = os.path.basename(filepath)
+            self.fetch_to_cycle(filepath)
 
-                # Replace source according to number of atm. vertical layers
-                # ----------------------------------------------------------
-                if(AGCM_LM != '72'):
-                    self.logger.info(f"No. atm. vertical layers mismatch: {AGCM_LM} vs. 72")
-                    self.logger.info(' Modifying AMIP file ' + filename)
-                    self.replace_str(os.path.join(self.cycle_dir, filename), 'L72', 'L' + str(AGCM_LM))
-                    self.replace_str(os.path.join(self.cycle_dir, filename), 'z72', 'z' + str(AGCM_LM))
+            # Replace source according to number of atm. vertical layers
+            # ----------------------------------------------------------
+            if(AGCM_LM != '72'):
+                self.logger.info(f"No. atm. vertical layers mismatch: {AGCM_LM} vs. 72")
+                self.logger.info(' Modifying AMIP file ' + filename)
+                self.replace_str(os.path.join(self.cycle_dir, filename), 'L72', 'L' + str(AGCM_LM))
+                self.replace_str(os.path.join(self.cycle_dir, filename), 'z72', 'z' + str(AGCM_LM))
 
     # ----------------------------------------------------------------------------------------------
 
-    #TODO: this dict could be kept outside of this code
-    # -------------------------------------------------
     def get_bcs(self):
+        # Uses parsed .rc and .j files to set BCs 
+        # ---------------------------------------
+        AGCM_IM = self.agcm_dict['AGCM_IM']
+        AGCM_JM = self.agcm_dict['AGCM_JM']
+        OGCM_IM = self.agcm_dict['OGCM.IM_WORLD']
+        OGCM_JM = self.agcm_dict['OGCM.JM_WORLD']
+        OGCM_LM = self.agcm_dict['OGCM.LM']
 
-        geos_bcsdir = self.config_get('geos_bcsdir')
-        geos_chmdir = self.config_get('geos_chmdir')
-        geos_bcrslv = self.config_get('geos_bcrslv')
-        geos_abcsdir = self.config_get('geos_abcsdir')
-        geos_obcsdir = os.path.join(self.config_get('geos_obcsdir'), self.ocn_horizontal_resolution)
+        geos_bcsdir = self.gcm_dict['BCSDIR']
+        geos_chmdir = self.gcm_dict['CHMDIR']
+        geos_bcrslv = self.gcm_dict['BCRSLV']
+        geos_abcsdir = self.gcm_dict['ABCSDIR']
 
-        AGCM_IM = self.config_get('AGCM_IM')
-        AGCM_JM = self.config_get('AGCM_JM')
+        # Obtain tag information from abcsdir
+        # -----------------------------------
+        [ATMOStag, OCEANtag] = os.path.basename(geos_abcsdir).split('_')
 
-        pchem_clim_years = self.config_get('pchem_clim_years')
+        geos_obcsdir = self.gcm_dict['OBCSDIR'].format(OGCM_IM=OGCM_IM, OGCM_JM=OGCM_JM)
+        geos_obcsdir = geos_obcsdir.replace('$', '')        
+
+        pchem_clim_years = self.agcm_dict['pchem_clim_years']
 
         pchem = {
             '1': 'pchem.species.Clim_Prod_Loss.z_721x72.nc4',
@@ -116,14 +134,14 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             self.logger.abort('MERRA2OX data non existent for the current cycle')
 
         self.bcs_dict = {
-        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.til'): 
+        os.path.join(geos_abcsdir,f"{ATMOStag}_{OCEANtag}-Pfafstetter.til"): 
                     'tile.data',
-        os.path.join(geos_abcsdir,'CF0012x6C_TM0072xTM0036-Pfafstetter.TRN'): 
+        os.path.join(geos_abcsdir,f"{ATMOStag}_{OCEANtag}-Pfafstetter.TRN"): 
                     'runoff.bin',
-        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{self.ocn_horizontal_resolution}"): 
+        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"): 
                     'SEAWIFS_KPAR_mon_clim.data',
         os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
-        os.path.join(geos_obcsdir, f"vgrid{self.ocn_vertical_resolution}.ascii"): 'vgrid.ascii',
+        os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
         os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
                     'species.data',
         os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
@@ -198,20 +216,17 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     def get_static(self):
 
-        # Folder name contains both horizontal and vertical resolutions
-        # ----------------------------
-        resolution = self.ocn_horizontal_resolution + 'x' + self.ocn_vertical_resolution
+        # Obtain experiment input files created by GEOS gcm_setup
+        # --------------------------------------------------
 
         geos_install_path = os.path.join(self.experiment_dir, 'GEOSgcm/source/install/bin')
 
         src_dirs = []
 
-        # Create list of common source dirs
+        # Create list of static files
         # ---------------------------------
-        src_dirs.append(os.path.join(self.swell_static_files, 'geos', 'static', 
-                            resolution))
-        src_dirs.append(os.path.join(self.swell_static_files, 'geos', 'static', 
-                            resolution, 'RC'))
+        src_dirs.append(self.geos_exp_dir)
+        src_dirs.append(os.path.join(self.geos_exp_dir, 'RC'))
         src_dirs.append(os.path.join(geos_install_path,'bundleParser.py'))
 
         for src_dir in src_dirs:
@@ -233,7 +248,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Modifying file templates
         # -------------------------
 
-        if not self.cap_dict['EXTDATA2G_TRUE']:
+        if not self.cap_dict['USE_EXTDATA2G']:
             self.replace_str(os.path.join(self.cycle_dir, 'WSUB_ExtData.rc'), 
             'ExtData/g5gcm/moist/L72/Wvar_positive_05hrdeg_2006%m2.nc4', 
             '/dev/null'
@@ -267,9 +282,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             All inputs are extracted from the suite configurations.
         """
 
-        self.ocn_horizontal_resolution = self.config_get('ocn_horizontal_resolution')
-        self.ocn_vertical_resolution = self.config_get('ocn_vertical_resolution')
-        self.swell_static_files = self.config_get('swell_static_files')
+        self.geos_exp_dir = self.config_get('geos_experiment_directory')
         self.cycle_dir = self.config_get('cycle_dir')
         self.experiment_dir = self.config_get('experiment_dir')
         self.geos_source = self.config_get('existing_geos_source_directory')
@@ -285,14 +298,28 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ----------------
         self.get_static()
 
-        # Parse .rc files
-        # ----------------
+        # Parse .rc files and convert bool.s to Python format
+        # ---------------------------------------------------
         self.cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
-        self.rc_assign(self.cap_dict, 'EXTDATA2G_TRUE') 
+        self.cap_dict = self.rc_to_bool(self.cap_dict)
+
+        # This ensures a bool entry for USE_EXTDATA2G exists
+        # --------------------------------------------------
+        self.rc_assign(self.cap_dict, 'USE_EXTDATA2G') 
+
+        # Link replay files TODO
+        # -----------------
+        self.agcm_d = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        self.agcm_dict = self.rc_to_bool(self.agcm_d)
+        # self.link_replay()
+
+        # Parse gcm_run.j and get a dictionary based upon setenv
+        # ------------------------------------------------------
+        self.gcm_dict = self.parse_gcmrun(os.path.join(self.cycle_dir,'gcm_run.j'))
 
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # ----------------------------------------------------------------
-        self.emissions = self.config_get('emissions')
+        self.emissions = self.gcm_dict['EMISSIONS']
 
         # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
         # ------------------------------------------------------------------
@@ -316,6 +343,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Get boundary conditions
         # ----------------
         self.get_bcs()
+        # print(json.dumps(self.gcm_dict,indent=2))
+        exit()
 
         # Get dynamic files
         # ----------------
@@ -325,11 +354,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ------------------
         with open(os.path.join(self.cycle_dir,'cap_restart'), 'w') as file:
             file.write(dt.strftime(self.cc_dto, "%Y%m%d %H%M%S"))
-
-        # Link replay files TODO
-        # -----------------
-        # agcm_dict = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
-        # self.link_replay()
 
         self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
                         dev = True)

@@ -41,19 +41,18 @@
         {% for model_component in model_components %}
             # Task triggers for: {{model_component}}
             # ------------------
+            # Get background
+            GetRestart-{{model_component}}
 
-            # Prepare Geos run directory
+            # Run Geos hofx executable
             BuildGeosByLinking[^]? | BuildGeos[^]  => PrepGeosRunDir
-
-            # Get Geos rst files
-            PrepGeosRunDir => GetRestart-{{model_component}}
+            GetRestart-{{model_component}} => PrepGeosRunDir
 
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
-        
-            # Placeholder, cylc scripting is faulty to allow commenting out
+
             # Save restart
-            # RunGeosExecutable => SaveRestart-{model_component}}
+            RunGeosExecutable => SaveRestart-{{model_component}}
         {% endfor %}
         """
         {% endfor %}
@@ -97,10 +96,9 @@
     [[GetRestart-{{model_component}}]]
         script = "swell_task GetRestart $config -d $datetime -m {{model_component}}"
 
-    # Placeholder, cylc scripting is faulty to allow commenting out
-    # [[SaveRestart-{model_component}}]]
-    #     script = "swell_task SaveRestart $config -d $datetime -m {model_component}}"
-    # { endfor }
+    [[SaveRestart-{{model_component}}]]
+        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
+    {% endfor %}
 
     [[RunGeosExecutable]]
         script = "swell_task RunGeosExecutable $config -d $datetime"

@@ -1,9 +1,16 @@
 # Cycle frequency
 cycle_times:
   default_value: ['T00', 'T12']
-  prompt: List all cycle times, by middle of the window?
+  prompt: List all cycle times
   options: ['T00', 'T12']
   type: string-check-list
+
+# GEOS Experiment folder, created by gcm_setup script
+geos_experiment_directory:
+  default_value: /discover/nobackup/dardag/GEOS_FORWARD/fromscratch
+  prompt: Where to source GEOS BCSDIR?
+  options: ['/discover/nobackup/dardag/GEOS_FORWARD/fromscratch']
+  type: string-drop-list
 
 # Ocean horizontal resolution
 ocn_horizontal_resolution:
@@ -19,33 +26,7 @@ ocn_vertical_resolution:
   options: ['50', '75']
   type: string-drop-list
 
-# Atmospheric Model Configuration Parameters
-
-AGCM_IM:
-  default_value: '12'
-  prompt: Pick x resolution for the atmospheric model
-  options: ['12', '90', '180']
-  type: string-drop-list
-
-AGCM_JM:
-  default_value: '72'
-  prompt: Pick y resolution for the atmospheric model (Default = 6 * AGCM_IM)
-  options: ['72', '540', '1080']
-  type: string-drop-list
-
-AGCM_LM:
-  default_value: '72'
-  prompt: Pick the number of vertical layers for the atmospheric model
-  options: ['72']
-  type: string-drop-list
-
-pchem_clim_years:
-  default_value: '1'
-  prompt: Pick Pchem option (Some are time constrained)
-  options: ['1', '228', '3', '39']
-  type: string-drop-list
-
-  # Processor layout
+# Processor layout
 npx_proc:
   default_value: '24'
   prompt: What processor layout (x-direction) per cube face?
@@ -64,30 +45,6 @@ geos_gcm_tag:
 
 # GEOS boundary conditions and settings, taken from the gcm_run.j script
 
-geos_bcsdir:
-  default_value: /discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds
-  prompt: Where to source GEOS BCSDIR?
-  options: ['/discover/nobackup/ltakacs/bcs/Icarus-NLv3/Icarus-NLv3_Reynolds']
-  type: string-drop-list
-
-geos_chmdir:
-  default_value: /discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3
-  prompt: Where to source GEOS CHMDIR?
-  options: ['/discover/nobackup/projects/gmao/share/gmao_ops/fvInput_nc3']
-  type: string-drop-list
-
-geos_bcrslv:
-  default_value: CF0012x6C_DE0360xPE0180
-  prompt: Where to source GEOS BCRSLV?
-  options: ['CF0012x6C_DE0360xPE0180']
-  type: string-drop-list
-
-emissions:
-  default_value: AMIP_EMISSIONS
-  prompt: What GEOS emission to use?
-  options: ['AMIP_EMISSIONS']
-  type: string-drop-list
-
 # TODO: Could this be reduced further with horizontal grid resolutions?
 geos_abcsdir:
   default_value: /discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/Icarus-NLv3/MOM6/CF0012x6C_TM0072xTM0036
@@ -100,8 +57,6 @@ geos_obcsdir:
   prompt: Where to source GEOS ocean BCs?
   options: ['/discover/nobackup/projects/gmao/ssd/aogcm/ocean_bcs/MOM6/']
   type: string-drop-list
-
-# setenv OBCSDIR  ${OGCM_IM}x${OGCM_JM}
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------

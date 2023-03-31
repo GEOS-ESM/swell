@@ -111,15 +111,49 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_rc(self, rcfile, getkey=None, singlekey=None):
+    def parse_gcmrun(self, jfile):
 
-        # Parse AGCM.rc & CAP.rc line by line and create a dictionary or obtain 
-        # single key-value pair. It ignores comments and commented out lines.
-        # Some values involve multiple ":" characters which required some extra 
-        # steps to handle them as dictionary values.
+        # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup
+        # creates gcm_run.j and handles platform dependencies.
+        # ----------------------------------------------------------------------
 
-        # Also possible (notyet) to return a single key-value pair using getkey and 
-        # singlekey options
+        with open(jfile, 'r') as file:
+            lines = file.readlines()
+
+        rcdict = {}
+
+        for line in lines:
+            
+            # Skip if the line is a comment (i.e., starts with #)
+            # ------------------------------------------------------
+            if line.startswith("#"):
+                continue
+
+            # Strip any leading or trailing whitespace from the line
+            # ------------------------------------------------------
+            line = line.strip()
+
+            # Skips empty lines
+            # ------------------
+            if line:
+
+                # Split the line and use setenv expressions for key-value pairs
+                # -------------------------------------------------------------
+                parts = line.split()
+
+                if parts[0] == 'setenv':
+                    key = parts[1]
+                    rcdict[key] = parts[2]
+
+        return rcdict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def parse_rc(self, rcfile):
+
+        # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented 
+        # out lines. Some values involve multiple ":" characters which required 
+        # some extra steps to handle them as dictionary values.
         # ----------------------------------------------------------------------
 
         with open(rcfile, 'r') as file:
@@ -137,8 +171,8 @@ class GeosTasksRunExecutableBase(taskBase):
             if line.startswith("#"):
                 continue
 
-            # Split the line into key-value pair and ignore any comment after #
-            # -------------------------------------------------------------------
+            # Split the line to ignore any comment after #
+            # ---------------------------------------------
             parts = line.split('#', 1)
             line = parts[0]
 
@@ -159,16 +193,6 @@ class GeosTasksRunExecutableBase(taskBase):
                 rcdict[key] = value
 
         return rcdict
-    #                 # TODO: Check if the key matches the string we're looking for
-    #                 # might be obsolete?
-    #                   # -----------------------------------------------------
-    #                 print(key)
-    #                 print(singlekey)
-    #                 if getkey and key == singlekey:
-    #                     # Store the value and return
-    #                     # --------------------------
-    #                     print(value)
-    #                     rcdict[singlekey] = value
 
     # ----------------------------------------------------------------------------------------------
 
