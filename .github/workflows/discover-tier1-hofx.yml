@@ -1,0 +1,13 @@
+# SWELL Discover Tier1 HOFX
+
+name: swell-discover-tier1-hofx
+
+on: workflow_dispatch
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  swell-discover-tier1-hofx:
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-discover-tier1-hofx.yml@main
