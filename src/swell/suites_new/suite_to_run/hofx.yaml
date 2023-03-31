@@ -34,7 +34,7 @@ model_components:
   default_value: ['geos_atmosphere', 'geos_ocean']
   prompt: Select models to use (choose at least one)
   options: use_method
-  type: file-check-list
+  type: string-check-list
 
 # Fixed options
 fixed_options:

@@ -22,7 +22,7 @@ suite_to_run:
   default_value: {{suite_to_run}}
   prompt: Choose the suite to run
   options: use_method
-  type: file-drop-list
+  type: string-drop-list
 
 # Options that are questions
 fixed_options:
