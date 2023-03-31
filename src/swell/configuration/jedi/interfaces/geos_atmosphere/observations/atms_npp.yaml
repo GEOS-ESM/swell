@@ -16,7 +16,7 @@ obs operator:
   Clouds: [Water, Ice]
   Cloud_Fraction: 1.0
   obs options:
-    Sensor_ID: atms_npp
+    Sensor_ID: &Sensor_ID atms_npp
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
 obs bias:
