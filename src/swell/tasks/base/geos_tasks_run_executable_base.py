@@ -111,6 +111,24 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def geos_linker(self, src, dst, dst_dir=None):
+
+        # Link files from BC directories
+        # ------------------------------
+
+        if dst_dir is None:
+            dst_dir = self.cycle_dir
+
+        if os.path.exists(os.path.join(dst_dir, dst)):
+            os.unlink(os.path.join(dst_dir, dst))
+
+        try:
+            os.symlink(src, os.path.join(dst_dir, dst))
+        except Exception:
+            self.logger.abort('Linking failed, see if source files exists')
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_gcmrun(self, jfile):
 
         # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup

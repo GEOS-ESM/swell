@@ -9,7 +9,6 @@
 
 import os
 import glob
-import json #ERASE THIS AT THE END
 
 from datetime import datetime as dt
 
@@ -96,8 +95,10 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
     # ----------------------------------------------------------------------------------------------
 
     def get_bcs(self):
+
         # Uses parsed .rc and .j files to set BCs 
         # ---------------------------------------
+
         AGCM_IM = self.agcm_dict['AGCM_IM']
         AGCM_JM = self.agcm_dict['AGCM_JM']
         OGCM_IM = self.agcm_dict['OGCM.IM_WORLD']
@@ -131,7 +132,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         d2 = dt.strptime('062017', '%m%Y')
 
         if pchem_clim_years == '39' and (self.cc_dto > d2 or self.cc_dto < d1):
-            self.logger.abort('MERRA2OX data non existent for the current cycle')
+            self.logger.abort('MERRA2OX data non existent for the current' +
+                            ' cycle. Change pchem_clim_years in AGCM.rc')
 
         self.bcs_dict = {
         os.path.join(geos_abcsdir,f"{ATMOStag}_{OCEANtag}-Pfafstetter.til"): 
@@ -140,7 +142,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                     'runoff.bin',
         os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"): 
                     'SEAWIFS_KPAR_mon_clim.data',
-        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): '',
+        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
         os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
         os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
                     'species.data',
@@ -159,8 +161,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                     'topo_gwdvar.data',
         os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"): 
                     'topo_trbvar.data',
-        os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): '',
-        os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): '',
+        os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
+        os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
         }
 
         #Conditional BCs that don't break the model
@@ -185,6 +187,10 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     def get_dynamic(self):
 
+        # Creating symlinks to BCs dictionary
+        # Unlinks existing links first
+        # ---------------------------------------
+
         for src, dst in self.bcs_dict.items():
             if "*" in src:
 
@@ -195,22 +201,13 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                     filename = os.path.basename(filepath)
                     if len(dst) > 0:
                         os.makedirs(dst, 0o755, exist_ok=True)
-                        try:
-                            os.system('ln -sf ' + filepath + ' ' + dst + '/' + filename)
-                        except Exception:
-                            self.logger.abort('Linking failed, see if source files exists')
-                        continue
+                        self.geos_linker(filepath, filename, dst_dir=dst)
 
-                    try:
-                        os.system('ln -sf ' + filepath + ' ' + self.cycle_dir + '/' + filename)
-                    except Exception:
-                        self.logger.abort('Linking failed, see if source files exists')
+                    self.geos_linker(filepath, filename)
+
             else:
                 self.logger.info(' Linking file: ' + src)
-                try:
-                    os.system('ln -sf ' + src + ' ' + self.cycle_dir + '/' + dst)
-                except Exception:
-                    self.logger.abort('Linking failed, see if source file exists')
+                self.geos_linker(src, dst)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -263,23 +260,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     def execute(self):
 
-        """Obtains necessary directories and files from the static directories 
-        (most are defined in gcm_run.j script):
+        """
+        Parses resource files in "geos_experiment_directory" to obtain required 
+        directories and files.
 
-            - get_bcs:
-            Defines boundary conditions for different components of the coupled
-            system and creates a bc dictionary.
-
-            - get_dynamic:
-            Links dynamic boundary conditions defined by the get_bcs method
-
-            - get_static:
-            Copies source files required for GEOS forecast to time dependent 
-            cycle_dir.
-
-        Parameters
-        ----------
-            All inputs are extracted from the suite configurations.
+        In GEOS speak, it creates the "scratch" directory.
         """
 
         self.geos_exp_dir = self.config_get('geos_experiment_directory')
@@ -343,8 +328,6 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Get boundary conditions
         # ----------------
         self.get_bcs()
-        # print(json.dumps(self.gcm_dict,indent=2))
-        exit()
 
         # Get dynamic files
         # ----------------
@@ -355,7 +338,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         with open(os.path.join(self.cycle_dir,'cap_restart'), 'w') as file:
             file.write(dt.strftime(self.cc_dto, "%Y%m%d %H%M%S"))
 
-        self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
-                        dev = True)
+        # self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
+        #                 dev = True)
 
 # --------------------------------------------------------------------------------------------------
