@@ -1,0 +1,165 @@
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            {% for model_component in model_components %}
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}}
+            {% endfor %}
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Get background
+            GetBackground-{{model_component}}
+
+            # Get observations
+            GetObservations-{{model_component}}
+
+            # GenerateBClimatologyByLinking
+            GenerateBClimatologyByLinking-{{model_component}}
+
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
+            # Run Jedi variational executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            # EvaObservations
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # Save observations
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
+
+    {% for model_component in model_components %}
+    [[StageJedi-{{model_component}}]]
+        script = "swell_task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
+
+    [[ GetBackground-{{model_component}} ]]
+        script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
+
+    [[GetObservations-{{model_component}}]]
+        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+
+    [[GenerateBClimatologyByLinking-{{model_component}}]]
+        script = "swell_task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    [[RunJediVariationalExecutable-{{model_component}}]]
+        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
+            --job-name = RunJediVariationalExecutable
+            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+
+    [[MergeIodaFiles-{{model_component}}]]
+        script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
+
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaObservations-{{model_component}}]]
+        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
+
+    [[SaveObsDiags-{{model_component}}]]
+        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-{{model_component}}]]
+        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
+    {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
