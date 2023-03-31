@@ -19,7 +19,9 @@ from swell.tasks.base.geos_tasks_run_executable_base import *
 
 class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def generate_extdata(self):
 
@@ -53,7 +55,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                             './GEOS_ChemGridComp.rc', True)
             open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w').close()
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def get_amip_emission(self):
 
@@ -92,7 +96,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 self.replace_str(os.path.join(self.cycle_dir, filename), 'L72', 'L' + str(AGCM_LM))
                 self.replace_str(os.path.join(self.cycle_dir, filename), 'z72', 'z' + str(AGCM_LM))
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def get_bcs(self):
 
@@ -183,7 +189,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
                             os.path.join(self.cycle_dir,'INPUT'))
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def get_dynamic(self):
 
@@ -209,7 +217,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 self.logger.info(' Linking file: ' + src)
                 self.geos_linker(src, dst)
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def get_static(self):
 
@@ -229,16 +239,20 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         for src_dir in src_dirs:
             self.fetch_to_cycle(src_dir)
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def link_replay(self):
 
         # Linking REPLAY files according to AGCM.rc
         # -----------------------------------------
+        self.logger.abort('Under construction')
         pass
-        # print('placeholder')
+
 
     # ----------------------------------------------------------------------------------------------
+
 
     def restructure_rc(self):
 
@@ -256,7 +270,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             '/dev/null'
             )
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def execute(self):
 
@@ -338,7 +354,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         with open(os.path.join(self.cycle_dir,'cap_restart'), 'w') as file:
             file.write(dt.strftime(self.cc_dto, "%Y%m%d %H%M%S"))
 
-        # self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
-        #                 dev = True)
+        self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
+                        dev = True)
 
 # --------------------------------------------------------------------------------------------------

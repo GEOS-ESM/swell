@@ -110,9 +110,9 @@ class GetRestart(GeosTasksRunExecutableBase):
         self.forecast_duration = scg('forecast_duration')
         self.previous_cycle_dir = self.previous_cycle(self.cycle_dir, self.forecast_duration)
 
-        # Create an empty restart directory
-        # ----------------------------------
-        os.mkdir(os.path.join(self.cycle_dir, 'RESTART'))
+        # # Create an empty restart directory
+        # # ----------------------------------
+        # os.mkdir(os.path.join(self.cycle_dir, 'RESTART'))
 
         # Restarts should be provided
         # --------------------------------------------------

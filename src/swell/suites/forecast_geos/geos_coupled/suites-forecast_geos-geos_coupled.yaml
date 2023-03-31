@@ -14,7 +14,7 @@ geos_experiment_directory:
 
 # Processor layout
 npx_proc:
-  default_value: '24'
+  default_value: '6'
   prompt: What processor layout (x-direction) per cube face?
   type: string
 npy_proc:

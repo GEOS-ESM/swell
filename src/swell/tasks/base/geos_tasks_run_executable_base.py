@@ -32,7 +32,9 @@ class GeosTasksRunExecutableBase(taskBase):
         # ------------------------------------------------------------------------
         pass
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def fetch_to_cycle(self, src_dir, dst_dir=None):
 
@@ -54,7 +56,9 @@ class GeosTasksRunExecutableBase(taskBase):
         except Exception:
             self.logger.abort('Copying failed, see if source files exists')
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def exec_python(self, script_src, script, input = '', dev = False):
 
@@ -77,7 +81,9 @@ class GeosTasksRunExecutableBase(taskBase):
         # ---------------------------------------------------------
         subprocess.run(command, shell=True)
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def geos_chem_rename(self, rcdict):
 
@@ -109,7 +115,9 @@ class GeosTasksRunExecutableBase(taskBase):
                 self.logger.info(' Renaming file: '+fname)
                 os.system('rename .rc .rc.NOT_USED ' + fname)
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def geos_linker(self, src, dst, dst_dir=None):
 
@@ -127,7 +135,9 @@ class GeosTasksRunExecutableBase(taskBase):
         except Exception:
             self.logger.abort('Linking failed, see if source files exists')
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def parse_gcmrun(self, jfile):
 
@@ -165,7 +175,9 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def parse_rc(self, rcfile):
 
@@ -212,7 +224,9 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def previous_cycle(self, cycle_dir, forecast_duration):
 
@@ -237,7 +251,9 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return previous_cycle_dir
 
+
     # ----------------------------------------------------------------------------------------------
+
 
     def rc_assign(self, rcdict, key_inquiry):
 
@@ -251,7 +267,9 @@ class GeosTasksRunExecutableBase(taskBase):
         if key_inquiry not in rcdict:
             rcdict.setdefault(key_inquiry, False)
 
+
     # --------------------------------------------------------------------------------------------------
+
 
     def rc_to_bool(self, rcdict):
 
@@ -270,7 +288,9 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
+
     # --------------------------------------------------------------------------------------------------
+
 
     def replace_str(self, filename, instr, outstr):
 
@@ -289,25 +309,26 @@ class GeosTasksRunExecutableBase(taskBase):
         with open(os.path.join(self.cycle_dir,filename), 'w') as file:
             file.write(modified_contents)
 
+
     # ----------------------------------------------------------------------------------------------
 
-    def run_executable(self, cycle_dir, np, geos_executable_path, geos_source, output_log):
+
+    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log):
 
         # Run the GEOS executable
         # -----------------------
-        self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
-
-        command = [
-            'source', f'{geos_source}', '&&',
-            'mpirun', '-np', str(np), f'{geos_executable_path}',
-            '--logging_config', 'logging.yaml' ]
+        self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
 
         # Move to the cycle directory
         # ---------------------------
         os.chdir(cycle_dir)
 
-        # Run command
-        # -----------
-        run_track_log_subprocess(self.logger, command, output_log=output_log)
+        command = f'source {geos_modules} && ' + \
+        f'mpirun -np {np} {geos_executable} ' + \
+        f'--logging_config logging.yaml'
+
+        # Run command within bash environment 
+        # -----------------------------------
+        run_track_log_subprocess(self.logger, ['/bin/bash', '-c', command], output_log=output_log)
 
 # --------------------------------------------------------------------------------------------------

@@ -29,9 +29,8 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Create RESTART folder
         # ---------------------
-        os.chdir(cycle_dir)
-        if not os.path.exists('RESTART'):
-            os.mkdir('RESTART')
+        if not os.path.exists(os.path.join(cycle_dir, 'RESTART')):
+            os.mkdir(os.path.join(cycle_dir, 'RESTART'))
 
         # Output log file
         # ---------------
@@ -51,13 +50,13 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # GEOS source 
         # ---------------
-        geos_source = 'g5_modules.sh'
-        geos_source_path = os.path.join(experiment_dir, 'GEOSgcm', 'source', 
-                                        '@env', geos_source)
+        geos_modules = 'g5_modules.sh'
+        geos_modules_path = os.path.join(experiment_dir, 'GEOSgcm', 'source', 
+                                        '@env', geos_modules)
 
         # Run the GEOS executable
         # -----------------------
-        self.run_executable(cycle_dir, np, geos_executable_path, geos_source_path, output_log_file)
+        self.run_executable(cycle_dir, np, geos_executable_path, geos_modules_path, output_log_file)
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
 
