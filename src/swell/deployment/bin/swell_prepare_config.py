@@ -29,7 +29,7 @@ from swell.utilities.welcome_message import write_welcome_message
               'platform specific defaults.')
 @click.option('-o', '--override', 'override', default=None, help='After generating the config ' +
               'file parameters inside can be overridden using value from the override config file.')
-@click.option('-m', '--models', 'models', multiple=True, default=['geos_atmosphere'], help='Enter' + 
+@click.option('-m', '--models', 'models', multiple=True, default=['geos_atmosphere'], help='Enter' +
               'model components.')
 def main(input_method, suite, platform, override, models):
 

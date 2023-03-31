@@ -77,7 +77,10 @@ class PrepConfigCli(PrepConfigBase):
             else:
                 choices.append(Choice(mod, checked=False))
 
-        selected_models = self.make_check_widget('Which models?', choices, default = None, prompt=questionary.checkbox)
+        selected_models = self.make_check_widget('Which models?',
+                                                 choices,
+                                                 default=None,
+                                                 prompt=questionary.checkbox)
 
         if 'None' in selected_models:
             selected_models = []
@@ -223,4 +226,3 @@ class PrepConfigCli(PrepConfigBase):
             return None
 
 # --------------------------------------------------------------------------------------------------
-

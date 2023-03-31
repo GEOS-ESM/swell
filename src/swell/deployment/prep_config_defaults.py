@@ -25,7 +25,7 @@ class PrepConfigDefaults(PrepConfigBase):
     # ----------------------------------------------------------------------------------------------
 
     def get_models(self):
-       return self.model_choices
+        return self.model_choices
 
     # ----------------------------------------------------------------------------------------------
 

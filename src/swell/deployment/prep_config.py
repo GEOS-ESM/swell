@@ -47,7 +47,6 @@ def prepare_config(method, suite, platform, override, models):
                         'PrepConfig'+method.capitalize())
     prep_using = PrepUsing(logger, config_file, suite, platform, models)
 
-
     # Call the config prep step
     # -------------------------
     prep_using.execute()

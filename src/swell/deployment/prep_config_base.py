@@ -39,7 +39,7 @@ class PrepConfigBase(ABC):
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Keep track of the model, atmosphere, ocean etc
-        self.model_path = os.path.join(self.install_path, 
+        self.model_path = os.path.join(self.install_path,
                                        'configuration',
                                        'jedi/interfaces/')
         self.model = None
@@ -70,16 +70,12 @@ class PrepConfigBase(ABC):
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
 
-
         # Render the templates in the platform dictionary using user inputs
         platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
 
         # Dictionary of templates to use whenever opening a file
         self.platform_template_dictionary = yaml.safe_load(platform_dict_str)
         self.platform_template_dictionary.update(user_inputs_dict)
-
-        # Starting dictionary
-        #self.dictionary = self.read_dictionary_file(dictionary_file)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -175,8 +171,8 @@ class PrepConfigBase(ABC):
 
         # Open model specific defaults
         model_inputs_dict_file = os.path.join(swell_path, 'configuration',
-                                       'jedi/interfaces/' + model,
-                                       'tasks', task_file + '.yaml')
+                                              'jedi/interfaces/' + model,
+                                              'tasks', task_file + '.yaml')
 
         with open(model_inputs_dict_file, 'r') as model_inputs_open:
             model_template_dictionary = yaml.safe_load(model_inputs_open.read())
@@ -211,7 +207,6 @@ class PrepConfigBase(ABC):
             template_dictionary = self.set_model_template(self.model_name)
         else:
             template_dictionary = self.platform_template_dictionary
-
 
         # Render the templates using the template dictionary
         dictionary_str = template_string_jinja2(self.logger, dictionary_str,
@@ -257,7 +252,6 @@ class PrepConfigBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     def add_to_experiment_dictionary(self, key, element_dict):
-
 
         # Set the element
         # ---------------
@@ -357,8 +351,9 @@ class PrepConfigBase(ABC):
 
                     # Setting model options from available models in interfaces
                     self.model_options = glob.glob(os.path.join(self.install_path,
-                                                           'configuration',
-                                                           'jedi/interfaces/', '*/'))
+                                                                'configuration',
+                                                                'jedi/interfaces/', 
+                                                                '*/'))
 
                     model_list = self.get_models()
                     for model in model_list:
@@ -367,13 +362,14 @@ class PrepConfigBase(ABC):
                         task_collector = self.get_tasks(dictionary['model_tasks'], 'model')
                         for task in task_collector:
                             for element in task_collector[task]:
-                                new_dictionary['models'][model][element] = task_collector[task][element]
+                                new_dictionary['models'][model][element] = \
+                                    task_collector[task][element]
                 key_list = list(new_dictionary.keys())
             else:
                 new_dictionary[key] = dictionary[key]
         dictionary = new_dictionary
 
-        del(new_dictionary)
+        del new_dictionary
 
         return dictionary
 
@@ -412,7 +408,7 @@ class PrepConfigBase(ABC):
 
         # Check for fixed options in key list and set end key
         key_list = self.set_end_key(key_list)
- 
+
         # Create empty executable key list which will track which keys are executed
         self.exec_keys = []
 
