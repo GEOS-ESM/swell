@@ -352,7 +352,7 @@ class PrepConfigBase(ABC):
                     # Setting model options from available models in interfaces
                     self.model_options = glob.glob(os.path.join(self.install_path,
                                                                 'configuration',
-                                                                'jedi/interfaces/', 
+                                                                'jedi/interfaces/',
                                                                 '*/'))
 
                     model_list = self.get_models()
