@@ -12,10 +12,10 @@
 # standard imports
 import click
 import os
-import subprocess
 
 # local imports
 from swell.utilities.logger import Logger
+from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.welcome_message import write_welcome_message
 
 # --------------------------------------------------------------------------------------------------
@@ -52,21 +52,21 @@ class DeployWorkflow():
         if self.log_path:
             # Add optional path for workflow engine logging.
             option = '--symlink-dirs=run=' + self.log_path
-            subprocess.run(['cylc', 'install', option], check=True)
+            run_subprocess(self.logger, ['cylc', 'install', option])
         else:
-            subprocess.run(['cylc', 'install'], check=True)
+            run_subprocess(self.logger, ['cylc', 'install'])
 
         # Start the workflow
 
         if self.no_detach:
 
             # Start the suite and wait for the workflow to complete.
-            subprocess.run(['cylc', 'play', '--no-detach', self.experiment_name], check=True)
+            run_subprocess(self.logger, ['cylc', 'play', '--no-detach', self.experiment_name])
 
         else:
 
             # Start the suite and return
-            subprocess.run(['cylc', 'play', self.experiment_name], check=True)
+            run_subprocess(self.logger, ['cylc', 'play', self.experiment_name])
 
             # Pre TUI messages
             self.logger.info(' ', False)
@@ -91,7 +91,7 @@ class DeployWorkflow():
             self.logger.info(' ', False)
             self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name + '\033[0m')
             self.logger.info(' ', False)
-            subprocess.run(['cylc', 'tui', self.experiment_name], check=True)
+            run_subprocess(self.logger, ['cylc', 'tui', self.experiment_name])
 
 # --------------------------------------------------------------------------------------------------
 

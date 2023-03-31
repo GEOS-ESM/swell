@@ -1,0 +1,59 @@
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for building the GEOS model
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    [[graph]]
+        R1 = """
+           CloneGeos => BuildGeosByLinking?
+
+           BuildGeosByLinking:fail? => BuildGeos
+        """
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneGeos]]
+        script = "swell_task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell_task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell_task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildGeos"]["account"]}}
+            --qos = {{scheduling["BuildGeos"]["qos"]}}
+            --job-name = SwellBuildGeos
+            --nodes={{scheduling["BuildGeos"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildGeos"]["constraint"]}}
+
+# --------------------------------------------------------------------------------------------------

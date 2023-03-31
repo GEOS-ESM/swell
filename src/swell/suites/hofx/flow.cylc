@@ -53,20 +53,24 @@
             # Get observations
             GetObservations-{{model_component}}
 
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
-            # Evadriver
-            RunJediHofxExecutable-{{model_component}} => EvaDriver-{{model_component}}
+            # EvaObservations
+            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
             RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
-            EvaDriver-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
 
         {% endif %}
@@ -102,14 +106,17 @@
         [[[directives]]]
             --account = {{scheduling["BuildJedi"]["account"]}}
             --qos = {{scheduling["BuildJedi"]["qos"]}}
-            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
             --job-name = BuildJedi
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
         script = "swell_task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
 
     [[ GetBackground-{{model_component}} ]]
         script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
@@ -124,13 +131,13 @@
         [[[directives]]]
             --account = {{scheduling["RunJediHofxExecutable"]["account"]}}
             --qos = {{scheduling["RunJediHofxExecutable"]["qos"]}}
-            --constraint = {{scheduling["RunJediHofxExecutable"]["constraint"]}}
             --job-name = RunJediHofxExecutable
             --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediHofxExecutable"]["constraint"]}}
 
-    [[EvaDriver-{{model_component}}]]
-        script = "swell_task EvaDriver $config -d $datetime -m {{model_component}}"
+    [[EvaObservations-{{model_component}}]]
+        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"

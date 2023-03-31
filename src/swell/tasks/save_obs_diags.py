@@ -38,15 +38,20 @@ class SaveObsDiags(taskBase):
             # Store observation files
             # -----------------------
             name = observation_dict['obs space']['name']
-            source_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
+            obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
 
-            # Append obs file with _0000
-            source_file_name, source_file_ext = os.path.splitext(source_file)
-            source_file = source_file_name + '_0000' + source_file_ext
+            # Check for need to add 0000 to the file
+            if not os.path.exists(obs_path_file):
+                obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
+                obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
+                if not os.path.exists(obs_path_file_0000):
+                    self.logger.abort(f'No observation file found for {obs_path_file} or ' +
+                                      f'{obs_path_file_0000}')
+                obs_path_file = obs_path_file_0000
 
             store(date=window_begin,
                   provider='ncdiag',
-                  source_file=source_file,
+                  source_file=obs_path_file,
                   obs_type=name,
                   type='ob',
                   experiment=experiment_id)

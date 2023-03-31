@@ -83,5 +83,5 @@ fixed_options:
     default_value: odas
     prompt: Database providing the observations.
   clean_patterns:
-    default_value: ['*.nc4','*.txt']
+    default_value: ['*.nc4','*.txt','*MOM*','logfile.*.out']
     prompt: 'Patterns for the files to remove after completing a cycle'

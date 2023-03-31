@@ -35,7 +35,16 @@ class StageJedi(taskBase):
 
         # Open the stage configuration file
         # ---------------------------------
-        stage_dict = self.open_jedi_interface_model_config_file('stage')
+        stage_file = 'stage'
+        if self.is_datetime_dependent():
+            stage_file = 'stage_cycle'
+
+        stage_dict = self.open_jedi_interface_model_config_file(stage_file)
+
+        # Check that the passed configuration had a stage component
+        if stage_dict is None:
+            self.logger.info('No stage dictionary was found for this configuration')
+            exit(0)
 
         # Run the file handler
         # --------------------

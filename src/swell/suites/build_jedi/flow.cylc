@@ -51,9 +51,9 @@
         [[[directives]]]
             --account = {{scheduling["BuildJedi"]["account"]}}
             --qos = {{scheduling["BuildJedi"]["qos"]}}
-            --constraint = {{scheduling["BuildJedi"]["constraint"]}}
             --job-name = SwellBuildJedi
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
 # --------------------------------------------------------------------------------------------------
