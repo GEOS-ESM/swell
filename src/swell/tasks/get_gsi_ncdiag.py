@@ -34,7 +34,8 @@ class GetGsiNcdiag(taskBase):
         # Get cycle dir and create if needed
         # ----------------------------------
         cycle_dir = self.config_get('cycle_dir')
-        os.makedirs(cycle_dir, 0o755, exist_ok=True)
+        gsi_diag_dir = os.path.join(cycle_dir, 'gsi_ncdiags')
+        os.makedirs(gsi_diag_dir, 0o755, exist_ok=True)
 
         # Copy all the files into the cycle directory
         # -------------------------------------------
@@ -46,7 +47,7 @@ class GetGsiNcdiag(taskBase):
             self.logger.info(f'Copying {gsi_diag_file}')
 
             # Copy file
-            shutil.copyfile(gsi_diag_path_file, os.path.join(cycle_dir, gsi_diag_file))
+            shutil.copyfile(gsi_diag_path_file, os.path.join(gsi_diag_dir, gsi_diag_file))
 
 
 # --------------------------------------------------------------------------------------------------

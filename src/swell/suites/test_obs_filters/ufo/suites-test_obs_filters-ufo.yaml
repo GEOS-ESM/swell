@@ -15,7 +15,40 @@ window_length:
 observations:
   default_value:
   - aircraft
+  - airs_aqua
+  - amsr2_gcom-w1
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
   - amsua_n19
+  - atms_n20
+  - atms_npp
+  - avhrr_metop-a
+  - avhrr_n18
+  - cris-fsr_n20
+  - cris-fsr_npp
+  - gmi_gpm
+  - gps
+  - iasi_metop-a
+  - iasi_metop-b
+  - mhs_metop-b
+  - mhs_metop-c
+  - mhs_n19
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
+  - satwind
+  - scatwind
+  - seviri_m08
+  - sfcship
+  - sfc
+  - sondes
+  - ssmis_f17
+  - vadwind
+
   prompt: Select observations to run with.
   options: use_method
   type: string-check-list
@@ -25,6 +58,12 @@ path_to_gsi_diags:
   default_value: '/discover/nobackup/drholdaw/SwellTestData/ncdiag/'
   prompt: Path to where the ncdiags will be held
   type: string
+
+# Compute GeoVaLs and observations
+produce_geovals:
+  default_value: true
+  prompt: Compute GeoVaLs as well as observations?
+  type: boolean
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------
@@ -50,3 +89,5 @@ fixed_options:
   background_time_offset:
     default_value:  PT9H
     prompt: Time before the middle of the window that the background providing forecast began
+
+

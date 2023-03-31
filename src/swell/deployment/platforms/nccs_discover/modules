@@ -26,13 +26,14 @@ module load jedi-fv3-env/1.0.0
 module load nco/5.0.6
 module load sp/2.3.3
 
-# Add IODA to PYTHONPATH in case it is needed
-# -------------------------------------------
+# IODA from experiement JEDI build
+# --------------------------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
-PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
 
-export PYTHONPATH=$PYTHONPATH:/path/to/clone/iodaconv/src
+# IODA-Converters from experiement JEDI source
+# --------------------------------------------
+PYTHONPATH=/discover/nobackup/drholdaw/JediSwell/iodaconv-v3/src:$PYTHONPATH
 
 # Load GMAO modules
 # -----------------
