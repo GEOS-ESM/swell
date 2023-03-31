@@ -9,5 +9,7 @@ defaults:
     shell: bash
 
 jobs:
+  
   swell-discover-tier1-hofx:
+    if: ${{ github.event.label.name == 'run-ci-discover (authorized users)' }}
     uses: GEOS-ESM/CI-workflows/.github/workflows/swell-discover-tier1-hofx.yml@main
