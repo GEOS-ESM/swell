@@ -8,22 +8,8 @@ cycle_times:
 # GEOS Experiment folder, created by gcm_setup script
 geos_experiment_directory:
   default_value: /discover/nobackup/dardag/GEOS_FORWARD/fromscratch
-  prompt: Where to source GEOS BCSDIR?
+  prompt: What experiment folder should GEOS obtain settings?
   options: ['/discover/nobackup/dardag/GEOS_FORWARD/fromscratch']
-  type: string-drop-list
-
-# Ocean horizontal resolution
-ocn_horizontal_resolution:
-  default_value: '72x36'
-  prompt: What horizontal resolution will be used for the GEOS forecast?
-  options: ['72x36', '1440x1080']
-  type: string-drop-list
-
-# Ocean vertical resolution
-ocn_vertical_resolution:
-  default_value: '50'
-  prompt: What vertical resolution will be used for the GEOS forecast?
-  options: ['50', '75']
   type: string-drop-list
 
 # Processor layout
@@ -41,21 +27,6 @@ geos_gcm_tag:
   default_value: 'v10.25.1'
   prompt: Which tag of GEOS do you want to build?
   options: ['v10.25.1']
-  type: string-drop-list
-
-# GEOS boundary conditions and settings, taken from the gcm_run.j script
-
-# TODO: Could this be reduced further with horizontal grid resolutions?
-geos_abcsdir:
-  default_value: /discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/Icarus-NLv3/MOM6/CF0012x6C_TM0072xTM0036
-  prompt: Where to source GEOS atmospheric BCs?
-  options: ['/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/Icarus-NLv3/MOM6/CF0012x6C_TM0072xTM0036']
-  type: string-drop-list
-
-geos_obcsdir:
-  default_value: /discover/nobackup/projects/gmao/ssd/aogcm/ocean_bcs/MOM6/
-  prompt: Where to source GEOS ocean BCs?
-  options: ['/discover/nobackup/projects/gmao/ssd/aogcm/ocean_bcs/MOM6/']
   type: string-drop-list
 
 # Fixed options (user not prompted for these)
