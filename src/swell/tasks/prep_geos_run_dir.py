@@ -299,6 +299,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ----------------
         self.get_static()
 
+        # Combine input.nml and fvcore_layout
+        # Modify input.nml if not cold start (default)
+        # ------------------------------------------
+        self.process_nml()
+
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
         self.cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))

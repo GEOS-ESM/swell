@@ -52,7 +52,7 @@ class GetRestart(GeosTasksRunExecutableBase):
         self.logger.info('GEOS restarts from a forecast run')
 
         src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            'rst_20210630_060000_72x36x50/*_rst')
+                            self.rst_path, '*_rst')
 
         for filepath in list(glob.glob(src)):            
             filename = os.path.basename(filepath)
@@ -60,13 +60,13 @@ class GetRestart(GeosTasksRunExecutableBase):
             shutil.copy(filepath, os.path.join(self.cycle_dir,filename))
 
         src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            'rst_20210630_060000_72x36x50/tile.bin')
+                            self.rst_path, 'tile.bin')
     
         self.logger.info(' Copying file: ' + src)
         shutil.copy(src, os.path.join(self.cycle_dir,'tile.bin'))
 
         src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            'rst_20210630_060000_72x36x50/MOM.res.nc')
+                            self.rst_path, 'MOM.res.nc')
     
         self.logger.info(' Copying file: ' + src)
         shutil.copy(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
@@ -105,14 +105,14 @@ class GetRestart(GeosTasksRunExecutableBase):
         self.cycle_dir = scg('cycle_dir')
         self.swell_static_files = scg('swell_static_files')
 
+        # rst files folder
+        # ----------------
+        self.rst_path = scg('geos_restarts_directory')
+
         # Previous cycle folder name
         # ----------------------------------
         self.forecast_duration = scg('forecast_duration')
         self.previous_cycle_dir = self.previous_cycle(self.cycle_dir, self.forecast_duration)
-
-        # # Create an empty restart directory
-        # # ----------------------------------
-        # os.mkdir(os.path.join(self.cycle_dir, 'RESTART'))
 
         # Restarts should be provided
         # --------------------------------------------------

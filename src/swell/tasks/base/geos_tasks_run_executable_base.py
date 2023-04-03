@@ -12,6 +12,7 @@ import shutil
 import subprocess
 from datetime import datetime
 import isodate
+import f90nml
 
 from abc import ABC, abstractmethod
 
@@ -135,7 +136,6 @@ class GeosTasksRunExecutableBase(taskBase):
         except Exception:
             self.logger.abort('Linking failed, see if source files exists')
 
-
     # ----------------------------------------------------------------------------------------------
 
 
@@ -250,6 +250,35 @@ class GeosTasksRunExecutableBase(taskBase):
         previous_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
 
         return previous_cycle_dir
+
+
+    # ----------------------------------------------------------------------------------------------
+
+
+    def process_nml(self, cold_restart=False):
+
+    # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
+    # -------------------------------------------------------------
+
+        nml1 = f90nml.read(os.path.join(self.cycle_dir, 'input.nml'))
+
+        if not cold_restart:
+            self.logger.info('Hot start, will require rst/checkpoint files')
+
+            # mom_input_nml needs to be 'r' for hot_restart
+            # ----------------------------------------------
+            nml1['mom_input_nml']['input_filename'] = 'r'
+
+        nml2 = f90nml.read(os.path.join(self.cycle_dir, 'fvcore_layout.rc'))
+
+        # Combine the dictionaries and write the new input.nml
+        # ---------------------------------------------------
+        nml_comb = {**nml1, **nml2}
+
+        self.logger.info('Combining input.nml and fvcore_layout.rc')
+
+        with open(os.path.join(self.cycle_dir, 'input.nml'), 'w') as f:
+            f90nml.write(nml_comb, f)
 
 
     # ----------------------------------------------------------------------------------------------
