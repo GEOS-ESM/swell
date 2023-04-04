@@ -35,7 +35,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             # ----------------------------------------
             d1 = dt.strptime('01112021', '%d%m%Y')
 
-            if self.emissions == 'OPS_EMISSIONS' and self.cc_dto < d1:
+            if self.emissions == 'OPS_EMISSIONS' and self.cc_dto > d1:
                 #TODO: Only relevant if EXTDATA2G is false, relevant section 
                 #from gcm_run.j:
                    #if ( ${EMISSIONS} == OPS_EMISSIONS && ${MODIS_Transition_Date} <= $nymdc ) then
@@ -196,7 +196,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
     def get_dynamic(self):
 
         # Creating symlinks to BCs dictionary
-        # Unlinks existing links first
+        # Unlinks existing ones first
         # ---------------------------------------
 
         for src, dst in self.bcs_dict.items():
@@ -245,10 +245,18 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     def link_replay(self):
 
-        # Linking REPLAY files according to AGCM.rc
-        # -----------------------------------------
+        # Linking REPLAY files according to AGCM.rc as in gcm_run.j
+        # ---------------------------------------------------------
+
+        if self.agcm_dict['REPLAY_MODE'] == 'Exact' or self.agcm_dict['REPLAY_MODE'] == 'Regular':
+            ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
+            ANA_LOCATION = self.agcm_dict['REPLAY_ANA_LOCATION']
+            REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
+
+            if 'REPLAY_FILE09' in self.agcm_dict:
+                REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
+
         self.logger.abort('Under construction')
-        pass
 
 
     # ----------------------------------------------------------------------------------------------
@@ -313,11 +321,14 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # --------------------------------------------------
         self.rc_assign(self.cap_dict, 'USE_EXTDATA2G') 
 
-        # Link replay files TODO
-        # -----------------
+        # Link replay files if active TODO
+        # ---------------------------
         self.agcm_d = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
         self.agcm_dict = self.rc_to_bool(self.agcm_d)
-        # self.link_replay()
+
+        if 'REPLAY_MODE' in self.agcm_dict:
+            self.logger.info('Replay Mode is Active')
+            self.link_replay()
 
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------

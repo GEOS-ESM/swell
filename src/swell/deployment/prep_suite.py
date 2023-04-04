@@ -94,7 +94,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediVariationalExecutable']['constraint'] = 'cas|sky|hasw'
 
     render_dictionary['scheduling']['RunGeosExecutable'] = {}
-    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT30M'
     render_dictionary['scheduling']['RunGeosExecutable']['account'] = 'g0613'
     render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'allnccs'
     render_dictionary['scheduling']['RunGeosExecutable']['nodes'] = 1

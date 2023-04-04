@@ -41,10 +41,10 @@
         {% for model_component in model_components %}
             # Task triggers for: {{model_component}}
             # ------------------
-            # Get background
+            # Get restarts from a previos GEOS run
             GetRestart-{{model_component}}
 
-            # Run Geos hofx executable
+            # Prepare GEOS run directory
             BuildGeosByLinking[^]? | BuildGeos[^]  => PrepGeosRunDir
             GetRestart-{{model_component}} => PrepGeosRunDir
 

@@ -29,6 +29,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
     @abstractmethod
     def execute(self):
+
         # This class does not execute, it provides helper function for the children
         # ------------------------------------------------------------------------
         pass
@@ -201,12 +202,14 @@ class GeosTasksRunExecutableBase(taskBase):
             if line.startswith("#"):
                 continue
 
-            # Split the line to ignore any comment after #
+            # Split the line to ignore comments after #
             # ---------------------------------------------
             parts = line.split('#', 1)
             line = parts[0]
 
             # Split the line into key and value using the first occurrence of ":" as the delimiter
+            # This part is required because of AGCM.rc entries with confusing
+            # lines (e.g., CH4_FRIENDLIES: DYNAMICS:TURBULENCE:MOIST)
             # ------------------------------------------------------------------------------------
             split_line = line.split(":", 1)
             if len(split_line) == 2:
@@ -310,7 +313,11 @@ class GeosTasksRunExecutableBase(taskBase):
         for key, value in rcdict.items():
             if rcdict[key].strip('.').lower() == 'true':
                 rcdict[key] = True
+            elif rcdict[key].strip('.').lower() == 't':
+                rcdict[key] = True
             elif rcdict[key].strip('.').lower() == 'false':
+                rcdict[key] = False
+            elif rcdict[key].strip('.').lower() == 'f':
                 rcdict[key] = False
             else:
                 continue

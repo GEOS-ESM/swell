@@ -19,7 +19,12 @@ from datetime import datetime as dt
 
 class GetRestart(GeosTasksRunExecutableBase):
 
+
+    # ----------------------------------------------------------------------------------------------
+
+
     def cycling_restarts(self):
+
 
         # Get restarts (checkpoints) from the previous cycle dir 
         # ------------------------------------------------------
@@ -29,20 +34,20 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         for filepath in list(glob.glob(src)):            
             filename = os.path.basename(filepath)
-            self.logger.info(' Copying file: ' + filepath)
-            shutil.copy(filepath, os.path.join(self.cycle_dir,filename))
+            self.fetch_to_cycle(filepath, os.path.join(self.cycle_dir,filename))
 
         src = os.path.join(self.previous_cycle_dir, 'tile.bin')
-    
-        self.logger.info(' Copying file: ' + src)
-        shutil.copy(src, os.path.join(self.cycle_dir,'tile.bin'))
+        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'tile.bin'))
 
         src = os.path.join(self.previous_cycle_dir, 'RESTART', 'MOM.res.nc')
+        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
 
-        self.logger.info(' Copying file: ' + src)
-        shutil.copy(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
+
+    # ----------------------------------------------------------------------------------------------
+
 
     def initial_restarts(self):
+
 
         # GEOS forecast checkpoint files should be created
         # ------------------------------------------------
@@ -56,20 +61,21 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         for filepath in list(glob.glob(src)):            
             filename = os.path.basename(filepath)
-            self.logger.info(' Copying file: ' + filepath)
-            shutil.copy(filepath, os.path.join(self.cycle_dir,filename))
+            self.fetch_to_cycle(filepath, os.path.join(self.cycle_dir,filename))
+
 
         src = os.path.join(self.swell_static_files, 'geos', 'static', 
                             self.rst_path, 'tile.bin')
-    
-        self.logger.info(' Copying file: ' + src)
-        shutil.copy(src, os.path.join(self.cycle_dir,'tile.bin'))
+        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'tile.bin'))
+
 
         src = os.path.join(self.swell_static_files, 'geos', 'static', 
                             self.rst_path, 'MOM.res.nc')
-    
-        self.logger.info(' Copying file: ' + src)
-        shutil.copy(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
+        self.fetch_to_cycle(src, os.path.join(self.cycle_dir, 'INPUT', 'MOM.res.nc'))
+
+
+    # ----------------------------------------------------------------------------------------------
+
 
     def rename_checkpoints(self):
 
@@ -86,7 +92,12 @@ class GetRestart(GeosTasksRunExecutableBase):
         except Exception:
             self.logger.abort('Renaming failed, see if checkpoint files exists')
 
+
+    # ----------------------------------------------------------------------------------------------
+
+
     def execute(self):
+
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
@@ -94,8 +105,8 @@ class GetRestart(GeosTasksRunExecutableBase):
         # -------------------------------------------
         scg=self.config_get
 
-        # Obtain current and previous cycle time objects
-        # ----------------------------------------------
+        # Obtain current and previous cycle time objects, create cycle_dir
+        # ----------------------------------------------------------------
         current_cycle = scg('current_cycle')
         cc_dto = dt.strptime(current_cycle, "%Y%m%dT%H%M%SZ")
 
@@ -104,6 +115,11 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         self.cycle_dir = scg('cycle_dir')
         self.swell_static_files = scg('swell_static_files')
+
+        # Create cycle_dir and INPUT
+        # ----------------------------
+        if not os.path.exists(os.path.join(self.cycle_dir,'INPUT')):
+            os.makedirs(os.path.join(self.cycle_dir,'INPUT'), 0o755, exist_ok=True)
 
         # rst files folder
         # ----------------
