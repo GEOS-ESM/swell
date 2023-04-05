@@ -243,8 +243,21 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             ANA_LOCATION = self.agcm_dict['REPLAY_ANA_LOCATION']
             REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
 
-            if 'REPLAY_FILE09' in self.agcm_dict:
-                REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
+        rply_dict = {
+            os.path.join(ANA_LOCATION, 'aod'): '',
+            os.path.join(ANA_LOCATION): '',
+        }
+
+            # if 'REPLAY_FILE09' in self.agcm_dict:
+            #     REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
+            #     self.logger.info(' Including REPLAY_FILE09: ' + src)
+            #     self.rply_dict.update({
+            #         os.path.join(ANA_LOCATION): '',
+            #         })
+
+        for src, dst in rply_dict.items():
+            self.logger.info(' Linking file: ' + src)
+            self.geos_linker(src, dst)
 
         self.logger.abort('Under construction')
 
@@ -272,7 +285,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             with open(self.at_cycle('WSUB_ExtData.yaml'), 'r') as f:
                 wsub = yaml.safe_load(f)
 
-            # Modifying the particular entry
+            # Modifying one particular value
             # -----------------------------
             wsub['Exports']['WSUB_NATURE']['collection'] = '/dev/null'
 

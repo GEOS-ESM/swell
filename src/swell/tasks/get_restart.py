@@ -37,7 +37,7 @@ class GetRestart(GeosTasksRunExecutableBase):
         self.fetch_to_cycle(src, self.at_cycle('tile.bin'))
 
         src = os.path.join(self.previous_cycle_dir, 'RESTART', 'MOM.res.nc')
-        self.fetch_to_cycle(src, self.at_cycle('INPUT', 'MOM.res.nc'))
+        self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'MOM.res.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         src = os.path.join(self.swell_static_files, 'geos', 'static',
                            self.rst_path, 'MOM.res.nc')
-        self.fetch_to_cycle(src, self.at_cycle('INPUT', 'MOM.res.nc'))
+        self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'MOM.res.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -125,7 +125,7 @@ class GetRestart(GeosTasksRunExecutableBase):
             self.cycling_restarts()
             self.rename_checkpoints()
 
-        # TODO: use rst time for cap_restart
+        # TODouse rst time for cap_restart
         # self.get_rst_time()
 
 # --------------------------------------------------------------------------------------------------

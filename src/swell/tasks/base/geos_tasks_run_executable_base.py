@@ -362,17 +362,10 @@ class GeosTasksRunExecutableBase(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
 
-        # Move to the cycle directory
-        # ---------------------------
-        os.chdir(cycle_dir)
-
-        command = f'source {geos_modules} && ' + \
+        command =   f'source {geos_modules} \n' + \
+            f'cd {cycle_dir} \n' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'
-
-        # command =   f'source {script_src}/g5_modules.sh \n' + \
-        #     f'cd {self.cycle_dir} \n' + \
-        #     f'{script_src}/{script} {input}'
 
         # Run command within bash environment
         # -----------------------------------
