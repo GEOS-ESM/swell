@@ -138,4 +138,7 @@ class GetRestart(GeosTasksRunExecutableBase):
             self.cycling_restarts()
             self.rename_checkpoints()
 
+        #TODO: use rst time for cap_restart
+        # self.get_rst_time()
+
 # --------------------------------------------------------------------------------------------------

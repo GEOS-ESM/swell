@@ -7,12 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
+from datetime import datetime
+import f90nml, netCDF4
+import isodate
+import os, glob, re
 import shutil
 import subprocess
-from datetime import datetime
-import isodate
-import f90nml
 
 from abc import ABC, abstractmethod
 
@@ -33,6 +33,22 @@ class GeosTasksRunExecutableBase(taskBase):
         # This class does not execute, it provides helper function for the children
         # ------------------------------------------------------------------------
         pass
+
+
+    # ----------------------------------------------------------------------------------------------
+
+
+    def at_cycle(self, paths):
+
+        # Ensure what we have is a list (paths should be a list)
+        # ------------------------------------------------------
+        if isinstance(paths, str):
+            paths = [paths]
+
+        # Combining list of paths with cycle dir for script brevity 
+        # ---------------------------------------------------------
+        full_path = os.path.join(self.cycle_dir, *paths)
+        return full_path
 
 
     # ----------------------------------------------------------------------------------------------
@@ -111,7 +127,7 @@ class GeosTasksRunExecutableBase(taskBase):
         }
 
         for key, value in chem_files.items():
-            fname = os.path.join(self.cycle_dir, value)
+            fname = self.at_cycle(value)
             
             if not rcdict[key] and os.path.isfile(fname):
                 self.logger.info(' Renaming file: '+fname)
@@ -136,6 +152,30 @@ class GeosTasksRunExecutableBase(taskBase):
             os.symlink(src, os.path.join(dst_dir, dst))
         except Exception:
             self.logger.abort('Linking failed, see if source files exists')
+    # ----------------------------------------------------------------------------------------------
+
+
+    def get_rst_time(self):
+
+        # Obtain time information from any of the rst files listed by the
+        # glob method
+        # --------------------------------------------------------------------
+
+        src = self.at_cycle('*_rst')
+
+        # Open the NetCDF file and read the time and units
+        # ------------------------------------------------
+        ncfile = netCDF4.Dataset(list(glob.glob(src))[0])
+        time_var = ncfile.variables['time']
+        units = time_var.units
+
+        # Convert the time values to datetime objects
+        # ---------------------------------------------
+        times = netCDF4.num2date(time_var[:], units=units, calendar='standard')
+
+        self.logger.info('This is not used yet')
+        ncfile.close()
+
 
     # ----------------------------------------------------------------------------------------------
 
@@ -263,7 +303,7 @@ class GeosTasksRunExecutableBase(taskBase):
     # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
     # -------------------------------------------------------------
 
-        nml1 = f90nml.read(os.path.join(self.cycle_dir, 'input.nml'))
+        nml1 = f90nml.read(self.at_cycle('input.nml'))
 
         if not cold_restart:
             self.logger.info('Hot start, will require rst/checkpoint files')
@@ -272,7 +312,7 @@ class GeosTasksRunExecutableBase(taskBase):
             # ----------------------------------------------
             nml1['mom_input_nml']['input_filename'] = 'r'
 
-        nml2 = f90nml.read(os.path.join(self.cycle_dir, 'fvcore_layout.rc'))
+        nml2 = f90nml.read(self.at_cycle('fvcore_layout.rc'))
 
         # Combine the dictionaries and write the new input.nml
         # ---------------------------------------------------
@@ -280,7 +320,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         self.logger.info('Combining input.nml and fvcore_layout.rc')
 
-        with open(os.path.join(self.cycle_dir, 'input.nml'), 'w') as f:
+        with open(self.at_cycle('input.nml'), 'w') as f:
             f90nml.write(nml_comb, f)
 
 
@@ -305,9 +345,10 @@ class GeosTasksRunExecutableBase(taskBase):
 
     def rc_to_bool(self, rcdict):
 
-        # .rc files have switch values in .TRUE. or .FALSE. format.
-        # This method converts it to python boolean and assumes only two types
-        # of input. It can also accept faulty formats (i.e., .True. , .False) 
+        # .rc files have switch values in .TRUE. or .FALSE. format, some might
+        # have T and F.
+        # This method converts them to python boolean and assumes only two types
+        # of input. It can also converts faulty formats (i.e., .True. , .False) 
         # ----------------------------------------------------------------------
 
         for key, value in rcdict.items():
@@ -328,22 +369,19 @@ class GeosTasksRunExecutableBase(taskBase):
     # --------------------------------------------------------------------------------------------------
 
 
-    def replace_str(self, filename, instr, outstr):
+    def resub(self, filename, pattern, replacement):
 
-        # Replacing string values
-        # ------------------------
+        # Replacing string values involving wildcards
+        # -------------------------------------------
+        with open(filename, 'r') as f:
+            full_text = f.read()
 
-        with open(os.path.join(self.cycle_dir,filename), 'r') as file:
-            # Find and replace the contents of the file
-            # -----------------------------------------
-            file_contents = file.read()
-            try:
-                modified_contents = file_contents.replace(instr, outstr)
-            except Exception:
-                self.logger.abort('Modifying file failed. GCM wont execute')
+        # Perform the substitution and write the output to a new file
+        # -----------------------------------------------------------
+        modified_text = re.sub(pattern, replacement, full_text, flags=re.MULTILINE)
 
-        with open(os.path.join(self.cycle_dir,filename), 'w') as file:
-            file.write(modified_contents)
+        with open(filename, 'w') as out_file:
+            out_file.write(modified_text)
 
 
     # ----------------------------------------------------------------------------------------------

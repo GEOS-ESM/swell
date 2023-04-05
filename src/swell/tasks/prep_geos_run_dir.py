@@ -9,8 +9,10 @@
 
 import os
 import glob
+import yaml
 
 from datetime import datetime as dt
+import isodate
 
 from swell.tasks.base.geos_tasks_run_executable_base import *
 
@@ -26,30 +28,31 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
     def generate_extdata(self):
 
         # Generate ExtData.rc according to emissions and EXTDATA2G options
-        # This is likely change with *.yaml vs *.rc considerations
         # 'w' option overwrites the contents or creates a new file
         # --------------------------------------------------------
 
+        self.logger.info('Generating ExtData.rc')
+
         if not self.cap_dict['USE_EXTDATA2G']:
+            
+            rc_paths = os.path.join(self.cycle_dir,'*_ExtData.rc')
+            with open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w') as extdata:
+                for filepath in list(glob.glob(rc_paths)):
+                    with open(filepath, 'r') as file:
+                        extdata.write(file.read())
+
             # Switch to MODIS v6.1 data after Nov 2021
             # ----------------------------------------
             d1 = dt.strptime('01112021', '%d%m%Y')
 
             if self.emissions == 'OPS_EMISSIONS' and self.cc_dto > d1:
-                #TODO: Only relevant if EXTDATA2G is false, relevant section 
-                #from gcm_run.j:
-                   #if ( ${EMISSIONS} == OPS_EMISSIONS && ${MODIS_Transition_Date} <= $nymdc ) then
-                   #cat $extdata_files | sed 's|\(qfed2.emis_.*\).006.|\1.061.|g' > ExtData.rc
-                   #else
-                self.logger.abort('This setting is not developed yet. See ' 
-                                'code for details')
-            
-            else:
-                rc_paths = os.path.join(self.cycle_dir,'*_ExtData.rc')
-                with open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w') as extdata:
-                    for filepath in list(glob.glob(rc_paths)):
-                        with open(filepath, 'r') as file:
-                            extdata.write(file.read())
+
+                # 'r' indicates raw string
+                # ------------------------
+                pattern = r'(qfed2.emis_.*).006.'
+                replacement = r'\g<1>.061.'
+                self.logger.info('Switching to MODIS v6.1 (OPS_EMISSIONS)')
+                self.resub(os.path.join(self.cycle_dir, 'ExtData.rc'), pattern, replacement)
         else:
             self.exec_python(self.geosbin, 'construct_extdata_yaml_list.py', 
                             './GEOS_ChemGridComp.rc', True)
@@ -78,11 +81,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         d1 = dt.strptime('01032000', '%d%m%Y')
         AGCM_LM = self.agcm_dict['AGCM_LM']
 
-        src_dir = os.path.join(self.cycle_dir, 'AMIP','*')
+        src_dir = self.at_cycle(['AMIP', '*'])
 
         if not self.cap_dict['USE_EXTDATA2G']:
             if self.cc_dto < d1:
-                src_dir = os.path.join(self.cycle_dir, 'AMIP.20C','*')
+                src_dir = self.at_cycle(['AMIP.20C', '*'])
 
         for filepath in list(glob.glob(src_dir)):
             filename = os.path.basename(filepath)
@@ -91,10 +94,10 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             # Replace source according to number of atm. vertical layers
             # ----------------------------------------------------------
             if(AGCM_LM != '72'):
-                self.logger.info(f"No. atm. vertical layers mismatch: {AGCM_LM} vs. 72")
+                self.logger.info(f"Atm. vertical layers mismatch: {AGCM_LM} vs. 72")
                 self.logger.info(' Modifying AMIP file ' + filename)
-                self.replace_str(os.path.join(self.cycle_dir, filename), 'L72', 'L' + str(AGCM_LM))
-                self.replace_str(os.path.join(self.cycle_dir, filename), 'z72', 'z' + str(AGCM_LM))
+                self.resub(self.at_cycle(filename), 'L72', 'L' + str(AGCM_LM))
+                self.resub(self.at_cycle(filename), 'z72', 'z' + str(AGCM_LM))
 
 
     # ----------------------------------------------------------------------------------------------
@@ -264,19 +267,56 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     def restructure_rc(self):
 
+        # 1MOM and GFDL microphysics do not use WSUB_NATURE
+        # -------------------------------------------------
+
         # Modifying file templates
         # -------------------------
-
         if not self.cap_dict['USE_EXTDATA2G']:
-            self.replace_str(os.path.join(self.cycle_dir, 'WSUB_ExtData.rc'), 
-            'ExtData/g5gcm/moist/L72/Wvar_positive_05hrdeg_2006%m2.nc4', 
-            '/dev/null'
-            )
+            self.logger.info('Modifying WSUB_ExtData.rc')
+
+            # Only modify the line starts with WSUB_NATURE
+            # --------------------------------------------
+            pattern = r'^(WSUB_NATURE.*)ExtData.*'
+            replacement = '\g<1>/dev/null'
+            self.resub(self.at_cycle('WSUB_ExtData.rc'), pattern, replacement)
+
         else:
-            self.replace_str(os.path.join(self.cycle_dir, 'WSUB_ExtData.yaml'), 
-            'WSUB_Wvar_positive_05hrdeg_2006%m2.nc4', 
-            '/dev/null'
-            )
+            self.logger.info('Modifying WSUB_ExtData.yaml')
+
+            with open(self.at_cycle('WSUB_ExtData.yaml'), 'r') as f:
+                wsub = yaml.safe_load(f)
+
+            # Modifying the particular entry
+            # -----------------------------
+            wsub['Exports']['WSUB_NATURE']['collection'] = '/dev/null'
+
+            # Write the updated YAML back to the file
+            with open(self.at_cycle('WSUB_ExtData.yaml'), 'w') as f:
+                yaml.dump(wsub, f, sort_keys=False)
+
+
+    # ----------------------------------------------------------------------------------------------
+
+
+    def rewrite_cap(self, rcdict, rcfile):
+
+        # CAP.rc requires some modifications
+        # This method returns rcdict with the bool fix
+        # ---------------------------------------------
+
+        self.logger.info('Modifying CAP.rc')
+        # fcst_dur = self.config_get('forecast_duration')
+
+        rcdict['NUM_SGMT'] = '1'
+        #TODO: this is hardcoded for now, fcst_dur could be useful
+        # ----------------------------------------------------------
+        rcdict['JOB_SGMT'] = '00000000 060000'
+
+        with open(rcfile, "w") as f:
+            yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
+
+        return self.rc_to_bool(rcdict)
 
 
     # ----------------------------------------------------------------------------------------------
@@ -286,7 +326,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         """
         Parses resource files in "geos_experiment_directory" to obtain required 
-        directories and files.
+        directories and files. Modifies file contents using re module according
+        to cycle_date and CAP.rc and AGCM.rc switches.
 
         In GEOS speak, it creates the "scratch" directory.
         """
@@ -297,6 +338,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         self.geos_source = self.config_get('existing_geos_source_directory')
 
         self.logger.info('Preparing GEOS Forecast directory')
+        self.logger.info('Some steps involve modifying input files and replacing')
+        self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
+        self.logger.info('encouraged to validate if this changes ensued.')
 
         # Current cycle time object, useful for temporal BC constraints
         # -------------------------------------------------------------
@@ -314,16 +358,16 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
-        self.cap_dict = self.parse_rc(os.path.join(self.cycle_dir,'CAP.rc'))
-        self.cap_dict = self.rc_to_bool(self.cap_dict)
+        self.cap_dict = self.parse_rc(self.at_cycle('CAP.rc'))
+        self.cap_dict = self.rewrite_cap(self.cap_dict, self.at_cycle('CAP.rc'))
 
         # This ensures a bool entry for USE_EXTDATA2G exists
         # --------------------------------------------------
         self.rc_assign(self.cap_dict, 'USE_EXTDATA2G') 
 
         # Link replay files if active TODO
-        # ---------------------------
-        self.agcm_d = self.parse_rc(os.path.join(self.cycle_dir,'AGCM.rc'))
+        # --------------------------------
+        self.agcm_d = self.parse_rc(self.at_cycle('AGCM.rc'))
         self.agcm_dict = self.rc_to_bool(self.agcm_d)
 
         if 'REPLAY_MODE' in self.agcm_dict:
@@ -332,7 +376,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------
-        self.gcm_dict = self.parse_gcmrun(os.path.join(self.cycle_dir,'gcm_run.j'))
+        self.gcm_dict = self.parse_gcmrun(self.at_cycle('gcm_run.j'))
 
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # ----------------------------------------------------------------
@@ -345,7 +389,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Rename GEOS Chem files
         # ----------------------
-        chem_dict = self.parse_rc(os.path.join(self.cycle_dir,'GEOS_ChemGridComp.rc'))
+        chem_dict = self.parse_rc(self.at_cycle('GEOS_ChemGridComp.rc'))
         self.geos_chem_rename(chem_dict)
 
         # Rename settings according to .rc switches
@@ -356,6 +400,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # --------------------------------
         self.geosbin = os.path.join(self.geos_source, 'install', 'bin') 
         self.generate_extdata()
+
+        exit()
 
         # Get boundary conditions
         # ----------------
