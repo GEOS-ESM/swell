@@ -35,7 +35,7 @@ obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   obs options:
-    Sensor_ID: airs_aqua
+    Sensor_ID: &Sensor_ID airs_aqua
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
 obs bias:
