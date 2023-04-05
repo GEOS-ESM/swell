@@ -21,9 +21,7 @@ from swell.tasks.base.geos_tasks_run_executable_base import *
 
 class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def generate_extdata(self):
 
@@ -31,12 +29,10 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # 'w' option overwrites the contents or creates a new file
         # --------------------------------------------------------
 
-        self.logger.info('Generating ExtData.rc')
-
         if not self.cap_dict['USE_EXTDATA2G']:
-            
-            rc_paths = os.path.join(self.cycle_dir,'*_ExtData.rc')
-            with open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w') as extdata:
+            self.logger.info('Generating ExtData.rc')
+            rc_paths = self.at_cycle('*_ExtData.rc')
+            with open(self.at_cycle('ExtData.rc'), 'w') as extdata:
                 for filepath in list(glob.glob(rc_paths)):
                     with open(filepath, 'r') as file:
                         extdata.write(file.read())
@@ -52,15 +48,14 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 pattern = r'(qfed2.emis_.*).006.'
                 replacement = r'\g<1>.061.'
                 self.logger.info('Switching to MODIS v6.1 (OPS_EMISSIONS)')
-                self.resub(os.path.join(self.cycle_dir, 'ExtData.rc'), pattern, replacement)
+                self.resub(self.at_cycle('ExtData.rc'), pattern, replacement)
         else:
-            self.exec_python(self.geosbin, 'construct_extdata_yaml_list.py', 
-                            './GEOS_ChemGridComp.rc', True)
-            open(os.path.join(self.cycle_dir,'ExtData.rc'), 'w').close()
-
+            self.logger.info('Creating extdata.yaml')
+            self.exec_python(self.geosbin, 'construct_extdata_yaml_list.py',
+                             './GEOS_ChemGridComp.rc')
+            open(self.at_cycle('ExtData.rc'), 'w').close()
 
     # ----------------------------------------------------------------------------------------------
-
 
     def get_amip_emission(self):
 
@@ -71,9 +66,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Before 2000-03-01, we need to use AMIP.20C which has different
         # emissions (HFED instead of QFED) valid before 2000-03-01. Note
-        # that if you make a change to anything in /RC/AMIP or /RC/AMIP.20C, 
-        # you might need to make a change in the other directory to be 
-        # consistent. Some files in AMIP.20C are symlinks to that in AMIP but 
+        # that if you make a change to anything in /RC/AMIP or /RC/AMIP.20C,
+        # you might need to make a change in the other directory to be
+        # consistent. Some files in AMIP.20C are symlinks to that in AMIP but
         # others are not.
 
         # AMIP EMISSIONS Transition window and number of vertical layers
@@ -99,13 +94,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 self.resub(self.at_cycle(filename), 'L72', 'L' + str(AGCM_LM))
                 self.resub(self.at_cycle(filename), 'z72', 'z' + str(AGCM_LM))
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def get_bcs(self):
 
-        # Uses parsed .rc and .j files to set BCs 
+        # Uses parsed .rc and .j files to set BCs
         # ---------------------------------------
 
         AGCM_IM = self.agcm_dict['AGCM_IM']
@@ -124,7 +117,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         [ATMOStag, OCEANtag] = os.path.basename(geos_abcsdir).split('_')
 
         geos_obcsdir = self.gcm_dict['OBCSDIR'].format(OGCM_IM=OGCM_IM, OGCM_JM=OGCM_JM)
-        geos_obcsdir = geos_obcsdir.replace('$', '')        
+        geos_obcsdir = geos_obcsdir.replace('$', '')
 
         pchem_clim_years = self.agcm_dict['pchem_clim_years']
 
@@ -142,59 +135,57 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         if pchem_clim_years == '39' and (self.cc_dto > d2 or self.cc_dto < d1):
             self.logger.abort('MERRA2OX data non existent for the current' +
-                            ' cycle. Change pchem_clim_years in AGCM.rc')
+                              ' cycle. Change pchem_clim_years in AGCM.rc')
 
         self.bcs_dict = {
-        os.path.join(geos_abcsdir,f"{ATMOStag}_{OCEANtag}-Pfafstetter.til"): 
-                    'tile.data',
-        os.path.join(geos_abcsdir,f"{ATMOStag}_{OCEANtag}-Pfafstetter.TRN"): 
-                    'runoff.bin',
-        os.path.join(geos_obcsdir,f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"): 
-                    'SEAWIFS_KPAR_mon_clim.data',
-        os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
-        os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
-        os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]): 
-                    'species.data',
-        os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
-        os.path.join(geos_chmdir, '*'): os.path.join(self.cycle_dir, 'ExtData'),
-        os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
-        os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
-        os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
-        os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
-        os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
-        os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
-        os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
-        os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"): 
-                    'topo_dynave.data',
-        os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"): 
-                    'topo_gwdvar.data',
-        os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"): 
-                    'topo_trbvar.data',
-        os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
-        os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
+            os.path.join(geos_abcsdir, f"{ATMOStag}_{OCEANtag}-Pfafstetter.til"):
+                'tile.data',
+            os.path.join(geos_abcsdir, f"{ATMOStag}_{OCEANtag}-Pfafstetter.TRN"):
+                'runoff.bin',
+            os.path.join(geos_obcsdir, f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"):
+                'SEAWIFS_KPAR_mon_clim.data',
+            os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
+            os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
+            os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]):
+                'species.data',
+            os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
+            os.path.join(geos_chmdir, '*'): self.at_cycle('ExtData'),
+            os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
+            os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
+            os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
+            os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
+            os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
+            os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
+            os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
+            os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"):
+                'topo_dynave.data',
+            os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"):
+                'topo_gwdvar.data',
+            os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
+                'topo_trbvar.data',
+            os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
+            os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
         }
 
-        #Conditional BCs that don't break the model
+        # Conditional BCs that don't break the model
         # ------------------------------------------
         conditional_bcs = {
-        os.path.join(geos_bcsdir, geos_bcrslv, f"Gnomonic_{geos_bcrslv}.dat"): '',
+            os.path.join(geos_bcsdir, geos_bcrslv, f"Gnomonic_{geos_bcrslv}.dat"): '',
         }
 
         for src, dst in conditional_bcs.items():
             if os.path.isfile(src):
                 self.logger.info(' Including conditional file: ' + src)
                 self.bcs_dict.update({
-                    src: dst, 
+                    src: dst,
                     })
 
         # Fetch more resolution dependent files
         # -------------------------------------
-        self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'), 
-                            os.path.join(self.cycle_dir,'INPUT'))
-
+        self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'),
+                            self.at_cycle('INPUT'))
 
     # ----------------------------------------------------------------------------------------------
-
 
     def get_dynamic(self):
 
@@ -220,9 +211,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 self.logger.info(' Linking file: ' + src)
                 self.geos_linker(src, dst)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def get_static(self):
 
@@ -237,14 +226,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ---------------------------------
         src_dirs.append(self.geos_exp_dir)
         src_dirs.append(os.path.join(self.geos_exp_dir, 'RC'))
-        src_dirs.append(os.path.join(geos_install_path,'bundleParser.py'))
+        src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:
             self.fetch_to_cycle(src_dir)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def link_replay(self):
 
@@ -261,9 +248,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         self.logger.abort('Under construction')
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def restructure_rc(self):
 
@@ -278,7 +263,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             # Only modify the line starts with WSUB_NATURE
             # --------------------------------------------
             pattern = r'^(WSUB_NATURE.*)ExtData.*'
-            replacement = '\g<1>/dev/null'
+            replacement = r'\g<1>/dev/null'
             self.resub(self.at_cycle('WSUB_ExtData.rc'), pattern, replacement)
 
         else:
@@ -295,9 +280,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             with open(self.at_cycle('WSUB_ExtData.yaml'), 'w') as f:
                 yaml.dump(wsub, f, sort_keys=False)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def rewrite_cap(self, rcdict, rcfile):
 
@@ -309,7 +292,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # fcst_dur = self.config_get('forecast_duration')
 
         rcdict['NUM_SGMT'] = '1'
-        #TODO: this is hardcoded for now, fcst_dur could be useful
+        # TODO: this is hardcoded for now, fcst_dur could be useful
         # ----------------------------------------------------------
         rcdict['JOB_SGMT'] = '00000000 060000'
 
@@ -318,14 +301,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         return self.rc_to_bool(rcdict)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def execute(self):
 
         """
-        Parses resource files in "geos_experiment_directory" to obtain required 
+        Parses resource files in "geos_experiment_directory" to obtain required
         directories and files. Modifies file contents using re module according
         to cycle_date and CAP.rc and AGCM.rc switches.
 
@@ -363,7 +344,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # This ensures a bool entry for USE_EXTDATA2G exists
         # --------------------------------------------------
-        self.rc_assign(self.cap_dict, 'USE_EXTDATA2G') 
+        self.rc_assign(self.cap_dict, 'USE_EXTDATA2G')
 
         # Link replay files if active TODO
         # --------------------------------
@@ -398,10 +379,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Generate the complete ExtData.rc
         # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install', 'bin') 
+        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
         self.generate_extdata()
-
-        exit()
 
         # Get boundary conditions
         # ----------------
@@ -413,10 +392,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Create cap_restart
         # ------------------
-        with open(os.path.join(self.cycle_dir,'cap_restart'), 'w') as file:
+        with open(os.path.join(self.cycle_dir, 'cap_restart'), 'w') as file:
             file.write(dt.strftime(self.cc_dto, "%Y%m%d %H%M%S"))
 
-        self.exec_python(script_src = self.geosbin, script = 'bundleParser.py', 
-                        dev = True)
+        # Run bundleParser
+        # ------------------
+        self.exec_python(self.geosbin, 'bundleParser.py')
 
 # --------------------------------------------------------------------------------------------------

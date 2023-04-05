@@ -19,35 +19,29 @@ from datetime import datetime as dt
 
 class GetRestart(GeosTasksRunExecutableBase):
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def cycling_restarts(self):
 
-
-        # Get restarts (checkpoints) from the previous cycle dir 
+        # Get restarts (checkpoints) from the previous cycle dir
         # ------------------------------------------------------
         self.logger.info('GEOS restarts will be taken from the previous cycle')
 
         src = os.path.join(self.previous_cycle_dir, '*_checkpoint')
 
-        for filepath in list(glob.glob(src)):            
+        for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.fetch_to_cycle(filepath, os.path.join(self.cycle_dir,filename))
+            self.fetch_to_cycle(filepath, self.at_cycle(filename))
 
         src = os.path.join(self.previous_cycle_dir, 'tile.bin')
-        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'tile.bin'))
+        self.fetch_to_cycle(src, self.at_cycle('tile.bin'))
 
         src = os.path.join(self.previous_cycle_dir, 'RESTART', 'MOM.res.nc')
-        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'INPUT', 'MOM.res.nc'))
-
+        self.fetch_to_cycle(src, self.at_cycle('INPUT', 'MOM.res.nc'))
 
     # ----------------------------------------------------------------------------------------------
 
-
     def initial_restarts(self):
-
 
         # GEOS forecast checkpoint files should be created
         # ------------------------------------------------
@@ -56,26 +50,22 @@ class GetRestart(GeosTasksRunExecutableBase):
         # ----------------------------------------------------
         self.logger.info('GEOS restarts from a forecast run')
 
-        src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            self.rst_path, '*_rst')
+        src = os.path.join(self.swell_static_files, 'geos', 'static',
+                           self.rst_path, '*_rst')
 
-        for filepath in list(glob.glob(src)):            
+        for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.fetch_to_cycle(filepath, os.path.join(self.cycle_dir,filename))
+            self.fetch_to_cycle(filepath, self.at_cycle(filename))
 
+        src = os.path.join(self.swell_static_files, 'geos', 'static',
+                           self.rst_path, 'tile.bin')
+        self.fetch_to_cycle(src, self.at_cycle('tile.bin'))
 
-        src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            self.rst_path, 'tile.bin')
-        self.fetch_to_cycle(src, os.path.join(self.cycle_dir,'tile.bin'))
-
-
-        src = os.path.join(self.swell_static_files, 'geos', 'static', 
-                            self.rst_path, 'MOM.res.nc')
-        self.fetch_to_cycle(src, os.path.join(self.cycle_dir, 'INPUT', 'MOM.res.nc'))
-
+        src = os.path.join(self.swell_static_files, 'geos', 'static',
+                           self.rst_path, 'MOM.res.nc')
+        self.fetch_to_cycle(src, self.at_cycle('INPUT', 'MOM.res.nc'))
 
     # ----------------------------------------------------------------------------------------------
-
 
     def rename_checkpoints(self):
 
@@ -92,18 +82,15 @@ class GetRestart(GeosTasksRunExecutableBase):
         except Exception:
             self.logger.abort('Renaming failed, see if checkpoint files exists')
 
-
     # ----------------------------------------------------------------------------------------------
 
-
     def execute(self):
-
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
         # Create config get object for script brevity
         # -------------------------------------------
-        scg=self.config_get
+        scg = self.config_get
 
         # Obtain current and previous cycle time objects, create cycle_dir
         # ----------------------------------------------------------------
@@ -118,8 +105,8 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         # Create cycle_dir and INPUT
         # ----------------------------
-        if not os.path.exists(os.path.join(self.cycle_dir,'INPUT')):
-            os.makedirs(os.path.join(self.cycle_dir,'INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.at_cycle('INPUT')):
+            os.makedirs(self.at_cycle('INPUT'), 0o755, exist_ok=True)
 
         # rst files folder
         # ----------------
@@ -138,7 +125,7 @@ class GetRestart(GeosTasksRunExecutableBase):
             self.cycling_restarts()
             self.rename_checkpoints()
 
-        #TODO: use rst time for cap_restart
+        # TODO: use rst time for cap_restart
         # self.get_rst_time()
 
 # --------------------------------------------------------------------------------------------------

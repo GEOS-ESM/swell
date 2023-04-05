@@ -8,16 +8,18 @@
 # --------------------------------------------------------------------------------------------------
 
 from datetime import datetime
-import f90nml, netCDF4
+import f90nml
+import glob
 import isodate
-import os, glob, re
+import netCDF4
+import os
+import re
 import shutil
-import subprocess
 
 from abc import ABC, abstractmethod
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 
 
 # --------------------------------------------------------------------------------------------------
@@ -34,9 +36,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # ------------------------------------------------------------------------
         pass
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def at_cycle(self, paths):
 
@@ -45,14 +45,28 @@ class GeosTasksRunExecutableBase(taskBase):
         if isinstance(paths, str):
             paths = [paths]
 
-        # Combining list of paths with cycle dir for script brevity 
+        # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
         full_path = os.path.join(self.cycle_dir, *paths)
         return full_path
 
-
     # ----------------------------------------------------------------------------------------------
 
+    def exec_python(self, script_src, script, input=''):
+
+        # Source g5_modules and execute py scripts in a new shell process then
+        # return to the current one
+        # Define the command to source the Bash script and run the Python command
+        # -----------------------------------------------------------------------
+        command = f'source {script_src}/g5_modules.sh \n' + \
+            f'cd {self.cycle_dir} \n' + \
+            f'{script_src}/{script} {input}'
+
+        # Containerized run of the GEOS build steps
+        # -----------------------------------------
+        run_subprocess(self.logger, ['/bin/bash', '-c', command])
+
+    # ----------------------------------------------------------------------------------------------
 
     def fetch_to_cycle(self, src_dir, dst_dir=None):
 
@@ -74,41 +88,14 @@ class GeosTasksRunExecutableBase(taskBase):
         except Exception:
             self.logger.abort('Copying failed, see if source files exists')
 
-
     # ----------------------------------------------------------------------------------------------
-
-
-    def exec_python(self, script_src, script, input = '', dev = False):
-
-        # Source g5_modules then execute py scripts
-        # -----------------------------------------
-
-        # This allows executing python scripts within the cycle_dir
-        # ---------------------------------------------------------
-        if dev:
-            os.chdir(self.cycle_dir)
-
-        # Define the command to source the Bash script and run the Python command
-        # -----------------------------------------------------------------------
-        command = [
-            f'source {script_src}/g5_modules.sh && ' + \
-            f'python {script_src}/{script} {input}'
-        ]
-
-        # Run the command using subprocess. No need for logger here
-        # ---------------------------------------------------------
-        subprocess.run(command, shell=True)
-
-
-    # ----------------------------------------------------------------------------------------------
-
 
     def geos_chem_rename(self, rcdict):
 
-        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc 
+        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc
         # -------------------------------------------------------------------------
 
-        # Convert rc bool.s to python 
+        # Convert rc bool.s to python
         # ---------------------------
         rcdict = self.rc_to_bool(rcdict)
 
@@ -117,25 +104,23 @@ class GeosTasksRunExecutableBase(taskBase):
         # GEOS Chem filenames, shares same keys as rcdict
         # -----------------------------------------------
         chem_files = {
-            'ENABLE_STRATCHEM' : 'StratChem_ExtData.rc',
-            'ENABLE_GMICHEM' : 'GMI_ExtData.rc',
-            'ENABLE_GEOSCHEM' : 'GEOSCHEMchem_ExtData.rc',
-            'ENABLE_CARMA' : 'CARMAchem_GridComp_ExtData.rc',
-            'ENABLE_DNA' : 'DNA_ExtData.rc',
-            'ENABLE_ACHEM' : 'GEOSachem_ExtData.rc',
-            'ENABLE_GOCART_DATA' : 'GOCARTdata_ExtData.rc',
+            'ENABLE_STRATCHEM': 'StratChem_ExtData.rc',
+            'ENABLE_GMICHEM': 'GMI_ExtData.rc',
+            'ENABLE_GEOSCHEM': 'GEOSCHEMchem_ExtData.rc',
+            'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
+            'ENABLE_DNA': 'DNA_ExtData.rc',
+            'ENABLE_ACHEM': 'GEOSachem_ExtData.rc',
+            'ENABLE_GOCART_DATA': 'GOCARTdata_ExtData.rc',
         }
 
         for key, value in chem_files.items():
             fname = self.at_cycle(value)
-            
+
             if not rcdict[key] and os.path.isfile(fname):
                 self.logger.info(' Renaming file: '+fname)
                 os.system('rename .rc .rc.NOT_USED ' + fname)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def geos_linker(self, src, dst, dst_dir=None):
 
@@ -152,8 +137,8 @@ class GeosTasksRunExecutableBase(taskBase):
             os.symlink(src, os.path.join(dst_dir, dst))
         except Exception:
             self.logger.abort('Linking failed, see if source files exists')
-    # ----------------------------------------------------------------------------------------------
 
+    # ----------------------------------------------------------------------------------------------
 
     def get_rst_time(self):
 
@@ -176,9 +161,7 @@ class GeosTasksRunExecutableBase(taskBase):
         self.logger.info('This is not used yet')
         ncfile.close()
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def parse_gcmrun(self, jfile):
 
@@ -192,7 +175,7 @@ class GeosTasksRunExecutableBase(taskBase):
         rcdict = {}
 
         for line in lines:
-            
+
             # Skip if the line is a comment (i.e., starts with #)
             # ------------------------------------------------------
             if line.startswith("#"):
@@ -216,14 +199,12 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def parse_rc(self, rcfile):
 
-        # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented 
-        # out lines. Some values involve multiple ":" characters which required 
+        # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
+        # out lines. Some values involve multiple ":" characters which required
         # some extra steps to handle them as dictionary values.
         # ----------------------------------------------------------------------
 
@@ -267,9 +248,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def previous_cycle(self, cycle_dir, forecast_duration):
 
@@ -294,14 +273,12 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return previous_cycle_dir
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def process_nml(self, cold_restart=False):
 
-    # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
-    # -------------------------------------------------------------
+        # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
+        # -------------------------------------------------------------
 
         nml1 = f90nml.read(self.at_cycle('input.nml'))
 
@@ -323,9 +300,7 @@ class GeosTasksRunExecutableBase(taskBase):
         with open(self.at_cycle('input.nml'), 'w') as f:
             f90nml.write(nml_comb, f)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def rc_assign(self, rcdict, key_inquiry):
 
@@ -339,16 +314,14 @@ class GeosTasksRunExecutableBase(taskBase):
         if key_inquiry not in rcdict:
             rcdict.setdefault(key_inquiry, False)
 
-
     # --------------------------------------------------------------------------------------------------
-
 
     def rc_to_bool(self, rcdict):
 
         # .rc files have switch values in .TRUE. or .FALSE. format, some might
         # have T and F.
         # This method converts them to python boolean and assumes only two types
-        # of input. It can also converts faulty formats (i.e., .True. , .False) 
+        # of input. It can also converts faulty formats (i.e., .True. , .False)
         # ----------------------------------------------------------------------
 
         for key, value in rcdict.items():
@@ -365,9 +338,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         return rcdict
 
-
     # --------------------------------------------------------------------------------------------------
-
 
     def resub(self, filename, pattern, replacement):
 
@@ -383,9 +354,7 @@ class GeosTasksRunExecutableBase(taskBase):
         with open(filename, 'w') as out_file:
             out_file.write(modified_text)
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log):
 
@@ -398,10 +367,14 @@ class GeosTasksRunExecutableBase(taskBase):
         os.chdir(cycle_dir)
 
         command = f'source {geos_modules} && ' + \
-        f'mpirun -np {np} {geos_executable} ' + \
-        f'--logging_config logging.yaml'
+            f'mpirun -np {np} {geos_executable} ' + \
+            f'--logging_config logging.yaml'
 
-        # Run command within bash environment 
+        # command =   f'source {script_src}/g5_modules.sh \n' + \
+        #     f'cd {self.cycle_dir} \n' + \
+        #     f'{script_src}/{script} {input}'
+
+        # Run command within bash environment
         # -----------------------------------
         run_track_log_subprocess(self.logger, ['/bin/bash', '-c', command], output_log=output_log)
 

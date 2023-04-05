@@ -33,7 +33,7 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
             os.mkdir(os.path.join(cycle_dir, 'RESTART'))
 
         # Output log file
-        # ---------------
+        # ---------------sw
         output_log_file = os.path.join(cycle_dir, 'geos_out.log')
 
         # Compute number of processors
@@ -42,17 +42,17 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         total_processors = total_processors.replace('npy_proc', str(npy_proc))
         np = eval(total_processors)
 
-        # GEOS executable 
+        # GEOS executable
         # ---------------
         geos_executable = 'GEOSgcm.x'
-        geos_executable_path = os.path.join(experiment_dir, 'GEOSgcm', 'build', 
-                                        'bin', geos_executable)
+        geos_executable_path = os.path.join(experiment_dir, 'GEOSgcm', 'build',
+                                            'bin', geos_executable)
 
-        # GEOS source 
+        # GEOS source
         # ---------------
         geos_modules = 'g5_modules.sh'
-        geos_modules_path = os.path.join(experiment_dir, 'GEOSgcm', 'source', 
-                                        '@env', geos_modules)
+        geos_modules_path = os.path.join(experiment_dir, 'GEOSgcm', 'source',
+                                         '@env', geos_modules)
 
         # Run the GEOS executable
         # -----------------------
