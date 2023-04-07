@@ -130,7 +130,16 @@ class GeosTasksRunExecutableBase(taskBase):
         if dst_dir is None:
             dst_dir = self.cycle_dir
 
-        if os.path.exists(os.path.join(dst_dir, dst)):
+        # Assign dst name if non-existent
+        # ------------------------------
+        if dst == '':
+            dst = os.path.basename(src)
+
+        # Assures existing links will be unlinked
+        # -----------------------------------
+        if os.path.lexists(os.path.join(dst_dir, dst)):
+            self.logger.info(' Unlinking existing link: ')
+            self.logger.info(os.path.join(dst_dir, dst))
             os.unlink(os.path.join(dst_dir, dst))
 
         try:

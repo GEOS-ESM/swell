@@ -114,7 +114,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Obtain tag information from abcsdir
         # -----------------------------------
-        [ATMOStag, OCEANtag] = os.path.basename(geos_abcsdir).split('_')
+        [ATMOStag, OCEANtag, *_] = os.path.basename(geos_abcsdir).split('_')
 
         geos_obcsdir = self.gcm_dict['OBCSDIR'].format(OGCM_IM=OGCM_IM, OGCM_JM=OGCM_JM)
         geos_obcsdir = geos_obcsdir.replace('$', '')
@@ -185,6 +185,20 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'),
                             self.at_cycle('INPUT'))
 
+        # TODO: Temporary fix for some input files in gcm_run.j
+        # -----------------------------------------------------
+        if self.agcm_dict['OGCM.IM_WORLD'] == '1440':
+            self.logger.info(' OBTAINING EXTRA WOA13 files')
+            swell_static_files = self.config_get('swell_static_files')
+            rst_path = self.config_get('geos_restarts_directory')
+            src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
+                               'woa13_ptemp_monthly.nc')
+            self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'woa13_ptemp_monthly.nc']))
+
+            src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
+                               'woa13_s_monthly.nc')
+            self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'woa13_s_monthly.nc']))
+
     # ----------------------------------------------------------------------------------------------
 
     def get_dynamic(self):
@@ -245,7 +259,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         rply_dict = {
             os.path.join(ANA_LOCATION, 'aod'): '',
-            os.path.join(ANA_LOCATION): '',
+            os.path.join(ANA_LOCATION, 'ana'): '',
         }
 
             # if 'REPLAY_FILE09' in self.agcm_dict:
@@ -255,11 +269,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             #         os.path.join(ANA_LOCATION): '',
             #         })
 
+        print(ANA_LOCATION)
         for src, dst in rply_dict.items():
             self.logger.info(' Linking file: ' + src)
             self.geos_linker(src, dst)
 
-        self.logger.abort('Under construction')
+        # self.logger.abort('Under construction')
 
     # ----------------------------------------------------------------------------------------------
 
