@@ -11,7 +11,7 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
-from r2d2 import fetch
+from r2d2 import R2D2Data
 
 
 # --------------------------------------------------------------------------------------------------
@@ -55,13 +55,25 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info("Processing observation file "+target_file)
 
-            fetch(date=window_begin,
-                  target_file=target_file,
-                  provider=provider,
-                  obs_type=observation,
-                  time_window=window_length,
-                  type='ob',
-                  experiment=experiment)
+            file_extension = os.path.splitext(target_file)[1]
+
+            R2D2Data.fetch(item = 'observation'
+                          ,target_file = target_file
+                          ,provider = provider 
+                          ,observation_type = observation
+                          ,file_extension = file_extension
+                          ,window_start = window_begin
+                          ,window_length = window_length)
+                          #,create_date = 
+                          #,mod_date = )
+
+#            fetch(date=window_begin,
+#                  target_file=target_file,
+#                  provider=provider,
+#                  obs_type=observation,
+#                  time_window=window_length,
+#                  type='ob',
+#                  experiment=experiment)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -75,13 +87,27 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs bias']['input file']
             self.logger.info("Processing satbias file "+target_file)
 
-            fetch(date=background_time,
-                  target_file=target_file,
-                  provider='gsi',
-                  obs_type=observation,
-                  type='bc',
-                  experiment=experiment,
-                  file_type='satbias')
+            file_extension = os.path.splitext(target_file)[1]
+
+            R2D2Data.fetch(item = 'bias_correction'
+                          ,target_file = target_file
+                          ,model = 'geos'
+                          ,experiment = experiment
+                          ,provider = 'gsi'
+                          ,observation_type = observation
+                          ,file_extension = file_extension
+                          ,file_type = 'satbias'
+                          ,date = background_time)
+                          #,create_date = 
+                          #,mod_date = )
+
+#            fetch(date=background_time,
+#                  target_file=target_file,
+#                  provider='gsi',
+#                  obs_type=observation,
+#                  type='bc',
+#                  experiment=experiment,
+#                  file_type='satbias')
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -91,13 +117,25 @@ class GetObservations(taskBase):
 
                 self.logger.info("Processing tlapse file "+target_file)
 
-                fetch(date=background_time,
-                      target_file=target_file,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=experiment,
-                      file_type='tlapse')
+                R2D2Data.fetch(item             = 'bias_correction'
+                              ,target_file      = target_file
+                              ,model            = 'geos'
+                              ,experiment       = experiment
+                              ,provider         = 'gsi'
+                              ,observation_type = observation
+                              ,file_extension   = file_extension
+                              ,file_type        = 'tlapse'
+                              ,date             = background_time)
+                              #create_date = 
+                              #,mod_date = )
+
+#                fetch(date=background_time,
+#                      target_file=target_file,
+#                      provider='gsi',
+#                      obs_type=observation,
+#                      type='bc',
+#                      experiment=experiment,
+#                      file_type='tlapse')
 
                 # Change permission
                 os.chmod(target_file, 0o644)
