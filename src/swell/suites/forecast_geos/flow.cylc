@@ -12,7 +12,7 @@
 
 [scheduler]
     UTC mode = True
-    allow implicit tasks = True
+    allow implicit tasks = False
 
 # --------------------------------------------------------------------------------------------------
 
@@ -99,7 +99,13 @@
     [[PrepGeosRunDir]]
         script = "swell_task PrepGeosRunDir $config"
 
+    [[RemoveGeosRunDir]]
+        script = "swell_task RemoveGeosRunDir $config"
+
     [[GetRestart]]
+        script = "swell_task GetRestart $config -d $datetime"
+
+    [[MoveRestart]]
         script = "swell_task GetRestart $config -d $datetime"
 
     [[SaveRestart]]
