@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing UFO ObsFilters tests
+# Cylc suite for executing geos_atmosphere ObsFilters tests
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,13 +40,16 @@
         {{cycle_time.cycle_time}} = """
             # Task triggers
             # -------------
-            GetGsiNcdiags
+            GetGsiNcdiag
 
-            GetGsiNcdiags => GsiNcdiagsToIoda
+            GetGsiNcdiag => GsiNcdiagToIoda
+
+            GetGeovals
 
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
-            GsiNcdiagsToIoda => RunJediTestObsFiltersExecutable
+            GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
+            GetGeovals => RunJediTestObsFiltersExecutable
 
             # EvaObservations
             RunJediTestObsFiltersExecutable => EvaObservations
@@ -93,14 +96,17 @@
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
-    [[ GetGsiNcdiags ]]
-        script = "swell_task GetGsiNcdiags $config -d $datetime -m ufo"
+    [[ GetGsiNcdiag ]]
+        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
 
-    [[ GsiNcdiagsToIoda ]]
-        script = "swell_task GsiNcdiagsToIoda $config -d $datetime -m ufo"
+    [[ GsiNcdiagToIoda ]]
+        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GetGeovals ]]
+        script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
 
     [[RunJediTestObsFiltersExecutable]]
-        script = "swell_task RunJediTestObsFiltersExecutable $config -d $datetime -m ufo"
+        script = "swell_task RunJediTestObsFiltersExecutable $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediTestObsFiltersExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -112,12 +118,12 @@
             --constraint={{scheduling["RunJediTestObsFiltersExecutable"]["constraint"]}}
 
     [[EvaObservations]]
-        script = "swell_task EvaObservations $config -d $datetime -m ufo"
+        script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"
 
     [[SaveObsDiags]]
-        script = "swell_task SaveObsDiags $config -d $datetime -m ufo"
+        script = "swell_task SaveObsDiags $config -d $datetime -m geos_atmosphere"
 
     [[CleanCycle]]
-        script = "swell_task CleanCycle $config -d $datetime -m ufo"
+        script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
 
 # --------------------------------------------------------------------------------------------------

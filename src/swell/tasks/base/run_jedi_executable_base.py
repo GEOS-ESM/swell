@@ -30,7 +30,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def jedi_dictionary_iterator(self, jedi_config_dict, window_type):
+    def jedi_dictionary_iterator(self, jedi_config_dict, window_type = ''):
 
         # Loop over dictionary and replace if value is a dictionary, meanwhile
         # inquire list objects for dictionary items.
@@ -68,7 +68,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_jedi_config(self, jedi_application, window_type):
+    def generate_jedi_config(self, jedi_application, window_type = ''):
 
         # Var suite names are handled in variational executable
         # -----------------------------------------------------

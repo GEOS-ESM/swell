@@ -25,7 +25,7 @@ jedi_build_method:
 
 # Existing JEDI bundle directory
 existing_source_directory:
-  default_value: {{existing_source_directory}}
+  default_value: '/discover/nobackup/drholdaw/JediDev/swell-ufo'
   prompt: Provide the path to an existing JEDI bundle directory containing source code repos
   type: string
   depends:
@@ -34,7 +34,7 @@ existing_source_directory:
 
 # Existing JEDI build
 existing_build_directory:
-  default_value: {{existing_build_directory}}
+  default_value: '/discover/nobackup/drholdaw/JediDev/swell-ufo/build-intel-release'
   prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:
@@ -56,7 +56,7 @@ coupling_style:
 
 # Models to use
 model_components:
-  default_value: ['ufo']
+  default_value: ['geos_atmosphere']
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list

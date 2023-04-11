@@ -17,18 +17,7 @@ from swell.tasks.base.run_jedi_executable_base import RunJediExecutableBase
 # --------------------------------------------------------------------------------------------------
 
 
-interface_executable = {
-  'fv3-jedi-4D': 'fv3jedi_hofx.x',
-  'fv3-jedi-3D': 'fv3jedi_hofx_nomodel.x',
-  'soca-4D': 'soca_hofx.x',
-  'soca-3D': 'soca_hofx3d.x',
-}
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-class RunJediHofxExecutable(RunJediExecutableBase):
+class RunJediTestObsFiltersExecutable(RunJediExecutableBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -38,48 +27,60 @@ class RunJediHofxExecutable(RunJediExecutableBase):
         # ----------------------------
         cycle_dir = self.config_get('cycle_dir')
         experiment_dir = self.config_get('experiment_dir')
-        window_type = self.config_get('window_type')
-        model = self.config_get('window_type')
-        suite_to_run = self.config_get('suite_to_run')
-        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
-        total_processors = self.config_get('total_processors')
+        observations = self.config_get('observations')
+        window_begin = self.config_get('window_begin')
+
+        # Make cycle dir
+        # --------------
+        os.makedirs(cycle_dir, 0o755, exist_ok=True)
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(cycle_dir, 'jedi_hofx_config.yaml')
+        jedi_config_file = os.path.join(cycle_dir, 'jedi_test_obs_filters.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.log')
+        output_log_file = os.path.join(cycle_dir, 'jedi_test_obs_filters.log')
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
-        jedi_config_dict = self.generate_jedi_config(suite_to_run, window_type)
+        jedi_config_dict = self.generate_jedi_config('TestObsFilters')
 
+        # Make modifications needed for testing
+        # -------------------------------------
+
+        conventional_types = ['aircraft']
+
+        # Loop over the observations
+        for index in range(len(observations)):
+
+            # Remove GetValues if present
+            if 'get values' in jedi_config_dict['observations'][index]:
+                del jedi_config_dict['observations'][index]['get values']
+
+            # Create GeoVaLs dictionary
+            geovals = {}
+            geovals['filename'] = os.path.join(cycle_dir,
+                                               f'{observations[index]}_geovals.{window_begin}.nc4')
+            # For conventional add the GeoVaLs flip
+            if observations[index] in conventional_types:
+                geovals['levels_are_top_down'] = False
+
+            jedi_config_dict['observations'][index]['geovals'] = geovals
+            jedi_config_dict['observations'][index]['passedBenchmark'] = 317688
+
+        # Write executable configuration to file
+        # --------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Get the JEDI interface for this model component
-        # -----------------------------------------------
-        model_component_meta = self.open_jedi_interface_meta_config_file()
-        jedi_interface = model_component_meta['jedi_interface']
-
         # Jedi executable name
         # --------------------
-        jedi_executable = interface_executable[jedi_interface + '-' + window_type]
         jedi_executable_path = os.path.join(experiment_dir, 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
-
-        # Compute number of processors
-        # ----------------------------
-        total_processors = total_processors.replace('npx_proc', str(npx_proc))
-        total_processors = total_processors.replace('npy_proc', str(npy_proc))
-        np = eval(total_processors)
+                                            'test_ObsFilters.x')
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file, output_log_file)
-        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+        self.run_executable(cycle_dir, 1, jedi_executable_path, jedi_config_file, output_log_file)
 
 # --------------------------------------------------------------------------------------------------

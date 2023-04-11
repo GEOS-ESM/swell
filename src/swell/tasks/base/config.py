@@ -175,6 +175,9 @@ class Config():
         # Compute window beginning time
         window_begin_dto = current_cycle_dto - window_offset_dur
 
+        # Compute window end time
+        window_end_dto = current_cycle_dto + window_offset_dur
+
         # Background time for satbias files
         background_time_offset = self.get('background_time_offset')
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
@@ -192,6 +195,7 @@ class Config():
 
         window_begin = window_begin_dto.strftime(self.__datetime_swl_format__)
         window_begin_iso = window_begin_dto.strftime(self.__datetime_iso_format__)
+        window_end_iso = window_end_dto.strftime(self.__datetime_iso_format__)
         background_time = background_time_dto.strftime(self.__datetime_swl_format__)
         local_background_time_iso = local_background_time.strftime(self.__datetime_iso_format__)
         local_background_time = local_background_time.strftime(self.__datetime_swl_format__)
@@ -199,6 +203,7 @@ class Config():
         # Create new dictionary with these items
         self.put('window_begin', window_begin)
         self.put('window_begin_iso', window_begin_iso)
+        self.put('window_end_iso', window_end_iso)
         self.put('background_time', background_time)
         self.put('local_background_time', local_background_time)
         self.put('local_background_time_iso', local_background_time_iso)
