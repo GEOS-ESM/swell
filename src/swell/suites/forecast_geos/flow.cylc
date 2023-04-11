@@ -12,7 +12,7 @@
 
 [scheduler]
     UTC mode = True
-    allow implicit tasks = False
+    allow implicit tasks = True
 
 # --------------------------------------------------------------------------------------------------
 
@@ -34,26 +34,33 @@
 
             # If not able to link to build create the build
             BuildGeosByLinking:fail? => BuildGeos
+
+            # Get first set of restarts
+            BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
+            GetRestart => RunGeosExecutable
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
-        {% for model_component in model_components %}
-            # Task triggers for: {{model_component}}
-            # ------------------
+            # Task triggers for
+            # -----------------
             # Get restarts from a previos GEOS run
-            GetRestart-{{model_component}}
 
             # Prepare GEOS run directory
-            BuildGeosByLinking[^]? | BuildGeos[^]  => PrepGeosRunDir
-            GetRestart-{{model_component}} => PrepGeosRunDir
+            PrepGeosRunDir
 
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
+            MoveRestart[-PT6H] => RunGeosExecutable
 
-            # Save restart
-            RunGeosExecutable => SaveRestart-{{model_component}}
-        {% endfor %}
+            # Move restart to next cycle
+            RunGeosExecutable => MoveRestart
+
+            # Remove Run Directory
+            MoveRestart[-PT6H] => SaveRestart
+
+            # Remove Run Directory
+            MoveRestart => RemoveGeosRunDir
         """
         {% endfor %}
 
@@ -92,13 +99,11 @@
     [[PrepGeosRunDir]]
         script = "swell_task PrepGeosRunDir $config"
 
-    {% for model_component in model_components %}
-    [[GetRestart-{{model_component}}]]
-        script = "swell_task GetRestart $config -d $datetime -m {{model_component}}"
+    [[GetRestart]]
+        script = "swell_task GetRestart $config -d $datetime"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
-    {% endfor %}
+    [[SaveRestart]]
+        script = "swell_task SaveRestart $config -d $datetime"
 
     [[RunGeosExecutable]]
         script = "swell_task RunGeosExecutable $config -d $datetime"
