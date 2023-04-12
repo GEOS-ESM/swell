@@ -52,23 +52,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def exec_python(self, script_src, script, input=''):
-
-        # Source g5_modules and execute py scripts in a new shell process then
-        # return to the current one
-        # Define the command to source the Bash script and run the Python command
-        # -----------------------------------------------------------------------
-        command = f'source {script_src}/g5_modules.sh \n' + \
-            f'cd {self.cycle_dir} \n' + \
-            f'{script_src}/{script} {input}'
-
-        # Containerized run of the GEOS build steps
-        # -----------------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command])
-
-    # ----------------------------------------------------------------------------------------------
-
-    def fetch_to_cycle(self, src_dir, dst_dir=None):
+    def copy_to_cycle(self, src_dir, dst_dir=None):
 
         self.cycle_dir = self.config_get('cycle_dir')
 
@@ -87,6 +71,22 @@ class GeosTasksRunExecutableBase(taskBase):
 
         except Exception:
             self.logger.abort('Copying failed, see if source files exists')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def exec_python(self, script_src, script, input=''):
+
+        # Source g5_modules and execute py scripts in a new shell process then
+        # return to the current one
+        # Define the command to source the Bash script and run the Python command
+        # -----------------------------------------------------------------------
+        command = f'source {script_src}/g5_modules.sh \n' + \
+            f'cd {self.cycle_dir} \n' + \
+            f'{script_src}/{script} {input}'
+
+        # Containerized run of the GEOS build steps
+        # -----------------------------------------
+        run_subprocess(self.logger, ['/bin/bash', '-c', command])
 
     # ----------------------------------------------------------------------------------------------
 
@@ -210,6 +210,31 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def next_cycle(self, cycle_dir, forecast_duration):
+
+        # Basename consists of swell datetime and model
+        # ---------------------------------------------
+        basename = os.path.basename(cycle_dir)
+        dt_str = basename.split('-')[0]
+        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
+
+        # Modify datetime by subtracting forecast duration
+        # -----------------------------------------------
+        modified_dt_obj = dt_obj + isodate.parse_duration(forecast_duration)
+
+        # Replace datetime section in the basename with the modified datetime string
+        # -----------------------------------------------------------------
+        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
+        modified_basename = basename.replace(dt_str, modified_dt_str)
+
+        # Create new file path with modified basename
+        # --------------------------------------------
+        next_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
+
+        return next_cycle_dir
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_rc(self, rcfile):
 
         # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
@@ -256,31 +281,6 @@ class GeosTasksRunExecutableBase(taskBase):
                 rcdict[key] = value
 
         return rcdict
-
-    # ----------------------------------------------------------------------------------------------
-
-    def previous_cycle(self, cycle_dir, forecast_duration):
-
-        # Basename consists of swell datetime and model
-        # ---------------------------------------------
-        basename = os.path.basename(cycle_dir)
-        dt_str = basename.split('-')[0]
-        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
-
-        # Modify datetime by subtracting forecast duration
-        # -----------------------------------------------
-        modified_dt_obj = dt_obj - isodate.parse_duration(forecast_duration)
-
-        # Replace datetime section in the basename with the modified datetime string
-        # -----------------------------------------------------------------
-        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
-        modified_basename = basename.replace(dt_str, modified_dt_str)
-
-        # Create new file path with modified basename
-        # --------------------------------------------
-        previous_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
-
-        return previous_cycle_dir
 
     # ----------------------------------------------------------------------------------------------
 
@@ -371,7 +371,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
 
-        command =   f'source {geos_modules} \n' + \
+        command = f'source {geos_modules} \n' + \
             f'cd {cycle_dir} \n' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'

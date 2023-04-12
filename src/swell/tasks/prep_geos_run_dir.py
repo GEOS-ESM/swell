@@ -84,11 +84,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         for filepath in list(glob.glob(src_dir)):
             filename = os.path.basename(filepath)
-            self.fetch_to_cycle(filepath)
+            self.copy_to_cycle(filepath)
 
             # Replace source according to number of atm. vertical layers
             # ----------------------------------------------------------
-            if(AGCM_LM != '72'):
+            if AGCM_LM != '72':
                 self.logger.info(f"Atm. vertical layers mismatch: {AGCM_LM} vs. 72")
                 self.logger.info(' Modifying AMIP file ' + filename)
                 self.resub(self.at_cycle(filename), 'L72', 'L' + str(AGCM_LM))
@@ -182,8 +182,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Fetch more resolution dependent files
         # -------------------------------------
-        self.fetch_to_cycle(os.path.join(geos_obcsdir, 'INPUT'),
-                            self.at_cycle('INPUT'))
+        self.copy_to_cycle(os.path.join(geos_obcsdir, 'INPUT'),
+                           self.at_cycle('INPUT'))
 
         # TODO: Temporary fix for some input files in gcm_run.j
         # -----------------------------------------------------
@@ -193,11 +193,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             rst_path = self.config_get('geos_restarts_directory')
             src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
                                'woa13_ptemp_monthly.nc')
-            self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'woa13_ptemp_monthly.nc']))
+            self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_ptemp_monthly.nc']))
 
             src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
                                'woa13_s_monthly.nc')
-            self.fetch_to_cycle(src, self.at_cycle(['INPUT', 'woa13_s_monthly.nc']))
+            self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:
-            self.fetch_to_cycle(src_dir)
+            self.copy_to_cycle(src_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -262,19 +262,16 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             os.path.join(ANA_LOCATION, 'ana'): '',
         }
 
-            # if 'REPLAY_FILE09' in self.agcm_dict:
-            #     REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
-            #     self.logger.info(' Including REPLAY_FILE09: ' + src)
-            #     self.rply_dict.update({
-            #         os.path.join(ANA_LOCATION): '',
-            #         })
+        # if 'REPLAY_FILE09' in self.agcm_dict:
+        #     REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
+        #     self.logger.info(' Including REPLAY_FILE09: ' + src)
+        #     self.rply_dict.update({
+        #         os.path.join(ANA_LOCATION): '',
+        #         })
 
-        print(ANA_LOCATION)
         for src, dst in rply_dict.items():
             self.logger.info(' Linking file: ' + src)
             self.geos_linker(src, dst)
-
-        # self.logger.abort('Under construction')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -320,8 +317,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # fcst_dur = self.config_get('forecast_duration')
 
         rcdict['NUM_SGMT'] = '1'
-        # TODO: this is hardcoded for now, fcst_dur could be useful
-        # ----------------------------------------------------------
+        # TODO: this is hardcoded for now, using fcst_dur instead would be better
+        # -----------------------------------------------------------------------
         rcdict['JOB_SGMT'] = '00000000 060000'
 
         with open(rcfile, "w") as f:
@@ -417,6 +414,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Get dynamic files
         # ----------------
         self.get_dynamic()
+
+        # TODO: use rst time for cap_restart?
+        # self.get_rst_time()
 
         # Create cap_restart
         # ------------------
