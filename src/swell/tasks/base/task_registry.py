@@ -20,6 +20,7 @@ valid_tasks = [
   'GetBackground',
   'GetObservations',
   'GetRestart',
+  'MoveRestart',
   'ObsProcessSetup',
   'PrepGeosRunDir',
   'RunGeosExecutable',

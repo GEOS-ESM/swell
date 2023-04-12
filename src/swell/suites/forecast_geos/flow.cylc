@@ -41,7 +41,7 @@
         """
 
         {% for cycle_time in cycle_times %}
-        {{cycle_time.cycle_time}} = """
+        {{cycle_time}} = """
             # Task triggers for
             # -----------------
             # Get restarts from a previos GEOS run
@@ -57,10 +57,10 @@
             RunGeosExecutable => MoveRestart
 
             # Remove Run Directory
-            MoveRestart[-PT6H] => SaveRestart
+            # MoveRestart[-PT6H] => SaveRestart
 
             # Remove Run Directory
-            MoveRestart => RemoveGeosRunDir
+            # MoveRestart => RemoveGeosRunDir
         """
         {% endfor %}
 

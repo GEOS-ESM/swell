@@ -1,11 +1,20 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  prompt: List all cycle times
+  options: ['T00', 'T06', 'T12', 'T18']
+  type: string-check-list
+
 # Cycle start point
 start_cycle_point:
+  # default_value: '2021-07-01T00:00:00Z'
   default_value: '2021-06-30T06:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
+  # default_value: '2021-07-01T12:00:00Z'
   default_value: '2021-06-30T18:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
@@ -54,15 +63,54 @@ r2d2_local_path:
   type: string
 
 # What kind of coupling is needed
-model_coupling_style:
-  default_value: uncoupled
-  prompt: What kind of coupling would you like to run with?
-  options: ['uncoupled', 'coupled']
+# model_coupling_style:
+#   default_value: uncoupled
+#   prompt: What kind of coupling would you like to run with?
+#   options: ['uncoupled', 'coupled']
+#   type: string-drop-list
+
+# # # Models to use
+# model_components:
+#   default_value: ['geos_coupled']
+#   prompt: Select models to use (choose at least one)
+#   options: use_method
+#   type: file-check-list
+
+# GEOS Experiment folder, created by gcm_setup script
+geos_experiment_directory:
+  default_value: /discover/nobackup/dardag/GEOS_FORWARD/5deg
+  prompt: What experiment folder should GEOS obtain settings?
+  options: ['/discover/nobackup/dardag/GEOS_FORWARD/5deg']
   type: string-drop-list
 
-# Models to use
-model_components:
-  default_value: ['geos_coupled']
-  prompt: Select models to use (choose at least one)
-  options: use_method
-  type: file-check-list
+# GEOS restarts folder, produced by GEOS cold start
+geos_restarts_directory:
+  default_value: rst_20210630_060000_72x36x50
+  prompt: What experiment folder should GEOS obtain settings?
+  options: ['rst_20210630_060000_540x458x50', 'rst_20210630_060000_72x36x50 ']
+  type: string-drop-list
+
+# Processor layout
+npx_proc:
+  default_value: '6'
+  prompt: What processor layout (x-direction) per cube face?
+  type: string
+npy_proc:
+  default_value: '1'
+  prompt: What processor layout (y-direction) per cube face?
+  type: string
+
+# Version of GCM being used
+geos_gcm_tag:
+  default_value: 'v10.25.1'
+  prompt: Which tag of GEOS do you want to build?
+  options: ['v10.25.1']
+  type: string-drop-list
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  total_processors:
+    default_value:  'npx_proc * npy_proc'
+    prompt: Equation to compute total number of processors
+

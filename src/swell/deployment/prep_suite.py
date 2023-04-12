@@ -47,7 +47,12 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                 cycle_time_dict[model_component] = True
         cycle_times_dict_list.append(cycle_time_dict)
 
-    render_dictionary['cycle_times'] = cycle_times_dict_list
+    # If there are no model_components get cycle_times from the experiment dict
+    # --------------------------------------------------------------------------
+    if len(model_components) == 0:
+        cycle_times = list(set(experiment_dict['cycle_times']))
+        cycle_times.sort()
+        render_dictionary['cycle_times'] = cycle_times
 
     # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
