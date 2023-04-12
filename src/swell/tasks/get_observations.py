@@ -57,15 +57,15 @@ class GetObservations(taskBase):
 
             file_extension = os.path.splitext(target_file)[1]
 
-            R2D2Data.fetch(item = 'observation'
-                          ,target_file = target_file
-                          ,provider = provider 
+            R2D2Data.fetch(item             = 'observation'
+                          ,target_file      = target_file
+                          ,provider         = provider 
                           ,observation_type = observation
-                          ,file_extension = file_extension
-                          ,window_start = window_begin
-                          ,window_length = window_length)
-                          #,create_date = 
-                          #,mod_date = )
+                          ,file_extension   = file_extension
+                          ,window_start     = window_begin
+                          ,window_length    = window_length)
+                          # ,create_date = 
+                          # ,mod_date = )
 
 #            fetch(date=window_begin,
 #                  target_file=target_file,
@@ -89,17 +89,17 @@ class GetObservations(taskBase):
 
             file_extension = os.path.splitext(target_file)[1]
 
-            R2D2Data.fetch(item = 'bias_correction'
-                          ,target_file = target_file
-                          ,model = 'geos'
-                          ,experiment = experiment
-                          ,provider = 'gsi'
+            R2D2Data.fetch(item             = 'bias_correction'
+                          ,target_file      = target_file
+                          ,model            = 'geos'
+                          ,experiment       = experiment
+                          ,provider         = 'gsi'
                           ,observation_type = observation
-                          ,file_extension = file_extension
-                          ,file_type = 'satbias'
-                          ,date = background_time)
-                          #,create_date = 
-                          #,mod_date = )
+                          ,file_extension   = file_extension
+                          ,file_type        = 'satbias'
+                          ,date             = background_time)
+                          # ,create_date = 
+                          # ,mod_date = )
 
 #            fetch(date=background_time,
 #                  target_file=target_file,
@@ -126,8 +126,8 @@ class GetObservations(taskBase):
                               ,file_extension   = file_extension
                               ,file_type        = 'tlapse'
                               ,date             = background_time)
-                              #create_date = 
-                              #,mod_date = )
+                              # create_date = 
+                              # ,mod_date = )
 
 #                fetch(date=background_time,
 #                      target_file=target_file,
