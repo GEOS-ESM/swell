@@ -71,6 +71,11 @@ geovals_experiment:
   prompt: Experiment providing the GeoVaLs
   type: string
 
+gsi_bc_location:
+  default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/x0044/rs/Y2020/M12/x0044.rst.20201214_21z.tar
+  prompt: Tar or directory containing BC files
+  type: string
+
 # Fixed options (user not prompted for these)
 # -------------------------------------------
 fixed_options:

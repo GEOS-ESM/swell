@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -30,7 +30,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def jedi_dictionary_iterator(self, jedi_config_dict, window_type = ''):
+    def jedi_dictionary_iterator(self, jedi_config_dict, window_type=''):
 
         # Loop over dictionary and replace if value is a dictionary, meanwhile
         # inquire list objects for dictionary items.
@@ -68,7 +68,7 @@ class RunJediExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_jedi_config(self, jedi_application, window_type = ''):
+    def generate_jedi_config(self, jedi_application, window_type=''):
 
         # Var suite names are handled in variational executable
         # -----------------------------------------------------

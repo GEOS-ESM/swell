@@ -41,14 +41,17 @@
             # Task triggers
             # -------------
             GetGsiNcdiag
+            GetGsiBc
 
             GetGsiNcdiag => GsiNcdiagToIoda
+            GetGsiBc => GsiBcToIoda
 
             GetGeovals
 
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
             GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
+            GsiBcToIoda => RunJediTestObsFiltersExecutable
             GetGeovals => RunJediTestObsFiltersExecutable
 
             # EvaObservations
@@ -99,7 +102,13 @@
     [[ GetGsiNcdiag ]]
         script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
 
+    [[ GetGsiBc ]]
+        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
+
     [[ GsiNcdiagToIoda ]]
+        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GsiBcToIoda ]]
         script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
 
     [[ GetGeovals ]]

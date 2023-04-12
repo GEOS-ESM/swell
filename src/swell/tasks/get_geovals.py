@@ -16,7 +16,6 @@ from r2d2 import fetch
 
 # --------------------------------------------------------------------------------------------------
 
-
 class GetGeovals(taskBase):
 
     def execute(self):
@@ -53,6 +52,5 @@ class GetGeovals(taskBase):
 
             # Change permission
             os.chmod(target_file, 0o644)
-
 
     # ----------------------------------------------------------------------------------------------

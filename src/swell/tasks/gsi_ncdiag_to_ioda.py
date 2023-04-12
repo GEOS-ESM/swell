@@ -18,7 +18,7 @@ import gsi_ncdiag.gsi_ncdiag as gsid
 from gsi_ncdiag.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.shell_commands import run_track_log_subprocess
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -166,7 +166,6 @@ class GsiNcdiagToIoda(taskBase):
                 self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
             else:
                 self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
-
 
         # Get list of the observations that are ozone observations
         # --------------------------------------------------------
