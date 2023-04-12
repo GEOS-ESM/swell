@@ -64,10 +64,14 @@ class RunJediTestObsFiltersExecutable(RunJediExecutableBase):
                                                f'{observations[index]}_geovals.{window_begin}.nc4')
             # For conventional add the GeoVaLs flip
             if observations[index] in conventional_types:
-                geovals['levels_are_top_down'] = False
+                geovals['levels_are_top_down'] = True
 
             jedi_config_dict['observations'][index]['geovals'] = geovals
-            jedi_config_dict['observations'][index]['passedBenchmark'] = 317688
+
+            # Need to insert at least one benchmark, but we do not really want to check anything
+            # so check that some made up variable does not exist
+            jedi_config_dict['observations'][index]['expectVariablesNotToExist'] = \
+                                                                        [{'name': 'Fake/Group/Var'}]
 
         # Write executable configuration to file
         # --------------------------------------
