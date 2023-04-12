@@ -63,10 +63,10 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
         try:
             self.logger.info(' Moving file(s) from: '+src_dir)
-            shutil.move(src_dir, dst_dir, dirs_exist_ok=True)
+            shutil.move(src_dir, dst_dir)
 
         except Exception:
-            self.logger.abort('Moving failed, see if source files exists')
+            self.logger.abort('Moving failed, see if source files exist')
 
     # ----------------------------------------------------------------------------------------------
 

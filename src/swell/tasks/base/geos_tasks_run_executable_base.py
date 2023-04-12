@@ -145,7 +145,7 @@ class GeosTasksRunExecutableBase(taskBase):
         try:
             os.symlink(src, os.path.join(dst_dir, dst))
         except Exception:
-            self.logger.abort('Linking failed, see if source files exists')
+            self.logger.abort('Linking failed, see if source files exist')
 
     # ----------------------------------------------------------------------------------------------
 
