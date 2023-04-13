@@ -106,7 +106,8 @@
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
 
     [[ GsiNcdiagToIoda ]]
-        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+        #script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+        script = "swell_task GetObservations $config -d $datetime -m geos_atmosphere"
 
     [[ GsiBcToIoda ]]
         script = "swell_task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
