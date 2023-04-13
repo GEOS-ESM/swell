@@ -42,9 +42,6 @@
 
         {% for cycle_time in cycle_times %}
         {{cycle_time}} = """
-            # Task triggers for
-            # -----------------
-            # Get restarts from a previos GEOS run
 
             # Prepare GEOS run directory
             PrepGeosRunDir
@@ -97,16 +94,16 @@
             --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
 
     [[PrepGeosRunDir]]
-        script = "swell_task PrepGeosRunDir $config"
+        script = "swell_task PrepGeosRunDir $config -d $datetime"
 
     [[RemoveGeosRunDir]]
-        script = "swell_task RemoveGeosRunDir $config"
+        script = "swell_task RemoveGeosRunDir $config -d $datetime"
 
     [[GetRestart]]
         script = "swell_task GetRestart $config -d $datetime"
 
     [[MoveRestart]]
-        script = "swell_task GetRestart $config -d $datetime"
+        script = "swell_task MoveRestart $config -d $datetime"
 
     [[SaveRestart]]
         script = "swell_task SaveRestart $config -d $datetime"
