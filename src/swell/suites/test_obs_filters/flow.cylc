@@ -38,19 +38,23 @@
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
-            # Task triggers
-            # -------------
-            GetGsiNcdiag
-            GetGsiBc
 
-            GetGsiNcdiag => GsiNcdiagToIoda
+            # Convert ncdiags to ioda
+            #GetGsiNcdiag
+            #GetGsiNcdiag => GsiNcdiagToIoda
+            GetObservations
+
+            # Convert ncdiags to ioda
+            GetGsiBc
             GetGsiBc => GsiBcToIoda
 
+            # Get GeoVaLs
             GetGeovals
 
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
-            GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
+            #GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
+            GetObservations => RunJediTestObsFiltersExecutable
             GsiBcToIoda => RunJediTestObsFiltersExecutable
             GetGeovals => RunJediTestObsFiltersExecutable
 
@@ -99,18 +103,20 @@
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
 
-    [[ GetGsiNcdiag ]]
-        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
-
     [[ GetGsiBc ]]
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
 
-    [[ GsiNcdiagToIoda ]]
-        #script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
-        script = "swell_task GetObservations $config -d $datetime -m geos_atmosphere"
-
     [[ GsiBcToIoda ]]
         script = "swell_task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
+
+#    [[ GetGsiNcdiag ]]
+#        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
+#
+#    [[ GsiNcdiagToIoda ]]
+#        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GetObservations ]]
+        script = "swell_task GetObservations $config -d $datetime -m geos_atmosphere"
 
     [[ GetGeovals ]]
         script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
