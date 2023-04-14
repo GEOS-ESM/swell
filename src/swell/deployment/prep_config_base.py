@@ -438,8 +438,6 @@ class PrepConfigBase(ABC):
         # check_wdigets goes in cli
         # defaults gets nothing
 
-        print(self.directory, self.filename)
-
         print(f"Now editing the {os.path.basename(self.directory)} YAML file.")
 
         # Get answers for the suite YAML file

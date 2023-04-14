@@ -214,7 +214,6 @@ class PrepConfigCli(PrepConfigBase):
 
             for k in change_keys:
                 changed_dict = self.dictionary[k]
-                print(k, changed_dict, self.experiment_dict)
                 new_default_value = self.get_answer(k, changed_dict)
                 if k == self.exec_keys[-1]:
                     changed_dict['default_value'] = new_default_value
