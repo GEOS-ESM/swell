@@ -22,8 +22,8 @@ from swell.utilities.welcome_message import write_welcome_message
 @click.command()
 @click.option('-i', '--input_method', 'input_method', default='defaults', help='Method by which ' +
               'to create the YAML configuration file. Valid choices: \'defaults\', \'cli\'.')
-@click.option('-s', '--suite', 'suite', default='hofx', help='If using defaults for input_method ' +
-              'this option is used to determine which suite to obtain the defaults for.')
+# @click.option('-s', '--suite', 'suite', default='hofx', help='If using defaults for input_method ' +
+#               'this option is used to determine which suite to obtain the defaults for.')
 @click.option('-p', '--platform', 'platform', default='nccs_discover', help='If using defaults ' +
               'for input_method this option is used to determine which platform to use for ' +
               'platform specific defaults.')
@@ -31,8 +31,11 @@ from swell.utilities.welcome_message import write_welcome_message
               'file parameters inside can be overridden using value from the override config file.')
 @click.option('-m', '--models', 'models', multiple=True, default=['geos_atmosphere'], help='Enter' +
               'model components.')
+@click.argument('suite')
 def main(input_method, suite, platform, override, models):
-
+    """
+        SUITE argument determines which set of tasks are going to be run.
+    """
     # Welcome message
     # ---------------
     write_welcome_message('Prepare Config')

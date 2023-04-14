@@ -10,13 +10,6 @@ experiment_root:
   prompt: Enter the path where experiment will be staged
   type: string
 
-# Compute platform to use
-platform:
-  default_value: {{platform}}
-  prompt: Which compute platform do you wish to use?
-  options: use_method
-  type: string-drop-list
-
 # Type of suite to run
 suite_to_run:
   default_value: {{suite_to_run}}

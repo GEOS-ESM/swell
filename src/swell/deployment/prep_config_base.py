@@ -406,6 +406,9 @@ class PrepConfigBase(ABC):
         key_list = list(dictionary.keys())
         dictionary = self.expand_tasks(key_list, dictionary)
 
+        # Save dictionary as self.dictionary for use in prep_config_cli.before_next()
+        self.dictionary = dictionary
+
         # Check for fixed options in key list and set end key
         key_list = self.set_end_key(key_list)
 
