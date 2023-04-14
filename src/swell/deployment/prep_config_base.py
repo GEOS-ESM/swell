@@ -130,41 +130,6 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def before_next(self, method):
-        if method == 'defaults':
-            return None
-
-        changer = self.make_boolean('Do you wish to change any of your entries?',
-                                    False,
-                                    questionary.confirm)
-        if changer:
-            keys = self.exec_keys
-            for k in keys:
-                if k not in list(self.dictionary.keys()):
-                    non_exec_idx = keys.index(k)
-                    keys.pop(non_exec_idx)
-            # Show user key change options and retrieve new values
-            change_keys = self.make_check_widget('Which elements would you like to change?',
-                                                 keys,
-                                                 None,
-                                                 questionary.checkbox)
-
-            for k in change_keys:
-                changed_dict = self.dictionary[k]
-                new_default_value = self.check_widgets(k, changed_dict)
-                if 'file' in changed_dict['type']:
-                    # going to need to change this now because file in type is no longer there
-                    changed_dict['default_value'] = new_default_value
-                    return changed_dict
-                elif k == self.exec_keys[-1]:
-                    changed_dict['default_value'] = new_default_value
-                    return changed_dict
-                else:
-                    self.update_experiment_dictionary(k, new_default_value)
-            return None
-
-    # ----------------------------------------------------------------------------------------------
-
     def set_model_template(self, model):
         swell_path = self.install_path
         task_file = camel_to_snake('GetBackground')
