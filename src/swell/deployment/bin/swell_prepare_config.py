@@ -36,6 +36,7 @@ def main(input_method, suite, platform, override, models):
     """
         SUITE argument determines which set of tasks are going to be run.
     """
+
     # Welcome message
     # ---------------
     write_welcome_message('Prepare Config')
