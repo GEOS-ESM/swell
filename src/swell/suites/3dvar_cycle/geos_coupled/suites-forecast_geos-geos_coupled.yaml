@@ -1,0 +1,44 @@
+# Cycle frequency
+# cycle_times:
+#   default_value: ['T00', 'T06', 'T12', 'T18']
+#   prompt: List all cycle times
+#   options: ['T00', 'T06', 'T12', 'T18']
+#   type: string-check-list
+
+# # GEOS Experiment folder, created by gcm_setup script
+# geos_experiment_directory:
+#   default_value: /discover/nobackup/dardag/GEOS_FORWARD/5deg
+#   prompt: What experiment folder should GEOS obtain settings?
+#   options: ['/discover/nobackup/dardag/GEOS_FORWARD/5deg']
+#   type: string-drop-list
+
+# # GEOS restarts folder, produced by GEOS cold start
+# geos_restarts_directory:
+#   default_value: rst_20210630_060000_72x36x50
+#   prompt: What experiment folder should GEOS obtain settings?
+#   options: ['rst_20210630_060000_540x458x50', 'rst_20210630_060000_72x36x50 ']
+#   type: string-drop-list
+
+# # Processor layout
+# npx_proc:
+#   default_value: '6'
+#   prompt: What processor layout (x-direction) per cube face?
+#   type: string
+# npy_proc:
+#   default_value: '1'
+#   prompt: What processor layout (y-direction) per cube face?
+#   type: string
+
+# # Version of GCM being used
+# geos_gcm_tag:
+#   default_value: 'v10.25.1'
+#   prompt: Which tag of GEOS do you want to build?
+#   options: ['v10.25.1']
+#   type: string-drop-list
+
+# # Fixed options (user not prompted for these)
+# # -------------------------------------------
+# fixed_options:
+#   total_processors:
+#     default_value:  'npx_proc * npy_proc'
+#     prompt: Equation to compute total number of processors

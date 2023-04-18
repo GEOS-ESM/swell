@@ -1,0 +1,114 @@
+# (C) Copyright 2021-2023 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing Geos forecast
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = True
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = 2020-12-15T00:00:00Z
+    final cycle point = 2020-12-15T06:00:00Z
+    runahead limit = P4
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-geos_ocean
+
+            # Need first set of restarts to run model
+            GetRestart => RunGeosExecutable
+
+            # First cycle dependencies for JEDI
+            CloneJedi => StageJedi-geos_ocean => RunJediVariationalExecutable-geos_ocean
+            GetBackground-geos_ocean => RunJediVariationalExecutable-geos_ocean
+        """
+
+        T00,T06,T12,T18 = """
+
+            # Data assimilation things
+            GetObservations-geos_ocean
+            GenerateBClimatologyByLinking-geos_ocean
+            StageJediCycle-geos_ocean
+
+            # Model things
+            PrepGeosRunDir
+
+            # Run the analysis
+            MoveBackground-geos_ocean[-PT6H] => RunJediVariationalExecutable-geos_ocean
+            StageJediCycle-geos_ocean => RunJediVariationalExecutable-geos_ocean
+            GenerateBClimatologyByLinking-geos_ocean => RunJediVariationalExecutable-geos_ocean
+            GetObservations-geos_ocean => RunJediVariationalExecutable-geos_ocean
+
+            # Prepare analysis for next forecast
+            RunJediVariationalExecutable-geos_ocean => PrepareAnalysis-geos_ocean
+
+            # Run analysis diagnostics
+            RunJediVariationalExecutable-geos_ocean => EvaObservations-geos_ocean
+            RunJediVariationalExecutable-geos_ocean => EvaJediLog-geos_ocean
+
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            PrepareAnalysis-geos_ocean => RunGeosExecutable
+            PrepGeosRunDir => RunGeosExecutable
+            MoveRestart[-PT6H] => RunGeosExecutable
+
+            # Move restart to next cycle
+            RunGeosExecutable => MoveRestart
+            RunGeosExecutable => MoveBackground-geos_ocean
+
+            # Save analysis output
+            RunJediVariationalExecutable-geos_ocean => SaveAnalysis-geos_ocean
+            RunJediVariationalExecutable-geos_ocean => SaveObsDiags-geos_ocean
+
+            # Save model output
+            MoveRestart => SaveRestart
+            MoveBackground-geos_ocean => SaveBackground-geos_ocean
+
+            # Remove Run Directory
+            MoveRestart & MoveBackground-geos_ocean => RemoveGeosRunDir
+
+            # Clean up large files
+            EvaObservations-geos_ocean & EvaJediLog-geos_ocean & SaveObsDiags-geos_ocean & RemoveGeosRunDir =>
+            CleanCycle-geos_ocean
+        """
+
+# --------------------------------------------------------------------------------------------------
+
+
+
+# --------------------------------------------------------------------------------------------------
