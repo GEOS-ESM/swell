@@ -30,21 +30,21 @@ class GetRestart(GeosTasksRunExecutableBase):
         # ----------------------------------------------------
         self.logger.info('GEOS restarts from a forecast run')
 
-        src = os.path.join(self.swell_static_files, 'geos', 'static',
-                           self.rst_path, '*_rst')
+        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
+                           'geos_ocean', 'model',  'geos', self.rst_path, '*_rst')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
             self.copy_to_cycle(filepath, self.at_cycle(filename))
 
-        src = os.path.join(self.swell_static_files, 'geos', 'static',
-                           self.rst_path, 'tile.bin')
+        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
+                           'geos_ocean', 'model', 'geos', self.rst_path, 'tile.bin')
         self.copy_to_cycle(src, self.at_cycle('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
-        src = os.path.join(self.swell_static_files, 'geos', 'static',
-                           self.rst_path, 'MOM.res*nc')
+        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
+                           'geos_ocean', 'model', 'geos', self.rst_path, 'MOM.res*nc')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)

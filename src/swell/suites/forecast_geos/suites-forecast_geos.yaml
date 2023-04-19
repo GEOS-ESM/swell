@@ -62,32 +62,18 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
-# What kind of coupling is needed
-# model_coupling_style:
-#   default_value: uncoupled
-#   prompt: What kind of coupling would you like to run with?
-#   options: ['uncoupled', 'coupled']
-#   type: string-drop-list
-
-# # # Models to use
-# model_components:
-#   default_value: ['geos_coupled']
-#   prompt: Select models to use (choose at least one)
-#   options: use_method
-#   type: file-check-list
-
 # GEOS Experiment folder, created by gcm_setup script
 geos_experiment_directory:
-  default_value: /discover/nobackup/dardag/GEOS_FORWARD/5deg
+  default_value: experiment_directory
   prompt: What experiment folder should GEOS obtain settings?
-  options: ['/discover/nobackup/dardag/GEOS_FORWARD/5deg']
+  options: ['experiment_directory']
   type: string-drop-list
 
 # GEOS restarts folder, produced by GEOS cold start
 geos_restarts_directory:
-  default_value: rst_20210630_060000_72x36x50
+  default_value: restarts
   prompt: What experiment folder should GEOS obtain settings?
-  options: ['rst_20210630_060000_540x458x50', 'rst_20210630_060000_72x36x50 ']
+  options: ['restarts']
   type: string-drop-list
 
 # Processor layout
