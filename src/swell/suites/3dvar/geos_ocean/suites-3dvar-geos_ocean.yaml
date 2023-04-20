@@ -91,7 +91,7 @@ fixed_options:
     default_value: RPCG
     prompt: Minimizer to use for gradient descent
   number_of_iterations:
-    default_value: 5
+    default_value: 10
     prompt: Number of iterations to use in the minimization
   gradient_norm_reduction:
     default_value: 1e-10

@@ -150,19 +150,7 @@ diagnostics:
             - mean
             - max
             - std
-          # statistics:
-          #   data:
-          #     variable: experiment::omanPassedQc::${variable}
-          #   statistic list:
-          #   - n
-          #   - min
-          #   - mean
-          #   - max
-          #   - std
-          #   - name
-          #   kwargs:
-          #     fontsize: 6
-          
+
           layers:
           - type: Histogram
             data:
