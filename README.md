@@ -2,7 +2,7 @@
   align="center"
 >
 <img
-  src="https://github.com/GEOS-ESM/swell/blob/feature/logo/etc/logo/SwellLogo%400.33x.png"
+  src="https://github.com/GEOS-ESM/swell/blob/develop/etc/logo/SwellLogo%400.33x.png"
   width="50%"
 />
 
