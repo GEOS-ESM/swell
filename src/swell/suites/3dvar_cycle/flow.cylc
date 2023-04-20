@@ -97,7 +97,7 @@
 
             # Save model output
             MoveRestart => SaveRestart
-            MoveBackground-geos_ocean => SaveBackground-geos_ocean
+            MoveBackground-geos_ocean => StoreBackground-geos_ocean
 
             # Remove Run Directory
             MoveRestart & MoveBackground-geos_ocean => RemoveGeosRunDir

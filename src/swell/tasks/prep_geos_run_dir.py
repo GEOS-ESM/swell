@@ -191,11 +191,13 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             self.logger.info(' OBTAINING EXTRA WOA13 files')
             swell_static_files = self.config_get('swell_static_files')
             rst_path = self.config_get('geos_restarts_directory')
-            src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
+            src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
+                               'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_ptemp_monthly.nc')
             self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_ptemp_monthly.nc']))
 
-            src = os.path.join(swell_static_files, 'geos', 'static', rst_path,
+            src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
+                               'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_s_monthly.nc')
             self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_s_monthly.nc']))
 
@@ -333,12 +335,17 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         """
         Parses resource files in "geos_experiment_directory" to obtain required
         directories and files. Modifies file contents using re module according
-        to cycle_date and CAP.rc and AGCM.rc switches.
+        to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
 
         In GEOS speak, it creates the "scratch" directory.
         """
 
-        self.geos_exp_dir = self.config_get('geos_experiment_directory')
+        self.swell_static_files = self.config_get('swell_static_files')
+        # TODO: exp. directory location ought to be handled better
+        self.geos_exp_dir = os.path.join(self.swell_static_files, 'jedi',
+                                         'interfaces', 'geos_ocean', 'model', 'geos',
+                                         self.config_get('geos_experiment_directory'))
+
         self.cycle_dir = self.config_get('cycle_dir')
         self.experiment_dir = self.config_get('experiment_dir')
         self.geos_source = self.config_get('existing_geos_source_directory')

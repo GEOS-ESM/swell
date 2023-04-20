@@ -1,0 +1,126 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  prompt: List all cycle times
+  options: ['T00', 'T06', 'T12', 'T18']
+  type: string-check-list
+
+# Window length
+window_length:
+  default_value: 'P1D'
+  prompt: Window length for ocean data assimilation
+  type: iso-duration
+
+# Horizontal resolution
+horizontal_resolution:
+  default_value: '72x36'
+  prompt: What resolution for the hor. res?
+  options: ['72x36', '360x320', '1440x1080']
+  type: string-drop-list
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '50'
+  prompt: What vertical resolution for the ocean background?
+  options: ['50', '75']
+  type: string-drop-list
+
+# Backgrounds
+background_experiment:
+  default_value: s2s
+  prompt: Experiment providing the background files?
+  type: string
+
+# Analysis
+analysis_variables:
+  default_value: [socn, tocn, ssh, hocn]
+  prompt: Variables to be assimilated?
+  type: string
+
+obs_experiment:
+  default_value: s2s_v1
+  prompt: Database providing the observations?
+  type: string
+
+# Observations
+observations:
+  default_value:
+  # Gdas (NOAA)
+  - adt_3a_egm2008
+  - adt_3b_egm2008
+  - adt_c2_egm2008
+  - adt_j3_egm2008
+  - adt_sa_egm2008
+  - sst_ostia
+  - salt_profile_fnmoc
+  - sss_smos_esa
+  - sss_trak_fnmoc
+  - sst_gmi_l3u
+  - sst_ship_fnmoc
+  - sst_trak_fnmoc
+  - temp_profile_fnmoc
+
+  # - adt_coperl4 (non existing obs?)
+  # Issues with the ObsValue
+  # - sst_amsr2_l3u
+
+  # ODAS (NASA)
+  # - adt
+  # - insitus
+  # - insitut
+  prompt: Select ocean observations.
+  options: use_method
+  type: string-check-list
+
+  # Processor layout
+# npx_proc:
+#   default_value: '24'
+#   prompt: What processor layout (x-direction) per cube face?
+#   type: string
+# npy_proc:
+#   default_value: '1'
+#   prompt: What processor layout (y-direction) per cube face?
+#   type: string
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  window_type:
+    default_value: 3D
+    prompt: Window type (3D or 4D)
+  minimizer:
+    default_value: RPCG
+    prompt: Minimizer to use for gradient descent
+  number_of_iterations:
+    default_value: 5
+    prompt: Number of iterations to use in the minimization
+  gradient_norm_reduction:
+    default_value: 1e-10
+    prompt: Threshold for convergence of the minimization
+  # total_processors:
+  #   default_value:  'npx_proc * npy_proc'
+  #   prompt: Equation to compute total number of processors
+  window_offset:
+    default_value:  PT12H
+    prompt: Time from beginning to middle of the window
+  analysis_forecast_window_offset:
+    default_value:  -PT12H
+    prompt: Time from the middle of the window when forecasts start
+  background_time_offset:
+    default_value:  PT18H
+    prompt: Time before the middle of the window that the background providing forecast began
+  background_frequency:
+    default_value:  PT1H
+    prompt: 'Frequency of 4D backgrounds'
+  background_source:
+    default_value: file
+    prompt: 'Source of the background files (file or from model)'
+  static_background_error_model:
+    default_value: bump
+    prompt: 'Method for calculating background error covariance'
+  obs_provider:
+    default_value: gdas_marine
+    prompt: Database providing the observations.
+  clean_patterns:
+    default_value: ['*.nc4','*.txt']
+    prompt: 'Patterns for the files to remove after completing a cycle'
