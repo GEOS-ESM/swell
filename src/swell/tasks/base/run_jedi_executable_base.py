@@ -75,6 +75,9 @@ class RunJediExecutableBase(taskBase):
         if 'var' not in jedi_application:
             jedi_application = jedi_application + window_type
 
+        print(jedi_application)
+        exit()
+
         # Create dictionary from the templated JEDI config file
         # -----------------------------------------------------
         jedi_config_dict = self.open_jedi_oops_config_file(jedi_application)
