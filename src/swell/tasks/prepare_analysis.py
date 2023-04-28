@@ -26,21 +26,24 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
         # This automatically closes the dataset after use
         # -----------------------------------------------
-        with xr.open_dataset(fname1, decode_cf=False) as ds:
-        # with xr.open_dataset(fname1) as ds:
-            var = ds['ave_ssh']
-            # lat = ds['xaxis_1']
-
         fname2 = self.at_cycle('MOM6.res.20210621T060000Z.nc')
-        # print(fname2)
-        # print(var)
-        ds = xr.open_dataset(fname2, decode_cf=False)
-        var2 = ds['ave_ssh']
-        # print(var2)
-        ds['ave_ssh'] = var
 
-        # print(ds['ave_ssh'])
-        print(var - var2)
+        ds2 = xr.open_dataset(fname2, decode_cf=False)
+
+        with xr.open_dataset(fname1, decode_cf=False) as ds1:
+            ds1 = ds1.rename({'xaxis_1': 'lonh', 'yaxis_1': 'lath','zaxis_1': 'Layer'})
+            ds1 = ds1.assign_coords(coords=ds2.coords)
+
+            # Replace variables with analysis
+            # -------------------------------
+            for var in ds1.data_vars:
+                ds2[var] = ds1[var]
+
+        f_out = self.at_cycle()'post_update.nc')
+
+        if os.path.exists(f_out):
+            os.remove(f_out)
+        ds2.to_netcdf(f_out)
 
     def execute(self):
 
