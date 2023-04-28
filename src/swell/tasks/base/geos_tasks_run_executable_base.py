@@ -172,6 +172,25 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def iso_duration_to_time_string(self, iso_duration):
+
+        # Parse the ISO duration string and get the total number of seconds
+        # It is written to handle fcst_duration less than a day for now
+        # ----------------------------------------------------------------
+        duration = isodate.parse_duration(iso_duration)
+        duration_seconds = duration.total_seconds()
+
+        # Convert the duration to a string in the format of "HHMMSS" to be used
+        # with AGCM.rc and CAP.rc
+        # ---------------------------------------------------------------------
+        hours, remainder = divmod(duration_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        time_string = f"{int(hours):02d}{int(minutes):02d}{int(seconds):02d}"
+
+        return time_string
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_gcmrun(self, jfile):
 
         # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup

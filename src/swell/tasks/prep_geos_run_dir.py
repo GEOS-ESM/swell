@@ -314,11 +314,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # AGCM.rc might requires some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        # fcst_dur = self.config_get('forecast_duration')
+        time_string = self.iso_duration_to_time_string(self.config_get('forecast_duration'))
 
-        # TODO: this is hardcoded for now, using fcst_dur instead would be better
-        # -----------------------------------------------------------------------
-        rcdict['RECORD_FREQUENCY'] = '060000'
+        rcdict['RECORD_FREQUENCY'] = time_string
         rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
         rcdict['RECORD_REF_TIME'] = self.fc_dto.strftime("%H%M%S")
 
@@ -332,14 +330,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # CAP.rc requires some modifications
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
-
         self.logger.info('Modifying CAP.rc')
-        # fcst_dur = self.config_get('forecast_duration')
+        time_string = self.iso_duration_to_time_string(self.config_get('forecast_duration'))
 
         rcdict['NUM_SGMT'] = '1'
-        # TODO: this is hardcoded for now, using fcst_dur instead would be better
-        # -----------------------------------------------------------------------
-        rcdict['JOB_SGMT'] = '00000000 120000'
+        rcdict['JOB_SGMT'] = '00000000 ' + time_string
 
         with open(rcfile, "w") as f:
             yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
