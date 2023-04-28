@@ -151,24 +151,24 @@ class GeosTasksRunExecutableBase(taskBase):
 
     def get_rst_time(self):
 
-        # Obtain time information from any of the rst files listed by the
-        # glob method
-        # --------------------------------------------------------------------
-
+        # Obtain time information from any of the rst files listed by glob
+        # ----------------------------------------------------------------
         src = self.at_cycle('*_rst')
 
-        # Open the NetCDF file and read the time and units
-        # ------------------------------------------------
+        # Open any _rst file in cycle dir to read time and units
+        # ------------------------------------------------------
         ncfile = netCDF4.Dataset(list(glob.glob(src))[0])
+        self.logger.info(f"Getting time information from: ' {list(glob.glob(src))[0]}")
+
         time_var = ncfile.variables['time']
         units = time_var.units
 
         # Convert the time values to datetime objects
         # ---------------------------------------------
         times = netCDF4.num2date(time_var[:], units=units, calendar='standard')
-
-        self.logger.info('This is not used yet')
         ncfile.close()
+
+        return times[0]
 
     # ----------------------------------------------------------------------------------------------
 

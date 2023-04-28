@@ -41,7 +41,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             # ----------------------------------------
             d1 = dt.strptime('01112021', '%d%m%Y')
 
-            if self.emissions == 'OPS_EMISSIONS' and self.cc_dto > d1:
+            if self.emissions == 'OPS_EMISSIONS' and self.fc_dto > d1:
 
                 # 'r' indicates raw string
                 # ------------------------
@@ -79,7 +79,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         src_dir = self.at_cycle(['AMIP', '*'])
 
         if not self.cap_dict['USE_EXTDATA2G']:
-            if self.cc_dto < d1:
+            if self.fc_dto < d1:
                 src_dir = self.at_cycle(['AMIP.20C', '*'])
 
         for filepath in list(glob.glob(src_dir)):
@@ -133,7 +133,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         d1 = dt.strptime('021979', '%m%Y')
         d2 = dt.strptime('062017', '%m%Y')
 
-        if pchem_clim_years == '39' and (self.cc_dto > d2 or self.cc_dto < d1):
+        if pchem_clim_years == '39' and (self.fc_dto > d2 or self.fc_dto < d1):
             self.logger.abort('MERRA2OX data non existent for the current' +
                               ' cycle. Change pchem_clim_years in AGCM.rc')
 
@@ -309,6 +309,24 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def rewrite_agcm(self, rcdict, rcfile):
+
+        # AGCM.rc might requires some modifications depending on the restart intervals
+        # ----------------------------------------------------------------------------
+        self.logger.info('Modifying AGCM.rc RECORD_* entries')
+        # fcst_dur = self.config_get('forecast_duration')
+
+        # TODO: this is hardcoded for now, using fcst_dur instead would be better
+        # -----------------------------------------------------------------------
+        rcdict['RECORD_FREQUENCY'] = '060000'
+        rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
+        rcdict['RECORD_REF_TIME'] = self.fc_dto.strftime("%H%M%S")
+
+        with open(rcfile, "w") as f:
+            yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
+
+    # ----------------------------------------------------------------------------------------------
+
     def rewrite_cap(self, rcdict, rcfile):
 
         # CAP.rc requires some modifications
@@ -321,7 +339,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         rcdict['NUM_SGMT'] = '1'
         # TODO: this is hardcoded for now, using fcst_dur instead would be better
         # -----------------------------------------------------------------------
-        rcdict['JOB_SGMT'] = '00000000 060000'
+        rcdict['JOB_SGMT'] = '00000000 120000'
 
         with open(rcfile, "w") as f:
             yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
@@ -355,10 +373,9 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
         self.logger.info('encouraged to validate if this changes ensued.')
 
-        # Current cycle time object, useful for temporal BC constraints
+        # Forecast start time object, useful for temporal BC constraints
         # -------------------------------------------------------------
-        self.current_cycle = self.config_get('current_cycle')
-        self.cc_dto = dt.strptime(self.current_cycle, "%Y%m%dT%H%M%SZ")
+        self.fc_dto = self.get_rst_time()
 
         # Get static files
         # ----------------
@@ -386,6 +403,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         if 'REPLAY_MODE' in self.agcm_dict:
             self.logger.info('Replay Mode is Active')
             self.link_replay()
+
+        # Set AGCM.rc record ref_date to fcst start time
+        # -------------------------------------------------------------------
+        if 'RECORD_FREQUENCY' in self.agcm_dict:
+            self.rewrite_agcm(self.agcm_dict, self.at_cycle('AGCM.rc'))
 
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------
@@ -422,13 +444,10 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # ----------------
         self.get_dynamic()
 
-        # TODO: use rst time for cap_restart?
-        # self.get_rst_time()
-
         # Create cap_restart
         # ------------------
         with open(os.path.join(self.cycle_dir, 'cap_restart'), 'w') as file:
-            file.write(dt.strftime(self.cc_dto, "%Y%m%d %H%M%S"))
+            file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
 
         # Run bundleParser
         # ------------------

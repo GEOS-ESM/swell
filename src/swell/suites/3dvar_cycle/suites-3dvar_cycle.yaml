@@ -12,7 +12,7 @@ final_cycle_point:
 
 # Each forecast cycle consists of a set duration until DA
 forecast_duration:
-  default_value: 'PT6H'
+  default_value: 'PT12H'
   prompt: What is the GEOS forecast duration?
   type: string
 

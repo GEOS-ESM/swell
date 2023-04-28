@@ -22,6 +22,7 @@ valid_tasks = [
   'GetRestart',
   'MoveRestart',
   'ObsProcessSetup',
+  'PrepareAnalysis',
   'PrepGeosRunDir',
   'RunGeosExecutable',
   'RunJediHofxExecutable',

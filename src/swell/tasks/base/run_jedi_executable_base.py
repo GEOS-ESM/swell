@@ -75,8 +75,9 @@ class RunJediExecutableBase(taskBase):
         if 'var' not in jedi_application:
             jedi_application = jedi_application + window_type
 
-        print(jedi_application)
-        exit()
+        # This assumes cycle suites will always have _cycle appended
+        # ----------------------------------------------------------
+        jedi_application = jedi_application.rsplit("_cycle", 1)[0]
 
         # Create dictionary from the templated JEDI config file
         # -----------------------------------------------------
