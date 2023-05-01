@@ -314,7 +314,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # AGCM.rc might requires some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        time_string = self.iso_duration_to_time_string(self.config_get('forecast_duration'))
+        time_string = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
 
         rcdict['RECORD_FREQUENCY'] = time_string
         rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
@@ -331,7 +331,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
         self.logger.info('Modifying CAP.rc')
-        time_string = self.iso_duration_to_time_string(self.config_get('forecast_duration'))
+        time_string = self.iso_to_time_str(self.config_get('forecast_duration'))
 
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = '00000000 ' + time_string
@@ -441,7 +441,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Create cap_restart
         # ------------------
-        with open(os.path.join(self.cycle_dir, 'cap_restart'), 'w') as file:
+        with open(self.at_cycle('cap_restart'), 'w') as file:
             file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
 
         # Run bundleParser

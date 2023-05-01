@@ -21,7 +21,7 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Path to executable being run
         # ----------------------------
-        cycle_dir = self.config_get('cycle_dir')
+        self.cycle_dir = self.config_get('cycle_dir')
         experiment_dir = self.config_get('experiment_dir')
         npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
         npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
@@ -29,12 +29,12 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Create RESTART folder
         # ---------------------
-        if not os.path.exists(os.path.join(cycle_dir, 'RESTART')):
-            os.mkdir(os.path.join(cycle_dir, 'RESTART'))
+        if not os.path.exists(self.at_cycle('RESTART')):
+            os.mkdir(self.at_cycle('RESTART'))
 
         # Output log file
-        # ---------------sw
-        output_log_file = os.path.join(cycle_dir, 'geos_out.log')
+        # ---------------
+        output_log_file = self.at_cycle('geos_out.log')
 
         # Compute number of processors
         # ----------------------------
@@ -56,8 +56,21 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Run the GEOS executable
         # -----------------------
-        self.run_executable(cycle_dir, np, geos_executable_path, geos_modules_path, output_log_file)
+        self.run_executable(self.cycle_dir, np, geos_executable_path, geos_modules_path, output_log_file)
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
+        # Clear the previous INPUT folder
+        # -------------------------------
+        if os.path.exists(self.at_cycle('INPUT')):
+            shutil.rmtree(self.at_cycle('INPUT'))
+
+        # Link restart to history output
+        # TODO: this will only work for 3Dvar
+        # ------------------------------
+        src = self.at_cycle('his_2021_06_21_06.nc')
+        dst = self.at_cycle('MOM6.res.20210621T060000Z.nc')
+
+        if os.path.exists(src):
+            self.geos_linker(src, dst)
 
 # --------------------------------------------------------------------------------------------------

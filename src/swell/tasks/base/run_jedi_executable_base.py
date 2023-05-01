@@ -10,6 +10,7 @@
 
 from abc import ABC, abstractmethod
 import os
+import shutil
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -106,6 +107,5 @@ class RunJediExecutableBase(taskBase):
         # Run command
         # -----------
         run_track_log_subprocess(self.logger, command, output_log=output_log)
-
 
 # --------------------------------------------------------------------------------------------------

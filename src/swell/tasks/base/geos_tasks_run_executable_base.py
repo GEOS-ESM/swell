@@ -38,6 +38,34 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def adjacent_cycle(self, cycle_dir, duration, return_date=False):
+
+        # Basename consists of swell datetime and model
+        # ---------------------------------------------
+        basename = os.path.basename(cycle_dir)
+        dt_str = basename.split('-')[0]
+        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
+
+        # Modify datetime by subtracting forecast duration
+        # -----------------------------------------------
+        modified_dt_obj = dt_obj + isodate.parse_duration(duration)
+
+        if return_date:
+            return modified_dt_obj
+
+        # Replace datetime section in the basename with the modified datetime string
+        # -----------------------------------------------------------------
+        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
+        modified_basename = basename.replace(dt_str, modified_dt_str)
+
+        # Create new file path with modified basename
+        # --------------------------------------------
+        adj_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
+
+        return adj_cycle_dir
+
+    # ----------------------------------------------------------------------------------------------
+
     def at_cycle(self, paths):
 
         # Ensure what we have is a list (paths should be a list)
@@ -172,13 +200,18 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def iso_duration_to_time_string(self, iso_duration):
+    def iso_to_time_str(self, iso_duration, half=False):
 
         # Parse the ISO duration string and get the total number of seconds
         # It is written to handle fcst_duration less than a day for now
         # ----------------------------------------------------------------
         duration = isodate.parse_duration(iso_duration)
         duration_seconds = duration.total_seconds()
+
+        # RESTART shall be produced at the half of the forecast cycle
+        # ----------------------------------------------------------
+        if half:
+            duration_seconds = duration_seconds / 2
 
         # Convert the duration to a string in the format of "HHMMSS" to be used
         # with AGCM.rc and CAP.rc
