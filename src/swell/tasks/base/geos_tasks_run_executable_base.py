@@ -38,7 +38,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def adjacent_cycle(self, cycle_dir, duration, return_date=False):
+    def adjacent_cycle(self, cycle_dir, offset, return_date=False):
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
@@ -46,9 +46,9 @@ class GeosTasksRunExecutableBase(taskBase):
         dt_str = basename.split('-')[0]
         dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
 
-        # Modify datetime by subtracting forecast duration
-        # -----------------------------------------------
-        modified_dt_obj = dt_obj + isodate.parse_duration(duration)
+        # Modify datetime by using date offset
+        # ------------------------------------
+        modified_dt_obj = dt_obj + isodate.parse_duration(offset)
 
         if return_date:
             return modified_dt_obj

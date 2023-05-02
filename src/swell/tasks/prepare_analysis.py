@@ -7,8 +7,8 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import xarray as xr
 from datetime import datetime as dt
+import xarray as xr
 
 from swell.tasks.base.geos_tasks_run_executable_base import *
 
@@ -20,7 +20,15 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
     # --------------------------------------------------------------------------------------------------
 
-    def replace_ds(self, f_ana, f_rst):
+    def replace_ocn(self, f_rst):
+
+        # TODO: ocean only for now, ought to update method names when
+        # more model analyses (i.e., ice, bgc) are introduced.
+        # TODO: combining stftime format with strings, safe practice?
+        # -----------------------------------------------------------------
+        # Generic analysis file format
+        # ---------------------------
+        f_ana = self.at_cycle('ocn.' + self.exp_id + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc'))
 
         # Update restart with analysis
         # ----------------------------
@@ -50,22 +58,22 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
         self.logger.info('Preparing analysis and updating restarts')
 
         self.cycle_dir = self.config_get('cycle_dir')
-        self.an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        self.exp_id = self.config_get('experiment_id')
 
         # Current and restart time objects
         # --------------------------------
         self.current_cycle = self.config_get('current_cycle')
-        self.cc_dto = dt.strptime(self.current_cycle, "%Y%m%dT%H%M%SZ")
-        self.rst_dto = self.adjacent_cycle(self.cycle_dir, self.an_fcst_offset, return_date=True)
+        self.cc_dto = dt.strptime(self.current_cycle, self.get_datetime_format())
 
         # GEOS restarts have seconds in their filename
         # --------------------------------------------
-        seconds = str(self.rst_dto.hour * 3600 + self.rst_dto.minute * 60 + self.rst_dto.second)
+        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+        seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
-        f_ana = self.at_cycle('ocn.swell-3dvar_cycle.an.2021-06-21T06:00:00Z.nc')
-        # f_rst = self.at_cycle('his_' + now.strftime('%Y_%m_%d_%H') + '.nc')
-        f_rst = self.at_cycle(['RESTART', 'MOM.res_Y' + self.cc_dto.strftime('%Y') + '_D' + self.cc_dto.strftime('%j') + '_S' + seconds + '.nc'])
-
-        self.replace_ds(f_ana, f_rst)
+        # Generic rst file format
+        # ------------------------
+        f_rst = self.at_cycle(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
+        self.replace_ocn(f_rst)
 
 # --------------------------------------------------------------------------------------------------

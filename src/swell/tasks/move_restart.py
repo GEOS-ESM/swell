@@ -89,14 +89,14 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
     def execute(self):
 
-        self.logger.info('Obtaining GEOS restarts for the coupled simulation')
+        self.logger.info('Moving GEOS restarts for the next simulation cycle')
 
         self.cycle_dir = self.config_get('cycle_dir')
 
-        # Previous cycle folder name
-        # ----------------------------------
-        self.forecast_duration = self.config_get('forecast_duration')
-        self.next_cycle_dir = self.next_cycle(self.cycle_dir, self.forecast_duration)
+        # Next cycle folder name
+        # -----------------------
+        self.window_length = self.config_get('window_length')
+        self.next_cycle_dir = self.adjacent_cycle(self.cycle_dir, self.window_length)
 
         # Create cycle_dir and INPUT
         # ----------------------------

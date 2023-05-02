@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from datetime import datetime as dt
 import os
 
 from swell.tasks.base.task_base import taskBase
@@ -59,16 +60,37 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         self.run_executable(self.cycle_dir, np, geos_executable_path, geos_modules_path, output_log_file)
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
-        # Clear the previous INPUT folder
-        # -------------------------------
+        # Clear the previous INPUT folder once the forecast is done
+        # ---------------------------------------------------------
         if os.path.exists(self.at_cycle('INPUT')):
             shutil.rmtree(self.at_cycle('INPUT'))
 
+        # Current and restart time objects
+        # --------------------------------
+        current_cycle = self.config_get('current_cycle')
+        cc_dto = dt.strptime(current_cycle, self.get_datetime_format())
+
+        #######################################################################
+        # Create links for SOCA to read
+        #######################################################################
+        # Option #1:
         # Link restart to history output
         # TODO: this will only work for 3Dvar
-        # ------------------------------
-        src = self.at_cycle('his_2021_06_21_06.nc')
-        dst = self.at_cycle('MOM6.res.20210621T060000Z.nc')
+        # ----------------------------------
+        # src = self.at_cycle('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
+
+        # Option #2:
+        # Link restart to restart
+        # GEOS restarts have seconds in their filename
+        # --------------------------------------------
+        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+        seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
+
+        # Generic rst file format
+        # ------------------------
+        src = self.at_cycle(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
+        dst = self.at_cycle('MOM6.res.' + current_cycle + '.nc')
 
         if os.path.exists(src):
             self.geos_linker(src, dst)
