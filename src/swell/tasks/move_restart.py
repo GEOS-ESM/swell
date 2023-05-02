@@ -37,14 +37,20 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
     def cycling_restarts(self):
 
-        # Get restarts (checkpoints) from the previous cycle dir
+        # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
-        self.logger.info('GEOS restarts will be moved to the next cycle dir')
+        self.logger.info('GEOS restarts are being moved to the next cycle dir')
 
-        src = self.at_cycle('*_checkpoint')
+        src = self.at_cycle(self.rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
+
+        # This part ensures forecast GEOS runs even without timestamped restarts
+        # ----------------------------------------------------------------------
+        if not list(glob.glob(src)):
+            self.logger.info('Using _checkpoint restarts without timestamps')
+            src = self.at_cycle('*_checkpoint')
 
         for filepath in list(glob.glob(src)):
-            filename = os.path.basename(filepath)
+            filename = os.path.basename(filepath).split('.')[0]
             self.move_to_next(filepath, self.at_next_cycle(filename))
 
         self.move_to_next(self.at_cycle('tile.bin'), self.at_next_cycle('tile.bin'))
@@ -89,6 +95,12 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
     def execute(self):
 
+        """
+        Moving correct restart files (i.e., _checkpoint) to the next cycle directory.
+        We are using AGCM.rc checkpoint option, which creates time stamped _checkpoint
+        files requiring additional filename handling.
+        """
+
         self.logger.info('Moving GEOS restarts for the next simulation cycle')
 
         self.cycle_dir = self.config_get('cycle_dir')
@@ -102,6 +114,11 @@ class MoveRestart(GeosTasksRunExecutableBase):
         # ----------------------------
         if not os.path.exists(self.at_next_cycle('INPUT')):
             os.makedirs(self.at_next_cycle('INPUT'), 0o755, exist_ok=True)
+
+        # GEOS restarts have seconds in their filename
+        # --------------------------------------------
+        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        self.rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
 
         self.cycling_restarts()
         self.rename_checkpoints()

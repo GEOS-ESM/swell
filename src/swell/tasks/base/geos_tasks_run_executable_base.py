@@ -158,6 +158,8 @@ class GeosTasksRunExecutableBase(taskBase):
         if dst_dir is None:
             dst_dir = self.cycle_dir
 
+        dst = os.path.basename(dst)
+
         # Assign dst name if non-existent
         # ------------------------------
         if dst == '':

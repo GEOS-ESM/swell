@@ -65,18 +65,16 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         if os.path.exists(self.at_cycle('INPUT')):
             shutil.rmtree(self.at_cycle('INPUT'))
 
-        # Current and restart time objects
-        # --------------------------------
-        current_cycle = self.config_get('current_cycle')
-        cc_dto = dt.strptime(current_cycle, self.get_datetime_format())
-
         #######################################################################
         # Create links for SOCA to read
         #######################################################################
+        current_cycle = self.config_get('current_cycle')
+
         # Option #1:
         # Link restart to history output
         # TODO: this will only work for 3Dvar
         # ----------------------------------
+        # cc_dto = dt.strptime(current_cycle, self.get_datetime_format())
         # src = self.at_cycle('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
         # Option #2:
@@ -90,7 +88,7 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         # Generic rst file format
         # ------------------------
         src = self.at_cycle(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
-        dst = self.at_cycle('MOM6.res.' + current_cycle + '.nc')
+        dst = 'MOM6.res.' + current_cycle + '.nc'
 
         if os.path.exists(src):
             self.geos_linker(src, dst)
