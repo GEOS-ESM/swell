@@ -46,8 +46,8 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
         # TODO/WARNING: This method only works for read + write mode
         # ----------------------------------------------------------
-        ds_ana.renameDimension('xaxis_1','long')
-        ds_ana.renameDimension('yaxis_1','latq')
+        ds_ana.renameDimension('xaxis_1','lonh')
+        ds_ana.renameDimension('yaxis_1','lath')
         ds_ana.renameDimension('zaxis_1','Layer')
 
         for soca_var in self.soca_ana:
