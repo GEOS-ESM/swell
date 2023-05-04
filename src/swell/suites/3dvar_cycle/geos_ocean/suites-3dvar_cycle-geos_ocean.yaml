@@ -15,7 +15,7 @@ window_length:
 horizontal_resolution:
   default_value: '72x36'
   prompt: What resolution for the hor. res?
-  options: ['72x36', '360x320', '1440x1080']
+  options: ['72x36', '540x458']
   type: string-drop-list
 
 # Vertical resolution
@@ -72,16 +72,6 @@ observations:
   options: use_method
   type: string-check-list
 
-  # Processor layout
-# npx_proc:
-#   default_value: '24'
-#   prompt: What processor layout (x-direction) per cube face?
-#   type: string
-# npy_proc:
-#   default_value: '1'
-#   prompt: What processor layout (y-direction) per cube face?
-#   type: string
-
 # Fixed options (user not prompted for these)
 # -------------------------------------------
 fixed_options:
@@ -97,9 +87,6 @@ fixed_options:
   gradient_norm_reduction:
     default_value: 1e-10
     prompt: Threshold for convergence of the minimization
-  # total_processors:
-  #   default_value:  'npx_proc * npy_proc'
-  #   prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT3H
     prompt: Time from beginning to middle of the window

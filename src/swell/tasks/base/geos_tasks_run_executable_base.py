@@ -210,19 +210,23 @@ class GeosTasksRunExecutableBase(taskBase):
         duration = isodate.parse_duration(iso_duration)
         duration_seconds = duration.total_seconds()
 
-        # RESTART shall be produced at the half of the forecast cycle
-        # ----------------------------------------------------------
+        # RESTART is produced at the half of the forecast cycle
+        # -----------------------------------------------------
         if half:
             duration_seconds = duration_seconds / 2
+
+        # Calculate days in case of long forecast time
+        # --------------------------------------------
+        days, remainder = divmod(duration_seconds, 60*60*24)
 
         # Convert the duration to a string in the format of "HHMMSS" to be used
         # with AGCM.rc and CAP.rc
         # ---------------------------------------------------------------------
-        hours, remainder = divmod(duration_seconds, 3600)
+        hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
-        time_string = f"{int(hours):02d}{int(minutes):02d}{int(seconds):02d}"
+        time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
 
-        return time_string
+        return time_string, days
 
     # ----------------------------------------------------------------------------------------------
 
