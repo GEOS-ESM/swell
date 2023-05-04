@@ -51,14 +51,13 @@ observations:
   - adt_c2_egm2008
   - adt_j3_egm2008
   - adt_sa_egm2008
-  # Soon to be available with a standing by SOCA update
-  # - sst_ostia
+  - sst_ostia
   # - salt_profile_fnmoc #this has MarineVertInterp causing problems
-  # - sss_smos_esa
-  # - sss_trak_fnmoc
-  # - sst_gmi_l3u
-  # - sst_ship_fnmoc
-  # - sst_trak_fnmoc
+  - sss_smos_esa
+  - sss_trak_fnmoc
+  - sst_gmi_l3u
+  - sst_ship_fnmoc
+  - sst_trak_fnmoc
   # - temp_profile_fnmoc
 
   # - adt_coperl4 (non existing obs?)

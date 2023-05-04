@@ -8,13 +8,22 @@
 # --------------------------------------------------------------------------------------------------
 
 from datetime import datetime as dt
-import xarray as xr
+import netCDF4 as nc
+import shutil
 
 from swell.tasks.base.geos_tasks_run_executable_base import *
 
 
 # --------------------------------------------------------------------------------------------------
 
+# TODO: This could be restructured according to model type (MOM6, CICE etc.)
+# --------------------------------------------------------------------------
+SOCA_dict = {
+    'hocn': 'h',
+    'socn': 'Salt',
+    'ssh': 'ave_ssh',
+    'tocn': 'Temp',
+}
 
 class PrepareAnalysis(GeosTasksRunExecutableBase):
 
@@ -30,22 +39,27 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
         # ---------------------------
         f_ana = self.at_cycle('ocn.' + self.exp_id + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc'))
 
-        # Update restart with analysis
-        # ----------------------------
-        ds2 = xr.open_dataset(f_rst, decode_cf=False)
+        # Open read and write and rename dimensions
+        # -----------------------------------------
+        ds_ana = nc.Dataset(f_ana, 'r+')
+        ds_rst = nc.Dataset(f_rst, 'r+')
 
-        # This automatically closes the dataset after use
-        # -----------------------------------------------
-        with xr.open_dataset(f_ana, decode_cf=False) as ds1:
-            ds1 = ds1.rename({'xaxis_1': 'lonh', 'yaxis_1': 'lath', 'zaxis_1': 'Layer'})
-            ds1 = ds1.assign_coords(coords=ds2.coords)
+        # TODO/WARNING: This method only works for read + write mode
+        # ----------------------------------------------------------
+        ds_ana.renameDimension('xaxis_1','long')
+        ds_ana.renameDimension('yaxis_1','latq')
+        ds_ana.renameDimension('zaxis_1','Layer')
 
-            # Replace restart variables with analysis
-            # ---------------------------------------
-            for var in ds1.data_vars:
-                ds2[var] = ds1[var]
+        for soca_var in self.soca_ana:
+            var = SOCA_dict[soca_var]
+            self.logger.info(f'Updating {var} in restart')
 
-        ds2.to_netcdf(self.at_cycle(['RESTART', 'MOM.res.nc']), mode='w')
+            ds_rst.variables[var][:] = ds_ana.variables[var][:]
+            ds_rst.sync()
+        ds_ana.close()
+        ds_rst.close()
+
+        shutil.move(f_rst, self.at_cycle(['RESTART', 'MOM.res.nc']))
 
     # --------------------------------------------------------------------------------------------------
 
@@ -59,6 +73,7 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
         self.cycle_dir = self.config_get('cycle_dir')
         self.exp_id = self.config_get('experiment_id')
+        self.soca_ana = self.config_get('analysis_variables')
 
         # Current and restart time objects
         # --------------------------------
