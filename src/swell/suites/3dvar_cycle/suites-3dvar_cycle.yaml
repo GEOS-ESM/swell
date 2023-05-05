@@ -6,7 +6,7 @@ start_cycle_point:
 
 # Cycle final point
 final_cycle_point:
-  default_value: '2021-06-22T06:00:00Z'
+  default_value: '2021-06-21T18:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
@@ -30,9 +30,9 @@ model_components:
   options: use_method
   type: file-check-list
 
+#-------------------------------------------------------------------------------
 # GEOS Settings
 #-------------------------------------------------------------------------------
-
 # Geos build system
 geos_build_method:
   default_value: use_existing
@@ -102,9 +102,9 @@ geos_gcm_tag:
   options: ['v10.25.1']
   type: string-drop-list
 
+#-------------------------------------------------------------------------------
 # JEDI Settings
 #-------------------------------------------------------------------------------
-
 # Jedi build system
 jedi_build_method:
   default_value: use_existing
@@ -133,7 +133,6 @@ existing_build_directory:
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------
-
 fixed_options:
   data_assimilation_run:
     default_value: true

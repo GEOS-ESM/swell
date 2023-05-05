@@ -57,7 +57,8 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Run the GEOS executable
         # -----------------------
-        self.run_executable(self.cycle_dir, np, geos_executable_path, geos_modules_path, output_log_file)
+        self.run_executable(self.cycle_dir, np, geos_executable_path,
+                            geos_modules_path, output_log_file)
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
         # Clear the previous INPUT folder once the forecast is done

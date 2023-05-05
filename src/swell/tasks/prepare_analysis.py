@@ -25,6 +25,7 @@ SOCA_dict = {
     'tocn': 'Temp',
 }
 
+
 class PrepareAnalysis(GeosTasksRunExecutableBase):
 
     # --------------------------------------------------------------------------------------------------
@@ -37,7 +38,8 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
         # -----------------------------------------------------------------
         # Generic analysis file format
         # ---------------------------
-        f_ana = self.at_cycle('ocn.' + self.exp_id + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc'))
+        f_ana = self.at_cycle('ocn.' + self.exp_id +
+                              self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc'))
 
         # Open read and write and rename dimensions
         # -----------------------------------------
@@ -46,9 +48,9 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
         # TODO/WARNING: This method only works for read + write mode
         # ----------------------------------------------------------
-        ds_ana.renameDimension('xaxis_1','lonh')
-        ds_ana.renameDimension('yaxis_1','lath')
-        ds_ana.renameDimension('zaxis_1','Layer')
+        ds_ana.renameDimension('xaxis_1', 'lonh')
+        ds_ana.renameDimension('yaxis_1', 'lath')
+        ds_ana.renameDimension('zaxis_1', 'Layer')
 
         for soca_var in self.soca_ana:
             var = SOCA_dict[soca_var]

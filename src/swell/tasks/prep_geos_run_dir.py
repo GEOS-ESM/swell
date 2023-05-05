@@ -314,7 +314,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # AGCM.rc might requires some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        [time_string, *_]  = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
+        [time_string, *_] = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
 
         rcdict['RECORD_FREQUENCY'] = time_string
         rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
@@ -331,14 +331,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
         self.logger.info('Modifying CAP.rc')
-        time_string, days = self.iso_to_time_str(self.config_get('forecast_duration'))
+        [time_string, days] = self.iso_to_time_str(self.config_get('forecast_duration'))
 
-        # Prepend day information if duration is longer than a day
-        # --------------------------------------------------------
-        if days > 0.:
-            time_string = f'0000{int(days):02d} ' + time_string
-        else:
-            time_string = '000000 ' + time_string
+        # Prepend day information
+        # -----------------------
+        time_string = f'0000{int(days):02d} ' + time_string
 
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = time_string
