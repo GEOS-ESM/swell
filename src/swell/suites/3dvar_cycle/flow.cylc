@@ -69,16 +69,16 @@
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveRestart[-PT6H]-{{model_component}} => PrepGeosRunDir-{{model_component}}
+            MoveRestart-{{model_component}}[-PT6H] => PrepGeosRunDir-{{model_component}}
             PrepGeosRunDir-{{model_component}} => RunGeosExecutable-{{model_component}}
 
             # Data assimilation things
             GetObservations-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}
-            RunGeosExecutable[-PT6H]-{{model_component}} => StageJedi-{{model_component}}
+            RunGeosExecutable-{{model_component}}[-PT6H] => StageJedi-{{model_component}}
 
             # Run the analysis
-            RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable-{{model_component}} => StageJediCycle-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -164,22 +164,22 @@
 
     {% for model_component in model_components %}
 
-    [[PrepGeosRunDir]]
+    [[PrepGeosRunDir-{{model_component}}]]
         script = "swell_task PrepGeosRunDir $config -d $datetime -m {{model_component}}"
 
-    [[RemoveGeosRunDir]]
+    [[RemoveGeosRunDir-{{model_component}}]]
         script = "swell_task RemoveGeosRunDir $config -d $datetime -m {{model_component}}"
 
-    [[GetRestart]]
+    [[GetRestart-{{model_component}}]]
         script = "swell_task GetRestart $config -d $datetime -m {{model_component}}"
 
-    [[MoveRestart]]
+    [[MoveRestart-{{model_component}}]]
         script = "swell_task MoveRestart $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart]]
+    [[SaveRestart-{{model_component}}]]
         script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
 
-    [[RunGeosExecutable]]
+    [[RunGeosExecutable-{{model_component}}]]
         script = "swell_task RunGeosExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
@@ -189,6 +189,7 @@
             --job-name = RunGeosExecutable
             --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunGeosExecutable"]["constraint"]}}
 
     [[StageJedi-{{model_component}}]]
         script = "swell_task StageJedi $config -m {{model_component}}"
