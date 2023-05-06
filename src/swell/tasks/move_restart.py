@@ -21,7 +21,7 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_next_cycle(self, paths):
+    def at_next_geosdir(self, paths):
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -30,7 +30,7 @@ class MoveRestart(GeosTasksRunExecutableBase):
 
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(self.next_cycle_dir, *paths)
+        full_path = os.path.join(self.next_geosdir, *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
@@ -41,27 +41,27 @@ class MoveRestart(GeosTasksRunExecutableBase):
         # ------------------------------------------------------
         self.logger.info('GEOS restarts are being moved to the next cycle dir')
 
-        src = self.at_cycle(self.rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
+        src = self.at_cycle_geosdir(self.rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
 
         # This part ensures forecast GEOS runs even without timestamped restarts
         # ----------------------------------------------------------------------
         if not list(glob.glob(src)):
             self.logger.info('Using _checkpoint restarts without timestamps')
-            src = self.at_cycle('*_checkpoint')
+            src = self.at_cycle_geosdir('*_checkpoint')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            self.move_to_next(filepath, self.at_next_cycle(filename))
+            self.move_to_next(filepath, self.at_next_geosdir(filename))
 
-        self.move_to_next(self.at_cycle('tile.bin'), self.at_next_cycle('tile.bin'))
+        self.move_to_next(self.at_cycle_geosdir('tile.bin'), self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
-        src = self.at_cycle(['RESTART', 'MOM.res*nc'])
+        src = self.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.move_to_next(filepath, self.at_next_cycle(['INPUT', filename]))
+            self.move_to_next(filepath, self.at_next_geosdir(['INPUT', filename]))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -79,11 +79,9 @@ class MoveRestart(GeosTasksRunExecutableBase):
     def rename_checkpoints(self):
 
         # Rename _checkpoint files to _rst
-        # --------------------------------
-
-        # Move to the cycle directory
-        # ---------------------------
-        os.chdir(self.next_cycle_dir)
+        # Move to the next geos cycle directory
+        # -------------------------------------
+        os.chdir(self.next_geosdir)
 
         self.logger.info('Renaming *_checkpoint files to *_rst')
         try:
@@ -109,11 +107,12 @@ class MoveRestart(GeosTasksRunExecutableBase):
         # -----------------------
         self.window_length = self.config_get('window_length')
         self.next_cycle_dir = self.adjacent_cycle(self.cycle_dir, self.window_length)
+        self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
 
         # Create cycle_dir and INPUT
         # ----------------------------
-        if not os.path.exists(self.at_next_cycle('INPUT')):
-            os.makedirs(self.at_next_cycle('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.at_next_geosdir('INPUT')):
+            os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
 
         # GEOS restarts have seconds in their filename
         # --------------------------------------------

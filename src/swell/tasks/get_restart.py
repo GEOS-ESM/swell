@@ -35,11 +35,11 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.copy_to_cycle(filepath, self.at_cycle(filename))
+            self.copy_to_geosdir(filepath, self.at_cycle_geosdir(filename))
 
         src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                            'geos_ocean', 'model', 'geos', self.rst_path, 'tile.bin')
-        self.copy_to_cycle(src, self.at_cycle('tile.bin'))
+        self.copy_to_geosdir(src, self.at_cycle_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
@@ -48,7 +48,7 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.copy_to_cycle(filepath, self.at_cycle(['INPUT', filename]))
+            self.copy_to_geosdir(filepath, self.at_cycle_geosdir(['INPUT', filename]))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -65,8 +65,8 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         # Create cycle_dir and INPUT
         # ----------------------------
-        if not os.path.exists(self.at_cycle('INPUT')):
-            os.makedirs(self.at_cycle('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.at_cycle_geosdir('INPUT')):
+            os.makedirs(self.at_cycle_geosdir('INPUT'), 0o755, exist_ok=True)
 
         # rst files folder
         # ----------------

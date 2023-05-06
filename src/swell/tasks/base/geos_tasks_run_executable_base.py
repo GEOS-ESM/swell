@@ -68,6 +68,8 @@ class GeosTasksRunExecutableBase(taskBase):
 
     def at_cycle(self, paths):
 
+        self.cycle_dir = self.config_get('cycle_dir')
+
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
         if isinstance(paths, str):
@@ -80,14 +82,26 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def copy_to_cycle(self, src_dir, dst_dir=None):
+    def at_cycle_geosdir(self, paths=[]):
 
-        self.cycle_dir = self.config_get('cycle_dir')
+        # Ensure what we have is a list (paths should be a list)
+        # ------------------------------------------------------
+        if isinstance(paths, str):
+            paths = [paths]
+
+        # Combining list of paths with cycle dir for script brevity
+        # ---------------------------------------------------------
+        full_path = os.path.join(self.cycle_dir, 'geosdir', *paths)
+        return full_path
+
+    # ----------------------------------------------------------------------------------------------
+
+    def copy_to_geosdir(self, src_dir, dst_dir=None):
 
         # Destination is always (time dependent) cycle_dir if None
         # --------------------------------------------------------
         if dst_dir is None:
-            dst_dir = self.cycle_dir
+            dst_dir = self.at_cycle_geosdir()
 
         try:
             if not os.path.isfile(src_dir):
@@ -109,7 +123,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # Define the command to source the Bash script and run the Python command
         # -----------------------------------------------------------------------
         command = f'source {script_src}/g5_modules.sh \n' + \
-            f'cd {self.cycle_dir} \n' + \
+            f'cd {self.at_cycle_geosdir()} \n' + \
             f'{script_src}/{script} {input}'
 
         # Containerized run of the GEOS build steps
@@ -127,7 +141,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # ---------------------------
         rcdict = self.rc_to_bool(rcdict)
 
-        self.cycle_dir = self.config_get('cycle_dir')
+        # self.cycle_dir = self.config_get('cycle_dir')
 
         # GEOS Chem filenames, shares same keys as rcdict
         # -----------------------------------------------
@@ -142,7 +156,7 @@ class GeosTasksRunExecutableBase(taskBase):
         }
 
         for key, value in chem_files.items():
-            fname = self.at_cycle(value)
+            fname = self.at_cycle_geosdir(value)
 
             if not rcdict[key] and os.path.isfile(fname):
                 self.logger.info(' Renaming file: '+fname)
@@ -156,7 +170,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # ------------------------------
 
         if dst_dir is None:
-            dst_dir = self.cycle_dir
+            dst_dir = self.at_cycle_geosdir()
 
         dst = os.path.basename(dst)
 
@@ -183,7 +197,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         # Obtain time information from any of the rst files listed by glob
         # ----------------------------------------------------------------
-        src = self.at_cycle('*_rst')
+        src = self.at_cycle_geosdir('*_rst')
 
         # Open any _rst file in cycle dir to read time and units
         # ------------------------------------------------------
@@ -347,7 +361,7 @@ class GeosTasksRunExecutableBase(taskBase):
         # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
         # -------------------------------------------------------------
 
-        nml1 = f90nml.read(self.at_cycle('input.nml'))
+        nml1 = f90nml.read(self.at_cycle_geosdir('input.nml'))
 
         if not cold_restart:
             self.logger.info('Hot start, will require rst/checkpoint files')
@@ -356,7 +370,7 @@ class GeosTasksRunExecutableBase(taskBase):
             # ----------------------------------------------
             nml1['mom_input_nml']['input_filename'] = 'r'
 
-        nml2 = f90nml.read(self.at_cycle('fvcore_layout.rc'))
+        nml2 = f90nml.read(self.at_cycle_geosdir('fvcore_layout.rc'))
 
         # Combine the dictionaries and write the new input.nml
         # ---------------------------------------------------
@@ -364,7 +378,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         self.logger.info('Combining input.nml and fvcore_layout.rc')
 
-        with open(self.at_cycle('input.nml'), 'w') as f:
+        with open(self.at_cycle_geosdir('input.nml'), 'w') as f:
             f90nml.write(nml_comb, f)
 
     # ----------------------------------------------------------------------------------------------

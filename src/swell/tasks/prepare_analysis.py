@@ -61,7 +61,8 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
         ds_ana.close()
         ds_rst.close()
 
-        shutil.move(f_rst, self.at_cycle(['RESTART', 'MOM.res.nc']))
+        shutil.move(f_rst, self.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
+        # shutil.move(f_rst, self.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
 
     # --------------------------------------------------------------------------------------------------
 
@@ -90,7 +91,7 @@ class PrepareAnalysis(GeosTasksRunExecutableBase):
 
         # Generic rst file format
         # ------------------------
-        f_rst = self.at_cycle(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
+        f_rst = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
         self.replace_ocn(f_rst)
 
 # --------------------------------------------------------------------------------------------------

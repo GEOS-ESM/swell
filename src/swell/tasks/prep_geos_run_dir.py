@@ -31,8 +31,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         if not self.cap_dict['USE_EXTDATA2G']:
             self.logger.info('Generating ExtData.rc')
-            rc_paths = self.at_cycle('*_ExtData.rc')
-            with open(self.at_cycle('ExtData.rc'), 'w') as extdata:
+            rc_paths = self.at_cycle_geosdir('*_ExtData.rc')
+            with open(self.at_cycle_geosdir('ExtData.rc'), 'w') as extdata:
                 for filepath in list(glob.glob(rc_paths)):
                     with open(filepath, 'r') as file:
                         extdata.write(file.read())
@@ -48,12 +48,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
                 pattern = r'(qfed2.emis_.*).006.'
                 replacement = r'\g<1>.061.'
                 self.logger.info('Switching to MODIS v6.1 (OPS_EMISSIONS)')
-                self.resub(self.at_cycle('ExtData.rc'), pattern, replacement)
+                self.resub(self.at_cycle_geosdir('ExtData.rc'), pattern, replacement)
         else:
             self.logger.info('Creating extdata.yaml')
             self.exec_python(self.geosbin, 'construct_extdata_yaml_list.py',
                              './GEOS_ChemGridComp.rc')
-            open(self.at_cycle('ExtData.rc'), 'w').close()
+            open(self.at_cycle_geosdir('ExtData.rc'), 'w').close()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -76,23 +76,23 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         d1 = dt.strptime('01032000', '%d%m%Y')
         AGCM_LM = self.agcm_dict['AGCM_LM']
 
-        src_dir = self.at_cycle(['AMIP', '*'])
+        src_dir = self.at_cycle_geosdir(['AMIP', '*'])
 
         if not self.cap_dict['USE_EXTDATA2G']:
             if self.fc_dto < d1:
-                src_dir = self.at_cycle(['AMIP.20C', '*'])
+                src_dir = self.at_cycle_geosdir(['AMIP.20C', '*'])
 
         for filepath in list(glob.glob(src_dir)):
             filename = os.path.basename(filepath)
-            self.copy_to_cycle(filepath)
+            self.copy_to_geosdir(filepath)
 
             # Replace source according to number of atm. vertical layers
             # ----------------------------------------------------------
             if AGCM_LM != '72':
                 self.logger.info(f"Atm. vertical layers mismatch: {AGCM_LM} vs. 72")
                 self.logger.info(' Modifying AMIP file ' + filename)
-                self.resub(self.at_cycle(filename), 'L72', 'L' + str(AGCM_LM))
-                self.resub(self.at_cycle(filename), 'z72', 'z' + str(AGCM_LM))
+                self.resub(self.at_cycle_geosdir(filename), 'L72', 'L' + str(AGCM_LM))
+                self.resub(self.at_cycle_geosdir(filename), 'z72', 'z' + str(AGCM_LM))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -149,7 +149,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]):
                 'species.data',
             os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
-            os.path.join(geos_chmdir, '*'): self.at_cycle('ExtData'),
+            os.path.join(geos_chmdir, '*'): self.at_cycle_geosdir('ExtData'),
             os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
@@ -182,8 +182,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Fetch more resolution dependent files
         # -------------------------------------
-        self.copy_to_cycle(os.path.join(geos_obcsdir, 'INPUT'),
-                           self.at_cycle('INPUT'))
+        self.copy_to_geosdir(os.path.join(geos_obcsdir, 'INPUT'),
+                             self.at_cycle_geosdir('INPUT'))
 
         # TODO: Temporary fix for some input files in gcm_run.j
         # -----------------------------------------------------
@@ -194,12 +194,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                                'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_ptemp_monthly.nc')
-            self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_ptemp_monthly.nc']))
+            self.copy_to_geosdir(src, self.at_cycle_geosdir(['INPUT', 'woa13_ptemp_monthly.nc']))
 
             src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                                'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_s_monthly.nc')
-            self.copy_to_cycle(src, self.at_cycle(['INPUT', 'woa13_s_monthly.nc']))
+            self.copy_to_geosdir(src, self.at_cycle_geosdir(['INPUT', 'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -245,7 +245,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:
-            self.copy_to_cycle(src_dir)
+            self.copy_to_geosdir(src_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -291,12 +291,12 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             # --------------------------------------------
             pattern = r'^(WSUB_NATURE.*)ExtData.*'
             replacement = r'\g<1>/dev/null'
-            self.resub(self.at_cycle('WSUB_ExtData.rc'), pattern, replacement)
+            self.resub(self.at_cycle_geosdir('WSUB_ExtData.rc'), pattern, replacement)
 
         else:
             self.logger.info('Modifying WSUB_ExtData.yaml')
 
-            with open(self.at_cycle('WSUB_ExtData.yaml'), 'r') as f:
+            with open(self.at_cycle_geosdir('WSUB_ExtData.yaml'), 'r') as f:
                 wsub = yaml.safe_load(f)
 
             # Modifying one particular value
@@ -304,7 +304,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             wsub['Exports']['WSUB_NATURE']['collection'] = '/dev/null'
 
             # Write the updated YAML back to the file
-            with open(self.at_cycle('WSUB_ExtData.yaml'), 'w') as f:
+            with open(self.at_cycle_geosdir('WSUB_ExtData.yaml'), 'w') as f:
                 yaml.dump(wsub, f, sort_keys=False)
 
     # ----------------------------------------------------------------------------------------------
@@ -387,8 +387,8 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
-        self.cap_dict = self.parse_rc(self.at_cycle('CAP.rc'))
-        self.cap_dict = self.rewrite_cap(self.cap_dict, self.at_cycle('CAP.rc'))
+        self.cap_dict = self.parse_rc(self.at_cycle_geosdir('CAP.rc'))
+        self.cap_dict = self.rewrite_cap(self.cap_dict, self.at_cycle_geosdir('CAP.rc'))
 
         # This ensures a bool entry for USE_EXTDATA2G exists
         # --------------------------------------------------
@@ -396,7 +396,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Link replay files if active TODO
         # --------------------------------
-        self.agcm_d = self.parse_rc(self.at_cycle('AGCM.rc'))
+        self.agcm_d = self.parse_rc(self.at_cycle_geosdir('AGCM.rc'))
         self.agcm_dict = self.rc_to_bool(self.agcm_d)
 
         if 'REPLAY_MODE' in self.agcm_dict:
@@ -406,11 +406,11 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Set AGCM.rc record ref_date to fcst start time
         # -------------------------------------------------------------------
         if 'RECORD_FREQUENCY' in self.agcm_dict:
-            self.rewrite_agcm(self.agcm_dict, self.at_cycle('AGCM.rc'))
+            self.rewrite_agcm(self.agcm_dict, self.at_cycle_geosdir('AGCM.rc'))
 
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------
-        self.gcm_dict = self.parse_gcmrun(self.at_cycle('gcm_run.j'))
+        self.gcm_dict = self.parse_gcmrun(self.at_cycle_geosdir('gcm_run.j'))
 
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # ----------------------------------------------------------------
@@ -423,7 +423,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Rename GEOS Chem files
         # ----------------------
-        chem_dict = self.parse_rc(self.at_cycle('GEOS_ChemGridComp.rc'))
+        chem_dict = self.parse_rc(self.at_cycle_geosdir('GEOS_ChemGridComp.rc'))
         self.geos_chem_rename(chem_dict)
 
         # Rename settings according to .rc switches
@@ -445,7 +445,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
 
         # Create cap_restart
         # ------------------
-        with open(self.at_cycle('cap_restart'), 'w') as file:
+        with open(self.at_cycle_geosdir('cap_restart'), 'w') as file:
             file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
 
         # Run bundleParser

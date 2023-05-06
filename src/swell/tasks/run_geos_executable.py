@@ -30,12 +30,12 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Create RESTART folder
         # ---------------------
-        if not os.path.exists(self.at_cycle('RESTART')):
-            os.mkdir(self.at_cycle('RESTART'))
+        if not os.path.exists(self.at_cycle_geosdir('RESTART')):
+            os.mkdir(self.at_cycle_geosdir('RESTART'))
 
         # Output log file
         # ---------------
-        output_log_file = self.at_cycle('geos_out.log')
+        output_log_file = self.at_cycle_geosdir('geos_out.log')
 
         # Compute number of processors
         # ----------------------------
@@ -57,14 +57,14 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Run the GEOS executable
         # -----------------------
-        self.run_executable(self.cycle_dir, np, geos_executable_path,
+        self.run_executable(self.at_cycle_geosdir(), np, geos_executable_path,
                             geos_modules_path, output_log_file)
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
         # Clear the previous INPUT folder once the forecast is done
         # ---------------------------------------------------------
-        if os.path.exists(self.at_cycle('INPUT')):
-            shutil.rmtree(self.at_cycle('INPUT'))
+        # if os.path.exists(self.at_cycle_geosdir('INPUT')):
+        #     shutil.rmtree(self.at_cycle_geosdir('INPUT'))
 
         #######################################################################
         # Create links for SOCA to read
@@ -76,7 +76,7 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         # TODO: this will only work for 3Dvar
         # ----------------------------------
         # cc_dto = dt.strptime(current_cycle, self.get_datetime_format())
-        # src = self.at_cycle('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        # src = self.at_cycle_geosdir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
         # Option #2:
         # Link restart to restart
@@ -86,12 +86,12 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
-        # Generic rst file format
-        # ------------------------
-        src = self.at_cycle(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
+        # Generic rst file format for SOCA
+        # --------------------------------
+        src = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
         dst = 'MOM6.res.' + current_cycle + '.nc'
 
         if os.path.exists(src):
-            self.geos_linker(src, dst)
+            self.geos_linker(src, dst, dst_dir=self.cycle_dir)
 
 # --------------------------------------------------------------------------------------------------
