@@ -24,6 +24,7 @@ valid_tasks = [
   'ObsProcessSetup',
   'PrepareAnalysis',
   'PrepGeosRunDir',
+  'RemoveGeosRunDir',
   'RunGeosExecutable',
   'RunJediHofxExecutable',
   'RunJediVariationalExecutable',

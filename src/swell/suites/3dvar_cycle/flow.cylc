@@ -78,7 +78,6 @@
             # Data assimilation things
             GetObservations-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}
-            # RunGeosExecutable[-P1D] => StageJedi-{{model_component}}
 
             # Run the analysis
             RunGeosExecutable-{{model_component}} => StageJediCycle-{{model_component}}
@@ -106,7 +105,8 @@
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Remove Run Directory
-            # MoveRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveGeosRunDir
+            # MoveRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveGeosRunDir-{{model_component}}
+            MoveRestart-{{model_component}} => RemoveGeosRunDir-{{model_component}}
 
             # Clean up large files
             # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveGeosRunDir =>
