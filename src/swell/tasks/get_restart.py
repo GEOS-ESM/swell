@@ -56,10 +56,6 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
-        # Create config get object for script brevity
-        # -------------------------------------------
-        scg = self.config_get
-
         self.cycle_dir = self.config_get('cycle_dir')
         self.swell_static_files = self.config_get('swell_static_files')
 

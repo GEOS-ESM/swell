@@ -56,7 +56,8 @@ class MoveRestart(GeosTasksRunExecutableBase):
         self.move_to_next(self.at_cycle_geosdir('tile.bin'), self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
-        # -------------------------------------------
+        # TODO: this could be forced to be a single file (MOM_input option)
+        # -----------------------------------------------------------------
         src = self.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
@@ -115,7 +116,8 @@ class MoveRestart(GeosTasksRunExecutableBase):
             os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
 
         # GEOS restarts have seconds in their filename
-        # --------------------------------------------
+        # TODO: this requires a default if the task is not attached a model (geos_ocean or atm.)
+        # -------------------------------------------------------------------------------------
         an_fcst_offset = self.config_get('analysis_forecast_window_offset')
         self.rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
 

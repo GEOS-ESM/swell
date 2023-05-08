@@ -165,18 +165,19 @@ class Config():
         current_cycle_dto = datetime.datetime.strptime(self.get('current_cycle'),
                                                        self.__datetime_swl_format__)
 
+        # Obsolete defaults are provided for GEOS tasks not to fail
         # Type of data assimilation window (3D or 4D)
-        window_type = self.get('window_type')
+        window_type = self.get('window_type', '3D')
 
         # Time from beginning of the window to the middle of the window
-        window_offset = self.get('window_offset')
+        window_offset = self.get('window_offset', 'PT3H')
         window_offset_dur = isodate.parse_duration(window_offset)
 
         # Compute window beginning time
         window_begin_dto = current_cycle_dto - window_offset_dur
 
         # Background time for satbias files
-        background_time_offset = self.get('background_time_offset')
+        background_time_offset = self.get('background_time_offset', 'PT3H')
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
 
         background_time_dto = current_cycle_dto - background_time_offset_dur

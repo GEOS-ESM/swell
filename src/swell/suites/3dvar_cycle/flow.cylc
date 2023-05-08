@@ -44,9 +44,6 @@
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
 
-            # JEDI cannot run without code
-            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-geos_ocean
-
             {% for model_component in model_components %}
 
             # Need first set of restarts to run model
@@ -54,28 +51,34 @@
 
             # Model cannot run without code
             BuildGeosByLinking? | BuildGeos => RunGeosExecutable-{{model_component}}
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{{model_component}}
+
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-geos_ocean
-            {% endfor %}
+            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # First cycle dependencies for JEDI
-            # CloneJedi => StageJedi-geos_ocean => RunJediVariationalExecutable-geos_ocean
-            # GetBackground-geos_ocean => RunJediVariationalExecutable-geos_ocean
+            # CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            # GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            {% endfor %}
         """
 
-        T00,T06,T12,T18 = """
+        # T00,T06,T12,T18 = """
+        T12 = """
         {% for model_component in model_components %}
 
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveRestart-{{model_component}}[-PT6H] => PrepGeosRunDir-{{model_component}}
+            MoveRestart-{{model_component}}[-P1D] => PrepGeosRunDir-{{model_component}}
+            # MoveRestart-{{model_component}}[-PT6H] => PrepGeosRunDir-{{model_component}}
             PrepGeosRunDir-{{model_component}} => RunGeosExecutable-{{model_component}}
 
             # Data assimilation things
             GetObservations-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}
-            RunGeosExecutable-{{model_component}}[-PT6H] => StageJedi-{{model_component}}
+            # RunGeosExecutable[-P1D] => StageJedi-{{model_component}}
 
             # Run the analysis
             RunGeosExecutable-{{model_component}} => StageJediCycle-{{model_component}}
@@ -95,18 +98,18 @@
             PrepareAnalysis-{{model_component}} => MoveRestart-{{model_component}}
 
             # Save analysis output
-            # RunJediVariationalExecutable-geos_ocean => SaveAnalysis-geos_ocean
-            # RunJediVariationalExecutable-geos_ocean => SaveObsDiags-geos_ocean
+            # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            # RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
-            # MoveRestart => SaveRestart
-            # MoveBackground-geos_ocean => StoreBackground-geos_ocean
+            # MoveRestart-{{model_component}} => SaveRestart
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Remove Run Directory
-            # MoveRestart & MoveBackground-geos_ocean => RemoveGeosRunDir
+            # MoveRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveGeosRunDir
 
             # Clean up large files
-            # EvaObservations-geos_ocean & EvaJediLog-geos_ocean & SaveObsDiags-geos_ocean & RemoveGeosRunDir =>
+            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveGeosRunDir =>
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
@@ -164,6 +167,18 @@
 
     {% for model_component in model_components %}
 
+    [[RunGeosExecutable-{{model_component}}]]
+        script = "swell_task RunGeosExecutable $config -d $datetime"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunGeosExecutable"]["account"]}}
+            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
+            --job-name = RunGeosExecutable
+            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunGeosExecutable"]["constraint"]}}
+
     [[PrepGeosRunDir-{{model_component}}]]
         script = "swell_task PrepGeosRunDir $config -d $datetime -m {{model_component}}"
 
@@ -178,18 +193,6 @@
 
     [[SaveRestart-{{model_component}}]]
         script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
-
-    [[RunGeosExecutable-{{model_component}}]]
-        script = "swell_task RunGeosExecutable $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-            --account = {{scheduling["RunGeosExecutable"]["account"]}}
-            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
-            --job-name = RunGeosExecutable
-            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunGeosExecutable"]["constraint"]}}
 
     [[StageJedi-{{model_component}}]]
         script = "swell_task StageJedi $config -m {{model_component}}"

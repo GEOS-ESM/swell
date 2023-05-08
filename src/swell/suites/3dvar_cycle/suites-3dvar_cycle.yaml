@@ -1,19 +1,20 @@
 # Cycle start point
 start_cycle_point:
-  default_value: '2021-06-21T06:00:00Z'
+  default_value: '2021-06-21T12:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
-  default_value: '2021-06-21T18:00:00Z'
+  default_value: '2021-06-30T12:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
 # Each forecast cycle consists of a set duration until DA
 # Should be less than or equal to 1 day due to the ISO -> string conversion
 forecast_duration:
-  default_value: 'PT12H'
+  # default_value: 'PT12H'
+  default_value: 'P1D'
   prompt: What is the GEOS forecast duration?
   type: string
 

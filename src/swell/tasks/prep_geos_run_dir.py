@@ -314,7 +314,13 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # AGCM.rc might requires some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        [time_string, *_] = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
+        [time_string, days] = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
+
+        # Prepend day information only record frequency is longer than a day
+        # ------------------------------------------------------------------
+        # TODO: float precision or scientific
+        if days + 0.0000001 >= 1:
+            time_string = f'0000{int(days):02d} ' + time_string
 
         rcdict['RECORD_FREQUENCY'] = time_string
         rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
