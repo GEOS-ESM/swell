@@ -18,7 +18,7 @@ import gsi_ncdiag.gsi_ncdiag as gsid
 from gsi_ncdiag.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
-
+from swell.utilities.shell_commands import run_track_log_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -75,34 +75,34 @@ class GsiNcdiagToIoda(taskBase):
 
         # First process the conventional data (if needed)
         # -----------------------------------------------
-#        for gsi_type_to_process in gsi_types_to_process:
-#
-#            log_str = f'Processing GSI file {gsi_type_to_process}'
-#            self.logger.info('', wrap=False)
-#            self.logger.info(log_str)
-#            self.logger.info('-'*len(log_str))
-#
-#            gsi_conv_file = glob.glob(os.path.join(gsi_diag_dir, f'*{gsi_type_to_process}*'))[0]
-#
-#            # Open the file
-#            Diag = gsid.Conv(gsi_conv_file)
-#            Diag.read()
-#
-#            # Assemble list of needed platforms
-#            needed_platforms = []
-#            for platform in gsid.conv_platforms[gsi_type_to_process]:
-#                if platform in needed_ioda_types:
-#                    needed_platforms.append(platform)
-#
-#            # Extract data
-#            Diag.toIODAobs(cycle_dir, platforms=needed_platforms)
-#
-#            if produce_geovals:
-#                self.logger.info('', wrap=False)
-#                self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process}')
-#                Diag.toGeovals(cycle_dir)
-#
-#            Diag.close()
+        for gsi_type_to_process in gsi_types_to_process:
+
+            log_str = f'Processing GSI file {gsi_type_to_process}'
+            self.logger.info('', wrap=False)
+            self.logger.info(log_str)
+            self.logger.info('-'*len(log_str))
+
+            gsi_conv_file = glob.glob(os.path.join(gsi_diag_dir, f'*{gsi_type_to_process}*'))[0]
+
+            # Open the file
+            Diag = gsid.Conv(gsi_conv_file)
+            Diag.read()
+
+            # Assemble list of needed platforms
+            needed_platforms = []
+            for platform in gsid.conv_platforms[gsi_type_to_process]:
+                if platform in needed_ioda_types:
+                    needed_platforms.append(platform)
+
+            # Extract data
+            Diag.toIODAobs(cycle_dir, platforms=needed_platforms)
+
+            if produce_geovals:
+                self.logger.info('', wrap=False)
+                self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process}')
+                Diag.toGeovals(cycle_dir)
+
+            Diag.close()
 
         # Combine the conventional data
         # -----------------------------
@@ -156,6 +156,17 @@ class GsiNcdiagToIoda(taskBase):
                 geo_dir = None
                 if produce_geovals:
                     geo_dir = cycle_dir
+
+                    # Remove wind_reduction_factor_at_10m from non-uv geoval files
+                    geoval_files = glob.glob(os.path.join(cycle_dir,
+                                                          f'{needed_ioda_type}_*_geoval_*.nc4'))
+                    for geoval_file in geoval_files:
+                        if f'{needed_ioda_type}_uv_geoval_' not in geoval_file:
+                            var_remove_command = ['ncks', '-O', '-x', '-v',
+                                                  'wind_reduction_factor_at_10m',
+                                                  geoval_file, geoval_file]
+                            run_track_log_subprocess(self.logger, var_remove_command)
+
                 combine_obsspace(ioda_path_files, new_name, geo_dir)
 
                 # Remove input files
@@ -167,54 +178,64 @@ class GsiNcdiagToIoda(taskBase):
             else:
                 self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
 
-#        # Get list of the observations that are ozone observations
-#        # --------------------------------------------------------
-#        ozone_sensors = gsid.oz_lay_sensors + gsid.oz_lev_sensors
-#        ozone_observations = []
-#        for observation in observations:
-#            for ozone_sensor in ozone_sensors:
-#                if ozone_sensor in observation:
-#                    ozone_observations.append(observation)
-#
-#        # Copy all the files into the cycle directory
-#        # -------------------------------------------
-#        for observation in observations:
-#
-#            self.logger.info(f'Converting {observation} to IODA format')
-#
-#            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation}*'))
-#
-#            if observation not in ozone_observations:
-#
-#                # Radiances
-#                Diag = gsid.Radiances(gsi_obs_file[0])
-#                Diag.read()
-#                Diag.toIODAobs(cycle_dir, False, False, False)
-#
-#            else:
-#
-#                # Ozone
-#                Diag = gsid.Ozone(gsi_obs_file[0])
-#                Diag.read()
-#                Diag.toIODAobs(cycle_dir)
-#
-#            # GeoVaLs call
-#            if produce_geovals:
-#                Diag.toGeovals(cycle_dir)
-#
-#            if observation not in ozone_observations:
-#                Diag.close()
-#
-#        # Rename files to be swell compliant
-#        # ----------------------------------
-#        for observation in observations_orig:
-#
-#            # Input filename
-#            ioda_file_in_pattern = f'{observation}_obs_*nc*'
-#            ioda_file_in = glob.glob(os.path.join(cycle_dir, ioda_file_in_pattern))[0]
-#
-#            ioda_file_out = f'{observation}.{window_begin}.nc4'
-#
-#            os.rename(ioda_file_in, os.path.join(cycle_dir, ioda_file_out))
+        # Get list of the observations that are ozone observations
+        # --------------------------------------------------------
+        ozone_sensors = gsid.oz_lay_sensors + gsid.oz_lev_sensors
+        ozone_observations = []
+        for observation in observations:
+            for ozone_sensor in ozone_sensors:
+                if ozone_sensor in observation:
+                    ozone_observations.append(observation)
+
+        # Copy all the files into the cycle directory
+        # -------------------------------------------
+        for observation in observations:
+
+            self.logger.info(f'Converting {observation} to IODA format')
+
+            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation}*'))
+
+            if observation not in ozone_observations:
+
+                # Radiances
+                Diag = gsid.Radiances(gsi_obs_file[0])
+                Diag.read()
+                Diag.toIODAobs(cycle_dir, False, False, False)
+
+            else:
+
+                # Ozone
+                Diag = gsid.Ozone(gsi_obs_file[0])
+                Diag.read()
+                Diag.toIODAobs(cycle_dir)
+
+            # GeoVaLs call
+            if produce_geovals:
+                Diag.toGeovals(cycle_dir)
+
+            if observation not in ozone_observations:
+                Diag.close()
+
+        # Rename files to be swell compliant
+        # ----------------------------------
+        for observation in observations_orig:
+
+            # Input filename
+            ioda_obs_in_pattern = f'{observation}_obs_*nc*'
+            ioda_obs_in = glob.glob(os.path.join(cycle_dir, ioda_obs_in_pattern))[0]
+
+            ioda_obs_out = f'{observation}.{window_begin}.nc4'
+
+            os.rename(ioda_obs_in, os.path.join(cycle_dir, ioda_obs_out))
+
+            # Rename GeoVaLs file if need be
+            if produce_geovals:
+                ioda_geoval_in_pattern = f'{observation}_geoval_*.nc*'
+                ioda_geoval_in = glob.glob(os.path.join(cycle_dir, ioda_geoval_in_pattern))[0]
+
+                ioda_geoval_out = f'{observation}_geovals.{window_begin}.nc4'
+
+                os.rename(ioda_geoval_in, os.path.join(cycle_dir, ioda_geoval_out))
+
 
 # --------------------------------------------------------------------------------------------------
