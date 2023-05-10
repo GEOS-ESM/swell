@@ -84,7 +84,8 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Generic rst file format for SOCA
         # --------------------------------
-        # src = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds + '.nc'])
+        # src = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+        #                              + seconds + '.nc'])
         src = self.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
         dst = 'MOM6.res.' + current_cycle + '.nc'
 
