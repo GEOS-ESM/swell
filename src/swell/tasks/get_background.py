@@ -14,7 +14,7 @@ from datetime import datetime as dt
 import isodate
 import os
 import re
-from r2d2 import fetch
+from r2d2 import R2D2Data
 
 
 # --------------------------------------------------------------------------------------------------
@@ -127,16 +127,34 @@ class GetBackground(taskBase):
                 # Set the datetime templating in the target file name
                 target_file = background_time.strftime(target_file_template)
 
-                fetch(
-                    date=forecast_start_time,
-                    target_file=target_file,
-                    model=r2d2_model_dict[model_component],
-                    file_type=file_type,
-                    fc_date_rendering='analysis',
-                    step=bkg_step,
-                    resolution=horizontal_resolution,
-                    type='fc',
-                    experiment=background_experiment)
+                file_extension = os.path.splitext(target_file)[1]
+
+                R2D2Data.fetch(item           = 'forecast'
+                              ,target_file    = target_file
+                              ,model          = r2d2_model_dict[model_component]
+                              ,experiment     = background_experiment
+                              ,file_extension = file_extension
+                              ,resolution     = horizontal_resolution
+                              #,domain         = 
+                              ,file_type      = file_type
+                              ,step           = bkg_step
+                              #,tile           = 
+                              #,member         = 
+                              ,date           = forecast_start_time)
+                              #,create_date = 
+                              #,mod_date = )
+
+
+#                fetch(
+#                    date=forecast_start_time,
+#                    target_file=target_file,
+#                    model=r2d2_model_dict[model_component],
+#                    file_type=file_type,
+#                    fc_date_rendering='analysis',
+#                    step=bkg_step,
+#                    resolution=horizontal_resolution,
+#                    type='fc',
+#                    experiment=background_experiment)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

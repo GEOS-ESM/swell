@@ -14,7 +14,7 @@ from datetime import datetime as dt
 import isodate
 import os
 import re
-from r2d2 import store
+from r2d2 import R2D2Data
 
 
 # --------------------------------------------------------------------------------------------------
@@ -110,8 +110,8 @@ class StoreBackground(taskBase):
         # Loop over fc
         for fc in r2d2_dict['store']['fc']:
 
-            # Reset target file
-            target_file_template = os.path.split(background_dict['filename'])[1]
+            # Reset source file
+            source_file_template = os.path.split(background_dict['filename'])[1]
 
             # Datetime format to use
             user_date_format = fc['user_date_format']
@@ -119,8 +119,8 @@ class StoreBackground(taskBase):
             # Loop over file types
             for file_type in fc['file_type']:
 
-                # Replace filetype in target_file_template
-                target_file_type_template = target_file_template.replace("$(file_type)", file_type)
+                # Replace filetype in source_file_template
+                source_file_type_template = source_file_template.replace("$(file_type)", file_type)
 
                 # Looop over background steps
                 for bkg_step in bkg_steps:
@@ -129,17 +129,36 @@ class StoreBackground(taskBase):
                     background_time = forecast_start_time + isodate.parse_duration(bkg_step)
                     valid_time_str = background_time.strftime(user_date_format)
 
-                    # Set the target file name
-                    target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(cfg.get('cycle_dir'), target_file)
+                    # Set the source file name
+                    source_file = source_file_type_template.replace("$(valid_date)", valid_time_str)
+                    source_file = os.path.join(cfg.get('cycle_dir'), source_file)
+
+                    file_extension = os.path.splitext(source_file)[1]
 
                     # Perform the store
-                    store(date=forecast_start_time,
-                          source_file=target_file,
-                          model='geos',
-                          file_type='bkg',
-                          fc_date_rendering='analysis',
-                          step=bkg_step,
-                          resolution=cfg.get('horizontal_resolution'),
-                          type='fc',
-                          experiment=bkg_info['background experiment'])
+                    R2D2Data.store(item           = 'forecast'
+                                  ,source_file    = source_file
+                                  ,model          = 'geos'
+                                  ,experiment     = bkg_info['background experiment']
+                                  ,file_extension = file_extension
+                                  ,resolution     = cfg.get('horizontal_resolution')
+                                  #,domain = 
+                                  ,file_type      = 'bkg'
+                                  ,step           = bkg_step
+                                  #,tile = 
+                                  #,member = 
+                                  ,date           = forecast_start_time)
+                                  # ,create_date = 
+                                  # ,mod_date = )
+
+
+#                    store(date=forecast_start_time,
+#                          source_file=target_file,
+#                          model='geos',
+#                          file_type='bkg',
+#                          fc_date_rendering='analysis',
+#                          step=bkg_step,
+#                          resolution=cfg.get('horizontal_resolution'),
+#                          type='fc',
+#                          experiment=bkg_info['background experiment'])
+

@@ -14,7 +14,7 @@ import os
 import tarfile
 import glob
 from swell.tasks.base.task_base import taskBase
-from r2d2 import store
+from r2d2 import R2D2Data
 
 # --------------------------------------------------------------------------------------------------
 
@@ -165,39 +165,85 @@ class ObsProcessSetup(taskBase):
 
         # Perform store of observations
         for filepath in list(glob.glob(out_dir + '/*nc4')):
+
             source_file = os.path.basename(filepath)
             filename_parts = source_file.split('.')
             name = filename_parts[0]
-            store(date=obs_r2d2_dt,
-                  source_file=source_file,
-                  provider='ncdiag',
-                  obs_type=name,
-                  type='ob',
-                  experiment=geos_experiment)
+
+            file_extension = os.path.splitext(source_file)[1]
+
+            R2D2Data.store(item             = 'observation'
+                          ,source_file      = source_file
+                          ,provider         = 'ncdiag'
+                          ,observation_type = name
+                          ,file_extension   = file_extension
+                          ,window_start     = obs_r2d2_dt
+                          ,window_length    = )
+                          # ,create_date =
+                          # ,mod_date =
+
+#            store(date=obs_r2d2_dt,
+#                  source_file=source_file,
+#                  provider='ncdiag',
+#                  obs_type=name,
+#                  type='ob',
+#                  experiment=geos_experiment)
 
         # Perform store of satbias
         for filepath in list(glob.glob(out_dir + '/*satbias')):
+
             source_file = os.path.basename(filepath)
             filename_parts = source_file.split('.')
             name = filename_parts[3]
-            store(date=satbias_r2d2_dt,
-                  source_file=source_file,
-                  provider='gsi',
-                  obs_type=name,
-                  type='bc',
-                  experiment=geos_experiment,
-                  file_type='satbias')
+
+            file_extension = os.path.splitext(source_file)[1]
+
+            R2D2Data.store(item             = 'bias_correction'
+                          ,source_file      = source_file
+                          ,model            = 'geos'
+                          ,experiment       = geos_experiment
+                          ,provider         = 'gsi'
+                          ,observation_type = name
+                          ,file_extension   = file_extension
+                          ,file_type        = 'satbias'
+                          ,date             = satbias_r2d2_dt)
+                          # ,create_date =
+                          # ,mod_date = )
+
+#            store(date=satbias_r2d2_dt,
+#                  source_file=source_file,
+#                  provider='gsi',
+#                  obs_type=name,
+#                  type='bc',
+#                  experiment=geos_experiment,
+#                  file_type='satbias')
 
         # Perform store of tlapse
         for filepath in list(glob.glob(out_dir + '/*tlapse')):
+
             source_file = os.path.basename(filepath)
             filename_parts = source_file.split('.')
             name = filename_parts[3]
-            store(date=satbias_r2d2_dt,
-                  source_file=source_file,
-                  provider='gsi',
-                  obs_type=name,
-                  type='bc',
-                  experiment=geos_experiment,
-                  file_type='tlapse')
+
+            file_extension = os.path.splitext(source_file)[1]
+
+            R2D2Data.store(item             = 'bias_correction'
+                          ,source_file      = source_file
+                          ,model            = 'geos'
+                          ,experiment       = geos_experiment
+                          ,provider         = 'gsi'
+                          ,observation_type = name
+                          ,file_extension   = file_extension
+                          ,file_type        = 'tlapse'
+                          ,date             = satbias_r2d2_dt)
+                          # ,create_date =
+                          # ,mod_date = )
+
+#            store(date=satbias_r2d2_dt,
+#                  source_file=source_file,
+#                  provider='gsi',
+#                  obs_type=name,
+#                  type='bc',
+#                  experiment=geos_experiment,
+#                  file_type='tlapse')
 # --------------------------------------------------------------------------------------------------

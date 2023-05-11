@@ -9,7 +9,7 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
-from r2d2 import store
+from r2d2 import R2D2Data
 
 # --------------------------------------------------------------------------------------------------
 
@@ -42,16 +42,34 @@ class SaveObsDiags(taskBase):
 
             # Check for need to add 0000 to the file
             if not os.path.exists(obs_path_file):
+
                 obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
+
                 if not os.path.exists(obs_path_file_0000):
                     self.logger.abort(f'No observation file found for {obs_path_file} or ' +
                                       f'{obs_path_file_0000}')
+
                 obs_path_file = obs_path_file_0000
 
-            store(date=window_begin,
-                  provider='ncdiag',
-                  source_file=obs_path_file,
-                  obs_type=name,
-                  type='ob',
-                  experiment=experiment_id)
+            file_extension = os.path.splitext(obs_path_file)[1]
+
+            R2D2Data.store(item             = 'observation'
+                          ,source_file      = obs_path_file
+                          ,provider         = 'ncdiag'
+                          ,observation_type = name
+                          ,file_extension   = file_extension
+                          ,window_start     = window_begin
+                          ,window_length    = )
+                          # ,create_date =      
+                          # ,mod_date = )       
+                                     
+                                     
+             # store(date=window_begin,
+             #       provider='ncdiag',
+             #       source_file=obs_path_file,
+             #       obs_type=name,
+             #       type='ob',
+             #       experiment=experiment_id)
+
+
