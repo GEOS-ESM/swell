@@ -75,7 +75,8 @@ def prepare_config(method, suite, platform, override=None):
         with open(override, 'r') as override_open:
             override_dict = yaml.safe_load(override_open)
 
-        overridable_keys = ['experiment_id', 'experiment_root', 'existing_source_directory', 'existing_build_directory']
+        overridable_keys = ['experiment_id', 'experiment_root', 'existing_source_directory', 
+                            'existing_build_directory']
         for overridable_key in overridable_keys:
             if overridable_key in override_dict:
                 experiment_dict[overridable_key] = override_dict[overridable_key]
