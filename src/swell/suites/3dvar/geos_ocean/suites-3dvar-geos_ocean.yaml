@@ -44,7 +44,7 @@ obs_experiment:
 # Observations
 observations:
   default_value:
-  # Godas (NOAA) - Some of them give FillValue 999 warning
+  # Gdas (NOAA)
   - adt_3a_egm2008
   - adt_3b_egm2008
   - adt_c2_egm2008
@@ -58,10 +58,6 @@ observations:
   - sst_ship_fnmoc
   - sst_trak_fnmoc
   - temp_profile_fnmoc
-
-  # - adt_coperl4 (non existing obs?)
-  # Issues with the ObsValue
-  # - sst_amsr2_l3u
 
   # ODAS (NASA)
   # - adt

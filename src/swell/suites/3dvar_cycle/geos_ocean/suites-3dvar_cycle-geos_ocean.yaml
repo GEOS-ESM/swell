@@ -53,17 +53,13 @@ observations:
   - adt_j3_egm2008
   - adt_sa_egm2008
   - sst_ostia
-  # - salt_profile_fnmoc #this has MarineVertInterp causing problems
+  - salt_profile_fnmoc
   - sss_smos_esa
   - sss_trak_fnmoc
   - sst_gmi_l3u
   - sst_ship_fnmoc
   - sst_trak_fnmoc
-  # - temp_profile_fnmoc
-
-  # - adt_coperl4 (non existing obs?)
-  # Issues with the ObsValue
-  # - sst_amsr2_l3u
+  - temp_profile_fnmoc
 
   # ODAS (NASA)
   # - adt

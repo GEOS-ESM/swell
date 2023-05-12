@@ -10,11 +10,15 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.insitu_s_profile_fnmoc.{{window_begin}}.nc4'
   simulated variables: [salinity]
 obs operator:
-  name: VertInterp
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  vertical coordinate: sea_water_depth
-  observation vertical coordinate: depth
-  interpolation method: linear
+  name: Composite
+  components:
+  - name: VertInterp
+    observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+    variables:
+    - name: salinity
+    vertical coordinate: sea_water_depth
+    observation vertical coordinate: depth
+    interpolation method: linear
 obs error:
   covariance model: diagonal
 obs filters:
