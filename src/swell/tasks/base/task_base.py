@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -83,16 +83,6 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    # Method to return the experiment directory
-    def experiment_dir(self):
-
-        experiment_root = self.config_get('experiment_root')
-        experiment_id = self.config_get('experiment_id')
-        experiment_dir = os.path.join(experiment_root, experiment_id)
-        return experiment_dir
-
-    # ----------------------------------------------------------------------------------------------
-
     # Method to get the Swell experiment path
     def get_swell_exp_path(self):
         experiment_root = self.config_get('experiment_root')
@@ -105,114 +95,6 @@ class taskBase(ABC):
     def get_swell_exp_config_path(self):
         swell_exp_path = self.get_swell_exp_path()
         return os.path.join(swell_exp_path, 'configuration')
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to open a specific configuration file
-    def __open_jedi_interface_config_file(self, model_or_obs, config_name):
-
-        # Assert that the task has a model associated with it
-        self.logger.assert_abort(self.__model__ is not None,
-                                 'Task must have a model associated with it.')
-
-        # Get experiment configuration path
-        swell_exp_config_path = self.get_swell_exp_config_path()
-
-        # Path to configuration file
-        config_file = os.path.join(swell_exp_config_path, 'jedi', 'interfaces',
-                                   self.__model__, model_or_obs, config_name + '.yaml')
-
-        # Check that config file exists
-        if not os.path.exists(config_file):
-            return None
-
-        # Open file as a string
-        with open(config_file, 'r') as config_file_open:
-            config_file_str_templated = config_file_open.read()
-
-        # Fill templates in the configuration file using the config
-        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
-
-        # Convert string to dictionary
-        return yaml.safe_load(config_file_str)
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to open a specific model configuration file
-    def open_jedi_oops_config_file(self, config_name):
-
-        # Get experiment configuration path
-        swell_exp_config_path = self.get_swell_exp_config_path()
-
-        # Path to configuration file
-        config_file = os.path.join(swell_exp_config_path, 'jedi', 'oops', config_name + '.yaml')
-
-        # Open file as a string
-        with open(config_file, 'r') as config_file_open:
-            config_file_str_templated = config_file_open.read()
-
-        # Fill templates in the configuration file using the config
-        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
-
-        # Convert string to dictionary
-        return yaml.safe_load(config_file_str)
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to open a specific model configuration file metadata
-    def open_jedi_interface_meta_config_file(self, model=None):
-
-        # Set model to the actual model if needed
-        if model is None:
-            self.logger.assert_abort(self.__model__ is not None,
-                                     'Task must have a model associated with it.')
-            model = self.__model__
-
-        # Get experiment configuration path
-        swell_exp_config_path = self.get_swell_exp_config_path()
-
-        # Path to configuration file
-        config_file = os.path.join(swell_exp_config_path, 'jedi', 'interfaces',
-                                   model, model + '.yaml')
-
-        # Open file as a string
-        with open(config_file, 'r') as config_file_open:
-            config_file_str = config_file_open.read()
-
-        # Convert string to dictionary
-        return yaml.safe_load(config_file_str)
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to open a specific model configuration file
-    def open_jedi_interface_model_config_file(self, config_name):
-        return self.__open_jedi_interface_config_file('model', config_name)
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to open a specific observation configuration file
-    def open_jedi_interface_obs_config_file(self, config_name, window_type):
-        obs_dict = self.__open_jedi_interface_config_file('observations', config_name)
-
-        # Check that a config file was opened
-        if obs_dict is None:
-            return None
-
-        # If 4D window then add time interpolation to the dictionary
-        if window_type == '4D':
-            obs_dict['get values'] = {}
-            obs_dict['get values']['time interpolation'] = 'linear'
-
-        # Placeholder to add GeoVaLs saver filter
-
-        # Placeholder for IO pool things
-
-        return obs_dict
-
-    # ----------------------------------------------------------------------------------------------
-
-    def use_config_to_template_string(self, string_in):
-        return self.__config__.use_config_to_template_string(string_in)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -229,17 +111,6 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_cycle(self):
-
-        # Check that datetime is set
-        self.logger.assert_abort(self.__datetime__ is not None, 'In get_cycle_dir but this ' +
-                                 'should not be called if the task does not receive datetime.')
-
-        # Return
-        return self.__datetime__
-
-    # ----------------------------------------------------------------------------------------------
-
     def get_cycle_dir(self):
 
         # Check that model is set
@@ -247,7 +118,7 @@ class taskBase(ABC):
                                  'should not be called if the task does not receive model.')
 
         # Get the current cycle in directory format
-        current_cycle_dir_format = self.get_cycle().strftime(datetime_formats['dir_format'])
+        current_cycle_dir_format = self.__datetime__.strftime(datetime_formats['dir_format'])
 
         # Combine with the model
         cycle_dir = os.path.join(current_cycle_dir_format, self.__model__)

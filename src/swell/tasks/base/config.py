@@ -6,9 +6,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
+
 import yaml
 
-from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 #  @package configuration
@@ -91,10 +91,5 @@ class Config():
             else:
                 return default
 
-    # ----------------------------------------------------------------------------------------------
-
-    def use_config_to_template_string(self, string_in):
-
-        return template_string_jinja2(self.__logger__, string_in, self.__config__)
 
 # ----------------------------------------------------------------------------------------------

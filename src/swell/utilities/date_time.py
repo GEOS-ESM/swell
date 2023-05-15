@@ -94,5 +94,3 @@ class DataAssimilationWindowParams():
         return local_background_time.strftime(datetime_formats['dir_format'])
 
     # ----------------------------------------------------------------------------------------------
-
-

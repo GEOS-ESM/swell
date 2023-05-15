@@ -101,7 +101,7 @@ class GenerateBClimatology(taskBase):
             # Jedi executable name
             # --------------------
             jedi_executable = interface_executable[self.jedi_interface]
-            jedi_executable_path = os.path.join(self.experiment_dir, 'jedi_bundle',
+            jedi_executable_path = os.path.join(self.get_swell_exp_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
@@ -144,7 +144,6 @@ class GenerateBClimatology(taskBase):
         self.horizontal_resolution = self.config_get('horizontal_resolution')
         self.vertical_resolution = self.config_get('vertical_resolution')
         self.cycle_dir = self.config_get('cycle_dir')
-        self.experiment_dir = self.config_get('experiment_dir')
         self.npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
         self.npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
 
