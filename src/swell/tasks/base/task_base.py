@@ -21,6 +21,7 @@ import yaml
 # local imports
 from swell.tasks.base.config import Config
 from swell.tasks.base.datetime import Datetime
+from swell.utilities.date_time import datetime_formats
 from swell.utilities.logger import Logger
 from swell.tasks.base.task_registry import valid_tasks
 from swell.tasks.base.utils import camelcase_to_underscore
@@ -58,8 +59,13 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, datetime_in=self.__datetime__,
-                                 model=self.__model__)
+        self.__config__ = Config(config_input, self.logger, self.__model__)
+
+        # Ensure that the cycle directory is present
+        # ------------------------------------------
+        if self.__datetime__ is not None:
+            cycle_dir = self.get_cycle_dir()
+            os.makedirs(cycle_dir, 0o755, exist_ok=True)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -77,6 +83,16 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    # Method to return the experiment directory
+    def experiment_dir(self):
+
+        experiment_root = self.config_get('experiment_root')
+        experiment_id = self.config_get('experiment_id')
+        experiment_dir = os.path.join(experiment_root, experiment_id)
+        return experiment_dir
+
+    # ----------------------------------------------------------------------------------------------
+
     # Method to get the Swell experiment path
     def get_swell_exp_path(self):
         experiment_root = self.config_get('experiment_root')
@@ -89,12 +105,6 @@ class taskBase(ABC):
     def get_swell_exp_config_path(self):
         swell_exp_path = self.get_swell_exp_path()
         return os.path.join(swell_exp_path, 'configuration')
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to get the Swell experiment configuration path
-    def get_datetime_format(self):
-        return self.__config__.get_datetime_format()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -167,10 +177,7 @@ class taskBase(ABC):
 
         # Open file as a string
         with open(config_file, 'r') as config_file_open:
-            config_file_str_templated = config_file_open.read()
-
-        # Fill templates in the configuration file using the config
-        config_file_str = self.__config__.use_config_to_template_string(config_file_str_templated)
+            config_file_str = config_file_open.read()
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)
@@ -184,7 +191,7 @@ class taskBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     # Method to open a specific observation configuration file
-    def open_jedi_interface_obs_config_file(self, config_name):
+    def open_jedi_interface_obs_config_file(self, config_name, window_type):
         obs_dict = self.__open_jedi_interface_config_file('observations', config_name)
 
         # Check that a config file was opened
@@ -192,7 +199,7 @@ class taskBase(ABC):
             return None
 
         # If 4D window then add time interpolation to the dictionary
-        if self.config_get('window_type') == '4D':
+        if window_type == '4D':
             obs_dict['get values'] = {}
             obs_dict['get values']['time interpolation'] = 'linear'
 
@@ -222,12 +229,31 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_cycle_dir(self):
-        cycle_dir = self.__config__.get('cycle_dir', None)
-        if cycle_dir is None:
-            self.logger.abort('Do not call get_cycle_dir when the task is run without time')
-        return cycle_dir
+    def get_cycle(self):
 
+        # Check that datetime is set
+        self.logger.assert_abort(self.__datetime__ is not None, 'In get_cycle_dir but this ' +
+                                 'should not be called if the task does not receive datetime.')
+
+        # Return
+        return self.__datetime__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_cycle_dir(self):
+
+        # Check that model is set
+        self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
+                                 'should not be called if the task does not receive model.')
+
+        # Get the current cycle in directory format
+        current_cycle_dir_format = self.get_cycle().strftime(datetime_formats['dir_format'])
+
+        # Combine with the model
+        cycle_dir = os.path.join(current_cycle_dir_format, self.__model__)
+
+        # Return
+        return cycle_dir
 
 # --------------------------------------------------------------------------------------------------
 

@@ -23,11 +23,11 @@ def template_string_jinja2(logger, templated_string, dictionary_of_templates):
     # Render the templates using the dictionary
     string_rendered = t.render(dictionary_of_templates)
 
-    logger.assert_abort('{{' not in string_rendered, f'In use_config_to_template_string ' +
+    logger.assert_abort('{{' not in string_rendered, f'In template_string_jinja2 ' +
                         f'the output string still contains template directives. ' +
                         f'{string_rendered}')
 
-    logger.assert_abort('}}' not in string_rendered, f'In use_config_to_template_string ' +
+    logger.assert_abort('}}' not in string_rendered, f'In template_string_jinja2 ' +
                         f'the output string still contains template directives. ' +
                         f'{string_rendered}')
 

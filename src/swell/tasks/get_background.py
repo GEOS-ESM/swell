@@ -9,6 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.date_time import datetime_formats
 
 from datetime import datetime as dt
 import isodate
@@ -42,7 +43,7 @@ class GetBackground(taskBase):
         # Current cycle time object
         # -------------------------
         current_cycle = self.config_get('current_cycle')
-        current_cycle_dto = dt.strptime(current_cycle, self.get_datetime_format())
+        current_cycle_dto = dt.strptime(current_cycle, datetime_formats['dir_format'])
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
