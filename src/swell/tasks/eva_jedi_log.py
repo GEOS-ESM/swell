@@ -24,20 +24,13 @@ class EvaJediLog(taskBase):
 
     def execute(self):
 
-        # Parse config for jedi_config
-        # ----------------------------
-        cycle_dir = self.config_get('cycle_dir')
-        experiment_root = self.config_get('experiment_root')
-        experiment_id = self.config_get('experiment_id')
-
         # Get the model
         # -------------
         model = self.get_model()
 
         # Read Eva template file into dictionary
         # --------------------------------------
-        exp_path = os.path.join(experiment_root, experiment_id)
-        exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
+        exp_suite_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite')
         eva_config_file = os.path.join(exp_suite_path, f'eva_jedi_log-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
@@ -50,7 +43,7 @@ class EvaJediLog(taskBase):
 
         # Create dictionary used to override the eva config
         eva_override = {}
-        eva_override['cycle_dir'] = cycle_dir
+        eva_override['cycle_dir'] = self.cycle_dir()
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
@@ -58,7 +51,7 @@ class EvaJediLog(taskBase):
 
         # Write eva dictionary to file
         # ----------------------------
-        conf_output = os.path.join(cycle_dir, 'eva', 'jedi_log', 'jedi_log_eva.yaml')
+        conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
             yaml.dump(eva_dict, outfile, default_flow_style=False)

@@ -36,39 +36,35 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Path to executable being run
         # ----------------------------
-        cycle_dir = self.config_get('cycle_dir')
-        experiment_dir = self.config_get('experiment_dir')
         window_type = self.config_get('window_type')
-        model = self.config_get('window_type')
-        suite_to_run = self.config_get('suite_to_run')
         npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
         npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
         total_processors = self.config_get('total_processors')
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(cycle_dir, 'jedi_hofx_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(), 'jedi_hofx_config.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(cycle_dir, 'jedi_hofx_log.log')
+        output_log_file = os.path.join(self.cycle_dir(), 'jedi_hofx_log.log')
 
         # Generate the JEDI configuration file for running the executable
         # ---------------------------------------------------------------
-        jedi_config_dict = self.generate_jedi_config(suite_to_run, window_type)
+        jedi_config_dict = self.generate_jedi_config(self.suite(), window_type)
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
-        model_component_meta = self.open_jedi_interface_meta_config_file()
+        model_component_meta = self.jedi_rendering.render_interface_meta()
         jedi_interface = model_component_meta['jedi_interface']
 
         # Jedi executable name
         # --------------------
         jedi_executable = interface_executable[jedi_interface + '-' + window_type]
-        jedi_executable_path = os.path.join(experiment_dir, 'jedi_bundle', 'build', 'bin',
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
         # Compute number of processors
@@ -79,7 +75,8 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(cycle_dir, np, jedi_executable_path, jedi_config_file, output_log_file)
+        self.run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
+                            output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------

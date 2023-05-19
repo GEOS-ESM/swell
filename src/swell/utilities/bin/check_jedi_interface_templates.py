@@ -27,17 +27,27 @@ def main():
     # Create a logger
     logger = Logger('CheckJediInterfaceTemplates')
 
-    config_types = ['oops', 'interfaces/*/model', 'interfaces/*/observations']
+    config_types = ['oops/*yaml',
+                    'interfaces/*/model/*yaml',
+                    'interfaces/*/observations/*yaml',
+                    'interfaces/*/model/r2d2.yaml',
+                    'interfaces/*/model/stage*.yaml',
+                    'interfaces/*/model/background.yaml',
+                    'interfaces/*/model/StaticBInit.yaml',
+                    ]
 
     # Path to JEDI interface code
     swell_path = get_swell_path()
     jedi_interfaces_path = os.path.join(swell_path, 'configuration', 'jedi')
 
+    # Default keys
+    def_keys = ['experiment_id', 'experiment_root', 'model_component', 'cycle_dir']
+
     # Loop over config types
     for config_type in config_types:
 
         # Path to the files for this config type
-        config_yaml_path = os.path.join(jedi_interfaces_path, config_type, '*yaml')
+        config_yaml_path = os.path.join(jedi_interfaces_path, config_type)
 
         config_yaml_files = glob.glob(config_yaml_path)
 
@@ -68,11 +78,20 @@ def main():
         # Remove duplicates & sort
         templates = sorted(list(set(templates)))
 
+        # Remove some keys
+        for ind, template in enumerate(templates):
+            templates[ind] = templates[ind].strip('{').strip('}')
+            if templates[ind] in def_keys:
+                templates[ind] = '*** ' + templates[ind]
+
+        # Resort to gather ***
+        templates = sorted(list(set(templates)))
+
         # Print the templates
         logger.info(config_type)
         logger.info('-'*len(config_type))
         for template in templates:
-            logger.info(template.strip('{').strip('}'))
+            logger.info(template)
         if config_type != config_types[-1]:
             logger.info(' ', False)
 

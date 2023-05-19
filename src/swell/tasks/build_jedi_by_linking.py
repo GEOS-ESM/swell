@@ -29,7 +29,7 @@ class BuildJediByLinking(taskBase):
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
-        swell_exp_path = self.get_swell_exp_path()
+        swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
 
         # Get paths to build and source

@@ -50,13 +50,21 @@ class GetBackground(taskBase):
         bkg_steps = []
 
         # Parse config
-        window_type = self.config_get('window_type')
+        background_experiment = self.config_get('background_experiment')
+        background_frequency = self.config_get('background_frequency', None)
+        background_source = self.config_get('background_source', 'file')
+        forecast_offset = self.config_get('analysis_forecast_window_offset')
+        horizontal_resolution = self.config_get('horizontal_resolution')
         window_length = self.config_get('window_length')
         window_offset = self.config_get('window_offset')
-        background_source = self.config_get('background_source', 'file')
-        background_experiment = self.config_get('background_experiment')
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        forecast_offset = self.config_get('analysis_forecast_window_offset')
+        window_type = self.config_get('window_type')
+
+        # Get window parameters
+        local_background_time = self.da_window_params.local_background_time(window_offset,
+                                                                            window_type)
+
+        # Add to jedi config rendering dictionary
+        self.jedi_rendering.add_key('local_background_time', local_background_time)
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
@@ -79,8 +87,7 @@ class GetBackground(taskBase):
         # ----------------------------------------------------------
         if window_type == "4D" and background_source == 'file':
 
-            bkg_freq = self.config_get('background_frequency')
-            bkg_freq_dur = isodate.parse_duration(bkg_freq)
+            bkg_freq_dur = isodate.parse_duration(background_frequency)
 
             # Check for a sensible frequency
             if (window_length_dur/bkg_freq_dur) % 2:
@@ -110,7 +117,7 @@ class GetBackground(taskBase):
         self.logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
 
         # Get r2d2 dictionary
-        r2d2_dict = self.open_jedi_interface_model_config_file('r2d2')
+        r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
         # Loop over fc
         for fc in r2d2_dict['fetch']['fc']:

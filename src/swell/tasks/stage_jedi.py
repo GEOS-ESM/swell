@@ -33,18 +33,31 @@ class StageJedi(taskBase):
              See the taskBase constructor for more information.
         """
 
+        # Extract potential template variables from config
+        horizontal_resolution = self.config_get('horizontal_resolution')
+        swell_static_files = self.config_get('swell_static_files')
+        vertical_resolution = self.config_get('vertical_resolution')
+
+        # Add jedi interface template keys
+        self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
+        self.jedi_rendering.add_key('swell_static_files', swell_static_files)
+        self.jedi_rendering.add_key('vertical_resolution', vertical_resolution)
+
         # Open the stage configuration file
         # ---------------------------------
         stage_file = 'stage'
         if self.is_datetime_dependent():
             stage_file = 'stage_cycle'
 
-        stage_dict = self.open_jedi_interface_model_config_file(stage_file)
-
-        # Check that the passed configuration had a stage component
-        if stage_dict is None:
+        # Check for presence of stage file
+        # --------------------------------
+        stage_file = os.path.join(self.experiment_config_path(), self.get_model(), stage_file)
+        if not os.path.exists(stage_file):
             self.logger.info('No stage dictionary was found for this configuration')
             exit(0)
+
+        # Open file and template it
+        stage_dict = self.jedi_rendering.render_interface_model(stage_file)
 
         # Run the file handler
         # --------------------

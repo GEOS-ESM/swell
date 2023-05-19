@@ -30,7 +30,7 @@ class CloneGeos(taskBase):
 
         # Get the experiment/geos directory
         # ---------------------------------
-        swell_exp_path = self.get_swell_exp_path()
+        swell_exp_path = self.experiment_path()
         geos_gcm_path = os.path.join(swell_exp_path, 'GEOSgcm')
 
         # Get paths to build and source

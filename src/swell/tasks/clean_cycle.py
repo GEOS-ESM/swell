@@ -27,15 +27,14 @@ class CleanCycle(taskBase):
 
     def execute(self):
 
-        cycle_dir = self.config_get("cycle_dir")
         clean_list = self.config_get('clean_patterns', None)
 
         # If no cleaning requested then exit
         if clean_list is None:
             return
 
-        if os.path.isdir(cycle_dir):
-            os.chdir(cycle_dir)
+        if os.path.isdir(self.cycle_dir()):
+            os.chdir(self.cycle_dir())
             # Remove all specified files
             for pattern in clean_list:
                 if pattern == '*':
@@ -47,7 +46,7 @@ class CleanCycle(taskBase):
                     for file_to_delete in glob.glob(path_parts[1]):
                         os.remove(file_to_delete)
 
-            # Save cycle_done file to cycle_dir
+            # Save cycle_done file to cycle directory
             filename = 'cycle_done'
-            cmd = 'touch ' + os.path.join(cycle_dir, filename)
+            cmd = 'touch ' + os.path.join(self.cycle_dir(), filename)
             os.system(cmd)

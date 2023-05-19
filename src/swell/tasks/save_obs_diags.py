@@ -24,16 +24,25 @@ class SaveObsDiags(taskBase):
 
         # Parse config
         # ------------
-        experiment_id = self.config_get('experiment_id')
-        window_begin = self.config_get('window_begin')
+        background_time = self.config_get('background_time')
+        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
         observations = self.config_get('observations')
+        window_offset = self.config_get('window_offset')
+
+        # Get window beginning
+        window_begin = self.da_window_params.window_begin(window_offset)
+
+        # Create templates dictionary
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
 
             # Load the observation dictionary
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Store observation files
             # -----------------------
@@ -54,4 +63,4 @@ class SaveObsDiags(taskBase):
                   source_file=obs_path_file,
                   obs_type=name,
                   type='ob',
-                  experiment=experiment_id)
+                  experiment=self.experiment_id())

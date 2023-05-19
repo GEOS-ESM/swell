@@ -12,6 +12,8 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilities.render_jedi_interface_files import template_dictionary_oops_config, \
+                                                        read_render_jedi_interface_oops,
 
 # --------------------------------------------------------------------------------------------------
 
@@ -42,9 +44,9 @@ class GenerateBClimatology(taskBase):
 
     def generate_jedi_config(self):
 
-        # Create dictionary from the templated JEDI config file
-        # ---------------------------------------------------------
-        jedi_config_dict = self.open_jedi_oops_config_file('StaticBInit')
+        # Render StaticBInit (no templates needed)
+        # ----------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit')
 
         # Read configs for the rest of the dictionary
         # -------------------------------------------
@@ -78,7 +80,7 @@ class GenerateBClimatology(taskBase):
                              model_component, self.background_error_model, 'climatological',
                              resolution, str(self.np))
 
-        d_dir = os.path.join(self.cycle_dir, 'background_error_model')
+        d_dir = os.path.join(self.cycle_dir(), 'background_error_model')
 
         try:
             self.logger.info('  Copying BUMP files from: '+b_dir)
@@ -89,7 +91,7 @@ class GenerateBClimatology(taskBase):
 
             # Jedi configuration file
             # -----------------------
-            jedi_config_file = os.path.join(self.cycle_dir, 'jedi_bump_config.yaml')
+            jedi_config_file = os.path.join(self.cycle_dir(), 'jedi_bump_config.yaml')
 
             # Generate the JEDI configuration file for running the executable
             # ---------------------------------------------------------------
@@ -101,7 +103,7 @@ class GenerateBClimatology(taskBase):
             # Jedi executable name
             # --------------------
             jedi_executable = interface_executable[self.jedi_interface]
-            jedi_executable_path = os.path.join(self.get_swell_exp_path(), 'jedi_bundle',
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
@@ -112,7 +114,7 @@ class GenerateBClimatology(taskBase):
 
             # Move to the cycle directory
             # ---------------------------
-            os.chdir(self.cycle_dir)
+            os.chdir(self.cycle_dir())
             if not os.path.exists('background_error_model'):
                 os.mkdir('background_error_model')
 
@@ -143,13 +145,12 @@ class GenerateBClimatology(taskBase):
         self.swell_static_files = self.config_get('swell_static_files')
         self.horizontal_resolution = self.config_get('horizontal_resolution')
         self.vertical_resolution = self.config_get('vertical_resolution')
-        self.cycle_dir = self.config_get('cycle_dir')
         self.npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
         self.npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
-        model_component_meta = self.open_jedi_interface_meta_config_file()
+        model_component_meta = self.jedi_rendering.render_interface_meta()
         self.jedi_interface = model_component_meta['jedi_interface']
 
         # Compute number of processors

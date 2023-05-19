@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import datetime
 import isodate
 
 
@@ -25,33 +26,33 @@ datetime_formats = {
 
 class DataAssimilationWindowParams():
 
-    def __init__(self, cycle_time, window_offset):
+    def __init__(self, logger, cycle_time):
 
         """
         Defines cycle dependent parameters for the data assimilation window and adds to config
         """
 
+        # Keep logger
+        self.logger = logger
+
         # Current cycle datetime object
         self.__current_cycle_dto__ = datetime.datetime.strptime(cycle_time,
                                                                 datetime_formats['dir_format'])
 
-        # Save the window offset
-        self.__window_offset__ = window_offset
-
     # ----------------------------------------------------------------------------------------------
 
-    def __get_window_begin_dto__(self):
+    def __get_window_begin_dto__(self, window_offset):
 
-        window_offset_dur = isodate.parse_duration(self.__window_offset__)
+        window_offset_dur = isodate.parse_duration(window_offset)
         return self.__current_cycle_dto__ - window_offset_dur
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_local_background_time__(self, window_type):
+    def __get_local_background_time__(self, window_type, window_offset):
 
         # Background time for the window
         if window_type == '4D':
-            local_background_time = self.__get_window_begin_dto__(self.__window_offset__)
+            local_background_time = self.__get_window_begin_dto__(window_offset)
         elif window_type == '3D':
             local_background_time = self.__current_cycle_dto__
 
@@ -59,21 +60,21 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self):
+    def window_begin(self, window_offset):
 
-        window_begin_dto = self.__get_window_begin_dto__()
+        window_begin_dto = self.__get_window_begin_dto__(window_offset)
         return window_begin_dto.strftime(datetime_formats['dir_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin_iso(self):
+    def window_begin_iso(self, window_offset):
 
-        window_begin_dto = self.__get_window_begin_dto__()
+        window_begin_dto = self.__get_window_begin_dto__(window_offset)
         return window_begin_dto.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def background_time(self, background_time_offset):
+    def background_time(self, window_offset, background_time_offset):
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
         background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
@@ -81,16 +82,16 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time_iso(self, window_type):
+    def local_background_time_iso(self, window_offset, window_type):
 
-        local_background_time = self.__get_local_background_time__(window_type)
+        local_background_time = self.__get_local_background_time__(window_type, window_offset)
         return local_background_time.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time(self, window_type):
+    def local_background_time(self, window_offset, window_type):
 
-        local_background_time = self.__get_local_background_time__(window_type)
+        local_background_time = self.__get_local_background_time__(window_type, window_offset)
         return local_background_time.strftime(datetime_formats['dir_format'])
 
     # ----------------------------------------------------------------------------------------------

@@ -41,6 +41,16 @@ class GetObservations(taskBase):
         background_time = self.config_get('background_time')
         observations = self.config_get('observations')
         window_length = self.config_get('window_length')
+        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
+        window_offset = self.config_get('window_offset')
+
+        # Get window begin time
+        window_begin = self.da_window_params.window_begin(window_offset)
+
+        # Add to JEDI template rendering dictionary
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Loop over observation operators
         # -------------------------------
@@ -48,7 +58,7 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Fetch observation files
             # -----------------------

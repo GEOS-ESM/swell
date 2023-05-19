@@ -30,7 +30,7 @@ class CloneJedi(taskBase):
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
-        swell_exp_path = self.get_swell_exp_path()
+        swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
 
         # Get paths to build and source
@@ -55,7 +55,7 @@ class CloneJedi(taskBase):
                 bundles = []
                 for model_component in model_components:
                     # Open the metadata config for interface
-                    meta = self.open_jedi_interface_meta_config_file(model_component)
+                    meta = self.jedi_rendering.render_interface_meta()
                     bundles.append(meta['jedi_interface'])
             else:
                 bundles_default = get_bundles()
