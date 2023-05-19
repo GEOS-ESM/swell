@@ -17,8 +17,8 @@ import isodate
 # Swell datetime format (yyyymmddThhMMssZ)
 
 datetime_formats = {
-    'dir_format': "%Y%m%dT%H%M%SZ"        # yyyymmddThhMMssZ for directory formats
-    'iso_format': "%Y-%m-%dT%H:%M:%SZ"    # yyyy-mm-ddThh:MM:ssZ ISO format
+    'dir_format': "%Y%m%dT%H%M%SZ",        # yyyymmddThhMMssZ for directory formats
+    'iso_format': "%Y-%m-%dT%H:%M:%SZ"     # yyyy-mm-ddThh:MM:ssZ ISO format
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class DataAssimilationWindowParams():
 
         # Current cycle datetime object
         self.__current_cycle_dto__ = datetime.datetime.strptime(cycle_time,
-                                                                datetime_formats['dir_format'])
+                                                                datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 

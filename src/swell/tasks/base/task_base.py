@@ -69,21 +69,25 @@ class taskBase(ABC):
         self.__experiment_id__ = self.config_get('experiment_id')
         self.__suite__ = self.config_get('suite_to_run')
 
+        # Create cycle directory
+        # ----------------------
+        cycle_dir = None
+        if datetime_input is not None:
+            cycle_dir = self.cycle_dir()
+            os.makedirs(cycle_dir, 0o755, exist_ok=True)
+
+        # Add JEDI config rendering helper
+        # --------------------------------
+        self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
+                                                  self.__experiment_id__, cycle_dir, self.__model__)
+
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------
         if self.__datetime__ is not None:
 
-            # Create the cycle directory
-            cycle_dir = self.get_cycle_dir()
-            os.makedirs(cycle_dir, 0o755, exist_ok=True)
-
-            # Jedi config file rendering
-            self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
-                                                      self.__experiment_id__, cycle_dir,
-                                                      self.__model__)
-
             # Object for computing data assimilation window parameters
-            self.da_window_params = DataAssimilationWindowParams(self.logger, self.__datetime__)
+            self.da_window_params = DataAssimilationWindowParams(self.logger,
+                                                                 self.__datetime__.string_iso())
 
     # ----------------------------------------------------------------------------------------------
 
@@ -158,11 +162,9 @@ class taskBase(ABC):
         self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
                                  'should not be called if the task does not receive model.')
 
-        # Get the current cycle in directory format
-        current_cycle_dir_format = self.__datetime__.strftime(datetime_formats['dir_format'])
-
-        # Combine with the model
-        cycle_dir = os.path.join(current_cycle_dir_format, self.__model__)
+        # Combine datetime string (directory format) with the model
+        cycle_dir = os.path.join(self.experiment_path(), 'run', self.__datetime__.string_directory(),
+                                 self.__model__)
 
         # Return
         return cycle_dir

@@ -89,7 +89,7 @@ class JediConfigRendering():
 
         # Fill templates in the configuration file using the config
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
-                                                 self.template_dictionary)
+                                                 self.template_dict)
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)

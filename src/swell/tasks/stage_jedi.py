@@ -51,8 +51,10 @@ class StageJedi(taskBase):
 
         # Check for presence of stage file
         # --------------------------------
-        stage_file = os.path.join(self.experiment_config_path(), self.get_model(), stage_file)
-        if not os.path.exists(stage_file):
+        stage_pathfile = os.path.join(self.experiment_config_path(), 'jedi', 'interfaces',
+                                      self.get_model(), 'model', stage_file + '.yaml')
+        print(stage_file)
+        if not os.path.exists(stage_pathfile):
             self.logger.info('No stage dictionary was found for this configuration')
             exit(0)
 
