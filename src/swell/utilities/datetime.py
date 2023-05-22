@@ -29,23 +29,25 @@ class Datetime:
         datetime_str = re.sub('[^0-9]', '', datetime_input+'000000')[0:14]
 
         # Convert string to datetime object
-        self.datetime = pydatetime.datetime.strptime(datetime_str, '%Y%m%d%H%M%S')
+        self.__datetime__ = pydatetime.datetime.strptime(datetime_str, '%Y%m%d%H%M%S')
 
-        # Datetime formats
-        self.directory_format = datetime_formats['directory_format']
-        self.iso_format = datetime_formats['iso_format']
+    # ----------------------------------------------------------------------------------------------
+
+    def dto(self):
+
+        return self.__datetime__
 
     # ----------------------------------------------------------------------------------------------
 
     def string_iso(self):
 
-        return self.datetime.strftime(self.iso_format)
+        return self.__datetime__.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
     def string_directory(self):
 
-        return self.datetime.strftime(self.directory_format)
+        return self.__datetime__.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 

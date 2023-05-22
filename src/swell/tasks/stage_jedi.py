@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -53,7 +53,7 @@ class StageJedi(taskBase):
         # --------------------------------
         stage_pathfile = os.path.join(self.experiment_config_path(), 'jedi', 'interfaces',
                                       self.get_model(), 'model', stage_file + '.yaml')
-        print(stage_file)
+
         if not os.path.exists(stage_pathfile):
             self.logger.info('No stage dictionary was found for this configuration')
             exit(0)

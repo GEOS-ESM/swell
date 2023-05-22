@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -8,13 +8,13 @@
 # --------------------------------------------------------------------------------------------------
 
 
-def camelcase_to_underscore(CamelCaseString):
+def camel_case_to_snake_case(CamelCaseString):
 
     # Convert a string that looks like e.g. ThisIsAString to this_is_a_string
     # -----------------------------------------------------------------------
 
     # Create empty output string
-    underscore_string = ''
+    snake_case_string = ''
 
     # Loop over the elements in the string
     for element in CamelCaseString:
@@ -26,13 +26,13 @@ def camelcase_to_underscore(CamelCaseString):
             new_element = element
 
         # Add new element to the output string
-        underscore_string = underscore_string+new_element
+        snake_case_string = snake_case_string+new_element
 
     # If this results in leading underscore then remove it
-    if underscore_string[0] == "_":
-        underscore_string = underscore_string[1:]
+    if snake_case_string[0] == "_":
+        snake_case_string = snake_case_string[1:]
 
-    return underscore_string
+    return snake_case_string
 
 
 # --------------------------------------------------------------------------------------------------

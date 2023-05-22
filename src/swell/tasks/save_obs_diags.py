@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -24,13 +24,15 @@ class SaveObsDiags(taskBase):
 
         # Parse config
         # ------------
-        background_time = self.config_get('background_time')
+        background_time_offset = self.config_get('background_time_offset')
         crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
         observations = self.config_get('observations')
         window_offset = self.config_get('window_offset')
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)

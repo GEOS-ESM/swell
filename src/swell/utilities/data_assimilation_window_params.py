@@ -10,16 +10,8 @@
 import datetime
 import isodate
 
+from swell.utilities.datetime import datetime_formats
 
-# --------------------------------------------------------------------------------------------------
-
-
-# Swell datetime format (yyyymmddThhMMssZ)
-
-datetime_formats = {
-    'dir_format': "%Y%m%dT%H%M%SZ",        # yyyymmddThhMMssZ for directory formats
-    'iso_format': "%Y-%m-%dT%H:%M:%SZ"     # yyyy-mm-ddThh:MM:ssZ ISO format
-}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -63,7 +55,7 @@ class DataAssimilationWindowParams():
     def window_begin(self, window_offset):
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
-        return window_begin_dto.strftime(datetime_formats['dir_format'])
+        return window_begin_dto.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 
@@ -78,7 +70,7 @@ class DataAssimilationWindowParams():
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
         background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
-        return background_time_dto.strftime(datetime_formats['dir_format'])
+        return background_time_dto.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 
@@ -92,6 +84,6 @@ class DataAssimilationWindowParams():
     def local_background_time(self, window_offset, window_type):
 
         local_background_time = self.__get_local_background_time__(window_type, window_offset)
-        return local_background_time.strftime(datetime_formats['dir_format'])
+        return local_background_time.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------

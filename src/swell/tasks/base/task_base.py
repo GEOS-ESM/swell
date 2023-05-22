@@ -18,14 +18,13 @@ import sys
 import time
 import yaml
 
-# local imports
-from swell.tasks.base.config import Config
-from swell.tasks.base.datetime import Datetime
-from swell.utilities.date_time import datetime_formats
-from swell.utilities.logger import Logger
+# swell imports
 from swell.tasks.base.task_registry import valid_tasks
-from swell.tasks.base.utils import camelcase_to_underscore
-from swell.utilities.date_time import DataAssimilationWindowParams
+from swell.utilities.case_switching import camel_case_to_snake_case
+from swell.utilities.config import Config
+from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
+from swell.utilities.datetime import Datetime
+from swell.utilities.logger import Logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 
 
@@ -149,13 +148,6 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycle_time(self):
-        self.logger.assert_abort(self.__datetime__ is not None, f'Cannot obtain the cycle time' +
-                                 f'when the task was not initialized with the cycle time.')
-        return self.__datetime__
-
-    # ----------------------------------------------------------------------------------------------
-
     def cycle_dir(self):
 
         # Check that model is set
@@ -163,11 +155,25 @@ class taskBase(ABC):
                                  'should not be called if the task does not receive model.')
 
         # Combine datetime string (directory format) with the model
-        cycle_dir = os.path.join(self.experiment_path(), 'run', self.__datetime__.string_directory(),
-                                 self.__model__)
+        cycle_dir = os.path.join(self.experiment_path(), 'run',
+                                 self.__datetime__.string_directory(), self.__model__)
 
         # Return
         return cycle_dir
+
+    # ----------------------------------------------------------------------------------------------
+
+    def cycle_time_dto(self):
+
+        return self.__datetime__.dto()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def cycle_time(self):
+
+        return self.__datetime__.string_iso()
+
+    # ----------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------------------------------
 
@@ -176,8 +182,8 @@ class taskFactory():
 
     def create_task(self, task, config, datetime, model):
 
-        # Convert capitilized string to one with underscores
-        task_lower = camelcase_to_underscore(task)
+        # Convert camel case string to snake case
+        task_lower = camel_case_to_snake_case(task)
 
         # Import class based on user selected task
         task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)

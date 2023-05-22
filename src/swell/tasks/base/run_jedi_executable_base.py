@@ -99,7 +99,7 @@ class RunJediExecutableBase(taskBase):
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
                                                                                     window_type)
         window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_iso = self.da_window_params.window_begin(window_offset)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
 
         # Add config to template rendering dictionary
         self.jedi_rendering.add_key('analysis_variables', analysis_variables)

@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -9,7 +9,6 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.date_time import datetime_formats
 
 from datetime import datetime as dt
 import isodate
@@ -39,11 +38,6 @@ class GetBackground(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
-
-        # Current cycle time object
-        # -------------------------
-        current_cycle = self.config_get('current_cycle')
-        current_cycle_dto = dt.strptime(current_cycle, datetime_formats['dir_format'])
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
@@ -94,8 +88,11 @@ class GetBackground(taskBase):
                 self.logger.abort('Window length not divisible by background frequency')
 
             # Loop over window
-            start_date = current_cycle_dto - window_offset_dur
-            final_date = current_cycle_dto + window_offset_dur
+            print('self.cycle_time_dto()', self.cycle_time_dto())
+            print('window_offset_dur', window_offset_dur)
+
+            start_date = self.cycle_time_dto() - window_offset_dur
+            final_date = self.cycle_time_dto() + window_offset_dur
 
             loop_date = start_date + bkg_freq_dur
 
@@ -106,7 +103,7 @@ class GetBackground(taskBase):
 
         # Get the forecast start time
         # ---------------------------
-        forecast_start_time = current_cycle_dto - window_length_dur + forecast_offset_dur
+        forecast_start_time = self.cycle_time_dto() - window_length_dur + forecast_offset_dur
 
         # Get name of this model component
         # --------------------------------

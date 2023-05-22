@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -16,7 +16,7 @@ from r2d2 import store
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.date_time import datetime_formats
+from swell.tasks.base.datetime import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------
