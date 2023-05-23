@@ -1,0 +1,377 @@
+analysis_forecast_window_offset:
+  default_value: null
+  models: null
+  prompt: This is an actual question
+  tasks:
+  - store_background
+  - get_background
+  type: string
+
+analysis_variables:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - run_jedi_executable_base
+  type: string
+
+background_error_model:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology
+  type: string
+
+background_experiment:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background
+  type: string
+
+background_frequency:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background
+  - run_jedi_executable_base
+  type: string
+
+background_source:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background
+  type: string
+
+background_time_offset:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - save_obs_diags
+  - get_observations
+  - eva_observations
+  - run_jedi_executable_base
+  type: string
+
+backgrounds:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - store_background
+  type: string
+
+bundles:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_jedi
+  - clone_jedi
+  type: string
+
+clean_patterns:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - clean_cycle
+  type: string
+
+crtm_coeff_dir:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - save_obs_diags
+  - get_observations
+  - eva_observations
+  - run_jedi_executable_base
+  type: string
+
+existing_build_directory:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_jedi_by_linking
+  type: string
+
+existing_geos_gcm_build_path:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_geos_by_linking
+  type: string
+
+existing_geos_gcm_source_path:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - clone_geos
+  type: string
+
+existing_source_directory:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - clone_jedi
+  type: string
+
+geos_background_restart_offset:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background_geos_experiment
+  type: string
+
+geos_bkg_filename_template:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background_geos_experiment
+  type: string
+
+geos_bkg_tar_filename_template:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background_geos_experiment
+  type: string
+
+geos_build_method:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_geos
+  - clone_geos
+  - build_geos_by_linking
+  type: string
+
+geos_gcm_tag:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - clone_geos
+  type: string
+
+gradient_norm_reduction:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - run_jedi_executable_base
+  type: string
+
+horizontal_resolution:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  - stage_jedi
+  - store_background
+  - generate_b_climatology
+  - get_background
+  - run_jedi_executable_base
+  type: string
+
+jedi_bkg_filename_template:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_background_geos_experiment
+  type: string
+
+jedi_build_method:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_jedi
+  - clone_jedi
+  - build_jedi_by_linking
+  type: string
+
+minimizer:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - run_jedi_executable_base
+  type: string
+
+model:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - run_jedi_executable_base
+  type: string
+
+model_components:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - build_jedi
+  - clone_jedi
+  type: string
+
+npx_proc:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  - generate_b_climatology
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
+  - run_jedi_executable_base
+  type: string
+
+npy_proc:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  - generate_b_climatology
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
+  - run_jedi_executable_base
+  type: string
+
+number_of_iterations:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - run_jedi_executable_base
+  type: string
+
+obs_experiment:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_observations
+  type: string
+
+obs_provider:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - get_observations
+  type: string
+
+observations:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - save_obs_diags
+  - get_observations
+  - eva_observations
+  - run_jedi_executable_base
+  type: string
+
+static_background_error_model:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  type: string
+
+swell_static_files:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  - stage_jedi
+  - generate_b_climatology
+  - run_jedi_executable_base
+  type: string
+
+swell_static_files_user:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  type: string
+
+total_processors:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
+  type: string
+
+vertical_resolution:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - generate_b_climatology_by_linking
+  - stage_jedi
+  - generate_b_climatology
+  - run_jedi_executable_base
+  type: string
+
+window_length:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - store_background
+  - get_background
+  - get_observations
+  - run_jedi_executable_base
+  type: string
+
+window_offset:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - store_background
+  - save_obs_diags
+  - get_background
+  - get_observations
+  - eva_observations
+  - run_jedi_executable_base
+  type: string
+
+window_type:
+  default_value: null
+  models: null
+  prompt: Question
+  tasks:
+  - store_background
+  - get_background
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
+  type: string
+

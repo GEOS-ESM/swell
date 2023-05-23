@@ -65,6 +65,9 @@ setuptools.setup(
             'swell_sat_db_processing = swell.deployment.bin.swell_sat_db_processing:main',
             'util_check_jedi_interface_templates = \
                 swell.utilities.bin.check_jedi_interface_templates:main',
+            'util_list_of_task_questions = \
+                swell.utilities.bin.list_of_task_questions:main',
+
         ],
     },
     )
