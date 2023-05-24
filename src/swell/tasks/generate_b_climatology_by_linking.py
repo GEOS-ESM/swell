@@ -41,7 +41,7 @@ class GenerateBClimatologyByLinking(taskBase):
         swell_static_files_user = self.config_get('swell_static_files_user', None)
 
         # Set the destination directory
-        target_path = os.path.join(self.get_cycle_dir(), 'background_error_model')
+        target_path = os.path.join(self.cycle_dir(), 'background_error_model')
         os.makedirs(target_path, mode=0o777, exist_ok=True)
 
         # Source path base the part that looks like /path/to/static_background_error_model/
