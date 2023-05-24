@@ -11,24 +11,14 @@
 import os
 import yaml
 
-from swell.tasks.base.run_jedi_executable_base import RunJediExecutableBase
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-interface_executable = {
-  'fv3-jedi-4D': 'fv3jedi_hofx.x',
-  'fv3-jedi-3D': 'fv3jedi_hofx_nomodel.x',
-  'soca-4D': 'soca_hofx.x',
-  'soca-3D': 'soca_hofx3d.x',
-}
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-class RunJediHofxExecutable(RunJediExecutableBase):
+class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -92,21 +82,20 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict, window_type)
+        jedi_dictionary_iterator(jedi_config_dict, window_type)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Get the JEDI interface for this model component
-        # -----------------------------------------------
+        # Get the JEDI interface metadata
+        # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
-        jedi_interface = model_component_meta['jedi_interface']
 
         # Jedi executable name
         # --------------------
-        jedi_executable = interface_executable[jedi_interface + '-' + window_type]
+        jedi_executable = model_component_meta['executables'][f'hofx{window_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
@@ -118,8 +107,8 @@ class RunJediHofxExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
-                            output_log_file)
+        run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
+                       output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------

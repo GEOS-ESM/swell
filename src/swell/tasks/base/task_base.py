@@ -66,7 +66,6 @@ class taskBase(ABC):
         # --------------------------------------------------------
         self.__experiment_root__ = self.config_get('experiment_root')
         self.__experiment_id__ = self.config_get('experiment_id')
-        self.__suite__ = self.config_get('suite_to_run')
 
         # Save the model components
         # -------------------------
@@ -117,12 +116,6 @@ class taskBase(ABC):
     # Method to get the experiment ID
     def experiment_id(self):
         return self.__experiment_id__
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to get the suite type
-    def suite(self):
-        return self.__suite__
 
     # ----------------------------------------------------------------------------------------------
 

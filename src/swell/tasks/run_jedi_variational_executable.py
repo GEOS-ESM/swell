@@ -7,23 +7,18 @@
 
 # --------------------------------------------------------------------------------------------------
 
+
 import os
 import yaml
 
-from swell.tasks.base.run_jedi_executable_base import RunJediExecutableBase
-
-# --------------------------------------------------------------------------------------------------
-
-
-interface_executable = {
-  'soca-3D': 'soca_var.x',
-}
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediVariationalExecutable(RunJediExecutableBase):
+class RunJediVariationalExecutable(taskBase):
 
     def execute(self):
 
@@ -98,7 +93,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict, window_type)
+        jedi_dictionary_iterator(jedi_config_dict, window_type)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
@@ -107,7 +102,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
 
         # Jedi executable name
         # --------------------
-        jedi_executable = interface_executable[jedi_interface + '-' + window_type]
+        jedi_executable = model_component_meta['executables'][f'variational{window_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build',
                                             'bin', jedi_executable)
         # Compute number of processors
@@ -118,7 +113,7 @@ class RunJediVariationalExecutable(RunJediExecutableBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
+        run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
                             output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 

@@ -8,79 +8,69 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from abc import ABC, abstractmethod
 import os
 
-from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediExecutableBase(taskBase):
+def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
+                             jedi_forecast_mode):
 
-    # ----------------------------------------------------------------------------------------------
+    # Assemble configuration YAML file
+    # --------------------------------
+    for key, value in jedi_config_dict.items():
+        if isinstance(value, dict):
+            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, jedi_forecast_mode)
 
-    @abstractmethod
-    def execute(self):
-        # This class does not execute, it provides helper function for the children
-        # ------------------------------------------------------------------------
-        pass
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    jedi_dictionary_iterator(item, jedi_rendering, window_type, obs,
+                                             jedi_forecast_mode)
 
-    # ----------------------------------------------------------------------------------------------
+        else:
+            if 'TASKFILL' in value:
+                value_file = value.replace('TASKFILL', '')
+                value_dict = jedi_rendering.render_interface_model(value_file)
 
-    def jedi_dictionary_iterator(self, jedi_config_dict, window_type, obs, jedi_forecast_mode):
+                jedi_config_dict[key] = value_dict
 
-        # Assemble configuration YAML file
-        # --------------------------------
-        for key, value in jedi_config_dict.items():
-            if isinstance(value, dict):
-                self.jedi_dictionary_iterator(value, window_type)
+            elif 'SPECIAL' in value:
+                value_special = value.replace('SPECIAL', '')
+                if value_special == 'observations':
+                    observations = []
+                    for ob in obs:
+                        # Get observation dictionary
+                        obs_dict = jedi_rendering.render_interface_observations(ob)
+                        observations.append(obs_dict)
+                    jedi_config_dict[key] = observations
 
-            elif isinstance(value, list):
-                for item in value:
-                    if isinstance(item, dict):
-                        self.jedi_dictionary_iterator(item, window_type)
+                elif value_special == 'model' and window_type == '4D':
+                    model_dict = jedi_rendering.render_interface_model(jedi_forecast_model)
+                    jedi_config_dict[key] = model_dict
 
-            else:
-                if 'TASKFILL' in value:
-                    value_file = value.replace('TASKFILL', '')
-                    value_dict = self.jedi_rendering.render_interface_model(value_file)
 
-                    jedi_config_dict[key] = value_dict
+# ----------------------------------------------------------------------------------------------
 
-                elif 'SPECIAL' in value:
-                    value_special = value.replace('SPECIAL', '')
-                    if value_special == 'observations':
-                        observations = []
-                        for ob in obs:
-                            # Get observation dictionary
-                            obs_dict = self.jedi_rendering.render_interface_observations(ob)
-                            observations.append(obs_dict)
-                        jedi_config_dict[key] = observations
 
-                    elif value_special == 'model' and window_type == '4D':
-                        model_dict = self.jedi_rendering.render_interface_model(jedi_forecast_model)
-                        jedi_config_dict[key] = model_dict
+def run_executable(logger, cycle_dir, np, jedi_executable_path, jedi_config_file, output_log):
 
-    # ----------------------------------------------------------------------------------------------
+    # Run the JEDI executable
+    # -----------------------
+    logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
-    def run_executable(self, cycle_dir, np, jedi_executable_path, jedi_config_file, output_log):
+    command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
 
-        # Run the JEDI executable
-        # -----------------------
-        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+    # Move to the cycle directory
+    # ---------------------------
+    os.chdir(cycle_dir)
 
-        command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
-
-        # Move to the cycle directory
-        # ---------------------------
-        os.chdir(cycle_dir)
-
-        # Run command
-        # -----------
-        run_track_log_subprocess(self.logger, command, output_log=output_log)
+    # Run command
+    # -----------
+    run_track_log_subprocess(logger, command, output_log=output_log)
 
 
 # --------------------------------------------------------------------------------------------------
