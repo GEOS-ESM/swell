@@ -1,9 +1,8 @@
 analysis_forecast_window_offset:
   ask_question: false
-  default_value: model()
+  default_value: defer_to_model
   models:
   - all
-  options: model()
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - store_backgr:qound
@@ -12,10 +11,9 @@ analysis_forecast_window_offset:
 
 analysis_variables:
   ask_question: false
-  default_value: model()
+  default_value: defer_to_model
   models:
   - all
-  options: model()
   prompt: What are the analysis variables?
   tasks:
   - run_jedi_executable_base
@@ -23,10 +21,10 @@ analysis_variables:
 
 background_error_model:
   ask_question: false
-  default_value: model()
+  default_value: defer_to_model
   models:
   - all
-  options: model()
+  options: defer_to_model
   prompt: Which background error model do you want to use?
   tasks:
   - generate_b_climatology
@@ -34,7 +32,7 @@ background_error_model:
 
 background_experiment:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
   - all
   prompt: What is the name of the name of the experiment providing the backgrounds?
@@ -44,10 +42,9 @@ background_experiment:
 
 background_frequency:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
   - all
-  options: null
   prompt: What is the frequency of the background files?
   tasks:
   - get_background
@@ -59,10 +56,9 @@ background_frequency:
 
 background_time_offset:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: How long before the middle of the analysis window did the background providing forecast begin?
   tasks:
   - save_obs_diags
@@ -73,10 +69,8 @@ background_time_offset:
 
 bundles:
   ask_question: true
-  default_value: null
-  models:
-  - null
-  options: null
+  default_value: ['fv3-jedi', 'soca', 'iodaconv']
+  options: ['fv3-jedi', 'soca', 'iodaconv', 'ufo', 'ioda', 'oops', 'saber']
   prompt: Which JEDI bundles do you wish to build?
   tasks:
   - build_jedi
@@ -85,10 +79,9 @@ bundles:
 
 clean_patterns:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - clean_cycle
@@ -96,9 +89,9 @@ clean_patterns:
 
 crtm_coeff_dir:
   ask_question: false
-  default_value: platform()
+  default_value: defer_to_platform
   models:
-  - null
+  - geos_atmosphere
   prompt: What is the path to the CRTM coefficient files?
   tasks:
   - save_obs_diags
@@ -109,9 +102,7 @@ crtm_coeff_dir:
 
 existing_geos_gcm_build_path:
   ask_question: true
-  default_value: null
-  models:
-  - null
+  default_value: defer_to_platform
   prompt: What is the path to the existing GEOS build directory?
   tasks:
   - build_geos_by_linking
@@ -122,9 +113,7 @@ existing_geos_gcm_build_path:
 
 existing_jedi_build_directory:
   ask_question: true
-  default_value: null
-  models:
-  - null
+  default_value: defer_to_platform
   prompt: What is the path to the existing JEDI build directory?
   tasks:
   - build_jedi_by_linking
@@ -135,9 +124,7 @@ existing_jedi_build_directory:
 
 existing_geos_gcm_source_path:
   ask_question: true
-  default_value: null
-  models:
-  - null
+  default_value: defer_to_platform
   prompt: What is the path to the existing GEOS source code directory?
   tasks:
   - clone_geos
@@ -148,9 +135,7 @@ existing_geos_gcm_source_path:
 
 existing_jedi_source_directory:
   ask_question: true
-  default_value: null
-  models:
-  - null
+  default_value: defer_to_platform
   prompt: What is the path to the existing JEDI source code directory?
   tasks:
   - clone_jedi
@@ -161,10 +146,9 @@ existing_jedi_source_directory:
 
 geos_background_restart_offset:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - geos_atmosphere
   prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
   - get_background_geos_experiment
@@ -172,9 +156,9 @@ geos_background_restart_offset:
 
 geos_bkg_filename_template:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
+  - geos_atmosphere
   prompt: Name of the background files as output by GEOS (with date and time templated).
   tasks:
   - get_background_geos_experiment
@@ -182,9 +166,9 @@ geos_bkg_filename_template:
 
 geos_bkg_tar_filename_template:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
+  - geos_atmosphere
   prompt: Name of the GEOS backgrounds tar file (with date and time templated
   tasks:
   - get_background_geos_experiment
@@ -193,8 +177,6 @@ geos_bkg_tar_filename_template:
 geos_build_method:
   ask_question: true
   default_value: use_existing
-  models:
-  - null
   options: ['use_existing', 'create']
   prompt: Do you want to use an existing GEOS build or create a new build?
   tasks:
@@ -206,9 +188,6 @@ geos_build_method:
 geos_gcm_tag:
   ask_question: true
   default_value: v11.0.2
-  models:
-  - null
-  options: None
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - clone_geos
@@ -216,10 +195,9 @@ geos_gcm_tag:
 
 gradient_norm_reduction:
   ask_question: false
-  default_value: model()
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - run_jedi_executable_base
@@ -227,10 +205,10 @@ gradient_norm_reduction:
 
 horizontal_resolution:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: What is the horizontal resolution for the forecast model and backgrounds?
   tasks:
   - generate_b_climatology_by_linking
@@ -243,10 +221,9 @@ horizontal_resolution:
 
 jedi_bkg_filename_template:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - geos_atmosphere
   prompt: What is the name of the background as used by JEDI (with date and time templated)
   tasks:
   - get_background_geos_experiment
@@ -255,8 +232,6 @@ jedi_bkg_filename_template:
 jedi_build_method:
   ask_question: true
   default_value: use_existing
-  models:
-  - null
   options: ['use_existing', 'create']
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
@@ -267,21 +242,21 @@ jedi_build_method:
 
 minimizer:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: Which data assimilation minimizer do you wish to use?
   tasks:
   - run_jedi_executable_base
   type: string-drop-list
 
-model:
+jedi_forecast_model:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - run_jedi_executable_base
@@ -292,10 +267,9 @@ model:
 
 npx_proc:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - geos_atmosphere
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - generate_b_climatology_by_linking
@@ -307,10 +281,9 @@ npx_proc:
 
 npy_proc:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - geos_atmosphere
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - generate_b_climatology_by_linking
@@ -322,10 +295,9 @@ npy_proc:
 
 number_of_iterations:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
   tasks:
   - run_jedi_executable_base
@@ -333,9 +305,9 @@ number_of_iterations:
 
 obs_experiment:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
+  - all
   prompt: What is the database providing the observations?
   tasks:
   - get_observations
@@ -343,10 +315,9 @@ obs_experiment:
 
 obs_provider:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: What is the group providing the observations?
   tasks:
   - get_observations
@@ -354,10 +325,10 @@ obs_provider:
 
 observations:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: Which observations do you want to include?
   tasks:
   - save_obs_diags
@@ -368,10 +339,10 @@ observations:
 
 static_background_error_model:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: Which static background error model do you want to use?
   tasks:
   - generate_b_climatology_by_linking
@@ -379,9 +350,9 @@ static_background_error_model:
 
 swell_static_files:
   ask_question: false
-  default_value: null
+  default_value: defer_to_platform
   models:
-  - null
+  - all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - generate_b_climatology_by_linking
@@ -392,33 +363,32 @@ swell_static_files:
 
 swell_static_files_user:
   ask_question: false
-  default_value: null
+  default_value: None
   models:
-  - null
-  prompt: What is the path to the user provided Swell Static files directory?
+  - all
+  prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - generate_b_climatology_by_linking
   type: string
 
 total_processors:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
-  prompt: What is the total number of processors for JEDI?
+  - geos_ocean
+  prompt: What is the number of processors for JEDI?
   tasks:
   - generate_b_climatology
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
-  type: string
+  type: integer
 
 vertical_resolution:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
+  options: defer_to_model
   prompt: What is the vertical resolution for the forecast model and background?
   tasks:
   - generate_b_climatology_by_linking
@@ -429,24 +399,22 @@ vertical_resolution:
 
 window_length:
   ask_question: false
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: What is the duration for the data assimilation window?
   tasks:
   - store_background
   - get_background
   - get_observations
   - run_jedi_executable_base
-  type: string
+  type: duration
 
 window_offset:
   ask_question: true
-  default_value: null
+  default_value: defer_to_model
   models:
-  - null
-  options: null
+  - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - store_background
@@ -461,7 +429,7 @@ window_type:
   ask_question: true
   default_value: 4D
   models:
-  - null
+  - all
   options: ['3D', '4D']
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
@@ -470,4 +438,3 @@ window_type:
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
   type: string-drop-list
-

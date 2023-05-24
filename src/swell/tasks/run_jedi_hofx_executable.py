@@ -37,9 +37,46 @@ class RunJediHofxExecutable(RunJediExecutableBase):
         # Path to executable being run
         # ----------------------------
         window_type = self.config_get('window_type')
-        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
-        total_processors = self.config_get('total_processors')
+        npx_proc = self.config_get('npx_proc', None)
+        npy_proc = self.config_get('npy_proc', None)
+        total_processors = self.config_get('total_processors', None)
+        window_length = self.config_get('window_length')
+        horizontal_resolution = self.config_get('horizontal_resolution')
+        vertical_resolution = self.config_get('vertical_resolution')
+        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
+        window_offset = self.config_get('window_offset')
+        background_time_offset = self.config_get('background_time_offset')
+        observations = self.config_get('observations')
+
+        # Compute data assimilation window parameters
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+        local_background_time = self.da_window_params.local_background_time(window_offset,
+                                                                            window_type)
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+                                                                                    window_type)
+        window_begin = self.da_window_params.window_begin(window_offset)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
+
+        # Populate jedi interface templates dictionary
+        # --------------------------------------------
+        self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
+        self.jedi_rendering.add_key('window_length', window_length)
+
+        # Background
+        self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
+        self.jedi_rendering.add_key('local_background_time', local_background_time)
+        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+
+        # Geometry
+        self.jedi_rendering.add_key('npx_proc', npx_proc)
+        self.jedi_rendering.add_key('npy_proc', npy_proc)
+        self.jedi_rendering.add_key('vertical_resolution', vertical_resolution)
+
+        # Observations
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Jedi configuration file
         # -----------------------
@@ -49,10 +86,16 @@ class RunJediHofxExecutable(RunJediExecutableBase):
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), 'jedi_hofx_log.log')
 
-        # Generate the JEDI configuration file for running the executable
-        # ---------------------------------------------------------------
-        jedi_config_dict = self.generate_jedi_config(self.suite(), window_type)
+        # Open the JEDI config file and fill initial templates
+        # ----------------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'hofx{window_type}')
 
+        # Perform complete template rendering
+        # -----------------------------------
+        self.jedi_dictionary_iterator(jedi_config_dict, window_type)
+
+        # Write the expanded dictionary to YAML file
+        # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
