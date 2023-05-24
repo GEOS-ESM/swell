@@ -36,10 +36,6 @@ def main():
     # All python files
     task_codes = jedi_tasks_path.rglob("*py")
 
-    # All lines of all task files
-    raw_task_code_lines = []
-    task_names = []
-
     # Output file
     outfile_yaml = os.path.join(swell_path, 'tasks', 'questions.yaml')
 
@@ -50,6 +46,9 @@ def main():
     else:
         question_dict = {}
 
+
+    config_keys = []
+    task_names = []
     for task_code in task_codes:
 
         if '__init__.py' not in str(task_code) and 'task_base.py' not in str(task_code):
@@ -58,21 +57,9 @@ def main():
                 file_lines = file.read().split('\n')
 
                 for file_line in file_lines:
-                    if 'self.config_get' in file_line:
-                        raw_task_code_lines.append(file_line.split('=')[1].strip())
+                    if 'self.config.' in file_line:
+                        config_keys.append(file_line.split('self.config.')[1].split('(')[0].strip())
                         task_names.append(os.path.basename(str(task_code)).split('.')[0])
-
-    # Extract just the config key from the string
-    config_keys = []
-    for raw_task_code_line in raw_task_code_lines:
-
-        config_key = raw_task_code_line.replace('self.config_get(', '')
-        config_key = config_key.replace(')', '')
-        config_key = config_key.split(',')[0].strip()
-        config_key = config_key.split('#')[0].strip()
-        config_key = config_key.replace('\'', '')
-
-        config_keys.append(config_key)
 
     # For each key create lists of tasks
     unique_keys = sorted(list(set(config_keys)))
@@ -104,7 +91,7 @@ def main():
 
             # Make sure minimal things are in the question's dictionary
             if 'default_value' not in question_dict_key:
-                question_to_tasks[unique_key]['default_value'] = defer_to_model
+                question_to_tasks[unique_key]['default_value'] = 'defer_to_model'
 
             if 'prompt' not in question_dict_key:
                 question_to_tasks[unique_key]['prompt'] = 'Question'
@@ -118,8 +105,8 @@ def main():
 
         else:
             question_to_tasks[unique_key] = {}
-            question_to_tasks[unique_key]['default_value'] = defer_to_model
-            question_to_tasks[unique_key]['options'] = defer_to_model
+            question_to_tasks[unique_key]['default_value'] = 'defer_to_model'
+            question_to_tasks[unique_key]['options'] = 'defer_to_model'
             question_to_tasks[unique_key]['prompt'] = 'Question'
             question_to_tasks[unique_key]['type'] = 'string'
             question_to_tasks[unique_key]['models'] = ['all']
