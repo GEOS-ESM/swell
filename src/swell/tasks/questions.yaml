@@ -43,6 +43,9 @@ background_experiment:
 background_frequency:
   ask_question: false
   default_value: defer_to_model
+  depends:
+    key: window_type
+    value: 4D
   models:
   - all
   prompt: What is the frequency of the background files?
@@ -50,9 +53,6 @@ background_frequency:
   - get_background
   - run_jedi_executable_base
   type: duration
-  depends:
-    key: window_type
-    value: 4D
 
 background_time_offset:
   ask_question: false
@@ -103,46 +103,46 @@ crtm_coeff_dir:
 existing_geos_gcm_build_path:
   ask_question: true
   default_value: defer_to_platform
+  depends:
+    key: geos_build_method
+    value: use_existing
   prompt: What is the path to the existing GEOS build directory?
   tasks:
   - build_geos_by_linking
   type: string
-  depends:
-    key: geos_build_method
-    value: use_existing
 
 existing_jedi_build_directory:
   ask_question: true
   default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_existing
   prompt: What is the path to the existing JEDI build directory?
   tasks:
   - build_jedi_by_linking
   type: string
-  depends:
-    key: jedi_build_method
-    value: use_existing
 
 existing_geos_gcm_source_path:
   ask_question: true
   default_value: defer_to_platform
+  depends:
+    key: geos_build_method
+    value: use_existing
   prompt: What is the path to the existing GEOS source code directory?
   tasks:
   - clone_geos
   type: string
-  depends:
-    key: geos_build_method
-    value: use_existing
 
 existing_jedi_source_directory:
   ask_question: true
   default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_existing
   prompt: What is the path to the existing JEDI source code directory?
   tasks:
   - clone_jedi
   type: string
-  depends:
-    key: jedi_build_method
-    value: use_existing
 
 geos_background_restart_offset:
   ask_question: true
@@ -254,6 +254,9 @@ minimizer:
 jedi_forecast_model:
   ask_question: true
   default_value: defer_to_model
+  depends:
+    key: window_type
+    value: 4D
   models:
   - all
   options: defer_to_model
@@ -261,9 +264,6 @@ jedi_forecast_model:
   tasks:
   - run_jedi_executable_base
   type: string-drop-list
-  depends:
-    key: window_type
-    value: 4D
 
 npx_proc:
   ask_question: true

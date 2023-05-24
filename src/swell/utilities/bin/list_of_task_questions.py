@@ -102,10 +102,7 @@ def main():
             question_dict_key = question_dict[unique_key]
 
             if 'default_value' not in question_dict_key:
-                question_to_tasks[unique_key]['default_value'] = None
-
-            if 'options' not in question_dict_key:
-                question_to_tasks[unique_key]['options'] = None
+                question_to_tasks[unique_key]['default_value'] = defer_to_model
 
             if 'prompt' not in question_dict_key:
                 question_to_tasks[unique_key]['prompt'] = 'Question'
@@ -114,7 +111,7 @@ def main():
                 question_to_tasks[unique_key]['type'] = 'string'
 
             if 'models' not in question_dict_key:
-                question_to_tasks[unique_key]['models'] = [None]
+                question_to_tasks[unique_key]['models'] = ['all']
 
             if 'ask_question' not in question_dict_key:
                 question_to_tasks[unique_key]['ask_question'] = True
@@ -122,11 +119,11 @@ def main():
 
         else:
             question_to_tasks[unique_key] = {}
-            question_to_tasks[unique_key]['default_value'] = None
-            question_to_tasks[unique_key]['options'] = None
+            question_to_tasks[unique_key]['default_value'] = defer_to_model
+            question_to_tasks[unique_key]['options'] = defer_to_model
             question_to_tasks[unique_key]['prompt'] = 'Question'
             question_to_tasks[unique_key]['type'] = 'string'
-            question_to_tasks[unique_key]['models'] = [None]
+            question_to_tasks[unique_key]['models'] = ['all']
             question_to_tasks[unique_key]['ask_question'] = True
 
         # Regardless of whether question was already in dictionary
