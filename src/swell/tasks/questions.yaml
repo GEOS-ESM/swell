@@ -1,93 +1,105 @@
 analysis_forecast_window_offset:
-  default_value: null
-  models: null
-  prompt: This is an actual question
+  ask_question: false
+  default_value: model()
+  models:
+  - all
+  options: model()
+  prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
-  - store_background
+  - store_backgr:qound
   - get_background
-  type: string
+  type: duration
 
 analysis_variables:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: false
+  default_value: model()
+  models:
+  - all
+  options: model()
+  prompt: What are the analysis variables?
   tasks:
   - run_jedi_executable_base
-  type: string
+  type: string-check-list
 
 background_error_model:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: false
+  default_value: model()
+  models:
+  - all
+  options: model()
+  prompt: Which background error model do you want to use?
   tasks:
   - generate_b_climatology
-  type: string
+  type: string-drop-list
 
 background_experiment:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - all
+  prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
   - get_background
   type: string
 
 background_frequency:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - all
+  options: null
+  prompt: What is the frequency of the background files?
   tasks:
   - get_background
   - run_jedi_executable_base
-  type: string
-
-background_source:
-  default_value: null
-  models: null
-  prompt: Question
-  tasks:
-  - get_background
-  type: string
+  type: duration
+  depends:
+    key: window_type
+    value: 4D
 
 background_time_offset:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: How long before the middle of the analysis window did the background providing forecast begin?
   tasks:
   - save_obs_diags
   - get_observations
   - eva_observations
   - run_jedi_executable_base
-  type: string
-
-backgrounds:
-  default_value: null
-  models: null
-  prompt: Question
-  tasks:
-  - store_background
-  type: string
+  type: duration
 
 bundles:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Which JEDI bundles do you wish to build?
   tasks:
   - build_jedi
   - clone_jedi
-  type: string
+  type: string-check-list
 
 clean_patterns:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - clean_cycle
-  type: string
+  type: string-list
 
 crtm_coeff_dir:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: false
+  default_value: platform()
+  models:
+  - null
+  prompt: What is the path to the CRTM coefficient files?
   tasks:
   - save_obs_diags
   - get_observations
@@ -95,92 +107,131 @@ crtm_coeff_dir:
   - run_jedi_executable_base
   type: string
 
-existing_build_directory:
-  default_value: null
-  models: null
-  prompt: Question
-  tasks:
-  - build_jedi_by_linking
-  type: string
-
 existing_geos_gcm_build_path:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the path to the existing GEOS build directory?
   tasks:
   - build_geos_by_linking
   type: string
+  depends:
+    key: geos_build_method
+    value: use_existing
+
+existing_jedi_build_directory:
+  ask_question: true
+  default_value: null
+  models:
+  - null
+  prompt: What is the path to the existing JEDI build directory?
+  tasks:
+  - build_jedi_by_linking
+  type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
 
 existing_geos_gcm_source_path:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the path to the existing GEOS source code directory?
   tasks:
   - clone_geos
   type: string
+  depends:
+    key: geos_build_method
+    value: use_existing
 
-existing_source_directory:
+existing_jedi_source_directory:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the path to the existing JEDI source code directory?
   tasks:
   - clone_jedi
   type: string
+  depends:
+    key: jedi_build_method
+    value: use_existing
 
 geos_background_restart_offset:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
   - get_background_geos_experiment
-  type: string
+  type: duration
 
 geos_bkg_filename_template:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: Name of the background files as output by GEOS (with date and time templated).
   tasks:
   - get_background_geos_experiment
   type: string
 
 geos_bkg_tar_filename_template:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: Name of the GEOS backgrounds tar file (with date and time templated
   tasks:
   - get_background_geos_experiment
   type: string
 
 geos_build_method:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: true
+  default_value: use_existing
+  models:
+  - null
+  options: ['use_existing', 'create']
+  prompt: Do you want to use an existing GEOS build or create a new build?
   tasks:
   - build_geos
   - clone_geos
   - build_geos_by_linking
-  type: string
+  type: string-drop-list
 
 geos_gcm_tag:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: true
+  default_value: v11.0.2
+  models:
+  - null
+  options: None
+  prompt: Which GEOS tag do you wish to clone?
   tasks:
   - clone_geos
   type: string
 
 gradient_norm_reduction:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: false
+  default_value: model()
+  models:
+  - null
+  options: null
+  prompt: What value of gradient norm reduction for convergence?
   tasks:
   - run_jedi_executable_base
-  type: string
+  type: float
 
 horizontal_resolution:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the horizontal resolution for the forecast model and backgrounds?
   tasks:
   - generate_b_climatology_by_linking
   - stage_jedi
@@ -188,20 +239,26 @@ horizontal_resolution:
   - generate_b_climatology
   - get_background
   - run_jedi_executable_base
-  type: string
+  type: string-drop-list
 
 jedi_bkg_filename_template:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the name of the background as used by JEDI (with date and time templated)
   tasks:
   - get_background_geos_experiment
   type: string
 
 jedi_build_method:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: true
+  default_value: use_existing
+  models:
+  - null
+  options: ['use_existing', 'create']
+  prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
   - build_jedi
   - clone_jedi
@@ -209,101 +266,123 @@ jedi_build_method:
   type: string
 
 minimizer:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Which data assimilation minimizer do you wish to use?
   tasks:
   - run_jedi_executable_base
-  type: string
+  type: string-drop-list
 
 model:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - run_jedi_executable_base
-  type: string
-
-model_components:
-  default_value: null
-  models: null
-  prompt: Question
-  tasks:
-  - build_jedi
-  - clone_jedi
-  type: string
+  type: string-drop-list
+  depends:
+    key: window_type
+    value: 4D
 
 npx_proc:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - generate_b_climatology_by_linking
   - generate_b_climatology
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
   - run_jedi_executable_base
-  type: string
+  type: integer
 
 npy_proc:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - generate_b_climatology_by_linking
   - generate_b_climatology
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
   - run_jedi_executable_base
-  type: string
+  type: integer
 
 number_of_iterations:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
   tasks:
   - run_jedi_executable_base
-  type: string
+  type: integer-list
 
 obs_experiment:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the database providing the observations?
   tasks:
   - get_observations
   type: string
 
 obs_provider:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the group providing the observations?
   tasks:
   - get_observations
   type: string
 
 observations:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Which observations do you want to include?
   tasks:
   - save_obs_diags
   - get_observations
   - eva_observations
   - run_jedi_executable_base
-  type: string
+  type: string-check-list
 
 static_background_error_model:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: Which static background error model do you want to use?
   tasks:
   - generate_b_climatology_by_linking
-  type: string
+  type: string-drop-list
 
 swell_static_files:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the path to the Swell Static files directory?
   tasks:
   - generate_b_climatology_by_linking
   - stage_jedi
@@ -312,17 +391,22 @@ swell_static_files:
   type: string
 
 swell_static_files_user:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  prompt: What is the path to the user provided Swell Static files directory?
   tasks:
   - generate_b_climatology_by_linking
   type: string
 
 total_processors:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the total number of processors for JEDI?
   tasks:
   - generate_b_climatology
   - run_jedi_hofx_executable
@@ -330,20 +414,26 @@ total_processors:
   type: string
 
 vertical_resolution:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the vertical resolution for the forecast model and background?
   tasks:
   - generate_b_climatology_by_linking
   - stage_jedi
   - generate_b_climatology
   - run_jedi_executable_base
-  type: string
+  type: string-drop-list
 
 window_length:
+  ask_question: false
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the duration for the data assimilation window?
   tasks:
   - store_background
   - get_background
@@ -352,9 +442,12 @@ window_length:
   type: string
 
 window_offset:
+  ask_question: true
   default_value: null
-  models: null
-  prompt: Question
+  models:
+  - null
+  options: null
+  prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - store_background
   - save_obs_diags
@@ -362,16 +455,19 @@ window_offset:
   - get_observations
   - eva_observations
   - run_jedi_executable_base
-  type: string
+  type: duration
 
 window_type:
-  default_value: null
-  models: null
-  prompt: Question
+  ask_question: true
+  default_value: 4D
+  models:
+  - null
+  options: ['3D', '4D']
+  prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - store_background
   - get_background
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
-  type: string
+  type: string-drop-list
 

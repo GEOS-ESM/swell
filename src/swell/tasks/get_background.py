@@ -46,7 +46,6 @@ class GetBackground(taskBase):
         # Parse config
         background_experiment = self.config_get('background_experiment')
         background_frequency = self.config_get('background_frequency', None)
-        background_source = self.config_get('background_source', 'file')
         forecast_offset = self.config_get('analysis_forecast_window_offset')
         horizontal_resolution = self.config_get('horizontal_resolution')
         window_length = self.config_get('window_length')
@@ -79,7 +78,7 @@ class GetBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        if window_type == "4D" and background_source == 'file':
+        if window_type == "4D":
 
             bkg_freq_dur = isodate.parse_duration(background_frequency)
 

@@ -42,15 +42,15 @@ class CloneJedi(taskBase):
         if jedi_build_method == 'use_existing':
 
             # Get the existing bundle directory to get the source code
-            existing_source_directory = self.config_get('existing_source_directory')
+            existing_jedi_source_directory = self.config_get('existing_jedi_source_directory')
 
             # Link the source code directory
-            link_path(existing_source_directory, jedi_bundle_source_path)
+            link_path(existing_jedi_source_directory, jedi_bundle_source_path)
 
         elif jedi_build_method == 'create':
 
             # Determine which bundles need to be build
-            model_components = self.config_get('model_components', None)
+            model_components = self.get_model_components()
             if model_components is not None:
                 bundles = []
                 for model_component in model_components:

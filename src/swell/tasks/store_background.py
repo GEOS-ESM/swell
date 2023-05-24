@@ -46,6 +46,8 @@ class StoreBackground(taskBase):
         window_type = self.config_get('window_type')
         window_length = self.config_get('window_length')
         window_offset = self.config_get('window_offset')
+        background_experiment = self.config_get('background_experiment')
+        background_frequency = self.config_get('background_frequency')
 
         # Position relative to center of the window where forecast starts
         forecast_offset = self.config_get('analysis_forecast_window_offset')
@@ -71,12 +73,9 @@ class StoreBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        bkg_info = self.config_get('backgrounds')
+        if window_type == "4D":
 
-        if window_type == "4D" and bkg_info['background source'] == 'file':
-
-            bkg_freq = bkg_info['background frequency']
-            bkg_freq_dur = isodate.parse_duration(bkg_freq)
+            bkg_freq_dur = isodate.parse_duration(background_frequency)
 
             # Check for a sensible frequency
             if (window_length_dur/bkg_freq_dur) % 2:
@@ -138,4 +137,4 @@ class StoreBackground(taskBase):
                           step=bkg_step,
                           resolution=self.config_get('horizontal_resolution'),
                           type='fc',
-                          experiment=bkg_info['background experiment'])
+                          experiment=background_experiment)

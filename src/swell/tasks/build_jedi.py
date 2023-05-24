@@ -40,7 +40,7 @@ class BuildJedi(taskBase):
         if jedi_build_method == 'create':
 
             # Determine which bundles need to be build
-            model_components = self.config_get('model_components', None)
+            model_components = self.get_model_components()
             if model_components is not None:
                 bundles = []
                 for model_component in model_components:

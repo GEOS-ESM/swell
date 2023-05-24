@@ -41,13 +41,13 @@ class BuildJediByLinking(taskBase):
         if jedi_build_method == 'use_existing':
 
             # Get the existing build directory from the dictionary
-            existing_build_directory = self.config_get('existing_build_directory')
+            existing_jedi_build_directory = self.config_get('existing_jedi_build_directory')
 
             # Assert that the existing build directory contains a bin directory
-            if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
+            if not os.path.exists(os.path.join(existing_jedi_build_directory, 'bin')):
                 self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
                                   f'directory is not found in the path ' +
-                                  f'\'{existing_build_directory}\'')
+                                  f'\'{existing_jedi_build_directory}\'')
 
             # Write warning to user
             self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
@@ -56,7 +56,7 @@ class BuildJediByLinking(taskBase):
                              'this experiment may not be reproducible if the build changes.')
 
             # Link the source code directory
-            link_path(existing_build_directory, jedi_bundle_build_path)
+            link_path(existing_jedi_build_directory, jedi_bundle_build_path)
 
         else:
 

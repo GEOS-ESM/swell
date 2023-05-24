@@ -142,7 +142,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface metadata file and call rendering
-    def render_interface_meta(self):
+    def render_interface_meta(self, model_component = self.jedi_interface):
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a '
@@ -150,8 +150,8 @@ class JediConfigRendering():
                                  f'jedi interface.')
 
         # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
-                                   f'{self.jedi_interface}.yaml')
+        config_file = os.path.join(self.jedi_config_path, 'interfaces', model_component,
+                                   f'{model_component}.yaml')
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

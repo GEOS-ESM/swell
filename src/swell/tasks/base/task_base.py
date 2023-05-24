@@ -68,6 +68,10 @@ class taskBase(ABC):
         self.__experiment_id__ = self.config_get('experiment_id')
         self.__suite__ = self.config_get('suite_to_run')
 
+        # Save the model components
+        # -------------------------
+        self.__model_components__ = self.config_get('model_components', None)
+
         # Create cycle directory
         # ----------------------
         cycle_dir = None
@@ -137,6 +141,11 @@ class taskBase(ABC):
 
     def get_model(self):
         return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model_components(self):
+        return self.__model_components__
 
     # ----------------------------------------------------------------------------------------------
 
