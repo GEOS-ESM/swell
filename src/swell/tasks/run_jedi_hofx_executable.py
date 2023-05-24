@@ -37,6 +37,7 @@ class RunJediHofxExecutable(taskBase):
         window_offset = self.config_get('window_offset')
         background_time_offset = self.config_get('background_time_offset')
         observations = self.config_get('observations')
+        jedi_forecast_model = self.config_get('jedi_forecast_model', None)
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -82,7 +83,8 @@ class RunJediHofxExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, window_type)
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
+                                 jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
@@ -107,7 +109,7 @@ class RunJediHofxExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
-        run_executable(self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
+        run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
                        output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 

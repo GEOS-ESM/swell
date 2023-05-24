@@ -17,19 +17,19 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             jedi_forecast_mode):
+                             jedi_forecast_model):
 
     # Assemble configuration YAML file
     # --------------------------------
     for key, value in jedi_config_dict.items():
         if isinstance(value, dict):
-            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, jedi_forecast_mode)
+            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, jedi_forecast_model)
 
         elif isinstance(value, list):
             for item in value:
                 if isinstance(item, dict):
                     jedi_dictionary_iterator(item, jedi_rendering, window_type, obs,
-                                             jedi_forecast_mode)
+                                             jedi_forecast_model)
 
         else:
             if 'TASKFILL' in value:
