@@ -5,8 +5,8 @@ analysis_forecast_window_offset:
   - all
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
-  - store_background
-  - get_background
+  - StoreBackground
+  - GetBackground
   type: duration
 
 analysis_variables:
@@ -16,7 +16,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
-  - run_jedi_variational_executable
+  - RunJediVariationalExecutable
   type: string-check-list
 
 background_error_model:
@@ -27,7 +27,7 @@ background_error_model:
   options: defer_to_model
   prompt: Which background error model do you want to use?
   tasks:
-  - generate_b_climatology
+  - GenerateBClimatology
   type: string-drop-list
 
 background_experiment:
@@ -37,8 +37,8 @@ background_experiment:
   - all
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
-  - store_background
-  - get_background
+  - StoreBackground
+  - GetBackground
   type: string
 
 background_frequency:
@@ -51,8 +51,8 @@ background_frequency:
   - all
   prompt: What is the frequency of the background files?
   tasks:
-  - store_background
-  - get_background
+  - StoreBackground
+  - GetBackground
   type: duration
 
 background_time_offset:
@@ -63,11 +63,11 @@ background_time_offset:
   prompt: How long before the middle of the analysis window did the background providing
     forecast begin?
   tasks:
-  - save_obs_diags
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
-  - get_observations
-  - eva_observations
+  - SaveObsDiags
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - GetObservations
+  - EvaObservations
   type: duration
 
 bundles:
@@ -86,8 +86,8 @@ bundles:
   - saber
   prompt: Which JEDI bundles do you wish to build?
   tasks:
-  - build_jedi
-  - clone_jedi
+  - BuildJedi
+  - CloneJedi
   type: string-check-list
 
 clean_patterns:
@@ -97,7 +97,7 @@ clean_patterns:
   - all
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
-  - clean_cycle
+  - CleanCycle
   type: string-list
 
 crtm_coeff_dir:
@@ -107,11 +107,11 @@ crtm_coeff_dir:
   - geos_atmosphere
   prompt: What is the path to the CRTM coefficient files?
   tasks:
-  - save_obs_diags
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
-  - get_observations
-  - eva_observations
+  - SaveObsDiags
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - GetObservations
+  - EvaObservations
   type: string
 
 existing_geos_gcm_build_path:
@@ -122,7 +122,7 @@ existing_geos_gcm_build_path:
     value: use_existing
   prompt: What is the path to the existing GEOS build directory?
   tasks:
-  - build_geos_by_linking
+  - BuildGeosByLinking
   type: string
 
 existing_geos_gcm_source_path:
@@ -133,7 +133,7 @@ existing_geos_gcm_source_path:
     value: use_existing
   prompt: What is the path to the existing GEOS source code directory?
   tasks:
-  - clone_geos
+  - CloneGeos
   type: string
 
 existing_jedi_build_directory:
@@ -144,7 +144,7 @@ existing_jedi_build_directory:
     value: use_existing
   prompt: What is the path to the existing JEDI build directory?
   tasks:
-  - build_jedi_by_linking
+  - BuildJediByLinking
   type: string
 
 existing_jedi_source_directory:
@@ -155,7 +155,7 @@ existing_jedi_source_directory:
     value: use_existing
   prompt: What is the path to the existing JEDI source code directory?
   tasks:
-  - clone_jedi
+  - CloneJedi
   type: string
 
 geos_background_restart_offset:
@@ -165,7 +165,7 @@ geos_background_restart_offset:
   - geos_atmosphere
   prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
-  - get_background_geos_experiment
+  - GetBackgroundGeosExperiment
   type: duration
 
 geos_bkg_filename_template:
@@ -175,7 +175,7 @@ geos_bkg_filename_template:
   - geos_atmosphere
   prompt: Name of the background files as output by GEOS (with date and time templated).
   tasks:
-  - get_background_geos_experiment
+  - GetBackgroundGeosExperiment
   type: string
 
 geos_bkg_tar_filename_template:
@@ -185,7 +185,7 @@ geos_bkg_tar_filename_template:
   - geos_atmosphere
   prompt: Name of the GEOS backgrounds tar file (with date and time templated
   tasks:
-  - get_background_geos_experiment
+  - GetBackgroundGeosExperiment
   type: string
 
 geos_build_method:
@@ -196,9 +196,9 @@ geos_build_method:
   - create
   prompt: Do you want to use an existing GEOS build or create a new build?
   tasks:
-  - build_geos
-  - clone_geos
-  - build_geos_by_linking
+  - BuildGeos
+  - CloneGeos
+  - BuildGeosByLinking
   type: string-drop-list
 
 geos_gcm_tag:
@@ -206,7 +206,7 @@ geos_gcm_tag:
   default_value: v11.0.2
   prompt: Which GEOS tag do you wish to clone?
   tasks:
-  - clone_geos
+  - CloneGeos
   type: string
 
 gradient_norm_reduction:
@@ -216,7 +216,7 @@ gradient_norm_reduction:
   - all
   prompt: What value of gradient norm reduction for convergence?
   tasks:
-  - run_jedi_variational_executable
+  - RunJediVariationalExecutable
   type: float
 
 horizontal_resolution:
@@ -227,13 +227,13 @@ horizontal_resolution:
   options: defer_to_model
   prompt: What is the horizontal resolution for the forecast model and backgrounds?
   tasks:
-  - generate_b_climatology_by_linking
-  - stage_jedi
-  - store_background
-  - generate_b_climatology
-  - get_background
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - GenerateBClimatologyByLinking
+  - StageJedi
+  - StoreBackground
+  - GenerateBClimatology
+  - GetBackground
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: string-drop-list
 
 jedi_bkg_filename_template:
@@ -243,7 +243,7 @@ jedi_bkg_filename_template:
   - geos_atmosphere
   prompt: What is the name of the background as used by JEDI (with date and time templated)
   tasks:
-  - get_background_geos_experiment
+  - GetBackgroundGeosExperiment
   type: string
 
 jedi_build_method:
@@ -254,9 +254,9 @@ jedi_build_method:
   - create
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
-  - build_jedi
-  - clone_jedi
-  - build_jedi_by_linking
+  - BuildJedi
+  - CloneJedi
+  - BuildJediByLinking
   type: string
 
 jedi_forecast_model:
@@ -270,8 +270,8 @@ jedi_forecast_model:
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: string-drop-list
 
 minimizer:
@@ -282,7 +282,7 @@ minimizer:
   options: defer_to_model
   prompt: Which data assimilation minimizer do you wish to use?
   tasks:
-  - run_jedi_variational_executable
+  - RunJediVariationalExecutable
   type: string-drop-list
 
 npx_proc:
@@ -292,10 +292,10 @@ npx_proc:
   - geos_atmosphere
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
-  - generate_b_climatology_by_linking
-  - generate_b_climatology
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - GenerateBClimatologyByLinking
+  - GenerateBClimatology
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: integer
 
 npy_proc:
@@ -305,10 +305,10 @@ npy_proc:
   - geos_atmosphere
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
-  - generate_b_climatology_by_linking
-  - generate_b_climatology
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - GenerateBClimatologyByLinking
+  - GenerateBClimatology
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: integer
 
 number_of_iterations:
@@ -319,7 +319,7 @@ number_of_iterations:
   prompt: What number of iterations do you wish to use for each outer loop? Provide
     a list of integers the same length as the number of outer loops.
   tasks:
-  - run_jedi_variational_executable
+  - RunJediVariationalExecutable
   type: integer-list
 
 obs_experiment:
@@ -329,7 +329,7 @@ obs_experiment:
   - all
   prompt: What is the database providing the observations?
   tasks:
-  - get_observations
+  - GetObservations
   type: string
 
 obs_provider:
@@ -339,7 +339,7 @@ obs_provider:
   - all
   prompt: What is the group providing the observations?
   tasks:
-  - get_observations
+  - GetObservations
   type: string
 
 observations:
@@ -350,11 +350,11 @@ observations:
   options: defer_to_model
   prompt: Which observations do you want to include?
   tasks:
-  - save_obs_diags
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
-  - get_observations
-  - eva_observations
+  - SaveObsDiags
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - GetObservations
+  - EvaObservations
   type: string-check-list
 
 static_background_error_model:
@@ -365,7 +365,7 @@ static_background_error_model:
   options: defer_to_model
   prompt: Which static background error model do you want to use?
   tasks:
-  - generate_b_climatology_by_linking
+  - GenerateBClimatologyByLinking
   type: string-drop-list
 
 swell_static_files:
@@ -375,9 +375,9 @@ swell_static_files:
   - all
   prompt: What is the path to the Swell Static files directory?
   tasks:
-  - generate_b_climatology_by_linking
-  - stage_jedi
-  - generate_b_climatology
+  - GenerateBClimatologyByLinking
+  - StageJedi
+  - GenerateBClimatology
   type: string
 
 swell_static_files_user:
@@ -387,7 +387,7 @@ swell_static_files_user:
   - all
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
-  - generate_b_climatology_by_linking
+  - GenerateBClimatologyByLinking
   type: string
 
 total_processors:
@@ -397,9 +397,9 @@ total_processors:
   - geos_ocean
   prompt: What is the number of processors for JEDI?
   tasks:
-  - generate_b_climatology
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - GenerateBClimatology
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: integer
 
 vertical_resolution:
@@ -410,11 +410,11 @@ vertical_resolution:
   options: defer_to_model
   prompt: What is the vertical resolution for the forecast model and background?
   tasks:
-  - generate_b_climatology_by_linking
-  - stage_jedi
-  - generate_b_climatology
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - GenerateBClimatologyByLinking
+  - StageJedi
+  - GenerateBClimatology
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: string-drop-list
 
 window_length:
@@ -424,11 +424,11 @@ window_length:
   - all
   prompt: What is the duration for the data assimilation window?
   tasks:
-  - store_background
-  - get_background
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
-  - get_observations
+  - StoreBackground
+  - GetBackground
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - GetObservations
   type: duration
 
 window_offset:
@@ -438,13 +438,13 @@ window_offset:
   - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
-  - store_background
-  - save_obs_diags
-  - get_background
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
-  - get_observations
-  - eva_observations
+  - StoreBackground
+  - SaveObsDiags
+  - GetBackground
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - GetObservations
+  - EvaObservations
   type: duration
 
 window_type:
@@ -457,9 +457,9 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
-  - store_background
-  - get_background
-  - run_jedi_hofx_executable
-  - run_jedi_variational_executable
+  - StoreBackground
+  - GetBackground
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   type: string-drop-list
 

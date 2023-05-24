@@ -18,6 +18,7 @@ import yaml
 # swell imports
 from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
+from swell.utilities.case_switching import snake_case_to_camel_case
 
 
 # --------------------------------------------------------------------------------------------------
@@ -92,7 +93,7 @@ def main():
 
             if unique_key == config_key:
 
-                tasks.append(task_name)
+                tasks.append(snake_case_to_camel_case(task_name))
 
         question_to_tasks = {}
 
