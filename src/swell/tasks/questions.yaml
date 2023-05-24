@@ -5,7 +5,7 @@ analysis_forecast_window_offset:
   - all
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
-  - store_backgr:qound
+  - store_background
   - get_background
   type: duration
 
@@ -16,7 +16,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
-  - run_jedi_executable_base
+  - run_jedi_variational_executable
   type: string-check-list
 
 background_error_model:
@@ -37,6 +37,7 @@ background_experiment:
   - all
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
+  - store_background
   - get_background
   type: string
 
@@ -50,8 +51,8 @@ background_frequency:
   - all
   prompt: What is the frequency of the background files?
   tasks:
+  - store_background
   - get_background
-  - run_jedi_executable_base
   type: duration
 
 background_time_offset:
@@ -63,9 +64,10 @@ background_time_offset:
     forecast begin?
   tasks:
   - save_obs_diags
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   - get_observations
   - eva_observations
-  - run_jedi_executable_base
   type: duration
 
 bundles:
@@ -106,9 +108,10 @@ crtm_coeff_dir:
   prompt: What is the path to the CRTM coefficient files?
   tasks:
   - save_obs_diags
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   - get_observations
   - eva_observations
-  - run_jedi_executable_base
   type: string
 
 existing_geos_gcm_build_path:
@@ -213,7 +216,7 @@ gradient_norm_reduction:
   - all
   prompt: What value of gradient norm reduction for convergence?
   tasks:
-  - run_jedi_executable_base
+  - run_jedi_variational_executable
   type: float
 
 horizontal_resolution:
@@ -229,7 +232,8 @@ horizontal_resolution:
   - store_background
   - generate_b_climatology
   - get_background
-  - run_jedi_executable_base
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   type: string-drop-list
 
 jedi_bkg_filename_template:
@@ -266,7 +270,8 @@ jedi_forecast_model:
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
-  - run_jedi_executable_base
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   type: string-drop-list
 
 minimizer:
@@ -277,7 +282,7 @@ minimizer:
   options: defer_to_model
   prompt: Which data assimilation minimizer do you wish to use?
   tasks:
-  - run_jedi_executable_base
+  - run_jedi_variational_executable
   type: string-drop-list
 
 npx_proc:
@@ -291,7 +296,6 @@ npx_proc:
   - generate_b_climatology
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
-  - run_jedi_executable_base
   type: integer
 
 npy_proc:
@@ -305,7 +309,6 @@ npy_proc:
   - generate_b_climatology
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
-  - run_jedi_executable_base
   type: integer
 
 number_of_iterations:
@@ -316,7 +319,7 @@ number_of_iterations:
   prompt: What number of iterations do you wish to use for each outer loop? Provide
     a list of integers the same length as the number of outer loops.
   tasks:
-  - run_jedi_executable_base
+  - run_jedi_variational_executable
   type: integer-list
 
 obs_experiment:
@@ -348,9 +351,10 @@ observations:
   prompt: Which observations do you want to include?
   tasks:
   - save_obs_diags
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   - get_observations
   - eva_observations
-  - run_jedi_executable_base
   type: string-check-list
 
 static_background_error_model:
@@ -374,7 +378,6 @@ swell_static_files:
   - generate_b_climatology_by_linking
   - stage_jedi
   - generate_b_climatology
-  - run_jedi_executable_base
   type: string
 
 swell_static_files_user:
@@ -410,7 +413,8 @@ vertical_resolution:
   - generate_b_climatology_by_linking
   - stage_jedi
   - generate_b_climatology
-  - run_jedi_executable_base
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   type: string-drop-list
 
 window_length:
@@ -422,8 +426,9 @@ window_length:
   tasks:
   - store_background
   - get_background
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   - get_observations
-  - run_jedi_executable_base
   type: duration
 
 window_offset:
@@ -436,9 +441,10 @@ window_offset:
   - store_background
   - save_obs_diags
   - get_background
+  - run_jedi_hofx_executable
+  - run_jedi_variational_executable
   - get_observations
   - eva_observations
-  - run_jedi_executable_base
   type: duration
 
 window_type:
@@ -456,3 +462,4 @@ window_type:
   - run_jedi_hofx_executable
   - run_jedi_variational_executable
   type: string-drop-list
+
