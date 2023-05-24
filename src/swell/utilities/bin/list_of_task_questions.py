@@ -101,6 +101,7 @@ def main():
 
             question_dict_key = question_dict[unique_key]
 
+            # Make sure minimal things are in the question's dictionary
             if 'default_value' not in question_dict_key:
                 question_to_tasks[unique_key]['default_value'] = defer_to_model
 
@@ -109,9 +110,6 @@ def main():
 
             if 'type' not in question_dict_key:
                 question_to_tasks[unique_key]['type'] = 'string'
-
-            if 'models' not in question_dict_key:
-                question_to_tasks[unique_key]['models'] = ['all']
 
             if 'ask_question' not in question_dict_key:
                 question_to_tasks[unique_key]['ask_question'] = True

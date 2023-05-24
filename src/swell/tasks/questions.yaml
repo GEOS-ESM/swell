@@ -69,8 +69,18 @@ background_time_offset:
 
 bundles:
   ask_question: true
-  default_value: ['fv3-jedi', 'soca', 'iodaconv']
-  options: ['fv3-jedi', 'soca', 'iodaconv', 'ufo', 'ioda', 'oops', 'saber']
+  default_value:
+  - 'fv3-jedi'
+  - 'soca'
+  - 'iodaconv'
+  options:
+  - 'fv3-jedi'
+  - 'soca'
+  - 'iodaconv'
+  - 'ufo'
+  - 'ioda'
+  - 'oops'
+  - 'saber'
   prompt: Which JEDI bundles do you wish to build?
   tasks:
   - build_jedi
@@ -177,7 +187,9 @@ geos_bkg_tar_filename_template:
 geos_build_method:
   ask_question: true
   default_value: use_existing
-  options: ['use_existing', 'create']
+  options:
+  - 'use_existing'
+  - 'create'
   prompt: Do you want to use an existing GEOS build or create a new build?
   tasks:
   - build_geos
@@ -232,7 +244,9 @@ jedi_bkg_filename_template:
 jedi_build_method:
   ask_question: true
   default_value: use_existing
-  options: ['use_existing', 'create']
+  options:
+  - 'use_existing'
+  - 'create'
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
   - build_jedi
@@ -430,7 +444,9 @@ window_type:
   default_value: 4D
   models:
   - all
-  options: ['3D', '4D']
+  options:
+  - '3D'
+  - '4D'
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - store_background
