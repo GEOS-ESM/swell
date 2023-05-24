@@ -52,6 +52,11 @@ class Config():
         with open(input_file, 'r') as ymlfile:
             experiment_dict = yaml.safe_load(ymlfile)
 
+        # Save some things that all tasks can use
+        self.__experiment_root__ = experiment_dict.get('experiment_root')
+        self.__experiment_id__ = experiment_dict.get('experiment_id')
+        self.__model_components__ = experiment_dict.get('model_components')
+
         # Step1: flatten the dictionary based on the model
         # ------------------------------------------------
 
@@ -108,15 +113,17 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def get(self, experiment_key):
-        def getter():
+        def getter(default=None):
             try:
-                var = getattr(self, f'__{experiment_key}__')
+                return getattr(self, f'__{experiment_key}__')
             except Exception e:
-                self.logger.abort(f'In config class trying to get variable {experiment_key} but ' +
-                                  f'it was not created. Ensure that the variable is in the ' +
-                                  f'experiment configuration and that the task can access that ' +
-                                  f'key based on the rules in tasks/questions.yaml.')
-            return getattr(self, f'__{experiment_key}__')
+                if default is None:
+                    self.logger.abort(f'In config class, trying to get variable {experiment_key} ' +
+                                      f'but it was not created. Ensure that the variable is in ' +
+                                      f'the experiment configuration and that the task can ' +
+                                      f'access that key based on the rules in '
+                                      f'tasks/questions.yaml.')
+                return default
         return getter
 
 # ----------------------------------------------------------------------------------------------

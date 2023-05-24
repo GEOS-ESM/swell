@@ -64,12 +64,12 @@ class taskBase(ABC):
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
-        self.__experiment_root__ = self.config_get('experiment_root')
-        self.__experiment_id__ = self.config_get('experiment_id')
+        self.__experiment_root__ = self.config.__experiment_root__
+        self.__experiment_id__ = self.config.__experiment_id__
 
         # Save the model components
         # -------------------------
-        self.__model_components__ = self.config_get('model_components', None)
+        self.__model_components__ = self.config.__model_components__
 
         # Create cycle directory
         # ----------------------
