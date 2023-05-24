@@ -3,6 +3,5 @@ executables:
   hofx3D: fv3jedi_hofx_nomodel.x
   hofx4D: fv3jedi_hofx.x
   variational3D: fv3jedi_var.x
-  variationalFGAT: fv3jedi_var.x
   variational4D: fv3jedi_var.x
   variational4DEnsVar: fv3jedi_var.x
