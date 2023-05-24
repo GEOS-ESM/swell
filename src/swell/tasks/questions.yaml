@@ -59,7 +59,8 @@ background_time_offset:
   default_value: defer_to_model
   models:
   - all
-  prompt: How long before the middle of the analysis window did the background providing forecast begin?
+  prompt: How long before the middle of the analysis window did the background providing
+    forecast begin?
   tasks:
   - save_obs_diags
   - get_observations
@@ -121,17 +122,6 @@ existing_geos_gcm_build_path:
   - build_geos_by_linking
   type: string
 
-existing_jedi_build_directory:
-  ask_question: true
-  default_value: defer_to_platform
-  depends:
-    key: jedi_build_method
-    value: use_existing
-  prompt: What is the path to the existing JEDI build directory?
-  tasks:
-  - build_jedi_by_linking
-  type: string
-
 existing_geos_gcm_source_path:
   ask_question: true
   default_value: defer_to_platform
@@ -141,6 +131,17 @@ existing_geos_gcm_source_path:
   prompt: What is the path to the existing GEOS source code directory?
   tasks:
   - clone_geos
+  type: string
+
+existing_jedi_build_directory:
+  ask_question: true
+  default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_existing
+  prompt: What is the path to the existing JEDI build directory?
+  tasks:
+  - build_jedi_by_linking
   type: string
 
 existing_jedi_source_directory:
@@ -254,17 +255,6 @@ jedi_build_method:
   - build_jedi_by_linking
   type: string
 
-minimizer:
-  ask_question: false
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Which data assimilation minimizer do you wish to use?
-  tasks:
-  - run_jedi_executable_base
-  type: string-drop-list
-
 jedi_forecast_model:
   ask_question: true
   default_value: defer_to_model
@@ -275,6 +265,17 @@ jedi_forecast_model:
   - all
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
+  tasks:
+  - run_jedi_executable_base
+  type: string-drop-list
+
+minimizer:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  options: defer_to_model
+  prompt: Which data assimilation minimizer do you wish to use?
   tasks:
   - run_jedi_executable_base
   type: string-drop-list
@@ -312,7 +313,8 @@ number_of_iterations:
   default_value: defer_to_model
   models:
   - all
-  prompt: What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
+  prompt: What number of iterations do you wish to use for each outer loop? Provide
+    a list of integers the same length as the number of outer loops.
   tasks:
   - run_jedi_executable_base
   type: integer-list
