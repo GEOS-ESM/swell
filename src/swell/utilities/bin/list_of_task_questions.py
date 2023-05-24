@@ -10,9 +10,8 @@
 
 
 # standard imports
-from collections import OrderedDict
+import glob
 import os
-import pathlib
 import yaml
 
 # swell imports
@@ -31,13 +30,13 @@ def main():
 
     # Path to JEDI interface code
     swell_path = get_swell_path()
-    jedi_tasks_path = pathlib.Path(os.path.join(swell_path, 'tasks'))
 
     # All python files
-    task_codes = jedi_tasks_path.rglob("*py")
+    task_codes = glob.glob(os.path.join(get_swell_path(), 'tasks', '*.py'))
+    task_codes = list(filter(lambda task_code: task_code != '__init__.py', task_codes))
 
     # Output file
-    outfile_yaml = os.path.join(swell_path, 'tasks', 'questions.yaml')
+    outfile_yaml = os.path.join(get_swell_path(), 'tasks', 'questions.yaml')
 
     # Read input file into dictionary
     if os.path.exists(outfile_yaml):
@@ -46,30 +45,33 @@ def main():
     else:
         question_dict = {}
 
+    # Now safe to overwrite file
+    outfile = open(outfile_yaml, 'w')
 
+    # Loop through task code and accumulate all lines containing a use of config
     config_keys = []
     task_names = []
     for task_code in task_codes:
 
-        if '__init__.py' not in str(task_code) and 'task_base.py' not in str(task_code):
+        # Open code for this task
+        with open(task_code, 'r') as file:
 
-            with open(task_code, 'r') as file:
-                file_lines = file.read().split('\n')
+            # Loop over lines and append if line contains
+            for file_line in file.read().split('\n'):
+                if 'self.config.' in file_line:
 
-                for file_line in file_lines:
-                    if 'self.config.' in file_line:
-                        config_keys.append(file_line.split('self.config.')[1].split('(')[0].strip())
-                        task_names.append(os.path.basename(str(task_code)).split('.')[0])
+                    config_key = file_line.split('self.config.')[1].split('(')[0].strip()
+                    task_name = os.path.basename(str(task_code)).split('.')[0]
+                    task_name = snake_case_to_camel_case(task_name)
+
+                    config_keys.append(config_key)
+                    task_names.append(task_name)
 
     # For each key create lists of tasks
     unique_keys = sorted(list(set(config_keys)))
 
     # question to task dictionary
     question_to_tasks = {}
-
-    # Output file
-    outfile_yaml = os.path.join(swell_path, 'tasks', 'questions.yaml')
-    outfile = open(outfile_yaml, 'w')
 
     # Task for each key
     for unique_key in unique_keys:
@@ -80,11 +82,16 @@ def main():
 
             if unique_key == config_key:
 
-                tasks.append(snake_case_to_camel_case(task_name))
+                tasks.append(task_name)
 
+        # Make sure tasks are unique
+        tasks = list(set(tasks))
+
+        # Create dictionary to hold question components
         question_to_tasks = {}
 
         if unique_key in question_dict:
+
             question_to_tasks[unique_key] = question_dict[unique_key]
 
             question_dict_key = question_dict[unique_key]
@@ -102,8 +109,8 @@ def main():
             if 'ask_question' not in question_dict_key:
                 question_to_tasks[unique_key]['ask_question'] = True
 
-
         else:
+
             question_to_tasks[unique_key] = {}
             question_to_tasks[unique_key]['default_value'] = 'defer_to_model'
             question_to_tasks[unique_key]['options'] = 'defer_to_model'
