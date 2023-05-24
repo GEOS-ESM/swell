@@ -1,4 +1,5 @@
 jedi_interface: fv3-jedi
+total_processors: {{npx_proc}}x{{npy_proc}}
 executables:
   hofx3D: fv3jedi_hofx_nomodel.x
   hofx4D: fv3jedi_hofx.x

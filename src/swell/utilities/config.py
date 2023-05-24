@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
 import yaml
 
 from swell.swell_path import get_swell_path
@@ -92,17 +93,19 @@ class Config():
         # -------------------------------------------------------------------------
 
         # Open the question dictionary
-         with open(os.path.join(get_swell_path(), 'tasks', 'questions.yaml'), 'r') as ymlfile:
+        with open(os.path.join(get_swell_path(), 'tasks', 'questions.yaml'), 'r') as ymlfile:
             question_dict = yaml.safe_load(ymlfile)
 
         # Loop through the dictionary
         for experiment_key, experiment_value in experiment_dict.items():
 
-            # Loop through the question dictionary
-            for question_key, question_value in question_dict.items():
+            key_question_dict = question_dict.get(experiment_key)
 
-                # List of valid tasks
-                if task_name in question_value['tasks']:
+            if key_question_dict is not None:
+
+                if task_name in key_question_dict['tasks']:
+
+                    print(f'Adding {experiment_key} for {task_name}')
 
                     # Add this variable to the object
                     setattr(self, f'__{experiment_key}__', experiment_value)
@@ -113,11 +116,11 @@ class Config():
     # ----------------------------------------------------------------------------------------------
 
     def get(self, experiment_key):
-        def getter(default=None):
+        def getter(default='None'):
             try:
                 return getattr(self, f'__{experiment_key}__')
-            except Exception e:
-                if default is None:
+            except Exception:
+                if default == 'None':
                     self.logger.abort(f'In config class, trying to get variable {experiment_key} ' +
                                       f'but it was not created. Ensure that the variable is in ' +
                                       f'the experiment configuration and that the task can ' +

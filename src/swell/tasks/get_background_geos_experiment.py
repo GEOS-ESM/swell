@@ -34,10 +34,10 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Parse config
         # ------------
-        geos_background_restart_offset = self.config_get('geos_background_restart_offset')
-        tar_filename_template_geos = self.config_get('geos_bkg_tar_filename_template')
-        bkg_filename_template_geos = self.config_get('geos_bkg_filename_template')
-        bkg_filename_template_jedi = self.config_get('jedi_bkg_filename_template')
+        geos_background_restart_offset = self.config.geos_background_restart_offset()
+        tar_filename_template_geos = self.config.geos_bkg_tar_filename_template()
+        bkg_filename_template_geos = self.config.geos_bkg_filename_template()
+        bkg_filename_template_jedi = self.config.jedi_bkg_filename_template()
 
         # Current cycle time (middle of the window)
         # -----------------------------------------

@@ -24,22 +24,11 @@ class RunJediVariationalExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_type = self.config_get('window_type')
-        npx_proc = self.config_get('npx_proc', None)
-        npy_proc = self.config_get('npy_proc', None)
-        total_processors = self.config_get('total_processors', None)
-        window_length = self.config_get('window_length')
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        vertical_resolution = self.config_get('vertical_resolution')
-        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
-        window_offset = self.config_get('window_offset')
-        background_time_offset = self.config_get('background_time_offset')
-        number_of_iterations = self.config_get('number_of_iterations')
-        minimizer = self.config_get('minimizer')
-        analysis_variables = self.config_get('analysis_variables')
-        gradient_norm_reduction = self.config_get('gradient_norm_reduction')
-        observations = self.config_get('observations')
-        jedi_forecast_model = self.config_get('jedi_forecast_model', None)
+        window_type = self.config.window_type()
+        window_offset = self.config.window_offset()
+        background_time_offset = self.config.background_time_offset()
+        number_of_iterations = self.config.number_of_iterations()
+        observations = self.config.observations()
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -54,25 +43,27 @@ class RunJediVariationalExecutable(taskBase):
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
-        self.jedi_rendering.add_key('window_length', window_length)
-        self.jedi_rendering.add_key('minimizer', minimizer)
+        self.jedi_rendering.add_key('window_length', self.config.window_length())
+        self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
-        self.jedi_rendering.add_key('analysis_variables', analysis_variables)
-        self.jedi_rendering.add_key('gradient_norm_reduction', gradient_norm_reduction)
+        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('gradient_norm_reduction',
+                                    self.config.gradient_norm_reduction())
 
         # Background
-        self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
+        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
-        self.jedi_rendering.add_key('npx_proc', npx_proc)
-        self.jedi_rendering.add_key('npy_proc', npy_proc)
-        self.jedi_rendering.add_key('vertical_resolution', vertical_resolution)
+        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
+        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Jedi configuration file
@@ -95,7 +86,7 @@ class RunJediVariationalExecutable(taskBase):
         # Perform complete template rendering
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 jedi_forecast_model)
+                                 self.config.jedi_forecast_model(None))
 
 
         # Write the expanded dictionary to YAML file
@@ -108,15 +99,14 @@ class RunJediVariationalExecutable(taskBase):
         jedi_executable = model_component_meta['executables'][f'variational{window_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build',
                                             'bin', jedi_executable)
+
         # Compute number of processors
         # ----------------------------
-        total_processors = total_processors.replace('npx_proc', str(npx_proc))
-        total_processors = total_processors.replace('npy_proc', str(npy_proc))
-        np = eval(total_processors)
+        np = eval(model_component_meta['total_processors'])
 
         # Run the JEDI executable
         # -----------------------
-        run_executable(self.logger, self.logger, self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
+        run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
                        output_log_file)
         self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 

@@ -25,21 +25,14 @@ class EvaObservations(taskBase):
 
     def execute(self):
 
-        # Parse config for jedi_config
-        # ----------------------------
-        background_time_offset = self.config_get('background_time_offset')
-        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
-        observations = self.config_get('observations')
-        window_offset = self.config_get('window_offset')
-
         # Compute window beginning time
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
+        window_begin = self.da_window_params.window_begin(self.config.window_offset())
+        background_time = self.da_window_params.background_time(self.config.window_offset(),
+                                                               self.config.background_time_offset())
 
         # Create JEDI interface config templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Get the model
@@ -55,7 +48,7 @@ class EvaObservations(taskBase):
 
         # Loop over observations
         # -------------------
-        for observation in observations:
+        for observation in self.config.observations():
 
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)

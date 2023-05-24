@@ -1,4 +1,5 @@
 jedi_interface: soca
+total_processors: {{total_processors}}
 executables:
   hofx3D: soca_hofx3d.x
   hofx4D: soca_hofx.x

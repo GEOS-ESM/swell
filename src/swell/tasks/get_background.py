@@ -44,13 +44,13 @@ class GetBackground(taskBase):
         bkg_steps = []
 
         # Parse config
-        background_experiment = self.config_get('background_experiment')
-        background_frequency = self.config_get('background_frequency', None)
-        forecast_offset = self.config_get('analysis_forecast_window_offset')
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        window_length = self.config_get('window_length')
-        window_offset = self.config_get('window_offset')
-        window_type = self.config_get('window_type')
+        background_experiment = self.config.background_experiment()
+        background_frequency = self.config.background_frequency(None)
+        forecast_offset = self.config.analysis_forecast_window_offset()
+        horizontal_resolution = self.config.horizontal_resolution()
+        window_length = self.config.window_length()
+        window_offset = self.config.window_offset()
+        window_type = self.config.window_type()
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_offset,

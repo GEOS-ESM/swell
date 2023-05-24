@@ -34,11 +34,11 @@ class GenerateBClimatologyByLinking(taskBase):
         """
 
         # Get the flavor of static background error model
-        static_background_error_model = self.config_get('static_background_error_model')
+        static_background_error_model = self.config.static_background_error_model()
 
         # Extract general parts of the config
-        swell_static_files_main = self.config_get('swell_static_files')
-        swell_static_files_user = self.config_get('swell_static_files_user', None)
+        swell_static_files_main = self.config.swell_static_files()
+        swell_static_files_user = self.config.swell_static_files_user(None)
 
         # Set the destination directory
         target_path = os.path.join(self.get_cycle_dir(), 'background_error_model')
@@ -79,13 +79,13 @@ class GenerateBClimatologyByLinking(taskBase):
     def append_source_path_bump(self):
 
         # First part of bump path is the model resolution
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        vertical_resolution = self.config_get('vertical_resolution')
+        horizontal_resolution = self.config.horizontal_resolution()
+        vertical_resolution = self.config.vertical_resolution()
         res_path = horizontal_resolution + 'x' + vertical_resolution
 
         # Second part of bump path is the number of processors
-        npx_proc = self.config_get('npx_proc')
-        npy_proc = self.config_get('npy_proc')
+        npx_proc = self.config.npx_proc()
+        npy_proc = self.config.npy_proc()
         proc_path = str(npx_proc) + 'x' + str(npy_proc)
 
         return os.path.join(res_path, proc_path)
