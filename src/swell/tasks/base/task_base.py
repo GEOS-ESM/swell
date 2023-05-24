@@ -60,7 +60,7 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, self.__model__)
+        self.config = Config(config_input, self.logger, task_name, self.__model__)
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
@@ -98,12 +98,6 @@ class taskBase(ABC):
     @abstractmethod
     def execute(self):
         pass
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to get something from config (with fail if not existing)
-    def config_get(self, key, default='NODEFAULT'):
-        return self.__config__.get(key, default)
 
     # ----------------------------------------------------------------------------------------------
 
