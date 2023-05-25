@@ -30,7 +30,7 @@ clean_patterns:
   default_value:
   - '*.nc4'
   - '*.txt'
-  - 'logfile.*.out'
+  - logfile.*.out
 
 geos_background_restart_offset:
   default_value: TODO

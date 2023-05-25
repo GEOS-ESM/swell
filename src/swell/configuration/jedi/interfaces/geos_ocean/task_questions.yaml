@@ -27,16 +27,16 @@ clean_patterns:
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
-  - 'logfile.*.out'
+  - logfile.*.out
 
 gradient_norm_reduction:
   default_value: 1e-10
 
 horizontal_resolution:
-  default_value: '1440x1080'
+  default_value: 1440x1080
   options:
-  - '360x320'
-  - '1440x1080'
+  - 360x320
+  - 1440x1080
 
 jedi_forecast_model:
   default_value: NA
