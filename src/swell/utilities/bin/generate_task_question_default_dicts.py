@@ -60,6 +60,9 @@ def main():
         with open(question_defaults_dict, 'r') as ymlfile:
             question_dict_defaults_exist = yaml.safe_load(ymlfile)
 
+        if question_dict_defaults_exist is None:
+            question_dict_defaults_exist = {}
+
         # Open file ready to overwrite
         outfile = open(question_defaults_dict, 'w')
 

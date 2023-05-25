@@ -1,0 +1,89 @@
+analysis_forecast_window_offset:
+  default_value: defer_to_model
+
+analysis_variables:
+  default_value: defer_to_model
+
+background_error_model:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+background_experiment:
+  default_value: defer_to_model
+
+background_frequency:
+  default_value: defer_to_model
+
+background_time_offset:
+  default_value: defer_to_model
+
+clean_patterns:
+  default_value: defer_to_model
+
+geos_background_restart_offset:
+  default_value: defer_to_model
+
+geos_bkg_filename_template:
+  default_value: defer_to_model
+
+geos_bkg_tar_filename_template:
+  default_value: defer_to_model
+
+gradient_norm_reduction:
+  default_value: defer_to_model
+
+horizontal_resolution:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+jedi_bkg_filename_template:
+  default_value: defer_to_model
+
+jedi_forecast_model:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+minimizer:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+npx_proc:
+  default_value: defer_to_model
+
+npy_proc:
+  default_value: defer_to_model
+
+number_of_iterations:
+  default_value: defer_to_model
+
+obs_experiment:
+  default_value: defer_to_model
+
+obs_provider:
+  default_value: defer_to_model
+
+observations:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+static_background_error_model:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+vertical_resolution:
+  default_value: defer_to_model
+  options:
+  - defer_to_model
+
+window_length:
+  default_value: defer_to_model
+
+window_offset:
+  default_value: defer_to_model
+
