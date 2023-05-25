@@ -37,98 +37,91 @@ def main():
     # Read input file into dictionary
     if os.path.exists(task_questions_config):
         with open(task_questions_config, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
+            questions_dict = yaml.safe_load(ymlfile)
     else:
         logger.abort(f'Did not fine the task questions dictionary at {task_questions_config}')
 
     # Generate list of jedi interfaces
-    jedi_interfaces = glob.glob(os.path.join(get_swell_path(), 'configuration', 'jedi',
-                                             'interfaces'))
+    jedi_interfaces_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces')
+    jedi_interfaces = [ f.path for f in os.scandir(jedi_interfaces_path) if f.is_dir() ]
+    jedi_interfaces = list(filter(lambda jedi_interface: '__' not in jedi_interface,
+                                  jedi_interfaces))
+    jedi_interface_names = []
+    for jedi_interface in jedi_interfaces:
+        jedi_interface_names.append(os.path.basename(jedi_interface))
 
+    # Loop over jedi interfaces
+    for jedi_interface_name in jedi_interface_names:
 
-    print(jedi_interfaces)
+        question_defaults_dict = os.path.join(jedi_interfaces_path, jedi_interface_name,
+                                              'question_defaults.yaml')
 
-    exit()
+        # Open file ready to overwrite
+        outfile = open(question_defaults_dict, 'w')
 
+        # Loop over main question list
+        for question_key, question_dict in questions_dict.items():
 
-    # Loop through task code and accumulate all lines containing a use of config
-    config_keys = []
-    task_names = []
-    for task_code in task_codes:
+            # Check if question defers the default value to the jedi interface
+            if question_dict['default_value'] == 'defer_to_model':
 
-        # Open code for this task
-        with open(task_code, 'r') as file:
+                # If default is deferred to model the dict must contain the jedi interface list
+                logger.assert_abort('models' in question_dict, f'If the default for the config ' +
+                                    f'is defer to model then the question dictionary must ' +
+                                    f'contain models. Offending key: {question_key}')
 
-            # Loop over lines and append if line contains
-            for file_line in file.read().split('\n'):
-                if 'self.config.' in file_line:
+                # Set the required jedi interfaces for this question
+                jedi_interfaces_needed = question_dict['models']
+                if jedi_interfaces_needed[0] == 'all' or jedi_interface_name in jedi_interfaces_needed:
 
-                    config_key = file_line.split('self.config.')[1].split('(')[0].strip()
-                    task_name = os.path.basename(str(task_code)).split('.')[0]
-                    task_name = snake_case_to_camel_case(task_name)
+                    # Create defaults dictionary for the question
+                    question_dict_defaults = {question_key: {
+                       'default_value': 'defer_to_model'
+                    }}
 
-                    config_keys.append(config_key)
-                    task_names.append(task_name)
+                    if 'options' in question_dict:
+                        question_dict_defaults[question_key]['options'] = ['defer_to_model']
 
-    # For each key create lists of tasks
-    unique_keys = sorted(list(set(config_keys)))
+                    # Write to the YAML file
+                    outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))
+                    outfile.write('\n')
 
-    # question to task dictionary
-    question_to_tasks = {}
+    # Generate list of platforms
+    platforms_path = os.path.join(get_swell_path(), 'deployment', 'platforms')
+    platforms = [ f.path for f in os.scandir(platforms_path) if f.is_dir() ]
+    platforms = list(filter(lambda platform: '__' not in platform, platforms))
+    platform_names = []
+    for platform in platforms:
+        platform_names.append(os.path.basename(platform))
 
-    # Task for each key
-    for unique_key in unique_keys:
+    # Loop over platforms
+    for platform_name in platform_names:
 
-        tasks = []
+        print(platform_name)
 
-        for task_name, config_key in zip(task_names, config_keys):
+        question_defaults_dict = os.path.join(platforms_path, platform_name,
+                                              'question_defaults.yaml')
 
-            if unique_key == config_key:
+        # Open file ready to overwrite
+        outfile = open(question_defaults_dict, 'w')
 
-                tasks.append(task_name)
+        # Loop over main question list
+        for question_key, question_dict in questions_dict.items():
 
-        # Make sure tasks are unique
-        tasks = list(set(tasks))
+            # Check if question defers the default value to the platform
+            if question_dict['default_value'] == 'defer_to_platform':
 
-        # Create dictionary to hold question components
-        question_to_tasks = {}
+                # Create defaults dictionary for the question
+                question_dict_defaults = {question_key: {
+                       'default_value': 'defer_to_model'
+                }}
 
-        if unique_key in question_dict:
+                if 'options' in question_dict:
+                    question_dict_defaults[question_key]['options'] = ['defer_to_model']
 
-            question_to_tasks[unique_key] = question_dict[unique_key]
-
-            question_dict_key = question_dict[unique_key]
-
-            # Make sure minimal things are in the question's dictionary
-            if 'default_value' not in question_dict_key:
-                question_to_tasks[unique_key]['default_value'] = 'defer_to_model'
-
-            if 'prompt' not in question_dict_key:
-                question_to_tasks[unique_key]['prompt'] = 'Question'
-
-            if 'type' not in question_dict_key:
-                question_to_tasks[unique_key]['type'] = 'string'
-
-            if 'ask_question' not in question_dict_key:
-                question_to_tasks[unique_key]['ask_question'] = True
-
-        else:
-
-            question_to_tasks[unique_key] = {}
-            question_to_tasks[unique_key]['default_value'] = 'defer_to_model'
-            question_to_tasks[unique_key]['options'] = 'defer_to_model'
-            question_to_tasks[unique_key]['prompt'] = 'Question'
-            question_to_tasks[unique_key]['type'] = 'string'
-            question_to_tasks[unique_key]['models'] = ['all']
-            question_to_tasks[unique_key]['ask_question'] = True
-
-        # Regardless of whether question was already in dictionary
-        question_to_tasks[unique_key]['tasks'] = tasks
-
-        outfile.write(yaml.dump(question_to_tasks, default_flow_style=False))
-        outfile.write('\n')
-
-    outfile.close()
+                # Write to the YAML file
+                outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))
+                outfile.write('\n')
 
 
 # --------------------------------------------------------------------------------------------------

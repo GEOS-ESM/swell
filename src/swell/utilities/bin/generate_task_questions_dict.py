@@ -36,7 +36,7 @@ def main():
     task_codes = list(filter(lambda task_code: task_code != '__init__.py', task_codes))
 
     # Output file
-    outfile_yaml = os.path.join(get_swell_path(), 'tasks', 'questions.yaml')
+    outfile_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
     # Read input file into dictionary
     if os.path.exists(outfile_yaml):
