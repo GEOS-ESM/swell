@@ -1,5 +1,5 @@
 crtm_coeff_dir:
-  default_value: defer_to_model
+  default_value: this is something as well
 
 existing_geos_gcm_build_path:
   default_value: defer_to_model

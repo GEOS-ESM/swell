@@ -1,5 +1,5 @@
 analysis_forecast_window_offset:
-  default_value: defer_to_model
+  default_value: This is something
 
 analysis_variables:
   default_value: defer_to_model

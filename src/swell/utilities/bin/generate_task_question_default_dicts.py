@@ -115,6 +115,13 @@ def main():
         question_defaults_dict = os.path.join(platforms_path, platform_name,
                                               'task_questions.yaml')
 
+        # Open the existing file
+        with open(question_defaults_dict, 'r') as ymlfile:
+            question_dict_defaults_exist = yaml.safe_load(ymlfile)
+
+        if question_dict_defaults_exist is None:
+            question_dict_defaults_exist = {}
+
         # Open file ready to overwrite
         outfile = open(question_defaults_dict, 'w')
 
@@ -124,13 +131,21 @@ def main():
             # Check if question defers the default value to the platform
             if question_dict['default_value'] == 'defer_to_platform':
 
-                # Create defaults dictionary for the question
-                question_dict_defaults = {question_key: {
-                       'default_value': 'defer_to_model'
-                }}
+                # Create dictionary if it does not already exist
+                if question_key not in question_dict_defaults_exist:
 
-                if 'options' in question_dict:
-                    question_dict_defaults[question_key]['options'] = ['defer_to_model']
+                    # Create defaults dictionary for the question
+                    question_dict_defaults = {question_key: {
+                           'default_value': 'defer_to_model'
+                    }}
+
+                    if 'options' in question_dict:
+                        question_dict_defaults[question_key]['options'] = ['defer_to_model']
+
+                else:
+
+                    # Copy from the existing dictionary
+                    question_dict_defaults = {question_key: question_dict_defaults_exist[question_key]}
 
                 # Write to the YAML file
                 outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))
