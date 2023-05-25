@@ -66,9 +66,9 @@ setuptools.setup(
             'swell_util_check_jedi_interface_templates = \
                 swell.utilities.bin.check_jedi_interface_templates:main',
             'swell_util_generate_task_questions_dict = \
-                swell.utilities.bin.generate_task_questions_dict.py:main',
+                swell.utilities.bin.generate_task_questions_dict:main',
             'swell_util_generate_task_question_default_dicts = \
-                swell.utilities.bin.generate_task_question_default_dicts.py:main',
+                swell.utilities.bin.generate_task_question_default_dicts:main',
         ],
     },
     )

@@ -85,7 +85,7 @@ def main():
                 tasks.append(task_name)
 
         # Make sure tasks are unique
-        tasks = list(set(tasks))
+        tasks = sorted(list(set(tasks)))
 
         # Create dictionary to hold question components
         question_to_tasks = {}
