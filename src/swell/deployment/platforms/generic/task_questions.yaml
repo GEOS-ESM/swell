@@ -1,0 +1,18 @@
+crtm_coeff_dir:
+  default_value: defer_to_model
+
+existing_geos_gcm_build_path:
+  default_value: defer_to_model
+
+existing_geos_gcm_source_path:
+  default_value: defer_to_model
+
+existing_jedi_build_directory:
+  default_value: defer_to_model
+
+existing_jedi_source_directory:
+  default_value: defer_to_model
+
+swell_static_files:
+  default_value: defer_to_model
+

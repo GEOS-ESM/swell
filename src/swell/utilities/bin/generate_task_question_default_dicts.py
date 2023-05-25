@@ -32,7 +32,7 @@ def main():
     swell_path = get_swell_path()
 
     # Output file
-    task_questions_config = os.path.join(get_swell_path(), 'tasks', 'questions.yaml')
+    task_questions_config = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
     # Read input file into dictionary
     if os.path.exists(task_questions_config):
@@ -54,7 +54,11 @@ def main():
     for jedi_interface_name in jedi_interface_names:
 
         question_defaults_dict = os.path.join(jedi_interfaces_path, jedi_interface_name,
-                                              'question_defaults.yaml')
+                                              'task_questions.yaml')
+
+        # Open the existing file
+        with open(question_defaults_dict, 'r') as ymlfile:
+            question_dict_defaults_exist = yaml.safe_load(ymlfile)
 
         # Open file ready to overwrite
         outfile = open(question_defaults_dict, 'w')
@@ -74,13 +78,21 @@ def main():
                 jedi_interfaces_needed = question_dict['models']
                 if jedi_interfaces_needed[0] == 'all' or jedi_interface_name in jedi_interfaces_needed:
 
-                    # Create defaults dictionary for the question
-                    question_dict_defaults = {question_key: {
-                       'default_value': 'defer_to_model'
-                    }}
+                    # Create dictionary if it does not already exist
+                    if question_key not in question_dict_defaults_exist:
 
-                    if 'options' in question_dict:
-                        question_dict_defaults[question_key]['options'] = ['defer_to_model']
+                        # Create defaults dictionary for the question
+                        question_dict_defaults = {question_key: {
+                           'default_value': 'defer_to_model'
+                        }}
+
+                        if 'options' in question_dict:
+                            question_dict_defaults[question_key]['options'] = ['defer_to_model']
+
+                    else:
+
+                        # Copy from the existing dictionary
+                        question_dict_defaults = {question_key: question_dict_defaults_exist[question_key]}
 
                     # Write to the YAML file
                     outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))
@@ -97,10 +109,8 @@ def main():
     # Loop over platforms
     for platform_name in platform_names:
 
-        print(platform_name)
-
         question_defaults_dict = os.path.join(platforms_path, platform_name,
-                                              'question_defaults.yaml')
+                                              'task_questions.yaml')
 
         # Open file ready to overwrite
         outfile = open(question_defaults_dict, 'w')
