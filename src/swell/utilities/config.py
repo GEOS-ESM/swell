@@ -93,7 +93,7 @@ class Config():
         # -------------------------------------------------------------------------
 
         # Open the question dictionary
-        with open(os.path.join(get_swell_path(), 'tasks', 'questions.yaml'), 'r') as ymlfile:
+        with open(os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             question_dict = yaml.safe_load(ymlfile)
 
         # Loop through the dictionary
