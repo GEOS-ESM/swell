@@ -1,74 +1,88 @@
 analysis_forecast_window_offset:
-  default_value: This is something
+  default_value: -PT6H
 
 analysis_variables:
-  default_value: defer_to_model
+  default_value:
+  - socn
+  - tocn
+  - ssh
+  - hocn
 
 background_error_model:
-  default_value: defer_to_model
+  default_value: bump
   options:
-  - defer_to_model
+  - bump
 
 background_experiment:
-  default_value: defer_to_model
+  default_value: s2s
 
 background_frequency:
-  default_value: defer_to_model
+  default_value: PT1H
 
 background_time_offset:
-  default_value: defer_to_model
+  default_value: PT9H
 
 clean_patterns:
-  default_value: defer_to_model
+  default_value:
+  - '*.nc4'
+  - '*.txt'
+  - '*MOM*'
+  - 'logfile.*.out'
 
 gradient_norm_reduction:
-  default_value: defer_to_model
+  default_value: 1e-10
 
 horizontal_resolution:
-  default_value: defer_to_model
+  default_value: '1440x1080'
   options:
-  - defer_to_model
+  - '360x320'
+  - '1440x1080'
 
 jedi_forecast_model:
-  default_value: defer_to_model
+  default_value: NA
   options:
-  - defer_to_model
+  - NA
 
 minimizer:
-  default_value: defer_to_model
+  default_value: RPCG
   options:
-  - defer_to_model
+  - RPCG
 
 number_of_iterations:
-  default_value: defer_to_model
+  default_value: 5
 
 obs_experiment:
-  default_value: defer_to_model
+  default_value: s2s
 
 obs_provider:
-  default_value: defer_to_model
+  default_value: odas
 
 observations:
-  default_value: defer_to_model
+  default_value:
+  - adt
+  - insitus
+  - insitut
   options:
-  - defer_to_model
+  - adt
+  - insitus
+  - insitut
 
 static_background_error_model:
-  default_value: defer_to_model
+  default_value: bump
   options:
-  - defer_to_model
+  - bump
 
 total_processors:
-  default_value: defer_to_model
+  default_value: 24
 
 vertical_resolution:
-  default_value: defer_to_model
+  default_value: 75
   options:
-  - defer_to_model
+  - 75
 
 window_length:
-  default_value: defer_to_model
+  default_value: PT12H
 
 window_offset:
-  default_value: defer_to_model
+  default_value: PT6H
 

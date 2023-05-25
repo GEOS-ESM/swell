@@ -1,89 +1,127 @@
 analysis_forecast_window_offset:
-  default_value: Now this is something
+  default_value: -PT3H
 
 analysis_variables:
-  default_value: defer_to_model
+  default_value:
+  - ua
+  - va
+  - t
+  - q
+  - ps
+  - qi
+  - ql
+  - o3
 
 background_error_model:
-  default_value: defer_to_model
+  default_value: GSIbec
   options:
-  - defer_to_model
+  - GSIbec
 
 background_experiment:
-  default_value: defer_to_model
+  default_value: x0044
 
 background_frequency:
-  default_value: defer_to_model
+  default_value: PT1H
 
 background_time_offset:
-  default_value: defer_to_model
+  default_value: PT9H
 
 clean_patterns:
-  default_value: defer_to_model
+  default_value:
+  - '*.nc4'
+  - '*.txt'
+  - 'logfile.*.out'
 
 geos_background_restart_offset:
-  default_value: defer_to_model
+  default_value: TODO
 
 geos_bkg_filename_template:
-  default_value: defer_to_model
+  default_value: TODO
 
 geos_bkg_tar_filename_template:
-  default_value: defer_to_model
+  default_value: TODO
 
 gradient_norm_reduction:
-  default_value: defer_to_model
+  default_value: 10e-5
 
 horizontal_resolution:
-  default_value: defer_to_model
+  default_value: C361
   options:
-  - defer_to_model
+  - C361
 
 jedi_bkg_filename_template:
-  default_value: defer_to_model
+  default_value: TODO
 
 jedi_forecast_model:
-  default_value: defer_to_model
+  default_value: pseudo-model
   options:
-  - defer_to_model
+  - pseudo-model
 
 minimizer:
-  default_value: defer_to_model
+  default_value: DRIPCG
   options:
-  - defer_to_model
+  - DRIPCG
 
 npx_proc:
-  default_value: defer_to_model
+  default_value: 2
 
 npy_proc:
-  default_value: defer_to_model
+  default_value: 2
 
 number_of_iterations:
-  default_value: defer_to_model
+  default_value: 50
 
 obs_experiment:
-  default_value: defer_to_model
+  default_value: x0044_v3
 
 obs_provider:
-  default_value: defer_to_model
+  default_value: ncdiag
 
 observations:
-  default_value: defer_to_model
+  default_value:
+  - aircraft
+  - amsua_n19
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - gmi_gpm
+  - amsr2_gcom-w1
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
   options:
-  - defer_to_model
+  - aircraft
+  - amsua_n19
+  - amsua_aqua
+  - amsua_metop-a
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - gmi_gpm
+  - amsr2_gcom-w1
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
 
 static_background_error_model:
-  default_value: defer_to_model
+  default_value: GSIbec
   options:
-  - defer_to_model
+  - GSIbec
 
 vertical_resolution:
-  default_value: defer_to_model
+  default_value: 72
   options:
-  - defer_to_model
+  - 72
 
 window_length:
-  default_value: defer_to_model
+  default_value: PT6H
 
 window_offset:
-  default_value: defer_to_model
+  default_value: PT3H
 
