@@ -66,9 +66,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_cycle(self, paths):
-
-        self.cycle_dir = self.config_get('cycle_dir')
+    def at_cycle_model(self, paths):
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -77,7 +75,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(self.cycle_dir, *paths)
+        full_path = os.path.join(self.cycle_dir(), *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
@@ -89,9 +87,11 @@ class GeosTasksRunExecutableBase(taskBase):
         if isinstance(paths, str):
             paths = [paths]
 
+        datetimedir = os.path.dirname(self.cycle_dir())
+
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(self.cycle_dir, 'geosdir', *paths)
+        full_path = os.path.join(datetimedir, 'geosdir', *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
@@ -140,8 +140,6 @@ class GeosTasksRunExecutableBase(taskBase):
         # Convert rc bool.s to python
         # ---------------------------
         rcdict = self.rc_to_bool(rcdict)
-
-        # self.cycle_dir = self.config_get('cycle_dir')
 
         # GEOS Chem filenames, shares same keys as rcdict
         # -----------------------------------------------
@@ -282,31 +280,6 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def next_cycle(self, cycle_dir, forecast_duration):
-
-        # Basename consists of swell datetime and model
-        # ---------------------------------------------
-        basename = os.path.basename(cycle_dir)
-        dt_str = basename.split('-')[0]
-        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
-
-        # Modify datetime by subtracting forecast duration
-        # -----------------------------------------------
-        modified_dt_obj = dt_obj + isodate.parse_duration(forecast_duration)
-
-        # Replace datetime section in the basename with the modified datetime string
-        # -----------------------------------------------------------------
-        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
-        modified_basename = basename.replace(dt_str, modified_dt_str)
-
-        # Create new file path with modified basename
-        # --------------------------------------------
-        next_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
-
-        return next_cycle_dir
-
-    # ----------------------------------------------------------------------------------------------
-
     def parse_rc(self, rcfile):
 
         # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
@@ -364,7 +337,7 @@ class GeosTasksRunExecutableBase(taskBase):
         nml1 = f90nml.read(self.at_cycle_geosdir('input.nml'))
 
         if not cold_restart:
-            self.logger.info('Hot start, will require rst/checkpoint files')
+            self.logger.info('Hot start, Swell expects require rst/checkpoint files')
 
             # mom_input_nml needs to be 'r' for hot_restart
             # ----------------------------------------------
@@ -390,8 +363,6 @@ class GeosTasksRunExecutableBase(taskBase):
         # for environment setting. Hence, they will be assigned 'False'.
         # ----------------------------------------------------------------------
 
-        # Check if the 'key_inquiry' exists in the dictionary
-        # ----------------------------------------------------
         if key_inquiry not in rcdict:
             rcdict.setdefault(key_inquiry, False)
 

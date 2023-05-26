@@ -1,4 +1,4 @@
-# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -20,6 +20,112 @@ from swell.tasks.base.geos_tasks_run_executable_base import *
 
 
 class PrepGeosRunDir(GeosTasksRunExecutableBase):
+
+    # ----------------------------------------------------------------------------------------------
+
+    def execute(self):
+
+        """
+        Parses resource files in "geos_experiment_directory" to obtain required
+        directories and files. Modifies file contents using re module according
+        to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
+
+        In GEOS speak, it creates the "scratch" directory.
+        """
+
+        self.swell_static_files = self.config_get('swell_static_files', None)
+        # TODO: exp. directory location ought to be handled better
+        self.geos_exp_dir = os.path.join(self.swell_static_files, 'jedi',
+                                         'interfaces', 'geos_ocean', 'model', 'geos',
+                                         self.config_get('geos_experiment_directory'))
+
+        self.geos_source = self.config_get('existing_geos_source_directory')
+
+        self.logger.info('Preparing GEOS Forecast directory')
+        self.logger.info('Some steps involve modifying input files and replacing')
+        self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
+        self.logger.info('encouraged to validate if this changes ensued.')
+
+        # Forecast start time object, useful for temporal BC constraints
+        # -------------------------------------------------------------
+        self.fc_dto = self.get_rst_time()
+
+        # Get static files
+        # ----------------
+        self.get_static()
+
+        # Combine input.nml and fvcore_layout
+        # Modify input.nml if not cold start (default)
+        # ------------------------------------------
+        self.process_nml()
+
+        # Parse .rc files and convert bool.s to Python format
+        # ---------------------------------------------------
+        self.cap_dict = self.parse_rc(self.at_cycle_geosdir('CAP.rc'))
+        self.cap_dict = self.rewrite_cap(self.cap_dict, self.at_cycle_geosdir('CAP.rc'))
+
+        self.agcm_d = self.parse_rc(self.at_cycle_geosdir('AGCM.rc'))
+        self.agcm_dict = self.rc_to_bool(self.agcm_d)
+
+        # This ensures a bool entry for USE_EXTDATA2G exists
+        # --------------------------------------------------
+        self.rc_assign(self.cap_dict, 'USE_EXTDATA2G')
+
+        # Link replay files if active TODO
+        # --------------------------------
+        if 'REPLAY_MODE' in self.agcm_dict:
+            self.logger.info('Replay Mode is Active')
+            self.link_replay()
+
+        # Set AGCM.rc record ref_date to fcst start time
+        # TODO: This needs rethinking for forecast_geos vs cycle cases
+        # ------------------------------------------------------------
+        if 'RECORD_FREQUENCY' in self.agcm_dict:
+            self.rewrite_agcm(self.agcm_dict, self.at_cycle_geosdir('AGCM.rc'))
+
+        # Parse gcm_run.j and get a dictionary based upon setenv
+        # ------------------------------------------------------
+        self.gcm_dict = self.parse_gcmrun(self.at_cycle_geosdir('gcm_run.j'))
+
+        # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
+        # ----------------------------------------------------------------
+        self.emissions = self.gcm_dict['EMISSIONS']
+
+        # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
+        # ------------------------------------------------------------------
+        if self.emissions == 'AMIP_EMISSIONS':
+            self.get_amip_emission()
+
+        # Rename GEOS Chem files
+        # ----------------------
+        chem_dict = self.parse_rc(self.at_cycle_geosdir('GEOS_ChemGridComp.rc'))
+        self.geos_chem_rename(chem_dict)
+
+        # Rename settings according to .rc switches
+        # -----------------------------------------
+        self.restructure_rc()
+
+        # Generate the complete ExtData.rc
+        # --------------------------------
+        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
+        self.generate_extdata()
+
+        # Get boundary conditions
+        # -----------------------
+        self.get_bcs()
+
+        # Get dynamic files
+        # -----------------
+        self.get_dynamic()
+
+        # Create cap_restart
+        # ------------------
+        with open(self.at_cycle_geosdir('cap_restart'), 'w') as file:
+            file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
+
+        # Run bundleParser
+        # ------------------
+        self.exec_python(self.geosbin, 'bundleParser.py')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -234,7 +340,7 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
         # Obtain experiment input files created by GEOS gcm_setup
         # --------------------------------------------------
 
-        geos_install_path = os.path.join(self.experiment_dir, 'GEOSgcm/source/install/bin')
+        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm/source/install/bin')
 
         src_dirs = []
 
@@ -350,112 +456,5 @@ class PrepGeosRunDir(GeosTasksRunExecutableBase):
             yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
 
         return self.rc_to_bool(rcdict)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def execute(self):
-
-        """
-        Parses resource files in "geos_experiment_directory" to obtain required
-        directories and files. Modifies file contents using re module according
-        to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
-
-        In GEOS speak, it creates the "scratch" directory.
-        """
-
-        self.swell_static_files = self.config_get('swell_static_files')
-        # TODO: exp. directory location ought to be handled better
-        self.geos_exp_dir = os.path.join(self.swell_static_files, 'jedi',
-                                         'interfaces', 'geos_ocean', 'model', 'geos',
-                                         self.config_get('geos_experiment_directory'))
-
-        self.cycle_dir = self.config_get('cycle_dir')
-        self.experiment_dir = self.config_get('experiment_dir')
-        self.geos_source = self.config_get('existing_geos_source_directory')
-
-        self.logger.info('Preparing GEOS Forecast directory')
-        self.logger.info('Some steps involve modifying input files and replacing')
-        self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
-        self.logger.info('encouraged to validate if this changes ensued.')
-
-        # Forecast start time object, useful for temporal BC constraints
-        # -------------------------------------------------------------
-        self.fc_dto = self.get_rst_time()
-
-        # Get static files
-        # ----------------
-        self.get_static()
-
-        # Combine input.nml and fvcore_layout
-        # Modify input.nml if not cold start (default)
-        # ------------------------------------------
-        self.process_nml()
-
-        # Parse .rc files and convert bool.s to Python format
-        # ---------------------------------------------------
-        self.cap_dict = self.parse_rc(self.at_cycle_geosdir('CAP.rc'))
-        self.cap_dict = self.rewrite_cap(self.cap_dict, self.at_cycle_geosdir('CAP.rc'))
-
-        # This ensures a bool entry for USE_EXTDATA2G exists
-        # --------------------------------------------------
-        self.rc_assign(self.cap_dict, 'USE_EXTDATA2G')
-
-        # Link replay files if active TODO
-        # --------------------------------
-        self.agcm_d = self.parse_rc(self.at_cycle_geosdir('AGCM.rc'))
-        self.agcm_dict = self.rc_to_bool(self.agcm_d)
-
-        if 'REPLAY_MODE' in self.agcm_dict:
-            self.logger.info('Replay Mode is Active')
-            self.link_replay()
-
-        # Set AGCM.rc record ref_date to fcst start time
-        # -------------------------------------------------------------------
-        if 'RECORD_FREQUENCY' in self.agcm_dict:
-            self.rewrite_agcm(self.agcm_dict, self.at_cycle_geosdir('AGCM.rc'))
-
-        # Parse gcm_run.j and get a dictionary based upon setenv
-        # ------------------------------------------------------
-        self.gcm_dict = self.parse_gcmrun(self.at_cycle_geosdir('gcm_run.j'))
-
-        # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
-        # ----------------------------------------------------------------
-        self.emissions = self.gcm_dict['EMISSIONS']
-
-        # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
-        # ------------------------------------------------------------------
-        if self.emissions == 'AMIP_EMISSIONS':
-            self.get_amip_emission()
-
-        # Rename GEOS Chem files
-        # ----------------------
-        chem_dict = self.parse_rc(self.at_cycle_geosdir('GEOS_ChemGridComp.rc'))
-        self.geos_chem_rename(chem_dict)
-
-        # Rename settings according to .rc switches
-        # -----------------------------------------
-        self.restructure_rc()
-
-        # Generate the complete ExtData.rc
-        # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
-        self.generate_extdata()
-
-        # Get boundary conditions
-        # ----------------
-        self.get_bcs()
-
-        # Get dynamic files
-        # ----------------
-        self.get_dynamic()
-
-        # Create cap_restart
-        # ------------------
-        with open(self.at_cycle_geosdir('cap_restart'), 'w') as file:
-            file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
-
-        # Run bundleParser
-        # ------------------
-        self.exec_python(self.geosbin, 'bundleParser.py')
 
 # --------------------------------------------------------------------------------------------------

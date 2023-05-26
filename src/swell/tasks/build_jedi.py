@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -15,7 +15,6 @@ from jedi_bundle.bin.jedi_bundle import execute_tasks
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import set_jedi_bundle_config, get_bundles, build_and_source_dirs
 
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -29,7 +28,7 @@ class BuildJedi(taskBase):
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
-        swell_exp_path = self.get_swell_exp_path()
+        swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
 
         # Get paths to build and source
@@ -46,7 +45,7 @@ class BuildJedi(taskBase):
                 bundles = []
                 for model_component in model_components:
                     # Open the metadata config for interface
-                    meta = self.open_jedi_interface_meta_config_file(model_component)
+                    meta = self.jedi_rendering.render_interface_meta()
                     bundles.append(meta['jedi_interface'])
             else:
                 bundles_default = get_bundles()
