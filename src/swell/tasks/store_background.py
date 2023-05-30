@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -8,13 +8,15 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.tasks.base.task_base import taskBase
-
 from datetime import datetime as dt
 import isodate
 import os
 import re
 from r2d2 import store
+
+
+from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.datetime import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------
@@ -32,27 +34,21 @@ class StoreBackground(taskBase):
              See the taskBase constructor for more information.
         """
 
-        # Shortcuts to base objects
-        # -------------------------
-        cfg = self.config
-        logger = self.logger
-
         # Current cycle time object
         # -------------------------
-        current_cycle = cfg.get('current_cycle')
-        current_cycle_dto = dt.strptime(current_cycle, cfg.dt_format)
+        current_cycle_dto = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
 
         # Parse config
-        window_type = cfg.get('window_type')
-        window_length = cfg.get('window_length')
-        window_offset = cfg.get('window_offset')
+        window_type = self.config_get('window_type')
+        window_length = self.config_get('window_length')
+        window_offset = self.config_get('window_offset')
 
         # Position relative to center of the window where forecast starts
-        forecast_offset = cfg.get('analysis_forecast_window_offset')
+        forecast_offset = self.config_get('analysis_forecast_window_offset')
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
@@ -75,7 +71,7 @@ class StoreBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        bkg_info = cfg.get('backgrounds')
+        bkg_info = self.config_get('backgrounds')
 
         if window_type == "4D" and bkg_info['background source'] == 'file':
 
@@ -84,7 +80,7 @@ class StoreBackground(taskBase):
 
             # Check for a sensible frequency
             if (window_length_dur/bkg_freq_dur) % 2:
-                logger.abort('Window length not divisible by background frequency')
+                self.logger.abort('Window length not divisible by background frequency')
 
             # Loop over window
             start_date = current_cycle_dto - window_offset_dur
@@ -99,13 +95,13 @@ class StoreBackground(taskBase):
 
         # Loop over background files in the R2D2 config and store
         # -------------------------------------------------------
-        logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
+        self.logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
 
         # Background dictionary from config
-        background_dict = cfg.get('BACKGROUND')
+        background_dict = self.jedi_rendering.render_interface_model('background')
 
         # Get r2d2 dictionary
-        r2d2_dict = cfg.get('R2D2')
+        r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
         # Loop over fc
         for fc in r2d2_dict['store']['fc']:
@@ -131,7 +127,7 @@ class StoreBackground(taskBase):
 
                     # Set the target file name
                     target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(cfg.get('cycle_dir'), target_file)
+                    target_file = os.path.join(self.cycle_dir(), target_file)
 
                     # Perform the store
                     store(date=forecast_start_time,
@@ -140,6 +136,6 @@ class StoreBackground(taskBase):
                           file_type='bkg',
                           fc_date_rendering='analysis',
                           step=bkg_step,
-                          resolution=cfg.get('horizontal_resolution'),
+                          resolution=self.config_get('horizontal_resolution'),
                           type='fc',
                           experiment=bkg_info['background experiment'])
