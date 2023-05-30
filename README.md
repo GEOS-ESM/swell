@@ -6,9 +6,9 @@
   width="50%"
 />
 
-[![Python coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg)](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml)
-[![YAML coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg)](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml)
-[![NCCS Discover Nightly](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml/badge.svg)](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml)
+[![Python coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml)
+[![YAML coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml)
+[![NCCS Discover Nightly](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml)
 
 </div>
 
