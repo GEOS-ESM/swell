@@ -1,7 +1,7 @@
 experiment_id: swell-{{suite_to_run}}
 experiment_root: /discover/nobackup/${USER}/SwellExperiments
 platform: nccs_discover
-swell_static_files: /discover/nobackup/drholdaw/SwellStaticFiles
+swell_static_files: /discover/nobackup/dardag/SwellStaticFiles
 r2d2_local_path: /discover/nobackup/${USER}/R2D2DataStore/Local
 existing_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
 existing_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/

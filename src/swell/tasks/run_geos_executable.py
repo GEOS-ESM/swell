@@ -22,13 +22,9 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
 
         # Path to executable being run
         # ----------------------------
-        self.cycle_dir = self.config_get('cycle_dir')
-        experiment_dir = self.config_get('experiment_dir')
-        npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
+        npx_proc = self.config_get('npx_proc', None)  # Used in eval(total_processors)
+        npy_proc = self.config_get('npy_proc', None)  # Used in eval(total_processors)
         total_processors = self.config_get('total_processors')
-
-        exit()
 
         # Create RESTART folder
         # ---------------------
@@ -48,25 +44,33 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         # GEOS executable
         # ---------------
         geos_executable = 'GEOSgcm.x'
-        geos_executable_path = os.path.join(experiment_dir, 'GEOSgcm', 'build',
+        geos_executable_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build',
                                             'bin', geos_executable)
 
         # GEOS source
         # ---------------
         geos_modules = 'g5_modules.sh'
-        geos_modules_path = os.path.join(experiment_dir, 'GEOSgcm', 'source',
+        geos_modules_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'source',
                                          '@env', geos_modules)
 
         # Run the GEOS executable
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
+
         self.run_executable(self.at_cycle_geosdir(), np, geos_executable_path,
                             geos_modules_path, output_log_file)
+        exit()
 
         #######################################################################
         # Create links for SOCA to read
+        # Separate task?
         #######################################################################
-        current_cycle = self.config_get('current_cycle')
+        # current_cycle = self.config_get('current_cycle')
+        # TODO: Is this a good approach?
+        current_cycle = os.path.basename(os.path.dirname(self.cycle_dir()))
+        # Leaving here, In get_cycle_dir but this should not be called if the task does not receive model.
+        # so major issue is -m argument for geos
+        # at_cycle situ
 
         # Option #1:
         # Link restart to history output
@@ -81,7 +85,7 @@ class RunGeosExecutable(GeosTasksRunExecutableBase):
         # TODO: this requires a default if the task is not attached a model (geos_ocean or atm.)
         # -------------------------------------------------------------------------------------
         an_fcst_offset = self.config_get('analysis_forecast_window_offset')
-        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+        rst_dto = self.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
         # Generic rst file format for SOCA

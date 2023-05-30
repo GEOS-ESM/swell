@@ -38,12 +38,13 @@ class GeosTasksRunExecutableBase(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def adjacent_cycle(self, cycle_dir, offset, return_date=False):
+    def adjacent_cycle(self, offset, return_date=False):
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
-        basename = os.path.basename(cycle_dir)
-        dt_str = basename.split('-')[0]
+        # basename = os.path.basename(self.cycle_dir())
+        dt_str = os.path.basename(os.path.dirname(self.cycle_dir()))
+        # dt_str = basename.split('-')[0]
         dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
 
         # Modify datetime by using date offset
@@ -60,7 +61,7 @@ class GeosTasksRunExecutableBase(taskBase):
 
         # Create new file path with modified basename
         # --------------------------------------------
-        adj_cycle_dir = os.path.join(os.path.dirname(cycle_dir), modified_basename)
+        adj_cycle_dir = os.path.join(os.path.dirname(self.cycle_dir()), modified_basename)
 
         return adj_cycle_dir
 
@@ -415,7 +416,15 @@ class GeosTasksRunExecutableBase(taskBase):
         self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
 
         command = f'source {geos_modules} \n' + \
+            # f'export I_MPI_ADJUST_ALLREDUCE=12 \n' + \
+            # f'export I_MPI_ADJUST_GATHERV=3 \n' + \
+            # f'export I_MPI_SHM_HEAP_VSIZE=512 \n' + \
+            # f'export PSM2_MEMORY=large \n' + \
+            # f'export I_MPI_EXTRA_FILESYSTEM=1 \n' + \
+            # f'export OMP_NUM_THREADS=1 \n' + \
+            # f'I_MPI_EXTRA_FILESYSTEM_FORCE=gpfs \n' + \
             f'cd {cycle_dir} \n' + \
+            # f'env  LD_PRELOAD=/discover/nobackup/dardag/SwellExperiments/swell-3dvar_cycle/GEOSgcm/build/lib/libmom6.so \n' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'
 
