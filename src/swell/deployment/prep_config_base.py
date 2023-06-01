@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -12,7 +12,10 @@ from abc import ABC, abstractmethod
 import datetime
 import os
 import pathlib
+import re
 import yaml
+
+import glob
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
@@ -22,23 +25,32 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 class PrepConfigBase(ABC):
 
-    def __init__(self, logger, dictionary_file, suite, platform):
+    def __init__(self, logger, dictionary_file, suite, platform, models):
 
         # Store a logger for all to use
         self.logger = logger
 
         # Swell install path
         swell_path = get_swell_path()
+        self.install_path = swell_path
 
-        # Get the path and filename of the dictionary
-        self.directory = os.path.join(swell_path, 'suites')
+        # Get the path and filename of the suite dictionary
+        self.directory = os.path.join(swell_path, 'suites_new')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Keep track of the model, atmosphere, ocean etc
+        self.model_path = os.path.join(self.install_path,
+                                       'configuration',
+                                       'jedi/interfaces/')
         self.model = None
+        self.model_task = False
+        self.model_choices = models
 
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
+
+        # Add cli arguments to experiment dictionary
+        self.experiment_dict['suite_to_run'] = suite
 
         # Comment dictionary to be created and used to add comments to config file
         self.comment_dict = {}
@@ -65,25 +77,75 @@ class PrepConfigBase(ABC):
         platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
 
         # Dictionary of templates to use whenever opening a file
-        self.template_dictionary = yaml.safe_load(platform_dict_str)
-        self.template_dictionary.update(user_inputs_dict)
-
-        # Starting dictionary
-        self.dictionary = self.read_dictionary_file(dictionary_file)
+        self.platform_template_dictionary = yaml.safe_load(platform_dict_str)
+        self.platform_template_dictionary.update(user_inputs_dict)
 
     # ----------------------------------------------------------------------------------------------
 
-    def append_directory_and_filename(self, sub_dict_name):
-
-        self.directory = os.path.join(self.directory, sub_dict_name)
-        self.filename = self.filename + '-' + sub_dict_name
+    def set_end_key(self, key_list):
+        if 'fixed_options' in key_list:
+            fixed_idx = key_list.index('fixed_options')
+            key_list.pop(fixed_idx)
+        self.end_key = key_list[-1]
+        return key_list
 
     # ----------------------------------------------------------------------------------------------
 
-    def subtract_directory_and_filename(self):
+    def key_passer(self, key, el_dict):
 
-        self.directory = os.path.dirname(self.directory)
-        self.filename = '-'.join(self.filename.split('-')[0:-1])
+        if key != 'fixed_options':
+
+            # Validate the element dictionary
+            self.validate_dictionary(el_dict)
+
+            # Extract type
+            type = el_dict['type']
+
+            # Check that the key does not have a dependency
+            depends_flag = True
+            if 'depends' in el_dict.keys():
+                dep_key = el_dict['depends']['key']
+                dep_val = el_dict['depends']['value']
+                if self.experiment_dict[dep_key] != dep_val:
+                    depends_flag = False
+                    if key == self.end_key:
+                        change_check = self.before_next()
+
+            # In this case the key is not expected to refer to a sub dictionary but have
+            # everything needed in the elements dictionary
+            if depends_flag:
+                el_dict['default_value'] = self.get_answer(key, el_dict)
+                # Register the added experiment element key
+                self.exec_keys.append(key)
+                if key == self.end_key:
+                    change_check = self.before_next()
+                    if isinstance(change_check, dict):
+                        el_dict = change_check
+                self.add_to_experiment_dictionary(key, el_dict)
+
+        elif key == 'fixed_options':
+
+            for fixed_key in el_dict:
+
+                self.add_to_experiment_dictionary(fixed_key, el_dict[fixed_key])
+
+        return
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_model_template(self, model):
+        swell_path = self.install_path
+        task_file = camel_to_snake('GetBackground')
+
+        # Open model specific defaults
+        model_inputs_dict_file = os.path.join(swell_path, 'configuration',
+                                              'jedi/interfaces/' + model,
+                                              'tasks', task_file + '.yaml')
+
+        with open(model_inputs_dict_file, 'r') as model_inputs_open:
+            model_template_dictionary = yaml.safe_load(model_inputs_open.read())
+
+        return model_template_dictionary
 
     # ----------------------------------------------------------------------------------------------
 
@@ -109,9 +171,14 @@ class PrepConfigBase(ABC):
         with open(dictionary_file, 'r') as dictionary_file_open:
             dictionary_str = dictionary_file_open.read()
 
+        if self.model_task:
+            template_dictionary = self.set_model_template(self.model_name)
+        else:
+            template_dictionary = self.platform_template_dictionary
+
         # Render the templates using the template dictionary
         dictionary_str = template_string_jinja2(self.logger, dictionary_str,
-                                                self.template_dictionary)
+                                                template_dictionary)
 
         # Convert string to dictionary
         return yaml.safe_load(dictionary_str)
@@ -189,6 +256,15 @@ class PrepConfigBase(ABC):
         if key in self.experiment_dict.keys():
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
 
+        # Check if models key is present in experiment dictionary
+        if self.model is not None:
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+
+            # If specific model dictionary not added to the list of model then add it
+            if self.model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][self.model] = {}
+
         # Make sure the element was not already added
         # -------------------------------------------
         if self.model is None:
@@ -228,11 +304,138 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    @abstractmethod
+    def expand_tasks(self, key_list, dictionary):
+        new_dictionary = {}
+        for i, key in enumerate(key_list):
+            if 'tasks' in key:
+                if 'model' not in key:
+                    task_collector = self.get_tasks(dictionary['tasks'], 'base')
+                    for task in task_collector:
+                        for element in task_collector[task]:
+                            new_dictionary[element] = task_collector[task][element]
+                elif 'model' in key:
+                    if 'models' not in new_dictionary.keys():
+                        new_dictionary['models'] = {}
+
+                    # Setting model options from available models in interfaces
+                    self.model_options = glob.glob(os.path.join(self.install_path,
+                                                                'configuration',
+                                                                'jedi/interfaces/',
+                                                                '*/'))
+
+                    model_list = self.get_models()
+                    for model in model_list:
+                        self.model_name = model
+                        new_dictionary['models'][model] = {}
+                        task_collector = self.get_tasks(dictionary['model_tasks'], 'model')
+                        for task in task_collector:
+                            for element in task_collector[task]:
+                                new_dictionary['models'][model][element] = \
+                                    task_collector[task][element]
+                key_list = list(new_dictionary.keys())
+            else:
+                new_dictionary[key] = dictionary[key]
+        dictionary = new_dictionary
+
+        del new_dictionary
+
+        return dictionary
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_tasks(self, task_list, task_type):
+        tasks_path = os.path.join(self.install_path, 'tasks/')
+        task_collector = {}
+        if task_type == 'base':
+            self.model_task = False
+        elif task_type == 'model':
+            self.model_task = True
+        for t in task_list:
+            name = t
+            name = camel_to_snake(name)
+            t = name
+            task_file = t + '.yaml'
+            task_dict = self.read_dictionary_file(os.path.join(tasks_path, task_file))
+            if 'task_prerequisites' in task_dict.keys():
+                for pr in task_dict['task_prerequisites']:
+                    pr = camel_to_snake(pr)
+                    if pr in task_collector.keys():
+                        task_dict.pop('task_prerequisites')
+                    else:
+                        print('ABORT')
+            if task_dict:
+                task_collector[t] = task_dict
+        return task_collector
+
+    # ----------------------------------------------------------------------------------------------
+
+    def dictionary_comber(self, dictionary):
+        # Set key list and expand task lists
+        key_list = list(dictionary.keys())
+        dictionary = self.expand_tasks(key_list, dictionary)
+
+        # Save dictionary as self.dictionary for use in prep_config_cli.before_next()
+        self.dictionary = dictionary
+
+        # Check for fixed options in key list and set end key
+        key_list = self.set_end_key(key_list)
+
+        # Create empty executable key list which will track which keys are executed
+        self.exec_keys = []
+
+        # Iterate over dictionary
+        for key in dictionary:
+            # Element dictionary
+            if key == 'models':
+                for m in dictionary[key]:
+                    self.model = m
+                    for k in dictionary[key][m]:
+                        el_dict = dictionary[key][m][k]
+                        self.key_passer(k, el_dict)
+            else:
+                self.model = None
+                el_dict = dictionary[key]
+                self.key_passer(key, el_dict)
+
+        return
+
+    # ----------------------------------------------------------------------------------------------
+
     def execute(self):
+        # then open the suite_to_run selected
+        # check_wdigets goes in cli
+        # defaults gets nothing
+
+        print(f"Now editing the {os.path.basename(self.directory)} YAML file.")
+
+        # Get answers for the suite YAML file
+        suite_dictionary = self.open_dictionary()
+
+        self.dictionary_comber(suite_dictionary)
+
+        # Check which suite to run
+        self.directory = os.path.join(self.directory, 'suite_to_run')
+        self.filename = self.experiment_dict['suite_to_run']
+
+        suite_to_run_dictionary = self.open_dictionary()
+
+        self.dictionary_comber(suite_to_run_dictionary)
+
+        return
+
+        # The subclass has to implement an execute method since this is how it is called into
+        # action.
+    # ----------------------------------------------------------------------------------------------
+
+    @abstractmethod
+    def get_answer(self, dictionary):
         pass
         # The subclass has to implement an execute method since this is how it is called into
         # action.
 
-
 # --------------------------------------------------------------------------------------------------
+
+
+def camel_to_snake(s):
+    new_string = re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+    return new_string

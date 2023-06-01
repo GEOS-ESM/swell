@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -24,7 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override=None):
+def prepare_config(method, suite, platform, override, models):
 
     # Create a logger
     # ---------------
@@ -45,7 +45,7 @@ def prepare_config(method, suite, platform, override=None):
     # ---------------------------------------------------------------
     PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
                         'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform)
+    prep_using = PrepUsing(logger, config_file, suite, platform, models)
 
     # Call the config prep step
     # -------------------------
@@ -75,8 +75,7 @@ def prepare_config(method, suite, platform, override=None):
         with open(override, 'r') as override_open:
             override_dict = yaml.safe_load(override_open)
 
-        overridable_keys = ['experiment_id', 'experiment_root', 'existing_source_directory',
-                            'existing_build_directory']
+        overridable_keys = ['experiment_id', 'experiment_root']
         for overridable_key in overridable_keys:
             if overridable_key in override_dict:
                 experiment_dict[overridable_key] = override_dict[overridable_key]
