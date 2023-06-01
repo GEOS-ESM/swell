@@ -69,7 +69,7 @@ class PrepConfigBase(ABC):
 
         # Open the platform specific defaults
         platform_dict_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
-                                          'experiment.yaml')
+                                          'suite_questions.yaml')
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
 
@@ -410,6 +410,8 @@ class PrepConfigBase(ABC):
 
         # Get answers for the suite YAML file
         suite_dictionary = self.open_dictionary()
+
+        print('TEST TEST***********\n', suite_dictionary)
 
         self.dictionary_comber(suite_dictionary)
 
