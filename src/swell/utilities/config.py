@@ -125,7 +125,7 @@ class Config():
     # does not exist. This is valid so long as the task provides a default value.
     def __getattr__(self, name):
         def variable_not_found(default='LrZRExPGcQ'):
-            if default=='LrZRExPGcQ':
+            if default == 'LrZRExPGcQ':
                 self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
                                       f'this variable was not created. Ensure that the variable ' +
                                       f'is in the experiment configuration and that the task can ' +

@@ -43,7 +43,7 @@ def main():
 
     # Generate list of jedi interfaces
     jedi_interfaces_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces')
-    jedi_interfaces = [ f.path for f in os.scandir(jedi_interfaces_path) if f.is_dir() ]
+    jedi_interfaces = [f.path for f in os.scandir(jedi_interfaces_path) if f.is_dir()]
     jedi_interfaces = list(filter(lambda jedi_interface: '__' not in jedi_interface,
                                   jedi_interfaces))
     jedi_interface_names = []
@@ -78,8 +78,8 @@ def main():
                                     f'contain models. Offending key: {question_key}')
 
                 # Set the required jedi interfaces for this question
-                jedi_interfaces_needed = question_dict['models']
-                if jedi_interfaces_needed[0] == 'all' or jedi_interface_name in jedi_interfaces_needed:
+                jedi_int_needed = question_dict['models']
+                if jedi_int_needed[0] == 'all' or jedi_interface_name in jedi_int_needed:
 
                     # Create dictionary if it does not already exist
                     if question_key not in question_dict_defaults_exist:
@@ -95,7 +95,9 @@ def main():
                     else:
 
                         # Copy from the existing dictionary
-                        question_dict_defaults = {question_key: question_dict_defaults_exist[question_key]}
+                        question_dict_defaults = {
+                            question_key: question_dict_defaults_exist[question_key]
+                            }
 
                     # Write to the YAML file
                     outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))
@@ -103,7 +105,7 @@ def main():
 
     # Generate list of platforms
     platforms_path = os.path.join(get_swell_path(), 'deployment', 'platforms')
-    platforms = [ f.path for f in os.scandir(platforms_path) if f.is_dir() ]
+    platforms = [f.path for f in os.scandir(platforms_path) if f.is_dir()]
     platforms = list(filter(lambda platform: '__' not in platform, platforms))
     platform_names = []
     for platform in platforms:
@@ -145,7 +147,9 @@ def main():
                 else:
 
                     # Copy from the existing dictionary
-                    question_dict_defaults = {question_key: question_dict_defaults_exist[question_key]}
+                    question_dict_defaults = {
+                        question_key: question_dict_defaults_exist[question_key]
+                        }
 
                 # Write to the YAML file
                 outfile.write(yaml.dump(question_dict_defaults, default_flow_style=False))

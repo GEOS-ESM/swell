@@ -23,7 +23,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def main(test_mode):
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -35,18 +35,20 @@ def main():
     task_codes = glob.glob(os.path.join(get_swell_path(), 'tasks', '*.py'))
     task_codes = list(filter(lambda task_code: task_code != '__init__.py', task_codes))
 
-    # Output file
-    outfile_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
+    # Target YAML file
+    destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
     # Read input file into dictionary
-    if os.path.exists(outfile_yaml):
-        with open(outfile_yaml, 'r') as ymlfile:
+    if os.path.exists(destination_yaml):
+        with open(destination_yaml, 'r') as ymlfile:
             question_dict = yaml.safe_load(ymlfile)
     else:
         question_dict = {}
 
+    question_dict_in = question_dict.copy()
+
     # Now safe to overwrite file
-    outfile = open(outfile_yaml, 'w')
+    outfile = open(destination_yaml, 'w')
 
     # Loop through task code and accumulate all lines containing a use of config
     config_keys = []

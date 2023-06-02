@@ -57,7 +57,7 @@ class PrepConfigBase(ABC):
 
         # Open the platform specific defaults
         platform_suite_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
-                                          'suite_questions.yaml')
+                                           'suite_questions.yaml')
         platform_task_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
                                           'task_questions.yaml')
         with open(platform_suite_file, 'r') as platform_dict_file_open:
