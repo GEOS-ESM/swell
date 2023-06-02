@@ -1,8 +1,14 @@
 name: Python Coding Norms
 
 on:
+  push:
+    branches:
+      - develop
   pull_request:
-    types: [opened, synchronize, reopened]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   pycodestyle:
