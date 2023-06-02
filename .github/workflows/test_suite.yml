@@ -1,0 +1,33 @@
+name: Swell Test Suite
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pycodestyle:
+    name: Check Python Coding Norms
+    runs-on: ubuntu-latest
+    steps:
+
+    # Setup Python
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    # Update conda
+    - name: Update conda
+      run: conda update -n base -c defaults conda
+
+    # Install pycodestyle
+    - name: Install pycodestyle
+      run: conda install -c conda-forge pycodestyle
+
+    # Clone the swell code
+    - name: Clone swell repo
+      uses: actions/checkout@v2
+
+    # Run python codestyle
+    - name: Run python codestyle
+      run: $CONDA/bin/python3 pycodestyle_run.py

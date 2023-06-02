@@ -6,6 +6,7 @@
   width="50%"
 />
 
+![Swell test suite](https://github.com/GEOS-ESM/swell/actions/workflows/test_suite.yml/badge.svg)
 ![Python coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg)
 ![YAML coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg)
 ![NCCS Discover Nightly](https://github.com/GEOS-ESM/swell/actions/workflows/discover_nightly.yml/badge.svg)
