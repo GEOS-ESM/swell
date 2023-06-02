@@ -50,5 +50,5 @@ jobs:
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     # Run the swell test suite
-    - name: Run swell applications tests
+    - name: Run swell test suite
       run: swell_test_suite
