@@ -321,7 +321,6 @@ number_of_iterations:
   prompt: What number of iterations do you wish to use for each outer loop? Provide
     a list of integers the same length as the number of outer loops.
   tasks:
-  - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer-list
 
