@@ -68,14 +68,11 @@ observations:
   type: string-check-list
 
   # Processor layout
-npx_proc:
+total_processors:
   default_value: '6'
-  prompt: What processor layout (x-direction) per cube face?
+  prompt: What is the total number of required processors for JEDI?
   type: string
-npy_proc:
-  default_value: '1'
-  prompt: What processor layout (y-direction) per cube face?
-  type: string
+
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------
@@ -87,14 +84,11 @@ fixed_options:
     default_value: RPCG
     prompt: Minimizer to use for gradient descent
   number_of_iterations:
-    default_value: 5
+    default_value: [5]
     prompt: Number of iterations to use in the minimization
   gradient_norm_reduction:
     default_value: 1e-10
     prompt: Threshold for convergence of the minimization
-  total_processors:
-    default_value:  'npx_proc * npy_proc'
-    prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT12H
     prompt: Time from beginning to middle of the window

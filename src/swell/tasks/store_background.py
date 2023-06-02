@@ -43,12 +43,14 @@ class StoreBackground(taskBase):
         bkg_steps = []
 
         # Parse config
-        window_type = self.config_get('window_type')
-        window_length = self.config_get('window_length')
-        window_offset = self.config_get('window_offset')
+        window_type = self.config.window_type()
+        window_length = self.config.window_length()
+        window_offset = self.config.window_offset()
+        background_experiment = self.config.background_experiment()
+        background_frequency = self.config.background_frequency()
 
         # Position relative to center of the window where forecast starts
-        forecast_offset = self.config_get('analysis_forecast_window_offset')
+        forecast_offset = self.config.analysis_forecast_window_offset()
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
@@ -71,12 +73,9 @@ class StoreBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        bkg_info = self.config_get('backgrounds')
+        if window_type == "4D":
 
-        if window_type == "4D" and bkg_info['background source'] == 'file':
-
-            bkg_freq = bkg_info['background frequency']
-            bkg_freq_dur = isodate.parse_duration(bkg_freq)
+            bkg_freq_dur = isodate.parse_duration(background_frequency)
 
             # Check for a sensible frequency
             if (window_length_dur/bkg_freq_dur) % 2:
@@ -136,6 +135,6 @@ class StoreBackground(taskBase):
                           file_type='bkg',
                           fc_date_rendering='analysis',
                           step=bkg_step,
-                          resolution=self.config_get('horizontal_resolution'),
+                          resolution=self.config.horizontal_resolution(),
                           type='fc',
-                          experiment=bkg_info['background experiment'])
+                          experiment=background_experiment)

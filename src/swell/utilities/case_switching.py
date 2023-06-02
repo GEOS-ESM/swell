@@ -12,27 +12,25 @@ def camel_case_to_snake_case(CamelCaseString):
 
     # Convert a string that looks like e.g. ThisIsAString to this_is_a_string
     # -----------------------------------------------------------------------
-
-    # Create empty output string
-    snake_case_string = ''
-
-    # Loop over the elements in the string
-    for element in CamelCaseString:
-
-        # Check if element is upper case and if so prepend with underscore
-        if element.isupper():
-            new_element = '_'+element.lower()
+    snake_case_string = ""
+    for char in CamelCaseString:
+        if char.isupper():
+            snake_case_string += "_" + char.lower()
         else:
-            new_element = element
+            snake_case_string += char
+    return snake_case_string.lstrip("_")
 
-        # Add new element to the output string
-        snake_case_string = snake_case_string+new_element
 
-    # If this results in leading underscore then remove it
-    if snake_case_string[0] == "_":
-        snake_case_string = snake_case_string[1:]
+# --------------------------------------------------------------------------------------------------
 
-    return snake_case_string
+
+def snake_case_to_camel_case(snake_case_string):
+
+    # Convert a string that looks like e.g. this_is_a_string to ThisIsAString
+    # -----------------------------------------------------------------------
+    words = snake_case_string.split('_')
+    CamelCaseString = words[0].capitalize() + ''.join(word.capitalize() for word in words[1:])
+    return CamelCaseString
 
 
 # --------------------------------------------------------------------------------------------------
