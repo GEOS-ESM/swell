@@ -52,6 +52,8 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
   - StoreBackground
   type: duration
 
@@ -399,6 +401,7 @@ total_processors:
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer

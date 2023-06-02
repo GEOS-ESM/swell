@@ -24,13 +24,17 @@ class RunJediHofxExecutable(taskBase):
 
     def execute(self):
 
-        # Path to executable being run
-        # ----------------------------
+        # Jedi application name
+        # ---------------------
+        jedi_application = 'hofx'
+
+        # Parse configuration
+        # -------------------
         window_type = self.config.window_type()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
-        number_of_iterations = self.config.number_of_iterations()
         observations = self.config.observations()
+        jedi_forecast_model = self.config.jedi_forecast_model(None)
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -53,32 +57,36 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
+        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
         self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
         self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Model
+        if window_type == '4D':
+            self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
+
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), 'jedi_hofx_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), 'jedi_hofx_log.log')
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'hofx{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
 
         # Perform complete template rendering
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.config.jedi_forecast_model(None))
+                                 jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
@@ -89,15 +97,15 @@ class RunJediHofxExecutable(taskBase):
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
-        # Jedi executable name
-        # --------------------
-        jedi_executable = model_component_meta['executables'][f'hofx{window_type}']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
-
         # Compute number of processors
         # ----------------------------
-        np = eval(model_component_meta['total_processors'])
+        np = eval(str(model_component_meta['total_processors']))
+
+        # Jedi executable name
+        # --------------------
+        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
+                                            jedi_executable)
 
         # Run the JEDI executable
         # -----------------------

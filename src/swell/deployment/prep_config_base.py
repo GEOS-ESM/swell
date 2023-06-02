@@ -56,16 +56,26 @@ class PrepConfigBase(ABC):
         user_inputs_dict['platform'] = platform
 
         # Open the platform specific defaults
-        platform_dict_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
-                                          'experiment.yaml')
-        with open(platform_dict_file, 'r') as platform_dict_file_open:
+        platform_suite_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
+                                          'suite_questions.yaml')
+        platform_task_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
+                                          'task_questions.yaml')
+        with open(platform_suite_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
+        with open(platform_task_file, 'r') as platform_dict_file_open:
+            platform_dict_str = platform_dict_str + platform_dict_file_open.read()
 
         # Render the templates in the platform dictionary using user inputs
         platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
 
         # Dictionary of templates to use whenever opening a file
-        self.template_dictionary = yaml.safe_load(platform_dict_str)
+        platform_dictionary = yaml.safe_load(platform_dict_str)
+
+        # Flatten dictionary
+        self.template_dictionary = {}
+        for key, value in platform_dictionary.items():
+            self.template_dictionary[key] = value['default_value']
+
         self.template_dictionary.update(user_inputs_dict)
 
         # Starting dictionary

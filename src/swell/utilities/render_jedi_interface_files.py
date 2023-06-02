@@ -55,6 +55,7 @@ class JediConfigRendering():
             'npy_proc',
             'number_of_iterations',
             'swell_static_files',
+            'total_processors',
             'vertical_resolution',
             'window_begin',
             'window_begin_iso',

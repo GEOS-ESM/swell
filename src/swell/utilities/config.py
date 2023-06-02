@@ -105,28 +105,34 @@ class Config():
 
                 if task_name in key_question_dict['tasks']:
 
-                    print(f'Adding {experiment_key} for {task_name}')
-
                     # Add this variable to the object
                     setattr(self, f'__{experiment_key}__', experiment_value)
 
                     # Add a method to get the variable
+                    print('adding method for ', experiment_key)
                     setattr(self, f'{experiment_key}', self.get(experiment_key))
 
     # ----------------------------------------------------------------------------------------------
 
     def get(self, experiment_key):
         def getter(default='None'):
-            try:
-                return getattr(self, f'__{experiment_key}__')
-            except Exception:
-                if default == 'None':
-                    self.logger.abort(f'In config class, trying to get variable {experiment_key} ' +
-                                      f'but it was not created. Ensure that the variable is in ' +
-                                      f'the experiment configuration and that the task can ' +
+            return getattr(self, f'__{experiment_key}__')
+        return getter
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Implementation of __getattr__ to ensure there is no crash when a task requests a variable that
+    # does not exist. This is valid so long as the task provides a default value.
+    def __getattr__(self, name):
+        def variable_not_found(default='LrZRExPGcQ'):
+            if default=='LrZRExPGcQ':
+                self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
+                                      f'this variable was not created. Ensure that the variable ' +
+                                      f'is in the experiment configuration and that the task can ' +
                                       f'access that key based on the rules in '
                                       f'tasks/questions.yaml.')
+            else:
                 return default
-        return getter
+        return variable_not_found
 
 # ----------------------------------------------------------------------------------------------
