@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
 import unittest
-import json
+import yaml
 
 from swell.swell_path import get_swell_path
 from swell.utilities.bin.generate_task_questions_dict import main as generate_task_questions_dict

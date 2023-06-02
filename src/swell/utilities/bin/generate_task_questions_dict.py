@@ -23,7 +23,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def main(test_mode):
+def main():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
