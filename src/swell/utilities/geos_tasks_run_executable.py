@@ -374,7 +374,7 @@ class GeosTasksRunExecutable(taskBase):
         # .rc files have switch values in .TRUE. or .FALSE. format, some might
         # have T and F.
         # This method converts them to python boolean and assumes only two types
-        # of input. It can also converts faulty formats (i.e., .True. , .False)
+        # of input. It can also convert faulty formats (i.e., .True. , .False)
         # ----------------------------------------------------------------------
 
         for key, value in rcdict.items():

@@ -27,19 +27,18 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
 
         """
         Parses resource files in "geos_experiment_directory" to obtain required
-        directories and files. Modifies file contents using re module according
-        to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
+        directories and files. Modifies file contents using python re package 
+        according to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
 
         In GEOS speak, it creates the "scratch" directory.
         """
 
-        self.swell_static_files = self.config_get('swell_static_files', None)
+        self.swell_static_files = self.config.swell_static_files()
         # TODO: exp. directory location ought to be handled better
         self.geos_exp_dir = os.path.join(self.swell_static_files, 'jedi',
                                          'interfaces', 'geos_ocean', 'model', 'geos',
-                                         self.config_get('geos_experiment_directory'))
-
-        self.geos_source = self.config_get('existing_geos_source_directory')
+                                         self.config.geos_experiment_directory())
+        self.geos_source = self.config.existing_geos_gcm_source_path()
 
         self.logger.info('Preparing GEOS Forecast directory')
         self.logger.info('Some steps involve modifying input files and replacing')
@@ -107,7 +106,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
 
         # Generate the complete ExtData.rc
         # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
+        self.geosbin = os.path.join(self.geos_source, 'install-Release', 'bin')
         self.generate_extdata()
 
         # Get boundary conditions
@@ -340,7 +339,8 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
         # Obtain experiment input files created by GEOS gcm_setup
         # --------------------------------------------------
 
-        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm/source/install/bin')
+        # TODO: install folder name changes (install vs. install-Releaee)
+        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm/source/install-Release/bin')
 
         src_dirs = []
 
@@ -358,6 +358,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
     def link_replay(self):
 
         # Linking REPLAY files according to AGCM.rc as in gcm_run.j
+        # TODO: This needs another go over after GEOS Krok update
         # ---------------------------------------------------------
 
         if self.agcm_dict['REPLAY_MODE'] == 'Exact' or self.agcm_dict['REPLAY_MODE'] == 'Regular':
@@ -420,7 +421,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
         # AGCM.rc might requires some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        [time_string, days] = self.iso_to_time_str(self.config_get('forecast_duration'), half=True)
+        [time_string, days] = self.iso_to_time_str(self.config.forecast_duration(), half=True)
 
         # Prepend day information only record frequency is longer than a day
         # ------------------------------------------------------------------
@@ -439,11 +440,11 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
 
     def rewrite_cap(self, rcdict, rcfile):
 
-        # CAP.rc requires some modifications
+        # CAP.rc requires modifications before job submission
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
         self.logger.info('Modifying CAP.rc')
-        [time_string, days] = self.iso_to_time_str(self.config_get('forecast_duration'))
+        [time_string, days] = self.iso_to_time_str(self.config.forecast_duration())
 
         # Prepend day information
         # -----------------------
