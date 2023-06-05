@@ -228,7 +228,7 @@ geovals_experiment:
   type: string
 
 geovals_provider:
-  ask_question: true
+  ask_question: false
   default_value: defer_to_model
   models:
   - geos_atmosphere
@@ -252,7 +252,6 @@ gsi_bc_location:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: What is the location where GSI bias correction files can be found?
   tasks:
   - GetGsiBc

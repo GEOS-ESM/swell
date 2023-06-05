@@ -24,7 +24,7 @@ jedi_build_method:
   type: string-drop-list
 
 # Existing JEDI bundle directory
-existing_source_directory:
+existing_jedi_source_directory:
   default_value: '/discover/nobackup/drholdaw/JediDev/swell-ufo'
   prompt: Provide the path to an existing JEDI bundle directory containing source code repos
   type: string
@@ -33,7 +33,7 @@ existing_source_directory:
     value: use_existing
 
 # Existing JEDI build
-existing_build_directory:
+existing_jedi_build_directory:
   default_value: '/discover/nobackup/drholdaw/JediDev/swell-ufo/build-intel-release'
   prompt: Provide the path to an existing JEDI build directory
   type: string
@@ -47,23 +47,9 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
-# What kind of coupling is needed
-coupling_style:
-  default_value: uncoupled
-  prompt: What kind of coupling would you like to run with?
-  options: ['uncoupled', 'weakly coupled', 'strongly coupled']
-  type: string-drop-list
-
 # Models to use
 model_components:
   default_value: ['geos_atmosphere']
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
-
-# Fixed options
-fixed_options:
-  data_assimilation_run:
-    default_value: true
-    prompt: Does this workflow include data assimilation?
-
