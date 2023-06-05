@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -10,6 +10,7 @@
 import os
 import sys
 import textwrap
+import traceback
 
 
 # --------------------------------------------------------------------------------------------------
@@ -62,7 +63,12 @@ class Logger:
         if level != 'BLANK':
             level_show = level_show+' '+self.task_name+': '
 
+        if level == 'ABORT':
+            level_show = 'ABORT IN '+self.task_name+': '
+
         if level == 'ABORT' or self.loggerdict[level]:
+            if level == 'ABORT':
+                print('\n')
             first_line = True
             for message_item in message_items:
                 if not first_line:
@@ -99,7 +105,13 @@ class Logger:
     def abort(self, message, wrap=True):
 
         self.send_message('ABORT', message, wrap)
-        sys.exit('ABORTING\n')
+
+        # Get traceback stack (without logger.py lines)
+        filtered_stack = [line for line in traceback.format_stack() if 'logger.py' not in line]
+        traceback_str = '\n'.join(filtered_stack)
+
+        # Exit with traceback
+        sys.exit('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
 
     # ----------------------------------------------------------------------------------------------
 

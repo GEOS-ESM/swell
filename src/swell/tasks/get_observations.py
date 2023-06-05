@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -35,12 +35,23 @@ class GetObservations(taskBase):
 
         # Parse config
         # ------------
-        experiment = self.config_get('obs_experiment')
-        provider = self.config_get('obs_provider')
-        window_begin = self.config_get('window_begin')
-        background_time = self.config_get('background_time')
-        observations = self.config_get('observations')
-        window_length = self.config_get('window_length')
+        obs_experiment = self.config.obs_experiment()
+        obs_provider = self.config.obs_provider()
+        background_time_offset = self.config.background_time_offset()
+        observations = self.config.observations()
+        window_length = self.config.window_length()
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+        window_offset = self.config.window_offset()
+
+        # Get window begin time
+        window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+
+        # Add to JEDI template rendering dictionary
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Loop over observation operators
         # -------------------------------
@@ -48,7 +59,7 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Fetch observation files
             # -----------------------
@@ -57,11 +68,11 @@ class GetObservations(taskBase):
 
             fetch(date=window_begin,
                   target_file=target_file,
-                  provider=provider,
+                  provider=obs_provider,
                   obs_type=observation,
                   time_window=window_length,
                   type='ob',
-                  experiment=experiment)
+                  experiment=obs_experiment)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -80,7 +91,7 @@ class GetObservations(taskBase):
                   provider='gsi',
                   obs_type=observation,
                   type='bc',
-                  experiment=experiment,
+                  experiment=obs_experiment,
                   file_type='satbias')
 
             # Change permission
@@ -96,7 +107,7 @@ class GetObservations(taskBase):
                       provider='gsi',
                       obs_type=observation,
                       type='bc',
-                      experiment=experiment,
+                      experiment=obs_experiment,
                       file_type='tlapse')
 
                 # Change permission

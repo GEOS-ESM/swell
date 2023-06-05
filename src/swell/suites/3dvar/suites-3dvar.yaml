@@ -24,8 +24,8 @@ jedi_build_method:
   type: string-drop-list
 
 # Existing JEDI bundle directory
-existing_source_directory:
-  default_value: {{existing_source_directory}}
+existing_jedi_source_directory:
+  default_value: {{existing_jedi_source_directory}}
   prompt: Provide the path to an existing JEDI bundle directory containing source code repos
   type: string
   depends:
@@ -33,8 +33,8 @@ existing_source_directory:
     value: use_existing
 
 # Existing JEDI build
-existing_build_directory:
-  default_value: {{existing_build_directory}}
+existing_jedi_build_directory:
+  default_value: {{existing_jedi_build_directory}}
   prompt: Provide the path to an existing JEDI build directory
   type: string
   depends:

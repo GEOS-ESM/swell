@@ -1,4 +1,4 @@
-# (C) Copyright 2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -75,7 +75,8 @@ def prepare_config(method, suite, platform, override=None):
         with open(override, 'r') as override_open:
             override_dict = yaml.safe_load(override_open)
 
-        overridable_keys = ['experiment_id', 'experiment_root']
+        overridable_keys = ['experiment_id', 'experiment_root', 'existing_source_directory',
+                            'existing_build_directory']
         for overridable_key in overridable_keys:
             if overridable_key in override_dict:
                 experiment_dict[overridable_key] = override_dict[overridable_key]

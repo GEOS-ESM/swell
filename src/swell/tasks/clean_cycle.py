@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -28,18 +28,17 @@ class CleanCycle(taskBase):
     def execute(self):
 
         # Parse config
-        cycle_dir = self.config_get("cycle_dir")
-        clean_list = self.config_get('clean_patterns', None)
+        clean_patterns = self.config.clean_patterns(None)
 
         # If no cleaning requested then exit
-        if clean_list is None:
+        if clean_patterns is None:
             return
 
         # Move to the cycle directory
-        os.chdir(cycle_dir)
+        os.chdir(self.cycle_dir())
 
         # Remove all specified files
-        for pattern in clean_list:
+        for pattern in clean_patterns:
 
             # ---------------------------
             # Perform some safety checks:
@@ -87,5 +86,5 @@ class CleanCycle(taskBase):
                     os.remove(item_to_remove)
 
         # Save cycle_done file to cycle_dir
-        with open(os.path.join(cycle_dir, 'cycle_done'), 'w') as fp:
+        with open(os.path.join(self.cycle_dir(), 'cycle_done'), 'w') as fp:
             pass
