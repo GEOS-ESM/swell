@@ -14,9 +14,7 @@ from abc import ABC, abstractmethod
 import click
 import importlib
 import os
-import sys
 import time
-import yaml
 
 # swell imports
 from swell.tasks.base.task_registry import valid_tasks

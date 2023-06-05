@@ -10,9 +10,6 @@
 
 import glob
 import os
-import shutil
-import netCDF4 as nc
-
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import write_dict_to_yaml
@@ -28,13 +25,20 @@ class GsiBcToIoda(taskBase):
 
         # Parse configuration
         # -------------------
-        experiment_dir = self.config_get('experiment_dir')
-        cycle_dir = self.config_get('cycle_dir')
-        observations = self.config_get('observations')
-        produce_geovals = self.config_get('produce_geovals')
-        window_begin = self.config_get('window_begin')
-        current_cycle = self.config_get('current_cycle')
-        background_time = self.config_get('background_time')
+        observations = self.config.observations()
+        window_offset = self.config.window_offset()
+        background_time_offset = self.config.background_time_offset()
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+
+        # Get window beginning time
+        window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+
+        # Prepare dictionary for rendering jedi interface files
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Assemble list of needed sensors
         # -------------------------------
@@ -43,7 +47,7 @@ class GsiBcToIoda(taskBase):
         sensors_tlapse = []
         for observation in observations:
             # Open configuration file for observation
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Check for sensor key
             try:
@@ -61,7 +65,7 @@ class GsiBcToIoda(taskBase):
             return
 
         # Holding directory
-        gsi_bc_dir = os.path.join(cycle_dir, 'gsi_bcs')
+        gsi_bc_dir = os.path.join(self.cycle_dir(), 'gsi_bcs')
 
         # Get list of files from holding directory
         bc_files = glob.glob(os.path.join(gsi_bc_dir, '*.txt'))
@@ -97,7 +101,7 @@ class GsiBcToIoda(taskBase):
         for sensor, sensor_satbias in zip(sensors, sensors_satbias):
             output_dict = {}
             output_dict['sensor'] = sensor
-            output_dict['output file'] = os.path.join(cycle_dir, sensor_satbias)
+            output_dict['output file'] = os.path.join(self.cycle_dir(), sensor_satbias)
             output_dict['predictors'] = default_predictors
             satbias_converter_dict_output.append(output_dict)
 
@@ -108,7 +112,7 @@ class GsiBcToIoda(taskBase):
         write_dict_to_yaml(satbias_converter_dict, satbias_converter_yaml)
 
         # Run IODA satbias converter
-        satbias_converter_exe = os.path.join(experiment_dir, 'jedi_bundle', 'build', 'bin',
+        satbias_converter_exe = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                              'satbias2ioda.x')
 
         run_track_log_subprocess(self.logger, [satbias_converter_exe, satbias_converter_yaml])
@@ -121,7 +125,7 @@ class GsiBcToIoda(taskBase):
                     if sensor in line:
                         sensor_tlapse_file = sensor_tlapse_file + ' '.join(line.split()[1:]) + '\n'
             # Write to tlapse file
-            with open(os.path.join(cycle_dir, sensor_tlapse), 'w') as file_open:
+            with open(os.path.join(self.cycle_dir(), sensor_tlapse), 'w') as file_open:
                 file_open.write(sensor_tlapse_file)
 
 

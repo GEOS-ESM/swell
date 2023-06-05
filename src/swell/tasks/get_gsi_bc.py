@@ -25,11 +25,10 @@ class GetGsiBc(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_bc_location = self.config_get('gsi_bc_location')
-        cycle_dir = self.config_get('cycle_dir')
+        gsi_bc_location = self.config.gsi_bc_location()
 
         # Holding directory
-        gsi_bc_dir = os.path.join(cycle_dir, 'gsi_bcs')
+        gsi_bc_dir = os.path.join(self.cycle_dir(), 'gsi_bcs')
         os.makedirs(gsi_bc_dir, 0o755, exist_ok=True)
 
         # Get list of bias correction files to copy

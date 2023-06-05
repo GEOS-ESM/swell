@@ -66,6 +66,18 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
+    def window_end_iso(self, window_offset, window_length):
+
+        # Compute window length duration
+        window_length_dur = isodate.parse_duration(window_length)
+
+        # Get window beginning time
+        window_begin_dto = self.__get_window_begin_dto__(window_offset)
+
+        return window_begin_dto + window_length_dur
+
+    # ----------------------------------------------------------------------------------------------
+
     def background_time(self, window_offset, background_time_offset):
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)

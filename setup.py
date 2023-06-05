@@ -32,6 +32,7 @@ setuptools.setup(
         'Operating System :: OS Independent'],
     python_requires='>=3.6',
     install_requires=[
+        'tomlkit',
         'click',
         'jinja2>=3.0.3',
         'pyyaml>=6.0',
@@ -40,6 +41,7 @@ setuptools.setup(
         'isodate>=0.5.4',
         'xarray>=0.11.3',
         'questionary>=1.10.0',
+        'flake8>=6.0.0',
     ],
     package_data={
         '': [

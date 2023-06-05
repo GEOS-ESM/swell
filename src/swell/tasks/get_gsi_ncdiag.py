@@ -24,7 +24,7 @@ class GetGsiNcdiag(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_diag_path = self.config_get('path_to_gsi_diags')
+        gsi_diag_path = self.config.path_to_gsi_diags()
 
         # Get list of ncdiags to test with
         # --------------------------------
@@ -33,8 +33,7 @@ class GetGsiNcdiag(taskBase):
 
         # Get cycle dir and create if needed
         # ----------------------------------
-        cycle_dir = self.config_get('cycle_dir')
-        gsi_diag_dir = os.path.join(cycle_dir, 'gsi_ncdiags')
+        gsi_diag_dir = os.path.join(self.cycle_dir(), 'gsi_ncdiags')
         os.makedirs(gsi_diag_dir, 0o755, exist_ok=True)
 
         # Copy all the files into the cycle directory

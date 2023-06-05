@@ -86,5 +86,5 @@ class CleanCycle(taskBase):
                     os.remove(item_to_remove)
 
         # Save cycle_done file to cycle_dir
-        with open(os.path.join(self.cycle_dir(), 'cycle_done'), 'w') as fp:
-            pass
+        with open(os.path.join(self.cycle_dir(), 'cycle_done'), 'w') as file:
+            file.write('cycle complete')

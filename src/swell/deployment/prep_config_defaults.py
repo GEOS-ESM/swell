@@ -8,9 +8,6 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import os
-import yaml
-
 from swell.deployment.prep_config_base import PrepConfigBase
 
 

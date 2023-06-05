@@ -22,24 +22,32 @@ class GetGeovals(taskBase):
 
         # Parse config
         # ------------
-        cycle_dir = self.config_get('cycle_dir')
-        geovals_experiment = self.config_get('geovals_experiment')
-        geovals_provider = self.config_get('geovals_provider')
-        window_begin = self.config_get('window_begin')
-        observations = self.config_get('observations')
-        window_length = self.config_get('window_length')
+        geovals_experiment = self.config.geovals_experiment()
+        geovals_provider = self.config.geovals_provider()
+        window_offset = self.config.window_offset()
+        background_time_offset = self.config.background_time_offset()
+        observations = self.config.observations()
+        window_length = self.config.window_length()
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+
+        # Get window begin time
+        window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+
+        # Add to JEDI template rendering dictionary
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
 
-            # Open the observation operator dictionary
-            # ----------------------------------------
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
-
             # Fetch observation files
             # -----------------------
-            target_file = os.path.join(cycle_dir, f'{observation}_geovals.{window_begin}.nc4')
+            target_file = os.path.join(self.cycle_dir(),
+                                       f'{observation}_geovals.{window_begin}.nc4')
             self.logger.info("Processing observation file "+target_file)
 
             fetch(date=window_begin,

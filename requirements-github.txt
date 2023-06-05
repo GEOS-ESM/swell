@@ -6,3 +6,4 @@ pandas==2.0.2
 isodate==0.6.1
 xarray==2023.5.0
 questionary==1.10.0
+flake8==6.0.0

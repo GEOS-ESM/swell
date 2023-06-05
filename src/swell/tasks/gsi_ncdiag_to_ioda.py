@@ -10,8 +10,6 @@
 
 import glob
 import os
-import shutil
-import netCDF4 as nc
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -29,18 +27,18 @@ class GsiNcdiagToIoda(taskBase):
 
         # Parse configuration
         # -------------------
-        experiment_root = self.config_get('experiment_root')
-        experiment_id = self.config_get('experiment_id')
-        cycle_dir = self.config_get('cycle_dir')
-        observations = self.config_get('observations')
-        produce_geovals = self.config_get('produce_geovals')
-        window_begin = self.config_get('window_begin')
+        observations = self.config.observations()
+        produce_geovals = self.config.produce_geovals()
+        window_offset = self.config.window_offset()
+
+        # Get window beginning time
+        window_begin = self.da_window_params.window_begin(window_offset)
 
         # Keep copy of the
         observations_orig = observations.copy()
 
         # Directory containing the ncdiags
-        gsi_diag_dir = os.path.join(cycle_dir, 'gsi_ncdiags')
+        gsi_diag_dir = os.path.join(self.cycle_dir(), 'gsi_ncdiags')
 
         # Assemble all conventional types that ioda considers
         # ---------------------------------------------------
@@ -95,12 +93,12 @@ class GsiNcdiagToIoda(taskBase):
                     needed_platforms.append(platform)
 
             # Extract data
-            Diag.toIODAobs(cycle_dir, platforms=needed_platforms)
+            Diag.toIODAobs(self.cycle_dir(), platforms=needed_platforms)
 
             if produce_geovals:
                 self.logger.info('', wrap=False)
                 self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process}')
-                Diag.toGeovals(cycle_dir)
+                Diag.toGeovals(self.cycle_dir())
 
             Diag.close()
 
@@ -114,14 +112,11 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 
-            # Check dictionary for number of gsi files that were needed
-            gsi_sources = ioda_to_gsi_dict[needed_ioda_type]
-
             # Check the number of files that are found
             ioda_type_pattern = f'*{needed_ioda_type}*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
 
             # List of files for that instrument
-            ioda_path_files = glob.glob(os.path.join(cycle_dir, ioda_type_pattern))
+            ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
 
             # Get last file (first could be type_obs_ if the code already ran)
             ioda_file_0 = os.path.basename(ioda_path_files[-1])
@@ -144,7 +139,7 @@ class GsiNcdiagToIoda(taskBase):
                 # Create new file name
                 new_name_split = ioda_file_0_
                 del new_name_split[1]
-                new_name = os.path.join(cycle_dir, '_'.join(new_name_split))
+                new_name = os.path.join(self.cycle_dir(), '_'.join(new_name_split))
 
                 # Check if new file already exists and remove if so
                 if os.path.exists(new_name):
@@ -155,10 +150,10 @@ class GsiNcdiagToIoda(taskBase):
                 # Run the combine step
                 geo_dir = None
                 if produce_geovals:
-                    geo_dir = cycle_dir
+                    geo_dir = self.cycle_dir()
 
                     # Remove wind_reduction_factor_at_10m from non-uv geoval files
-                    geoval_files = glob.glob(os.path.join(cycle_dir,
+                    geoval_files = glob.glob(os.path.join(self.cycle_dir(),
                                                           f'{needed_ioda_type}_*_geoval_*.nc4'))
                     for geoval_file in geoval_files:
                         if f'{needed_ioda_type}_uv_geoval_' not in geoval_file:
@@ -200,18 +195,18 @@ class GsiNcdiagToIoda(taskBase):
                 # Radiances
                 Diag = gsid.Radiances(gsi_obs_file[0])
                 Diag.read()
-                Diag.toIODAobs(cycle_dir, False, False, False)
+                Diag.toIODAobs(self.cycle_dir(), False, False, False)
 
             else:
 
                 # Ozone
                 Diag = gsid.Ozone(gsi_obs_file[0])
                 Diag.read()
-                Diag.toIODAobs(cycle_dir)
+                Diag.toIODAobs(self.cycle_dir())
 
             # GeoVaLs call
             if produce_geovals:
-                Diag.toGeovals(cycle_dir)
+                Diag.toGeovals(self.cycle_dir())
 
             if observation not in ozone_observations:
                 Diag.close()
@@ -222,20 +217,21 @@ class GsiNcdiagToIoda(taskBase):
 
             # Input filename
             ioda_obs_in_pattern = f'{observation}_obs_*nc*'
-            ioda_obs_in = glob.glob(os.path.join(cycle_dir, ioda_obs_in_pattern))[0]
+            ioda_obs_in = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))[0]
 
             ioda_obs_out = f'{observation}.{window_begin}.nc4'
 
-            os.rename(ioda_obs_in, os.path.join(cycle_dir, ioda_obs_out))
+            os.rename(ioda_obs_in, os.path.join(self.cycle_dir(), ioda_obs_out))
 
             # Rename GeoVaLs file if need be
             if produce_geovals:
                 ioda_geoval_in_pattern = f'{observation}_geoval_*.nc*'
-                ioda_geoval_in = glob.glob(os.path.join(cycle_dir, ioda_geoval_in_pattern))[0]
+                ioda_geoval_in = glob.glob(os.path.join(self.cycle_dir(),
+                                                        ioda_geoval_in_pattern))[0]
 
                 ioda_geoval_out = f'{observation}_geovals.{window_begin}.nc4'
 
-                os.rename(ioda_geoval_in, os.path.join(cycle_dir, ioda_geoval_out))
+                os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
 
 # --------------------------------------------------------------------------------------------------

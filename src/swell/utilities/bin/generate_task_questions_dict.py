@@ -28,9 +28,6 @@ def main():
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
 
-    # Path to JEDI interface code
-    swell_path = get_swell_path()
-
     # All python files
     task_codes = glob.glob(os.path.join(get_swell_path(), 'tasks', '*.py'))
     task_codes = list(filter(lambda task_code: task_code != '__init__.py', task_codes))
@@ -38,14 +35,16 @@ def main():
     # Target YAML file
     destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
+    # Print message
+    logger.info(f'Running tool to regenerate the task questions dictionary. Output dictionary ' +
+                f'be written to {destination_yaml}')
+
     # Read input file into dictionary
     if os.path.exists(destination_yaml):
         with open(destination_yaml, 'r') as ymlfile:
             question_dict = yaml.safe_load(ymlfile)
     else:
         question_dict = {}
-
-    question_dict_in = question_dict.copy()
 
     # Now safe to overwrite file
     outfile = open(destination_yaml, 'w')
