@@ -20,11 +20,9 @@ class RunGeosExecutable(GeosTasksRunExecutable):
 
     def execute(self):
 
-        # Path to executable being run
+        # Total number of processors
         # ----------------------------
-        npx_proc = self.config_get('npx_proc', None)  # Used in eval(total_processors)
-        npy_proc = self.config_get('npy_proc', None)  # Used in eval(total_processors)
-        total_processors = self.config_get('total_processors')
+        np = self.config.total_processors()
 
         # Create RESTART folder
         # ---------------------
@@ -35,13 +33,7 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         # ---------------
         output_log_file = self.at_cycle_geosdir('geos_out.log')
 
-        # Compute number of processors
-        # ----------------------------
-        total_processors = total_processors.replace('npx_proc', str(npx_proc))
-        total_processors = total_processors.replace('npy_proc', str(npy_proc))
-        np = eval(total_processors)
-
-        # GEOS executable
+        # Path to the GEOS executable
         # ---------------
         geos_executable = 'GEOSgcm.x'
         geos_executable_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build',
@@ -59,8 +51,8 @@ class RunGeosExecutable(GeosTasksRunExecutable):
 
         self.run_executable(self.at_cycle_geosdir(), np, geos_executable_path,
                             geos_modules_path, output_log_file)
-        exit()
 
+        exit()
         #######################################################################
         # Create links for SOCA to read
         # Separate task?
@@ -68,9 +60,8 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         # current_cycle = self.config_get('current_cycle')
         # TODO: Is this a good approach?
         current_cycle = os.path.basename(os.path.dirname(self.cycle_dir()))
-        # Leaving here, In get_cycle_dir but this should not be called if the task does not receive model.
-        # so major issue is -m argument for geos
-        # at_cycle situ
+        # Leaving here, In get_cycle_dir but this should not be called if the task
+        # does not receive model. so major issue is -m argument for geos at_cycle situ
 
         # Option #1:
         # Link restart to history output

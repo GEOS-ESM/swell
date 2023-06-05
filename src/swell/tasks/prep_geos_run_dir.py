@@ -27,7 +27,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
 
         """
         Parses resource files in "geos_experiment_directory" to obtain required
-        directories and files. Modifies file contents using python re package 
+        directories and files. Modifies file contents using python re package
         according to cycle_date and CAP.rc,AGCM.rc, and gcm_run.j switches.
 
         In GEOS speak, it creates the "scratch" directory.
@@ -340,7 +340,8 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
         # --------------------------------------------------
 
         # TODO: install folder name changes (install vs. install-Releaee)
-        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm/source/install-Release/bin')
+        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
+                                         'source', 'install-Release', 'bin')
 
         src_dirs = []
 

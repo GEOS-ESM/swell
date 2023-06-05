@@ -429,11 +429,12 @@ total_processors:
   ask_question: true
   default_value: defer_to_model
   models:
-  - geos_ocean
+  - geos_ocean # TODO: needs to consider GEOS
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunGeosExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer

@@ -419,14 +419,6 @@ class GeosTasksRunExecutable(taskBase):
             f'cd {cycle_dir} \n' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'
-            # f'export I_MPI_ADJUST_ALLREDUCE=12 \n' + \
-            # f'export I_MPI_ADJUST_GATHERV=3 \n' + \
-            # f'export I_MPI_SHM_HEAP_VSIZE=512 \n' + \
-            # f'export PSM2_MEMORY=large \n' + \
-            # f'export I_MPI_EXTRA_FILESYSTEM=1 \n' + \
-            # f'export OMP_NUM_THREADS=1 \n' + \
-            # f'I_MPI_EXTRA_FILESYSTEM_FORCE=gpfs \n' + \
-            # f'env  LD_PRELOAD=/discover/nobackup/dardag/SwellExperiments/swell-3dvar_cycle/GEOSgcm/build/lib/libmom6.so \n' + \
 
         # Run command within bash environment
         # -----------------------------------
