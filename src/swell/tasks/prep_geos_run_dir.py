@@ -14,12 +14,12 @@ import yaml
 from datetime import datetime as dt
 import isodate
 
-from swell.tasks.base.geos_tasks_run_executable_base import *
+from swell.utilities.geos_tasks_run_executable import *
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepGeosRunDir(GeosTasksRunExecutableBase):
+class PrepGeosRunDir(GeosTasksRunExecutable):
 
     # ----------------------------------------------------------------------------------------------
 

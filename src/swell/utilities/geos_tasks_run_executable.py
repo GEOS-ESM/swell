@@ -25,7 +25,7 @@ from swell.utilities.shell_commands import run_subprocess, run_track_log_subproc
 # --------------------------------------------------------------------------------------------------
 
 
-class GeosTasksRunExecutableBase(taskBase):
+class GeosTasksRunExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -416,6 +416,9 @@ class GeosTasksRunExecutableBase(taskBase):
         self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
 
         command = f'source {geos_modules} \n' + \
+            f'cd {cycle_dir} \n' + \
+            f'mpirun -np {np} {geos_executable} ' + \
+            f'--logging_config logging.yaml'
             # f'export I_MPI_ADJUST_ALLREDUCE=12 \n' + \
             # f'export I_MPI_ADJUST_GATHERV=3 \n' + \
             # f'export I_MPI_SHM_HEAP_VSIZE=512 \n' + \
@@ -423,10 +426,7 @@ class GeosTasksRunExecutableBase(taskBase):
             # f'export I_MPI_EXTRA_FILESYSTEM=1 \n' + \
             # f'export OMP_NUM_THREADS=1 \n' + \
             # f'I_MPI_EXTRA_FILESYSTEM_FORCE=gpfs \n' + \
-            f'cd {cycle_dir} \n' + \
             # f'env  LD_PRELOAD=/discover/nobackup/dardag/SwellExperiments/swell-3dvar_cycle/GEOSgcm/build/lib/libmom6.so \n' + \
-            f'mpirun -np {np} {geos_executable} ' + \
-            f'--logging_config logging.yaml'
 
         # Run command within bash environment
         # -----------------------------------

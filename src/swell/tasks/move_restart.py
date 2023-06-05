@@ -11,13 +11,13 @@ import shutil
 import os
 import glob
 
-from swell.tasks.base.geos_tasks_run_executable_base import *
+from swell.utilities.geos_tasks_run_executable import *
 from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveRestart(GeosTasksRunExecutableBase):
+class MoveRestart(GeosTasksRunExecutable):
 
     # ----------------------------------------------------------------------------------------------
 

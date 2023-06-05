@@ -211,6 +211,16 @@ geos_gcm_tag:
   - CloneGeos
   type: string
 
+geos_restarts_directory:
+  ask_question: true
+  default_value: defer_to_platform
+  models:
+  - all
+  prompt: What is the path to the GEOS restarts directory?
+  tasks:
+  - GetRestart
+  type: string
+
 gradient_norm_reduction:
   ask_question: false
   default_value: defer_to_model
@@ -379,6 +389,7 @@ swell_static_files:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - GetRestart
   - StageJedi
   type: string
 

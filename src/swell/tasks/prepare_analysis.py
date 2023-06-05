@@ -11,7 +11,7 @@ from datetime import datetime as dt
 import netCDF4 as nc
 import shutil
 
-from swell.tasks.base.geos_tasks_run_executable_base import *
+from swell.utilities.geos_tasks_run_executable import *
 
 
 # --------------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ SOCA_dict = {
 }
 
 
-class PrepareAnalysis(GeosTasksRunExecutableBase):
+class PrepareAnalysis(GeosTasksRunExecutable):
 
     # --------------------------------------------------------------------------------------------------
 

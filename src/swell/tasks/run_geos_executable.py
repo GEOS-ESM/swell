@@ -11,12 +11,12 @@ from datetime import datetime as dt
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.tasks.base.geos_tasks_run_executable_base import *
+from swell.utilities.geos_tasks_run_executable import *
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RunGeosExecutable(GeosTasksRunExecutableBase):
+class RunGeosExecutable(GeosTasksRunExecutable):
 
     def execute(self):
 

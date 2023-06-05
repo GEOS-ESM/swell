@@ -66,7 +66,7 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
 
 def link_file_existing_link_ok(logger, source_path_file, target_path_file):
 
-    """Create a symboloc link from a source location to a target location. If a symbolic link
+    """Create a symbolic link from a source location to a target location. If a symbolic link
        already exists it will be deleted. If a file already exists and it is not a link the code
        will abort
 

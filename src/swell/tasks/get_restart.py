@@ -11,13 +11,13 @@ import shutil
 import os
 import glob
 
-from swell.tasks.base.geos_tasks_run_executable_base import *
+from swell.utilities.geos_tasks_run_executable import *
 from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
 
-class GetRestart(GeosTasksRunExecutableBase):
+class GetRestart(GeosTasksRunExecutable):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
-        self.swell_static_files = self.config_get('swell_static_files', None)
+        self.swell_static_files = self.config.swell_static_files()
 
         # Create cycle_dir and INPUT
         # ----------------------------
@@ -34,11 +34,7 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         # *_rst files folder
         # ------------------
-        rst_path = self.config_get('geos_restarts_directory')
-
-        # Add config to template rendering dictionary
-        # -------------------------------------------
-        self.jedi_rendering.add_key('swell_static_files', self.swell_static_files)
+        rst_path = self.config.geos_restarts_directory()
 
         # Restarts should be provided
         # ---------------------------
@@ -50,12 +46,11 @@ class GetRestart(GeosTasksRunExecutableBase):
 
         # GEOS forecast checkpoint files are created in advance
         # ----------------------------------------------------
-
         # TODO: check tile of restarts here for compatibility?
-        # TODO: IMPORTANT! restart folder placement, geos_ocean right now.
-        #       also users might choose to point to a random local directory
+        # TODO: Users might choose to point to a random local directory, where
+        # to keep restart files?
         # -------------------------------------------------------------------
-        self.logger.info('GEOS restarts from a forecast run')
+        self.logger.info('GEOS restarts are copied from a previous forecast')
 
         src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                            'geos_ocean', 'model',  'geos', rst_path, '*_rst')
