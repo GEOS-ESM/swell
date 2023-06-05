@@ -418,7 +418,8 @@ produce_geovals:
   options:
   - true
   - false
-  prompt: When running the ncdiag to ioda converted do you want to produce GeoVaLs files?
+  prompt: When running the ncdiag to ioda converted do you want to produce GeoVaLs
+    files?
   tasks:
   - GsiNcdiagToIoda
   type: boolean
