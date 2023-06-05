@@ -66,8 +66,11 @@ background_time_offset:
     forecast begin?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediTestObsFiltersExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: duration
@@ -110,8 +113,11 @@ crtm_coeff_dir:
   prompt: What is the path to the CRTM coefficient files?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediTestObsFiltersExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string
@@ -211,6 +217,26 @@ geos_gcm_tag:
   - CloneGeos
   type: string
 
+geovals_experiment:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the name of the R2D2 experiment providing the GeoVaLs?
+  tasks:
+  - GetGeovals
+  type: string
+
+geovals_provider:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the name of the R2D2 database providing the GeoVaLs?
+  tasks:
+  - GetGeovals
+  type: string
+
 gradient_norm_reduction:
   ask_question: false
   default_value: defer_to_model
@@ -220,6 +246,17 @@ gradient_norm_reduction:
   tasks:
   - RunJediVariationalExecutable
   type: float
+
+gsi_bc_location:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: What is the location where GSI bias correction files can be found?
+  tasks:
+  - GetGsiBc
+  type: string
 
 horizontal_resolution:
   ask_question: true
@@ -353,11 +390,38 @@ observations:
   prompt: Which observations do you want to include?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
+  - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediTestObsFiltersExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string-check-list
+
+path_to_gsi_diags:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where the GSI ncdiags are stored?
+  tasks:
+  - GetGsiNcdiag
+  type: string
+
+produce_geovals:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: When running the ncdiag to ioda converted do you want to produce GeoVaLs files?
+  tasks:
+  - GsiNcdiagToIoda
+  type: boolean
 
 static_background_error_model:
   ask_question: true
@@ -428,8 +492,10 @@ window_length:
   prompt: What is the duration for the data assimilation window?
   tasks:
   - GetBackground
+  - GetGeovals
   - GetObservations
   - RunJediHofxExecutable
+  - RunJediTestObsFiltersExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: duration
@@ -443,8 +509,12 @@ window_offset:
   tasks:
   - EvaObservations
   - GetBackground
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
+  - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediTestObsFiltersExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground
