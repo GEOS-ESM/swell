@@ -14,4 +14,5 @@ existing_jedi_source_directory:
   default_value: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
 
 swell_static_files:
-  default_value: /discover/nobackup/drholdaw/SwellStaticFiles
+  #default_value: /discover/nobackup/drholdaw/SwellStaticFiles
+  default_value: /discover/nobackup/dardag/SwellStaticFiles

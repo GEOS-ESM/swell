@@ -216,6 +216,11 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
         geos_chmdir = self.gcm_dict['CHMDIR']
         geos_bcrslv = self.gcm_dict['BCRSLV']
         geos_abcsdir = self.gcm_dict['ABCSDIR']
+        # TODO: GWD directory is not explicitly stated in gcm_run template, which
+        # requires an additional step to parse that information. It is hard coded
+        # for now but looking at the template there are 4 potential options.
+        geos_gwdrsdir = os.path.join('/discover/nobackup/projects/gmao/osse2',
+                                     f"stage/BCS_FILES/GWD_RIDGE/gwd_internal_c{AGCM_IM}")
 
         # Obtain tag information from abcsdir
         # -----------------------------------
@@ -270,6 +275,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
                 'topo_trbvar.data',
             os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
             os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
+            # geos_gwdrsdir: 'gwd_internal_rst',
         }
 
         # Conditional BCs that don't break the model
@@ -395,9 +401,9 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
         if not self.cap_dict['USE_EXTDATA2G']:
             self.logger.info('Modifying WSUB_ExtData.rc')
 
-            # Only modify the line starts with WSUB_NATURE
+            # Only modify the line starts with WSUB_CLIM
             # --------------------------------------------
-            pattern = r'^(WSUB_NATURE.*)ExtData.*'
+            pattern = r'^(WSUB_CLIM.*)ExtData.*'
             replacement = r'\g<1>/dev/null'
             self.resub(self.at_cycle_geosdir('WSUB_ExtData.rc'), pattern, replacement)
 
@@ -409,7 +415,7 @@ class PrepGeosRunDir(GeosTasksRunExecutable):
 
             # Modifying one particular value
             # -----------------------------
-            wsub['Exports']['WSUB_NATURE']['collection'] = '/dev/null'
+            wsub['Exports']['WSUB_CLIM']['collection'] = '/dev/null'
 
             # Write the updated YAML back to the file
             with open(self.at_cycle_geosdir('WSUB_ExtData.yaml'), 'w') as f:

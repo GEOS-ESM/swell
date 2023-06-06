@@ -151,7 +151,6 @@ class GeosTasksRunExecutable(taskBase):
             'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
             'ENABLE_DNA': 'DNA_ExtData.rc',
             'ENABLE_ACHEM': 'GEOSachem_ExtData.rc',
-            'ENABLE_GOCART_DATA': 'GOCARTdata_ExtData.rc',
         }
 
         for key, value in chem_files.items():
@@ -276,6 +275,9 @@ class GeosTasksRunExecutable(taskBase):
                 if parts[0] == 'setenv':
                     key = parts[1]
                     rcdict[key] = parts[2]
+                    # TODO: to parse GWDRSDIR
+                # elif parts[0] == '/bin/cp':
+                    # print(parts)
 
         return rcdict
 

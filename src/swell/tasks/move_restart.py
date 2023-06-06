@@ -21,6 +21,40 @@ class MoveRestart(GeosTasksRunExecutable):
 
     # ----------------------------------------------------------------------------------------------
 
+    def execute(self):
+
+        """
+        Moving correct restart files (i.e., _checkpoint) to the next cycle directory.
+        We are using AGCM.rc checkpoint option, which creates time stamped _checkpoint
+        files requiring additional filename handling.
+        """
+
+        self.logger.info('Moving GEOS restarts for the next simulation cycle')
+
+        self.cycle_dir = self.config_get('cycle_dir')
+
+        # Next cycle folder name
+        # -----------------------
+        self.window_length = self.config_get('window_length')
+        self.next_cycle_dir = self.adjacent_cycle(self.cycle_dir, self.window_length)
+        self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
+
+        # Create cycle_dir and INPUT
+        # ----------------------------
+        if not os.path.exists(self.at_next_geosdir('INPUT')):
+            os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
+
+        # GEOS restarts have seconds in their filename
+        # TODO: this requires a default if the task is not attached a model (geos_ocean or atm.)
+        # -------------------------------------------------------------------------------------
+        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        self.rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+
+        self.cycling_restarts()
+        self.rename_checkpoints()
+
+    # ----------------------------------------------------------------------------------------------
+
     def at_next_geosdir(self, paths):
 
         # Ensure what we have is a list (paths should be a list)
@@ -89,39 +123,5 @@ class MoveRestart(GeosTasksRunExecutable):
             os.system('rename _checkpoint _rst *_checkpoint')
         except Exception:
             self.logger.abort('Renaming failed, see if checkpoint files exists')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def execute(self):
-
-        """
-        Moving correct restart files (i.e., _checkpoint) to the next cycle directory.
-        We are using AGCM.rc checkpoint option, which creates time stamped _checkpoint
-        files requiring additional filename handling.
-        """
-
-        self.logger.info('Moving GEOS restarts for the next simulation cycle')
-
-        self.cycle_dir = self.config_get('cycle_dir')
-
-        # Next cycle folder name
-        # -----------------------
-        self.window_length = self.config_get('window_length')
-        self.next_cycle_dir = self.adjacent_cycle(self.cycle_dir, self.window_length)
-        self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
-
-        # Create cycle_dir and INPUT
-        # ----------------------------
-        if not os.path.exists(self.at_next_geosdir('INPUT')):
-            os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
-
-        # GEOS restarts have seconds in their filename
-        # TODO: this requires a default if the task is not attached a model (geos_ocean or atm.)
-        # -------------------------------------------------------------------------------------
-        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
-        self.rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
-
-        self.cycling_restarts()
-        self.rename_checkpoints()
 
 # --------------------------------------------------------------------------------------------------

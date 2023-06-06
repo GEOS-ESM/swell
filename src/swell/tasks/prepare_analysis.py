@@ -30,6 +30,38 @@ class PrepareAnalysis(GeosTasksRunExecutable):
 
     # --------------------------------------------------------------------------------------------------
 
+    def execute(self):
+
+        """
+        Updates variables in restart files with analysis variables.
+        """
+
+        self.logger.info('Preparing analysis and updating restarts')
+
+        self.cycle_dir = self.config_get('cycle_dir')
+        self.exp_id = self.config_get('experiment_id')
+        self.soca_ana = self.config_get('analysis_variables')
+
+        # Current and restart time objects
+        # --------------------------------
+        self.current_cycle = self.config_get('current_cycle')
+        self.cc_dto = dt.strptime(self.current_cycle, self.get_datetime_format())
+
+        # GEOS restarts have seconds in their filename
+        # --------------------------------------------
+        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
+        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+        seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
+
+        # Generic rst file format
+        # ------------------------
+        # f_rst = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+        #                                + seconds + '.nc'])
+        f_rst = self.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+        self.replace_ocn(f_rst)
+
+    # --------------------------------------------------------------------------------------------------
+
     def replace_ocn(self, f_rst):
 
         # TODO: ocean only for now, ought to update method names when
@@ -62,37 +94,5 @@ class PrepareAnalysis(GeosTasksRunExecutable):
         ds_rst.close()
 
         shutil.move(f_rst, self.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
-
-    # --------------------------------------------------------------------------------------------------
-
-    def execute(self):
-
-        """
-        Updates variables in restart files with analysis variables.
-        """
-
-        self.logger.info('Preparing analysis and updating restarts')
-
-        self.cycle_dir = self.config_get('cycle_dir')
-        self.exp_id = self.config_get('experiment_id')
-        self.soca_ana = self.config_get('analysis_variables')
-
-        # Current and restart time objects
-        # --------------------------------
-        self.current_cycle = self.config_get('current_cycle')
-        self.cc_dto = dt.strptime(self.current_cycle, self.get_datetime_format())
-
-        # GEOS restarts have seconds in their filename
-        # --------------------------------------------
-        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
-        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
-        seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
-
-        # Generic rst file format
-        # ------------------------
-        # f_rst = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-        #                                + seconds + '.nc'])
-        f_rst = self.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
-        self.replace_ocn(f_rst)
 
 # --------------------------------------------------------------------------------------------------

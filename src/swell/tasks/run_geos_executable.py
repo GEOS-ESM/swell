@@ -45,6 +45,8 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         geos_modules_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'source',
                                          '@env', geos_modules)
 
+        # print(np)
+        # exit()
         # Run the GEOS executable
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
@@ -52,7 +54,6 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         self.run_executable(self.at_cycle_geosdir(), np, geos_executable_path,
                             geos_modules_path, output_log_file)
 
-        exit()
         #######################################################################
         # Create links for SOCA to read
         # Separate task?
