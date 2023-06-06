@@ -12,6 +12,8 @@
 # standard imports
 import glob
 import os
+import random
+import string
 import yaml
 
 # swell imports
@@ -37,6 +39,7 @@ def main():
 
     # Target YAML file
     destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
+    destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
     # Read input file into dictionary
     if os.path.exists(destination_yaml):
@@ -46,9 +49,6 @@ def main():
         question_dict = {}
 
     question_dict_in = question_dict.copy()
-
-    # Now safe to overwrite file
-    outfile = open(destination_yaml, 'w')
 
     # Loop through task code and accumulate all lines containing a use of config
     config_keys = []
@@ -90,8 +90,6 @@ def main():
         tasks = sorted(list(set(tasks)))
 
         # Create dictionary to hold question components
-        question_to_tasks = {}
-
         if unique_key in question_dict:
 
             question_to_tasks[unique_key] = question_dict[unique_key]
@@ -124,10 +122,35 @@ def main():
         # Regardless of whether question was already in dictionary
         question_to_tasks[unique_key]['tasks'] = tasks
 
-        outfile.write(yaml.dump(question_to_tasks, default_flow_style=False))
-        outfile.write('\n')
+    if question_to_tasks == question_dict_in:
 
-    outfile.close()
+        logger.info(f'The code will make no change to the task questions dictionary. Clean exit')
+        return 0
+
+    else:
+
+        # Create a file in the tmp directory with some random characters
+        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        destination_yaml_temp = os.path.join('/tmp', f'task_questions_{random_string}.yaml')
+
+        logger.info(f'The configuration elements that are being accessed by the tasks are out of ' +
+                    f'sync with what is described in \'{destination_yaml}\'. The expected ' +
+                    f'dictionary will be written to a temporary file {destination_yaml_temp}. ' +
+                    f'Compare this file with the one in the tasks directory and resolve the ' +
+                    f'differences.')
+
+        # Changes to the dictionary.
+        outfile = open(destination_yaml_temp, 'w')
+        for key, value in question_to_tasks.items():
+            # Create dictionary one at a time and write
+            dict_to_write = {}
+            dict_to_write[key] = value
+            outfile.write(yaml.dump(dict_to_write, default_flow_style=False))
+            # Add a gap between dictionaries to make it more human readable.
+            outfile.write('\n')
+        outfile.close()
+
+        return 1
 
 
 # --------------------------------------------------------------------------------------------------

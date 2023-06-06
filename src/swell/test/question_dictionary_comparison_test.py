@@ -22,22 +22,10 @@ class QuestionDictionaryTest(unittest.TestCase):
 
     def test_dictionary_comparison(self):
 
-        # First test the
-        destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
-
-        # Read input file into dictionary
-        with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
-        question_dict_in = question_dict.copy()
-
         # Run dictionary generation
-        generate_task_questions_dict()
-
-        # Read new dictionary
-        with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
+        return_code = generate_task_questions_dict()
 
         # Assert that dictionaries are equal
-        self.assertDictEqual(question_dict_in, question_dict)
+        assert return_code == 0
 
 # --------------------------------------------------------------------------------------------------
