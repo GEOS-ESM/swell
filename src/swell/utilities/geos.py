@@ -18,23 +18,22 @@ import shutil
 
 from abc import ABC, abstractmethod
 
-from swell.tasks.base.task_base import taskBase
+# from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class GeosTasksRunExecutable(taskBase):
+class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    @abstractmethod
-    def execute(self):
+    def __init__(self, logger, cycle_dir):
 
-        # This class does not execute, it provides helper function for the children
-        # ------------------------------------------------------------------------
-        pass
+        # Keep a copy of the logger
+        self.logger = logger
+        self.cycle_dir = cycle_dir
 
     # ----------------------------------------------------------------------------------------------
 
@@ -42,8 +41,8 @@ class GeosTasksRunExecutable(taskBase):
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
-        # basename = os.path.basename(self.cycle_dir())
-        dt_str = os.path.basename(os.path.dirname(self.cycle_dir()))
+        # basename = os.path.basename(self.cycle_dir)
+        dt_str = os.path.basename(os.path.dirname(self.cycle_dir))
         # dt_str = basename.split('-')[0]
         dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
 
@@ -61,7 +60,7 @@ class GeosTasksRunExecutable(taskBase):
 
         # Create new file path with modified basename
         # --------------------------------------------
-        adj_cycle_dir = os.path.join(os.path.dirname(self.cycle_dir()), modified_basename)
+        adj_cycle_dir = os.path.join(os.path.dirname(self.cycle_dir), modified_basename)
 
         return adj_cycle_dir
 
@@ -76,7 +75,7 @@ class GeosTasksRunExecutable(taskBase):
 
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(self.cycle_dir(), *paths)
+        full_path = os.path.join(self.cycle_dir, *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
@@ -88,7 +87,7 @@ class GeosTasksRunExecutable(taskBase):
         if isinstance(paths, str):
             paths = [paths]
 
-        datetimedir = os.path.dirname(self.cycle_dir())
+        datetimedir = os.path.dirname(self.cycle_dir)
 
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------

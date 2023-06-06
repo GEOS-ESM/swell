@@ -140,6 +140,6 @@ fixed_options:
     prompt: Does this workflow include data assimilation?
 
   total_processors:
-    default_value:  24
+    default_value:  6
     prompt: Equation to compute total number of processors
 

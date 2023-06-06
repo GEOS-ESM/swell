@@ -26,6 +26,7 @@ from swell.utilities.data_assimilation_window_params import DataAssimilationWind
 from swell.utilities.datetime import Datetime
 from swell.utilities.logger import Logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
+from swell.utilities.geos import Geos
 
 
 # --------------------------------------------------------------------------------------------------
@@ -82,6 +83,10 @@ class taskBase(ABC):
         # --------------------------------
         self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
                                                   self.__experiment_id__, cycle_dir, self.__model__)
+
+        # Add GEOS utils
+        # --------------
+        self.geos = Geos(self.logger, cycle_dir)
 
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------

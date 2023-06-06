@@ -11,13 +11,14 @@ import shutil
 import os
 import glob
 
-from swell.utilities.geos_tasks_run_executable import *
+from swell.tasks.base.task_base import taskBase
+
 from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
 
-class GetRestart(GeosTasksRunExecutable):
+class GetRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -29,8 +30,8 @@ class GetRestart(GeosTasksRunExecutable):
 
         # Create cycle_dir and INPUT
         # ----------------------------
-        if not os.path.exists(self.at_cycle_geosdir('INPUT')):
-            os.makedirs(self.at_cycle_geosdir('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.geos.at_cycle_geosdir('INPUT')):
+            os.makedirs(self.geos.at_cycle_geosdir('INPUT'), 0o755, exist_ok=True)
 
         # *_rst files folder
         # ------------------
@@ -57,11 +58,11 @@ class GetRestart(GeosTasksRunExecutable):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.copy_to_geosdir(filepath, self.at_cycle_geosdir(filename))
+            self.geos.copy_to_geosdir(filepath, self.geos.at_cycle_geosdir(filename))
 
         src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                            'geos_ocean', 'model', 'geos', rst_path, 'tile.bin')
-        self.copy_to_geosdir(src, self.at_cycle_geosdir('tile.bin'))
+        self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
@@ -70,6 +71,6 @@ class GetRestart(GeosTasksRunExecutable):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.copy_to_geosdir(filepath, self.at_cycle_geosdir(['INPUT', filename]))
+            self.geos.copy_to_geosdir(filepath, self.geos.at_cycle_geosdir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------
