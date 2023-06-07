@@ -21,10 +21,6 @@ class BuildGeosByLinking(taskBase):
 
     def execute(self):
 
-        # Get the build method
-        # --------------------
-        geos_build_method = self.config_get('geos_build_method')
-
         # Get the experiment/geos directory
         # ---------------------------------
         swell_exp_path = self.experiment_path()
@@ -36,18 +32,16 @@ class BuildGeosByLinking(taskBase):
 
         # Choice to link to existing build or build GEOS
         # ----------------------------------------------
-        if not geos_build_method == 'use_existing':
-            self.logger.abort(f'Found \'{geos_build_method}\' for geos_build_method in the '
-                              f'experiment dictionary. Must be \'use_existing\'.')
-
-        # Get the existing build directory from the dictionary
-        existing_geos_gcm_build_path = self.config_get('existing_geos_gcm_build_path')
+        if not self.config.geos_build_method() == 'use_existing':
+            self.logger.abort(f'Found \'{self.config.geos_build_method()}\' for ' +
+                              f'geos_build_method in the experiment dictionary. Must be ' +
+                              f'\'use_existing\'.')
 
         # Assert that the existing build directory contains a bin directory
-        if not os.path.exists(os.path.join(existing_geos_gcm_build_path, 'bin')):
+        if not os.path.exists(os.path.join(self.config.existing_geos_gcm_build_path(), 'bin')):
             self.logger.abort(f'Existing GEOS build directory is provided but a bin ' +
                               f'directory is not found in the path ' +
-                              f'\'{existing_geos_gcm_build_path}\'')
+                              f'\'{self.config.existing_geos_gcm_build_path()}\'')
 
         # Write warning to user
         self.logger.info('Suitable GEOS build found, linking build directory. Warning: ' +
@@ -56,7 +50,7 @@ class BuildGeosByLinking(taskBase):
                          'this experiment may not be reproducible if the build changes.')
 
         # Link the source code directory
-        link_path(existing_geos_gcm_build_path, geos_gcm_build_path)
+        link_path(self.config.existing_geos_gcm_build_path(), geos_gcm_build_path)
 
 
 # --------------------------------------------------------------------------------------------------

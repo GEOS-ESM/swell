@@ -24,10 +24,10 @@ class SaveObsDiags(taskBase):
 
         # Parse config
         # ------------
-        background_time_offset = self.config_get('background_time_offset')
-        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
-        observations = self.config_get('observations')
-        window_offset = self.config_get('window_offset')
+        background_time_offset = self.config.background_time_offset()
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+        observations = self.config.observations()
+        window_offset = self.config.window_offset()
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)

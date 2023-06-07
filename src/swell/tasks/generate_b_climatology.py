@@ -12,8 +12,6 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
-from swell.utilities.render_jedi_interface_files import template_dictionary_oops_config, \
-                                                        read_render_jedi_interface_oops,
 
 # --------------------------------------------------------------------------------------------------
 
@@ -141,27 +139,25 @@ class GenerateBClimatology(taskBase):
             See the taskBase constructor for more information.
         """
 
-        self.total_processors = self.config_get('total_processors')
-        self.swell_static_files = self.config_get('swell_static_files')
-        self.horizontal_resolution = self.config_get('horizontal_resolution')
-        self.vertical_resolution = self.config_get('vertical_resolution')
-        self.npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        self.npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
+        self.swell_static_files = self.config.swell_static_files()
+        self.horizontal_resolution = self.config.horizontal_resolution()
+        self.vertical_resolution = self.config.vertical_resolution()
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
+        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
+        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         model_component_meta = self.jedi_rendering.render_interface_meta()
         self.jedi_interface = model_component_meta['jedi_interface']
 
         # Compute number of processors
         # ----------------------------
-        self.total_processors = self.total_processors.replace('npx_proc', str(self.npx_proc))
-        self.total_processors = self.total_processors.replace('npy_proc', str(self.npy_proc))
-        self.np = eval(self.total_processors)
+        np = eval(model_component_meta['total_processors'])
 
         # Obtain and initialize proper error model
         # -----------------------------------------------
-        self.background_error_model = self.config_get('background_error_model')
+        self.background_error_model = self.config.background_error_model()
         self.initialize_background()
 
 # --------------------------------------------------------------------------------------------------
