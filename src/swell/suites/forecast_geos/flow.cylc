@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing Geos forecast
+# Cylc suite for Geos forecast without DA
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,16 +48,16 @@
 
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
-            MoveRestart[-PT6H] => RunGeosExecutable
+            MoveForecastRestart[-PT6H] => RunGeosExecutable
 
             # Move restart to next cycle
-            RunGeosExecutable => MoveRestart
+            RunGeosExecutable => MoveForecastRestart
+
+            # Save restarts if requested
+            # MoveForecastRestart[-PT6H] => SaveRestart
 
             # Remove Run Directory
-            # MoveRestart[-PT6H] => SaveRestart
-
-            # Remove Run Directory
-            # MoveRestart => RemoveGeosRunDir
+            MoveForecastRestart => RemoveGeosRunDir
         """
         {% endfor %}
 
@@ -102,8 +102,8 @@
     [[GetRestart]]
         script = "swell_task GetRestart $config -d $datetime"
 
-    [[MoveRestart]]
-        script = "swell_task MoveRestart $config -d $datetime"
+    [[MoveForecastRestart]]
+        script = "swell_task MoveForecastRestart $config -d $datetime"
 
     [[SaveRestart]]
         script = "swell_task SaveRestart $config -d $datetime"

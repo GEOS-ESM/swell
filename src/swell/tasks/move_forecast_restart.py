@@ -17,40 +17,28 @@ from datetime import datetime as dt
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveRestart(taskBase):
+class MoveForecastRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
 
         """
-        Moving correct restart files (i.e., _checkpoint) to the next cycle directory.
-        On way is using AGCM.rc checkpoint option. This creates time stamped _checkpoint
-        files requiring additional filename handling.
+        Moving restart files (i.e., _checkpoint) to the next cycle geosdir.
         """
 
         self.logger.info('Moving GEOS restarts for the next simulation cycle')
 
-        self.cycle_dir = self.config.cycle_dir()
-
-        exit()
-
         # Next cycle folder name
         # -----------------------
-        self.window_length = self.config_get('window_length')
-        self.next_cycle_dir = self.geos.adjacent_cycle(self.cycle_dir, self.window_length)
-        self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
+        self.forecast_duration = self.config.forecast_duration()
+        next_cycle_dir = self.geos.adjacent_cycle(self.forecast_duration)
+        self.next_geosdir = os.path.join(next_cycle_dir, 'geosdir')
 
         # Create cycle_dir and INPUT
         # ----------------------------
         if not os.path.exists(self.at_next_geosdir('INPUT')):
             os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
-
-        # GEOS restarts have seconds in their filename
-        # TODO: this requires a default if the task is not attached a model (geos_ocean or atm.)
-        # -------------------------------------------------------------------------------------
-        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
-        self.rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
 
         self.cycling_restarts()
         self.rename_checkpoints()
@@ -76,25 +64,20 @@ class MoveRestart(taskBase):
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
         self.logger.info('GEOS restarts are being moved to the next cycle dir')
+        self.logger.info('Finding _checkpoint restarts')
 
-        src = self.at_cycle_geosdir(self.rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
-
-        # This part ensures forecast GEOS runs even without timestamped restarts
-        # ----------------------------------------------------------------------
-        if not list(glob.glob(src)):
-            self.logger.info('Using _checkpoint restarts without timestamps')
-            src = self.at_cycle_geosdir('*_checkpoint')
+        src = self.geos.at_cycle_geosdir('*_checkpoint')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
             self.move_to_next(filepath, self.at_next_geosdir(filename))
 
-        self.move_to_next(self.at_cycle_geosdir('tile.bin'), self.at_next_geosdir('tile.bin'))
+        self.move_to_next(self.geos.at_cycle_geosdir('tile.bin'), self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)
         # -----------------------------------------------------------------
-        src = self.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
+        src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)

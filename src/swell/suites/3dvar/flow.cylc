@@ -41,7 +41,7 @@
             {% endfor %}
         """
 
-        {% for cycle_time in cycle_times %}
+        {% for /rend in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}

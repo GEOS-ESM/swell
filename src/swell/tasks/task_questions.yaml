@@ -169,7 +169,7 @@ forecast_duration:
   prompt: GEOS forecast duration
   tasks:
   - PrepGeosRunDir
-  - MoveRestart
+  - MoveForecastRestart
   type: duration
 
 geos_background_restart_offset:

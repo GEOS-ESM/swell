@@ -19,7 +19,7 @@ import shutil
 from abc import ABC, abstractmethod
 
 from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
-
+from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -45,9 +45,8 @@ class Geos():
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
-        dt_str = os.path.basename(os.path.dirname(self.cycle_dir))
-        # dt_str = basename.split('-')[0]
-        dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
+        dt_str = os.path.basename(self.forecast_dir)
+        dt_obj = datetime.strptime(dt_str, datetime_formats['directory_format'])
 
         # Modify datetime by using date offset
         # ------------------------------------
@@ -58,12 +57,11 @@ class Geos():
 
         # Replace datetime section in the basename with the modified datetime string
         # -----------------------------------------------------------------
-        modified_dt_str = modified_dt_obj.strftime(self.get_datetime_format())
-        modified_basename = basename.replace(dt_str, modified_dt_str)
+        modified_dt_str = modified_dt_obj.strftime(datetime_formats['directory_format'])
 
         # Create new file path with modified basename
         # --------------------------------------------
-        adj_cycle_dir = os.path.join(os.path.dirname(self.cycle_dir), modified_basename)
+        adj_cycle_dir = os.path.join(os.path.dirname(self.forecast_dir), modified_dt_str)
 
         return adj_cycle_dir
 

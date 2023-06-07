@@ -303,12 +303,14 @@ class PrepGeosRunDir(taskBase):
             src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                                'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_ptemp_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT', 'woa13_ptemp_monthly.nc']))
+            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
+                                                                       'woa13_ptemp_monthly.nc']))
 
             src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
                                'geos_ocean', 'model', 'geos', self.rst_path,
                                'woa13_s_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT', 'woa13_s_monthly.nc']))
+            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
+                                                                       'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 

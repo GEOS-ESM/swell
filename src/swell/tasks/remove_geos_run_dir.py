@@ -10,20 +10,18 @@
 import shutil
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.geos_tasks_run_executable import *
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RemoveGeosRunDir(GeosTasksRunExecutable):
+class RemoveGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
 
-        self.cycle_dir = self.config_get('cycle_dir')
-        self.logger.info(f"Removing old GEOS directory: {self.at_cycle_geosdir()}")
-        shutil.rmtree(self.at_cycle_geosdir())
+        self.logger.info(f"Removing old GEOS directory: {self.geos.at_cycle_geosdir()}")
+        shutil.rmtree(self.geos.at_cycle_geosdir())
 
 # --------------------------------------------------------------------------------------------------

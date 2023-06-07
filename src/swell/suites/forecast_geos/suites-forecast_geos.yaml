@@ -61,13 +61,6 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
-# # # Models to use
-# model_components:
-#   default_value: ['geos_coupled']
-#   prompt: Select models to use (choose at least one)
-#   options: use_method
-#   type: file-check-list
-
 # GEOS Experiment folder, created by gcm_setup script
 geos_experiment_directory:
   default_value: experiment_directory
