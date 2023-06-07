@@ -11,13 +11,13 @@ import shutil
 import os
 import glob
 
-from swell.utilities.geos_tasks_run_executable import *
+from swell.tasks.base.task_base import taskBase
 from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveRestart(GeosTasksRunExecutable):
+class MoveRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -25,18 +25,20 @@ class MoveRestart(GeosTasksRunExecutable):
 
         """
         Moving correct restart files (i.e., _checkpoint) to the next cycle directory.
-        We are using AGCM.rc checkpoint option, which creates time stamped _checkpoint
+        On way is using AGCM.rc checkpoint option. This creates time stamped _checkpoint
         files requiring additional filename handling.
         """
 
         self.logger.info('Moving GEOS restarts for the next simulation cycle')
 
-        self.cycle_dir = self.config_get('cycle_dir')
+        self.cycle_dir = self.config.cycle_dir()
+
+        exit()
 
         # Next cycle folder name
         # -----------------------
         self.window_length = self.config_get('window_length')
-        self.next_cycle_dir = self.adjacent_cycle(self.cycle_dir, self.window_length)
+        self.next_cycle_dir = self.geos.adjacent_cycle(self.cycle_dir, self.window_length)
         self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
 
         # Create cycle_dir and INPUT
@@ -120,7 +122,7 @@ class MoveRestart(GeosTasksRunExecutable):
 
         self.logger.info('Renaming *_checkpoint files to *_rst')
         try:
-            os.system('rename _checkpoint _rst *_checkpoint')
+            os.system('rename -v _checkpoint _rst *_checkpoint')
         except Exception:
             self.logger.abort('Renaming failed, see if checkpoint files exists')
 

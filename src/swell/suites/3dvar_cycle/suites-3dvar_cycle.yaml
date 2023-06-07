@@ -96,11 +96,15 @@ geos_restarts_directory:
 #   prompt: What processor layout (y-direction) per cube face?
 #   type: string
 
+  total_processors:
+    default_value:  6
+    prompt: Total number of processors required for 
+
 # Version of GCM being used
 geos_gcm_tag:
-  default_value: 'v10.25.1'
+  default_value: 'v11.0.2'
   prompt: Which tag of GEOS do you want to build?
-  options: ['v10.25.1']
+  options: ['v11.0.2']
   type: string-drop-list
 
 #-------------------------------------------------------------------------------
@@ -138,8 +142,3 @@ fixed_options:
   data_assimilation_run:
     default_value: true
     prompt: Does this workflow include data assimilation?
-
-  total_processors:
-    default_value:  6
-    prompt: Equation to compute total number of processors
-

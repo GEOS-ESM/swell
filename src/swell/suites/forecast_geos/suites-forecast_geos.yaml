@@ -7,14 +7,12 @@ cycle_times:
 
 # Cycle start point
 start_cycle_point:
-  # default_value: '2021-07-01T00:00:00Z'
   default_value: '2021-06-30T06:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
-  # default_value: '2021-07-01T12:00:00Z'
   default_value: '2021-06-30T18:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
@@ -63,13 +61,6 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
-# What kind of coupling is needed
-# model_coupling_style:
-#   default_value: uncoupled
-#   prompt: What kind of coupling would you like to run with?
-#   options: ['uncoupled', 'coupled']
-#   type: string-drop-list
-
 # # # Models to use
 # model_components:
 #   default_value: ['geos_coupled']
@@ -92,26 +83,14 @@ geos_restarts_directory:
   type: string-drop-list
 
 # Processor layout
-npx_proc:
+total_processors:
   default_value: '6'
-  prompt: What processor layout (x-direction) per cube face?
-  type: string
-npy_proc:
-  default_value: '1'
-  prompt: What processor layout (y-direction) per cube face?
+  prompt: How many processors to use?
   type: string
 
 # Version of GCM being used
 geos_gcm_tag:
-  default_value: 'v10.25.1'
+  default_value: 'v11.0.2'
   prompt: Which tag of GEOS do you want to build?
-  options: ['v10.25.1']
+  options: ['v11.0.2']
   type: string-drop-list
-
-# Fixed options (user not prompted for these)
-# -------------------------------------------
-fixed_options:
-  total_processors:
-    default_value:  'npx_proc * npy_proc'
-    prompt: Equation to compute total number of processors
-

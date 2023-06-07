@@ -165,7 +165,7 @@ forecast_duration:
   ask_question: true
   default_value: defer_to_model
   models:
-  - all # TODO: this should be GEOS only eventually
+  - all
   prompt: GEOS forecast duration
   tasks:
   - PrepGeosRunDir
@@ -240,6 +240,7 @@ geos_restarts_directory:
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetRestart
+  - PrepGeosRunDir
   type: string
 
 gradient_norm_reduction:
@@ -429,7 +430,7 @@ total_processors:
   ask_question: true
   default_value: defer_to_model
   models:
-  - geos_ocean # TODO: needs to consider GEOS
+  - geos_ocean
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology

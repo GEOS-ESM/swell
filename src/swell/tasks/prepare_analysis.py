@@ -62,6 +62,14 @@ class PrepareAnalysis(GeosTasksRunExecutable):
 
     # --------------------------------------------------------------------------------------------------
 
+    def replace_ice(self, f_rst):
+
+        '''
+        placeholder for cice analysis
+        '''
+
+    # --------------------------------------------------------------------------------------------------
+
     def replace_ocn(self, f_rst):
 
         # TODO: ocean only for now, ought to update method names when
