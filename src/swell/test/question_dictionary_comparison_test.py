@@ -13,7 +13,8 @@ import unittest
 import yaml
 
 from swell.swell_path import get_swell_path
-from swell.utilities.bin.generate_task_questions_dict import main as generate_task_questions_dict
+from swell.utilities.bin.task_question_dicts import tq_dicts
+from swell.utilities.bin.task_question_dicts_defaults import tq_dicts_defaults
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,10 +23,13 @@ class QuestionDictionaryTest(unittest.TestCase):
 
     def test_dictionary_comparison(self):
 
-        # Run dictionary generation
-        return_code = generate_task_questions_dict()
+        # Run main task question dictionary generation
+        tq_dicts_rc = tq_dicts()
+        assert tq_dicts_rc == 0
 
-        # Assert that dictionaries are equal
-        assert return_code == 0
+        # Run generation for defaults
+        tq_dicts_defaults_rc = tq_dicts_defaults()
+        assert tq_dicts_defaults_rc == 0
+
 
 # --------------------------------------------------------------------------------------------------

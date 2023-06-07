@@ -64,12 +64,12 @@ setuptools.setup(
             'swell_prepare_experiment_config = swell.deployment.bin.swell_prepare_config:main',
             'swell_launch_experiment = swell.deployment.bin.swell_launch_experiment:main',
             'swell_sat_db_processing = swell.deployment.bin.swell_sat_db_processing:main',
-            'swell_util_generate_task_question_default_dicts = \
-                swell.utilities.bin.generate_task_question_default_dicts:main',
+            # Utilities
+            'swell_util_task_question_dicts = swell.utilities.bin.task_question_dicts:tq_dicts',
             'swell_util_check_jedi_interface_templates = \
                 swell.utilities.bin.check_jedi_interface_templates:main',
-            'swell_util_generate_task_questions_dict = \
-                swell.utilities.bin.generate_task_questions_dict:main',
+            'swell_util_task_question_dicts_defaults = \
+                swell.utilities.bin.swell_util_task_question_dicts_defaults:tq_dicts_defaults',
             'swell_test_suite = swell.test.test_suite:main',
         ],
     },

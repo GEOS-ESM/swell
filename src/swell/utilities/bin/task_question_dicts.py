@@ -25,7 +25,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def generate_tq_dict_defaults():
+def tq_dicts():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -165,7 +165,7 @@ def generate_tq_dict_defaults():
 
 
 if __name__ == '__main__':
-    generate_tq_dict_defaults()
+    tq_dicts()
 
 
 # --------------------------------------------------------------------------------------------------

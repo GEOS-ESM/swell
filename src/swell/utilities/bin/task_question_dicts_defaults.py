@@ -128,7 +128,7 @@ def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def tq_dicts_defaults():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -228,6 +228,9 @@ def main():
 
             failure = failure + 1
 
+        # Check wither 'defer_to' remains anywhere in the file.
+
+
         # Crete a space between loop elements
         logger.info(' ', False)
 
@@ -242,7 +245,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    tq_dicts_defaults()
 
 
 # --------------------------------------------------------------------------------------------------
