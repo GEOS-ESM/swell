@@ -67,9 +67,9 @@ observations:
   options: use_method
   type: string-check-list
 
-# Total number of processors
+  # Processor layout
 total_processors:
-  default_value: '6'
+  default_value: '24'
   prompt: What is the total number of required processors for JEDI?
   type: string
 
