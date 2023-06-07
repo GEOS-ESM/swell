@@ -204,7 +204,7 @@ def tq_dicts_defaults():
 
             logger.info(f'The code will make no change to the task questions dictionary.')
 
-        else:
+        if tq_dicts_str != dicts_str_in or 'defer_to_' in tq_dicts_str:
 
             # Write the new dictionary to a temporary file
             random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -214,31 +214,42 @@ def tq_dicts_defaults():
             with open(destination_yaml_temp, 'w') as file:
                 file.write(tq_dicts_str)
 
-            logger.info(f'If a new \'task_questions.yaml\' is generated for \'{tq_dicts_name}\' ' +
-                        f'using this utility the resulting file will be different. This could ' +
-                        f'be for a number of reasons:')
-            logger.info(f' ', False)
-            logger.info(f'  - Comments were added to the original file.' )
-            logger.info(f'  - A new key is accessed from a task.' )
-            logger.info(f'  - Referencing of a particular key has been removed from a task.')
-            logger.info(f' ', False)
-            logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' ' +
-                        f'with the existing file: \'{tq_dicts_name}/task_questions.yaml\' and ' +
-                        f'resolve the differences')
+            # If there is a dictionary mismatch inform the user
+            if tq_dicts_str != dicts_str_in:
 
+                logger.info(f'If a new \'task_questions.yaml\' is generated for ' +
+                            f'\'{tq_dicts_name}\' using this utility the resulting file will be ' +
+                            f'different. This could be for a number of reasons:')
+                logger.info(f' ', False)
+                logger.info(f'  - Comments were added to the original file.' )
+                logger.info(f'  - A new key is accessed from a task.' )
+                logger.info(f'  - Referencing of a particular key has been removed from a task.')
+                logger.info(f' ', False)
+                logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' ' +
+                            f'with the existing file: \'{tq_dicts_name}/task_questions.yaml\' and ' +
+                            f'resolve the differences')
+
+            # If there is a defer to in the file still then inform user
+            if 'defer_to_' in tq_dicts_str:
+
+                logger.info(f'The dictionary that was created for \'{tq_dicts_name}\' contains ' +
+                            f'\'defer_to_\'. Ensure these instances are resolved when comparing ' +
+                            f'the new (temporary) file \'{destination_yaml_temp}\' with the ' +
+                            f'existing file: \'{tq_dicts_name}/task_questions.yaml\' and resolve ' +
+                            f'the differences. Once resolved rerun this utility to ensure tests ' +
+                            f'pass.')
+
+            # Uptick failure count
             failure = failure + 1
-
-        # Check wither 'defer_to' remains anywhere in the file.
-
 
         # Crete a space between loop elements
         logger.info(' ', False)
 
-        # Return code
-        if failure > 0:
-            return 1
-        else:
-            return 0
+    # Return code
+    if failure > 0:
+        return 1
+    else:
+        return 0
 
 
 # --------------------------------------------------------------------------------------------------
