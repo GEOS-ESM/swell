@@ -130,14 +130,14 @@ diagnostics:
             loc: 'upper left'
           statistics:
             fields:
-              - field_name: experiment::omanPassedQc::${variable}
+              - field_name: experiment::ombgPassedQc::${variable}
                 xloc: 0.5
                 yloc: -0.10
                 kwargs:
-                  color: 'blue'
+                  color: 'black'
                   fontsize: 8
                   fontfamily: monospace
-              - field_name: experiment::ombgPassedQc::${variable}
+              - field_name: experiment::omanPassedQc::${variable}
                 xloc: 0.5
                 yloc: -0.13
                 kwargs:
@@ -150,7 +150,6 @@ diagnostics:
             - mean
             - max
             - std
-
           layers:
           - type: Histogram
             data:

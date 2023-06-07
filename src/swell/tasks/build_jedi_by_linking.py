@@ -23,10 +23,6 @@ class BuildJediByLinking(taskBase):
 
     def execute(self):
 
-        # Get the build method
-        # --------------------
-        jedi_build_method = self.config_get('jedi_build_method')
-
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
         swell_exp_path = self.experiment_path()
@@ -38,16 +34,16 @@ class BuildJediByLinking(taskBase):
 
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
-        if jedi_build_method == 'use_existing':
+        if self.config.jedi_build_method() == 'use_existing':
 
             # Get the existing build directory from the dictionary
-            existing_build_directory = self.config_get('existing_build_directory')
+            existing_jedi_build_directory = self.config.existing_jedi_build_directory()
 
             # Assert that the existing build directory contains a bin directory
-            if not os.path.exists(os.path.join(existing_build_directory, 'bin')):
+            if not os.path.exists(os.path.join(existing_jedi_build_directory, 'bin')):
                 self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
                                   f'directory is not found in the path ' +
-                                  f'\'{existing_build_directory}\'')
+                                  f'\'{existing_jedi_build_directory}\'')
 
             # Write warning to user
             self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
@@ -56,12 +52,13 @@ class BuildJediByLinking(taskBase):
                              'this experiment may not be reproducible if the build changes.')
 
             # Link the source code directory
-            link_path(existing_build_directory, jedi_bundle_build_path)
+            link_path(existing_jedi_build_directory, jedi_bundle_build_path)
 
         else:
 
-            self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
-                              f'experiment dictionary. Must be \'use_existing\'.')
+            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
+                              f'jedi_build_method in the experiment dictionary. Must be ' +
+                              f'\'use_existing\'.')
 
 
 # --------------------------------------------------------------------------------------------------

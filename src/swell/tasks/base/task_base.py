@@ -60,13 +60,16 @@ class taskBase(ABC):
 
         # Create a configuration object
         # -----------------------------
-        self.__config__ = Config(config_input, self.logger, self.__model__)
+        self.config = Config(config_input, self.logger, task_name, self.__model__)
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
-        self.__experiment_root__ = self.config_get('experiment_root')
-        self.__experiment_id__ = self.config_get('experiment_id')
-        self.__suite__ = self.config_get('suite_to_run')
+        self.__experiment_root__ = self.config.__experiment_root__
+        self.__experiment_id__ = self.config.__experiment_id__
+
+        # Save the model components
+        # -------------------------
+        self.__model_components__ = self.config.__model_components__
 
         # Create cycle directory
         # ----------------------
@@ -98,12 +101,6 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    # Method to get something from config (with fail if not existing)
-    def config_get(self, key, default='NODEFAULT'):
-        return self.__config__.get(key, default)
-
-    # ----------------------------------------------------------------------------------------------
-
     # Method to get the experiment root
     def experiment_root(self):
         return self.__experiment_root__
@@ -113,12 +110,6 @@ class taskBase(ABC):
     # Method to get the experiment ID
     def experiment_id(self):
         return self.__experiment_id__
-
-    # ----------------------------------------------------------------------------------------------
-
-    # Method to get the suite type
-    def suite(self):
-        return self.__suite__
 
     # ----------------------------------------------------------------------------------------------
 
@@ -137,6 +128,11 @@ class taskBase(ABC):
 
     def get_model(self):
         return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model_components(self):
+        return self.__model_components__
 
     # ----------------------------------------------------------------------------------------------
 

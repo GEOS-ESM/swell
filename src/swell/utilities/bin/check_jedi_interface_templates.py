@@ -30,9 +30,11 @@ def main():
     config_types = ['oops/*yaml',
                     'interfaces/*/model/*yaml',
                     'interfaces/*/observations/*yaml',
+                    'interfaces/*/model/geometry.yaml',
+                    'interfaces/*/model/background.yaml',
                     'interfaces/*/model/r2d2.yaml',
                     'interfaces/*/model/stage*.yaml',
-                    'interfaces/*/model/background.yaml',
+                    'interfaces/*/model/background_error.yaml',
                     'interfaces/*/model/StaticBInit.yaml',
                     ]
 

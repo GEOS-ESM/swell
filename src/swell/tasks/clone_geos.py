@@ -24,10 +24,6 @@ class CloneGeos(taskBase):
 
     def execute(self):
 
-        # Get the build method
-        # --------------------
-        geos_build_method = self.config_get('geos_build_method')
-
         # Get the experiment/geos directory
         # ---------------------------------
         swell_exp_path = self.experiment_path()
@@ -39,18 +35,15 @@ class CloneGeos(taskBase):
 
         # Choice to link to existing build or build GEOS
         # ----------------------------------------------
-        if geos_build_method == 'use_existing':
-
-            # Get the existing bundle directory to get the source code
-            existing_geos_gcm_source_path = self.config_get('existing_geos_gcm_source_path')
+        if self.config.geos_build_method() == 'use_existing':
 
             # Link the source code directory
-            link_path(existing_geos_gcm_source_path, geos_gcm_source_path)
+            link_path(self.config.existing_geos_gcm_source_path(), geos_gcm_source_path)
 
-        elif geos_build_method == 'create':
+        elif self.config.geos_build_method() == 'create':
 
             # Get tag to build
-            geos_gcm_tag = self.config_get('geos_gcm_tag')
+            geos_gcm_tag = self.config.geos_gcm_tag()
 
             # Make sure tag is prepended with 'v'
             if geos_gcm_tag[0] != 'v':

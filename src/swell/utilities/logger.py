@@ -10,6 +10,7 @@
 import os
 import sys
 import textwrap
+import traceback
 
 
 # --------------------------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ class Logger:
         # Set default logging levels
         self.loggerdict = {'BLANK': True,
                            'INFO': True,
+                           'TEST': True,
                            'TRACE': False,
                            'DEBUG': False, }
 
@@ -62,7 +64,12 @@ class Logger:
         if level != 'BLANK':
             level_show = level_show+' '+self.task_name+': '
 
+        if level == 'ABORT':
+            level_show = 'ABORT IN '+self.task_name+': '
+
         if level == 'ABORT' or self.loggerdict[level]:
+            if level == 'ABORT':
+                print('\n')
             first_line = True
             for message_item in message_items:
                 if not first_line:
@@ -75,6 +82,12 @@ class Logger:
     def info(self, message, wrap=True):
 
         self.send_message('INFO', message, wrap)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def test(self, message, wrap=True):
+
+        self.send_message('TEST', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -99,7 +112,13 @@ class Logger:
     def abort(self, message, wrap=True):
 
         self.send_message('ABORT', message, wrap)
-        sys.exit('ABORTING\n')
+
+        # Get traceback stack (without logger.py lines)
+        filtered_stack = [line for line in traceback.format_stack() if 'logger.py' not in line]
+        traceback_str = '\n'.join(filtered_stack)
+
+        # Exit with traceback
+        sys.exit('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
 
     # ----------------------------------------------------------------------------------------------
 

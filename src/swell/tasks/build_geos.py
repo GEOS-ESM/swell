@@ -22,10 +22,6 @@ class BuildGeos(taskBase):
 
     def execute(self):
 
-        # Get the build method
-        # --------------------
-        geos_build_method = self.config_get('geos_build_method')
-
         # Get the experiment/geos directory
         # ---------------------------------
         swell_exp_path = self.experiment_path()
@@ -38,7 +34,7 @@ class BuildGeos(taskBase):
 
         # Check that the choice is to create build
         # ----------------------------------------
-        if not geos_build_method == 'create':
+        if not self.config.geos_build_method() == 'create':
             self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
                               f'experiment dictionary. Must be \'create\'.')
 

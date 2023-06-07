@@ -34,9 +34,9 @@ class StageJedi(taskBase):
         """
 
         # Extract potential template variables from config
-        horizontal_resolution = self.config_get('horizontal_resolution')
-        swell_static_files = self.config_get('swell_static_files')
-        vertical_resolution = self.config_get('vertical_resolution')
+        horizontal_resolution = self.config.horizontal_resolution()
+        swell_static_files = self.config.swell_static_files()
+        vertical_resolution = self.config.vertical_resolution()
 
         # Add jedi interface template keys
         self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)

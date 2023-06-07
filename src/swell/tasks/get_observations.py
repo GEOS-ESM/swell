@@ -35,13 +35,13 @@ class GetObservations(taskBase):
 
         # Parse config
         # ------------
-        obs_experiment = self.config_get('obs_experiment')
-        obs_provider = self.config_get('obs_provider')
-        background_time_offset = self.config_get('background_time_offset')
-        observations = self.config_get('observations')
-        window_length = self.config_get('window_length')
-        crtm_coeff_dir = self.config_get('crtm_coeff_dir', None)
-        window_offset = self.config_get('window_offset')
+        obs_experiment = self.config.obs_experiment()
+        obs_provider = self.config.obs_provider()
+        background_time_offset = self.config.background_time_offset()
+        observations = self.config.observations()
+        window_length = self.config.window_length()
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+        window_offset = self.config.window_offset()
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
