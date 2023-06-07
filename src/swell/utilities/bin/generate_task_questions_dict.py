@@ -25,7 +25,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def generate_tq_dict_defaults():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -39,16 +39,18 @@ def main():
 
     # Target YAML file
     destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
-    destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
 
     # Read input file into dictionary
     if os.path.exists(destination_yaml):
         with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
+            question_dict_str = ymlfile.read()
+        question_dict = yaml.safe_load(question_dict_str)
     else:
         question_dict = {}
+        question_dict_str = ''
 
     question_dict_in = question_dict.copy()
+    question_dict_str_in = question_dict_str
 
     # Loop through task code and accumulate all lines containing a use of config
     config_keys = []
@@ -122,33 +124,39 @@ def main():
         # Regardless of whether question was already in dictionary
         question_to_tasks[unique_key]['tasks'] = tasks
 
-    if question_to_tasks == question_dict_in:
+    # Create string with new dictionary
+    dict_to_write_str = ''
+    for key, value in question_to_tasks.items():
+        # Create dictionary one at a time and write
+        dict_to_write = {}
+        dict_to_write[key] = value
+        dict_to_write_str = dict_to_write_str + yaml.dump(dict_to_write, default_flow_style=False)
+        dict_to_write_str = dict_to_write_str + '\n'
+
+    # Check whether the string of the new dictionary matches the existing one.
+    if dict_to_write_str == question_dict_str_in:
 
         logger.info(f'The code will make no change to the task questions dictionary. Clean exit')
         return 0
 
     else:
 
-        # Create a file in the tmp directory with some random characters
+        # Write the new dictionary to a temporary file
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
         destination_yaml_temp = os.path.join('/tmp', f'task_questions_{random_string}.yaml')
 
-        logger.info(f'The configuration elements that are being accessed by the tasks are out of ' +
-                    f'sync with what is described in \'{destination_yaml}\'. The expected ' +
-                    f'dictionary will be written to a temporary file {destination_yaml_temp}. ' +
-                    f'Compare this file with the one in the tasks directory and resolve the ' +
-                    f'differences.')
+        with open(destination_yaml_temp, 'w') as file:
+            file.write(dict_to_write_str)
 
-        # Changes to the dictionary.
-        outfile = open(destination_yaml_temp, 'w')
-        for key, value in question_to_tasks.items():
-            # Create dictionary one at a time and write
-            dict_to_write = {}
-            dict_to_write[key] = value
-            outfile.write(yaml.dump(dict_to_write, default_flow_style=False))
-            # Add a gap between dictionaries to make it more human readable.
-            outfile.write('\n')
-        outfile.close()
+        logger.info(f'If a new \'task_questions.yaml\' is generated using this utility the ' +
+                    f'resulting file will be different. This could be for a number of reasons:')
+        logger.info(f' ', False)
+        logger.info(f'  - Comments were added to the original file.' )
+        logger.info(f'  - A new key is accessed from a task.' )
+        logger.info(f'  - Referencing of a particular key has been removed from a task.')
+        logger.info(f' ', False)
+        logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' with ' +
+                    f'the existing file: \'tasks/task_questions.yaml\' and resolve differences.')
 
         return 1
 
@@ -157,7 +165,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    generate_tq_dict_defaults()
 
 
 # --------------------------------------------------------------------------------------------------
