@@ -11,12 +11,11 @@ from datetime import datetime as dt
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.geos_tasks_run_executable import *
 
 # --------------------------------------------------------------------------------------------------
 
 
-class RunGeosExecutable(GeosTasksRunExecutable):
+class RunGeosExecutable(taskBase):
 
     def execute(self):
 
@@ -26,12 +25,12 @@ class RunGeosExecutable(GeosTasksRunExecutable):
 
         # Create RESTART folder
         # ---------------------
-        if not os.path.exists(self.at_cycle_geosdir('RESTART')):
-            os.mkdir(self.at_cycle_geosdir('RESTART'))
+        if not os.path.exists(self.geos.at_cycle_geosdir('RESTART')):
+            os.mkdir(self.geos.at_cycle_geosdir('RESTART'))
 
         # Output log file
         # ---------------
-        output_log_file = self.at_cycle_geosdir('geos_out.log')
+        output_log_file = self.geos.at_cycle_geosdir('geos_out.log')
 
         # Path to the GEOS executable
         # ---------------
@@ -45,14 +44,12 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         geos_modules_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'source',
                                          '@env', geos_modules)
 
-        # print(np)
-        # exit()
         # Run the GEOS executable
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
-        self.run_executable(self.at_cycle_geosdir(), np, geos_executable_path,
-                            geos_modules_path, output_log_file)
+        self.geos.run_executable(self.geos.at_cycle_geosdir(), np, geos_executable_path,
+                                 geos_modules_path, output_log_file)
 
         #######################################################################
         # Create links for SOCA to read
@@ -69,7 +66,7 @@ class RunGeosExecutable(GeosTasksRunExecutable):
         # TODO: this will only work for 3Dvar
         # ----------------------------------
         # cc_dto = dt.strptime(current_cycle, self.get_datetime_format())
-        # src = self.at_cycle_geosdir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        # src = self.geos.at_cycle_geosdir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
         # Option #2:
         # Link restart to restart
@@ -82,12 +79,12 @@ class RunGeosExecutable(GeosTasksRunExecutable):
 
         # Generic rst file format for SOCA
         # --------------------------------
-        # src = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+        # src = self.geos.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
         #                              + seconds + '.nc'])
-        src = self.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+        src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
         dst = 'MOM6.res.' + current_cycle + '.nc'
 
         if os.path.exists(src):
-            self.geos_linker(src, dst, dst_dir=self.cycle_dir)
+            self.geos.linker(src, dst, dst_dir=self.cycle_dir)
 
 # --------------------------------------------------------------------------------------------------

@@ -18,7 +18,6 @@ import shutil
 
 from abc import ABC, abstractmethod
 
-# from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 
 
@@ -96,6 +95,35 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
+    def chem_rename(self, rcdict):
+
+        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc
+        # -------------------------------------------------------------------------
+
+        # Convert rc bool.s to python
+        # ---------------------------
+        rcdict = self.rc_to_bool(rcdict)
+
+        # GEOS Chem filenames, shares same keys as rcdict
+        # -----------------------------------------------
+        chem_files = {
+            'ENABLE_STRATCHEM': 'StratChem_ExtData.rc',
+            'ENABLE_GMICHEM': 'GMI_ExtData.rc',
+            'ENABLE_GEOSCHEM': 'GEOSCHEMchem_ExtData.rc',
+            'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
+            'ENABLE_DNA': 'DNA_ExtData.rc',
+            'ENABLE_ACHEM': 'GEOSachem_ExtData.rc',
+        }
+
+        for key, value in chem_files.items():
+            fname = self.at_cycle_geosdir(value)
+
+            if not rcdict[key] and os.path.isfile(fname):
+                self.logger.info(' Renaming file: '+fname)
+                os.system('rename .rc .rc.NOT_USED ' + fname)
+
+    # ----------------------------------------------------------------------------------------------
+
     def copy_to_geosdir(self, src_dir, dst_dir=None):
 
         # Destination is always (time dependent) cycle_dir if None
@@ -129,64 +157,6 @@ class Geos():
         # Containerized run of the GEOS build steps
         # -----------------------------------------
         run_subprocess(self.logger, ['/bin/bash', '-c', command])
-
-    # ----------------------------------------------------------------------------------------------
-
-    def geos_chem_rename(self, rcdict):
-
-        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc
-        # -------------------------------------------------------------------------
-
-        # Convert rc bool.s to python
-        # ---------------------------
-        rcdict = self.rc_to_bool(rcdict)
-
-        # GEOS Chem filenames, shares same keys as rcdict
-        # -----------------------------------------------
-        chem_files = {
-            'ENABLE_STRATCHEM': 'StratChem_ExtData.rc',
-            'ENABLE_GMICHEM': 'GMI_ExtData.rc',
-            'ENABLE_GEOSCHEM': 'GEOSCHEMchem_ExtData.rc',
-            'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
-            'ENABLE_DNA': 'DNA_ExtData.rc',
-            'ENABLE_ACHEM': 'GEOSachem_ExtData.rc',
-        }
-
-        for key, value in chem_files.items():
-            fname = self.at_cycle_geosdir(value)
-
-            if not rcdict[key] and os.path.isfile(fname):
-                self.logger.info(' Renaming file: '+fname)
-                os.system('rename .rc .rc.NOT_USED ' + fname)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def geos_linker(self, src, dst, dst_dir=None):
-
-        # Link files from BC directories
-        # ------------------------------
-
-        if dst_dir is None:
-            dst_dir = self.at_cycle_geosdir()
-
-        dst = os.path.basename(dst)
-
-        # Assign dst name if non-existent
-        # ------------------------------
-        if dst == '':
-            dst = os.path.basename(src)
-
-        # Assures existing links will be unlinked
-        # -----------------------------------
-        if os.path.lexists(os.path.join(dst_dir, dst)):
-            self.logger.info(' Unlinking existing link: ')
-            self.logger.info(os.path.join(dst_dir, dst))
-            os.unlink(os.path.join(dst_dir, dst))
-
-        try:
-            os.symlink(src, os.path.join(dst_dir, dst))
-        except Exception:
-            self.logger.abort('Linking failed, see if source files exist')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -241,6 +211,35 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
+    def linker(self, src, dst, dst_dir=None):
+
+        # Link files from BC directories
+        # ------------------------------
+
+        if dst_dir is None:
+            dst_dir = self.at_cycle_geosdir()
+
+        dst = os.path.basename(dst)
+
+        # Assign dst name if non-existent
+        # ------------------------------
+        if dst == '':
+            dst = os.path.basename(src)
+
+        # Assures existing links will be unlinked
+        # -----------------------------------
+        if os.path.lexists(os.path.join(dst_dir, dst)):
+            self.logger.info(' Unlinking existing link: ')
+            self.logger.info(os.path.join(dst_dir, dst))
+            os.unlink(os.path.join(dst_dir, dst))
+
+        try:
+            os.symlink(src, os.path.join(dst_dir, dst))
+        except Exception:
+            self.logger.abort('Linking failed, see if source files exist')
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_gcmrun(self, jfile):
 
         # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup
@@ -274,9 +273,6 @@ class Geos():
                 if parts[0] == 'setenv':
                     key = parts[1]
                     rcdict[key] = parts[2]
-                    # TODO: to parse GWDRSDIR
-                # elif parts[0] == '/bin/cp':
-                    # print(parts)
 
         return rcdict
 
@@ -339,7 +335,7 @@ class Geos():
         nml1 = f90nml.read(self.at_cycle_geosdir('input.nml'))
 
         if not cold_restart:
-            self.logger.info('Hot start, Swell expects require rst/checkpoint files')
+            self.logger.info('Hot start, Swell will expect rst/checkpoint files')
 
             # mom_input_nml needs to be 'r' for hot_restart
             # ----------------------------------------------
