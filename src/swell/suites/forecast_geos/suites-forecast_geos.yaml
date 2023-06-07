@@ -7,13 +7,13 @@ cycle_times:
 
 # Cycle start point
 start_cycle_point:
-  default_value: '2021-06-30T06:00:00Z'
+  default_value: '2021-06-20T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   type: iso-datetime
 
 # Cycle final point
 final_cycle_point:
-  default_value: '2021-06-30T18:00:00Z'
+  default_value: '2021-06-21T00:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
@@ -38,8 +38,8 @@ geos_build_method:
   type: string-drop-list
 
 # Existing GEOS source directory
-existing_geos_source_directory:
-  default_value: {{existing_geos_source_directory}}
+existing_geos_gcm_source_path:
+  default_value: {{existing_geos_gcm_source_path}}
   prompt: Provide the path to an existing GEOS bundle directory containing source code repos
   type: string
   depends:
@@ -47,8 +47,8 @@ existing_geos_source_directory:
     value: use_existing
 
 # Existing GEOS build directory
-existing_geos_build_directory:
-  default_value: {{existing_geos_build_directory}}
+existing_geos_gcm_build_path:
+  default_value: {{existing_geos_gcm_build_path}}
   prompt: Provide the path to an existing GEOS build directory
   type: string
   depends:

@@ -74,7 +74,7 @@ r2d2_local_path:
 
 # GEOS Experiment folder, created by gcm_setup script
 geos_experiment_directory:
-  default_value: 5deg_v11
+  default_value: experiment_directory
   prompt: What experiment folder should GEOS obtain settings?
   options: ['experiment_directory']
   type: string-drop-list
@@ -86,19 +86,9 @@ geos_restarts_directory:
   options: ['restarts']
   type: string-drop-list
 
-# Processor layout
-# npx_proc:
-#   default_value: '6'
-#   prompt: What processor layout (x-direction) per cube face?
-#   type: string
-# npy_proc:
-#   default_value: '1'
-#   prompt: What processor layout (y-direction) per cube face?
-#   type: string
-
-  total_processors:
-    default_value:  6
-    prompt: Total number of processors required for 
+total_processors:
+  default_value:  6
+  prompt: Total number of processors required for 
 
 # Version of GCM being used
 geos_gcm_tag:

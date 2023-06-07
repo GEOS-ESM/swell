@@ -28,11 +28,16 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, cycle_dir):
+    def __init__(self, logger, forecast_dir):
 
-        # Keep a copy of the logger
+        '''
+        Intention with GEOS class is to not have any model dependent methods.
+        This way both forecast only and cycle DA tasks can benefit from the same
+        methods.
+        '''
+
         self.logger = logger
-        self.cycle_dir = cycle_dir
+        self.forecast_dir = forecast_dir
 
     # ----------------------------------------------------------------------------------------------
 
@@ -40,7 +45,6 @@ class Geos():
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
-        # basename = os.path.basename(self.cycle_dir)
         dt_str = os.path.basename(os.path.dirname(self.cycle_dir))
         # dt_str = basename.split('-')[0]
         dt_obj = datetime.strptime(dt_str, self.get_datetime_format())
@@ -65,20 +69,6 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_cycle_model(self, paths):
-
-        # Ensure what we have is a list (paths should be a list)
-        # ------------------------------------------------------
-        if isinstance(paths, str):
-            paths = [paths]
-
-        # Combining list of paths with cycle dir for script brevity
-        # ---------------------------------------------------------
-        full_path = os.path.join(self.cycle_dir, *paths)
-        return full_path
-
-    # ----------------------------------------------------------------------------------------------
-
     def at_cycle_geosdir(self, paths=[]):
 
         # Ensure what we have is a list (paths should be a list)
@@ -86,11 +76,9 @@ class Geos():
         if isinstance(paths, str):
             paths = [paths]
 
-        datetimedir = os.path.dirname(self.cycle_dir)
-
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(datetimedir, 'geosdir', *paths)
+        full_path = os.path.join(self.forecast_dir, 'geosdir', *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
