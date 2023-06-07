@@ -151,8 +151,8 @@ def tq_dicts():
         logger.info(f'If a new \'task_questions.yaml\' is generated using this utility the ' +
                     f'resulting file will be different. This could be for a number of reasons:')
         logger.info(f' ', False)
-        logger.info(f'  - Comments were added to the original file.' )
-        logger.info(f'  - A new key is accessed from a task.' )
+        logger.info(f'  - Comments were added to the original file.')
+        logger.info(f'  - A new key is accessed from a task.')
         logger.info(f'  - Referencing of a particular key has been removed from a task.')
         logger.info(f' ', False)
         logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' with ' +

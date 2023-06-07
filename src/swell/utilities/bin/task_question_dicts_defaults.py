@@ -118,7 +118,7 @@ def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_
 
             # Add dictionary to the output dictionary
             platform_tq_dicts_str = platform_tq_dicts_str + yaml.dump(platform_tq_dict,
-                                                                default_flow_style=False)
+                                                                      default_flow_style=False)
             platform_tq_dicts_str = platform_tq_dicts_str + '\n'
 
     # Return dictionary in string format
@@ -221,13 +221,13 @@ def tq_dicts_defaults():
                             f'\'{tq_dicts_name}\' using this utility the resulting file will be ' +
                             f'different. This could be for a number of reasons:')
                 logger.info(f' ', False)
-                logger.info(f'  - Comments were added to the original file.' )
-                logger.info(f'  - A new key is accessed from a task.' )
+                logger.info(f'  - Comments were added to the original file.')
+                logger.info(f'  - A new key is accessed from a task.')
                 logger.info(f'  - Referencing of a particular key has been removed from a task.')
                 logger.info(f' ', False)
-                logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' ' +
-                            f'with the existing file: \'{tq_dicts_name}/task_questions.yaml\' and ' +
-                            f'resolve the differences')
+                logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\'' +
+                            f' with the existing file: \'{tq_dicts_name}/task_questions.yaml\' ' +
+                            f'and resolve the differences')
 
             # If there is a defer to in the file still then inform user
             if 'defer_to_' in tq_dicts_str:
