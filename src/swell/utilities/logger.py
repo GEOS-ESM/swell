@@ -32,6 +32,7 @@ class Logger:
         # Set default logging levels
         self.loggerdict = {'BLANK': True,
                            'INFO': True,
+                           'TEST': True,
                            'TRACE': False,
                            'DEBUG': False, }
 
@@ -81,6 +82,12 @@ class Logger:
     def info(self, message, wrap=True):
 
         self.send_message('INFO', message, wrap)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def test(self, message, wrap=True):
+
+        self.send_message('TEST', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
