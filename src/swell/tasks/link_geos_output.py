@@ -61,7 +61,6 @@ class LinkGeosOutput(taskBase):
         # ------------------------------------------
 
         an_fcst_offset = self.config.analysis_forecast_window_offset()
-
         rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 

@@ -226,6 +226,17 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
+    def move_to_next(self, src_dir, dst_dir):
+
+        try:
+            self.logger.info(' Moving file(s) from: '+src_dir)
+            shutil.move(src_dir, dst_dir)
+
+        except Exception:
+            self.logger.abort('Moving failed, see if source files exist')
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_gcmrun(self, jfile):
 
         # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup
@@ -373,6 +384,21 @@ class Geos():
                 continue
 
         return rcdict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def rename_checkpoints(self, next_geosdir):
+
+        # Rename _checkpoint files to _rst
+        # Move to the next geos cycle directory
+        # -------------------------------------
+        os.chdir(next_geosdir)
+
+        self.logger.info('Renaming *_checkpoint files to *_rst')
+        try:
+            os.system('rename -v _checkpoint _rst *_checkpoint')
+        except Exception:
+            self.logger.abort('Renaming failed, see if checkpoint files exists')
 
     # --------------------------------------------------------------------------------------------------
 

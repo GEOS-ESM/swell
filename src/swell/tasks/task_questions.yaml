@@ -7,6 +7,7 @@ analysis_forecast_window_offset:
   tasks:
   - GetBackground
   - LinkGeosOutput
+  - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
   type: duration
@@ -468,6 +469,7 @@ window_length:
   tasks:
   - GetBackground
   - GetObservations
+  - MoveDaRestart
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground

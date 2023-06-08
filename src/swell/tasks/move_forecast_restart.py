@@ -7,7 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import shutil
 import os
 import glob
 
@@ -40,8 +39,10 @@ class MoveForecastRestart(taskBase):
         if not os.path.exists(self.at_next_geosdir('INPUT')):
             os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
 
+        # Move and rename files
+        # ----------------------
         self.cycling_restarts()
-        self.rename_checkpoints()
+        self.geos.rename_checkpoints(self.next_geosdir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -70,43 +71,19 @@ class MoveForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            self.move_to_next(filepath, self.at_next_geosdir(filename))
+            self.geos.move_to_next(filepath, self.at_next_geosdir(filename))
 
-        self.move_to_next(self.geos.at_cycle_geosdir('tile.bin'), self.at_next_geosdir('tile.bin'))
+        self.geos.move_to_next(self.geos.at_cycle_geosdir('tile.bin'),
+                               self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)
+        # so wildcard character can be omitted.
         # -----------------------------------------------------------------
         src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.move_to_next(filepath, self.at_next_geosdir(['INPUT', filename]))
-
-    # ----------------------------------------------------------------------------------------------
-
-    def move_to_next(self, src_dir, dst_dir):
-
-        try:
-            self.logger.info(' Moving file(s) from: '+src_dir)
-            shutil.move(src_dir, dst_dir)
-
-        except Exception:
-            self.logger.abort('Moving failed, see if source files exist')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def rename_checkpoints(self):
-
-        # Rename _checkpoint files to _rst
-        # Move to the next geos cycle directory
-        # -------------------------------------
-        os.chdir(self.next_geosdir)
-
-        self.logger.info('Renaming *_checkpoint files to *_rst')
-        try:
-            os.system('rename -v _checkpoint _rst *_checkpoint')
-        except Exception:
-            self.logger.abort('Renaming failed, see if checkpoint files exists')
+            self.geos.move_to_next(filepath, self.at_next_geosdir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------
