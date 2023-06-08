@@ -8,11 +8,13 @@
 # --------------------------------------------------------------------------------------------------
 
 from datetime import datetime as dt
+import glob
 import netCDF4 as nc
+import os
 import shutil
 
-from swell.utilities.geos_tasks_run_executable import *
-
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -25,8 +27,7 @@ SOCA_dict = {
     'tocn': 'Temp',
 }
 
-
-class PrepareAnalysis(GeosTasksRunExecutable):
+class PrepareAnalysis(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
@@ -38,27 +39,54 @@ class PrepareAnalysis(GeosTasksRunExecutable):
 
         self.logger.info('Preparing analysis and updating restarts')
 
-        self.cycle_dir = self.config_get('cycle_dir')
-        self.exp_id = self.config_get('experiment_id')
-        self.soca_ana = self.config_get('analysis_variables')
-
         # Current and restart time objects
         # --------------------------------
-        self.current_cycle = self.config_get('current_cycle')
-        self.cc_dto = dt.strptime(self.current_cycle, self.get_datetime_format())
+        self.current_cycle = os.path.basename(self.forecast_dir())
+        self.cc_dto = dt.strptime(self.current_cycle, datetime_formats['directory_format'])
+        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
 
         # GEOS restarts have seconds in their filename
         # --------------------------------------------
-        an_fcst_offset = self.config_get('analysis_forecast_window_offset')
-        rst_dto = self.adjacent_cycle(self.cycle_dir, an_fcst_offset, return_date=True)
+        an_fcst_offset = self.config.analysis_forecast_window_offset()
+        rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
+
+        # Determine which models require analysis (code will fail if executed
+        # without a model as "an_fcst_offset" is model dependent)
+        # TODO: This could be improved with model dependent atmosphere or ocean
+        # model analysis with
+        # --------------------------------------------------------------------
+        # model_components = self.get_model_components()
 
         # Generic rst file format
         # ------------------------
-        # f_rst = self.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-        #                                + seconds + '.nc'])
-        f_rst = self.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+        f_rst = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+
+        # This alternate restart format corresponds to optional use of Restart Record
+        # parameters in AGCM.rc
+        # -------------------------------------------------------------------------
+        agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
+
+        if 'RECORD_FREQUENCY' in agcm_dict:
+            f_rst = self.geos.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+                                                + seconds + '.nc'])
+
+        self.soca_ana = self.config.analysis_variables()
         self.replace_ocn(f_rst)
+
+    # ----------------------------------------------------------------------------------------
+
+    def at_cycledir(self, paths=[]):
+
+        # Ensure what we have is a list (paths should be a list)
+        # ------------------------------------------------------
+        if isinstance(paths, str):
+            paths = [paths]
+
+        # Combining list of paths with cycle dir for script brevity
+        # ---------------------------------------------------------
+        full_path = os.path.join(self.cycle_dir(), *paths)
+        return full_path
 
     # --------------------------------------------------------------------------------------------------
 
@@ -67,26 +95,27 @@ class PrepareAnalysis(GeosTasksRunExecutable):
         '''
         placeholder for cice analysis
         '''
+        pass
 
     # --------------------------------------------------------------------------------------------------
 
     def replace_ocn(self, f_rst):
 
-        # TODO: ocean only for now, ought to update method names when
-        # more model analyses (i.e., ice, bgc) are introduced.
         # TODO: combining stftime format with strings, safe practice?
         # -----------------------------------------------------------------
-        # Generic analysis file format
-        # ---------------------------
-        f_ana = self.at_cycle('ocn.' + self.exp_id +
-                              self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc'))
+        # Generic analysis file format independent of exp_id
+        # --------------------------------------------------
+        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
+
+        for filepath in list(glob.glob(ana_path)):
+            f_ana = filepath
 
         # Open read and write and rename dimensions
         # -----------------------------------------
         ds_ana = nc.Dataset(f_ana, 'r+')
         ds_rst = nc.Dataset(f_rst, 'r+')
 
-        # TODO/WARNING: This method only works for read + write mode
+        # WARNING: This method only works for read + write mode
         # ----------------------------------------------------------
         ds_ana.renameDimension('xaxis_1', 'lonh')
         ds_ana.renameDimension('yaxis_1', 'lath')
@@ -101,6 +130,6 @@ class PrepareAnalysis(GeosTasksRunExecutable):
         ds_ana.close()
         ds_rst.close()
 
-        shutil.move(f_rst, self.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
+        shutil.move(f_rst, self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
 
 # --------------------------------------------------------------------------------------------------

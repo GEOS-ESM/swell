@@ -31,13 +31,10 @@ class MoveDaRestart(taskBase):
 
         self.logger.info('Moving GEOS restarts for the next simulation cycle')
 
-        print(self.config.__model_components__)
-        exit()
-
         # Next cycle folder name
         # -----------------------
-        self.window_length = self.config_get('window_length')
-        self.next_cycle_dir = self.geos.adjacent_cycle(self.cycle_dir, self.window_length)
+        self.next_cycle_dir = self.geos.adjacent_cycle(self.config.window_length())
+        exit()
         self.next_geosdir = os.path.join(self.next_cycle_dir, 'geosdir')
 
         # Create cycle_dir and INPUT

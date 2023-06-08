@@ -6,8 +6,9 @@ analysis_forecast_window_offset:
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
-  - StoreBackground
   - LinkGeosOutput
+  - PrepareAnalysis
+  - StoreBackground
   type: duration
 
 analysis_variables:
@@ -17,6 +18,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
+  - PrepareAnalysis
   - RunJediVariationalExecutable
   type: string-check-list
 

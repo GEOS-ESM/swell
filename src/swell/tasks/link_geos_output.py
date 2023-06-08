@@ -65,13 +65,13 @@ class LinkGeosOutput(taskBase):
         rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
-        # Generic rst file format for SOCA
-        # --------------------------------
+        # Generic rst file source format for SOCA
+        # ---------------------------------------
         src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
 
-        # This alternate format corresponds to optional use of Restart Record
+        # This alternate source format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
-        # -------------------------------------------------------------------
+        # -------------------------------------------------------------------------
         agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
