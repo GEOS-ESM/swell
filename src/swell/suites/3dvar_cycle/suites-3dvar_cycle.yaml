@@ -88,7 +88,9 @@ geos_restarts_directory:
 
 total_processors:
   default_value:  6
-  prompt: Total number of processors required for 
+  prompt: Total number of processors required for
+  type: string
+
 
 # Version of GCM being used
 geos_gcm_tag:

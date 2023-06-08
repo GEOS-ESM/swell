@@ -73,7 +73,6 @@ total_processors:
   prompt: What is the total number of required processors for JEDI?
   type: string
 
-
 # Fixed options (user not prompted for these)
 # -------------------------------------------
 fixed_options:

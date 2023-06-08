@@ -7,6 +7,7 @@ analysis_forecast_window_offset:
   tasks:
   - GetBackground
   - StoreBackground
+  - LinkGeosOutput
   type: duration
 
 analysis_variables:

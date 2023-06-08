@@ -425,7 +425,7 @@ class PrepGeosRunDir(taskBase):
 
     def rewrite_agcm(self, rcdict, rcfile):
 
-        # AGCM.rc might requires some modifications depending on the restart intervals
+        # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
         [time_string, days] = self.geos.iso_to_time_str(self.config.forecast_duration(), half=True)
