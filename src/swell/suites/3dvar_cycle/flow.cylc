@@ -80,15 +80,17 @@
             GenerateBClimatologyByLinking-{{model_component}}
 
             # Run the analysis
-            RunGeosExecutable => StageJediCycle-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            # RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable => LinkGeosOutput-{{model_component}}
+
+            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Prepare analysis for next forecast
-            RunJediVariationalExecutable-{{model_component}} => LinkGeosOutput-{{model_component}}
-            LinkGeosOutput-{{model_component}} => PrepareAnalysis-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
 
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
