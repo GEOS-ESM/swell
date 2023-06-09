@@ -27,10 +27,8 @@ from swell.utilities.welcome_message import write_welcome_message
               'platform specific defaults.')
 @click.option('-o', '--override', 'override', default=None, help='After generating the config ' +
               'file parameters inside can be overridden using value from the override config file.')
-@click.option('-m', '--models', 'models', multiple=True, default=['geos_atmosphere'], help='Enter' +
-              'model components.')
 @click.argument('suite')
-def main(input_method, suite, platform, override, models):
+def main(input_method, suite, platform, override):
     """
         SUITE argument determines which set of tasks are going to be run.
     """
@@ -41,7 +39,7 @@ def main(input_method, suite, platform, override, models):
 
     # Create suites object
     # --------------------
-    config_file = prepare_config(input_method, suite, platform, override, models)
+    config_file = prepare_config(input_method, suite, platform, override)
 
 
 # --------------------------------------------------------------------------------------------------
