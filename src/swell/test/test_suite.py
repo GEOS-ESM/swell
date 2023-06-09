@@ -8,15 +8,24 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
 import unittest
 
 from swell.test.question_dictionary_comparison_test import QuestionDictionaryTest
 from swell.test.unused_variables_test import UnusedVariablesTest
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
 
 def main():
+
+    # Create a logger
+    logger = Logger('TestSuite')
+    logger.test('Running Swell Test Suite')
+
+    # Turn off the regular info testing
+    os.environ["LOG_INFO"] = "0"
 
     # Create a test suite
     test_suite = unittest.TestSuite()
@@ -32,5 +41,6 @@ def main():
 
     # Run the tests
     test_runner.run(test_suite)
+
 
 # --------------------------------------------------------------------------------------------------

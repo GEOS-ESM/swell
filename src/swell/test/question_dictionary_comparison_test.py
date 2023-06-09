@@ -13,7 +13,8 @@ import unittest
 import yaml
 
 from swell.swell_path import get_swell_path
-from swell.utilities.bin.generate_task_questions_dict import main as generate_task_questions_dict
+from swell.utilities.bin.task_question_dicts import tq_dicts
+from swell.utilities.bin.task_question_dicts_defaults import tq_dicts_defaults
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,23 +23,14 @@ class QuestionDictionaryTest(unittest.TestCase):
 
     def test_dictionary_comparison(self):
 
-        # First test the
-        destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
+        # Run main task question dictionary generation
+        tq_dicts_rc = tq_dicts()
+        assert tq_dicts_rc == 0
 
-        # Read input file into dictionary
-        with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
-        question_dict_in = question_dict.copy()
+        # Run generation for defaults
+        tq_dicts_defaults_rc = tq_dicts_defaults()
+        assert tq_dicts_defaults_rc == 0
 
-        # Run dictionary generation
-        generate_task_questions_dict()
-
-        # Read new dictionary
-        with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
-
-        # Assert that dictionaries are equal
-        self.assertDictEqual(question_dict_in, question_dict)
 
 
 # --------------------------------------------------------------------------------------------------

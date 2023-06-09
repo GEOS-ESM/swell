@@ -12,6 +12,8 @@
 # standard imports
 import glob
 import os
+import random
+import string
 import yaml
 
 # swell imports
@@ -23,7 +25,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def tq_dicts():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -42,12 +44,14 @@ def main():
     # Read input file into dictionary
     if os.path.exists(destination_yaml):
         with open(destination_yaml, 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
+            question_dict_str = ymlfile.read()
+        question_dict = yaml.safe_load(question_dict_str)
     else:
         question_dict = {}
+        question_dict_str = ''
 
-    # Now safe to overwrite file
-    outfile = open(destination_yaml, 'w')
+    question_dict_in = question_dict.copy()
+    question_dict_str_in = question_dict_str
 
     # Loop through task code and accumulate all lines containing a use of config
     config_keys = []
@@ -89,8 +93,6 @@ def main():
         tasks = sorted(list(set(tasks)))
 
         # Create dictionary to hold question components
-        question_to_tasks = {}
-
         if unique_key in question_dict:
 
             question_to_tasks[unique_key] = question_dict[unique_key]
@@ -123,17 +125,48 @@ def main():
         # Regardless of whether question was already in dictionary
         question_to_tasks[unique_key]['tasks'] = tasks
 
-        outfile.write(yaml.dump(question_to_tasks, default_flow_style=False))
-        outfile.write('\n')
+    # Create string with new dictionary
+    dict_to_write_str = ''
+    for key, value in question_to_tasks.items():
+        # Create dictionary one at a time and write
+        dict_to_write = {}
+        dict_to_write[key] = value
+        dict_to_write_str = dict_to_write_str + yaml.dump(dict_to_write, default_flow_style=False)
+        dict_to_write_str = dict_to_write_str + '\n'
 
-    outfile.close()
+    # Check whether the string of the new dictionary matches the existing one.
+    if dict_to_write_str == question_dict_str_in:
+
+        logger.info(f'The code will make no change to the task questions dictionary. Clean exit')
+        return 0
+
+    else:
+
+        # Write the new dictionary to a temporary file
+        random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        destination_yaml_temp = os.path.join('/tmp', f'task_questions_{random_string}.yaml')
+
+        with open(destination_yaml_temp, 'w') as file:
+            file.write(dict_to_write_str)
+
+        logger.info(f'If a new \'task_questions.yaml\' is generated using this utility the ' +
+                    f'resulting file will be different. This could be for a number of reasons:')
+        logger.info(f' ', False)
+        logger.info(f'  - Comments were added to the original file.')
+        logger.info(f'  - A new key is accessed from a task.')
+        logger.info(f'  - Referencing of a particular key has been removed from a task.')
+        logger.info(f' ', False)
+        logger.info(f'Please compare the new (temporary) file \'{destination_yaml_temp}\' with ' +
+                    f'the existing file: \'tasks/task_questions.yaml\' and resolve differences.')
+
+        return 1
 
 
 # --------------------------------------------------------------------------------------------------
 
 
 if __name__ == '__main__':
-    main()
+    tq_dicts()
 
 
 # --------------------------------------------------------------------------------------------------
