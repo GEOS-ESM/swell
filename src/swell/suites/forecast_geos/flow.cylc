@@ -35,20 +35,19 @@
             # If not able to link to build create the build
             BuildGeosByLinking:fail? => BuildGeos
 
+            # Need first set of restarts to run model
+            GetRestart => PrepGeosRunDir
+
             # Get first set of restarts
             BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
-            GetRestart => RunGeosExecutable
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time}} = """
 
-            # Prepare GEOS run directory
-            PrepGeosRunDir
-
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
-            MoveForecastRestart[-PT6H] => RunGeosExecutable
+            MoveForecastRestart[-PT6H] => PrepGeosRunDir
 
             # Move restart to next cycle
             RunGeosExecutable => MoveForecastRestart
