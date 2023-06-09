@@ -1,6 +1,3 @@
-experiment_id:
-  default_value: swell-{{suite_to_run}}
-
 experiment_root:
   default_value: /discover/nobackup/${USER}/SwellExperiments
 
