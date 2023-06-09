@@ -257,7 +257,7 @@ jedi_build_method:
   - BuildJedi
   - BuildJediByLinking
   - CloneJedi
-  type: string
+  type: string-drop-list
 
 jedi_forecast_model:
   ask_question: true
