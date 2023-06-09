@@ -63,14 +63,14 @@ r2d2_local_path:
 
 # GEOS Experiment folder, created by gcm_setup script
 geos_experiment_directory:
-  default_value: experiment_directory
+  default_value: 5deg_v11
   prompt: What experiment folder should GEOS obtain settings?
   options: ['experiment_directory']
   type: string-drop-list
 
 # GEOS restarts folder, produced by GEOS cold start
 geos_restarts_directory:
-  default_value: restarts
+  default_value: restarts_20210620_000000
   prompt: What experiment folder should GEOS obtain settings?
   options: ['restarts']
   type: string-drop-list
