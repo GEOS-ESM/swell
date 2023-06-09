@@ -24,7 +24,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override, models):
+def prepare_config(method, suite, platform, override):
 
     # Create a logger
     # ---------------
@@ -45,7 +45,7 @@ def prepare_config(method, suite, platform, override, models):
     # ---------------------------------------------------------------
     PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
                         'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, models)
+    prep_using = PrepUsing(logger, config_file, suite, platform)
 
     # Call the config prep step
     # -------------------------

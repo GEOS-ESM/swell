@@ -65,8 +65,6 @@ class PrepConfigCli(PrepConfigBase):
         model_options = glob.glob(os.path.join(self.model_path, '*'))
         model_options.sort()
 
-        print('TEST', model_options)
-
         model_options = [os.path.basename(x) for x in model_options]
 
         choices = []
@@ -175,19 +173,29 @@ class PrepConfigCli(PrepConfigBase):
     # ----------------------------------------------------------------------------------------------
 
     def make_check_widget(self, quest, options, default, prompt):
-        if options == 'use_method':
-            choices = default
-            default = default[0]
-            if self.model is not None:
-                files = glob.glob(os.path.join(self.install_path,
-                                               'configuration/jedi/interfaces',
-                                               self.model,
-                                               'observations/*.yaml'))
-                # Do not include obsop_name_map.yaml in the list of observations
-                files = list(filter(lambda a: 'obsop_name_map' not in a, files))
-                choices = [os.path.splitext(os.path.basename(x))[0] for x in files]
-        else:
-            choices = options
+        #if options == 'use_method':
+        #    choices = default
+        #    default = default[0]
+        #    if self.model is not None:
+        #        files = glob.glob(os.path.join(self.install_path,
+        #                                       'configuration/jedi/interfaces',
+        #                                       self.model,
+        #                                       'observations/*.yaml'))
+        #        # Do not include obsop_name_map.yaml in the list of observations
+        #        files = list(filter(lambda a: 'obsop_name_map' not in a, files))
+        #        choices = [os.path.splitext(os.path.basename(x))[0] for x in files]
+        #else:
+        #    choices = options
+
+        choices = options.copy()
+
+        if isinstance(default, list):
+            for i, c in enumerate(choices):
+                if c in default:
+                    choices[i] = Choice(c, checked=True)
+                else:
+                    choices[i] = Choice(c, checked=False)
+            default = None
 
         answer = prompt(quest, choices=choices, default=default,
                         validate=lambda text: True if text != []
@@ -203,7 +211,7 @@ class PrepConfigCli(PrepConfigBase):
         if changer:
             keys = self.exec_keys
             for k in keys:
-                if k not in list(self.dictionary.keys()):
+                if k not in list(self.current_dictionary.keys()):
                     non_exec_idx = keys.index(k)
                     keys.pop(non_exec_idx)
             # Show user key change options and retrieve new values
@@ -213,13 +221,14 @@ class PrepConfigCli(PrepConfigBase):
                                                  questionary.checkbox)
 
             for k in change_keys:
-                changed_dict = self.dictionary[k]
+                changed_dict = self.current_dictionary[k]
                 new_default_value = self.get_answer(k, changed_dict)
-                if k == self.exec_keys[-1]:
+                if k == keys[-1]:
                     changed_dict['default_value'] = new_default_value
                     return changed_dict
                 else:
                     self.update_experiment_dictionary(k, new_default_value)
-            return None
+        self.exec_keys = []
+        return None
 
 # --------------------------------------------------------------------------------------------------
