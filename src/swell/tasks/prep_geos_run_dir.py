@@ -35,8 +35,7 @@ class PrepGeosRunDir(taskBase):
 
         self.swell_static_files = self.config.swell_static_files()
         # TODO: exp. directory location requires better handling
-        self.geos_exp_dir = os.path.join(self.swell_static_files, 'jedi',
-                                         'interfaces', 'geos_ocean', 'model', 'geos',
+        self.geos_exp_dir = os.path.join(self.swell_static_files, 'geos', 'run_dirs',
                                          self.config.geos_experiment_directory())
         self.geos_source = self.config.existing_geos_gcm_source_path()
 
@@ -300,14 +299,12 @@ class PrepGeosRunDir(taskBase):
             self.logger.info(' OBTAINING EXTRA WOA13 files')
 
             rst_path = self.config.geos_restarts_directory()
-            src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
-                               'geos_ocean', 'model', 'geos', self.rst_path,
+            src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_ptemp_monthly.nc')
             self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
                                                                        'woa13_ptemp_monthly.nc']))
 
-            src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
-                               'geos_ocean', 'model', 'geos', self.rst_path,
+            src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_s_monthly.nc')
             self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
                                                                        'woa13_s_monthly.nc']))

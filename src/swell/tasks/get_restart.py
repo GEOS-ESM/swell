@@ -53,21 +53,18 @@ class GetRestart(taskBase):
         # -------------------------------------------------------------------
         self.logger.info('GEOS restarts are copied from a previous forecast')
 
-        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
-                           'geos_ocean', 'model',  'geos', rst_path, '*_rst')
+        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, '*_rst')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
             self.geos.copy_to_geosdir(filepath, self.geos.at_cycle_geosdir(filename))
 
-        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
-                           'geos_ocean', 'model', 'geos', rst_path, 'tile.bin')
+        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'tile.bin')
         self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
-        src = os.path.join(self.swell_static_files, 'jedi', 'interfaces',
-                           'geos_ocean', 'model', 'geos', rst_path, 'MOM.res*nc')
+        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'MOM.res*nc')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
