@@ -75,11 +75,28 @@ def prepare_config(method, suite, platform, override=None):
         with open(override, 'r') as override_open:
             override_dict = yaml.safe_load(override_open)
 
-        overridable_keys = ['experiment_id', 'experiment_root', 'existing_source_directory',
-                            'existing_build_directory']
-        for overridable_key in overridable_keys:
-            if overridable_key in override_dict:
-                experiment_dict[overridable_key] = override_dict[overridable_key]
+        # List of keys that are allowed to be overridden
+        overridable_keys = [
+            'experiment_id',
+            'experiment_root',
+            'existing_jedi_source_directory',
+            'existing_jedi_build_directory'
+            ]
+
+        # Loop over keys that user wants to override
+        for over_key, over_value in override_dict.items():
+
+            # Assert that the override choice is in fact overridable
+            logger.assert_abort(over_key in overridable_keys, f'The override key \'{over_key}\' ' +
+                                f'is not overridable. Overridable keys: ' +
+                                f'\'{overridable_keys}\'.')
+
+            # Assert that the override choice is in the experiment dictionary
+            logger.assert_abort(over_key in experiment_dict, f'The override key \'{over_key}\' ' +
+                                f'is not part of the experiment dictionary.')
+
+            # Overwrite the element in the experiment dictionary
+            experiment_dict[over_key] = over_value
 
     # Add comments to dictionary
     # --------------------------
