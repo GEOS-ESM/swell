@@ -50,7 +50,6 @@ def tq_dicts():
         question_dict = {}
         question_dict_str = ''
 
-    question_dict_in = question_dict.copy()
     question_dict_str_in = question_dict_str
 
     # Loop through task code and accumulate all lines containing a use of config
