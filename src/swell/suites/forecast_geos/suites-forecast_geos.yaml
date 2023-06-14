@@ -24,12 +24,6 @@ forecast_duration:
   prompt: What is the GEOS forecast duration?
   type: string
 
-# Run ahead limit for workflow
-runahead_limit:
-  default_value: 'P4'
-  prompt: Since this suite is cycling choose how many hours the workflow can run ahead?
-  type: string
-
 # Geos build system
 geos_build_method:
   default_value: use_existing

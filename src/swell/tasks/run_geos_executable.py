@@ -10,6 +10,7 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -47,7 +48,24 @@ class RunGeosExecutable(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
-        self.geos.run_executable(self.geos.at_cycle_geosdir(), np, geos_executable_path,
-                                 geos_modules_path, output_log_file)
+        self.run_executable(self.geos.at_cycle_geosdir(), np, geos_executable_path,
+                            geos_modules_path, output_log_file)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log):
+
+        # Run the GEOS executable
+        # -----------------------
+        self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
+
+        command = f'source {geos_modules} \n' + \
+            f'cd {cycle_dir} \n' + \
+            f'mpirun -np {np} {geos_executable} ' + \
+            f'--logging_config logging.yaml'
+
+        # Run command within bash environment
+        # -----------------------------------
+        run_track_log_subprocess(self.logger, ['/bin/bash', '-c', command], output_log=output_log)
 
 # --------------------------------------------------------------------------------------------------

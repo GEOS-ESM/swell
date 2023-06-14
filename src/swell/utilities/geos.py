@@ -416,21 +416,4 @@ class Geos():
         with open(filename, 'w') as out_file:
             out_file.write(modified_text)
 
-    # ----------------------------------------------------------------------------------------------
-
-    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log):
-
-        # Run the GEOS executable
-        # -----------------------
-        self.logger.info('Running '+geos_executable+' with '+str(np)+' processors.')
-
-        command = f'source {geos_modules} \n' + \
-            f'cd {cycle_dir} \n' + \
-            f'mpirun -np {np} {geos_executable} ' + \
-            f'--logging_config logging.yaml'
-
-        # Run command within bash environment
-        # -----------------------------------
-        run_track_log_subprocess(self.logger, ['/bin/bash', '-c', command], output_log=output_log)
-
 # --------------------------------------------------------------------------------------------------

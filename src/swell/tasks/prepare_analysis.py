@@ -43,7 +43,7 @@ class PrepareAnalysis(taskBase):
         # Current and restart time objects
         # --------------------------------
         self.current_cycle = os.path.basename(self.forecast_dir())
-        self.cc_dto = dt.strptime(self.current_cycle, datetime_formats['directory_format'])
+        self.cc_dto = self.cycle_time_dto()
         ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
 
         # GEOS restarts have seconds in their filename

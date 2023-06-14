@@ -36,7 +36,7 @@
             BuildGeosByLinking:fail? => BuildGeos
 
             # Need first set of restarts to run model
-            GetRestart => PrepGeosRunDir
+            GetGeosRestart => PrepGeosRunDir
 
             # Get first set of restarts
             BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
@@ -98,8 +98,8 @@
     [[RemoveGeosRunDir]]
         script = "swell_task RemoveGeosRunDir $config -d $datetime"
 
-    [[GetRestart]]
-        script = "swell_task GetRestart $config -d $datetime"
+    [[GetGeosRestart]]
+        script = "swell_task GetGeosRestart $config -d $datetime"
 
     [[MoveForecastRestart]]
         script = "swell_task MoveForecastRestart $config -d $datetime"

@@ -42,7 +42,7 @@ class PrepGeosRunDir(taskBase):
         self.logger.info('Preparing GEOS Forecast directory')
         self.logger.info('Some steps involve modifying input files and replacing')
         self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
-        self.logger.info('encouraged to validate if this changes ensued.')
+        self.logger.info('encouraged to validate file modifications.')
 
         # Forecast start time object, useful for temporal BC constraints
         # -------------------------------------------------------------

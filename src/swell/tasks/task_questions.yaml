@@ -244,7 +244,7 @@ geos_restarts_directory:
   - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
-  - GetRestart
+  - GetGeosRestart
   - PrepGeosRunDir
   type: string
 
@@ -416,7 +416,7 @@ swell_static_files:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - GetRestart
+  - GetGeosRestart
   - PrepGeosRunDir
   - StageJedi
   type: string

@@ -46,7 +46,7 @@ class LinkGeosOutput(taskBase):
         # Create GEOS history to SOCA background link
         # TODO: this will only work for 3Dvar
         # --------------------------------------------
-        cc_dto = dt.strptime(self.current_cycle, datetime_formats['directory_format'])
+        cc_dto = self.cycle_time_dto()
         src = self.geos.at_cycle_geosdir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
         dst = 'MOM6.res.' + self.current_cycle + '.nc'

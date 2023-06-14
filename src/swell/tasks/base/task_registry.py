@@ -19,7 +19,7 @@ valid_tasks = [
   'GetBackgroundGeosExperiment',
   'GetBackground',
   'GetObservations',
-  'GetRestart',
+  'GetGeosRestart',
   'LinkGeosOutput',
   'MoveDaRestart',
   'MoveForecastRestart',
