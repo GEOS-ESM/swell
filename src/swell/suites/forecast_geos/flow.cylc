@@ -55,7 +55,7 @@
             # MoveForecastRestart[-PT6H] => SaveRestart
 
             # Remove Run Directory
-            MoveForecastRestart => RemoveGeosRunDir
+            MoveForecastRestart => RemoveForecastDir
         """
         {% endfor %}
 
@@ -94,8 +94,8 @@
     [[PrepGeosRunDir]]
         script = "swell_task PrepGeosRunDir $config -d $datetime"
 
-    [[RemoveGeosRunDir]]
-        script = "swell_task RemoveGeosRunDir $config -d $datetime"
+    [[RemoveForecastDir]]
+        script = "swell_task RemoveForecastDir $config -d $datetime"
 
     [[GetGeosRestart]]
         script = "swell_task GetGeosRestart $config -d $datetime"

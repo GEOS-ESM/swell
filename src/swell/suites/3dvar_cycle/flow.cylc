@@ -108,11 +108,11 @@
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Remove Run Directory
-            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveGeosRunDir
-            MoveDaRestart-{{model_component}} => RemoveGeosRunDir
+            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
+            MoveDaRestart-{{model_component}} => RemoveForecastDir
 
             # Clean up large files
-            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveGeosRunDir =>
+            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
@@ -183,8 +183,8 @@
     [[PrepGeosRunDir]]
         script = "swell_task PrepGeosRunDir $config -d $datetime"
 
-    [[RemoveGeosRunDir]]
-        script = "swell_task RemoveGeosRunDir $config -d $datetime"
+    [[RemoveForecastDir]]
+        script = "swell_task RemoveForecastDir $config -d $datetime"
 
     [[GetGeosRestart]]
         script = "swell_task GetGeosRestart $config -d $datetime"
