@@ -70,32 +70,32 @@ class MoveDaRestart(taskBase):
         # ------------------------------------------------------
         self.logger.info('GEOS restarts are being moved to the next cycle dir')
 
-        src = self.geos.at_cycle_geosdir('*_checkpoint')
+        src = self.forecast_dir('*_checkpoint')
 
         # This alternate source format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
         # -------------------------------------------------------------------------
-        agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
+        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
             an_fcst_offset = self.config.analysis_forecast_window_offset()
             rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
 
             self.logger.info('Using _checkpoint restarts with timestamps')
-            src = self.geos.at_cycle_geosdir(rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
+            src = self.forecast_dir(rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
             self.geos.move_to_next(filepath, self.at_next_geosdir(filename))
 
-        self.geos.move_to_next(self.geos.at_cycle_geosdir('tile.bin'),
+        self.geos.move_to_next(self.forecast_dir('tile.bin'),
                                self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could/should be forced to be a single file (MOM_input option)
         # so wildcard character can be omitted.
         # -----------------------------------------------------------------
-        src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
+        src = self.forecast_dir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)

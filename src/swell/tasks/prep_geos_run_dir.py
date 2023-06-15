@@ -80,7 +80,6 @@ class PrepGeosRunDir(taskBase):
         if 'RECORD_FREQUENCY' in self.agcm_dict:
             self.rewrite_agcm(self.agcm_dict, self.forecast_dir('AGCM.rc'))
 
-
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------
         self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))

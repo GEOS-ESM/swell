@@ -22,7 +22,7 @@ class RunGeosExecutable(taskBase):
         # Obtain processor information from AGCM.rc
         # -----------------------------------------
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
-        np = eval(agcm_dict['NX'] + '*' +agcm_dict['NY'])
+        np = eval(agcm_dict['NX'] + '*' + agcm_dict['NY'])
 
         # Create RESTART folder
         # ---------------------

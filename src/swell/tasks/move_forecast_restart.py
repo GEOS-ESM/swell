@@ -67,20 +67,19 @@ class MoveForecastRestart(taskBase):
         self.logger.info('GEOS restarts are being moved to the next cycle dir')
         self.logger.info('Finding _checkpoint restarts')
 
-        src = self.geos.at_cycle_geosdir('*_checkpoint')
+        src = self.forecast_dir('*_checkpoint')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
             self.geos.move_to_next(filepath, self.at_next_geosdir(filename))
 
-        self.geos.move_to_next(self.geos.at_cycle_geosdir('tile.bin'),
-                               self.at_next_geosdir('tile.bin'))
+        self.geos.move_to_next(self.forecast_dir('tile.bin'), self.at_next_geosdir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)
         # so wildcard character can be omitted.
         # -----------------------------------------------------------------
-        src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res*nc'])
+        src = self.forecast_dir(['RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
