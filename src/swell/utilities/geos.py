@@ -96,26 +96,6 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def copy_to_geosdir(self, src_dir, dst_dir=None):
-
-        # Destination is always (time dependent) cycle_dir if None
-        # --------------------------------------------------------
-        if dst_dir is None:
-            dst_dir = self.forecast_dir
-
-        try:
-            if not os.path.isfile(src_dir):
-                self.logger.info(' Copying files from: '+src_dir)
-                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
-            else:
-                self.logger.info(' Copying file: '+src_dir)
-                shutil.copy(src_dir, dst_dir)
-
-        except Exception:
-            self.logger.abort('Copying failed, see if source files exists')
-
-    # ----------------------------------------------------------------------------------------------
-
     def exec_python(self, script_src, script, input=''):
 
         # Source g5_modules and execute py scripts in a new shell process then
@@ -209,17 +189,6 @@ class Geos():
             os.symlink(src, os.path.join(dst_dir, dst))
         except Exception:
             self.logger.abort('Linking failed, see if source files exist')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def move_to_next(self, src_dir, dst_dir):
-
-        try:
-            self.logger.info(' Moving file(s) from: '+src_dir)
-            shutil.move(src_dir, dst_dir)
-
-        except Exception:
-            self.logger.abort('Moving failed, see if source files exist')
 
     # ----------------------------------------------------------------------------------------------
 

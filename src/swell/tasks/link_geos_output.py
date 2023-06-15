@@ -34,7 +34,7 @@ class LinkGeosOutput(taskBase):
         src, dst = self.link_restart()
 
         if os.path.exists(src):
-            self.geos.linker(src, dst, dst_dir=self.cycle_dir())
+            self.geos.linker(src, dst, self.cycle_dir())
         else:
             self.logger.abort('Source file does not exist. JEDI will fail ' +
                               'without a proper background file.')

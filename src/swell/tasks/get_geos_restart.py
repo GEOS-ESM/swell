@@ -7,11 +7,11 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import shutil
 import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.file_system_operations import copy_to_dst_dir
 
 from datetime import datetime as dt
 
@@ -54,10 +54,10 @@ class GetGeosRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.copy_to_geosdir(filepath, self.forecast_dir(filename))
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(filename))
 
         src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'tile.bin')
-        self.geos.copy_to_geosdir(src, self.forecast_dir('tile.bin'))
+        copy_to_dst_dir(self.logger, src, self.forecast_dir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
@@ -65,6 +65,6 @@ class GetGeosRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.copy_to_geosdir(filepath, self.forecast_dir(['INPUT', filename]))
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------

@@ -15,6 +15,7 @@ from datetime import datetime as dt
 import isodate
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.file_system_operations import copy_to_dst_dir
 
 # --------------------------------------------------------------------------------------------------
 
@@ -185,7 +186,7 @@ class PrepGeosRunDir(taskBase):
 
         for filepath in list(glob.glob(src_dir)):
             filename = os.path.basename(filepath)
-            self.geos.copy_to_geosdir(filepath)
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir())
 
             # Replace source according to number of atm. vertical layers
             # ----------------------------------------------------------
@@ -290,8 +291,8 @@ class PrepGeosRunDir(taskBase):
 
         # Fetch more resolution dependent files
         # -------------------------------------
-        self.geos.copy_to_geosdir(os.path.join(geos_obcsdir, 'INPUT'),
-                                  self.forecast_dir('INPUT'))
+        copy_to_dst_dir(self.logger, os.path.join(geos_obcsdir, 'INPUT'),
+                        self.forecast_dir('INPUT'))
 
         # TODO: Temporary fix for some input files in gcm_run.j
         # -----------------------------------------------------
@@ -301,13 +302,13 @@ class PrepGeosRunDir(taskBase):
             rst_path = self.config.geos_restarts_directory()
             src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_ptemp_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.forecast_dir(['INPUT',
-                                                              'woa13_ptemp_monthly.nc']))
+            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
+                                                                 'woa13_ptemp_monthly.nc']))
 
             src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_s_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.forecast_dir(['INPUT',
-                                                              'woa13_s_monthly.nc']))
+            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
+                                                                 'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -355,7 +356,7 @@ class PrepGeosRunDir(taskBase):
         src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:
-            self.geos.copy_to_geosdir(src_dir)
+            copy_to_dst_dir(self.logger, src_dir, self.forecast_dir())
 
     # ----------------------------------------------------------------------------------------------
 

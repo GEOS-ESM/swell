@@ -11,6 +11,7 @@ import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.file_system_operations import move_files
 from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
@@ -70,9 +71,9 @@ class MoveForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            self.geos.move_to_next(filepath, self.at_next_fcst_dir(filename))
+            move_files(self.logger, filepath, self.at_next_fcst_dir(filename))
 
-        self.geos.move_to_next(self.forecast_dir('tile.bin'), self.at_next_fcst_dir('tile.bin'))
+        move_files(self.logger, self.forecast_dir('tile.bin'), self.at_next_fcst_dir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)
@@ -82,6 +83,6 @@ class MoveForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.move_to_next(filepath, self.at_next_fcst_dir(['INPUT', filename]))
+            move_files(self.logger, filepath, self.at_next_fcst_dir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------
