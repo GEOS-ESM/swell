@@ -26,27 +26,26 @@ class MoveForecastRestart(taskBase):
         Moving restart files (i.e., _checkpoint) to the next cycle geosdir.
         """
 
-        self.logger.info('Moving GEOS restarts for the next simulation cycle')
+        self.logger.info('Moving GEOS restarts for the next forecast cycle')
 
         # Next cycle folder name
         # -----------------------
         self.forecast_duration = self.config.forecast_duration()
-        next_cycle_dir = self.geos.adjacent_cycle(self.forecast_duration)
-        self.next_geosdir = os.path.join(next_cycle_dir, 'geosdir')
+        self.next_forecast_dir = self.geos.adjacent_cycle(self.forecast_duration)
 
         # Create cycle_dir and INPUT
         # ----------------------------
-        if not os.path.exists(self.at_next_geosdir('INPUT')):
-            os.makedirs(self.at_next_geosdir('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.at_next_fcst_dir('INPUT')):
+            os.makedirs(self.at_next_fcst_dir('INPUT'), 0o755, exist_ok=True)
 
         # Move and rename files
         # ----------------------
         self.cycling_restarts()
-        self.geos.rename_checkpoints(self.next_geosdir)
+        self.geos.rename_checkpoints(self.next_forecast_dir)
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_next_geosdir(self, paths):
+    def at_next_fcst_dir(self, paths):
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -55,7 +54,7 @@ class MoveForecastRestart(taskBase):
 
         # Combining list of paths with cycle dir for script brevity
         # ---------------------------------------------------------
-        full_path = os.path.join(self.next_geosdir, *paths)
+        full_path = os.path.join(self.next_forecast_dir, *paths)
         return full_path
 
     # ----------------------------------------------------------------------------------------------
@@ -64,16 +63,16 @@ class MoveForecastRestart(taskBase):
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
-        self.logger.info('GEOS restarts are being moved to the next cycle dir')
+        self.logger.info('GEOS restarts are being moved to the next forecast dir')
         self.logger.info('Finding _checkpoint restarts')
 
         src = self.forecast_dir('*_checkpoint')
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            self.geos.move_to_next(filepath, self.at_next_geosdir(filename))
+            self.geos.move_to_next(filepath, self.at_next_fcst_dir(filename))
 
-        self.geos.move_to_next(self.forecast_dir('tile.bin'), self.at_next_geosdir('tile.bin'))
+        self.geos.move_to_next(self.forecast_dir('tile.bin'), self.at_next_fcst_dir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)
@@ -83,6 +82,6 @@ class MoveForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.move_to_next(filepath, self.at_next_geosdir(['INPUT', filename]))
+            self.geos.move_to_next(filepath, self.at_next_fcst_dir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------

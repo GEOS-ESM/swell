@@ -61,7 +61,7 @@ class Geos():
 
         # Create new file path with modified basename
         # --------------------------------------------
-        adj_cycle_dir = os.path.join(os.path.dirname(self.forecast_dir), modified_dt_str)
+        adj_cycle_dir = self.forecast_dir.replace(dt_str, modified_dt_str)
 
         return adj_cycle_dir
 
