@@ -170,13 +170,23 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self):
+    def forecast_dir(self, paths=[]):
 
         # Combine datetime string (directory format) with the model
+        # ------------------------------------------------------
         forecast_dir = os.path.join(self.experiment_path(), 'run',
-                                    self.__datetime__.string_directory())
+                                    self.__datetime__.string_directory(), 'forecast')
 
-        # Return
+        if len(paths) > 0:
+            # If paths (which should be a list) is not empty, combine with forecast_dir
+            # -------------------------------------------------------------------------
+            if isinstance(paths, str):
+                paths = [paths]
+
+            # Combining list of paths with forecast dir for code brevity
+            # ---------------------------------------------------------
+            forecast_dir = os.path.join(forecast_dir, *paths)
+
         return forecast_dir
 
     # ----------------------------------------------------------------------------------------------

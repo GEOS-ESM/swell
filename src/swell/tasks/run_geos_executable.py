@@ -19,18 +19,19 @@ class RunGeosExecutable(taskBase):
 
     def execute(self):
 
-        # Total number of processors
-        # ----------------------------
-        np = self.config.total_processors()
+        # Obtain processor information from AGCM.rc
+        # -----------------------------------------
+        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
+        np = eval(agcm_dict['NX'] + '*' +agcm_dict['NY'])
 
         # Create RESTART folder
         # ---------------------
-        if not os.path.exists(self.geos.at_cycle_geosdir('RESTART')):
-            os.mkdir(self.geos.at_cycle_geosdir('RESTART'))
+        if not os.path.exists(self.forecast_dir('RESTART')):
+            os.mkdir(self.forecast_dir('RESTART'))
 
         # Output log file
         # ---------------
-        output_log_file = self.geos.at_cycle_geosdir('geos_out.log')
+        output_log_file = self.forecast_dir('geos_out.log')
 
         # Path to the GEOS executable
         # ---------------
@@ -48,7 +49,7 @@ class RunGeosExecutable(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
-        self.run_executable(self.geos.at_cycle_geosdir(), np, geos_executable_path,
+        self.run_executable(self.forecast_dir(), np, geos_executable_path,
                             geos_modules_path, output_log_file)
 
     # ----------------------------------------------------------------------------------------------

@@ -61,16 +61,16 @@ class PrepareAnalysis(taskBase):
 
         # Generic rst file format
         # ------------------------
-        f_rst = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+        f_rst = self.forecast_dir(['RESTART', 'MOM.res.nc'])
 
         # This alternate restart format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
         # -------------------------------------------------------------------------
-        agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
+        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
-            f_rst = self.geos.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-                                                + seconds + '.nc'])
+            f_rst = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+                                       + seconds + '.nc'])
 
         self.soca_ana = self.config.analysis_variables()
         self.replace_ocn(f_rst)
@@ -131,6 +131,6 @@ class PrepareAnalysis(taskBase):
         ds_ana.close()
         ds_rst.close()
 
-        shutil.move(f_rst, self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc']))
+        shutil.move(f_rst, self.forecast_dir(['RESTART', 'MOM.res.nc']))
 
 # --------------------------------------------------------------------------------------------------

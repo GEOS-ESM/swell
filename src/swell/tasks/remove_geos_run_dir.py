@@ -21,7 +21,7 @@ class RemoveGeosRunDir(taskBase):
 
     def execute(self):
 
-        self.logger.info(f"Removing old GEOS directory: {self.geos.at_cycle_geosdir()}")
-        shutil.rmtree(self.geos.at_cycle_geosdir())
+        self.logger.info(f"Removing old GEOS directory: {self.forecast_dir()}")
+        shutil.rmtree(self.forecast_dir())
 
 # --------------------------------------------------------------------------------------------------

@@ -45,7 +45,7 @@ class Geos():
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
-        dt_str = os.path.basename(self.forecast_dir)
+        dt_str = os.path.basename(os.path.dirname(self.forecast_dir))
         dt_obj = datetime.strptime(dt_str, datetime_formats['directory_format'])
 
         # Modify datetime by using date offset
@@ -64,20 +64,6 @@ class Geos():
         adj_cycle_dir = os.path.join(os.path.dirname(self.forecast_dir), modified_dt_str)
 
         return adj_cycle_dir
-
-    # ----------------------------------------------------------------------------------------------
-
-    def at_cycle_geosdir(self, paths=[]):
-
-        # Ensure what we have is a list (paths should be a list)
-        # ------------------------------------------------------
-        if isinstance(paths, str):
-            paths = [paths]
-
-        # Combining list of paths with cycle dir for script brevity
-        # ---------------------------------------------------------
-        full_path = os.path.join(self.forecast_dir, 'geosdir', *paths)
-        return full_path
 
     # ----------------------------------------------------------------------------------------------
 
@@ -102,7 +88,7 @@ class Geos():
         }
 
         for key, value in chem_files.items():
-            fname = self.at_cycle_geosdir(value)
+            fname = os.path.join(self.forecast_dir, value)
 
             if not rcdict[key] and os.path.isfile(fname):
                 self.logger.info(' Renaming file: '+fname)
@@ -115,7 +101,7 @@ class Geos():
         # Destination is always (time dependent) cycle_dir if None
         # --------------------------------------------------------
         if dst_dir is None:
-            dst_dir = self.at_cycle_geosdir()
+            dst_dir = self.forecast_dir
 
         try:
             if not os.path.isfile(src_dir):
@@ -137,7 +123,7 @@ class Geos():
         # Define the command to source the Bash script and run the Python command
         # -----------------------------------------------------------------------
         command = f'source {script_src}/g5_modules.sh \n' + \
-            f'cd {self.at_cycle_geosdir()} \n' + \
+            f'cd {self.forecast_dir} \n' + \
             f'{script_src}/{script} {input}'
 
         # Containerized run of the GEOS build steps
@@ -150,7 +136,7 @@ class Geos():
 
         # Obtain time information from any of the rst files listed by glob
         # ----------------------------------------------------------------
-        src = self.at_cycle_geosdir('*_rst')
+        src = os.path.join(self.forecast_dir, '*_rst')
 
         # Open any _rst file in cycle dir to read time and units
         # ------------------------------------------------------
@@ -203,7 +189,7 @@ class Geos():
         # ------------------------------
 
         if dst_dir is None:
-            dst_dir = self.at_cycle_geosdir()
+            dst_dir = self.forecast_dir
 
         dst = os.path.basename(dst)
 
@@ -329,7 +315,7 @@ class Geos():
         # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
         # -------------------------------------------------------------
 
-        nml1 = f90nml.read(self.at_cycle_geosdir('input.nml'))
+        nml1 = f90nml.read(os.path.join(self.forecast_dir, 'input.nml'))
 
         if not cold_restart:
             self.logger.info('Hot start, Swell will expect rst/checkpoint files')
@@ -338,7 +324,7 @@ class Geos():
             # ----------------------------------------------
             nml1['mom_input_nml']['input_filename'] = 'r'
 
-        nml2 = f90nml.read(self.at_cycle_geosdir('fvcore_layout.rc'))
+        nml2 = f90nml.read(os.path.join(self.forecast_dir, 'fvcore_layout.rc'))
 
         # Combine the dictionaries and write the new input.nml
         # ---------------------------------------------------
@@ -346,7 +332,7 @@ class Geos():
 
         self.logger.info('Combining input.nml and fvcore_layout.rc')
 
-        with open(self.at_cycle_geosdir('input.nml'), 'w') as f:
+        with open(os.path.join(self.forecast_dir, 'input.nml'), 'w') as f:
             f90nml.write(nml_comb, f)
 
     # ----------------------------------------------------------------------------------------------

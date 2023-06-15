@@ -59,10 +59,10 @@ class PrepGeosRunDir(taskBase):
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
-        self.cap_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('CAP.rc'))
-        self.cap_dict = self.rewrite_cap(self.cap_dict, self.geos.at_cycle_geosdir('CAP.rc'))
+        self.cap_dict = self.geos.parse_rc(self.forecast_dir('CAP.rc'))
+        self.cap_dict = self.rewrite_cap(self.cap_dict, self.forecast_dir('CAP.rc'))
 
-        self.agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
+        self.agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         # This ensures a bool entry for USE_EXTDATA2G exists
         # --------------------------------------------------
@@ -78,11 +78,12 @@ class PrepGeosRunDir(taskBase):
         # TODO: This needs rethinking for forecast_geos vs cycle cases
         # ------------------------------------------------------------
         if 'RECORD_FREQUENCY' in self.agcm_dict:
-            self.rewrite_agcm(self.agcm_dict, self.geos.at_cycle_geosdir('AGCM.rc'))
+            self.rewrite_agcm(self.agcm_dict, self.forecast_dir('AGCM.rc'))
+
 
         # Parse gcm_run.j and get a dictionary based upon setenv
         # ------------------------------------------------------
-        self.gcm_dict = self.geos.parse_gcmrun(self.geos.at_cycle_geosdir('gcm_run.j'))
+        self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))
 
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
@@ -92,7 +93,7 @@ class PrepGeosRunDir(taskBase):
 
         # Rename GEOS Chem files
         # ----------------------
-        chem_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('GEOS_ChemGridComp.rc'))
+        chem_dict = self.geos.parse_rc(self.forecast_dir('GEOS_ChemGridComp.rc'))
         self.geos.chem_rename(chem_dict)
 
         # Rename settings according to .rc switches
@@ -115,7 +116,7 @@ class PrepGeosRunDir(taskBase):
 
         # Create cap_restart
         # ------------------
-        with open(self.geos.at_cycle_geosdir('cap_restart'), 'w') as file:
+        with open(self.forecast_dir('cap_restart'), 'w') as file:
             file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
 
         # Run bundleParser
@@ -132,8 +133,8 @@ class PrepGeosRunDir(taskBase):
 
         if not self.cap_dict['USE_EXTDATA2G']:
             self.logger.info('Generating ExtData.rc')
-            rc_paths = self.geos.at_cycle_geosdir('*_ExtData.rc')
-            with open(self.geos.at_cycle_geosdir('ExtData.rc'), 'w') as extdata:
+            rc_paths = self.forecast_dir('*_ExtData.rc')
+            with open(self.forecast_dir('ExtData.rc'), 'w') as extdata:
                 for filepath in list(glob.glob(rc_paths)):
                     with open(filepath, 'r') as file:
                         extdata.write(file.read())
@@ -149,12 +150,12 @@ class PrepGeosRunDir(taskBase):
                 pattern = r'(qfed2.emis_.*).006.'
                 replacement = r'\g<1>.061.'
                 self.logger.info('Switching to MODIS v6.1 (OPS_EMISSIONS)')
-                self.geos.resub(self.geos.at_cycle_geosdir('ExtData.rc'), pattern, replacement)
+                self.geos.resub(self.forecast_dir('ExtData.rc'), pattern, replacement)
         else:
             self.logger.info('Creating extdata.yaml')
             self.geos.exec_python(self.geosbin, 'construct_extdata_yaml_list.py',
                                   './GEOS_ChemGridComp.rc')
-            open(self.geos.at_cycle_geosdir('ExtData.rc'), 'w').close()
+            open(self.forecast_dir('ExtData.rc'), 'w').close()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -177,11 +178,11 @@ class PrepGeosRunDir(taskBase):
         d1 = dt.strptime('01032000', '%d%m%Y')
         AGCM_LM = self.agcm_dict['AGCM_LM']
 
-        src_dir = self.geos.at_cycle_geosdir(['AMIP', '*'])
+        src_dir = self.forecast_dir(['AMIP', '*'])
 
         if not self.cap_dict['USE_EXTDATA2G']:
             if self.fc_dto < d1:
-                src_dir = self.geos.at_cycle_geosdir(['AMIP.20C', '*'])
+                src_dir = self.forecast_dir(['AMIP.20C', '*'])
 
         for filepath in list(glob.glob(src_dir)):
             filename = os.path.basename(filepath)
@@ -192,8 +193,8 @@ class PrepGeosRunDir(taskBase):
             if AGCM_LM != '72':
                 self.logger.info(f"Atm. vertical layers mismatch: {AGCM_LM} vs. 72")
                 self.logger.info(' Modifying AMIP file ' + filename)
-                self.geos.resub(self.geos.at_cycle_geosdir(filename), 'L72', 'L' + str(AGCM_LM))
-                self.geos.resub(self.geos.at_cycle_geosdir(filename), 'z72', 'z' + str(AGCM_LM))
+                self.geos.resub(self.forecast_dir(filename), 'L72', 'L' + str(AGCM_LM))
+                self.geos.resub(self.forecast_dir(filename), 'z72', 'z' + str(AGCM_LM))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -256,7 +257,7 @@ class PrepGeosRunDir(taskBase):
             os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]):
                 'species.data',
             os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
-            os.path.join(geos_chmdir, '*'): self.geos.at_cycle_geosdir('ExtData'),
+            os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
             os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
@@ -291,7 +292,7 @@ class PrepGeosRunDir(taskBase):
         # Fetch more resolution dependent files
         # -------------------------------------
         self.geos.copy_to_geosdir(os.path.join(geos_obcsdir, 'INPUT'),
-                                  self.geos.at_cycle_geosdir('INPUT'))
+                                  self.forecast_dir('INPUT'))
 
         # TODO: Temporary fix for some input files in gcm_run.j
         # -----------------------------------------------------
@@ -301,13 +302,13 @@ class PrepGeosRunDir(taskBase):
             rst_path = self.config.geos_restarts_directory()
             src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_ptemp_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
-                                                                       'woa13_ptemp_monthly.nc']))
+            self.geos.copy_to_geosdir(src, self.forecast_dir(['INPUT',
+                                                              'woa13_ptemp_monthly.nc']))
 
             src = os.path.join(self.swell_static_files, 'geos', 'restarts', self.rst_path,
                                'woa13_s_monthly.nc')
-            self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir(['INPUT',
-                                                                       'woa13_s_monthly.nc']))
+            self.geos.copy_to_geosdir(src, self.forecast_dir(['INPUT',
+                                                              'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -402,12 +403,12 @@ class PrepGeosRunDir(taskBase):
             # --------------------------------------------
             pattern = r'^(WSUB_CLIM.*)ExtData.*'
             replacement = r'\g<1>/dev/null'
-            self.geos.resub(self.geos.at_cycle_geosdir('WSUB_ExtData.rc'), pattern, replacement)
+            self.geos.resub(self.forecast_dir('WSUB_ExtData.rc'), pattern, replacement)
 
         else:
             self.logger.info('Modifying WSUB_ExtData.yaml')
 
-            with open(self.geos.at_cycle_geosdir('WSUB_ExtData.yaml'), 'r') as f:
+            with open(self.forecast_dir('WSUB_ExtData.yaml'), 'r') as f:
                 wsub = yaml.safe_load(f)
 
             # Modifying one particular value
@@ -415,7 +416,7 @@ class PrepGeosRunDir(taskBase):
             wsub['Exports']['WSUB_CLIM']['collection'] = '/dev/null'
 
             # Write the updated YAML back to the file
-            with open(self.geos.at_cycle_geosdir('WSUB_ExtData.yaml'), 'w') as f:
+            with open(self.forecast_dir('WSUB_ExtData.yaml'), 'w') as f:
                 yaml.dump(wsub, f, sort_keys=False)
 
     # ----------------------------------------------------------------------------------------------

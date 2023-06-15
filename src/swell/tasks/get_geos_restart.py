@@ -28,10 +28,10 @@ class GetGeosRestart(taskBase):
 
         self.swell_static_files = self.config.swell_static_files()
 
-        # Create cycle_dir and INPUT
+        # Create forecast_dir and INPUT
         # ----------------------------
-        if not os.path.exists(self.geos.at_cycle_geosdir('INPUT')):
-            os.makedirs(self.geos.at_cycle_geosdir('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.forecast_dir('INPUT')):
+            os.makedirs(self.forecast_dir('INPUT'), 0o755, exist_ok=True)
 
         # *_rst files folder
         # ------------------
@@ -46,10 +46,7 @@ class GetGeosRestart(taskBase):
     def initial_restarts(self, rst_path):
 
         # GEOS forecast checkpoint files are created in advance
-        # ----------------------------------------------------
         # TODO: check tile of restarts here for compatibility?
-        # TODO: Users might choose to point to a random local directory, where
-        # to keep restart files?
         # -------------------------------------------------------------------
         self.logger.info('GEOS restarts are copied from a previous forecast')
 
@@ -57,10 +54,10 @@ class GetGeosRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.copy_to_geosdir(filepath, self.geos.at_cycle_geosdir(filename))
+            self.geos.copy_to_geosdir(filepath, self.forecast_dir(filename))
 
         src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'tile.bin')
-        self.geos.copy_to_geosdir(src, self.geos.at_cycle_geosdir('tile.bin'))
+        self.geos.copy_to_geosdir(src, self.forecast_dir('tile.bin'))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
@@ -68,6 +65,6 @@ class GetGeosRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            self.geos.copy_to_geosdir(filepath, self.geos.at_cycle_geosdir(['INPUT', filename]))
+            self.geos.copy_to_geosdir(filepath, self.forecast_dir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------

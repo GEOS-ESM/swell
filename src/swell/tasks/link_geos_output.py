@@ -30,7 +30,7 @@ class LinkGeosOutput(taskBase):
         Options could be offered in yamls, for instance history vs. restart.
         """
 
-        self.current_cycle = os.path.basename(self.forecast_dir())
+        self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
         src, dst = self.link_restart()
 
         if os.path.exists(src):
@@ -47,7 +47,7 @@ class LinkGeosOutput(taskBase):
         # TODO: this will only work for 3Dvar
         # --------------------------------------------
         cc_dto = self.cycle_time_dto()
-        src = self.geos.at_cycle_geosdir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        src = self.forecast_dir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
         dst = 'MOM6.res.' + self.current_cycle + '.nc'
 
@@ -66,16 +66,16 @@ class LinkGeosOutput(taskBase):
 
         # Generic rst file source format for SOCA
         # ---------------------------------------
-        src = self.geos.at_cycle_geosdir(['RESTART', 'MOM.res.nc'])
+        src = self.forecast_dir(['RESTART', 'MOM.res.nc'])
 
         # This alternate source format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
         # -------------------------------------------------------------------------
-        agcm_dict = self.geos.parse_rc(self.geos.at_cycle_geosdir('AGCM.rc'))
+        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
-            src = self.geos.at_cycle_geosdir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-                                              + seconds + '.nc'])
+            src = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+                                     + seconds + '.nc'])
 
         dst = 'MOM6.res.' + self.current_cycle + '.nc'
 
