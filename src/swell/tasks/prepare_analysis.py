@@ -18,15 +18,6 @@ from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
-# TODO: This could be restructured according to model type (MOM6, CICE etc.)
-# --------------------------------------------------------------------------
-SOCA_dict = {
-    'hocn': 'h',
-    'socn': 'Salt',
-    'ssh': 'ave_ssh',
-    'tocn': 'Temp',
-}
-
 
 class PrepareAnalysis(taskBase):
 
@@ -39,6 +30,12 @@ class PrepareAnalysis(taskBase):
         """
 
         self.logger.info('Preparing analysis and updating restarts')
+
+        # This will change with different model types
+        # --------------------------------
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        model_component_meta = self.jedi_rendering.render_interface_meta()
+        self.SOCA_dict = model_component_meta['variables']
 
         # Current and restart time objects
         # --------------------------------
@@ -123,7 +120,7 @@ class PrepareAnalysis(taskBase):
         ds_ana.renameDimension('zaxis_1', 'Layer')
 
         for soca_var in self.soca_ana:
-            var = SOCA_dict[soca_var]
+            var = self.SOCA_dict[soca_var]
             self.logger.info(f'Updating {var} in restart')
 
             ds_rst.variables[var][:] = ds_ana.variables[var][:]

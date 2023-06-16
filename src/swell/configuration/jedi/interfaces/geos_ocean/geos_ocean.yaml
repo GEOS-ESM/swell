@@ -7,3 +7,8 @@ executables:
   variational4D: soca_var.x
   variational4DEnsVar: soca_var.x
   bump: soca_staticbinit.x
+variables:
+  hocn: h
+  socn: Salt
+  ssh: ave_ssh
+  tocn: Temp

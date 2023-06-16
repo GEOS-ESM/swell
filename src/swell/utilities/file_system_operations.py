@@ -12,10 +12,11 @@ import shutil
 
 # --------------------------------------------------------------------------------------------------
 
+
 def copy_to_dst_dir(logger, src, dst_dir):
 
-    # Source could be a directory or single file which requires different handling
-    # ----------------------------------------------------------------------------
+    """ Source could be a directory or single file which necesitates different handling
+    """
 
     try:
         if not os.path.isfile(src):
@@ -29,6 +30,7 @@ def copy_to_dst_dir(logger, src, dst_dir):
         logger.abort('Copying failed, see if source files exists')
 
 # --------------------------------------------------------------------------------------------------
+
 
 def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, target_path):
     """For a list of source paths check for the existence of the source paths and for files
@@ -79,6 +81,7 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
 
 # --------------------------------------------------------------------------------------------------
 
+
 def link_file_existing_link_ok(logger, source_path_file, target_path_file):
 
     """Create a symbolic link from a source location to a target location. If a symbolic link
@@ -107,6 +110,7 @@ def link_file_existing_link_ok(logger, source_path_file, target_path_file):
     os.symlink(source_path_file, target_path_file)
 
     # ----------------------------------------------------------------------------------------------
+
 
 def move_files(logger, src_dir, dst_dir):
 
