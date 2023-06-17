@@ -1,0 +1,9 @@
+default:
+  linear obs operator test:
+    coef TL: 0.1
+    tolerance TL: 1.0e-11
+    tolerance AD: 1.0e-13
+  tolerance: 1.0e-06
+
+aircraft:
+  rms ref: 6.736593278810636

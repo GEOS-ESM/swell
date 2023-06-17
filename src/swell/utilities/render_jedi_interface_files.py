@@ -59,6 +59,7 @@ class JediConfigRendering():
             'vertical_resolution',
             'window_begin',
             'window_begin_iso',
+            'window_end_iso',
             'window_length',
         ]
 

@@ -204,6 +204,8 @@ obs filters:
       options:
         variable: airTemperature
         inflation factor: 8.0
+        surface_obs: false
+        adjusted_error_name: GsiAdjustObsError
   defer to post: true
 
 # assign TempObsErrorData/airTemperature  <--- ObsErrorData before changing its Min and Max
@@ -497,6 +499,8 @@ obs filters:
       options:
         variable: windEastward
         inflation factor: 4.0
+        surface_obs: false
+        adjusted_error_name: GsiAdjustObsError
   defer to post: true
 
 # Error inflation based on pressure check
@@ -510,6 +514,8 @@ obs filters:
       options:
         variable: windNorthward
         inflation factor: 4.0
+        surface_obs: false
+        adjusted_error_name: GsiAdjustObsError
   defer to post: true
 
   # Gross Check

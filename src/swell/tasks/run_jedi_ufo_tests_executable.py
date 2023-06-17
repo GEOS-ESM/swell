@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import os
 import yaml
 
@@ -18,7 +19,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediHofxExecutable(taskBase):
+class RunJediTestObsFiltersExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ class RunJediHofxExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'test_obs_filters'
+        jedi_application = 'ufo_tests'
 
         # Parse configuration
         # -------------------
@@ -51,14 +52,6 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        # Jedi configuration file
-        # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
-
-        # Output log file
-        # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
-
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
@@ -70,6 +63,11 @@ class RunJediHofxExecutable(taskBase):
         # Make modifications needed for testing
         # -------------------------------------
         conventional_types = ['aircraft']
+
+        # Open the ufo_tests config file
+        # ------------------------------
+        ufo_tests_dict = self.jedi_rendering.render_obs_file(f'ufo_tests')
+        ufo_tests_default = ufo_tests_dict['default']
 
         # Loop over the observations
         for index in range(len(observations)):
@@ -88,7 +86,7 @@ class RunJediHofxExecutable(taskBase):
 
             # For conventional add the GeoVaLs flip
             if observations[index] in conventional_types:
-                geo_va_ls_dict['levels_are_top_down'] = True
+                geo_va_ls_dict['levels_are_top_down'] = False
 
             jedi_config_dict['observations'][index]['geovals'] = geo_va_ls_dict
 
@@ -97,20 +95,63 @@ class RunJediHofxExecutable(taskBase):
             dummy_search = [{'name': 'Dummy/Group/Var'}]
             jedi_config_dict['observations'][index]['expectVariablesNotToExist'] = dummy_search
 
-        # Write the expanded dictionary to YAML file
-        # ------------------------------------------
-        with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+        # Make a copy of the jedi config dictionary
+        jedi_config_dict_operator_test = copy.deepcopy(jedi_config_dict)
+        jedi_config_dict_filter_test = copy.deepcopy(jedi_config_dict)
 
-        # Jedi executable name
-        # --------------------
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            'test_ObsFilters.x')
+        # Add the ufo_tests dictionary to the jedi config dictionary
+        for index in range(len(observations)):
 
-        # Run the JEDI executable
-        # -----------------------
-        run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
-                       output_log_file)
-        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            # Get the test values for this observation
+            ufo_tests_obs = ufo_tests[observations[index]]
+
+            # Overwrite the defaults with the values in ufo_tests_obs
+            ufo_tests_obs_dict = {**ufo_tests_default, **ufo_tests_obs}
+
+            # Add the ufo_tests_obs_dict to the observation dictionary
+            jedi_config_dict_operator_test['observations'][index].update(ufo_tests_obs_dict)
+
+            # If the observation has filters remove them
+            if 'filters' in jedi_config_dict_operator_test['observations'][index]:
+                del jedi_config_dict_operator_test['observations'][index]['filters']
+
+        # Tests to run
+        # ------------
+        tests = ['test_ObsFilters', 'test_ObsOperator', 'test_ObsOperatorTLAD']
+
+        # Loop over the tests
+        # -------------------
+        for test in tests:
+
+            # Executable dictionary
+            if test == 'test_ObsFilters':
+                jedi_config_dict = jedi_config_dict_operator_test
+            else:
+                jedi_config_dict = jedi_config_dict_filter_test
+
+            # Jedi configuration file
+            # -----------------------
+            jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{test}_config.yaml')
+
+            # Write the expanded dictionary to YAML file
+            # ------------------------------------------
+            with open(jedi_config_file, 'w') as jedi_config_file_open:
+                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+
+            # Output log file
+            # ---------------
+            output_log_file = os.path.join(self.cycle_dir(), f'jedi_{test}_log.log')
+
+            # Jedi executable name
+            # --------------------
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build',
+                                                'bin', f'{test}.x')
+
+            # Run the Test Obs Filters executable
+            # -----------------------------------
+            self.logger.info('Running '+jedi_executable_path+' with 1 processor.')
+            run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
+                           output_log_file)
+
 
 # --------------------------------------------------------------------------------------------------

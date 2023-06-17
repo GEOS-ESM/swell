@@ -36,7 +36,7 @@ PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9
 
 # IODA-Converters from experiement JEDI source
 # --------------------------------------------
-PYTHONPATH=/discover/nobackup/drholdaw/JediSwell/iodaconv-v3/src:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
 
 # Load GMAO modules
 # -----------------
