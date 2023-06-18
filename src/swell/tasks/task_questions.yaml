@@ -70,7 +70,7 @@ background_time_offset:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
-  - RunJediTestObsFiltersExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: duration
@@ -117,7 +117,7 @@ crtm_coeff_dir:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
-  - RunJediTestObsFiltersExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string
@@ -394,7 +394,7 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
-  - RunJediTestObsFiltersExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string-check-list
@@ -495,7 +495,7 @@ window_length:
   - GetGeovals
   - GetObservations
   - RunJediHofxExecutable
-  - RunJediTestObsFiltersExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: duration
@@ -514,7 +514,7 @@ window_offset:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
-  - RunJediTestObsFiltersExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground

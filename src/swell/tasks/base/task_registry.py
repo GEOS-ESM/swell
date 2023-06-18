@@ -29,7 +29,7 @@ valid_tasks = [
   'PrepGeosRunDir',
   'RunGeosExecutable',
   'RunJediHofxExecutable',
-  'RunJediTestObsFiltersExecutable',
+  'RunJediUfoTestsExecutable',
   'RunJediVariationalExecutable',
   'SaveObsDiags',
   'SaveRestart',

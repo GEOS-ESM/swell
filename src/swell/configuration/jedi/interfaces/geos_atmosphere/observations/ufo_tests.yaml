@@ -7,3 +7,4 @@ default:
 
 aircraft:
   rms ref: 6.736593278810636
+  passedBenchmark: 1
