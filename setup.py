@@ -39,6 +39,7 @@ setuptools.setup(
         'pandas>=1.4.0',
         'isodate>=0.5.4',
         'xarray>=0.11.3',
+        'f90nml>=1.4.3',
         'questionary>=1.10.0',
     ],
     package_data={

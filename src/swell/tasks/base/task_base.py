@@ -26,6 +26,7 @@ from swell.utilities.data_assimilation_window_params import DataAssimilationWind
 from swell.utilities.datetime import Datetime
 from swell.utilities.logger import Logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
+from swell.utilities.geos import Geos
 
 
 # --------------------------------------------------------------------------------------------------
@@ -71,17 +72,27 @@ class taskBase(ABC):
         # -------------------------
         self.__model_components__ = self.config.__model_components__
 
-        # Create cycle directory
-        # ----------------------
+        # Create cycle and forecast directories
+        # -------------------------------------
         cycle_dir = None
+        forecast_dir = None
+
         if datetime_input is not None:
-            cycle_dir = self.cycle_dir()
-            os.makedirs(cycle_dir, 0o755, exist_ok=True)
+            forecast_dir = self.forecast_dir()
+            os.makedirs(forecast_dir, 0o755, exist_ok=True)
+
+            if model is not None:
+                cycle_dir = self.cycle_dir()
+                os.makedirs(cycle_dir, 0o755, exist_ok=True)
 
         # Add JEDI config rendering helper
         # --------------------------------
         self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
                                                   self.__experiment_id__, cycle_dir, self.__model__)
+
+        # Add GEOS utils
+        # --------------
+        self.geos = Geos(self.logger, forecast_dir)
 
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------
@@ -156,6 +167,27 @@ class taskBase(ABC):
 
         # Return
         return cycle_dir
+
+    # ----------------------------------------------------------------------------------------------
+
+    def forecast_dir(self, paths=[]):
+
+        # Combine datetime string (directory format) with the model
+        # ------------------------------------------------------
+        forecast_dir = os.path.join(self.experiment_path(), 'run',
+                                    self.__datetime__.string_directory(), 'forecast')
+
+        if len(paths) > 0:
+            # If paths (which should be a list) is not empty, combine with forecast_dir
+            # -------------------------------------------------------------------------
+            if isinstance(paths, str):
+                paths = [paths]
+
+            # Combining list of paths with forecast dir for code brevity
+            # ---------------------------------------------------------
+            forecast_dir = os.path.join(forecast_dir, *paths)
+
+        return forecast_dir
 
     # ----------------------------------------------------------------------------------------------
 

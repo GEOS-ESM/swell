@@ -14,7 +14,7 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
-from swell.tasks.base.datetime import datetime_formats
+from swell.utilities.datetime import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------

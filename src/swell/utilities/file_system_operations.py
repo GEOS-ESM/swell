@@ -8,7 +8,26 @@
 
 
 import os
+import shutil
 
+# --------------------------------------------------------------------------------------------------
+
+
+def copy_to_dst_dir(logger, src, dst_dir):
+
+    """ Source could be a directory or single file which necesitates different handling
+    """
+
+    try:
+        if not os.path.isfile(src):
+            logger.info(' Copying files from: '+src)
+            shutil.copytree(src, dst_dir, dirs_exist_ok=True)
+        else:
+            logger.info(' Copying file: '+src)
+            shutil.copy(src, dst_dir)
+
+    except Exception:
+        logger.abort('Copying failed, see if source files exists')
 
 # --------------------------------------------------------------------------------------------------
 
@@ -60,13 +79,12 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
         target_path_file = os.path.join(target_path, source_file)
         link_file_existing_link_ok(logger, source_path_file, target_path_file)
 
-
 # --------------------------------------------------------------------------------------------------
 
 
 def link_file_existing_link_ok(logger, source_path_file, target_path_file):
 
-    """Create a symboloc link from a source location to a target location. If a symbolic link
+    """Create a symbolic link from a source location to a target location. If a symbolic link
        already exists it will be deleted. If a file already exists and it is not a link the code
        will abort
 
@@ -91,5 +109,16 @@ def link_file_existing_link_ok(logger, source_path_file, target_path_file):
     logger.info(f'Linking {source_path_file} to {target_path_file}')
     os.symlink(source_path_file, target_path_file)
 
+    # ----------------------------------------------------------------------------------------------
 
-# --------------------------------------------------------------------------------------------------
+
+def move_files(logger, src_dir, dst_dir):
+
+    try:
+        logger.info(' Moving file(s) from: '+src_dir)
+        shutil.move(src_dir, dst_dir)
+
+    except Exception:
+        logger.abort('Moving failed, see if source files exist')
+
+# ----------------------------------------------------------------------------------------------

@@ -42,3 +42,13 @@ linear variable change:
     Lz_mld: 1
     Lz_mld_max: 500.0
     scale_layer_thick: 1.5
+
+  - linear variable change name: HorizFiltSOCA
+    niter: 2
+    filter variables: {{analysis_variables}}
+
+  - linear variable change name: BalanceSOCA
+    dsdtmax: 0.1
+    dsdzmin: 3.0e-6
+    dtdzmin: 1.0e-6
+    nlayers: 10
