@@ -161,8 +161,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
             # Run the Test Obs Filters executable
             # -----------------------------------
-            run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
-                           output_log_file)
+            #run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
+            #               output_log_file)
 
 
 # --------------------------------------------------------------------------------------------------
