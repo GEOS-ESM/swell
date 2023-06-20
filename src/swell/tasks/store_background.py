@@ -15,7 +15,7 @@ from r2d2 import store
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.tasks.base.datetime import datetime_formats
+from swell.utilities.datetime import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------
