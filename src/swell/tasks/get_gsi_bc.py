@@ -25,7 +25,7 @@ class GetGsiBc(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_bc_location = self.config.gsi_bc_location()
+        gsi_bc_location = self.config.path_to_gsi_bc_coefficients()
 
         # Holding directory
         gsi_bc_dir = os.path.join(self.cycle_dir(), 'gsi_bcs')

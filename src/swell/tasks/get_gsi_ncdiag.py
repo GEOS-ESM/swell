@@ -24,7 +24,7 @@ class GetGsiNcdiag(taskBase):
 
         # Get the build method
         # --------------------
-        gsi_diag_path = self.config.path_to_gsi_diags()
+        gsi_diag_path = self.config.path_to_gsi_nc_diags()
 
         # Get list of ncdiags to test with
         # --------------------------------
@@ -36,17 +36,29 @@ class GetGsiNcdiag(taskBase):
         gsi_diag_dir = os.path.join(self.cycle_dir(), 'gsi_ncdiags')
         os.makedirs(gsi_diag_dir, 0o755, exist_ok=True)
 
+        # Assert that some files were found
+        self.logger.assert_abort(len(gsi_diag_path_files) != 0 is not None, f'No ncdiag ' +
+                                 f'files found in the source directory ' +
+                                 f'\'{gsi_diag_path_files_pattern}\'')
+
         # Copy all the files into the cycle directory
         # -------------------------------------------
         for gsi_diag_path_file in gsi_diag_path_files:
 
-            # File name
-            gsi_diag_file = os.path.basename(gsi_diag_path_file)
+            # Source file
+            gsi_diag_file_source = os.path.basename(gsi_diag_path_file)
 
-            self.logger.info(f'Copying {gsi_diag_file}')
+            # Target file
+            gsi_diag_file_target = os.path.join(gsi_diag_dir, gsi_diag_file_source)
 
-            # Copy file
-            shutil.copyfile(gsi_diag_path_file, os.path.join(gsi_diag_dir, gsi_diag_file))
+            # Remove target file if it exists (might be a link)
+            if os.path.exists(gsi_diag_file_target):
+                os.remove(gsi_diag_file_target)
+
+            # Create symlink from target to source
+            self.logger.info(f'Creating sym link from {gsi_diag_path_file} to '
+                             f'{gsi_diag_file_target}')
+            os.symlink(gsi_diag_path_file, gsi_diag_file_target)
 
 
 # --------------------------------------------------------------------------------------------------
