@@ -30,31 +30,46 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
-    model_components = dict_get(logger, experiment_dict, 'model_components', [])
-    cycle_times = []
-    for model_component in model_components:
-        cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
-        cycle_times = list(set(cycle_times + cycle_times_mc))
-    cycle_times.sort()
 
-    cycle_times_dict_list = []
-    for cycle_time in cycle_times:
-        cycle_time_dict = {}
-        cycle_time_dict['cycle_time'] = cycle_time
-        for model_component in model_components:
-            cycle_time_dict[model_component] = False
-            if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
-                cycle_time_dict[model_component] = True
-        cycle_times_dict_list.append(cycle_time_dict)
+    # Check if 'cycle_times' appears anywhere in the suite_file
+    if 'cycle_times' in suite_file:
 
-    # If no model_components get cycle_times from the experiment dict level instead
-    # -----------------------------------------------------------------------------
-    if len(model_components) == 0:
-        cycle_times = list(set(experiment_dict['cycle_times']))
-        cycle_times.sort()
-        render_dictionary['cycle_times'] = cycle_times
-    else:
-        render_dictionary['cycle_times'] = cycle_times_dict_list
+        # Since cycle times are used, the render_dictionary will need to include cycle_times
+        model_components = dict_get(logger, experiment_dict, 'model_components', [])
+
+        # If there are different model components then process each to gather cycle times
+        if len(model_components) > 0:
+            cycle_times = []
+            for model_component in model_components:
+                cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
+                cycle_times = list(set(cycle_times + cycle_times_mc))
+            cycle_times.sort()
+
+            cycle_times_dict_list = []
+            for cycle_time in cycle_times:
+                cycle_time_dict = {}
+                cycle_time_dict['cycle_time'] = cycle_time
+                for model_component in model_components:
+                    cycle_time_dict[model_component] = False
+                    if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
+                        cycle_time_dict[model_component] = True
+                cycle_times_dict_list.append(cycle_time_dict)
+
+            render_dictionary['cycle_times'] = cycle_times
+
+        # Otherwise check that experiment_dict has cycle_times
+        elif 'cycle_times' in experiment_dict:
+
+            cycle_times = list(set(experiment_dict['cycle_times']))
+            cycle_times.sort()
+            render_dictionary['cycle_times'] = cycle_times
+
+        else:
+
+            # Otherwise use logger to abort
+            logger.abort('The suite file required cycle_times but there are no model components ' +
+                         'to gather them from or they are not provided in the experiment ' +
+                         'dictionary.')
 
     # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------

@@ -69,7 +69,7 @@ observations:
 
   # Processor layout
 total_processors:
-  default_value: '24'
+  default_value: '6'
   prompt: What is the total number of required processors for JEDI?
   type: string
 
