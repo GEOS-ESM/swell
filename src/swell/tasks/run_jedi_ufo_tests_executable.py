@@ -13,6 +13,7 @@ import os
 import yaml
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.dictionary import update_dict
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 
@@ -54,11 +55,11 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_filter_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
 
         # Perform complete template rendering
         # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_filter_dict, self.jedi_rendering, '3D', observations)
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations)
 
         # Make modifications needed for testing
         # -------------------------------------
@@ -76,8 +77,8 @@ class RunJediUfoTestsExecutable(taskBase):
         for index in range(len(observations)):
 
             # Remove GetValues if present
-            if 'get values' in jedi_config_filter_dict['observations'][index]:
-                del jedi_config_filter_dict['observations'][index]['get values']
+            if 'get values' in jedi_config_dict['observations'][index]:
+                del jedi_config_dict['observations'][index]['get values']
 
             # GeoVaLs filename
             geo_va_ls_fname = os.path.join(self.cycle_dir(),
@@ -91,59 +92,51 @@ class RunJediUfoTestsExecutable(taskBase):
             if observations[index] in conventional_types:
                 geo_va_ls_dict['levels_are_top_down'] = False
 
-            jedi_config_filter_dict['observations'][index]['geovals'] = geo_va_ls_dict
+            jedi_config_dict['observations'][index]['geovals'] = geo_va_ls_dict
 
-        # Make a copy for doing the operator test
-        # ---------------------------------------
-        jedi_config_operator_dict = copy.deepcopy(jedi_config_filter_dict)
+        # Copies for each kind of test
+        # ----------------------------
+        jedi_operator_dict = copy.deepcopy(jedi_config_dict)
+        jedi_filter_dict = copy.deepcopy(jedi_config_dict)
 
-
-            # For filter test there needs to be at least one benchmark
-            dummy_search = [{'name': 'Dummy/Group/Var'}]
-            jedi_config_dict['observations'][index]['expectVariablesNotToExist'] = dummy_search
-
-        # Make a copy of the jedi config dictionary
-        jedi_config_dict_operator_test = copy.deepcopy(jedi_config_dict)
-        jedi_config_dict_filter_test = copy.deepcopy(jedi_config_dict)
-
-        # Add the ufo_tests dictionary to the jedi config dictionary
+        # Loop through observations and moderate based on test needs
+        # ----------------------------------------------------------
         for index in range(len(observations)):
 
-            # Get the test values for this observation
-            ufo_tests_obs = ufo_tests_dict[observations[index]]
-
             # Overwrite the defaults with the values in ufo_tests_obs
-            ufo_tests_obs_dict = {**ufo_tests_default, **ufo_tests_obs}
+            ufo_tests_obs = ufo_tests_dict[observations[index]]
+            ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
 
-            # Add the ufo_tests_obs_dict to the observation dictionary
-            jedi_config_dict_operator_test['observations'][index].update(ufo_tests_obs_dict)
+            # Merge the ufo_tests_obs dictionary with the observation dictionary
+            jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])
+            jedi_filter_dict['observations'][index].update(ufo_tests_obs['filter_test'])
 
-            # If the observation has filters remove them
-            if 'filters' in jedi_config_dict_operator_test['observations'][index]:
-                del jedi_config_dict_operator_test['observations'][index]['filters']
+            # Remove filters from operator test
+            if 'obs filters' in jedi_operator_dict['observations'][index]:
+                del jedi_operator_dict['observations'][index]['obs filters']
 
-        print(yaml.dump(jedi_config_dict_operator_test))
-
-        # Jedi configuration file
-        # -----------------------
+        # Write configuration files for the tests
+        # ---------------------------------------
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperator_config.yaml')
         with open(file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict_operator_test, jedi_config_file_open,
+                yaml.dump(jedi_operator_dict, jedi_config_file_open,
                           default_flow_style=False)
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperatorTLAD_config.yaml')
         with open(file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict_operator_test, jedi_config_file_open,
+                yaml.dump(jedi_operator_dict, jedi_config_file_open,
                           default_flow_style=False)
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsFilters_config.yaml')
         with open(file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict_filter_test, jedi_config_file_open,
+                yaml.dump(jedi_filter_dict, jedi_config_file_open,
                           default_flow_style=False)
 
         # Tests to run
         # ------------
-        tests = ['test_ObsOperator', 'test_ObsOperatorTLAD', 'test_ObsFilters']
+        #tests = ['test_ObsOperator'] #, 'test_ObsOperatorTLAD', 'test_ObsFilters']
+        #tests = ['test_ObsOperatorTLAD']
+        tests = ['test_ObsFilters']
 
         # Loop over the tests
         # -------------------
@@ -161,8 +154,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
             # Run the Test Obs Filters executable
             # -----------------------------------
-            #run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
-            #               output_log_file)
+            run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
+                           output_log_file)
 
 
 # --------------------------------------------------------------------------------------------------

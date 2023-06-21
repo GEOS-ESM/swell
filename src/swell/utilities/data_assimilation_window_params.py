@@ -74,10 +74,7 @@ class DataAssimilationWindowParams():
         # Get window beginning time
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
 
-        print(f'window_begin_dto: {window_begin_dto}')
-        print(f'window_length_dur: {window_length_dur}')
-        print(f'window_end_iso: {window_begin_dto + window_length_dur}')
-
+        # Window end time
         window_end_dto = window_begin_dto + window_length_dur
 
         return window_end_dto.strftime(datetime_formats['iso_format'])

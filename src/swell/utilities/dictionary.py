@@ -130,3 +130,20 @@ def write_dict_to_yaml(dictionary, file):
 
 
 # --------------------------------------------------------------------------------------------------
+
+
+def update_dict(original_dict, overwrite_dict):
+
+    # Create output dictionary from original dictionary
+    output_dict = original_dict.copy()
+
+    for key, value in overwrite_dict.items():
+        if isinstance(value, dict) and key in output_dict and isinstance(output_dict[key], dict):
+            output_dict[key] = update_dict(output_dict[key], value)
+        else:
+            output_dict[key] = value
+
+    return output_dict
+
+
+# --------------------------------------------------------------------------------------------------
