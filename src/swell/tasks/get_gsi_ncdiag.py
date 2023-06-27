@@ -10,7 +10,6 @@
 
 import glob
 import os
-import shutil
 
 from swell.tasks.base.task_base import taskBase
 
