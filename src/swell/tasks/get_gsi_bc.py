@@ -37,9 +37,14 @@ class GetGsiBc(taskBase):
 
         if os.path.isdir(gsi_bc_location):
 
+            print(gsi_bc_location)
+
             # Get list of matching files in the directory
             ana_satbias_rst = glob.glob(os.path.join(gsi_bc_location, '*ana_satbias_rst*'))
             ana_satbiaspc_rst = glob.glob(os.path.join(gsi_bc_location, '*ana_satbiaspc_rst*'))
+
+            print(ana_satbias_rst)
+            print(ana_satbiaspc_rst)
 
             # Record that files were found
             if len(ana_satbias_rst) == 1 and len(ana_satbiaspc_rst) == 1:

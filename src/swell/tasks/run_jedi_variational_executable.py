@@ -78,8 +78,8 @@ class RunJediVariationalExecutable(taskBase):
 
         # Atmosphere background error model
         if npx_proc is not None and npy_proc is not None:
-            self.jedi_rendering.add_key('gsi_npx_proc', npx_proc)
-            self.jedi_rendering.add_key('gsi_npy_proc', 6*npy_proc)
+            self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
+            self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
         # Model
         if window_type == '4D':
@@ -123,8 +123,8 @@ class RunJediVariationalExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
+        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
         run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
                        output_log_file)
-        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
 # --------------------------------------------------------------------------------------------------

@@ -18,6 +18,7 @@ valid_tasks = [
   'GenerateBClimatology',
   'GetBackgroundGeosExperiment',
   'GetBackground',
+  'GetGeosAdasBackground',
   'GetGeosRestart',
   'GetGeovals',
   'GetGsiBc',

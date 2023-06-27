@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import datetime
 import glob
 import os
 
@@ -17,6 +18,7 @@ from gsi_ncdiag.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -66,10 +68,15 @@ class GsiNcdiagToIoda(taskBase):
         for needed_ioda_type in needed_ioda_types:
             gsi_types_to_process += ioda_to_gsi_dict[needed_ioda_type]
         gsi_types_to_process = list(set(gsi_types_to_process))  # Unique values only
+        gsi_types_to_process = sorted(gsi_types_to_process)
 
         # Remove conv_platforms_to_process from the total observations list, leaving rad and ozn
         for needed_ioda_type in needed_ioda_types:
             observations.remove(needed_ioda_type)
+
+        # Convert cycle time datetime object to string with format yyyymmdd_hhz
+        gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
+                                                      datetime_formats['gsi_nc_diag_format'])
 
         # First process the conventional data (if needed)
         # -----------------------------------------------
@@ -80,10 +87,19 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 
-            gsi_conv_file = glob.glob(os.path.join(gsi_diag_dir, f'*{gsi_type_to_process}*'))[0]
+            # Path to search to GSI ncdiag files
+            path_to_search = os.path.join(gsi_diag_dir,
+                                          f'*{gsi_type_to_process}_*{gsi_datetime_str}*')
+
+            # Get the list of files
+            gsi_conv_file = glob.glob(path_to_search)
+
+            # Check that at least one file was found
+            self.logger.assert_abort(len(gsi_conv_file) == 1, 'The search for GSI ncdiags files ' +
+                                     f'returned more than one file. Search: \'{gsi_conv_file}\'')
 
             # Open the file
-            Diag = gsid.Conv(gsi_conv_file)
+            Diag = gsid.Conv(gsi_conv_file[0])
             Diag.read()
 
             # Assemble list of needed platforms

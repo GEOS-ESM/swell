@@ -43,6 +43,7 @@ setuptools.setup(
         'f90nml>=1.4.3',
         'questionary>=1.10.0',
         'flake8>=6.0.0',
+        'netCDF4',
     ],
     package_data={
         '': [

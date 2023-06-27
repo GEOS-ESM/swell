@@ -283,16 +283,6 @@ gradient_norm_reduction:
   - RunJediVariationalExecutable
   type: float
 
-gsi_bc_location:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the location where GSI bias correction files can be found?
-  tasks:
-  - GetGsiBc
-  type: string
-
 horizontal_resolution:
   ask_question: true
   default_value: defer_to_model
@@ -435,7 +425,27 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
-path_to_gsi_diags:
+path_to_geos_adas_background:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where the cubed sphere backgrounds are in the GEOSadas run?
+  tasks:
+  - GetGeosAdasBackground
+  type: string
+
+path_to_gsi_bc_coefficients:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the location where GSI bias correction files can be found?
+  tasks:
+  - GetGsiBc
+  type: string
+
+path_to_gsi_nc_diags:
   ask_question: true
   default_value: defer_to_model
   models:

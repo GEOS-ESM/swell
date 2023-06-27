@@ -51,6 +51,8 @@ class JediConfigRendering():
             'local_background_time',
             'local_background_time_iso',
             'minimizer',
+            'gsibec_npx_proc',
+            'gsibec_npy_proc',
             'npx_proc',
             'npy_proc',
             'number_of_iterations',
