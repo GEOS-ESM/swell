@@ -107,6 +107,8 @@ class StoreBackground(taskBase):
         # Get r2d2 dictionary
         r2d2_dict = cfg.get('R2D2')
 
+        os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over fc
         for fc in r2d2_dict['store']['fc']:
 
@@ -138,6 +140,7 @@ class StoreBackground(taskBase):
                     # Perform the store
                     R2D2Data.store(item           = 'forecast'
                                   ,source_file    = source_file
+                                  ,data_store     = 'swell_store' 
                                   ,model          = 'geos'
                                   ,experiment     = bkg_info['background experiment']
                                   ,file_extension = file_extension

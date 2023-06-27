@@ -28,6 +28,8 @@ class SaveObsDiags(taskBase):
         window_begin = self.config_get('window_begin')
         observations = self.config_get('observations')
 
+        os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -56,11 +58,12 @@ class SaveObsDiags(taskBase):
 
             R2D2Data.store(item             = 'observation'
                           ,source_file      = obs_path_file
-                          ,provider         = 'ncdiag'
+                          ,data_store       = 'swell_store'
+                          ,provider         = 'x0044'
                           ,observation_type = name
                           ,file_extension   = file_extension
                           ,window_start     = window_begin
-                          ,window_length    = )
+                          ,window_length    = 'PT6H')
                           # ,create_date =      
                           # ,mod_date = )       
                                      

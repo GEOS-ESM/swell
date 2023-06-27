@@ -42,6 +42,8 @@ class GetObservations(taskBase):
         observations = self.config_get('observations')
         window_length = self.config_get('window_length')
 
+        os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -59,6 +61,7 @@ class GetObservations(taskBase):
 
             R2D2Data.fetch(item             = 'observation'
                           ,target_file      = target_file
+                          ,data_store       = 'swell_store'
                           ,provider         = provider 
                           ,observation_type = observation
                           ,file_extension   = file_extension
@@ -90,8 +93,9 @@ class GetObservations(taskBase):
             file_extension = os.path.splitext(target_file)[1]
 
             R2D2Data.fetch(item             = 'bias_correction'
+                          ,data_store       = 'swell_store'
                           ,target_file      = target_file
-                          ,model            = 'geos'
+                          ,model            = 'geos_atmosphere'
                           ,experiment       = experiment
                           ,provider         = 'gsi'
                           ,observation_type = observation
@@ -119,7 +123,8 @@ class GetObservations(taskBase):
 
                 R2D2Data.fetch(item             = 'bias_correction'
                               ,target_file      = target_file
-                              ,model            = 'geos'
+                              ,data_store       = 'swell_store'
+                              ,model            = 'geos_atmosphere'
                               ,experiment       = experiment
                               ,provider         = 'gsi'
                               ,observation_type = observation

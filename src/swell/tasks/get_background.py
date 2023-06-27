@@ -111,6 +111,8 @@ class GetBackground(taskBase):
         # Get r2d2 dictionary
         r2d2_dict = self.open_jedi_interface_model_config_file('r2d2')
 
+        os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over fc
         for fc in r2d2_dict['fetch']['fc']:
 
@@ -131,6 +133,7 @@ class GetBackground(taskBase):
 
                 R2D2Data.fetch(item           = 'forecast'
                               ,target_file    = target_file
+                              ,data_store     = 'swell_store'
                               ,model          = r2d2_model_dict[model_component]
                               ,experiment     = background_experiment
                               ,file_extension = file_extension

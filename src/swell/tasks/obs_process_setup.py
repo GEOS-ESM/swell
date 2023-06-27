@@ -163,6 +163,8 @@ class ObsProcessSetup(taskBase):
         # Call R2D2 to store files
         # ------------------------
 
+        os.environ['R2D2_HOST'] = 'localhost'
+
         # Perform store of observations
         for filepath in list(glob.glob(out_dir + '/*nc4')):
 
@@ -174,11 +176,12 @@ class ObsProcessSetup(taskBase):
 
             R2D2Data.store(item             = 'observation'
                           ,source_file      = source_file
-                          ,provider         = 'ncdiag'
+                          ,data_store       = 'swell_store'
+                          ,provider         = 'x0044'
                           ,observation_type = name
                           ,file_extension   = file_extension
                           ,window_start     = obs_r2d2_dt
-                          ,window_length    = )
+                          ,window_length    = 'PT6H')
                           # ,create_date =
                           # ,mod_date =
 
@@ -200,7 +203,8 @@ class ObsProcessSetup(taskBase):
 
             R2D2Data.store(item             = 'bias_correction'
                           ,source_file      = source_file
-                          ,model            = 'geos'
+                          ,data_store       = 'swell_store'
+                          ,model            = 'geos_atmosphere'
                           ,experiment       = geos_experiment
                           ,provider         = 'gsi'
                           ,observation_type = name
@@ -229,7 +233,8 @@ class ObsProcessSetup(taskBase):
 
             R2D2Data.store(item             = 'bias_correction'
                           ,source_file      = source_file
-                          ,model            = 'geos'
+                          ,data_store       = 'swell_store'
+                          ,model            = 'geos_atmosphere'
                           ,experiment       = geos_experiment
                           ,provider         = 'gsi'
                           ,observation_type = name
