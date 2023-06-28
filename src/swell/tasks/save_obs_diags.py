@@ -27,6 +27,7 @@ class SaveObsDiags(taskBase):
         experiment_id = self.config_get('experiment_id')
         window_begin = self.config_get('window_begin')
         observations = self.config_get('observations')
+        window_length = self.config_get('window_length')
 
         os.environ['R2D2_HOST'] = 'localhost'
 
@@ -54,16 +55,16 @@ class SaveObsDiags(taskBase):
 
                 obs_path_file = obs_path_file_0000
 
-            file_extension = os.path.splitext(obs_path_file)[1]
+            file_extension = os.path.splitext(obs_path_file)[1].replace(".", "")
 
             R2D2Data.store(item             = 'observation'
                           ,source_file      = obs_path_file
-                          ,data_store       = 'swell_store'
+                          ,data_store       = 'swell-r2d2'
                           ,provider         = 'x0044'
                           ,observation_type = name
                           ,file_extension   = file_extension
                           ,window_start     = window_begin
-                          ,window_length    = 'PT6H')
+                          ,window_length    = window_length)
                           # ,create_date =      
                           # ,mod_date = )       
                                      

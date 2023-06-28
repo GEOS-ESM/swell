@@ -57,11 +57,13 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info("Processing observation file "+target_file)
 
-            file_extension = os.path.splitext(target_file)[1]
+            target_dir = os.path.dirname(target_file)
+            os.makedirs(target_dir, exist_ok = True)
+            file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
             R2D2Data.fetch(item             = 'observation'
                           ,target_file      = target_file
-                          ,data_store       = 'swell_store'
+                          # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
                           ,provider         = provider 
                           ,observation_type = observation
                           ,file_extension   = file_extension
@@ -90,11 +92,13 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs bias']['input file']
             self.logger.info("Processing satbias file "+target_file)
 
-            file_extension = os.path.splitext(target_file)[1]
+            target_dir = os.path.dirname(target_file)
+            os.makedirs(target_dir, exist_ok = True)
+            file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
             R2D2Data.fetch(item             = 'bias_correction'
-                          ,data_store       = 'swell_store'
                           ,target_file      = target_file
+                          # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
                           ,model            = 'geos_atmosphere'
                           ,experiment       = experiment
                           ,provider         = 'gsi'
@@ -121,9 +125,13 @@ class GetObservations(taskBase):
 
                 self.logger.info("Processing tlapse file "+target_file)
 
+                target_dir = os.path.dirname(target_file)
+                os.makedirs(target_dir, exist_ok = True)
+                file_extension = os.path.splitext(target_file)[1].replace(".", "")
+
                 R2D2Data.fetch(item             = 'bias_correction'
                               ,target_file      = target_file
-                              ,data_store       = 'swell_store'
+                              # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
                               ,model            = 'geos_atmosphere'
                               ,experiment       = experiment
                               ,provider         = 'gsi'

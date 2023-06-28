@@ -129,11 +129,13 @@ class GetBackground(taskBase):
                 # Set the datetime templating in the target file name
                 target_file = background_time.strftime(target_file_template)
 
-                file_extension = os.path.splitext(target_file)[1]
+                target_dir = os.path.dirname(target_file)
+                os.makedirs(target_dir, exist_ok = True)
+                file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
                 R2D2Data.fetch(item           = 'forecast'
                               ,target_file    = target_file
-                              ,data_store     = 'swell_store'
+                              # ,data_store     = 'swell_store' # Don't specify data_store.  R2D2 will find it wherever it exists on local.
                               ,model          = r2d2_model_dict[model_component]
                               ,experiment     = background_experiment
                               ,file_extension = file_extension

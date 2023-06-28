@@ -172,11 +172,11 @@ class ObsProcessSetup(taskBase):
             filename_parts = source_file.split('.')
             name = filename_parts[0]
 
-            file_extension = os.path.splitext(source_file)[1]
+            file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
             R2D2Data.store(item             = 'observation'
                           ,source_file      = source_file
-                          ,data_store       = 'swell_store'
+                          ,data_store       = 'swell-r2d2'
                           ,provider         = 'x0044'
                           ,observation_type = name
                           ,file_extension   = file_extension
@@ -199,11 +199,11 @@ class ObsProcessSetup(taskBase):
             filename_parts = source_file.split('.')
             name = filename_parts[3]
 
-            file_extension = os.path.splitext(source_file)[1]
+            file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
             R2D2Data.store(item             = 'bias_correction'
                           ,source_file      = source_file
-                          ,data_store       = 'swell_store'
+                          ,data_store       = 'swell-r2d2'
                           ,model            = 'geos_atmosphere'
                           ,experiment       = geos_experiment
                           ,provider         = 'gsi'
@@ -229,11 +229,11 @@ class ObsProcessSetup(taskBase):
             filename_parts = source_file.split('.')
             name = filename_parts[3]
 
-            file_extension = os.path.splitext(source_file)[1]
+            file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
             R2D2Data.store(item             = 'bias_correction'
                           ,source_file      = source_file
-                          ,data_store       = 'swell_store'
+                          ,data_store       = 'swell-r2d2'
                           ,model            = 'geos_atmosphere'
                           ,experiment       = geos_experiment
                           ,provider         = 'gsi'

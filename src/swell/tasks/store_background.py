@@ -135,12 +135,12 @@ class StoreBackground(taskBase):
                     source_file = source_file_type_template.replace("$(valid_date)", valid_time_str)
                     source_file = os.path.join(cfg.get('cycle_dir'), source_file)
 
-                    file_extension = os.path.splitext(source_file)[1]
+                    file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
                     # Perform the store
                     R2D2Data.store(item           = 'forecast'
                                   ,source_file    = source_file
-                                  ,data_store     = 'swell_store' 
+                                  ,data_store     = 'swell-r2d2'
                                   ,model          = 'geos'
                                   ,experiment     = bkg_info['background experiment']
                                   ,file_extension = file_extension
