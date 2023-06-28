@@ -36,6 +36,7 @@ class RunJediUfoTestsExecutable(taskBase):
         window_length = self.config.window_length()
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
+        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -150,8 +151,10 @@ class RunJediUfoTestsExecutable(taskBase):
 
             # Run the Test Obs Filters executable
             # -----------------------------------
-            run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path, jedi_config_file,
-                           output_log_file)
-
+            if not generate_yaml_and_exit:
+                run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path,
+                               jedi_config_file, output_log_file)
+            else:
+                self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

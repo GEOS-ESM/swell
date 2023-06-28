@@ -134,6 +134,11 @@ class GsiNcdiagToIoda(taskBase):
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
 
+            # Check that there are some files to combine
+            self.logger.assert_abort(len(ioda_path_files)> 0, f'In combine of {needed_ioda_type} ' +
+                                     f'no files where found. Ensure that the converter worked as ' +
+                                     f'expected.')
+
             # Get last file (first could be type_obs_ if the code already ran)
             ioda_file_0 = os.path.basename(ioda_path_files[-1])
 

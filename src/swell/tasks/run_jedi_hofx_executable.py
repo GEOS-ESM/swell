@@ -35,6 +35,7 @@ class RunJediHofxExecutable(taskBase):
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
+        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -109,8 +110,11 @@ class RunJediHofxExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
-        run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, jedi_config_file,
-                       output_log_file)
-        self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+        if not generate_yaml_and_exit:
+            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                           jedi_config_file, output_log_file)
+        else:
+            self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

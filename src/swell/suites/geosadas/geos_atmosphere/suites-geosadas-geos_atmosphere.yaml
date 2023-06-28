@@ -39,7 +39,7 @@ analysis_variables:
 # Observations
 observations:
   default_value:
-  - aircraft
+  - sondes
   - amsua_n19
   prompt: Select observations.
   options: use_method
@@ -59,7 +59,7 @@ path_to_gsi_nc_diags:
 
 # Path to GEOS adas background files
 path_to_geos_adas_background:
-  default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg
+  default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
   prompt: Tar or directory containing BC files
   type: string
 
