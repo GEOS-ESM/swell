@@ -39,12 +39,12 @@ obs bias:
       ch37v: 6
       ch37h: 7
       order: 2
-      tlapse: *gmigpmtlap
+      tlapse: *gmi_gpm_tlapse
     - name: cloud_liquid_water
       sensor: GMI_GPM
       ch37v: 6
       ch37h: 7
-      tlapse: *gmigpmtlap
+      tlapse: *gmi_gpm_tlapse
     - name: scan_angle
       var_name: sensorScanPosition
       order: 4
