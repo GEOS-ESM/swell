@@ -22,7 +22,7 @@ class PrepConfigDefaults(PrepConfigBase):
     def get_answer(self, key, val):
         return val['default_value']
 
-    # ---------------------------------------------------------------------------------------------- 
+    # ----------------------------------------------------------------------------------------------
 
     def get_models(self):
         return self.default_models

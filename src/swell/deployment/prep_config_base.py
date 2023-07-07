@@ -62,8 +62,11 @@ class PrepConfigBase(ABC):
         self.comment_dict = {}
 
         # Dictionary validation things
-        self.valid_types = ['string', 'integer', 'iso-datetime', 'iso-duration', 'string-list', 'integer-list', 'string-drop-list',
-                            'string-check-list', 'boolean']
+        self.valid_types = ['string', 'integer',
+                            'iso-datetime', 'iso-duration',
+                            'string-list', 'integer-list',
+                            'string-drop-list', 'string-check-list',
+                            'boolean']
 
         # Disallowed element types
         self.dis_elem_types = [datetime.datetime, datetime.date]
@@ -78,8 +81,9 @@ class PrepConfigBase(ABC):
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
 
-        # Dictionary of templates to use whenever opening a file
-        self.platform_dictionary = yaml.safe_load(platform_dict_str) # Use for 'defer_to_platform' default
+        # Dictionary of defaults for platform
+        # Use for 'defer_to_platform' default
+        self.platform_dictionary = yaml.safe_load(platform_dict_str)
 
         # Open Master ask questions yaml
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
@@ -105,14 +109,18 @@ class PrepConfigBase(ABC):
         self.before_next()
 
         # Open the platform specific task template and reassign platform dictionary
-        platform_dict_file = os.path.join(self.install_path, 'deployment', 'platforms', self.platform,
+        platform_dict_file = os.path.join(self.install_path,
+                                          'deployment',
+                                          'platforms',
+                                          self.platform,
                                           'task_questions.yaml')
 
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
 
-        # Dictionary of templates to use whenever opening a file
-        self.platform_dictionary = yaml.safe_load(platform_dict_str) # Use for 'defer_to_platform' default
+        # Dictionary of defaults for platform
+        # Use for 'defer_to_platform' default
+        self.platform_dictionary = yaml.safe_load(platform_dict_str)
 
         # Iterate over main task dictionary and get answers for base tasks
         self.dictionary_comber(base_tasks)
@@ -128,7 +136,6 @@ class PrepConfigBase(ABC):
             self.model_comber(model_tasks)
         else:
             pass
-        
 
         return
 
@@ -204,7 +211,7 @@ class PrepConfigBase(ABC):
         elif 'defer_to_model' == el_dict['default_value']:
             el_dict['default_value'] = self.model_defaults_dict[self.model][key]['default_value']
             if 'options' in self.model_defaults_dict[self.model][key].keys()\
-                and 'defer_to_model' == el_dict['options']:
+                    and 'defer_to_model' == el_dict['options']:
                 el_dict['options'] = self.model_defaults_dict[self.model][key]['options']
 
         return el_dict
@@ -274,7 +281,6 @@ class PrepConfigBase(ABC):
         element = element_dict['default_value']
         prompt = element_dict['prompt']
 
-
         # Validate the element
         # --------------------
 
@@ -321,8 +327,6 @@ class PrepConfigBase(ABC):
                 self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
         else:
             if key in self.experiment_dict['models'][self.model].keys():
-            # Loop through the task questions and ask questions that have not
-            # been asked and added to the experiment dictionary            
                 self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
 
         # Add element
@@ -343,7 +347,7 @@ class PrepConfigBase(ABC):
                 self.comment_dict['models.' + self.model] = f'Options for the {self.model} ' + \
                                                             f'model component'
             option_key = 'models.' + self.model + '.' + key
-        self.comment_dict[option_key] = prompt    
+        self.comment_dict[option_key] = prompt
 
     # ----------------------------------------------------------------------------------------------
 
@@ -402,25 +406,25 @@ class PrepConfigBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     def open_flow(self):
-        #open text file in read mode
+        # open text file in read mode
         cylc_file = open(os.path.join(self.directory, 'flow.cylc'), "r")
- 
-        #read whole file to a string
+
+        # read whole file to a string
         data = cylc_file.read()
- 
-        #close file
+
+        # close file
         cylc_file.close()
 
-        # Find the double bracket items in the Tasks section of the flow file to ID required tasks 
+        # Find the double bracket items in the Tasks section of the flow file to ID required tasks
         task_s = data[(data.find('Tasks')):]
         task_s_lines = task_s.split('\n')
 
         base_task_list = []
         model_task_list = []
-        for l in task_s_lines:
-            if 'script = "swell_task' in l:
-                task_name = l.split('"swell_task')[1].split(' ')[1]
-                if '-m' in l:
+        for line in task_s_lines:
+            if 'script = "swell_task' in line:
+                task_name = line.split('"swell_task')[1].split(' ')[1]
+                if '-m' in line:
                     if task_name in model_task_list:
                         continue
                     model_task_list.append(task_name)
@@ -430,12 +434,12 @@ class PrepConfigBase(ABC):
                     base_task_list.append(task_name)
 
         # add this to logger debug
-        #print('\n Following tasks selected for configuration: \n',
+        # print('\n Following tasks selected for configuration: \n',
         #      '\n ************ \n',
         #      base_task_list,
         #      '\n ************ \n')
 
-        #print('\n Following model tasks selected for configuration: \n',
+        # print('\n Following model tasks selected for configuration: \n',
         #      '\n ************ \n',
         #      model_task_list,
         #      '\n ************ \n')
@@ -458,7 +462,7 @@ class PrepConfigBase(ABC):
         for m in self.selected_models:
             self.model = m
             self.dictionary_comber(model_tasks)
-    
+
     # ----------------------------------------------------------------------------------------------
 
     def update_experiment_dictionary(self, key, new_value):

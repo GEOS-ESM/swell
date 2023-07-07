@@ -98,9 +98,9 @@ class PrepConfigCli(PrepConfigBase):
 
     def make_int_widget(self, quest, default, prompt):
         default = str(default)
-        answer = prompt(f"{quest} [{default}]", 
+        answer = prompt(f"{quest} [{default}]",
                         validate=lambda text: True if text.isdigit()
-                        else 'Please enter an integer value', 
+                        else 'Please enter an integer value',
                         default=default).ask()
 
         return answer
