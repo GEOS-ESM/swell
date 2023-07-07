@@ -55,6 +55,7 @@ class JediConfigRendering():
             'npy_proc',
             'number_of_iterations',
             'swell_static_files',
+            'total_processors',
             'vertical_resolution',
             'window_begin',
             'window_begin_iso',
@@ -142,7 +143,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface metadata file and call rendering
-    def render_interface_meta(self, model_component_in = None):
+    def render_interface_meta(self, model_component_in=None):
 
         # Optionally open a different model interface
         model_component = self.jedi_interface

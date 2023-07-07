@@ -1,4 +1,4 @@
-# (C) Copyright 2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -80,6 +80,8 @@ class PrepConfigBase(ABC):
                                           'suite_questions.yaml')
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
+        with open(platform_task_file, 'r') as platform_dict_file_open:
+            platform_dict_str = platform_dict_str + platform_dict_file_open.read()
 
         # Dictionary of defaults for platform
         # Use for 'defer_to_platform' default

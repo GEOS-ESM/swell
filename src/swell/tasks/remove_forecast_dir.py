@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2023- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,29 +7,21 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import shutil
 
-import os
-import yaml
-
-from swell.deployment.prep_config_base import PrepConfigBase
+from swell.tasks.base.task_base import taskBase
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepConfigDefaults(PrepConfigBase):
-
-    def get_answer(self, key, val):
-        return val['default_value']
+class RemoveForecastDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_models(self):
-        return self.default_models
+    def execute(self):
 
-    # ----------------------------------------------------------------------------------------------
-
-    def before_next(self):
-        return None
+        self.logger.info(f"Removing old forecast directory: {self.forecast_dir()}")
+        shutil.rmtree(self.forecast_dir())
 
 # --------------------------------------------------------------------------------------------------

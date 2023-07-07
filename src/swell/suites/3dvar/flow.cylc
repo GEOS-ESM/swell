@@ -146,9 +146,6 @@
             --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
 
-    [[MergeIodaFiles-{{model_component}}]]
-        script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
-
     [[EvaJediLog-{{model_component}}]]
         script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
 

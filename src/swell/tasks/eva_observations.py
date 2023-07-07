@@ -28,7 +28,8 @@ class EvaObservations(taskBase):
         # Compute window beginning time
         window_begin = self.da_window_params.window_begin(self.config.window_offset())
         background_time = self.da_window_params.background_time(self.config.window_offset(),
-                                                               self.config.background_time_offset())
+                                                                self.config.background_time_offset()
+                                                                )
 
         # Create JEDI interface config templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)

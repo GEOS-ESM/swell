@@ -12,14 +12,14 @@ window_length:
 
 # Horizontal resolution
 horizontal_resolution:
-  default_value: '360x320'
+  default_value: '72x36'
   prompt: What resolution for the hor. res (probably will become obsolete)?
   options: ['360x320', '1440x1080']
   type: string-drop-list
 
 # Vertical resolution
 vertical_resolution:
-  default_value: '75'
+  default_value: '50'
   prompt: What vertical resolution for the ocean background?
   options: ['75']
   type: string-drop-list
@@ -44,7 +44,7 @@ obs_experiment:
 # Observations
 observations:
   default_value:
-  # Godas (NOAA) - Some of them give FillValue 999 warning
+  # Gdas (NOAA)
   - adt_3a_egm2008
   - adt_3b_egm2008
   - adt_c2_egm2008
@@ -59,10 +59,6 @@ observations:
   - sst_trak_fnmoc
   - temp_profile_fnmoc
 
-  # - adt_coperl4 (non existing obs?)
-  # Issues with the ObsValue
-  # - sst_amsr2_l3u
-
   # ODAS (NASA)
   # - adt
   # - insitus
@@ -72,13 +68,9 @@ observations:
   type: string-check-list
 
   # Processor layout
-npx_proc:
-  default_value: '24'
-  prompt: What processor layout (x-direction) per cube face?
-  type: string
-npy_proc:
-  default_value: '1'
-  prompt: What processor layout (y-direction) per cube face?
+total_processors:
+  default_value: '6'
+  prompt: What is the total number of required processors for JEDI?
   type: string
 
 # Fixed options (user not prompted for these)
@@ -91,14 +83,11 @@ fixed_options:
     default_value: RPCG
     prompt: Minimizer to use for gradient descent
   number_of_iterations:
-    default_value: 5
+    default_value: [5]
     prompt: Number of iterations to use in the minimization
   gradient_norm_reduction:
     default_value: 1e-10
     prompt: Threshold for convergence of the minimization
-  total_processors:
-    default_value:  'npx_proc * npy_proc'
-    prompt: Equation to compute total number of processors
   window_offset:
     default_value:  PT12H
     prompt: Time from beginning to middle of the window
