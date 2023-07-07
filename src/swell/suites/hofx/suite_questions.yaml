@@ -22,3 +22,11 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
+cycle_times:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - all
+  prompt: Enter the cycle times for this model.
+  type: string-check-list
