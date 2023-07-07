@@ -32,7 +32,7 @@ def prepare_config(method, suite, platform, override):
 
     # Starting point for configuration generation
     # -------------------------------------------
-    config_file = os.path.join(get_swell_path(), 'suites_new', 'suite_questions.yaml')
+    config_file = os.path.join(get_swell_path(), 'suites', 'suite_questions.yaml')
 
     # Assert valid method
     # -------------------
