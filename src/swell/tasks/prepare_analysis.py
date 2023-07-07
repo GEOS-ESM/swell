@@ -54,7 +54,7 @@ class PrepareAnalysis(taskBase):
         # TODO: This could be improved with model dependent atmosphere or ocean
         # model analysis with
         # --------------------------------------------------------------------
-        # model_components = self.get_model_components()
+        #
 
         # Generic rst file format
         # ------------------------

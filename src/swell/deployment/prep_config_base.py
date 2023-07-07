@@ -80,6 +80,8 @@ class PrepConfigBase(ABC):
                                           'suite_questions.yaml')
         with open(platform_dict_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_file_open.read()
+        platform_task_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
+                                          'task_questions.yaml')
         with open(platform_task_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_str + platform_dict_file_open.read()
 

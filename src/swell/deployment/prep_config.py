@@ -61,6 +61,12 @@ def prepare_config(method, suite, platform, override):
     experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
     comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
 
+    # Add the model components to the dictionary
+    # ------------------------------------------
+    if 'models' in experiment_dict:
+        experiment_dict['model_components'] = list(experiment_dict['models'].keys())
+        comment_dict['model_components'] = 'List of models in this experiment'
+
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
