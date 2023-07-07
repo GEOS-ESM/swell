@@ -26,7 +26,22 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
-    render_dictionary = experiment_dict
+    render_dictionary = {}
+
+    # Elements to copy from the experiment dictionary
+    # -----------------------------------------------
+    render_elements = [
+        'start_cycle_point',
+        'final_cycle_point',
+        'runahead_limit',
+        'model_components',
+    ]
+
+    # Copy elements from experiment dictionary to render dictionary
+    # -------------------------------------------------------------
+    for element in render_elements:
+        if element in experiment_dict:
+            render_dictionary[element] = experiment_dict[element]
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
@@ -70,6 +85,8 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
             logger.abort('The suite file required cycle_times but there are no model components ' +
                          'to gather them from or they are not provided in the experiment ' +
                          'dictionary.')
+
+    print('render_dictionary', render_dictionary)
 
     # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
