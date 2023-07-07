@@ -34,6 +34,8 @@ class PrepConfigCli(PrepConfigBase):
         print('\n')
         if widget_type == 'string':
             answer = self.make_string_widget(quest, default, questionary.text)
+        elif widget_type == 'integer':
+            answer = self.make_int_widget(quest, default, questionary.text)
         elif 'drop-list' in widget_type:
             options = val['options']
             answer = self.make_drop_widget(key, quest, options, default, questionary.select)
@@ -70,12 +72,12 @@ class PrepConfigCli(PrepConfigBase):
         choices = []
 
         for mod in model_options:
-            if mod in self.model_choices:
+            if mod in self.default_models:
                 choices.append(Choice(mod, checked=True))
             else:
                 choices.append(Choice(mod, checked=False))
 
-        selected_models = self.make_check_widget('Which models?',
+        selected_models = self.make_check_widget('Which model components are required?',
                                                  choices,
                                                  default=None,
                                                  prompt=questionary.checkbox)
@@ -94,19 +96,20 @@ class PrepConfigCli(PrepConfigBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def make_int_widget(self, quest, default, prompt):
+        default = str(default)
+        answer = prompt(f"{quest} [{default}]", 
+                        validate=lambda text: True if text.isdigit()
+                        else 'Please enter an integer value', 
+                        default=default).ask()
+
+        return answer
+
+    # ----------------------------------------------------------------------------------------------
+
     def make_drop_widget(self, method, quest, options, default, prompt):
-        if options == 'use_method':
-            if method == 'platform':
-                method_dir = 'deployment/platforms/'
-            elif method == 'suite_to_run':
-                method_dir = 'suites_new/suite_to_run'
-            new_path = os.path.join(os.path.dirname(self.directory), method_dir, '*')
-            suite_list = [os.path.splitext(os.path.basename(x))[0] for x in glob.glob(new_path)]
-            # Make sure no python directories are included
-            suite_list = list(filter(lambda a: a != '__pycache__' and a != '__init__', suite_list))
-            choices = suite_list
-        else:
-            choices = options
+        default = str(default)
+        choices = [str(x) for x in options]
         answer = prompt(quest, choices=choices, default=default).ask()
 
         return answer
@@ -173,20 +176,6 @@ class PrepConfigCli(PrepConfigBase):
     # ----------------------------------------------------------------------------------------------
 
     def make_check_widget(self, quest, options, default, prompt):
-        #if options == 'use_method':
-        #    choices = default
-        #    default = default[0]
-        #    if self.model is not None:
-        #        files = glob.glob(os.path.join(self.install_path,
-        #                                       'configuration/jedi/interfaces',
-        #                                       self.model,
-        #                                       'observations/*.yaml'))
-        #        # Do not include obsop_name_map.yaml in the list of observations
-        #        files = list(filter(lambda a: 'obsop_name_map' not in a, files))
-        #        choices = [os.path.splitext(os.path.basename(x))[0] for x in files]
-        #else:
-        #    choices = options
-
         choices = options.copy()
 
         if isinstance(default, list):
