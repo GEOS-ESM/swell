@@ -7,7 +7,7 @@ analysis_forecast_window_offset:
   tasks:
   - GetBackground
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 analysis_variables:
   ask_question: false
@@ -53,7 +53,7 @@ background_frequency:
   tasks:
   - GetBackground
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 background_time_offset:
   ask_question: false
@@ -68,7 +68,7 @@ background_time_offset:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
-  type: duration
+  type: iso-duration
 
 bundles:
   ask_question: true
@@ -166,7 +166,7 @@ geos_background_restart_offset:
   prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
   - GetBackgroundGeosExperiment
-  type: duration
+  type: iso-duration
 
 geos_bkg_filename_template:
   ask_question: true
@@ -430,7 +430,7 @@ window_length:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_offset:
   ask_question: true
@@ -446,7 +446,7 @@ window_offset:
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_type:
   ask_question: true
