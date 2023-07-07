@@ -36,7 +36,7 @@ class PrepConfigBase(ABC):
         self.install_path = swell_path
 
         # Get the path and filename of the suite dictionary
-        self.directory = os.path.join(swell_path, 'suites_new')
+        self.directory = os.path.join(swell_path, 'suites')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Keep track of the model, atmosphere, ocean etc
