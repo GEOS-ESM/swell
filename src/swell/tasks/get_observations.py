@@ -51,10 +51,10 @@ class GetObservations(taskBase):
             # Open the observation operator dictionary
             # ----------------------------------------
             observation_dict = self.open_jedi_interface_obs_config_file(observation)
-
             # Fetch observation files
             # -----------------------
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+
             self.logger.info("Processing observation file "+target_file)
 
             target_dir = os.path.dirname(target_file)
@@ -64,12 +64,12 @@ class GetObservations(taskBase):
             R2D2Data.fetch(item             = 'observation'
                           ,target_file      = target_file
                           # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
-                          ,provider         = provider 
+                          ,provider         = provider
                           ,observation_type = observation
                           ,file_extension   = file_extension
                           ,window_start     = window_begin
                           ,window_length    = window_length)
-                          # ,create_date = 
+                          # ,create_date =
                           # ,mod_date = )
 
 #            fetch(date=window_begin,
@@ -106,7 +106,7 @@ class GetObservations(taskBase):
                           ,file_extension   = file_extension
                           ,file_type        = 'satbias'
                           ,date             = background_time)
-                          # ,create_date = 
+                          # ,create_date =
                           # ,mod_date = )
 
 #            fetch(date=background_time,
@@ -121,7 +121,7 @@ class GetObservations(taskBase):
             os.chmod(target_file, 0o644)
 
             # Tlapse
-            for target_file in self.get_tlapse_files(observation_dict):
+            for target_file in list(set(list(self.get_tlapse_files(observation_dict)))):
 
                 self.logger.info("Processing tlapse file "+target_file)
 
@@ -139,7 +139,7 @@ class GetObservations(taskBase):
                               ,file_extension   = file_extension
                               ,file_type        = 'tlapse'
                               ,date             = background_time)
-                              # create_date = 
+                              # create_date =
                               # ,mod_date = )
 
 #                fetch(date=background_time,

@@ -119,8 +119,9 @@ class GetBackground(taskBase):
             # Reset target file
             file_type = fc['file_type']
             target_file_template = fc['filename']
+            domain = fc.get('domain', '')
 
-            # Looop over background steps
+            # Loop over background steps
             for bkg_step in bkg_steps:
 
                 # Set the datetime format for the output files
@@ -138,9 +139,9 @@ class GetBackground(taskBase):
                               # ,data_store     = 'swell_store' # Don't specify data_store.  R2D2 will find it wherever it exists on local.
                               ,model          = r2d2_model_dict[model_component]
                               ,experiment     = background_experiment
-                              ,file_extension = file_extension
+                              ,file_extension = "nc" #file_extension
                               ,resolution     = horizontal_resolution
-                              #,domain         = 
+                              ,domain         = domain
                               ,file_type      = file_type
                               ,step           = bkg_step
                               #,tile           = 
