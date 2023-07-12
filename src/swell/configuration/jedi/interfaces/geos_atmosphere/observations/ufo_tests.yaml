@@ -1,3 +1,6 @@
+# Default values applied to all observation types if not overridden below
+# -----------------------------------------------------------------------
+
 default:
   operator_test:
     linear obs operator test:
@@ -9,8 +12,209 @@ default:
   filter_test:
     passedBenchmark: 1
 
+# Values for individual observation types
+# ---------------------------------------
+
 aircraft:
   operator_test:
-    rms ref: 1.9724833875646487e+38
+    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 297273
+    passedBenchmark: 1
+
+airs_aqua:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsr2_gcom-w1:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_aqua:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_metop-a:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_metop-b:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_metop-c:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_n15:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_n18:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+amsua_n19:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+atms_n20:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+atms_npp:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+avhrr3_metop-a:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+avhrr3_n18:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+cris-fsr_n20:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+cris-fsr_npp:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+gmi_gpm:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+gnssrobndnbam:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+iasi_metop-a:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+iasi_metop-b:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+mhs_metop-b:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+mhs_metop-c:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+mhs_n19:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+mls55_aura:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+omi_aura:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+ompslpnc_npp:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+ompsnm_npp:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+satwind:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+scatwind:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+sfcship:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+sfc:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+sondes:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+ssmis_f17:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1
+
+vadwind:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 1

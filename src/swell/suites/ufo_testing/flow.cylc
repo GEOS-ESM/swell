@@ -109,17 +109,11 @@
     [[ GsiBcToIoda ]]
         script = "swell_task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
 
-#    [[ GetGsiNcdiag ]]
-#        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
-#
-#    [[ GsiNcdiagToIoda ]]
-#        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+    [[ GetGsiNcdiag ]]
+        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
 
-    [[ GetObservations ]]
-        script = "swell_task GetObservations $config -d $datetime -m geos_atmosphere"
-
-    [[ GetGeovals ]]
-        script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
+    [[ GsiNcdiagToIoda ]]
+        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
 
     [[RunJediTestObsFiltersExecutable]]
         script = "swell_task RunJediTestObsFiltersExecutable $config -d $datetime -m geos_atmosphere"
