@@ -26,7 +26,23 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
-    render_dictionary = experiment_dict
+    render_dictionary = {}
+
+    # Elements to copy from the experiment dictionary
+    # -----------------------------------------------
+    render_elements = [
+        'start_cycle_point',
+        'final_cycle_point',
+        'runahead_limit',
+        'model_components',
+        'platform',
+    ]
+
+    # Copy elements from experiment dictionary to render dictionary
+    # -------------------------------------------------------------
+    for element in render_elements:
+        if element in experiment_dict:
+            render_dictionary[element] = experiment_dict[element]
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
@@ -55,7 +71,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                         cycle_time_dict[model_component] = True
                 cycle_times_dict_list.append(cycle_time_dict)
 
-            render_dictionary['cycle_times'] = cycle_times
+            render_dictionary['cycle_times'] = cycle_times_dict_list
 
         # Otherwise check that experiment_dict has cycle_times
         elif 'cycle_times' in experiment_dict:
