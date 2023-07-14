@@ -1,0 +1,16 @@
+wname: Tier 2 Applications Tests (Discover)
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron:  '0 0 * * *'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tier2-application-discover:
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier2_application_discover.yml@feature/ufo_tests
+
