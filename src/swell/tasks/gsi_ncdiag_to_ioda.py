@@ -109,7 +109,6 @@ class GsiNcdiagToIoda(taskBase):
                 gsi_type_to_process_actual = gsi_type_to_process
                 extra_path = ''
 
-
             # Path to search to GSI ncdiag files
             path_to_search = os.path.join(gsi_diag_dir, extra_path,
                                           f'*{gsi_type_to_process_actual}*{gsi_datetime_str}*')
@@ -158,9 +157,9 @@ class GsiNcdiagToIoda(taskBase):
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
 
             # Check that there are some files to combine
-            self.logger.assert_abort(len(ioda_path_files)> 0, f'In combine of {needed_ioda_type} ' +
-                                     f'no files where found. Ensure that the converter worked as ' +
-                                     f'expected.')
+            self.logger.assert_abort(len(ioda_path_files) > 0, f'In combine of ' +
+                                     f'{needed_ioda_type} no files where found. Ensure that ' +
+                                     f'the converter worked as expected.')
 
             # Get last file (first could be type_obs_ if the code already ran)
             ioda_file_0 = os.path.basename(ioda_path_files[-1])
