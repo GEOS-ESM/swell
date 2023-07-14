@@ -1,6 +1,6 @@
 filetype: cube sphere history
 provider: geos
-datapath: {{cycle_dir}}
-filename: {{experiment_id}}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
+datapath: '{{cycle_dir}}'
+filename: '{{experiment_id}}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
 first: PT0H
 frequency: PT1H
