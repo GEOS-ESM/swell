@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -26,28 +26,66 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
-    render_dictionary = experiment_dict
+    render_dictionary = {}
+
+    # Elements to copy from the experiment dictionary
+    # -----------------------------------------------
+    render_elements = [
+        'start_cycle_point',
+        'final_cycle_point',
+        'runahead_limit',
+        'model_components',
+        'platform',
+    ]
+
+    # Copy elements from experiment dictionary to render dictionary
+    # -------------------------------------------------------------
+    for element in render_elements:
+        if element in experiment_dict:
+            render_dictionary[element] = experiment_dict[element]
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
-    model_components = dict_get(logger, experiment_dict, 'model_components', [])
-    cycle_times = []
-    for model_component in model_components:
-        cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
-        cycle_times = list(set(cycle_times + cycle_times_mc))
-    cycle_times.sort()
 
-    cycle_times_dict_list = []
-    for cycle_time in cycle_times:
-        cycle_time_dict = {}
-        cycle_time_dict['cycle_time'] = cycle_time
-        for model_component in model_components:
-            cycle_time_dict[model_component] = False
-            if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
-                cycle_time_dict[model_component] = True
-        cycle_times_dict_list.append(cycle_time_dict)
+    # Check if 'cycle_times' appears anywhere in the suite_file
+    if 'cycle_times' in suite_file:
 
-    render_dictionary['cycle_times'] = cycle_times_dict_list
+        # Since cycle times are used, the render_dictionary will need to include cycle_times
+        model_components = dict_get(logger, experiment_dict, 'model_components', [])
+
+        # If there are different model components then process each to gather cycle times
+        if len(model_components) > 0:
+            cycle_times = []
+            for model_component in model_components:
+                cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
+                cycle_times = list(set(cycle_times + cycle_times_mc))
+            cycle_times.sort()
+
+            cycle_times_dict_list = []
+            for cycle_time in cycle_times:
+                cycle_time_dict = {}
+                cycle_time_dict['cycle_time'] = cycle_time
+                for model_component in model_components:
+                    cycle_time_dict[model_component] = False
+                    if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
+                        cycle_time_dict[model_component] = True
+                cycle_times_dict_list.append(cycle_time_dict)
+
+            render_dictionary['cycle_times'] = cycle_times_dict_list
+
+        # Otherwise check that experiment_dict has cycle_times
+        elif 'cycle_times' in experiment_dict:
+
+            cycle_times = list(set(experiment_dict['cycle_times']))
+            cycle_times.sort()
+            render_dictionary['cycle_times'] = cycle_times
+
+        else:
+
+            # Otherwise use logger to abort
+            logger.abort('The suite file required cycle_times but there are no model components ' +
+                         'to gather them from or they are not provided in the experiment ' +
+                         'dictionary.')
 
     # Add scheduling to the render dictionary (TODO: do not hard code this)
     # ---------------------------------------
@@ -94,7 +132,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediVariationalExecutable']['constraint'] = 'cas|sky|hasw'
 
     render_dictionary['scheduling']['RunGeosExecutable'] = {}
-    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT30M'
     render_dictionary['scheduling']['RunGeosExecutable']['account'] = 'g0613'
     render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'allnccs'
     render_dictionary['scheduling']['RunGeosExecutable']['nodes'] = 1

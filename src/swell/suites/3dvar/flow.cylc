@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -145,9 +145,6 @@
             --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
-
-    [[MergeIodaFiles-{{model_component}}]]
-        script = "swell_task MergeIodaFiles $config -d $datetime -m {{model_component}}"
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"

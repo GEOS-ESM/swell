@@ -1,4 +1,4 @@
-# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# (C) Copyright 2023- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import shutil
 
 from swell.tasks.base.task_base import taskBase
 
@@ -14,11 +15,13 @@ from swell.tasks.base.task_base import taskBase
 # --------------------------------------------------------------------------------------------------
 
 
-class GetRestart(taskBase):
+class RemoveForecastDir(taskBase):
+
+    # ----------------------------------------------------------------------------------------------
 
     def execute(self):
 
-        self.logger.info('GetRestart')
-
+        self.logger.info(f"Removing old forecast directory: {self.forecast_dir()}")
+        shutil.rmtree(self.forecast_dir())
 
 # --------------------------------------------------------------------------------------------------

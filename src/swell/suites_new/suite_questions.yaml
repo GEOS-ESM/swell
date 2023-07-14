@@ -1,0 +1,10 @@
+experiment_id:
+  ask_question: true
+  default_value: swell-{{suite_to_run}}
+  prompt: Enter the experiment ID
+  type: string
+
+experiment_root:
+  default_value: {{experiment_root}}
+  prompt: Enter the path where experiment will be staged
+  type: string

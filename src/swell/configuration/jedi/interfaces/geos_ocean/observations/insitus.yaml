@@ -1,6 +1,13 @@
 obs operator:
-  name: MarineVertInterp
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  name: Composite
+  components:
+  - name: VertInterp
+    observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+    variables:
+    - name: salinity
+    vertical coordinate: sea_water_depth
+    observation vertical coordinate: depth
+    interpolation method: linear
 obs space:
   name: InsituSalinity
   obsdatain:

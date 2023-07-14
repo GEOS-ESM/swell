@@ -1,4 +1,4 @@
-# (C) Copyright 2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -42,9 +42,9 @@ class GenerateBClimatology(taskBase):
 
     def generate_jedi_config(self):
 
-        # Create dictionary from the templated JEDI config file
-        # ---------------------------------------------------------
-        jedi_config_dict = self.open_jedi_oops_config_file('StaticBInit')
+        # Render StaticBInit (no templates needed)
+        # ----------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit')
 
         # Read configs for the rest of the dictionary
         # -------------------------------------------
@@ -78,7 +78,7 @@ class GenerateBClimatology(taskBase):
                              model_component, self.background_error_model, 'climatological',
                              resolution, str(self.np))
 
-        d_dir = os.path.join(self.cycle_dir, 'background_error_model')
+        d_dir = os.path.join(self.cycle_dir(), 'background_error_model')
 
         try:
             self.logger.info('  Copying BUMP files from: '+b_dir)
@@ -89,7 +89,7 @@ class GenerateBClimatology(taskBase):
 
             # Jedi configuration file
             # -----------------------
-            jedi_config_file = os.path.join(self.cycle_dir, 'jedi_bump_config.yaml')
+            jedi_config_file = os.path.join(self.cycle_dir(), 'jedi_bump_config.yaml')
 
             # Generate the JEDI configuration file for running the executable
             # ---------------------------------------------------------------
@@ -101,7 +101,7 @@ class GenerateBClimatology(taskBase):
             # Jedi executable name
             # --------------------
             jedi_executable = interface_executable[self.jedi_interface]
-            jedi_executable_path = os.path.join(self.experiment_dir, 'jedi_bundle',
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
@@ -112,7 +112,7 @@ class GenerateBClimatology(taskBase):
 
             # Move to the cycle directory
             # ---------------------------
-            os.chdir(self.cycle_dir)
+            os.chdir(self.cycle_dir())
             if not os.path.exists('background_error_model'):
                 os.mkdir('background_error_model')
 
@@ -139,29 +139,25 @@ class GenerateBClimatology(taskBase):
             See the taskBase constructor for more information.
         """
 
-        self.total_processors = self.config_get('total_processors')
-        self.swell_static_files = self.config_get('swell_static_files')
-        self.horizontal_resolution = self.config_get('horizontal_resolution')
-        self.vertical_resolution = self.config_get('vertical_resolution')
-        self.cycle_dir = self.config_get('cycle_dir')
-        self.experiment_dir = self.config_get('experiment_dir')
-        self.npx_proc = self.config_get('npx_proc')  # Used in eval(total_processors)
-        self.npy_proc = self.config_get('npy_proc')  # Used in eval(total_processors)
+        self.swell_static_files = self.config.swell_static_files()
+        self.horizontal_resolution = self.config.horizontal_resolution()
+        self.vertical_resolution = self.config.vertical_resolution()
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
-        model_component_meta = self.open_jedi_interface_meta_config_file()
+        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
+        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        model_component_meta = self.jedi_rendering.render_interface_meta()
         self.jedi_interface = model_component_meta['jedi_interface']
 
         # Compute number of processors
         # ----------------------------
-        self.total_processors = self.total_processors.replace('npx_proc', str(self.npx_proc))
-        self.total_processors = self.total_processors.replace('npy_proc', str(self.npy_proc))
-        self.np = eval(self.total_processors)
+        np = eval(model_component_meta['total_processors'])
 
         # Obtain and initialize proper error model
         # -----------------------------------------------
-        self.background_error_model = self.config_get('background_error_model')
+        self.background_error_model = self.config.background_error_model()
         self.initialize_background()
 
 # --------------------------------------------------------------------------------------------------

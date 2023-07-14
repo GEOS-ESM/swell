@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -18,7 +18,6 @@ from swell.utilities.dictionary import remove_matching_keys, replace_string_in_d
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -26,12 +25,16 @@ class EvaObservations(taskBase):
 
     def execute(self):
 
-        # Parse config for jedi_config
-        # ----------------------------
-        cycle_dir = self.config_get('cycle_dir')
-        experiment_root = self.config_get('experiment_root')
-        experiment_id = self.config_get('experiment_id')
-        observations = self.config_get('observations')
+        # Compute window beginning time
+        window_begin = self.da_window_params.window_begin(self.config.window_offset())
+        background_time = self.da_window_params.background_time(self.config.window_offset(),
+                                                                self.config.background_time_offset()
+                                                                )
+
+        # Create JEDI interface config templates dictionary
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Get the model
         # -------------
@@ -39,18 +42,17 @@ class EvaObservations(taskBase):
 
         # Read Eva template file into dictionary
         # --------------------------------------
-        exp_path = os.path.join(experiment_root, experiment_id)
-        exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
+        exp_suite_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite')
         eva_config_file = os.path.join(exp_suite_path, f'eva_observations-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
         # Loop over observations
         # -------------------
-        for observation in observations:
+        for observation in self.config.observations():
 
             # Load the observation dictionary
-            observation_dict = self.open_jedi_interface_obs_config_file(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
@@ -78,7 +80,7 @@ class EvaObservations(taskBase):
 
             # Create dictionary used to override the eva config
             eva_override = {}
-            eva_override['cycle_dir'] = cycle_dir
+            eva_override['cycle_dir'] = self.cycle_dir()
             eva_override['obs_path_file'] = obs_path_file
             eva_override['instrument'] = ioda_name
             eva_override['instrument_title'] = full_name
@@ -105,7 +107,7 @@ class EvaObservations(taskBase):
 
             # Write eva dictionary to file
             # ----------------------------
-            conf_output = os.path.join(cycle_dir, 'eva', ioda_name, ioda_name+'_eva.yaml')
+            conf_output = os.path.join(self.cycle_dir(), 'eva', ioda_name, ioda_name+'_eva.yaml')
             os.makedirs(os.path.dirname(conf_output), exist_ok=True)
             with open(conf_output, 'w') as outfile:
                 yaml.dump(eva_dict, outfile, default_flow_style=False)

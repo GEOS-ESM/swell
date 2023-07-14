@@ -1,4 +1,4 @@
-# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing Geos forecast
+# Cylc suite for Geos forecast without DA
 
 # --------------------------------------------------------------------------------------------------
 
@@ -20,7 +20,6 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
-    runahead limit = {{runahead_limit}}
 
     [[graph]]
         R1 = """
@@ -34,26 +33,29 @@
 
             # If not able to link to build create the build
             BuildGeosByLinking:fail? => BuildGeos
+
+            # Need first set of restarts to run model
+            GetGeosRestart => PrepGeosRunDir
+
+            # Get first set of restarts
+            BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
         """
 
         {% for cycle_time in cycle_times %}
-        {{cycle_time.cycle_time}} = """
-        {% for model_component in model_components %}
-            # Task triggers for: {{model_component}}
-            # ------------------
-            # Get background
-            GetRestart-{{model_component}}
-
-            # Run Geos hofx executable
-            BuildGeosByLinking[^]? | BuildGeos[^]  => PrepGeosRunDir
-            GetRestart-{{model_component}} => PrepGeosRunDir
+        {{cycle_time}} = """
 
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
+            MoveForecastRestart[-PT6H] => PrepGeosRunDir
 
-            # Save restart
-            RunGeosExecutable => SaveRestart-{{model_component}}
-        {% endfor %}
+            # Move restart to next cycle
+            RunGeosExecutable => MoveForecastRestart
+
+            # Save restarts if requested
+            # MoveForecastRestart[-PT6H] => SaveRestart
+
+            # Remove Run Directory
+            MoveForecastRestart => RemoveForecastDir
         """
         {% endfor %}
 
@@ -90,15 +92,19 @@
             --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
 
     [[PrepGeosRunDir]]
-        script = "swell_task PrepGeosRunDir $config"
+        script = "swell_task PrepGeosRunDir $config -d $datetime"
 
-    {% for model_component in model_components %}
-    [[GetRestart-{{model_component}}]]
-        script = "swell_task GetRestart $config -d $datetime -m {{model_component}}"
+    [[RemoveForecastDir]]
+        script = "swell_task RemoveForecastDir $config -d $datetime"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
-    {% endfor %}
+    [[GetGeosRestart]]
+        script = "swell_task GetGeosRestart $config -d $datetime"
+
+    [[MoveForecastRestart]]
+        script = "swell_task MoveForecastRestart $config -d $datetime"
+
+    [[SaveRestart]]
+        script = "swell_task SaveRestart $config -d $datetime"
 
     [[RunGeosExecutable]]
         script = "swell_task RunGeosExecutable $config -d $datetime"
