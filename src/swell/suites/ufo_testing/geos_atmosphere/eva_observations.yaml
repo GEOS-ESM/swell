@@ -280,6 +280,7 @@ diagnostics:
     # -------------------------------------------------------
     - batch figure:
         variables: *variables
+        channels: *channels
       figure:
         layout: [1,1]
         title: 'Observation minus Background Density (Passing QC) | {{instrument_title}} | ${variable_title}'
@@ -292,6 +293,7 @@ diagnostics:
           statistics:
             fields:
               - field_name: experiment::ObsValueMinusGsiHofXPassedQc::${variable}
+                channel: ${channel}
                 xloc: 0.5
                 yloc: -0.10
                 kwargs:
@@ -299,6 +301,7 @@ diagnostics:
                   fontsize: 8
                   fontfamily: monospace
               - field_name: experiment::ObsValueMinusHofxPassedQc::${variable}
+                channel: ${channel}
                 xloc: 0.5
                 yloc: -0.13
                 kwargs:
@@ -315,6 +318,7 @@ diagnostics:
           - type: Density
             data:
               variable: experiment::ObsValueMinusGsiHofXPassedQc::${variable}
+              channel: ${channel}
             color: 'blue'
             label: 'GSI omb (Passed QC)'
             alpha: 0.5
@@ -322,6 +326,7 @@ diagnostics:
           - type: Density
             data:
               variable: experiment::ObsValueMinusHofxPassedQc::${variable}
+              channel: ${channel}
             color: 'red'
             label: 'JEDI omb (Passed QC)'
             alpha: 0.5
@@ -332,6 +337,7 @@ diagnostics:
     # ------------------------------------------------------------------------
     - batch figure:
         variables: *variables
+        channels: *channels
       figure:
         layout: [1,1]
         title: 'Observation minus Background Density (Passing QC) | {{instrument_title}} | ${variable_title}'
@@ -344,6 +350,7 @@ diagnostics:
           statistics:
             fields:
               - field_name: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+                channel: ${channel}
                 xloc: 0.5
                 yloc: -0.10
                 kwargs:
@@ -351,6 +358,7 @@ diagnostics:
                   fontsize: 8
                   fontfamily: monospace
               - field_name: experiment::ObsValueMinusHofxPassedQc::${variable}
+                channel: ${channel}
                 xloc: 0.5
                 yloc: -0.13
                 kwargs:
@@ -367,6 +375,7 @@ diagnostics:
           - type: Density
             data:
               variable: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+              channel: ${channel}
             color: 'blue'
             label: 'GSI omb BC (Passed QC)'
             alpha: 0.5
@@ -374,6 +383,7 @@ diagnostics:
           - type: Density
             data:
               variable: experiment::ObsValueMinusHofxPassedQc::${variable}
+              channel: ${channel}
             color: 'red'
             label: 'JEDI omb (Passed QC)'
             alpha: 0.5

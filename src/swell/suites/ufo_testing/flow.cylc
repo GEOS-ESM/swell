@@ -115,17 +115,17 @@
     [[ GsiNcdiagToIoda ]]
         script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
 
-    [[RunJediTestObsFiltersExecutable]]
-        script = "swell_task RunJediTestObsFiltersExecutable $config -d $datetime -m geos_atmosphere"
+    [[RunJediUfoTestsExecutable]]
+        script = "swell_task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediTestObsFiltersExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediUfoTestsExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediTestObsFiltersExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediTestObsFiltersExecutable"]["qos"]}}
-            --job-name = RunJediTestObsFiltersExecutable
-            --nodes={{scheduling["RunJediTestObsFiltersExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediTestObsFiltersExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediTestObsFiltersExecutable"]["constraint"]}}
+            --account = {{scheduling["RunJediUfoTestsExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediUfoTestsExecutable"]["qos"]}}
+            --job-name = RunJediUfoTestsExecutable
+            --nodes={{scheduling["RunJediUfoTestsExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediUfoTestsExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediUfoTestsExecutable"]["constraint"]}}
 
     [[EvaObservations]]
         script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"

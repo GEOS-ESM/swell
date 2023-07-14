@@ -75,9 +75,9 @@ class GsiBcToIoda(taskBase):
 
         # Add the files
         for bc_file in bc_files:
-            if 'ana_satbias_rst' in bc_file:
+            if '.ana.satbias.' in bc_file:
                 satbias_converter_dict['input coeff file'] = bc_file
-            if 'ana_satbiaspc_rst' in bc_file:
+            if '.ana.satbiaspc.' in bc_file:
                 satbias_converter_dict['input err file'] = bc_file
 
         # Add the default predictors
@@ -95,6 +95,20 @@ class GsiBcToIoda(taskBase):
         default_predictors.append('scan_angle_order_2')
         default_predictors.append('scan_angle')
 
+        gmi_gpm_predictors = []
+        gmi_gpm_predictors.append('constant')
+        gmi_gpm_predictors.append('zenith_angle')
+        gmi_gpm_predictors.append('cosine_of_latitude_times_orbit_node')
+        gmi_gpm_predictors.append('lapse_rate_order_2')
+        gmi_gpm_predictors.append('lapse_rate')
+        gmi_gpm_predictors.append('cloud_liquid_water_order_2')
+        gmi_gpm_predictors.append('cloud_liquid_water')
+        gmi_gpm_predictors.append('emissivity')
+        gmi_gpm_predictors.append('scan_angle_order_4')
+        gmi_gpm_predictors.append('scan_angle_order_3')
+        gmi_gpm_predictors.append('scan_angle_order_2')
+        gmi_gpm_predictors.append('scan_angle')
+
         satbias_converter_dict['default predictors'] = default_predictors
 
         satbias_converter_dict_output = []
@@ -102,7 +116,10 @@ class GsiBcToIoda(taskBase):
             output_dict = {}
             output_dict['sensor'] = sensor
             output_dict['output file'] = os.path.join(self.cycle_dir(), sensor_satbias)
-            output_dict['predictors'] = default_predictors
+            if sensor == 'gmi_gpm':
+                output_dict['predictors'] = gmi_gpm_predictors
+            else:
+                output_dict['predictors'] = default_predictors
             satbias_converter_dict_output.append(output_dict)
 
         satbias_converter_dict['output'] = satbias_converter_dict_output
@@ -120,10 +137,10 @@ class GsiBcToIoda(taskBase):
         # Run tlapse converter (just a grep)
         for sensor, sensor_tlapse in zip(sensors, sensors_tlapse):
             sensor_tlapse_file = ''
-            with open(satbias_converter_dict['input err file'], 'r') as f:
+            with open(satbias_converter_dict['input coeff file'], 'r') as f:
                 for line in f.readlines():
                     if sensor in line:
-                        sensor_tlapse_file = sensor_tlapse_file + ' '.join(line.split()[1:]) + '\n'
+                        sensor_tlapse_file = sensor_tlapse_file + ' '.join(line.split()[1:4]) + '\n'
             # Write to tlapse file
             with open(os.path.join(self.cycle_dir(), sensor_tlapse), 'w') as file_open:
                 file_open.write(sensor_tlapse_file)

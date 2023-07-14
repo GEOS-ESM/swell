@@ -523,7 +523,7 @@ obs filters:
   filter variables:
   - name: windEastward
   function absolute threshold:
-  - name: ObsFunction/SatWindsSPDBCheck
+  - name: ObsFunction/WindsSPDBCheck
     options:
       wndtype:    [ 230, 231, 232, 233, 234, 235 ]
       cgross:     [ 6.0, 6.5, 7.0, 7.5, 7.5, 7.5 ]
@@ -539,7 +539,7 @@ obs filters:
   filter variables:
   - name: windNorthward
   function absolute threshold:
-  - name: ObsFunction/SatWindsSPDBCheck
+  - name: ObsFunction/WindsSPDBCheck
     options:
       wndtype:    [ 230, 231, 232, 233, 234, 235 ]
       cgross:     [ 6.0, 6.5, 7.0, 7.5, 7.5, 7.5 ]

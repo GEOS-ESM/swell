@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import datetime
 import glob
 import os
@@ -44,7 +45,20 @@ class GsiNcdiagToIoda(taskBase):
 
         # Assemble all conventional types that ioda considers
         # ---------------------------------------------------
-        gsi_to_ioda_dict = gsid.conv_platforms
+        gsi_to_ioda_dict = copy.copy(gsid.conv_platforms)
+
+        # Remove aircraft from the lists and add new dictionaries for aircraft
+        # --------------------------------------------------------------------
+        aircraft_is_in_prof_files = True
+
+        if aircraft_is_in_prof_files:
+            for key, value in gsi_to_ioda_dict.items():
+                gsi_to_ioda_dict[key] = [x for x in value if x not in ['aircraft']]
+
+            if 'aircraft' in observations:
+                gsi_to_ioda_dict['conv_prof_t'] = ['aircraft']
+                gsi_to_ioda_dict['conv_prof_uv'] = ['aircraft']
+
         ioda_types = []
         for key in gsi_to_ioda_dict:
             ioda_types += gsi_to_ioda_dict[key]
@@ -87,9 +101,18 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 
+            # If prof in the name then it is aircraft data. Adjust path and rename
+            if 'prof' in gsi_type_to_process:
+                gsi_type_to_process_actual = gsi_type_to_process.replace('_prof', '')
+                extra_path = 'aircraft'
+            else:
+                gsi_type_to_process_actual = gsi_type_to_process
+                extra_path = ''
+
+
             # Path to search to GSI ncdiag files
-            path_to_search = os.path.join(gsi_diag_dir,
-                                          f'*{gsi_type_to_process}_*{gsi_datetime_str}*')
+            path_to_search = os.path.join(gsi_diag_dir, extra_path,
+                                          f'*{gsi_type_to_process_actual}*{gsi_datetime_str}*')
 
             # Get the list of files
             gsi_conv_file = glob.glob(path_to_search)
@@ -104,7 +127,7 @@ class GsiNcdiagToIoda(taskBase):
 
             # Assemble list of needed platforms
             needed_platforms = []
-            for platform in gsid.conv_platforms[gsi_type_to_process]:
+            for platform in gsid.conv_platforms[gsi_type_to_process_actual]:
                 if platform in needed_ioda_types:
                     needed_platforms.append(platform)
 
@@ -113,7 +136,7 @@ class GsiNcdiagToIoda(taskBase):
 
             if produce_geovals:
                 self.logger.info('', wrap=False)
-                self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process}')
+                self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process_actual}')
                 Diag.toGeovals(self.cycle_dir())
 
             Diag.close()

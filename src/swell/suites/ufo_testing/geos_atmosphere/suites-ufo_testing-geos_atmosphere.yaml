@@ -14,10 +14,7 @@ window_length:
 # Observations
 observations:
   default_value:
-   - gmi_gpm
-   - sondes
-
-#  - aircraft
+  - aircraft
 #  - airs_aqua
 #  - amsr2_gcom-w1
 #  - amsua_aqua
@@ -55,7 +52,7 @@ observations:
   type: string-check-list
 
 # Path to GSI ncdiags
-path_to_gsi_diags:
+path_to_gsi_nc_diags:
   default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag'
   prompt: Path to where the ncdiags will be held
   type: string
@@ -67,7 +64,7 @@ produce_geovals:
   type: boolean
 
 # Location for bias correction coefficients
-gsi_bc_location:
+path_to_gsi_bc_coefficients:
   default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc'
   prompt: Tar or directory containing BC files
   type: string
@@ -92,6 +89,8 @@ fixed_options:
     - gsi_bcs/*.yaml
     - gsi_bcs
     - gsi_ncdiags/*.nc4
+    - gsi_ncdiags/aircraft/*.nc4
+    - gsi_ncdiags/aircraft
     - gsi_ncdiags
     prompt: 'Patterns for the files to remove after completing a cycle'
   # Needed because of config gen

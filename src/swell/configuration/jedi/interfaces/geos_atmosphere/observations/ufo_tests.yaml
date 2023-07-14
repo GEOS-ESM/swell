@@ -19,7 +19,7 @@ aircraft:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 341802
 
 airs_aqua:
   operator_test:
@@ -115,7 +115,7 @@ gmi_gpm:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 41937
 
 gnssrobndnbam:
   operator_test:

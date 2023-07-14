@@ -59,5 +59,19 @@ class GetGsiNcdiag(taskBase):
                              f'{gsi_diag_file_target}')
             os.symlink(gsi_diag_path_file, gsi_diag_file_target)
 
+        # Create another directory to hold the aircraft data
+        # --------------------------------------------------
+        prof_files = glob.glob(os.path.join(gsi_diag_dir, '*prof*.nc4'))
+
+        for prof_file in prof_files:
+            os.makedirs(os.path.join(gsi_diag_dir, 'aircraft'), 0o755, exist_ok=True)
+
+            # Replace _prof with nothing
+            file_name = os.path.basename(prof_file)
+            file_name = file_name.replace('_prof', '')
+
+            # Move the file into the prof directory
+            os.rename(prof_file, os.path.join(gsi_diag_dir, 'aircraft', file_name))
+
 
 # --------------------------------------------------------------------------------------------------

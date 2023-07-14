@@ -139,13 +139,13 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunGeosExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunGeosExecutable']['constraint'] = 'cas|sky|hasw'
 
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable'] = {}
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['execution_time_limit'] = 'PT30M'  # noqa
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['ntasks_per_node'] = 1
-    render_dictionary['scheduling']['RunJediTestObsFiltersExecutable']['constraint'] = 'cas'
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable'] = {}
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['execution_time_limit'] = 'PT30M'  # noqa
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['constraint'] = 'cas'
 
     # Render the template
     # -------------------
