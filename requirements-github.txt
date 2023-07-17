@@ -8,3 +8,5 @@ xarray==2023.7.0
 questionary==1.10.0
 f90nml==1.4.3
 netCDF4==1.6.4
+Cartopy==0.21.1
+matplotlib==3.7.2
