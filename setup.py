@@ -31,17 +31,6 @@ setuptools.setup(
         'Natural Language :: English',
         'Operating System :: OS Independent'],
     python_requires='>=3.6',
-    install_requires=[
-        'click',
-        'jinja2>=3.0.3',
-        'pyyaml>=6.0',
-        'pycodestyle>=2.8.0',
-        'pandas>=1.4.0',
-        'isodate>=0.5.4',
-        'xarray>=0.11.3',
-        'f90nml>=1.4.3',
-        'questionary>=1.10.0',
-    ],
     package_data={
         '': [
                'deployment/platforms/*/modules*',
