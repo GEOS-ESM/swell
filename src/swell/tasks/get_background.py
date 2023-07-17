@@ -148,18 +148,16 @@ class GetBackground(taskBase):
                 os.makedirs(target_dir, exist_ok = True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-                R2D2Data.fetch(item = 'forecast',
-                               target_file = target_file,
-                               model = r2d2_model_dict[model_component],
-                               experiment = background_experiment,
-                               file_extension = "nc" # file_extension
-                               resolution = horizontal_resolution,
-                               domain = domain,
-                               file_type = file_type,
-                               step = bkg_step,
-                               date = forecast_start_time)
+                R2D2Data.fetch(item='forecast',
+                               target_file=target_file,
+                               model=r2d2_model_dict[model_component],
+                               experiment=background_experiment,
+                               file_extension="nc" # file_extension
+                               resolution=horizontal_resolution,
+                               domain=domain,
+                               file_type=file_type,
+                               step=bkg_step,
+                               date=forecast_start_time)
 
                 # Change permission
                 os.chmod(target_file, 0o644)
-
-# --------------------------------------------------------------------------------------------------

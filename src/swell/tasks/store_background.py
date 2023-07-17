@@ -133,14 +133,13 @@ class StoreBackground(taskBase):
                     file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
                     # Perform the store
-                    R2D2Data.store(item = 'forecast',
-                                   source_file = source_file,
-                                   data_store = 'swell-r2d2',
-                                   model = 'geos',
-                                   experiment = background_experiment,
-                                   file_extension = file_extension,
-                                   resolution = cfg.get('horizontal_resolution'),
-                                   file_type = 'bkg',
-                                   step = bkg_step,
-                                   date = forecast_start_time)
-
+                    R2D2Data.store(item='forecast',
+                                   source_file=source_file,
+                                   data_store='swell-r2d2',
+                                   model='geos',
+                                   experiment=background_experiment,
+                                   file_extension=file_extension,
+                                   resolution=cfg.get('horizontal_resolution'),
+                                   file_type='bkg',
+                                   step=bkg_step,
+                                   date=forecast_start_time)
