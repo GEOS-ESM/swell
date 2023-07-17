@@ -70,7 +70,7 @@ class GetObservations(taskBase):
             self.logger.info("Processing observation file "+target_file)
 
             target_dir = os.path.dirname(target_file)
-            os.makedirs(target_dir, exist_ok = True)
+            os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
             R2D2Data.fetch(item='observation',
@@ -94,7 +94,7 @@ class GetObservations(taskBase):
             self.logger.info("Processing satbias file "+target_file)
 
             target_dir = os.path.dirname(target_file)
-            os.makedirs(target_dir, exist_ok = True)
+            os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
             R2D2Data.fetch(item='bias_correction',
@@ -116,7 +116,7 @@ class GetObservations(taskBase):
                 self.logger.info("Processing tlapse file "+target_file)
 
                 target_dir = os.path.dirname(target_file)
-                os.makedirs(target_dir, exist_ok = True)
+                os.makedirs(target_dir, exist_ok=True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
                 R2D2Data.fetch(item='bias_correction',
