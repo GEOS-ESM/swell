@@ -1,9 +1,12 @@
-wname: Tier 2 Applications Tests (Discover)
+# Discover Nightly
+
+name: discover-nightly
 
 on:
   workflow_dispatch:
 
   schedule:
+    # * is a special character in YAML so you have to quote this string
     - cron:  '0 0 * * *'
 
 defaults:
@@ -11,6 +14,5 @@ defaults:
     shell: bash
 
 jobs:
-  tier2-application-discover:
-    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier2_application_discover.yml@feature/ufo_tests
-
+  run-discover-nightly:
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-discover-nightly.yml@main
