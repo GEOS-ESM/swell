@@ -76,7 +76,7 @@ class GetObservations(taskBase):
             R2D2Data.fetch(item             = 'observation'
                           ,target_file      = target_file
                           # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
-                          ,provider         = provider
+                          ,provider         = obs_provider
                           ,observation_type = observation
                           ,file_extension   = file_extension
                           ,window_start     = window_begin
@@ -112,7 +112,7 @@ class GetObservations(taskBase):
                           ,target_file      = target_file
                           # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
                           ,model            = 'geos_atmosphere'
-                          ,experiment       = experiment
+                          ,experiment       = obs_experiment
                           ,provider         = 'gsi'
                           ,observation_type = observation
                           ,file_extension   = file_extension
@@ -145,7 +145,7 @@ class GetObservations(taskBase):
                               ,target_file      = target_file
                               # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
                               ,model            = 'geos_atmosphere'
-                              ,experiment       = experiment
+                              ,experiment       = obs_experiment
                               ,provider         = 'gsi'
                               ,observation_type = observation
                               ,file_extension   = file_extension

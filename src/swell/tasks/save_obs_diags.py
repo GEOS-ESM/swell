@@ -74,7 +74,7 @@ class SaveObsDiags(taskBase):
                           ,observation_type = name
                           ,file_extension   = file_extension
                           ,window_start     = window_begin
-                          ,window_length    = window_length)
+                          ,window_length    = window_offset)
                           # ,create_date =      
                           # ,mod_date = )       
                                      
