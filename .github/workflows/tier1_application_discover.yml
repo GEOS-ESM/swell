@@ -1,6 +1,6 @@
 name: Tier 1 Applications Tests (Discover)
 
-on: workflow_dispatch
+on: []
 
 defaults:
   run:
