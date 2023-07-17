@@ -13,4 +13,4 @@ defaults:
 
 jobs:
   run-discover-nightly:
-    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-discover-nightly.yml@main
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier1_application_discover.yml@main
