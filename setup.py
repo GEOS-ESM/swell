@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -31,20 +31,6 @@ setuptools.setup(
         'Natural Language :: English',
         'Operating System :: OS Independent'],
     python_requires='>=3.6',
-    install_requires=[
-        'tomlkit',
-        'click',
-        'jinja2>=3.0.3',
-        'pyyaml>=6.0',
-        'pycodestyle>=2.8.0',
-        'pandas>=1.4.0',
-        'isodate>=0.5.4',
-        'xarray>=0.11.3',
-        'f90nml>=1.4.3',
-        'questionary>=1.10.0',
-        'flake8>=6.0.0',
-        'netCDF4',
-    ],
     package_data={
         '': [
                'deployment/platforms/*/modules*',

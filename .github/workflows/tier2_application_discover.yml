@@ -1,6 +1,4 @@
-# Discover Nightly
-
-name: Tier2
+name: Tier 2 Applications Tests (Discover)
 
 on:
   workflow_dispatch:

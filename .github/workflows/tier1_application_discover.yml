@@ -1,12 +1,12 @@
 name: Tier 1 Applications Tests (Discover)
 
-on: []
+on:
+  workflow_dispatch:
 
 defaults:
   run:
     shell: bash
 
 jobs:
-
-  tier1-application-discover:
-    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier1_application_discover.yml@feature/ufo_tests
+  run-discover-nightly:
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-discover-nightly.yml@main
