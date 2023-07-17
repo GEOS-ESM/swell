@@ -73,24 +73,13 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok = True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            R2D2Data.fetch(item             = 'observation'
-                          ,target_file      = target_file
-                          # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
-                          ,provider         = obs_provider
-                          ,observation_type = observation
-                          ,file_extension   = file_extension
-                          ,window_start     = window_begin
-                          ,window_length    = window_length)
-                          # ,create_date =
-                          # ,mod_date = )
-
-#            fetch(date=window_begin,
-#                  target_file=target_file,
-#                  provider=provider,
-#                  obs_type=observation,
-#                  time_window=window_length,
-#                  type='ob',
-#                  experiment=experiment)
+            R2D2Data.fetch(item = 'observation',
+                           target_file = target_file,
+                           provider = obs_provider,
+                           observation_type = observation,
+                           file_extension = file_extension,
+                           window_start = window_begin,
+                           window_length = window_length)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -108,26 +97,15 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok = True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            R2D2Data.fetch(item             = 'bias_correction'
-                          ,target_file      = target_file
-                          # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
-                          ,model            = 'geos_atmosphere'
-                          ,experiment       = obs_experiment
-                          ,provider         = 'gsi'
-                          ,observation_type = observation
-                          ,file_extension   = file_extension
-                          ,file_type        = 'satbias'
-                          ,date             = background_time)
-                          # ,create_date =
-                          # ,mod_date = )
-
-#            fetch(date=background_time,
-#                  target_file=target_file,
-#                  provider='gsi',
-#                  obs_type=observation,
-#                  type='bc',
-#                  experiment=experiment,
-#                  file_type='satbias')
+            R2D2Data.fetch(item             = 'bias_correction',
+                           target_file      = target_file,
+                           model            = 'geos_atmosphere',
+                           experiment       = obs_experiment,
+                           provider         = 'gsi',
+                           observation_type = observation,
+                           file_extension   = file_extension,
+                           file_type        = 'satbias',
+                           date             = background_time)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -141,26 +119,15 @@ class GetObservations(taskBase):
                 os.makedirs(target_dir, exist_ok = True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-                R2D2Data.fetch(item             = 'bias_correction'
-                              ,target_file      = target_file
-                              # ,data_store       = 'swell_store' # Don't specify data_store.  R2D2 will find wherever it exists on local.
-                              ,model            = 'geos_atmosphere'
-                              ,experiment       = obs_experiment
-                              ,provider         = 'gsi'
-                              ,observation_type = observation
-                              ,file_extension   = file_extension
-                              ,file_type        = 'tlapse'
-                              ,date             = background_time)
-                              # create_date =
-                              # ,mod_date = )
-
-#                fetch(date=background_time,
-#                      target_file=target_file,
-#                      provider='gsi',
-#                      obs_type=observation,
-#                      type='bc',
-#                      experiment=experiment,
-#                      file_type='tlapse')
+                R2D2Data.fetch(item             = 'bias_correction',
+                               target_file      = target_file,
+                               model            = 'geos_atmosphere',
+                               experiment       = obs_experiment,
+                               provider         = 'gsi',
+                               observation_type = observation,
+                               file_extension   = file_extension,
+                               file_type        = 'tlapse',
+                               date             = background_time)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

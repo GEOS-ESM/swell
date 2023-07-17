@@ -133,30 +133,14 @@ class StoreBackground(taskBase):
                     file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
                     # Perform the store
-                    R2D2Data.store(item           = 'forecast'
-                                  ,source_file    = source_file
-                                  ,data_store     = 'swell-r2d2'
-                                  ,model          = 'geos'
-                                  ,experiment     = bkg_info['background experiment']
-                                  ,file_extension = file_extension
-                                  ,resolution     = cfg.get('horizontal_resolution')
-                                  #,domain = 
-                                  ,file_type      = 'bkg'
-                                  ,step           = bkg_step
-                                  #,tile = 
-                                  #,member = 
-                                  ,date           = forecast_start_time)
-                                  # ,create_date = 
-                                  # ,mod_date = )
-
-
-#                    store(date=forecast_start_time,
-#                          source_file=target_file,
-#                          model='geos',
-#                          file_type='bkg',
-#                          fc_date_rendering='analysis',
-#                          step=bkg_step,
-#                          resolution=cfg.get('horizontal_resolution'),
-#                          type='fc',
-#                          experiment=bkg_info['background experiment'])
+                    R2D2Data.store(item = 'forecast',
+                                   source_file = source_file,
+                                   data_store = 'swell-r2d2',
+                                   model = 'geos',
+                                   experiment = background_experiment,
+                                   file_extension = file_extension,
+                                   resolution = cfg.get('horizontal_resolution'),
+                                   file_type = 'bkg',
+                                   step = bkg_step,
+                                   date = forecast_start_time)
 

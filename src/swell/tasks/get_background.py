@@ -148,33 +148,16 @@ class GetBackground(taskBase):
                 os.makedirs(target_dir, exist_ok = True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-                R2D2Data.fetch(item           = 'forecast'
-                              ,target_file    = target_file
-                              # ,data_store     = 'swell_store' # Don't specify data_store.  R2D2 will find it wherever it exists on local.
-                              ,model          = r2d2_model_dict[model_component]
-                              ,experiment     = background_experiment
-                              ,file_extension = "nc" #file_extension
-                              ,resolution     = horizontal_resolution
-                              ,domain         = domain
-                              ,file_type      = file_type
-                              ,step           = bkg_step
-                              #,tile           = 
-                              #,member         = 
-                              ,date           = forecast_start_time)
-                              #,create_date = 
-                              #,mod_date = )
-
-
-#                fetch(
-#                    date=forecast_start_time,
-#                    target_file=target_file,
-#                    model=r2d2_model_dict[model_component],
-#                    file_type=file_type,
-#                    fc_date_rendering='analysis',
-#                    step=bkg_step,
-#                    resolution=horizontal_resolution,
-#                    type='fc',
-#                    experiment=background_experiment)
+                R2D2Data.fetch(item = 'forecast',
+                               target_file = target_file,
+                               model = r2d2_model_dict[model_component],
+                               experiment = background_experiment,
+                               file_extension = "nc" # file_extension
+                               resolution = horizontal_resolution,
+                               domain = domain,
+                               file_type = file_type,
+                               step = bkg_step,
+                               date = forecast_start_time)
 
                 # Change permission
                 os.chmod(target_file, 0o644)
