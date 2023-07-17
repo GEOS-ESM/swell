@@ -8,5 +8,5 @@ defaults:
     shell: bash
 
 jobs:
-  run-discover-nightly:
+  run-tier1-apps-discover:
     uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier1_application_discover.yml@feature/ufo_tests
