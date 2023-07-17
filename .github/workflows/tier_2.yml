@@ -1,6 +1,6 @@
 # Discover Nightly
 
-name: Tier2
+name: Tier 2 Discover
 
 on:
   workflow_dispatch:
