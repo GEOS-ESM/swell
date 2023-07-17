@@ -43,7 +43,7 @@ jobs:
 
     # Install swell
     - name: Install swell and dependencies
-      run: $CONDA/bin/pip3 install --use-deprecated=legacy-resolver -r requirements-github.txt --user .
+      run: $CONDA/bin/pip3 install -v --use-deprecated=legacy-resolver -r requirements-github.txt --user .
 
     # Put swell executables in the path
     - name: Put swell in the path
