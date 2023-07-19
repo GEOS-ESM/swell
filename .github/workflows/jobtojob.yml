@@ -4,12 +4,6 @@ name: job-to-job-test
 
 on:
   push:
-  
-  label:
-    types:
-      - created
-      - edited
-      - deleted
 
 defaults:
   run:
@@ -36,4 +30,4 @@ jobs:
     
     steps:
       - name: check-param
-        run: echo "$CI_DATETIME"
+        run: echo ${{ needs.datetime.outputs.datetime }}
