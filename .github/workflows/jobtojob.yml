@@ -3,11 +3,11 @@
 name: job-to-job-test
 
 on:
-  pull_request:
+  label:
     types:
-      - opened
-      - synchronize
-      - reopened
+      - created
+      - edited
+      - deleted
 
 defaults:
   run:
