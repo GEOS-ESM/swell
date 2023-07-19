@@ -48,12 +48,12 @@
             GetGsiNcdiag => GsiNcdiagToIoda
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
-            GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
-            GsiBcToIoda => RunJediTestObsFiltersExecutable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediUfoTestsExecutable
+            GsiNcdiagToIoda => RunJediUfoTestsExecutable
+            GsiBcToIoda => RunJediUfoTestsExecutable
 
             # EvaObservations
-            RunJediTestObsFiltersExecutable => EvaObservations
+            RunJediUfoTestsExecutable => EvaObservations
 
             # Clean up large files
             EvaObservations => CleanCycle

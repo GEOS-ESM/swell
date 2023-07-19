@@ -111,7 +111,7 @@ class GsiNcdiagToIoda(taskBase):
 
             # Path to search to GSI ncdiag files
             path_to_search = os.path.join(gsi_diag_dir, extra_path,
-                                          f'*{gsi_type_to_process_actual}*{gsi_datetime_str}*')
+                                          f'*{gsi_type_to_process_actual}_*{gsi_datetime_str}*')
 
             # Get the list of files
             gsi_conv_file = glob.glob(path_to_search)
