@@ -71,7 +71,7 @@ def run_subprocess(logger, command, stdout=None, stderr=None):
         subprocess.run(command, check=True, stdout=stdout, stderr=stderr)
     except subprocess.CalledProcessError as e:
         print(e)
-        logger.abort('Subprocess with command {command} failed, throwing error {error}')
+        logger.abort(f'Subprocess with command {command} failed, throwing error {e}')
 
 
 # --------------------------------------------------------------------------------------------------
