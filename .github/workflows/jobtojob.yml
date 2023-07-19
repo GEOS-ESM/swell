@@ -1,0 +1,32 @@
+# This is a SWELL Project Test
+
+name: job-to-job-test
+
+on: pull_request
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CI_ROOT: /discover/nobackup/gmao_ci/swell/nightly
+
+jobs:
+
+  datetime:
+    runs-on: nccs-discover
+    outputs:
+      datetime: ${{ steps.getdate.outputs.datetime }}
+    steps:
+      - id: getdate
+        run: echo "datetime=$(date +'%Y%m%dT%H%M%S')" >> $GITHUB_ENV
+
+  job1:
+    runs-on: nccs-discover
+    needs: datetime
+    env:
+      CI_DATETIME: ${{needs.datetime.outputs.datetime}}
+    
+    steps:
+      - name: check-param
+        run: echo "$CI_DATETIME"
