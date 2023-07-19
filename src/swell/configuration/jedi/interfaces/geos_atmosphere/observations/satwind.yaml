@@ -1,6 +1,7 @@
 obs operator:
   name: VertInterp
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  apply near surface wind scaling: true
 obs space:
   name: satwind
   obsdatain:
@@ -15,80 +16,253 @@ obs space:
 obs filters:
 #
 # Reject all obs with PreQC mark already set above 3
+# not found/add back
 - filter: PreQC
   maxvalue: 3
   action:
     name: reject
+
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  where:
+  - variable: PreUseFlag/windEastward
+    is_in: 100
+  action:
+    name: reject
+
+- filter: Perform Action
+  filter variables:
+  - name: windNorthward
+  where:
+  - variable: PreUseFlag/windNorthward
+    is_in: 100
+  action:
+    name: reject
+
 #
 # Assign the initial observation error, based on height/pressure
-- filter: Bounds Check
+# add back
+- filter: Perform Action
   filter variables:
   - name: windEastward
   - name: windNorthward
-  minvalue: -135
-  maxvalue: 135
+#  minvalue: -135
+#  maxvalue: 135
   action:
     name: assign error
     error function:
-      name: ObsFunction/ObsErrorModelStepwiseLinear
+      name: ObsErrorModelStepwiseLinear@ObsFunction
       options:
         xvar:
-          name: MetaData/pressure
+          name: pressure@MetaData
         xvals: [100000, 95000, 80000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
-        errors: [1.4, 1.5, 1.6, 1.8, 1.9, 2.0, 2.1, 2.3, 2.6, 2.8, 3.0, 3.2, 2.7, 2.4, 2.1]
-#
-# Observation Range Sanity Check: either wind component or velocity exceeds 135 m/s
-- filter: Bounds Check
+        errors: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+#   #Blacklist Obstypes that aren't used in GSI
+#   #kx =
+- filter: BlackList
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 240, 241, 248, 249, 251, 255, 256, 260
+# 
+# Assign the initial observation error, based on height/pressure
+# kx = 244
+# reject pressure levels = [110000, 105000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]
+- filter: Perform Action
   filter variables:
   - name: windEastward
   - name: windNorthward
-  minvalue: -135
-  maxvalue: 135
   action:
-    name: reject
-- filter: Bounds Check
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [5.9, 5.9, 5.9, 5.9, 5.45, 5, 5, 5, 5.075, 5.175, 5.3, 5.675, 6.05, 6.25, 6.625, 7, 7, 7, 7]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 244
+
+
+  # Assign the initial observation error, based on height/pressure
+- filter: Perform Action
   filter variables:
   - name: windEastward
   - name: windNorthward
-  test variables:
-  - name: ObsFunction/Velocity
-  maxvalue: 135.0
   action:
-    name: reject
-#
-# All satellite platforms, reject when pressure greater than 950 mb.
-- filter: Bounds Check
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]   #Pressure (Pa)
+        errors: [3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.9, 3.9, 4.0, 4.0, 4.1, 5, 6, 6.3, 6.6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 245, 246
+
+
+# Assign the initial observation error, based on height/pressure
+- filter: Perform Action
   filter variables:
   - name: windEastward
   - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  maxvalue: 95000
   action:
-    name: reject
-#
-# Difference check surface_pressure and air_pressure@ObsValue, if less than 100 hPa, reject.
-# Starting with 730029 values, 338418 missing (half?), 50883 rejected by difference check, leaving 340728
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]   #Pressure (Pa)
+        errors: [3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.9, 3.9, 4.0, 4.0, 4.1, 5, 6, 6.3, 6.6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 242, 243, 247, 252, 253
+
+# Assign the initial observation error, based on height/pressure
+# kx = 254
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]   #Pressure (Pa)
+        errors: [3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.9, 3.9, 4.0, 4.5, 6.1, 6.0, 6.5, 7.3, 7.6, 7, 7.5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 254
+
+# Assign the initial observation error, based on height/pressure
+# kx = 250
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]   #Pressure (Pa)
+        errors: [3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.8, 3.9, 3.9, 4.0, 4.0, 4.1, 5.0, 7, 7.3, 7.6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 250
+
+# Assign the initial observation error, based on height/pressure
+# kx = 257
+# reject [110000, 105000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [5.9, 5.9, 5.9, 5.9, 5.9, 5.9, 5.9, 5.9, 5.675, 5.45, 5.525, 5.8, 6.275, 6.575, 6.825, 7.05, 7.05, 7.05, 7.05]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 257
+
+# Assign the initial observation error, based on height/pressure
+# kx = 258
+# reject = [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [6.05, 5.625, 5.275, 5.375, 5.925, 6.475, 6.775, 7.05, 7.05, 7.05, 7.05]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 258
+
+# Assign the initial observation error, based on height/pressure
+# kx = 257
+# reject [110000, 105000, 7500, 5000, 4000, 3000, 2000, 1000, 500, 400, 300, 200, 100, 0]
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  action:
+    name: assign error
+    error function:
+      name: ObsErrorModelStepwiseLinear@ObsFunction
+      options:
+        xvar:
+          name: pressure@MetaData
+        xvals: [100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000, 60000, 55000, 50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000]   #Pressure (Pa)
+        errors: [6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6.5, 6, 5.5, 5.5, 5.575, 6.025, 6.4, 6.775, 7.15, 7.15, 7.15, 7.15]
+  where:
+  - variable:
+      name: windEastward@ObsType
+    is_in: 259
+
 - filter: Difference Check
   filter variables:
   - name: windEastward
   - name: windNorthward
-  reference: surface_pressure@GeoVaLs
-  value: pressure@MetaData
-  maxvalue: -10000
+  reference: GeoVaLs/surface_pressure
+  value: MetaData/pressure
+  maxvalue: -11000
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 247
+  - variable:
+      name: MetaData/surfaceQualifier
+    minvalue: 1
 #
-# Multiple satellite platforms, reject when pressure is more than 50 mb above tropopause.
 - filter: Difference Check
   filter variables:
   - name: windEastward
   - name: windNorthward
-  reference: TropopauseEstimate@ObsFunction
-  value: pressure@MetaData
-  minvalue: -5000                    # 50 hPa above tropopause level, negative p-diff
-  action:
-    name: reject
-#
+  reference: GeoVaLs/surface_pressure
+  value: MetaData/pressure
+  maxvalue: -20000
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 244, 257, 258, 259, 260
+  - variable:
+      name: MetaData/surfaceQualifier
+    minvalue: 1
+
 # GOES WV (non-cloudy; itype=247) reject when difference of wind direction is more than 50 degrees.
+# setupw:936/add back
 - filter: Bounds Check
   filter variables:
   - name: windEastward
@@ -96,86 +270,16 @@ obs filters:
   test variables:
   - name: ObsFunction/WindDirAngleDiff
   maxvalue: 50.0
-  action:
-    name: reject
-#
-# GOES IR (245), EUMET IR (253), JMA IR (252) reject when pressure between 400 and 800 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  minvalue: 40000
-  maxvalue: 80000
   where:
   - variable:
       name: ObsType/windEastward
-    is_in: 245, 252, 253
+    is_in: 247
   action:
     name: reject
 #
-# GOES WV (246, 250, 254), reject when pressure greater than 400 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  maxvalue: 40000
-  where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 246, 250, 254
-  action:
-    name: reject
-#
-# EUMET (242) and JMA (243) vis, reject when pressure less than 700 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  minvalue: 70000
-  where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 242, 243
-  action:
-    name: reject
-#
-# MODIS-Aqua/Terra (257) and (259), reject when pressure less than 250 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  minvalue: 25000
-  where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 257-259
-  action:
-    name: reject
-#
-# MODIS-Aqua/Terra (258) and (259), reject when pressure greater than 600 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: MetaData/pressure
-  maxvalue: 60000
-  where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 258, 259
-  action:
-    name: reject
 #
 # AVHRR (244), MODIS (257,258,259), VIIRS (260), GOES (247) use a LNVD check.
+# setupw:921,951,968/add back (definitely this one)
 - filter: Bounds Check
   filter variables:
   - name: windEastward
@@ -190,131 +294,106 @@ obs filters:
   action:
     name: reject
 #
-# AVHRR and MODIS (ObsType=244,257,258,259) use a SPDB check.
-- filter: Bounds Check
+
+#wgu
+- filter: BlackList
   filter variables:
   - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: ObsFunction/SatWindsSPDBCheck
-    options:
-      error_min: 1.4
-      error_max: 20.0
-  maxvalue: 1.75
   where:
     - variable:
         name: ObsType/windEastward
-      is_in: 244, 257, 258, 259
-  action:
-    name: reject
-#
-# GOES (ObsType=245,246,253,254) use a SPDB check only between 300-400 mb.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: ObsFunction/SatWindsSPDBCheck
-    options:
-      error_min: 1.4
-      error_max: 20.0
-  maxvalue: 1.75
-  where:
-    - variable:
-        name: ObsType/windEastward
-      is_in: 244, 257, 258, 259
-    - variable:
-        name: MetaData/pressure
-      minvalue: 30000
-      maxvalue: 40000
-  action:
-    name: reject
-#
-- filter: Background Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  absolute threshold: 7.5
+      is_in: 240-260
   action:
     name: inflate error
-    inflation factor: 3.0
-  defer to post: true
-#
-# If the total inflation factor is too big, reject.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  action:
-    name: reject
-  maxvalue: 2.5
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windEastward   # After inflation step
-      denominator:
-        name: ObsError/windEastward
-  where:
-    - variable:
-        name: ObsType/windEastward
-      is_in: 240, 241, 242, 244, 247, 248, 249, 250, 252, 255-260
-  defer to post: true
-#
-- filter: Bounds Check
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorPressureCheck
+      options:
+        variable: windEastward
+        inflation factor: 4
+        adjusted_error_name: GsiAdjustObsError
+
+- filter: BlackList
   filter variables:
   - name: windNorthward
-  action:
-    name: reject
-  maxvalue: 2.5
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windNorthward   # After inflation step
-      denominator:
-        name: ObsError/windNorthward
   where:
     - variable:
         name: ObsType/windNorthward
-      is_in: 240, 241, 242, 244, 247, 248, 249, 250, 252, 255-260
-  defer to post: true
-#
-# Some satellite platforms have a lower threshold of inflation factor of 1.5
-- filter: Bounds Check
+      is_in: 240-260
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorPressureCheck
+      options:
+        variable: windNorthward
+        inflation factor: 4
+        adjusted_error_name: GsiAdjustObsError
+
+#wgu
+# Gross Check
+- filter: Background Check
+  filter variables:
+  - name: windEastward
+  function absolute threshold:
+  - name: ObsFunction/WindsSPDBCheck
+    options:
+      error_min: [  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,
+                    1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4]
+      error_max: [  6.1,  6.1, 15.0, 15.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0,
+                    20.0, 20.0, 20.0, 20.0, 20.0, 20.1, 20.1, 20.1, 20.1, 20.1]
+      cgross:    [  2.5,  2.5,  2.5,  1.5,  2.5,  2.5,  2.5,  2.5,  2.5,  2.5,
+                    2.5,  1.3,  2.5,  1.5,  1.5,  2.5,  2.5,  2.5,  2.5,  2.5]
+      wndtype:  [  240,  241,  242,  243,  244,  245,  246,  247,  248,  249,
+                    250,  251,  252,  253,  254,  256,  257,  258,  259,  260]
+      variable: windEastward
+  action:
+    name: reject
+
+- filter: Background Check
+  filter variables:
+  - name: windNorthward
+  function absolute threshold:
+  - name: ObsFunction/WindsSPDBCheck
+    options:
+      cgross:     [  2.5,  2.5,  2.5,  1.5,  2.5,  2.5,  2.5,  2.5,  2.5,  2.5,
+                      2.5,  1.3,  2.5,  1.5,  1.5,  2.5,  2.5,  2.5,  2.5,  2.5]
+      error_min:  [  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,
+                      1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4,  1.4]
+      error_max:  [  6.1,  6.1, 15.0, 15.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0,
+                    20.0, 20.0, 20.0, 20.0, 20.0, 20.1, 20.1, 20.1, 20.1, 20.1]
+      wndtype:  [  240,  241,  242,  243,  244,  245,  246,  247,  248,  249,
+                    250,  251,  252,  253,  254,  256,  257,  258,  259,  260]
+      variable: windNorthward
+  action:
+    name: reject
+
+- filter: BlackList
   filter variables:
   - name: windEastward
   action:
-    name: reject
-  maxvalue: 1.5
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windEastward   # After inflation step
-      denominator:
-        name: ObsError/windEastward
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorDuplicateCheck@ObsFunction
+      options:
+        use_air_pressure: true
+        variable: windEastward
   where:
-    - variable:
-        name: ObsType/windEastward
-      is_in: 243, 245, 246, 251, 253, 254
+  - variable:
+      name: windEastward@ObsType
+    is_in:  240-260
   defer to post: true
-#
-- filter: Bounds Check
+
+- filter: BlackList
   filter variables:
   - name: windNorthward
   action:
-    name: reject
-  maxvalue: 1.5
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windNorthward   # After inflation step
-      denominator:
-        name: ObsError/windNorthward
+    name: inflate error
+    inflation variable:
+      name: ObsErrorFactorDuplicateCheck@ObsFunction
+      options:
+        use_air_pressure: true
+        variable: windNorthward
   where:
-    - variable:
-        name: ObsType/windEastward
-      is_in: 243, 245, 246, 251, 253, 254
+  - variable:
+      name: windNorthward@ObsType
+    is_in:  240-260
   defer to post: true
-
