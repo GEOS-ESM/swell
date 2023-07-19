@@ -2,7 +2,12 @@
 
 name: job-to-job-test
 
-on: pull_request
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 defaults:
   run:
