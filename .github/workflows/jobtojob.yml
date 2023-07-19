@@ -25,9 +25,10 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     needs: datetime
-    env:
-      CI_DATETIME: ${{ needs.datetime.outputs.datetime }}
-    
     steps:
+      - env:
+          CI_DATETIME: ${{needs.datetime.outputs.datetime}}
+        run: echo $CI_DATETIME
+    
       - name: check-param
-        run: echo ${{ needs.datetime.outputs.datetime }}
+        run: echo $CI_DATETIME
