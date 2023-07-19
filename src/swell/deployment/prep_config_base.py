@@ -28,7 +28,6 @@ class PrepConfigBase(ABC):
 
         # Swell install path
         swell_path = get_swell_path()
-        self.install_path = swell_path
 
         # Get the path and filename of the dictionary
         self.directory = os.path.join(swell_path, 'suites')
