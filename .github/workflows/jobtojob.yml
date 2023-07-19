@@ -3,6 +3,8 @@
 name: job-to-job-test
 
 on:
+  push:
+  
   label:
     types:
       - created
@@ -19,7 +21,7 @@ env:
 jobs:
 
   datetime:
-    runs-on: nccs-discover
+    runs-on: ubuntu-latest
     outputs:
       datetime: ${{ steps.getdate.outputs.datetime }}
     steps:
@@ -27,7 +29,7 @@ jobs:
         run: echo "datetime=$(date +'%Y%m%dT%H%M%S')" >> $GITHUB_ENV
 
   job1:
-    runs-on: nccs-discover
+    runs-on: ubuntu-latest
     needs: datetime
     env:
       CI_DATETIME: ${{needs.datetime.outputs.datetime}}
