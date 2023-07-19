@@ -39,33 +39,24 @@
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
 
-            # Convert ncdiags to ioda
-            #GetGsiNcdiag
-            #GetGsiNcdiag => GsiNcdiagToIoda
-            GetObservations
-
-            # Convert ncdiags to ioda
+            # Convert bias correction to ioda
             GetGsiBc
             GetGsiBc => GsiBcToIoda
 
-            # Get GeoVaLs
-            GetGeovals
+            # Convert ncdiags to ioda
+            GetGsiNcdiag
+            GetGsiNcdiag => GsiNcdiagToIoda
 
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
-            #GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
-            GetObservations => RunJediTestObsFiltersExecutable
+            GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
             GsiBcToIoda => RunJediTestObsFiltersExecutable
-            GetGeovals => RunJediTestObsFiltersExecutable
 
             # EvaObservations
             RunJediTestObsFiltersExecutable => EvaObservations
 
-            # Save observations
-            RunJediTestObsFiltersExecutable => SaveObsDiags
-
             # Clean up large files
-            EvaObservations & SaveObsDiags => CleanCycle
+            EvaObservations => CleanCycle
 
         """
         {% endfor %}
@@ -129,9 +120,6 @@
 
     [[EvaObservations]]
         script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"
-
-    [[SaveObsDiags]]
-        script = "swell_task SaveObsDiags $config -d $datetime -m geos_atmosphere"
 
     [[CleanCycle]]
         script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
