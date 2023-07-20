@@ -1,0 +1,126 @@
+ioda instrument names:
+  - ioda name: abi_g16
+    full name: ABI (GOES-16)
+  - ioda name: ahi_himawari8
+    full name: AHI (Himawari-8)
+  - ioda name: aircraft
+    full name: Aircraft
+  - ioda name: airs_aqua
+    full name: AIRS (AQUA)
+  - ioda name: amsua_aqua
+    full name: AMSU-A (AQUA)
+  - ioda name: amsua_metop-a
+    full name: AMSU-A (METOP-A)
+  - ioda name: amsua_metop-b
+    full name: AMSU-A (METOP-B)
+  - ioda name: amsua_metop-c
+    full name: AMSU-A (METOP-C)
+  - ioda name: amsua_n15
+    full name: AMSU-A (NOAA-15)
+  - ioda name: amsua_n18
+    full name: AMSU-A (NOAA-18)
+  - ioda name: amsua_n19
+    full name: AMSU-A (NOAA-19)
+  - ioda name: atms_n20
+    full name: ATMS (NOAA-20)
+  - ioda name: atms_npp
+    full name: ATMS (NPP)
+  - ioda name: amsr2_gcom-w1
+    full name: AMSR2 (GCOM-W1)
+  - ioda name: avhrr3_metop-a
+    full name: AVHRR-3 (METOP-A)
+  - ioda name: avhrr3_n18
+    full name: AVHRR-3 (NOAA-18)
+  - ioda name: avhrr3_n19
+    full name: AVHRR-3 (NOAA-19)
+  - ioda name: cris-fsr_n20
+    full name: CRIS-FSR (NOAA-20)
+  - ioda name: cris-fsr_npp
+    full name: CRIS-FSR (NPP)
+  - ioda name: gmi_gpm
+    full name: GMI (GPM)
+  - ioda name: gnssrobndnbam
+    full name: GNSSRO
+  - ioda name: gome_metop-a
+    full name: GOME (METOP-A)
+  - ioda name: hirs4_metop-a
+    full name: HIRS-4 (METOP-A)
+  - ioda name: hirs4_metop-b
+    full name: HIRS-4 (METOP-B)
+  - ioda name: iasi_metop-a
+    full name: IASI (METOP-A)
+  - ioda name: iasi_metop-b
+    full name: IASI (METOP-B)
+  - ioda name: mhs_metop-a
+    full name: MHS (METOP-A)
+  - ioda name: mhs_metop-b
+    full name: MHS (METOP-B)
+  - ioda name: mhs_metop-c
+    full name: MHS (METOP-C)
+  - ioda name: mhs_n19
+    full name: MHS (NOAA-19)
+  - ioda name: mls55_aura
+    full name: MLS (AURA)
+  - ioda name: omi_aura
+    full name: OMI (AURA)
+  - ioda name: ompsnp_npp
+    full name: OMPS Nadir Profile (NPP)
+  - ioda name: ompsnm_npp
+    full name: OMPS Nadir Mapper (NPP)
+  - ioda name: ompslpnc_npp
+    full name: OMPS Limb Profiler (NPP)
+  - ioda name: rass_tv
+    full name: RASS Virtual Temperature
+  - ioda name: satwind
+    full name: Satellite Winds
+  - ioda name: scatwind
+    full name: Scatterometer Winds
+  - ioda name: seviri_m11
+    full name: SEVIRI (Meteosat-11)
+  - ioda name: sfcship
+    full name: Surface Ship
+  - ioda name: sfc
+    full name: Surface
+  - ioda name: sondes
+    full name: Radiosondes
+  - ioda name: ssmis_f17
+    full name: SSMIS (DMSP-F17)
+  - ioda name: vadwind
+    full name: Velocity Azimuth Display Wind Profile
+# Ocean
+  - ioda name: adt_3a_egm2008
+    full name: ADT 3a (EGM2008)
+  - ioda name: adt_3b_egm2008
+    full name: ADT 3b (EGM2008)
+  - ioda name: adt_c2_egm2008
+    full name: ADT c2 (EGM2008)
+  - ioda name: adt_coperl4
+    full name: ADT Copernicus Level-4
+  - ioda name: adt_j3_egm2008
+    full name: ADT j3 (EGM2008)
+  - ioda name: adt_sa_egm2008
+    full name: ADT sa (EGM2008)
+  - ioda name: adt
+    full name: ADT
+  - ioda name: insitus
+    full name: Insitu Salinity
+  - ioda name: insitut
+    full name: Insitu Temperature
+  - ioda name: salt_profile_fnmoc
+    full name: FNMOC (In-situ Salinity)
+  - ioda name: sss_smos_esa
+    full name: ESA SMOS (SSS)
+  - ioda name: sss_trak_fnmoc
+    full name: FNMOC (SSS)
+  - ioda name: sst_amsr2_l3u
+    full name: AMSR2 (SST)
+  - ioda name: sst_gmi_l3u
+    full name: GMI (SST)
+  - ioda name: sst_ostia
+    full name: OSTIA (SST)
+  - ioda name: sst_ship_fnmoc
+    full name: FNMOC Ship (SST)
+  - ioda name: sst_trak_fnmoc
+    full name: FNMOC (SST)
+  - ioda name: temp_profile_fnmoc
+    full name: FNMOC (In-situ Temperature)

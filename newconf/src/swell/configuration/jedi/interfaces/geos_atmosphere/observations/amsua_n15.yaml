@@ -1,0 +1,204 @@
+obs space:
+  name: amsua_n15
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/amsua_n15.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n15.{{window_begin}}.nc4'
+  simulated variables: [brightnessTemperature]
+  channels: &amsua_n15_channels 1-15
+obs operator:
+  name: CRTM
+  Absorbers: [H2O,O3,CO2]
+  linear obs operator:
+    Absorbers: [H2O,O3,CO2]
+  obs options:
+    Sensor_ID: &Sensor_ID amsua_n15
+    EndianType: little_endian
+    CoefficientPath: '{{crtm_coeff_dir}}'
+obs bias:
+  input file: '{{cycle_dir}}/amsua_n15.{{background_time}}.satbias.nc4'
+  variables without bc: [brightnessTemperature]
+  channels: 14
+  variational bc:
+    predictors:
+    - name: constant
+    - name: cloud_liquid_water
+      sensor: AMSUA
+      clwdif_ch238: 1
+      clwdif_ch314: 2
+    - name: lapse_rate
+      order: 2
+      tlapse: &amsua_n15_tlapse '{{cycle_dir}}/amsua_n15.{{background_time}}.tlapse.txt'
+    - name: lapse_rate
+      tlapse: *amsua_n15_tlapse
+    - name: emissivity
+    - name: scan_angle
+      order: 4
+    - name: scan_angle
+      order: 3
+    - name: scan_angle
+      order: 2
+    - name: scan_angle
+obs filters:
+# Window and surface-sensitive channels check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-6,15
+    test variables:
+    - name: ObsValue/brightnessTemperature
+      channels: 1-6,15
+    treat missing as out of bounds: true
+    minvalue: 100.0
+    maxvalue: 500.0
+    flag all filter variables if any test variable is out of bounds: true
+# passedBenchmark: 1500
+# All channels unreasonable values check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    minvalue: 100.0
+    maxvalue: 500.0
+#  Hydrometeor Check (cloud/precipitation affected chanels)
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    test variables:
+    - name: ObsFunction/HydrometeorCheckAMSUAclr
+      channels: 1-15
+      options:
+        sensor: *Sensor_ID
+        channels: 1-15
+        test_biaspredictor: cloud_liquid_waterPredictor
+    maxvalue: 0.0
+    action:
+      name: reject
+# Assign obs error
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: assign error
+      error parameter vector:
+                  [3.000,  2.000,  2.000,  0.600,  0.300,
+                   0.230,  0.250,  0.275,  0.340,  0.400,
+                   0.600,  1.000,  1.500,  5.000,  3.000]
+# Topography check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTopoRad
+        channels: 1-15
+        options:
+          sensor: *Sensor_ID
+          channels: 1-15
+# Transmittance Top Check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: 1-15
+        options:
+          channels: 1-15
+# Surface Jacobian check
+  - filter: BlackList
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    action:
+      name: inflate error
+      inflation variable:
+        name: ObsFunction/ObsErrorFactorSurfJacobianRad
+        channels: 1-15
+        options:
+          channels: 1-15
+          sensor: *Sensor_ID
+          use_biasterm: true
+          test_biasterm: ObsBiasTerm
+          obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
+          obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
+# Gross check
+  - filter: Background Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    function absolute threshold:
+    - name: ObsFunction/ObsErrorBoundMW
+      channels: 1-15
+      options:
+        sensor: *Sensor_ID
+        channels: 1-15
+        obserr_bound_latitude:
+          name: ObsFunction/ObsErrorFactorLatRad
+          options:
+            latitude_parameters: [25.0, 0.25, 0.04, 3.0]
+        obserr_bound_transmittop:
+          name: ObsFunction/ObsErrorFactorTransmitTopRad
+          channels: 1-15
+          options:
+            channels: 1-15
+        obserr_bound_topo:
+          name: ObsFunction/ObsErrorFactorTopoRad
+          channels: 1-15
+          options:
+            channels: 1-15
+            sensor: *Sensor_ID
+        error parameter vector:
+                  [3.000,  2.000,  2.000,  0.600,  0.300,
+                   0.230,  0.250,  0.275,  0.340,  0.400,
+                   0.600,  1.000,  1.500,  5.000,  3.000]
+        obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
+                           2.0, 2.0, 2.0, 2.0, 2.0,
+                           2.5, 3.5, 4.5, 4.5, 4.5]
+    action:
+      name: reject
+# Inter-channel check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    test variables:
+    - name: ObsFunction/InterChannelConsistencyCheck
+      channels: 1-15
+      options:
+        channels: 1-15
+        use passive_bc: true
+        sensor: *Sensor_ID
+        use_flag: [-1, -1, -1,  1,  1,
+                   -1,  1,  1,  1,  1,
+                   -1,  1,  1, -1, -1]
+    maxvalue: 1.0e-12
+    action:
+      name: reject
+#  Useflag check
+  - filter: Bounds Check
+    filter variables:
+    - name: brightnessTemperature
+      channels: 1-15
+    test variables:
+    - name: ObsFunction/ChannelUseflagCheckRad
+      channels: 1-15
+      options:
+        channels: 1-15
+        use passive_bc: true
+        use_flag: [-1, -1, -1,  1,  1,
+                   -1,  1,  1,  1,  1,
+                   -1,  1,  1, -1, -1]
+    minvalue: 1.0e-12
+    action:
+      name: reject

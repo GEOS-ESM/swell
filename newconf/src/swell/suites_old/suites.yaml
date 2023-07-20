@@ -1,0 +1,32 @@
+# Experiment name
+experiment_id:
+  default_value: swell-{{suite_to_run}}
+  prompt: Enter the experiment ID
+  type: string
+
+# Location to store the experiment
+experiment_root:
+  default_value: {{experiment_root}}
+  prompt: Enter the path where experiment will be staged
+  type: string
+
+# Compute platform to use
+platform:
+  default_value: {{platform}}
+  prompt: Which compute platform do you wish to use?
+  options: use_method
+  type: string-drop-list
+
+# Type of suite to run
+suite_to_run:
+  default_value: {{suite_to_run}}
+  prompt: Choose the suite to run
+  options: use_method
+  type: file-drop-list
+
+# Options that are questions
+fixed_options:
+  # Swell static files
+  swell_static_files:
+    default_value: {{swell_static_files}}
+    prompt: Path to where the swell static files are located

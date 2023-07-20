@@ -1,0 +1,10 @@
+fetch:
+  an:
+    - file_type: bkg
+      filename: '{{cycle_dir}}/bkg.%Y%m%dT%H%M%SZ.nc4'
+  fc:
+    - file_type: bkg
+      filename: '{{cycle_dir}}/bkg.%Y%m%dT%H%M%SZ.nc4'
+store:
+  fc:
+    - file_type: bkg

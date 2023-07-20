@@ -1,0 +1,10 @@
+# Defines what model components (*.yaml files) will be written in config.
+# For instance, TASKFILLgeometry will utilize soca/model/geometry.yaml
+
+geometry:
+  TASKFILLgeometry
+analysis variables: {{analysis_variables}}
+background:
+  TASKFILLbackground
+background error:
+  TASKFILLbackground_error_init

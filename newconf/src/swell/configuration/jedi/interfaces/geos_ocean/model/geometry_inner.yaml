@@ -1,0 +1,3 @@
+mom6_input_nml: 'soca/input.nml'
+fields metadata: 'soca/fields_metadata.yaml'
+geom_grid_file: 'INPUT/soca_gridspec.nc'
