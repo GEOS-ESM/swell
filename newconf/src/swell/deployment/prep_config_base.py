@@ -133,10 +133,12 @@ class PrepConfigBase(ABC):
         if model_tasks:
             # Find out what model components are to be used in the config
             self.selected_models = self.get_models()
+            # Ask suite model question that has been saved
+            self.get_model_defaults('suite_questions.yaml')
             # Create a dictionary in which each key is a selected model
             # each model key has a value equal to a dictionary of defaults
             # defaults are retrieved from task defaults in interfaces model directory
-            self.get_model_defaults()
+            self.get_model_defaults('task_questions.yaml')
             self.model_comber(model_tasks)
         else:
             pass
@@ -183,6 +185,8 @@ class PrepConfigBase(ABC):
         self.directory = os.path.join(self.directory, self.suite_to_run)
         suite_questions_path = os.path.join(self.directory, 'suite_questions.yaml')
 
+        self.model_suite_dict = {}
+
         if os.path.exists(suite_questions_path):
             with open(suite_questions_path, 'r') as suite_dict_file:
                 suite_questions_dict = yaml.safe_load(suite_dict_file.read())
@@ -191,6 +195,11 @@ class PrepConfigBase(ABC):
                 if k in self.experiment_dict.keys():
                     pass
                 else:
+                    if 'models' in v.keys():
+                        self.model_suite_dict[k] = v
+                        continue
+                    else:
+                        pass
                     self.key_passer(k, v)
             self.before_next()
         else:
@@ -452,10 +461,10 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model_defaults(self):
+    def get_model_defaults(self, file_name):
         self.model_defaults_dict = {}
         for m in self.selected_models:
-            model_dict_path = os.path.join(self.model_path, m, 'task_questions.yaml')
+            model_dict_path = os.path.join(self.model_path, m, file_name)
             with open(model_dict_path, 'r') as model_dict_file:
                 model_comp_dict = yaml.safe_load(model_dict_file.read())
             self.model_defaults_dict[m] = model_comp_dict
@@ -464,6 +473,7 @@ class PrepConfigBase(ABC):
 
     def model_comber(self, model_tasks):
         for m in self.selected_models:
+            print(f'NOW CREATING {m} CONFIGURATION')
             self.model = m
             self.dictionary_comber(model_tasks)
 

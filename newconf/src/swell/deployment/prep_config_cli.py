@@ -54,7 +54,7 @@ class PrepConfigCli(PrepConfigBase):
         if answer in ['', []] and widget_type != 'file-check-list':
             answer = default
 
-        if answer == 'EXIT':
+        if answer == 'EXIT' or answer is None:
             print('Exiting swell prepper...')
             sys.exit()
 
