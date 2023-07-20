@@ -1,8 +1,0 @@
-jedi_interface: fv3-jedi
-total_processors: 6*{{npx_proc}}*{{npy_proc}}
-executables:
-  hofx3D: fv3jedi_hofx_nomodel.x
-  hofx4D: fv3jedi_hofx.x
-  variational3D: fv3jedi_var.x
-  variational4D: fv3jedi_var.x
-  variational4DEnsVar: fv3jedi_var.x
