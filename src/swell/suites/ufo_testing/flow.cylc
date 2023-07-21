@@ -53,7 +53,7 @@
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
-            GetGeovals => RunJediTestObsFiltersExecutable
+            GetGeovals => RunJediUfoTestsExecutable
 
             # EvaObservations
             RunJediUfoTestsExecutable => EvaObservations
