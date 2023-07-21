@@ -42,15 +42,16 @@
             # Convert bias correction to ioda
             GetGsiBc
             GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
 
             # Convert ncdiags to ioda
             GetGsiNcdiag
             GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
 
             GetGeovals
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable

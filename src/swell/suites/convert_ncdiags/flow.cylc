@@ -42,10 +42,12 @@
             # Convert bias correction to ioda
             GetGsiBc
             GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
 
             # Convert ncdiags to ioda
             GetGsiNcdiag
             GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
         """
         {% endfor %}
 
