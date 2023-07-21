@@ -147,13 +147,13 @@ class PrepConfigBase(ABC):
 
         # Create dictionary for asking about exp id and root
         exp_questions = {
-            'experiment_id':{
+            'experiment_id': {
                 'ask_question': True,
                 'default_value': f'swell-{self.suite_to_run}',
                 'prompt': 'Enter the experiment ID',
                 'type': 'string',
             },
-            'experiment_root':{
+            'experiment_root': {
                 'ask_question': True,
                 'default_value': 'defer_to_platform',
                 'prompt': 'Enter the path where experiment will be staged',
@@ -251,7 +251,7 @@ class PrepConfigBase(ABC):
             del task_dict
             del dependent_dict
         return question_dict
-    
+
     # ----------------------------------------------------------------------------------------------
 
     def build_question_dictionary(self, task, get_dependents):
