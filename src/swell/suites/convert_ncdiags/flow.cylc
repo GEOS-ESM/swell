@@ -46,21 +46,6 @@
             # Convert ncdiags to ioda
             GetGsiNcdiag
             GetGsiNcdiag => GsiNcdiagToIoda
-
-            GetGeovals
-
-            # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediUfoTestsExecutable
-            GsiNcdiagToIoda => RunJediUfoTestsExecutable
-            GsiBcToIoda => RunJediUfoTestsExecutable
-            GetGeovals => RunJediTestObsFiltersExecutable
-
-            # EvaObservations
-            RunJediUfoTestsExecutable => EvaObservations
-
-            # Clean up large files
-            EvaObservations => CleanCycle
-
         """
         {% endfor %}
 
@@ -108,26 +93,5 @@
 
     [[ GsiNcdiagToIoda ]]
         script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
-
-    [[ GetGeovals ]]
-        script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
-
-    [[RunJediUfoTestsExecutable]]
-        script = "swell_task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunJediUfoTestsExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-            --account = {{scheduling["RunJediUfoTestsExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediUfoTestsExecutable"]["qos"]}}
-            --job-name = RunJediUfoTestsExecutable
-            --nodes={{scheduling["RunJediUfoTestsExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediUfoTestsExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediUfoTestsExecutable"]["constraint"]}}
-
-    [[EvaObservations]]
-        script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"
-
-    [[CleanCycle]]
-        script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
 
 # --------------------------------------------------------------------------------------------------

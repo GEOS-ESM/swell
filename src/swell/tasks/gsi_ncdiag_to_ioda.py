@@ -31,7 +31,7 @@ class GsiNcdiagToIoda(taskBase):
         # Parse configuration
         # -------------------
         observations = self.config.observations()
-        produce_geovals = self.config.produce_geovals()
+        produce_geovals = False #self.config.produce_geovals()
         window_offset = self.config.window_offset()
 
         # Get window beginning time
@@ -233,6 +233,11 @@ class GsiNcdiagToIoda(taskBase):
 
             gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation}*'))
 
+            # Skip this observation if not files were found
+            if len(gsi_obs_file) == 0:
+                self.logger.info(f'No observation files found for {observation}. Skipping convert')
+                continue
+
             if observation not in ozone_observations:
 
                 # Radiances
@@ -258,21 +263,36 @@ class GsiNcdiagToIoda(taskBase):
         # ----------------------------------
         for observation in observations_orig:
 
-            # Input filename
-            ioda_obs_in_pattern = f'{observation}_obs_*nc*'
-            ioda_obs_in = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))[0]
+            self.logger.info(f'Renaming \'{observation}\' to be swell compliant')
 
-            ioda_obs_out = f'{observation}.{window_begin}.nc4'
+            # Change to gps_bend
+            search_name = observation
+            if search_name == 'gps':
+                search_name = 'gps_bend'
+
+            # Input filename
+            ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
+
+            ioda_obs_in_found = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))
+
+            # If nothing found then skipt this observation
+            if len(ioda_obs_in_found) == 0:
+                self.logger.info(f'No observation files found for {observation}. Skipping rename')
+                continue
+
+            ioda_obs_in = ioda_obs_in_found[0]
+
+            ioda_obs_out = f'{search_name}.{window_begin}.nc4'
 
             os.rename(ioda_obs_in, os.path.join(self.cycle_dir(), ioda_obs_out))
 
             # Rename GeoVaLs file if need be
             if produce_geovals:
-                ioda_geoval_in_pattern = f'{observation}_geoval_*.nc*'
+                ioda_geoval_in_pattern = f'{search_name}_geoval_*.nc*'
                 ioda_geoval_in = glob.glob(os.path.join(self.cycle_dir(),
                                                         ioda_geoval_in_pattern))[0]
 
-                ioda_geoval_out = f'{observation}_geovals.{window_begin}.nc4'
+                ioda_geoval_out = f'{search_name}_geovals.{window_begin}.nc4'
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
