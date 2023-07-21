@@ -47,3 +47,9 @@ model_components:
   prompt: Select models to use (choose at least one)
   options: use_method
   type: file-check-list
+
+# Fixed options
+fixed_options:
+  data_assimilation_run:
+    default_value: true
+    prompt: Does this workflow include data assimilation?
