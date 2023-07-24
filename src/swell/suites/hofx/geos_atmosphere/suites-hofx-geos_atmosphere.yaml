@@ -37,13 +37,13 @@ npy_proc:
 
 # Backgrounds
 background_experiment:
-  default_value: x0044
+  default_value: x0048
   prompt: Experiment providing the background files?
   type: string
 
 # Observation experiment
 obs_experiment:
-  default_value: x0044_v3
+  default_value: x0048
   prompt: Experiment providing the observations?
   type: string
 
@@ -53,14 +53,6 @@ observations:
   # Conventional
   - aircraft
   # Radiances
-  - amsua_n19
-  - amsua_aqua
-  - amsua_metop-a
-  - amsua_metop-b
-  - amsua_metop-c
-  - amsua_n15
-  - amsua_n18
-  - amsua_n19
   - gmi_gpm
   - amsr2_gcom-w1
   # Ozone
