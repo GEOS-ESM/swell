@@ -16,3 +16,21 @@ existing_jedi_source_directory:
 swell_static_files:
   default_value: /discover/nobackup/drholdaw/SwellStaticFiles
 
+r2d2_fetch_datastores:
+  default_value:
+  - swell-r2d2-$USER
+  - swell-r2d2-archive
+  - swell-r2d2
+  options:
+  - swell-r2d2-$USER
+  - swell-r2d2-archive
+  - swell-r2d2
+
+r2d2_store_datatore:
+  default_value:
+    - swell-r2d2-$USER
+    - swell-r2d2
+  options:
+    - swell-r2d2-$USER
+    - swell-r2d2
+
