@@ -7,12 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.store_fetch import Fetch
 
 import os
-
-from swell.tasks.base.task_base import taskBase
-from r2d2 import R2D2Data
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -42,6 +40,9 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
+
+        r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
+        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER')) for r in r2d2_fetch_datastores]
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -73,13 +74,14 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            R2D2Data.fetch(item='observation',
-                           target_file=target_file,
-                           provider=obs_provider,
-                           observation_type=observation,
-                           file_extension=file_extension,
-                           window_start=window_begin,
-                           window_length=window_length)
+            Fetch(r2d2_fetch_datastores,
+                  item='observation',
+                  target_file=target_file,
+                  provider=obs_provider,
+                  observation_type=observation,
+                  file_extension=file_extension,
+                  window_start=window_begin,
+                  window_length=window_length)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -97,15 +99,16 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            R2D2Data.fetch(item='bias_correction',
-                           target_file=target_file,
-                           model='geos_atmosphere',
-                           experiment=obs_experiment,
-                           provider='gsi',
-                           observation_type=observation,
-                           file_extension=file_extension,
-                           file_type='satbias',
-                           date=background_time)
+            Fetch(r2d2_fetch_datastores,
+                  item='bias_correction',
+                  target_file=target_file,
+                  model='geos_atmosphere',
+                  experiment=obs_experiment,
+                  provider='gsi',
+                  observation_type=observation,
+                  file_extension=file_extension,
+                  file_type='satbias',
+                  date=background_time)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -119,15 +122,16 @@ class GetObservations(taskBase):
                 os.makedirs(target_dir, exist_ok=True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-                R2D2Data.fetch(item='bias_correction',
-                               target_file=target_file,
-                               model='geos_atmosphere',
-                               experiment=obs_experiment,
-                               provider='gsi',
-                               observation_type=observation,
-                               file_extension=file_extension,
-                               file_type='tlapse',
-                               date=background_time)
+                Fetch(r2d2_fetch_datastores,
+                      item='bias_correction',
+                      target_file=target_file,
+                      model='geos_atmosphere',
+                      experiment=obs_experiment,
+                      provider='gsi',
+                      observation_type=observation,
+                      file_extension=file_extension,
+                      file_type='tlapse',
+                      date=background_time)
 
                 # Change permission
                 os.chmod(target_file, 0o644)
