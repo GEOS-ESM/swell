@@ -15,6 +15,9 @@ window_length:
 observations:
   default_value:
   - aircraft
+  - gmi_gpm
+
+
 #  - airs_aqua
 #  - amsr2_gcom-w1
 #  - amsua_aqua
@@ -59,7 +62,7 @@ path_to_gsi_nc_diags:
 
 # Compute GeoVaLs and observations
 produce_geovals:
-  default_value: true
+  default_value: false
   prompt: Compute GeoVaLs as well as observations?
   type: boolean
 
@@ -68,6 +71,13 @@ path_to_gsi_bc_coefficients:
   default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc'
   prompt: Tar or directory containing BC files
   type: string
+
+# Observation experiment
+geovals_experiment:
+  default_value: x0048-geovals
+  prompt: Experiment providing the GeoVaLs?
+  type: string
+
 
 # Fixed options (user not prompted for these)
 # -------------------------------------------
@@ -103,6 +113,8 @@ fixed_options:
   background_time_offset:
     default_value:  PT9H
     prompt: Time before the middle of the window that the background providing forecast began
-
+  geovals_provider:
+    default_value: ncdiag
+    prompt: Database providing the geovals.
 
 
