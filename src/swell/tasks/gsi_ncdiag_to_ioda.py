@@ -213,8 +213,16 @@ class GsiNcdiagToIoda(taskBase):
 
             elif len(ioda_file_0_) == 3:
                 self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
+
             else:
                 self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
+
+        # Rename gps files from gps_bend if they exist
+        if 'gps' in observations_orig:
+            gps_files = glob.glob(os.path.join(self.cycle_dir(), 'gps_bend*'))
+            for gps_file in gps_files:
+                gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
+                os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
 
         # Get list of the observations that are ozone observations
         # --------------------------------------------------------
@@ -225,13 +233,19 @@ class GsiNcdiagToIoda(taskBase):
                 if ozone_sensor in observation:
                     ozone_observations.append(observation)
 
-        # Copy all the files into the cycle directory
-        # -------------------------------------------
+        # Transform radiances and ozone
+        # -----------------------------
         for observation in observations:
 
             self.logger.info(f'Converting {observation} to IODA format')
 
-            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation}*'))
+            observation_search_name = copy.copy(observation)
+
+            # For avhrr replace the search with just avhrr
+            if 'avhrr3' in observation_search_name:
+                observation_search_name = observation_search_name.replace('avhrr3', 'avhrr')
+
+            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation_search_name}*'))
 
             # Skip this observation if not files were found
             if len(gsi_obs_file) == 0:
@@ -259,6 +273,15 @@ class GsiNcdiagToIoda(taskBase):
             if observation not in ozone_observations:
                 Diag.close()
 
+        # Rename avhrr files
+        # ------------------
+        # Rename gps files from gps_bend if they exist
+        if any('avhrr3' in item for item in observations):
+            avhrr_files = glob.glob(os.path.join(self.cycle_dir(), 'avhrr*'))
+            for avhrr_file in avhrr_files:
+                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr', 'avhrr3')
+                os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
+
         # Rename files to be swell compliant
         # ----------------------------------
         for observation in observations_orig:
@@ -267,8 +290,6 @@ class GsiNcdiagToIoda(taskBase):
 
             # Change to gps_bend
             search_name = observation
-            if search_name == 'gps':
-                search_name = 'gps_bend'
 
             # Input filename
             ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
