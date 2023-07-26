@@ -63,7 +63,7 @@ def Store(data_stores, limit_one=True, **store_kwargs):
         print("******", data_store, "*******")
 
         try:
-            R2D2Data.store(data_store = data_store, **store_kwargs)
+            R2D2Data.store(data_store=data_store, **store_kwargs)
 
         except err.RegistrationNotFound as r2d2error:
             failure_messages[data_store] = str(r2d2error)
