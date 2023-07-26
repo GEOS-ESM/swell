@@ -1,14 +1,14 @@
 obs space:
-  name: amsua_n18
-  obsdatain:
-    engine:
-      type: H5File
+    name: amsua_n18
+    obsdatain:
+      engine:
+        type: H5File
       obsfile: '{{cycle_dir}}/amsua_n18.{{window_begin}}.nc4'
-  obsdataout:
-    engine:
-      type: H5File
+    obsdataout:
+      engine:
+        type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n18.{{window_begin}}.nc4'
-  simulated variables: [brightnessTemperature]
+    simulated variables: [brightnessTemperature]
   channels: &amsua_n18_channels 1-15
 obs operator:
   name: CRTM
@@ -21,28 +21,28 @@ obs operator:
     CoefficientPath: '{{crtm_coeff_dir}}'
 obs bias:
   input file: '{{cycle_dir}}/amsua_n18.{{background_time}}.satbias.nc4'
-  variables without bc: [brightnessTemperature]
-  channels: 14
-  variational bc:
-    predictors:
-    - name: constant
-    - name: cloud_liquid_water
-      sensor: AMSUA
-      clwdif_ch238: 1
-      clwdif_ch314: 2
-    - name: lapse_rate
-      order: 2
+    variables without bc: [brightnessTemperature]
+    channels: 14
+    variational bc:
+      predictors:
+      - name: constant
+      - name: cloud_liquid_water
+        sensor: AMSUA
+        clwdif_ch238: 1
+        clwdif_ch314: 2
+      - name: lapse_rate
+        order: 2
       tlapse: &amsua_n18_tlapse '{{cycle_dir}}/amsua_n18.{{background_time}}.tlapse.txt'
-    - name: lapse_rate
+      - name: lapse_rate
       tlapse: *amsua_n18_tlapse
-    - name: emissivity
-    - name: scan_angle
-      order: 4
-    - name: scan_angle
-      order: 3
-    - name: scan_angle
-      order: 2
-    - name: scan_angle
+      - name: emissivity
+      - name: scan_angle
+        order: 4
+      - name: scan_angle
+        order: 3
+      - name: scan_angle
+        order: 2
+      - name: scan_angle
 obs filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
@@ -195,7 +195,7 @@ obs filters:
       channels: 1-15
       options:
         channels: 1-15
-        use passive_bc: true
+#       use passive_bc: true
         use_flag: [-1, -1, -1,  1, -1,
                     1,  1, -1, -1,  1,
                     1,  1,  1,  1, -1]
