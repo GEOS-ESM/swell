@@ -53,3 +53,9 @@ fixed_options:
   data_assimilation_run:
     default_value: true
     prompt: Does this workflow include data assimilation?
+
+# R2D2 Configuration
+r2d2_local_path:
+  default_value: {{r2d2_local_path}}
+  prompt: Enter the path where R2D2 will store experiment output
+  type: string

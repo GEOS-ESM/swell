@@ -31,7 +31,7 @@ class GsiNcdiagToIoda(taskBase):
         # Parse configuration
         # -------------------
         observations = self.config.observations()
-        produce_geovals = False #self.config.produce_geovals()
+        produce_geovals = self.config.produce_geovals()
         window_offset = self.config.window_offset()
 
         # Get window beginning time

@@ -27,22 +27,18 @@ observations:
     - amsua_n19
     - atms_n20
     - atms_npp
-    - avhrr_metop-b
-    - avhrr_n18
-    - avhrr_n19
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
     - cris-fsr_n20
     - cris-fsr_npp
     - gmi_gpm
-    - hirs4_n18
-    - hirs4_n19
     - iasi_metop-b
     - iasi_metop-c
     - mhs_metop-b
     - mhs_metop-c
     - mhs_n19
-    - seviri_m08
     - ssmis_f17
-    - ssmis_f18
     # Ozone
     - mls55_aura
     - omi_aura
@@ -53,7 +49,7 @@ observations:
 
 # Path to GSI ncdiags
 path_to_gsi_nc_diags:
-  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag'
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag/2021121200'
   prompt: Path to where the ncdiags will be held
   type: string
 
@@ -65,7 +61,14 @@ produce_geovals:
 
 # Location for bias correction coefficients
 path_to_gsi_bc_coefficients:
-  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc'
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc/2021121200'
   prompt: Tar or directory containing BC files
   type: string
 
+fixed_options:
+  window_offset:
+    default_value:  PT3H
+    prompt: Time from beginning to middle of the window
+  background_time_offset:
+    default_value:  PT9H
+    prompt: Time before the middle of the window that the background providing forecast began
