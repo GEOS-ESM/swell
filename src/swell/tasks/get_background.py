@@ -51,7 +51,8 @@ class GetBackground(taskBase):
         window_type = self.config.window_type()
 
         r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
-        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER')) for r in r2d2_fetch_datastores]
+        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER'))
+                                 for r in r2d2_fetch_datastores]
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_offset,

@@ -35,7 +35,8 @@ class SaveObsDiags(taskBase):
         window_offset = self.config.window_offset()
 
         r2d2_store_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2'])
-        r2d2_store_datastores = [r.replace("$USER", os.getenv('USER')) for r in r2d2_fetch_datastores]
+        r2d2_store_datastores = [r.replace("$USER", os.getenv('USER'))
+                                 for r in r2d2_fetch_datastores]
         limit_store = self.config.limit_r2d2_storing(True)
 
         # Get window beginning
@@ -75,7 +76,7 @@ class SaveObsDiags(taskBase):
             file_extension = os.path.splitext(obs_path_file)[1].replace(".", "")
 
             Store(r2d2_store_datastores,
-                  limit_one = limit_store
+                  limit_one=limit_store
                   item='observation',
                   source_file=obs_path_file,
                   provider='x0044',

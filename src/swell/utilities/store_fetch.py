@@ -10,6 +10,7 @@
 from r2d2 import R2D2Data
 import r2d2.error as err
 
+
 # --------------------------------------------------------------------------------------------------
 def Fetch(data_stores, **fetch_kwargs):
 
@@ -24,20 +25,20 @@ def Fetch(data_stores, **fetch_kwargs):
         print("******", data_store, "*******")
 
         try:
-            R2D2Data.fetch(data_store = data_store, **fetch_kwargs)
+            R2D2Data.fetch(data_store=data_store, **fetch_kwargs)
 
         except (err.RegistrationNotFound, err.RecordNotFound) as r2d2error:
             failure_messages[data_store] = str(r2d2error)
             pass
- 
+
         else:
             fetch_success = True
             break
- 
+
     if fetch_success is False:
 
         error_message = "Failed to fetch R2D2 data.\n"
-        for k,v in failure_messages.items():
+        for k, v in failure_messages.items():
             error_message += k + ": " + v
 
         # Is there a more appropriate error than ValueError?
@@ -45,10 +46,10 @@ def Fetch(data_stores, **fetch_kwargs):
 
 
 # --------------------------------------------------------------------------------------------------
-def Store(data_stores, limit_one = True, **store_kwargs):
+def Store(data_stores, limit_one=True, **store_kwargs):
 
     """Very similar to Fetch with an option to store into every data_store.
-       This method also ignores r2d2.error.RecordNotFound as it is irrelevant to storing. 
+       This method also ignores r2d2.error.RecordNotFound as it is irrelevant to storing.
     """
 
     # Track whether store is successful
@@ -76,10 +77,7 @@ def Store(data_stores, limit_one = True, **store_kwargs):
     if store_success is False:
 
         error_message = "Could not store data into any R2D2 data_store.\n"
-        for k,v in failure_messages.items():
+        for k, v in failure_messages.items():
             error_message += k + ": " + v
 
         raise ValueError(error_message)
-
-
-

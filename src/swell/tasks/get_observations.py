@@ -42,7 +42,8 @@ class GetObservations(taskBase):
         window_offset = self.config.window_offset()
 
         r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
-        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER')) for r in r2d2_fetch_datastores]
+        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER'))
+                                 for r in r2d2_fetch_datastores]
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
