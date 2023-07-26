@@ -25,7 +25,7 @@ airs_aqua:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 797414
 
 amsr2_gcom-w1:
   operator_test:
@@ -103,13 +103,13 @@ cris-fsr_n20:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 881527
 
 cris-fsr_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 547897
 
 gmi_gpm:
   operator_test:
