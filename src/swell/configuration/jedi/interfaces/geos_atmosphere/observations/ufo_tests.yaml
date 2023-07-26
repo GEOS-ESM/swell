@@ -181,7 +181,7 @@ satwind:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 231948
 
 scatwind:
   operator_test:
