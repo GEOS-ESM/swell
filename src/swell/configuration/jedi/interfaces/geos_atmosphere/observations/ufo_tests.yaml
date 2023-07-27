@@ -49,7 +49,7 @@ amsua_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 71950 
+    passedBenchmark: 71950
 
 amsua_metop-c:
   operator_test:

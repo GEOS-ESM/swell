@@ -1,14 +1,14 @@
 obs space:
-    name: amsua_aqua
-    obsdatain:
-      engine:
-        type: H5File
-      obsfile: '{{cycle_dir}}/amsua_aqua.{{window_begin}}.nc4'
-    obsdataout:
-      engine:
-        type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_aqua.{{window_begin}}.nc4'
-    simulated variables: [brightnessTemperature]
+  name: amsua_aqua
+  obsdatain:
+    engine:
+      type: H5File
+    obsfile: '{{cycle_dir}}/amsua_aqua.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+    obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_aqua.{{window_begin}}.nc4'
+  simulated variables: [brightnessTemperature]
   channels: &amsua_aqua_channels 1-15
 obs operator:
   name: CRTM
