@@ -151,10 +151,15 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info('-'*len(log_str))
 
             # Check the number of files that are found
-            ioda_type_pattern = f'*{needed_ioda_type}*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
+            ioda_type_pattern = f'*{needed_ioda_type}_*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
+
+            # Show files that will be combined
+            self.logger.info(f'Files to combine:')
+            for ioda_path_file in ioda_path_files:
+                self.logger.info(f' - {os.path.basename(ioda_path_file)}')
 
             # Check that there are some files to combine
             self.logger.assert_abort(len(ioda_path_files) > 0, f'In combine of ' +
@@ -317,5 +322,19 @@ class GsiNcdiagToIoda(taskBase):
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
+        # Remove left over files
+        # ------------------------------
+
+        self.logger('Removing residual files...')
+
+        patterns = [
+            '*_geoval_*',
+        ]
+
+        for pattern in patterns:
+            geoval_files = glob.glob(os.path.join(self.cycle_dir(), pattern))
+            for geoval_file in geoval_files:
+                self.logger.info(f'Removing left over file {os.path.basename(geoval_file)}')
+                os.remove(geoval_file)
 
 # --------------------------------------------------------------------------------------------------
