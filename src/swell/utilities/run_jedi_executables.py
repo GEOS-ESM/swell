@@ -17,7 +17,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             jedi_forecast_model):
+                             jedi_forecast_model=None):
 
     # Assemble configuration YAML file
     # --------------------------------

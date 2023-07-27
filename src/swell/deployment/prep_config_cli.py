@@ -16,7 +16,6 @@ import sys
 import questionary
 
 from swell.deployment.prep_config_base import PrepConfigBase
-from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -248,7 +247,6 @@ class PrepConfigCli(PrepConfigBase):
 
     def make_check_widget(self, quest, options, default, prompt):
         if options == 'file':
-            dir_list = os.listdir(self.directory)
             new_path = os.path.join(self.directory, '*/')
             suite_list = [x.split('/')[-2] for x in glob.glob(new_path)]
             choices = suite_list

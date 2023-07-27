@@ -10,7 +10,7 @@
 import os
 import shutil
 
-from jedi_bundle.bin.jedi_bundle import get_default_config, get_bundles
+from jedi_bundle.bin.jedi_bundle import get_default_config
 
 
 # --------------------------------------------------------------------------------------------------

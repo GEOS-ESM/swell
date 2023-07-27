@@ -29,6 +29,10 @@ clean_patterns:
   - '*MOM*'
   - logfile.*.out
 
+forecast_duration:
+  default_value:
+  - P1D
+
 gradient_norm_reduction:
   default_value: 1e-10
 
