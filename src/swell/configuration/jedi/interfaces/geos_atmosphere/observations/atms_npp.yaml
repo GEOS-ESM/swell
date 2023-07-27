@@ -43,7 +43,7 @@ obs bias:
     - name: scan_angle
 obs filters:
 # Window and surface-sensitive channels check
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: 1-7,16-22
@@ -56,14 +56,14 @@ obs filters:
     flag all filter variables if any test variable is out of bounds: true
 # passedBenchmark: 1500
 # All channels unreasonable values check
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
     minvalue: 100.0
     maxvalue: 500.0
 #Hydrometeor Check (cloud/precipitation affected chanels)
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -78,7 +78,7 @@ obs filters:
     action:
       name: reject
 # Assign obs error
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -91,7 +91,7 @@ obs filters:
                    5.000,  2.500,  2.500,  2.500,  2.500,
                    2.500,  2.500]
 # Topography check
-- filter: BlackList
+  - filter: BlackList
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -104,7 +104,7 @@ obs filters:
           sensor: *Sensor_ID
           channels: atms_npp_channels
 # Transmittance Top Check
-- filter: BlackList
+  - filter: BlackList
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -116,7 +116,7 @@ obs filters:
         options:
           channels: atms_npp_channels
 # Surface Jacobian check
-- filter: BlackList
+  - filter: BlackList
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -133,7 +133,7 @@ obs filters:
           obserr_demisf: [0.010, 0.020, 0.015, 0.020, 0.200]
           obserr_dtempf: [0.500, 2.000, 1.000, 2.000, 4.500]
 # Gross check
-- filter: Background Check
+  - filter: Background Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -172,7 +172,7 @@ obs filters:
     action:
       name: reject
 # Inter-channel check
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
@@ -192,7 +192,7 @@ obs filters:
     action:
       name: reject
 #Useflag check
-- filter: Bounds Check
+  - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
