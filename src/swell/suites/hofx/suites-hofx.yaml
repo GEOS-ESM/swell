@@ -41,17 +41,18 @@ existing_jedi_build_directory:
     key: jedi_build_method
     value: use_existing
 
+# R2D2 Configuration
 r2d2_fetch_datastores:
   default_value: defer_to_platform
   options: defer_to_platform
   prompt: In what order do you want to search R2D2 data_stores for fetching?
   type: string-check-list
 
-r2d2_store_datastore:
+r2d2_store_datastores:
   default_value: defer_to_platform
   options: defer_to_platform
-  prompt: In which R2D2 data_store do you want to store new data?
-  type: string-drop-list
+  prompt: In which R2D2 data_stores do you want to store new data?
+  type: string-check-list
 
 
 # What kind of coupling is needed

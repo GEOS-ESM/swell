@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.store_fetch import Fetch
+from swell.utilities.store_fetch import fetch
 
 import os
 
@@ -45,6 +45,8 @@ class GetObservations(taskBase):
         r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER'))
                                  for r in r2d2_fetch_datastores]
 
+        self.logger.info("Fetching from R2D2 data_stores: " + ', '.join(r2d2_fetch_datastores))
+
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(window_offset,
@@ -75,14 +77,16 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            Fetch(r2d2_fetch_datastores,
-                  item='observation',
-                  target_file=target_file,
-                  provider=obs_provider,
-                  observation_type=observation,
-                  file_extension=file_extension,
-                  window_start=window_begin,
-                  window_length=window_length)
+            fetched_from = fetch(r2d2_fetch_datastores,
+                                 item='observation',
+                                 target_file=target_file,
+                                 provider=obs_provider,
+                                 observation_type=observation,
+                                 file_extension=file_extension,
+                                 window_start=window_begin,
+                                 window_length=window_length)
+
+            self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -100,16 +104,18 @@ class GetObservations(taskBase):
             os.makedirs(target_dir, exist_ok=True)
             file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-            Fetch(r2d2_fetch_datastores,
-                  item='bias_correction',
-                  target_file=target_file,
-                  model='geos_atmosphere',
-                  experiment=obs_experiment,
-                  provider='gsi',
-                  observation_type=observation,
-                  file_extension=file_extension,
-                  file_type='satbias',
-                  date=background_time)
+            fetched_from = fetch(r2d2_fetch_datastores,
+                                 item='bias_correction',
+                                 target_file=target_file,
+                                 model='geos_atmosphere',
+                                 experiment=obs_experiment,
+                                 provider='gsi',
+                                 observation_type=observation,
+                                 file_extension=file_extension,
+                                 file_type='satbias',
+                                 date=background_time)
+
+            self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -123,16 +129,18 @@ class GetObservations(taskBase):
                 os.makedirs(target_dir, exist_ok=True)
                 file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
-                Fetch(r2d2_fetch_datastores,
-                      item='bias_correction',
-                      target_file=target_file,
-                      model='geos_atmosphere',
-                      experiment=obs_experiment,
-                      provider='gsi',
-                      observation_type=observation,
-                      file_extension=file_extension,
-                      file_type='tlapse',
-                      date=background_time)
+                fetched_from = fetch(r2d2_fetch_datastores,
+                                     item='bias_correction',
+                                     target_file=target_file,
+                                     model='geos_atmosphere',
+                                     experiment=obs_experiment,
+                                     provider='gsi',
+                                     observation_type=observation,
+                                     file_extension=file_extension,
+                                     file_type='tlapse',
+                                     date=background_time)
+
+                self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

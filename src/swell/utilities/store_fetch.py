@@ -12,7 +12,7 @@ import r2d2.error as err
 
 
 # --------------------------------------------------------------------------------------------------
-def Fetch(data_stores, **fetch_kwargs):
+def fetch(data_stores, **fetch_kwargs):
 
     # Track whether a fetch was successful
     fetch_success = False
@@ -46,24 +46,29 @@ def Fetch(data_stores, **fetch_kwargs):
 
 
 # --------------------------------------------------------------------------------------------------
-def Store(data_stores, limit_one=True, **store_kwargs):
+def store(data_stores, limit_one=True, **store_kwargs):
 
-    """Very similar to Fetch with an option to store into every data_store.
-       This method also ignores r2d2.error.RecordNotFound as it is irrelevant to storing.
+    """Very similar to Fetch, but
+       1. Has option to store into every data_store or limit to first found.
+       2. Ignores r2d2.error.RecordNotFound as it is irrelevant to storing.
+       3. Returns indices of stored data.
     """
 
-    # Track whether store is successful
+    # Track whether at least 1 store is successful
     store_success = False
 
     # Gather error messages for each store attempt
     failure_messages = dict.fromkeys(data_stores)
+
+    # Return index (int) of stored item
+    indices = dict.fromkeys(data_stores)
 
     for data_store in data_stores:
 
         print("******", data_store, "*******")
 
         try:
-            R2D2Data.store(data_store=data_store, **store_kwargs)
+            indices[data_store] = R2D2Data.store(data_store=data_store, **store_kwargs)
 
         except err.RegistrationNotFound as r2d2error:
             failure_messages[data_store] = str(r2d2error)
@@ -81,3 +86,5 @@ def Store(data_stores, limit_one=True, **store_kwargs):
             error_message += k + ": " + v
 
         raise ValueError(error_message)
+
+    return indices

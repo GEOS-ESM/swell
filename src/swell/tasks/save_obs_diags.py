@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.store_fetch import Store
+from swell.utilities.store_fetch import store
 
 import os
 
@@ -38,6 +38,8 @@ class SaveObsDiags(taskBase):
         r2d2_store_datastores = [r.replace("$USER", os.getenv('USER'))
                                  for r in r2d2_store_datastores]
         limit_store = self.config.limit_r2d2_storing(True)
+
+        self.logger.info("Storing to R2D2 data_stores: " + ', '.join(r2d2_store_datastores))
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -75,12 +77,14 @@ class SaveObsDiags(taskBase):
 
             file_extension = os.path.splitext(obs_path_file)[1].replace(".", "")
 
-            Store(r2d2_store_datastores,
-                  limit_one=limit_store,
-                  item='observation',
-                  source_file=obs_path_file,
-                  provider='x0044',
-                  observation_type=name,
-                  file_extension=file_extension,
-                  window_start=window_begin,
-                  window_length=window_offset)
+            stored_to = store(r2d2_store_datastores,
+                              limit_one=limit_store,
+                              item='observation',
+                              source_file=obs_path_file,
+                              provider='x0044',
+                              observation_type=name,
+                              file_extension=file_extension,
+                              window_start=window_begin,
+                              window_length=window_offset)
+
+            self.logger.info("Stored R2D2 data to " + str(stored_to))

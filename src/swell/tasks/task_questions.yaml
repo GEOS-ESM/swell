@@ -8,14 +8,14 @@ r2d2_fetch_datastores:
   - GetObservation
   type: string-check-list
 
-r2d2_store_datastore:
+r2d2_store_datastores:
   ask_question: false
   default_value: defer_to_platform
   options: defer_to_platform
-  prompt: In which R2D2 data_store do you want to store new data?
+  prompt: In which R2D2 data_stores do you want to store new data?
   tasks:
   - SaveObsDiags
-  type: string-drop-list
+  type: string-check-list
 
 analysis_forecast_window_offset:
   ask_question: false
