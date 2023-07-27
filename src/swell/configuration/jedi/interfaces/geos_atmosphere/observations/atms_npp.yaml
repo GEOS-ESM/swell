@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-    obsfile: '{{cycle_dir}}/atms_npp.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/atms_npp.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-    obsfile: '{{cycle_dir}}/{{experiment_id}}.atms_npp.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.atms_npp.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
   channels: &atms_npp_channels 1-22
 obs operator:
