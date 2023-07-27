@@ -31,13 +31,13 @@ amsr2_gcom-w1:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 54558
 
 amsua_aqua:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 0
 
 amsua_metop-a:
   operator_test:
@@ -49,43 +49,43 @@ amsua_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 71950
 
 amsua_metop-c:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 91419
 
 amsua_n15:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 56139
 
 amsua_n18:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 69693
 
 amsua_n19:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 73421
 
 atms_n20:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 159928
 
 atms_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 158687
 
 avhrr3_metop-a:
   operator_test:
@@ -139,19 +139,19 @@ mhs_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 29630
 
 mhs_metop-c:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 29815
 
 mhs_n19:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 27823
 
 mls55_aura:
   operator_test:
