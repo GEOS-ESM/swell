@@ -140,6 +140,13 @@ class GsiNcdiagToIoda(taskBase):
 
             Diag.close()
 
+        # Rename gps files from gps_bend if they exist
+        if 'gps' in observations_orig:
+            gps_files = glob.glob(os.path.join(self.cycle_dir(), 'gps_bend*'))
+            for gps_file in gps_files:
+                gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
+                os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
+
         # Combine the conventional data
         # -----------------------------
         for needed_ioda_type in needed_ioda_types:
@@ -151,7 +158,7 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info('-'*len(log_str))
 
             # Check the number of files that are found
-            ioda_type_pattern = f'*{needed_ioda_type}_*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
+            ioda_type_pattern = f'{needed_ioda_type}*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
@@ -221,13 +228,6 @@ class GsiNcdiagToIoda(taskBase):
 
             else:
                 self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
-
-        # Rename gps files from gps_bend if they exist
-        if 'gps' in observations_orig:
-            gps_files = glob.glob(os.path.join(self.cycle_dir(), 'gps_bend*'))
-            for gps_file in gps_files:
-                gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
-                os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
 
         # Get list of the observations that are ozone observations
         # --------------------------------------------------------
@@ -325,7 +325,7 @@ class GsiNcdiagToIoda(taskBase):
         # Remove left over files
         # ------------------------------
 
-        self.logger('Removing residual files...')
+        self.logger.info('Removing residual files...')
 
         patterns = [
             '*_geoval_*',
@@ -334,7 +334,7 @@ class GsiNcdiagToIoda(taskBase):
         for pattern in patterns:
             geoval_files = glob.glob(os.path.join(self.cycle_dir(), pattern))
             for geoval_file in geoval_files:
-                self.logger.info(f'Removing left over file {os.path.basename(geoval_file)}')
+                self.logger.info(f' - Removing {os.path.basename(geoval_file)}')
                 os.remove(geoval_file)
 
 # --------------------------------------------------------------------------------------------------
