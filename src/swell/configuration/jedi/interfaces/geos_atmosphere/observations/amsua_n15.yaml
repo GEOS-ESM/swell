@@ -32,9 +32,9 @@ obs bias:
         clwdif_ch314: 2
       - name: lapse_rate
         order: 2
-      tlapse: &amsua_n15_tlapse '{{cycle_dir}}/amsua_n15.{{background_time}}.tlapse.txt'
+        tlapse: &amsua_n15_tlapse '{{cycle_dir}}/amsua_n15.{{background_time}}.tlapse.txt'
       - name: lapse_rate
-      tlapse: *amsua_n15_tlapse
+        tlapse: *amsua_n15_tlapse
       - name: emissivity
       - name: scan_angle
         order: 4

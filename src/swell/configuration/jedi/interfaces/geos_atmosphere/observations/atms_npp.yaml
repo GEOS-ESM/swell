@@ -30,9 +30,9 @@ obs bias:
         clwdif_ch314: 2
       - name: lapse_rate
         order: 2
-      tlapse: &atms_npp_tlapse '{{cycle_dir}}/atms_npp.{{background_time}}.tlapse.txt'
+        tlapse: &atms_npp_tlapse '{{cycle_dir}}/atms_npp.{{background_time}}.tlapse.txt'
       - name: lapse_rate
-      tlapse: *atms_npp_tlapse
+        tlapse: *atms_npp_tlapse
       - name: emissivity
       - name: scan_angle
         order: 4
