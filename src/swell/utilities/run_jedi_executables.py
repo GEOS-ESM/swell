@@ -25,6 +25,9 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
         if isinstance(value, dict):
             jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, jedi_forecast_model)
 
+        elif isinstance(value, bool):
+            continue
+
         elif isinstance(value, list):
             for item in value:
                 if isinstance(item, dict):
