@@ -123,6 +123,14 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'cas|sky|hasw'
 
+    render_dictionary['scheduling']['RunJediLETKFExecutable'] = {}
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['execution_time_limit'] = 'PT3H' # CE - Not sure about this one
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['account'] = 'g0613'
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['nodes'] = 1
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['ntasks_per_node'] = 24
+    render_dictionary['scheduling']['RunJediLETKFExecutable']['constraint'] = 'cas|sky|hasw'
+
     render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
     render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
