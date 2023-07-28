@@ -417,6 +417,7 @@ obs filters:
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
+      use passive_bc: true
       use_flag: *useflag_cris-fsr_npp
   minvalue: 1.0e-12
   action:

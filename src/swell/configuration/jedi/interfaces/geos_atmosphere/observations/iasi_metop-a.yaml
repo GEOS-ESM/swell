@@ -4,7 +4,7 @@ obs operator:
   linear obs operator:
     Absorbers: [H2O,O3,CO2]
   obs options:
-    Sensor_ID: &Sensor_ID iasi_metop-c
+    Sensor_ID: &Sensor_ID iasi_metop-a
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
 obs space:
@@ -12,13 +12,13 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/iasi_metop-c.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/iasi_metop-a.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.iasi_metop-c.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.iasi_metop-a.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &iasi_metop-c_channels 16, 29, 32, 35, 38, 41, 44, 47, 49, 50, 51, 53,
+  channels: &iasi_metop-a_channels 16, 29, 32, 35, 38, 41, 44, 47, 49, 50, 51, 53,
             55, 56, 57, 59, 61, 62, 63, 66, 68, 70, 72, 74, 76, 78, 79, 81, 82, 83,
             84, 85, 86, 87, 89, 92, 93, 95, 97, 99, 101, 103, 104, 106, 109, 110,
             111, 113, 116, 119, 122, 125, 128, 131, 133, 135, 138, 141, 144, 146,
@@ -68,15 +68,15 @@ obs space:
             7475, 7549, 7584, 7665, 7666, 7831, 7836, 7853, 7865, 7885, 7888, 7912,
             7950, 7972, 7980, 7995, 8007, 8015, 8055, 8078
 obs bias:
-  input file: '{{cycle_dir}}/iasi_metop-c.{{background_time}}.satbias.nc4'
+  input file: '{{cycle_dir}}/iasi_metop-a.{{background_time}}.satbias.nc4'
   variational bc:
     predictors:
     - name: constant
     - name: lapse_rate
       order: 2
-      tlapse: &iasi_metop-c_tlapse '{{cycle_dir}}/iasi_metop-c.{{background_time}}.tlapse.txt'
+      tlapse: &iasi_metop-a_tlapse '{{cycle_dir}}/iasi_metop-a.{{background_time}}.tlapse.txt'
     - name: lapse_rate
-      tlapse: *iasi_metop-c_tlapse
+      tlapse: *iasi_metop-a_tlapse
     - name: emissivity
     - name: scan_angle
       order: 4
@@ -89,7 +89,7 @@ obs filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   action:
     name: assign error
     error parameter vector: [ 0.7270, 0.8100, 0.7500, 0.7900, 0.7055, 0.7400, 0.6800, 0.7200, 0.6526, 0.6500,
@@ -176,19 +176,19 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorWavenumIR
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       options:
-        channels: *iasi_metop-c_channels
+        channels: *iasi_metop-a_channels
 #  Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   minvalue: 50.00001
   maxvalue: 549.99999
   action:
@@ -197,38 +197,38 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTopoRad
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       options:
-        channels: *iasi_metop-c_channels
+        channels: *iasi_metop-a_channels
         sensor: *Sensor_ID
 #  Transmittance Top Check
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTransmitTopRad
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       options:
-        channels: *iasi_metop-c_channels
+        channels: *iasi_metop-a_channels
 #  Cloud Detection Check
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   test variables:
   - name: ObsFunction/CloudDetectMinResidualIR
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
     options:
-      channels: *iasi_metop-c_channels
-      use_flag: &useflag_iasi_metop-c [ 1, -1, -1, -1,  1, -1, -1, -1,  1, -1,
+      channels: *iasi_metop-a_channels
+      use_flag: &useflag_iasi_metop-a [ 1, -1, -1, -1,  1, -1, -1, -1,  1, -1,
                     1, -1,  1, -1,  1,  1,  1, -1,  1,  1,
                    -1,  1,  1,  1, -1, -1,  1,  1, -1,  1,
                    -1,  1, -1,  1, -1, -1, -1, -1, -1, -1,
@@ -290,7 +290,7 @@ obs filters:
                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1, -1]
-      use_flag_clddet: &clddet_iasi_metop-c [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      use_flag_clddet: &clddet_iasi_metop-a [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -360,13 +360,13 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   test variables:
   - name: ObsFunction/NearSSTRetCheckIR
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
     options:
-      channels: *iasi_metop-c_channels
-      use_flag: *useflag_iasi_metop-c
+      channels: *iasi_metop-a_channels
+      use_flag: *useflag_iasi_metop-a
       obserr_demisf: [0.01,0.02,0.03,0.02,0.03]
       obserr_dtempf: [0.50,2.00,4.00,2.00,4.00]
   maxvalue: 1.0e-12
@@ -376,14 +376,14 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorSurfJacobianRad
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       options:
-        channels: *iasi_metop-c_channels
+        channels: *iasi_metop-a_channels
         sensor: *Sensor_ID
         obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
         obserr_dtempf: [0.50, 2.00, 4.00, 2.00, 4.00]
@@ -391,21 +391,21 @@ obs filters:
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundIR
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
     options:
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
         options:
           latitude_parameters: [25.0, 0.5, 0.04, 1.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *iasi_metop-c_channels
+        channels: *iasi_metop-a_channels
         options:
-          channels: *iasi_metop-c_channels
+          channels: *iasi_metop-a_channels
       obserr_bound_max: [ 3.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00,
                           2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00,
                           2.00, 2.00, 4.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00, 2.00,
@@ -474,14 +474,14 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   test variables:
   - name: SurfTypeCheckRad@ObsFunction
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
     options:
-      channels: *iasi_metop-c_channels
-      use_flag: *useflag_iasi_metop-c
-      use_flag_clddet: *clddet_iasi_metop-c
+      channels: *iasi_metop-a_channels
+      use_flag: *useflag_iasi_metop-a
+      use_flag_clddet: *clddet_iasi_metop-a
   maxvalue: 1.0e-12
   defer to post: true
   action:
@@ -490,14 +490,14 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
   test variables:
   - name: ObsFunction/ChannelUseflagCheckRad
-    channels: *iasi_metop-c_channels
+    channels: *iasi_metop-a_channels
     options:
-      channels: *iasi_metop-c_channels
+      channels: *iasi_metop-a_channels
       use passive_bc: true
-      use_flag: *useflag_iasi_metop-c
+      use_flag: *useflag_iasi_metop-a
   minvalue: 1.0e-12
   action:
     name: reject
