@@ -34,8 +34,17 @@ obs bias:
     - name: lapse_rate
       tlapse: *gmi_gpm_tlapse
     - name: emissivity
-##  - name: cosine_of_latitude_times_orbit_node
-##  - name: sine_of_latitude
+    - name: cloud_liquid_water
+      sensor: GMI_GPM
+      ch37v: 6
+      ch37h: 7
+      order: 2
+      tlapse: *gmi_gpm_tlapse
+    - name: cloud_liquid_water
+      sensor: GMI_GPM
+      ch37v: 6
+      ch37h: 7
+      tlapse: *gmi_gpm_tlapse
     - name: scan_angle
       var_name: sensorScanPosition
       order: 4
@@ -57,7 +66,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 10,11,12,13
+    channels: 10-13
   minvalue: 70.0
   maxvalue: 320.0
 - filter: Domain Check
@@ -74,28 +83,39 @@ obs filters:
     minvalue: -55.0
     maxvalue: 55.0
   - variable:
-      name: MetaData/height
+      name: MetaData/heightOfSurface
     maxvalue: 2000
   - variable:
       name: GeoVaLs/water_area_fraction
     minvalue: 0.99
   - variable:
-      name: GeoVaLs/surface_temperature_where_sea
+      name: GeoVaLs/average_surface_temperature_within_field_of_view
     minvalue: 275
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 5,6,7,10,12,13
+    channels: 1-13
   where:
   - variable:
       name: MetaData/latitude
-    minvalue: -25.0
+    minvalue: -20.0
     maxvalue: 0.0
   - variable:
       name: MetaData/longitude
     minvalue: 25.0
     maxvalue: 40.0
-#  CLW Retrieval Check from ObsValue
+# Save CLW retrievals from ObsValue
+- filter: Variable Assignment
+  assignments:
+  - name: DerivedMetaData/clw_obs
+    type: float
+    function:
+      name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch37v: 6
+        clwret_ch37h: 7
+        clwret_types: [ObsValue]
+# Check CLW retrievals from ObsValue
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
@@ -106,10 +126,8 @@ obs filters:
       clwret_ch37v: 6
       clwret_ch37h: 7
       clwret_types: [ObsValue]
-  maxvalue: 999.0
-  action:
-    name: reject
-#  Ckeck CLW retrievals from Hofx
+  maxvalue: 900
+# Ckeck CLW retrievals from Hofx
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
@@ -120,42 +138,178 @@ obs filters:
       clwret_ch37v: 6
       clwret_ch37h: 7
       clwret_types: [HofX]
-  maxvalue: 999.0
+  maxvalue: 900
+# Save CLW retrievals from HofX
+- filter: Variable Assignment
+  assignments:
+  - name: DerivedMetaData/clw_hofx
+    type: float
+    function:
+      name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch37v: 6
+        clwret_ch37h: 7
+        clwret_types: [HofX]
+# emiss_qc
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: 1-13
+  where:
+  - variable:
+      name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch37v: 6
+        clwret_ch37h: 7
+        clwret_types: [ObsValue]
+    minvalue: 0.0
+    maxvalue: 0.05
+  - variable:
+      name: ObsFunction/Emissivity_Diff_GMI
+      options:
+        channel: 2
+        regression_constant_1: 0.13290
+        regression_constant_2: 0.42468
+        regression_coeff_1: [-0.00548, 0.00772, 0.00530, -0.00425,
+                            0.00053, 0.00008, -0.00003, -0.00144,
+                            0.00059, -0.00016, 0.00003, -0.00011,
+                            0.00017]
+        regression_coeff_2: [0.00289, -0.00142]
+    minvalue: 0.01
+  action:
+    name: reject
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: 1-13
+  where:
+  - variable:
+      name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch37v: 6
+        clwret_ch37h: 7
+        clwret_types: [ObsValue]
+    minvalue: 0.0
+    maxvalue: 0.05
+  - variable:
+      name: ObsFunction/Emissivity_Diff_GMI
+      options:
+        channel: 4
+        regression_constant_1: 0.15627
+        regression_constant_2: 0.83807
+        regression_coeff_1: [-0.01084, 0.01194, 0.01111, -0.00784,
+                              0.00060, 0.00008, -0.00003, -0.00248,
+                              0.00105, -0.00008, 0.00000, -0.00013,
+                              0.00016]
+        regression_coeff_2: [0.00048, -0.00207]
+    minvalue: 0.035
+  action:
+    name: reject
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: 1-13
+  where:
+  - variable:
+      name: ObsFunction/CLWRetMW
+      options:
+        clwret_ch37v: 6
+        clwret_ch37h: 7
+        clwret_types: [ObsValue]
+    minvalue: 0.0
+    maxvalue: 0.05
+  - variable:
+      name: ObsFunction/Emissivity_Diff_GMI
+      options:
+        channel: 7
+        regression_constant_1: 0.30306
+        regression_constant_2: 1.24071
+        regression_coeff_1: [-0.01793, 0.01730, 0.01784, -0.01199,
+                              0.00067, 0.00013, -0.00004, -0.00365,
+                              0.00154, -0.00004, -0.00001, -0.00015,
+                              0.00017]
+        regression_coeff_2: [0.00068, -0.00342]
+    minvalue: 0.05
   action:
     name: reject
 # Assign observational error in all-sky DA.
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 5,6,7,10,12,13
+    channels: 1-13
   action:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: 5,6,7,10,12,13
+      channels: 1-13
       options:
-        channels: 5,6,7,10,12,13
+        channels: 1-13
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
             clwret_ch37v: 6
             clwret_ch37h: 7
             clwret_types: [ObsValue, HofX]
-        x0:    [ 0.050,  0.050,  0.050,
+        x0:    [ 0.050,  0.050,  0.050,  0.050,  0.050,
+                 0.050,  0.050,  0.050,  0.050,  0.050,
                  0.050,  0.050,  0.050]
-        x1:    [ 0.200,  0.200,  0.200,
+        x1:    [ 0.200,  0.200,  0.200,  0.200,  0.200,
+                 0.200,  0.200,  0.200,  0.200,  0.300,
                  0.200,  0.300,  0.300]
-        x2:    [ 0.500,  0.500,  0.500,
+        x2:    [ 0.500,  0.500,  0.500,  0.500,  0.500,
+                 0.500,  0.500,  0.500,  0.500,  0.500,
                  0.500,  0.500,  0.500]
-        err0:  [ 4.000,  3.800,300.000,
+        err0:  [ 2.700,  3.700,  3.500,  4.500,  4.000,
+                 3.800,300.000,  5.000, 11.500,  5.000,
                  5.000,  2.500,  3.000]
-        err1:  [11.000,  13.300, 23.000,
+        err1:  [17.000, 23.000, 13.000, 25.000, 11.000,
+                13.000, 23.000, 10.000, 20.000, 15.000,
                 20.000,  8.000, 13.000]
-        err2:  [35.000, 25.300,500.000,
+        err2:  [25.000, 40.000, 40.000, 55.000, 35.000,
+                25.000,500.000, 50.000, 50.000, 50.000,
                 50.000, 30.000, 40.000]
 - filter: Background Check
   apply at iterations: 0, 1
   filter variables:
   - name: brightnessTemperature
-    channels: 5,6,7,10,12,13
+    channels: 1,2,4,6
   threshold: 2.0
+  absolute threshold: 30.0
+  action:
+    name: reject
+- filter: Background Check
+  apply at iterations: 0, 1
+  filter variables:
+  - name: brightnessTemperature
+    channels: 9,10,11
+  threshold: 2.0
+  absolute threshold: 20.0
+  action:
+    name: reject
+- filter: Background Check
+  apply at iterations: 0, 1
+  filter variables:
+  - name: brightnessTemperature
+    channels: 3,5,8
+  threshold: 2.0
+  absolute threshold: 15.0
+  action:
+    name: reject
+- filter: Background Check
+  apply at iterations: 0, 1
+  filter variables:
+  - name: brightnessTemperature
+    channels: 12,13
+  threshold: 2.0
+  absolute threshold: 10.0
+  action:
+    name: reject
+- filter: Background Check
+  apply at iterations: 0, 1
+  filter variables:
+  - name: brightnessTemperature
+    channels: 7
+  threshold: 2.0
+  absolute threshold: 5.0
+  action:
+    name: reject

@@ -12,6 +12,7 @@ import os
 import unittest
 
 from swell.test.question_dictionary_comparison_test import QuestionDictionaryTest
+from swell.test.unused_variables_test import UnusedVariablesTest
 from swell.utilities.logger import Logger
 
 
@@ -29,7 +30,10 @@ def main():
     # Create a test suite
     test_suite = unittest.TestSuite()
 
-    # Load tests from QuestionDictionaryTest
+    # Load unused variable test
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(UnusedVariablesTest))
+
+    # Load tests from UnusedVariablesTest
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(QuestionDictionaryTest))
 
     # Create a test runner

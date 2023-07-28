@@ -10,9 +10,7 @@
 
 import copy
 import glob
-import importlib
 import os
-import pathlib
 import shutil
 
 from swell.swell_path import get_swell_path

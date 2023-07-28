@@ -109,7 +109,6 @@ class Config():
                     setattr(self, f'__{experiment_key}__', experiment_value)
 
                     # Add a method to get the variable
-                    print('adding method for ', experiment_key)
                     setattr(self, f'{experiment_key}', self.get(experiment_key))
 
     # ----------------------------------------------------------------------------------------------

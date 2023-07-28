@@ -7,11 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime as dt
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 

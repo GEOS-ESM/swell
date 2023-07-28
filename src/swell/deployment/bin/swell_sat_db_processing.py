@@ -9,11 +9,9 @@ import os
 import yaml
 import click
 import numpy as np
-import pandas as pd
 
 from datetime import datetime as dt
 
-from swell.utilities.git_utils import git_got
 from swell.utilities.sat_db_utils import run_sat_db_process
 
 

@@ -3,11 +3,11 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/amsua_aqua.{{window_begin}}.nc4'
+    obsfile: '{{cycle_dir}}/amsua_aqua.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_aqua.{{window_begin}}.nc4'
+    obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_aqua.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
   channels: &amsua_aqua_channels 1-15
 obs operator:
@@ -160,9 +160,9 @@ obs filters:
                   [2.500,  2.000,  2.000,  0.500,  0.400,
                    0.400,  0.500,  0.300,  0.350,  0.350,
                    0.450,  1.000,  1.500,  3.750,  6.300]
-        obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
+        obserr_bound_max: [4.5, 4.5, 4.5, 3.0, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
-                           2.5, 3.5, 4.5, 4.5, 4.5]
+                           3.0, 3.5, 4.5, 4.5, 4.5]
     action:
       name: reject
 # Inter-channel check
@@ -193,7 +193,7 @@ obs filters:
       channels: 1-15
       options:
         channels: 1-15
-        use passive_bc: true
+#       use passive_bc: true
         use_flag: [-1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1]

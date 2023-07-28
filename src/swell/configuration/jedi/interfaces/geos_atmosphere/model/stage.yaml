@@ -3,3 +3,5 @@
       - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/GEOS_CRTM_Surface/geos.crtmsrf.{{horizontal_resolution}}.nc4', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/bkg/']
       - ['{{experiment_root}}/{{experiment_id}}/jedi_bundle/source/fv3-jedi/test/Data/fieldmetadata/*', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fieldmetadata/']
       - ['{{experiment_root}}/{{experiment_id}}/jedi_bundle/source/fv3-jedi/test/Data/fv3files/*', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec/gsibec_configuration_c{{horizontal_resolution}}.nml', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/']
