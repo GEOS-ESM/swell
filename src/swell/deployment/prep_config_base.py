@@ -31,6 +31,9 @@ class PrepConfigBase(ABC):
         # Store a logger for all to use
         self.logger = logger
 
+        # Store the name of the class inheriting base
+        self.prep_using = type(self).__name__.split('PrepConfig')[1]
+
         # Swell install path
         swell_path = get_swell_path()
         self.install_path = swell_path
@@ -53,10 +56,6 @@ class PrepConfigBase(ABC):
 
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
-
-        # Add cli arguments to experiment dictionary
-        self.experiment_dict['suite_to_run'] = suite
-        self.experiment_dict['platform'] = platform
 
         # Comment dictionary to be created and used to add comments to config file
         self.comment_dict = {}
@@ -101,8 +100,9 @@ class PrepConfigBase(ABC):
         # check_widgets goes in cli
         # defaults gets nothing
 
-        print("Please answer the following questions to generate your experiment " +
-              "configuration YAML file.\n")
+        if self.prep_using == 'Cli':
+            print("Please answer the following questions to generate your experiment " +
+                  "configuration YAML file.\n")
 
         # Set current dictionary variable which is needed for answer changes
         self.current_dictionary = {}
@@ -158,6 +158,18 @@ class PrepConfigBase(ABC):
                 'default_value': 'defer_to_platform',
                 'prompt': 'Enter the path where experiment will be staged',
                 'type': 'string',
+            },
+            'platform': {
+                'ask_question': False,
+                'default_value': self.platform,
+                'prompt': 'Enter the platform on which experiment will run',
+                'type': 'string'
+            },
+            'suite_to_run': {
+                'ask_question': False,
+                'default_value': self.suite_to_run,
+                'prompt': 'Enter the suite you wish to run',
+                'type': 'string'
             }
         }
 
@@ -167,22 +179,23 @@ class PrepConfigBase(ABC):
         self.directory = os.path.join(self.directory, self.suite_to_run)
         suite_questions_path = os.path.join(self.directory, 'suite_questions.yaml')
 
+        self.base_questions_dictionary = {}
+        self.base_questions_dictionary.update(exp_questions)
+
         if os.path.exists(suite_questions_path):
             with open(suite_questions_path, 'r') as suite_dict_file:
                 suite_questions_dict = yaml.safe_load(suite_dict_file.read())
 
-        self.base_questions_dictionary = {}
-        self.base_questions_dictionary.update(exp_questions)
-        # Need to create a distint model suite dictionary to prepend later
-        # onto model questions from task_questions.yaml file
-        self.model_suite_questions = {}
+            # Need to create a distint model suite dictionary to prepend later
+            # onto model questions from task_questions.yaml file
+            self.model_suite_questions = {}
 
-        for k, v in suite_questions_dict.items():
-            if 'models' in v.keys():
-                self.model_flag = True
-                self.model_suite_questions[k] = v
-            else:
-                self.base_questions_dictionary[k] = v
+            for k, v in suite_questions_dict.items():
+                if 'models' in v.keys():
+                    self.model_flag = True
+                    self.model_suite_questions[k] = v
+                else:
+                    self.base_questions_dictionary[k] = v
 
         # Get the tasks asked prior to model selection and model-based tasks
         base_tasks, model_tasks = self.open_flow()
@@ -311,8 +324,6 @@ class PrepConfigBase(ABC):
 
         # Validate the element dictionary
         self.validate_dictionary(el_dict)
-
-        print('MODEL CHECK', self.model)
 
         # Check that the key does not have a dependency
         depends_flag = True
