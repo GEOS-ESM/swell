@@ -334,6 +334,7 @@ obs filters:
     channels: *airs_aqua_channels
     options:
       channels: *airs_aqua_channels
+      use passive_bc: true
       use_flag: *useflag_airs_aqua
   minvalue: 1.0e-12
   action:
