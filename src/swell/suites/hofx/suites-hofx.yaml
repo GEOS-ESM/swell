@@ -54,7 +54,6 @@ r2d2_store_datastores:
   prompt: In which R2D2 data_stores do you want to store new data?
   type: string-check-list
 
-
 # What kind of coupling is needed
 coupling_style:
   default_value: uncoupled

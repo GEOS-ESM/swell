@@ -42,7 +42,7 @@ class GetObservations(taskBase):
         window_offset = self.config.window_offset()
 
         r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
-        r2d2_fetch_datastores = [r.replace("$USER", os.getenv('USER'))
+        r2d2_fetch_datastores = [r.replace("${USER}", os.getenv('USER'))
                                  for r in r2d2_fetch_datastores]
 
         self.logger.info("Fetching from R2D2 data_stores: " + ', '.join(r2d2_fetch_datastores))

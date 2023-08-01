@@ -35,7 +35,7 @@ class SaveObsDiags(taskBase):
         window_offset = self.config.window_offset()
 
         r2d2_store_datastores = self.config.r2d2_store_datastores(['swell-r2d2'])
-        r2d2_store_datastores = [r.replace("$USER", os.getenv('USER'))
+        r2d2_store_datastores = [r.replace("${USER}", os.getenv('USER'))
                                  for r in r2d2_store_datastores]
         limit_store = self.config.limit_r2d2_storing(True)
 

@@ -53,7 +53,6 @@ observations:
   # Conventional
   - aircraft
   # Radiances
-  - amsua_n19
   - amsua_aqua
   - amsua_metop-a
   - amsua_metop-b
@@ -102,5 +101,5 @@ fixed_options:
     default_value: ['*.nc4','*.txt','logfile.*.out']
     prompt: 'Patterns for the files to remove after completing a cycle'
   obs_provider:
-    default_value: ncdiag
+    default_value: x0044
     prompt: Database providing the observations.
