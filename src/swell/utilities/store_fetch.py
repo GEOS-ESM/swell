@@ -34,7 +34,7 @@ def fetch(data_stores, **fetch_kwargs):
             pass
 
         except Exception as unexpected_error:
-            raise Exception("Unexpected error encountered in fetch from " +\
+            raise Exception("Unexpected error encountered in fetch from " +
                             data_store + ". Stopping. " + str(unexpected_error))
 
         else:
