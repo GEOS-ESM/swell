@@ -20,10 +20,12 @@ def fetch(data_stores, **fetch_kwargs):
     # Gather error messages for each fetch attempt
     failure_messages = dict.fromkeys(data_stores)
 
+    # Loop over each data store
     for data_store in data_stores:
 
         print("******", data_store, "*******")
 
+        # Try to Fetch
         try:
             R2D2Data.fetch(data_store=data_store, **fetch_kwargs)
 
@@ -31,8 +33,13 @@ def fetch(data_stores, **fetch_kwargs):
             failure_messages[data_store] = str(r2d2error)
             pass
 
+        except Exception as unexpected_error:
+            raise Exception("Unexpected error encountered in fetch from " +\
+                            data_store + ". Stopping. " + str(unexpected_error))
+
         else:
             fetch_success = True
+            fetched_from = data_store
             break
 
     if fetch_success is False:
@@ -43,6 +50,8 @@ def fetch(data_stores, **fetch_kwargs):
 
         # Is there a more appropriate error than ValueError?
         raise ValueError(error_message)
+
+    return fetched_from
 
 
 # --------------------------------------------------------------------------------------------------
