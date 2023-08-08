@@ -73,11 +73,12 @@ class taskBase(ABC):
         # Create cycle and forecast directories
         # -------------------------------------
         cycle_dir = None
-        forecast_dir = None
+        self.cycle_forecast_dir = None
 
         if datetime_input is not None:
-            forecast_dir = self.forecast_dir()
-            os.makedirs(forecast_dir, 0o755, exist_ok=True)
+            # Name of directory where cycle forecast files will be staged
+            self.cycle_forecast_dir = os.path.join(self.experiment_path(), 'run',
+                                                   self.__datetime__.string_directory(), 'forecast')
 
             if model is not None:
                 cycle_dir = self.cycle_dir()
@@ -90,7 +91,7 @@ class taskBase(ABC):
 
         # Add GEOS utils
         # --------------
-        self.geos = Geos(self.logger, forecast_dir)
+        self.geos = Geos(self.logger, self.cycle_forecast_dir)
 
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------
@@ -170,10 +171,13 @@ class taskBase(ABC):
 
     def forecast_dir(self, paths=[]):
 
+        # Make sure forecast directory exists
+        # -----------------------------------
+        os.makedirs(self.cycle_forecast_dir, 0o755, exist_ok=True)
+
         # Combine datetime string (directory format) with the model
         # ------------------------------------------------------
-        forecast_dir = os.path.join(self.experiment_path(), 'run',
-                                    self.__datetime__.string_directory(), 'forecast')
+        forecast_dir = self.cycle_forecast_dir
 
         if len(paths) > 0:
             # If paths (which should be a list) is not empty, combine with forecast_dir
