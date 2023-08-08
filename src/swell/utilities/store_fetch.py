@@ -33,10 +33,6 @@ def fetch(data_stores, **fetch_kwargs):
             failure_messages[data_store] = str(r2d2error)
             pass
 
-        except Exception as unexpected_error:
-            raise Exception("Unexpected error encountered in fetch from " +
-                            data_store + ". Stopping. " + str(unexpected_error))
-
         else:
             fetch_success = True
             fetched_from = data_store
@@ -46,7 +42,7 @@ def fetch(data_stores, **fetch_kwargs):
 
         error_message = "Failed to fetch R2D2 data.\n"
         for k, v in failure_messages.items():
-            error_message += k + ": " + v
+            error_message += f'{k}: {v}\n'
 
         # Is there a more appropriate error than ValueError?
         raise ValueError(error_message)
@@ -92,7 +88,7 @@ def store(data_stores, limit_one=True, **store_kwargs):
 
         error_message = "Could not store data into any R2D2 data_store.\n"
         for k, v in failure_messages.items():
-            error_message += k + ": " + v
+            error_message += f'{k}: {v}\n'
 
         raise ValueError(error_message)
 
