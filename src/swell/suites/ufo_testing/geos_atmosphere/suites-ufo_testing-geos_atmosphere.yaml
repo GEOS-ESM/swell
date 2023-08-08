@@ -56,7 +56,7 @@ observations:
 
 # Path to GSI ncdiags
 path_to_gsi_nc_diags:
-  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag'
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag/2021121200'
   prompt: Path to where the ncdiags will be held
   type: string
 
@@ -68,7 +68,7 @@ produce_geovals:
 
 # Location for bias correction coefficients
 path_to_gsi_bc_coefficients:
-  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc'
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc/2021121200'
   prompt: Tar or directory containing BC files
   type: string
 

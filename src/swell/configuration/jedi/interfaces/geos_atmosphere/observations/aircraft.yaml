@@ -1,7 +1,7 @@
 
 obs operator:
   name: VertInterp
-  observation alias file: /discover/nobackup/msienkie/jedi/JediUfoTests/Config/obsop_name_map.yaml
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
   apply near surface wind scaling: true
 
 obs space:

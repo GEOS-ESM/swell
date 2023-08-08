@@ -8,7 +8,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.ompsnm_npp.{{window_begin}}.nc4'
-  simulated variables: [ozoneTotal]
+  simulated variables: [ozoneLayer]
 obs operator:
   name: AtmVertInterpLay
   geovals: [mole_fraction_of_ozone_in_air]
@@ -17,14 +17,14 @@ obs operator:
 obs filters:
 - filter: Perform Action
   filter variables:
-  - name: ozoneTotal
+  - name: ozoneLayer
   action:
     name: assign error
     error parameter: 6.0
  # range sanity check
 - filter: Bounds Check
   filter variables:
-  - name: ozoneTotal
+  - name: ozoneLayer
   minvalue: 0
   maxvalue: 1000
   action:
@@ -32,7 +32,7 @@ obs filters:
 # Reject SZA > 84
 - filter: Bounds Check
   filter variables:
-  - name: ozoneTotal
+  - name: ozoneLayer
   test variables:
   - name: MetaData/solarZenithAngle
   maxvalue: 84.
@@ -41,7 +41,7 @@ obs filters:
 # Gross check
 - filter: Background Check
   filter variables:
-  - name: ozoneTotal
+  - name: ozoneLayer
   threshold: 5.0
   action:
     name: reject
