@@ -82,8 +82,8 @@ def main(config):
 
     # Create R2D2 database file
     # -------------------------
-    data_assimilation_run = dict_get(logger, experiment_dict, 'data_assimilation_run', False)
-    if data_assimilation_run:
+    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
+    if r2d2_local_path is not None:
         r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
 
         # Write R2D2_CONFIG to modules

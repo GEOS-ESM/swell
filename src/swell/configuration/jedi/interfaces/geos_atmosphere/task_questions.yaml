@@ -45,9 +45,9 @@ gradient_norm_reduction:
   default_value: 10e-5
 
 horizontal_resolution:
-  default_value: C361
+  default_value: 361
   options:
-  - C361
+  - 361
 
 jedi_bkg_filename_template:
   default_value: TODO
