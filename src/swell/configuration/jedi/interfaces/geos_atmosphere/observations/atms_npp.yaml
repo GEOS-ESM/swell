@@ -78,7 +78,7 @@ obs filters:
     action:
       name: reject
 # Assign obs error
-  - filter: Bounds Check
+  - filter: Perform Action
     filter variables:
     - name: brightnessTemperature
       channels: atms_npp_channels
