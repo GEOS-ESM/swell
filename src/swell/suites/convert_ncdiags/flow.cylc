@@ -48,6 +48,9 @@
             GetGsiNcdiag
             GetGsiNcdiag => GsiNcdiagToIoda
             BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+            # Clean up
+            GsiNcdiagToIoda => CleanCycle
         """
         {% endfor %}
 
@@ -95,5 +98,8 @@
 
     [[ GsiNcdiagToIoda ]]
         script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[CleanCycle]]
+        script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
 
 # --------------------------------------------------------------------------------------------------
