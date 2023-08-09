@@ -115,9 +115,9 @@ static_background_error_model:
   - GSIbec
 
 vertical_resolution:
-  default_value: 72
+  default_value: '72'
   options:
-  - 72
+  - '72'
 
 window_length:
   default_value: PT6H
@@ -125,3 +125,5 @@ window_length:
 window_offset:
   default_value: PT3H
 
+window_type:
+  default_value: '4D'

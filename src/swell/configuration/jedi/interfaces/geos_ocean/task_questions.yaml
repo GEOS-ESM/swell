@@ -76,13 +76,16 @@ total_processors:
   default_value: 24
 
 vertical_resolution:
-  default_value: 75
+  default_value: '75'
   options:
-  - 75
+  - '75'
 
 window_length:
   default_value: PT12H
 
 window_offset:
   default_value: PT6H
+
+window_type:
+  default_value: '3D'
 
