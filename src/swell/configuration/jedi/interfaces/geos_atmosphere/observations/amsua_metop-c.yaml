@@ -195,7 +195,7 @@ obs filters:
       channels: 1-15
       options:
         channels: 1-15
-        use passive_bc: true
+#       use passive_bc: true
         use_flag: [-1, -1, -1,  1,  1,
                     1,  1,  1,  1,  1,
                     1,  1,  1,  1, -1]

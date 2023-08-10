@@ -10,10 +10,10 @@
 
 import os
 
-from jedi_bundle.bin.jedi_bundle import execute_tasks
+from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.build import set_jedi_bundle_config, get_bundles, build_and_source_dirs
+from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 # --------------------------------------------------------------------------------------------------
 

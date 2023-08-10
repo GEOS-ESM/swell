@@ -29,10 +29,14 @@ module unload gsibec
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/compiler/intel/2022.0.1
 module load crtm/v2.4-jedi.2
 
-# Add IODA to PYTHONPATH in case it is needed
-# -------------------------------------------
+# IODA from experiement JEDI build
+# --------------------------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
+
+# IODA-Converters from experiement JEDI source
+# --------------------------------------------
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
 
 # Load GMAO modules
 # -----------------

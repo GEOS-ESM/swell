@@ -25,7 +25,7 @@ existing_jedi_build_directory:
 
 # Bundles to build
 bundles:
-  default_value: ['fv3-jedi', 'soca', 'iodaconv']
+  default_value: ['fv3-jedi', 'soca', 'iodaconv', 'ufo']
   prompt: List the bundles that you wish to build
   type: string-check-list
   options: use_method  # This method would ask jedi_bundle for the default bundles

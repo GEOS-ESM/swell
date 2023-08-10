@@ -51,6 +51,8 @@ class JediConfigRendering():
             'local_background_time',
             'local_background_time_iso',
             'minimizer',
+            'gsibec_npx_proc',
+            'gsibec_npy_proc',
             'npx_proc',
             'npy_proc',
             'number_of_iterations',
@@ -59,6 +61,7 @@ class JediConfigRendering():
             'vertical_resolution',
             'window_begin',
             'window_begin_iso',
+            'window_end_iso',
             'window_length',
         ]
 

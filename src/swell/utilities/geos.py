@@ -1,4 +1,4 @@
-# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# (C) Copyright 2023- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -14,11 +14,8 @@ import isodate
 import netCDF4
 import os
 import re
-import shutil
 
-from abc import ABC, abstractmethod
-
-from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
+from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
