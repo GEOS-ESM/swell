@@ -93,6 +93,7 @@ class PrepConfigBase(ABC):
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             self.all_task_questions = yaml.safe_load(ymlfile)
 
+
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
@@ -133,8 +134,11 @@ class PrepConfigBase(ABC):
             # Prepend model suite question in front of model task questions
             self.prepend_model_dict()
 
+            model_questions_dictionary_copy = copy.deepcopy(self.model_questions_dictionary)
+
             # Iterate over base questions
             for m in self.selected_models:
+                self.model_questions_dictionary[m] = copy.deepcopy(model_questions_dictionary_copy[m])
                 self.model = m
                 for k, v in self.model_questions_dictionary[m].items():
                     self.key_passer(k, v)

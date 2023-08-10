@@ -77,7 +77,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             for ind, dict_str_item in enumerate(dict_str_items):
 
-                if key + ':' in dict_str_item:
+                if dict_str_item[0:len(key)+1] ==  key + ':':
 
                     dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
                     break
@@ -89,7 +89,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
                 for line in range(index_of_key, len(dict_str_items)):
 
-                    if key_hierarchy + ':' in dict_str_items[line]:
+                    if ' ' + key_hierarchy + ':' in dict_str_items[line]:
 
                         index_of_key = line
 
@@ -116,3 +116,6 @@ def replace_string_in_dictionary(dictionary, string_in, string_out):
 
     # Convert back to dictionary
     return yaml.safe_load(dictionary_string)
+
+
+# --------------------------------------------------------------------------------------------------
