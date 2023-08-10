@@ -147,3 +147,18 @@ def update_dict(original_dict, overwrite_dict):
 
 
 # --------------------------------------------------------------------------------------------------
+
+
+def dictionary_override(logger, original_data, override_data):
+    if isinstance(original_data, dict) and isinstance(override_data, dict):
+        for key, value in override_data.items():
+            if key in original_data:
+                original_data[key] = dictioanry_override(original_data[key], value)
+            else:
+                logger.abort(f'Key {key} in override dictionary does not exist in original ' +
+                             f'dictionary')
+        return original_data
+    return override_data
+
+
+# --------------------------------------------------------------------------------------------------

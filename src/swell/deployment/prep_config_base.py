@@ -91,6 +91,8 @@ class PrepConfigBase(ABC):
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             self.all_task_questions = yaml.safe_load(ymlfile)
 
+        print('HELLO')
+
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):

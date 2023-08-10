@@ -15,7 +15,7 @@ import yaml
 
 from swell.utilities.logger import Logger
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary import dict_get, add_comments_to_dictionary
+from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dictionary_override
 
 
 # --------------------------------------------------------------------------------------------------
@@ -70,40 +70,16 @@ def prepare_config(method, suite, platform, override):
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
 
-    # Override config with kay value pairs coming from override YAML
-    # --------------------------------------------------------------
-    if override is not None:
+    # Optionally override dictionary values (only used when method is 'defaults')
+    # -------------------------------------
+    if method == 'defaults' and override is not None:
+        dictionary_override(logger, experiment_dict, override)
 
-        # Open override dictionary
-        with open(override, 'r') as override_open:
-            override_dict = yaml.safe_load(override_open)
-
-        # List of keys that are allowed to be overridden
-        overridable_keys = [
-            'experiment_id',
-            'experiment_root',
-            'existing_jedi_source_directory',
-            'existing_jedi_build_directory'
-            ]
-
-        # Loop over keys that user wants to override
-        for over_key, over_value in override_dict.items():
-
-            # Assert that the override choice is in fact overridable
-            logger.assert_abort(over_key in overridable_keys, f'The override key \'{over_key}\' ' +
-                                f'is not overridable. Overridable keys: ' +
-                                f'\'{overridable_keys}\'.')
-
-            # Assert that the override choice is in the experiment dictionary
-            logger.assert_abort(over_key in experiment_dict, f'The override key \'{over_key}\' ' +
-                                f'is not part of the experiment dictionary.')
-
-            # Overwrite the element in the experiment dictionary
-            experiment_dict[over_key] = over_value
+    print(comment_dict)
 
     # Add comments to dictionary
     # --------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=None, sort_keys=False)
 
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
                                                                  comment_dict)

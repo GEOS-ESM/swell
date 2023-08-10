@@ -30,9 +30,8 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
-              'experiment. If not passed questions will be presented for setting up an experiment.')
-def main(config):
+@click.argument('config_file')
+def main(config_file):
 
     # Welcome message
     # ---------------
@@ -41,13 +40,6 @@ def main(config):
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
-
-    # Generate the configuration file
-    # -------------------------------
-    if config is None:
-        config_file = prepare_config('cli', 'hofx', 'nccs_discover')
-    else:
-        config_file = config
 
     # Load experiment file
     # --------------------
