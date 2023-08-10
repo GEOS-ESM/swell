@@ -75,8 +75,6 @@ def prepare_config(method, suite, platform, override):
     if method == 'defaults' and override is not None:
         dictionary_override(logger, experiment_dict, override)
 
-    print(comment_dict)
-
     # Add comments to dictionary
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=None, sort_keys=False)
