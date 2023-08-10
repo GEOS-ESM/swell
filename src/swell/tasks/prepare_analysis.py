@@ -1,4 +1,4 @@
-# (C) Copyright 2023- United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,14 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime as dt
 import glob
 import netCDF4 as nc
 import os
 import shutil
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -41,7 +39,6 @@ class PrepareAnalysis(taskBase):
         # --------------------------------
         self.current_cycle = os.path.basename(self.forecast_dir())
         self.cc_dto = self.cycle_time_dto()
-        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
 
         # GEOS restarts have seconds in their filename
         # --------------------------------------------

@@ -30,15 +30,16 @@ def tq_dicts():
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
 
-    # Path to JEDI interface code
-    swell_path = get_swell_path()
-
     # All python files
     task_codes = glob.glob(os.path.join(get_swell_path(), 'tasks', '*.py'))
     task_codes = list(filter(lambda task_code: task_code != '__init__.py', task_codes))
 
     # Target YAML file
     destination_yaml = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
+
+    # Print message
+    logger.info(f'Running tool to regenerate the task questions dictionary. Output dictionary ' +
+                f'be written to {destination_yaml}')
 
     # Read input file into dictionary
     if os.path.exists(destination_yaml):
@@ -49,7 +50,6 @@ def tq_dicts():
         question_dict = {}
         question_dict_str = ''
 
-    question_dict_in = question_dict.copy()
     question_dict_str_in = question_dict_str
 
     # Loop through task code and accumulate all lines containing a use of config

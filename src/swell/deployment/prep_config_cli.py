@@ -17,7 +17,6 @@ import questionary
 from questionary import Choice
 
 from swell.deployment.prep_config_base import PrepConfigBase
-from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
