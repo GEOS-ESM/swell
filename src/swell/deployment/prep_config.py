@@ -11,14 +11,11 @@
 import datetime
 import os
 import importlib
-import ruamel.yaml as ry
-import sys
 import yaml
 
 from swell.utilities.logger import Logger
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get, add_comments_to_dictionary
-from swell.utilities.jinja2 import template_string_jinja2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -119,9 +116,8 @@ def prepare_config(method, suite, platform, override):
 
     # Write dictionary to YAML file
     # -----------------------------
-    exp_dict_file_open = open(exp_dict_file, "w")
-    n = exp_dict_file_open.write(experiment_dict_string_comments)
-    exp_dict_file_open.close()
+    with open(exp_dict_file, 'w') as file:
+        file.write(experiment_dict_string_comments)
     logger.info(f'Prepared configuration file written to {exp_dict_file}', False)
 
     # Return path to dictionary file

@@ -1,0 +1,111 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = 2020-12-15T00:00:00Z
+    final cycle point = 2020-12-15T00:00:00Z
+
+    [[graph]]
+        R1 = """
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            BuildJediByLinking?
+
+            # Stage JEDI static files
+            CloneJedi => StageJedi
+        """
+
+        T00 = """
+            # Get and convert bias correction coefficients
+            GetGsiBc => GsiBcToIoda
+
+            # Get and convert ncdiags
+            GetGsiNcdiag => GsiNcdiagToIoda
+
+            # Get background
+            GetGeosAdasBackground
+
+            # Run Jedi variational executable
+            BuildJediByLinking[^]  => RunJediVariationalExecutable
+            StageJedi[^] => RunJediVariationalExecutable
+            GsiBcToIoda => RunJediVariationalExecutable
+            GsiNcdiagToIoda => RunJediVariationalExecutable
+            GetGeosAdasBackground => RunJediVariationalExecutable
+
+            # Clean cycle
+            RunJediVariationalExecutable => CleanCycle
+        """
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
+
+    [[StageJedi]]
+        script = "swell_task StageJedi $config -m geos_atmosphere"
+
+    [[ GetGsiBc ]]
+        script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
+
+    [[ GsiBcToIoda ]]
+        script = "swell_task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GetGsiNcdiag ]]
+        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
+
+    [[ GsiNcdiagToIoda ]]
+        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GetGeosAdasBackground ]]
+        script = "swell_task GetGeosAdasBackground $config -d $datetime -m geos_atmosphere"
+
+    [[RunJediVariationalExecutable]]
+        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m geos_atmosphere"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
+            --job-name = RunJediVariationalExecutable
+            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+
+    [[CleanCycle]]
+        script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
+
+# --------------------------------------------------------------------------------------------------
