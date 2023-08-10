@@ -30,18 +30,7 @@ model_components:
   options: use_method
   type: file-check-list
 
-# Generate the YAML and then exit
 generate_yaml_and_exit:
   default_value: True
   prompt: Generate YAML and exit?
   type: boolean
-
-# Bundles to build
-bundles:
-  default_value: ['fv3-jedi', 'soca', 'iodaconv', 'ufo']
-  prompt: List the bundles that you wish to build
-  type: string-check-list
-  options: use_method  # This method would ask jedi_bundle for the default bundles
-  depends:
-    key: jedi_build_method
-    value: create
