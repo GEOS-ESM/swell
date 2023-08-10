@@ -39,7 +39,7 @@ def main(input_method, suite, platform, override):
 
     # Create suites object
     # --------------------
-    config_file = prepare_config(input_method, suite, platform, override)
+    prepare_config(input_method, suite, platform, override)
 
 
 # --------------------------------------------------------------------------------------------------

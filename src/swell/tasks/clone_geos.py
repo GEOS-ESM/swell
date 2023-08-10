@@ -9,8 +9,6 @@
 
 
 import os
-import tarfile
-import urllib.request
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs, link_path

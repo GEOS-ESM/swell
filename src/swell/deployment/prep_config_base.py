@@ -12,8 +12,6 @@ from abc import ABC, abstractmethod
 import copy
 import datetime
 import os
-import pathlib
-import re
 import yaml
 
 import glob
@@ -92,7 +90,6 @@ class PrepConfigBase(ABC):
         # Open Master ask questions yaml
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             self.all_task_questions = yaml.safe_load(ymlfile)
-
 
     # ----------------------------------------------------------------------------------------------
 
@@ -411,7 +408,6 @@ class PrepConfigBase(ABC):
 
         # Check for disallowed element types
         for element_item in element_items:
-            element_item_type = type(element_item)
             for dis_elem_type in self.dis_elem_types:
                 if isinstance(element_item, dis_elem_type):
                     self.logger.abort(f'Element \'{element}\' has a type that is not permitted. ' +

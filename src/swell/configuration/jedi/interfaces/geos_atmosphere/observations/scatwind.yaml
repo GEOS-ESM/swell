@@ -1,8 +1,5 @@
-obs operator:
-  name: GSISfcModel
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
 obs space:
-  name: scatwind
+  name: Scatwind
   obsdatain:
     engine:
       type: H5File
@@ -12,107 +9,162 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.scatwind.{{window_begin}}.nc4'
   simulated variables: [windEastward, windNorthward]
+obs operator:
+  name: VertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  apply near surface wind scaling: true
+
 obs filters:
+#
 # Reject all obs with PreQC mark already set above 3
-- filter: PreQC
-  maxvalue: 3
+#- filter: PreQC
+#  maxvalue: 3
+#  action:
+#    name: reject
+#
+# Assign the initial observation error, based on height/pressure
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  minvalue: -135
+  maxvalue: 135
   action:
-    name: reject
+    name: assign error
+    error function:
+      name: ObsFunction/ObsErrorModelStepwiseLinear
+      options:
+        xvar:
+          name: MetaData/pressure
+        xvals: [110000, 105000, 100000, 95000, 90000, 85000, 80000, 75000, 70000, 65000,
+                  60000,  55000,  50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000,
+                  10000,   7500,   5000,  4000,  3000,  2000,  1000]   #Pressure (Pa)
+        errors: [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+                  2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+                  2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
 #
-# WindSat (289), ASCAT (290), or OSCAT (291) either wind component or velocity greater than 20 m/s, then reject.
-- filter: Bounds Check
+- filter: Perform Action
   filter variables:
   - name: windEastward
-  - name: windNorthward
-  minvalue: -20
-  maxvalue: 20
-#
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: ObsFunction/Velocity
-  maxvalue: 20.0
   where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 289, 290, 291
+  - variable: PreUseFlag/windEastward
+    is_in: 100
   action:
     name: reject
 #
-# Similar to satellite winds AMV, reject when obs wind direction is more than 50 degrees different than model.
-- filter: Bounds Check
+- filter: Perform Action
   filter variables:
-  - name: windEastward
   - name: windNorthward
-  test variables:
-  - name: ObsFunction/WindDirAngleDiff
-  maxvalue: 50.0
-  action:
-    name: reject
-#
-# ASCAT (290), RAPIDSCAT (296)  use a LNVD check.
-- filter: Bounds Check
-  filter variables:
-  - name: windEastward
-  - name: windNorthward
-  test variables:
-  - name: ObsFunction/SatWindsLNVDCheck
-  maxvalue: 3
   where:
-  - variable:
-      name: ObsType/windEastward
-    is_in: 290, 296
+  - variable: PreUseFlag/windNorthward
+    is_in: 100
   action:
     name: reject
 #
-# Assign the initial observation error (constant value, 3.5 m/s right now).
+#wgu
 - filter: BlackList
   filter variables:
   - name: windEastward
-  - name: windNorthward
+  where:
+    - variable:
+        name: ObsType/windEastward
+      is_in: 290
   action:
-    name: assign error
-    error parameter: 3.5
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorPressureCheck
+      options:
+        variable: windEastward
+        inflation factor: 4.0
+        adjusted_error_name: GsiAdjustObsError
 #
-# For OSCAT, ASCAT, RAPIDSCAT, or WindSat, reject when either wind component differs by at least 6 m/s from model.
-- filter: Background Check
+- filter: BlackList
+  filter variables:
+  - name: windNorthward
+  where:
+    - variable:
+        name: ObsType/windNorthward
+      is_in: 290
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorPressureCheck
+      options:
+        variable: windNorthward
+        inflation factor: 4.0
+        adjusted_error_name: GsiAdjustObsError
+#
+- filter: Bounds Check
   filter variables:
   - name: windEastward
   - name: windNorthward
-  absolute threshold: 6.0
+  test variables:
+  - name: ObsFunction/ScatWindsAmbiguityCheck
+  maxvalue: 1.e-12
   where:
   - variable:
       name: ObsType/windEastward
-    is_in: 289, 290, 291, 296
+    is_in: 290
   action:
     name: reject
+
+# Bounds checks. Filter U obs if |v_O-F| > 5, and V obs if |u_O-F| > 5.
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: ObsFunction/Arithmetic
+    options:
+      variables:
+      - name: ObsValue/windEastward
+      - name: HofX/windEastward
+      coefs: [1.0, -1.0]
+  minvalue: -5.0
+  maxvalue: 5.0
 #
 - filter: Bounds Check
   filter variables:
   - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: ObsFunction/Arithmetic
+    options:
+      variables:
+      - name: ObsValue/windNorthward
+      - name: HofX/windNorthward
+      coefs: [1.0, -1.0]
+  minvalue: -5.0
+  maxvalue: 5.0
+#
+# Gross Check
+- filter: Background Check
+  filter variables:
+  - name: windEastward
+  function absolute threshold:
+  - name: ObsFunction/WindsSPDBCheck
+    options:
+      wndtype: [ 290 ]
+      cgross:     [ 5.0 ]
+      error_min:  [ 1.4 ]
+      error_max:  [ 6.1 ]
+      variable: windEastward
   action:
     name: reject
-  maxvalue: 5.0
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windEastward   # After inflation step
-      denominator:
-        name: ObsError/windEastward
+  defer to post: true
 #
-- filter: Bounds Check
+- filter: Background Check
   filter variables:
   - name: windNorthward
+  function absolute threshold:
+  - name: ObsFunction/WindsSPDBCheck
+    options:
+      wndtype: [ 290 ]
+      cgross:     [ 5.0 ]
+      error_min:  [ 1.4 ]
+      error_max:  [ 6.1 ]
+      variable: windNorthward
   action:
     name: reject
-  maxvalue: 5.0
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/windNorthward   # After inflation step
-      denominator:
-        name: ObsError/windNorthward
+  defer to post: true
+

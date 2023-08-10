@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import re
-import string
 import yaml
 from collections.abc import Hashable
 
@@ -116,6 +114,51 @@ def replace_string_in_dictionary(dictionary, string_in, string_out):
 
     # Convert back to dictionary
     return yaml.safe_load(dictionary_string)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def write_dict_to_yaml(dictionary, file):
+
+    # Convert dictionary to YAML string
+    dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
+
+    # Write string to file
+    with open(file, 'w') as file_open:
+        file_open.write(dictionary_string)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def update_dict(original_dict, overwrite_dict):
+
+    # Create output dictionary from original dictionary
+    output_dict = original_dict.copy()
+
+    for key, value in overwrite_dict.items():
+        if isinstance(value, dict) and key in output_dict and isinstance(output_dict[key], dict):
+            output_dict[key] = update_dict(output_dict[key], value)
+        else:
+            output_dict[key] = value
+
+    return output_dict
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def dictionary_override(logger, original_data, override_data):
+    if isinstance(original_data, dict) and isinstance(override_data, dict):
+        for key, value in override_data.items():
+            if key in original_data:
+                original_data[key] = dictioanry_override(original_data[key], value)
+            else:
+                logger.abort(f'Key {key} in override dictionary does not exist in original ' +
+                             f'dictionary')
+        return original_data
+    return override_data
 
 
 # --------------------------------------------------------------------------------------------------

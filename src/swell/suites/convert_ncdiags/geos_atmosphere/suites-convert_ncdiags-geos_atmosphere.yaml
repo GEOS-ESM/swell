@@ -1,0 +1,85 @@
+# Cycle frequency
+cycle_times:
+  default_value: ['T00']
+  prompt: List all cycle times, by middle of the window?
+  options: ['T00']
+  type: string-check-list
+
+# Observations
+observations:
+  default_value:
+    # Conventional
+    - aircraft
+    - gps
+    - satwind
+    - scatwind
+    - sfcship
+    - sfc
+    - sondes
+    # Radiances
+    - airs_aqua
+    - amsr2_gcom-w1
+    - amsua_aqua
+    - amsua_metop-b
+    - amsua_metop-c
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - cris-fsr_n20
+    - cris-fsr_npp
+    - gmi_gpm
+    - iasi_metop-b
+    - iasi_metop-c
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - ssmis_f17
+    # Ozone
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
+  prompt: Select observations to run with.
+  options: use_method
+  type: string-check-list
+
+# Path to GSI ncdiags
+path_to_gsi_nc_diags:
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag/2021121200'
+  prompt: Path to where the ncdiags will be held
+  type: string
+
+# Compute GeoVaLs and observations
+produce_geovals:
+  default_value: true
+  prompt: Compute GeoVaLs as well as observations?
+  type: boolean
+
+# Location for bias correction coefficients
+path_to_gsi_bc_coefficients:
+  default_value: '/discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc/2021121200'
+  prompt: Tar or directory containing BC files
+  type: string
+
+fixed_options:
+  window_offset:
+    default_value:  PT3H
+    prompt: Time from beginning to middle of the window
+  background_time_offset:
+    default_value:  PT9H
+    prompt: Time before the middle of the window that the background providing forecast began
+  clean_patterns:
+    default_value:
+    - gsi_bcs/*.nc4
+    - gsi_bcs/*.txt
+    - gsi_bcs/*.yaml
+    - gsi_bcs
+    - gsi_ncdiags/*.nc4
+    - gsi_ncdiags/aircraft/*.nc4
+    - gsi_ncdiags/aircraft
+    - gsi_ncdiags
+    prompt: 'Patterns for the files to remove after completing a cycle'

@@ -13,6 +13,14 @@ existing_jedi_build_directory:
 existing_jedi_source_directory:
   default_value: This would need to be provided by user
 
+geos_experiment_directory:
+  default_value:
+  - /home/geos/
+
+geos_restarts_directory:
+  default_value:
+  - /home/geos/restarts
+
 swell_static_files:
   default_value: This would need to be provided by user
 

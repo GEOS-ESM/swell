@@ -8,16 +8,14 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import os
 import unittest
-import yaml
 
-from swell.swell_path import get_swell_path
 from swell.utilities.bin.task_question_dicts import tq_dicts
 from swell.utilities.bin.task_question_dicts_defaults import tq_dicts_defaults
 
 
 # --------------------------------------------------------------------------------------------------
+
 
 class QuestionDictionaryTest(unittest.TestCase):
 

@@ -13,6 +13,14 @@ existing_jedi_build_directory:
 existing_jedi_source_directory:
   default_value: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
 
+geos_experiment_directory:
+  default_value:
+  - /discover/nobackup/drholdaw/SwellStaticFiles/geos/run_dirs/5deg_v11
+
+geos_restarts_directory:
+  default_value:
+  - /discover/nobackup/drholdaw/SwellStaticFiles/geos/restarts/restarts_20210620_000000
+
 swell_static_files:
   default_value: /discover/nobackup/drholdaw/SwellStaticFiles
 

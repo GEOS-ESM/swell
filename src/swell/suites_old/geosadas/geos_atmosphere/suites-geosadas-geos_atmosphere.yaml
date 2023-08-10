@@ -1,0 +1,107 @@
+# Window length
+window_length:
+  default_value: 'PT6H'
+  prompt: Window length for ocean data assimilation
+  type: iso-duration
+
+# Horizontal resolution
+horizontal_resolution:
+  default_value: '361'
+  prompt: What resolution for the atmospheric background (For c360 choose 361)?
+  options: ['181', '361', '721']
+  type: string-drop-list
+
+# Vertical resolution
+vertical_resolution:
+  default_value: '72'
+  prompt: What vertical resolution for the atmospheric background?
+  options: ['72']
+  type: string-drop-list
+
+# Processor layout x direction
+npx_proc:
+  default_value: '4'
+  prompt: What processor layout (x-direction) per cube face?
+  type: string
+
+# Processor layout y direction
+npy_proc:
+  default_value: '1'
+  prompt: What processor layout (y-direction) per cube face?
+  type: string
+
+# Analysis
+analysis_variables:
+  default_value: [ua,va,t,ps,q,qi,ql,o3ppmv,ts,phis,frocean,frlake,frseaice]
+  prompt: Variables to be assimilated?
+  type: string
+
+# Observations
+observations:
+  default_value:
+  - sondes
+  - amsua_n19
+  prompt: Select observations.
+  options: use_method
+  type: string-check-list
+
+# Path to GSI bias correction coefficients
+path_to_gsi_bc_coefficients:
+  default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bc
+  prompt: Tar or directory containing BC files
+  type: string
+
+# Path to GSI ncdiags
+path_to_gsi_nc_diags:
+  default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/obs
+  prompt: Path to where the ncdiags will be held
+  type: string
+
+# Path to GEOS adas background files
+path_to_geos_adas_background:
+  default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
+  prompt: Tar or directory containing BC files
+  type: string
+
+# Compute GeoVaLs and observations
+produce_geovals:
+  default_value: false
+  prompt: Compute GeoVaLs as well as observations?
+  type: boolean
+
+# Fixed options (user not prompted for these)
+# -------------------------------------------
+fixed_options:
+  window_type:
+    default_value: 3D
+    prompt: Window type (3D or 4D)
+  minimizer:
+    default_value: DRIPCG
+    prompt: Minimizer to use for gradient descent
+  number_of_iterations:
+    default_value: [2]
+    prompt: Number of iterations to use in the minimization
+  gradient_norm_reduction:
+    default_value: 1e-6
+    prompt: Threshold for convergence of the minimization
+  window_offset:
+    default_value:  PT3H
+    prompt: Time from beginning to middle of the window
+  analysis_forecast_window_offset:
+    default_value:  -PT3H
+    prompt: Time from the middle of the window when forecasts start
+  background_time_offset:
+    default_value:  PT1H
+    prompt: Time before the middle of the window that the background providing forecast began
+  background_frequency:
+    default_value:  PT1H
+    prompt: 'Frequency of 4D backgrounds'
+  background_source:
+    default_value: file
+    prompt: 'Source of the background files (file or from model)'
+  clean_patterns:
+    default_value: ['*.nc4','*.txt']
+    prompt: 'Patterns for the files to remove after completing a cycle'
+  crtm_coeff_dir:
+    default_value: {{crtm_coeff_dir}}
+    prompt: 'Directory containing the CRTM coefficient files'

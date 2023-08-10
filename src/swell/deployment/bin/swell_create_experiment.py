@@ -30,9 +30,8 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
-              'experiment. If not passed questions will be presented for setting up an experiment.')
-def main(config):
+@click.argument('config_file')
+def main(config_file):
 
     # Welcome message
     # ---------------
@@ -41,13 +40,6 @@ def main(config):
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
-
-    # Generate the configuration file
-    # -------------------------------
-    if config is None:
-        config_file = prepare_config('cli', 'hofx', 'nccs_discover')
-    else:
-        config_file = config
 
     # Load experiment file
     # --------------------
@@ -82,8 +74,8 @@ def main(config):
 
     # Create R2D2 database file
     # -------------------------
-    data_assimilation_run = dict_get(logger, experiment_dict, 'data_assimilation_run', False)
-    if data_assimilation_run:
+    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
+    if r2d2_local_path is not None:
         r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
 
         # Write R2D2_CONFIG to modules

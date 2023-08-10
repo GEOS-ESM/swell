@@ -1,0 +1,3 @@
+window begin: '{{window_begin_iso}}'
+window end: '{{window_end_iso}}'
+observations: SPECIALobservations
