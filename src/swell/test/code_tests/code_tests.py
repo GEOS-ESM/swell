@@ -11,8 +11,8 @@
 import os
 import unittest
 
-from swell.test.question_dictionary_comparison_test import QuestionDictionaryTest
-from swell.test.unused_variables_test import UnusedVariablesTest
+from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
+from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
 from swell.utilities.logger import Logger
 
 
