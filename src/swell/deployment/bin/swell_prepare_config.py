@@ -27,8 +27,10 @@ from swell.utilities.welcome_message import write_welcome_message
               'platform specific defaults.')
 @click.option('-o', '--override', 'override', default=None, help='After generating the config ' +
               'file parameters inside can be overridden using value from the override config file.')
+@click.option('-t', '--test', 'test', default=None, help='Override defaults with a preprepared ' +
+              'test config file.')
 @click.argument('suite')
-def main(input_method, suite, platform, override):
+def main(input_method, suite, platform, override, test):
     """
         SUITE argument determines which set of tasks are going to be run.
     """
@@ -39,7 +41,7 @@ def main(input_method, suite, platform, override):
 
     # Create suites object
     # --------------------
-    prepare_config(input_method, suite, platform, override)
+    prepare_config(input_method, suite, platform, override, test)
 
 
 # --------------------------------------------------------------------------------------------------

@@ -20,6 +20,16 @@ import traceback
 #
 # --------------------------------------------------------------------------------------------------
 
+red = '\033[91m'
+blue = '\033[94m'
+cyan = '\033[96m'
+green = '\033[92m'
+end = '\033[0m'
+
+under = '\033[4m'
+
+# --------------------------------------------------------------------------------------------------
+
 class Logger:
 
     def __init__(self, task_name):
@@ -65,7 +75,12 @@ class Logger:
             level_show = level_show+' '+self.task_name+': '
 
         if level == 'ABORT':
-            level_show = 'ABORT IN '+self.task_name+': '
+            task_name = under + self.task_name + end
+            level_show = red + 'ABORT IN ' + end +task_name+': '
+
+        color = end
+        if level == 'ABORT':
+            color = red
 
         if level == 'ABORT' or self.loggerdict[level]:
             if level == 'ABORT':
@@ -73,7 +88,7 @@ class Logger:
             first_line = True
             for message_item in message_items:
                 if not first_line:
-                    message_item = ' ' + message_item
+                    message_item = ' ' + color + message_item + end
                 print(level_show+message_item)
                 first_line = False
 
@@ -111,10 +126,17 @@ class Logger:
 
     def abort(self, message, wrap=True):
 
+        # Make the text red
+        message = red + message + end
+
         self.send_message('ABORT', message, wrap)
 
         # Get traceback stack (without logger.py lines)
         filtered_stack = [line for line in traceback.format_stack() if 'logger.py' not in line]
+
+        # Remove everything after 'logger.assert_abort' in last element of filtered_stack
+        filtered_stack[-1] = filtered_stack[-1].split('logger.assert_abort')[0]
+
         traceback_str = '\n'.join(filtered_stack)
 
         # Exit with traceback

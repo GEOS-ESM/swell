@@ -22,7 +22,7 @@ from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dic
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override):
+def prepare_config(method, suite, platform, override, test):
 
     # Create a logger
     # ---------------
@@ -71,14 +71,43 @@ def prepare_config(method, suite, platform, override):
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
 
+    # Point to a particular pre-existing dictionary used for testing
+    # --------------------------------------------------------------
+    if test is not None:
+
+        # Method must be defaults if specifying test
+        logger.assert_abort(method == 'defaults',
+                            f'If specifying override, the input method must be \'defaults\'')
+
+        # Asser that there is no override
+        logger.assert_abort(override is None, 'Cannot specify override when test is also specified')
+
+        # Set test file
+        test_file = suite + '-' + test + '.yaml'
+
+        # Set an override to the test file
+        override = os.path.join(get_swell_path(), 'test', 'suite_tests', test_file)
+
+        # Check that the test file choice is valid
+        logger.assert_abort(os.path.exists(override), f'Requested test \'{test}\' does not ' +
+                            f'exist. Expected file is \'{override}\'')
+
+        # Show information about override
+        logger.info(f'Overriding the experiment dictionary using suite test \'{test}\'')
+
     # Optionally override dictionary values (only used when method is 'defaults')
     # -------------------------------------
-    if method == 'defaults' and override is not None:
+    if override is not None:
+
+        # Method must be defaults if specifying override
+        logger.assert_abort(method == 'defaults',
+                            f'If specifying override, the input method must be \'defaults\'')
 
         with open(override, 'r') as file:
             override_dict = yaml.safe_load(file)
 
-        logger.info(f'Overriding experiment dictionary settings using {override}')
+        if test is None:
+            logger.info(f'Overriding experiment dictionary settings using {override}')
         dictionary_override(logger, experiment_dict, override_dict)
 
     # Update model components in case the override changed which are turned on
@@ -92,6 +121,10 @@ def prepare_config(method, suite, platform, override):
         if model not in model_components_wanted:
             logger.info(f'Removing model {model} from model_components')
             del(experiment_dict['models'][model])
+            # Loop over all elements of the comment dictionay and remove any redundant keys
+            for key in list(comment_dict.keys()):
+                if 'models.'+model in key:
+                    del(comment_dict[key])
 
     # Add comments to dictionary
     # --------------------------
