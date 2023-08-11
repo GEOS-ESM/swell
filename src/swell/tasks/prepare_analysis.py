@@ -29,12 +29,6 @@ class PrepareAnalysis(taskBase):
 
         self.logger.info('Preparing analysis and updating restarts')
 
-        # This will change with different model types
-        # --------------------------------
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        model_component_meta = self.jedi_rendering.render_interface_meta()
-        self.SOCA_dict = model_component_meta['variables']
-
         # Current and restart time objects
         # --------------------------------
         self.current_cycle = os.path.basename(self.forecast_dir())
@@ -116,8 +110,15 @@ class PrepareAnalysis(taskBase):
         ds_ana.renameDimension('yaxis_1', 'lath')
         ds_ana.renameDimension('zaxis_1', 'Layer')
 
+        SOCA_dict = {
+            'h': 'hocn',
+            'socn': 'Salt',
+            'ssh': 'ave_ssh',
+            'tocn': 'Temp',
+        }:
+
         for soca_var in self.soca_ana:
-            var = self.SOCA_dict[soca_var]
+            var = SOCA_dict[soca_var]
             self.logger.info(f'Updating {var} in restart')
 
             ds_rst.variables[var][:] = ds_ana.variables[var][:]

@@ -32,10 +32,6 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
-forecast_duration:
-  default_value:
-  - PT6H
-
 geos_background_restart_offset:
   default_value: TODO
 

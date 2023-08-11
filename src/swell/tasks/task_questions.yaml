@@ -176,7 +176,7 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: defer_to_model
+  default_value: P1D
   models:
   - all
   prompt: GEOS forecast duration
@@ -498,8 +498,6 @@ static_background_error_model:
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology
@@ -512,8 +510,6 @@ swell_static_files:
 swell_static_files_user:
   ask_question: false
   default_value: None
-  models:
-  - all
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - GenerateBClimatologyByLinking
@@ -528,8 +524,6 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - PrepareAnalysis
-  - RunGeosExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer

@@ -1,36 +1,32 @@
-# Jedi build system
-jedi_build_method:
-  default_value: use_existing
-  prompt: Create a new JEDI build or use an existing build?
-  options: ['create', 'use_existing']
-  type: string-drop-list
+start_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T00:00:00Z'
+  prompt: What is the time of the first cycle (middle of the window)?
+  type: iso-datetime
 
-# Existing JEDI bundle directory
-existing_jedi_source_directory:
-  default_value: /discover/nobackup/drholdaw/JediDev/gsibec
-  prompt: Provide the path to an existing JEDI bundle directory containing source code repos
+final_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T06:00:00Z'
+  prompt: What is the time of the final cycle (middle of the window)?
+  type: iso-datetime
+
+runahead_limit:
+  ask_question: True
+  default_value: 'P4'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: string
-  depends:
-    key: jedi_build_method
-    value: use_existing
 
-# Existing JEDI build
-existing_jedi_build_directory:
-  default_value: /discover/nobackup/drholdaw/JediDev/gsibec/build-intel-release/
-  prompt: Provide the path to an existing JEDI build directory
+r2d2_local_path:
+  ask_question: False
+  default_value: defer_to_platform
+  prompt: Enter the path where R2D2 will store experiment output
   type: string
-  depends:
-    key: jedi_build_method
-    value: use_existing
 
-# Models to use
-model_components:
-  default_value: ['geos_atmosphere']
-  prompt: Select models to use
-  options: use_method
-  type: file-check-list
-
-generate_yaml_and_exit:
-  default_value: True
-  prompt: Generate YAML and exit?
-  type: boolean
+cycle_times:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - all
+  prompt: Enter the cycle times for this model.
+  type: string-check-list

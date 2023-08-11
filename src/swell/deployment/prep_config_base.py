@@ -59,7 +59,7 @@ class PrepConfigBase(ABC):
         self.comment_dict = {}
 
         # Dictionary validation things
-        self.valid_types = ['string', 'integer',
+        self.valid_types = ['string', 'integer', 'float',
                             'iso-datetime', 'iso-duration',
                             'string-list', 'integer-list',
                             'string-drop-list', 'string-check-list',
@@ -424,6 +424,7 @@ class PrepConfigBase(ABC):
 
         # Check that dictionary does not already contain the key
         if key in self.experiment_dict.keys():
+
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
 
         # Check if models key is present in experiment dictionary

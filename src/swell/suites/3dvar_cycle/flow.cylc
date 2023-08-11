@@ -20,7 +20,6 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
-    runahead limit = {{runahead_limit}}
 
     [[graph]]
         R1 = """
