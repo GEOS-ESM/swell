@@ -1,7 +1,6 @@
 start_cycle_point: '2021-06-21T12:00:00Z'
-
 final_cycle_point: '2021-06-24T12:00:00Z'
-
+model_components: ['geos_ocean']
 models:
   geos_ocean:
     cycle_times:
@@ -39,5 +38,3 @@ models:
     - '*.txt'
     - '*.rc'
     - '*.bin'
-
-model_components: ['geos_ocean']
