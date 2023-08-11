@@ -96,6 +96,10 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
             dict_str_items.insert(max(0, index_of_key), '\n' + indent + '# ' +
                                   comment_dictionary[key])
 
+    # Remove empty line at the beginning
+    if dict_str_items[0][0] == '\n':
+        dict_str_items[0] = dict_str_items[0][1:]
+
     dictionary_string_with_comments = '\n'.join(dict_str_items)
 
     return dictionary_string_with_comments

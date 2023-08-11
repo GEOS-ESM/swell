@@ -94,7 +94,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['BuildJedi'] = {}
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['BuildJedi']['account'] = 'g0613'
-    render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['BuildJedi']['qos'] = 'advda'
     render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
     render_dictionary['scheduling']['BuildJedi']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['BuildJedi']['constraint'] = 'cas|sky|hasw'
@@ -102,7 +102,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['BuildGeos'] = {}
     render_dictionary['scheduling']['BuildGeos']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['BuildGeos']['account'] = 'g0613'
-    render_dictionary['scheduling']['BuildGeos']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['BuildGeos']['qos'] = 'advda'
     render_dictionary['scheduling']['BuildGeos']['nodes'] = 1
     render_dictionary['scheduling']['BuildGeos']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['BuildGeos']['constraint'] = 'cas|sky|hasw'
@@ -110,7 +110,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['GenerateBClimatology'] = {}
     render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT15M'
     render_dictionary['scheduling']['GenerateBClimatology']['account'] = 'g0613'
-    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'advda'
     render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 1
     render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['GenerateBClimatology']['constraint'] = 'cas|sky|hasw'
@@ -118,7 +118,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
     render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
     render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'advda'
     render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'cas|sky|hasw'
@@ -126,7 +126,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
     render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['qos'] = 'advda'
     render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunJediVariationalExecutable']['constraint'] = 'cas|sky|hasw'
@@ -134,7 +134,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunGeosExecutable'] = {}
     render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT30M'
     render_dictionary['scheduling']['RunGeosExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'advda'
     render_dictionary['scheduling']['RunGeosExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunGeosExecutable']['ntasks_per_node'] = 24
     render_dictionary['scheduling']['RunGeosExecutable']['constraint'] = 'cas|sky|hasw'
@@ -142,7 +142,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['RunJediUfoTestsExecutable'] = {}
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['execution_time_limit'] = 'PT30M'  # noqa
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['qos'] = 'allnccs'
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['qos'] = 'advda'
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['nodes'] = 1
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['constraint'] = 'cas'

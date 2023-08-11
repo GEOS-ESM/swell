@@ -77,7 +77,7 @@ def prepare_config(method, suite, platform, override):
 
     # Add comments to dictionary
     # --------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=None, sort_keys=False)
+    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
                                                                  comment_dict)
