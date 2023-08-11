@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import datetime
 import os
 import importlib
@@ -73,7 +74,24 @@ def prepare_config(method, suite, platform, override):
     # Optionally override dictionary values (only used when method is 'defaults')
     # -------------------------------------
     if method == 'defaults' and override is not None:
-        dictionary_override(logger, experiment_dict, override)
+
+        with open(override, 'r') as file:
+            override_dict = yaml.safe_load(file)
+
+        logger.info(f'Overriding experiment dictionary settings using {override}')
+        dictionary_override(logger, experiment_dict, override_dict)
+
+    # Update model components in case the override changed which are turned on
+    # ------------------------------------------------------------------------
+    model_components_wanted = copy.copy(experiment_dict['model_components'])
+    model_components_actual = list(experiment_dict['models'].keys())
+
+    # If models element of experiment dictionary contains anything not in model_components_actual
+    # then remove it from model
+    for model in model_components_actual:
+        if model not in model_components_wanted:
+            logger.info(f'Removing model {model} from model_components')
+            del(experiment_dict['models'][model])
 
     # Add comments to dictionary
     # --------------------------
