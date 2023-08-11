@@ -39,6 +39,7 @@ setuptools.setup(
                'suites/*/*',
                'suites/*/*/*',
                'tasks/task_questions.yaml',
+               'test/suite_tests/*.yaml',
                'configuration/*',
                'configuration/*/*',
                'configuration/*/*/*',
