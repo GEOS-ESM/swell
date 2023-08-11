@@ -116,9 +116,13 @@ class GsiNcdiagToIoda(taskBase):
             # Get the list of files
             gsi_conv_file = glob.glob(path_to_search)
 
-            # Check that at least one file was found
+            # Check that some files where found
+            self.logger.assert_abort(len(gsi_conv_file) != 0, 'The search for GSI ncdiags files ' +
+                                     f'returned no files. Search path: \'{path_to_search}\'')
+
+            # Check that only one file was found
             self.logger.assert_abort(len(gsi_conv_file) == 1, 'The search for GSI ncdiags files ' +
-                                     f'returned more than one file. Search: \'{gsi_conv_file}\'')
+                                     f'returned more than one file. Files: \'{gsi_conv_file}\'')
 
             # Open the file
             Diag = gsid.Conv(gsi_conv_file[0])
@@ -162,6 +166,10 @@ class GsiNcdiagToIoda(taskBase):
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
+
+            # For sfc make sure there are no surface ship files
+            if needed_ioda_type == 'sfc':
+                ioda_path_files = [x for x in ioda_path_files if 'sfcship' not in x]
 
             # Show files that will be combined
             self.logger.info(f'Files to combine:')
