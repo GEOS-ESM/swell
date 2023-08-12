@@ -112,6 +112,17 @@ class PrepConfigBase(ABC):
         base_tasks_question_dict = self.task_dictionary_comber(base_tasks)
         self.base_questions_dictionary.update(base_tasks_question_dict)
 
+        # Base model questions (i.e. questions sent to model tasks that do not depend on model)
+        model_task_base_questions_tmp = self.task_dictionary_comber(model_tasks)
+
+        model_task_base_questions = {}
+        for key in model_task_base_questions_tmp.keys():
+            if 'models' not in model_task_base_questions_tmp[key].keys():
+                model_task_base_questions[key] = model_task_base_questions_tmp[key]
+
+        # Add to the base questions
+        self.base_questions_dictionary.update(model_task_base_questions)
+
         # Iterate over base questions
         for k, v in self.base_questions_dictionary.items():
             self.key_passer(k, v)
@@ -304,7 +315,7 @@ class PrepConfigBase(ABC):
 
     def show_deference(self, key, el_dict):
 
-        if 'defer_to_' in el_dict['default_value']:
+        if 'defer_to_' in str(el_dict['default_value']):
             pass
         else:
             return el_dict

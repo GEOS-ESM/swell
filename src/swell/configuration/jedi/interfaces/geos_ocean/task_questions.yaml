@@ -49,7 +49,8 @@ minimizer:
   - RPCG
 
 number_of_iterations:
-  default_value: 5
+  default_value:
+  - 5
 
 obs_experiment:
   default_value: s2s

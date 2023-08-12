@@ -498,6 +498,8 @@ static_background_error_model:
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
+  #models:
+  #- all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology

@@ -75,7 +75,8 @@ npy_proc:
   default_value: 2
 
 number_of_iterations:
-  default_value: 50
+  default_value:
+  - 50
 
 obs_experiment:
   default_value: x0044_v3
