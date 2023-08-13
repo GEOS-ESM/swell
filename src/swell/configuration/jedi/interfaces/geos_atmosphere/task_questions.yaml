@@ -42,7 +42,7 @@ geos_bkg_tar_filename_template:
   default_value: TODO
 
 geovals_experiment:
-  default_value: x0044_test_obs_filters_geovals
+  default_value: x0048-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -86,86 +86,80 @@ obs_provider:
 
 observations:
   default_value:
-  - aircraft.yaml
-  - airs_aqua.yaml
-  - amsr2_gcom-w1.yaml
-  - amsua_aqua.yaml
-  - amsua_metop-a.yaml
-  - amsua_metop-b.yaml
-  - amsua_metop-c.yaml
-  - amsua_n15.yaml
-  - amsua_n18.yaml
-  - amsua_n19.yaml
-  - atms_n20.yaml
-  - atms_npp.yaml
-  - avhrr3_metop-b.yaml
-  - avhrr3_n18.yaml
-  - avhrr3_n19.yaml
-  - cris-fsr_n20.yaml
-  - cris-fsr_npp.yaml
-  - gmi_gpm.yaml
-  - gps.yaml
-  - iasi_metop-a.yaml
-  - iasi_metop-b.yaml
-  - iasi_metop-c.yaml
-  - mhs_metop-b.yaml
-  - mhs_metop-c.yaml
-  - mhs_n19.yaml
-  - mls55_aura.yaml
-  - omi_aura.yaml
-  - ompsnm_npp.yaml
-  - satwind.yaml
-  - scatwind.yaml
-  - sfcship.yaml
-  - sfc.yaml
-  - sondes.yaml
-  - ssmis_f17.yaml
+  - aircraft
+  - gps
+  - satwind
+  - scatwind
+  - sfcship
+  - sfc
+  - sondes
+  - airs_aqua
+  - amsr2_gcom-w1
+  - amsua_aqua
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - atms_n20
+  - atms_npp
+  - avhrr3_metop-b
+  - avhrr3_n18
+  - avhrr3_n19
+  - cris-fsr_n20
+  - cris-fsr_npp
+  - gmi_gpm
+  - iasi_metop-b
+  - iasi_metop-c
+  - mhs_metop-b
+  - mhs_metop-c
+  - mhs_n19
+  - ssmis_f17
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
   options:
-  - aircraft.yaml
-  - airs_aqua.yaml
-  - amsr2_gcom-w1.yaml
-  - amsua_aqua.yaml
-  - amsua_metop-a.yaml
-  - amsua_metop-b.yaml
-  - amsua_metop-c.yaml
-  - amsua_n15.yaml
-  - amsua_n18.yaml
-  - amsua_n19.yaml
-  - atms_n20.yaml
-  - atms_npp.yaml
-  - avhrr3_metop-b.yaml
-  - avhrr3_n18.yaml
-  - avhrr3_n19.yaml
-  - cris-fsr_n20.yaml
-  - cris-fsr_npp.yaml
-  - gmi_gpm.yaml
-  - gps.yaml
-  - iasi_metop-a.yaml
-  - iasi_metop-b.yaml
-  - iasi_metop-c.yaml
-  - mhs_metop-b.yaml
-  - mhs_metop-c.yaml
-  - mhs_n19.yaml
-  - mls55_aura.yaml
-  - omi_aura.yaml
-  - ompsnm_npp.yaml
-  - satwind.yaml
-  - scatwind.yaml
-  - sfcship.yaml
-  - sfc.yaml
-  - sondes.yaml
-  - ssmis_f17.yaml
+  - aircraft
+  - gps
+  - satwind
+  - scatwind
+  - sfcship
+  - sfc
+  - sondes
+  - airs_aqua
+  - amsr2_gcom-w1
+  - amsua_aqua
+  - amsua_metop-b
+  - amsua_metop-c
+  - amsua_n15
+  - amsua_n18
+  - amsua_n19
+  - atms_n20
+  - atms_npp
+  - avhrr3_metop-b
+  - avhrr3_n18
+  - avhrr3_n19
+  - cris-fsr_n20
+  - cris-fsr_npp
+  - gmi_gpm
+  - iasi_metop-b
+  - iasi_metop-c
+  - mhs_metop-b
+  - mhs_metop-c
+  - mhs_n19
+  - ssmis_f17
+  - mls55_aura
+  - omi_aura
+  - ompsnm_npp
 
 path_to_geos_adas_background:
   default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
 
 path_to_gsi_bc_coefficients:
-  default_value:
-  - /discover/nobackup/drholdaw/SwellTestData/geosadas/bc
+  default_value: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc/2021121200
 
 path_to_gsi_nc_diags:
-  default_value:
-  - /discover/nobackup/drholdaw/SwellTestData/geosadas/obs
+  default_value: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag/2021121200
 
 produce_geovals:
   default_value: true

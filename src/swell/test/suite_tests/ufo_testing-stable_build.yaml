@@ -1,0 +1,27 @@
+final_cycle_point: '2021-12-12T00:00:00Z'
+jedi_build_method: use_existing
+existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
+existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
+bundles: REMOVE
+model_components: ['geos_atmosphere']
+models:
+  geos_atmosphere:
+    cycle_times:
+    - T00
+    observations:
+    - aircraft
+    - gmi_gpm
+    produce_geovals: false
+    clean_patterns:
+    - '*.nc4'
+    - '*.txt'
+    - '*.log'
+    - '*.yaml'
+    - gsi_bcs/*.nc4
+    - gsi_bcs/*.txt
+    - gsi_bcs/*.yaml
+    - gsi_bcs
+    - gsi_ncdiags/*.nc4
+    - gsi_ncdiags/aircraft/*.nc4
+    - gsi_ncdiags/aircraft
+    - gsi_ncdiags

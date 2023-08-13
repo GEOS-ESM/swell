@@ -112,19 +112,20 @@ def prepare_config(method, suite, platform, override, test):
 
     # Update model components in case the override changed which are turned on
     # ------------------------------------------------------------------------
-    model_components_wanted = copy.copy(experiment_dict['model_components'])
-    model_components_actual = list(experiment_dict['models'].keys())
+    if 'models' in experiment_dict:
+        model_components_wanted = copy.copy(experiment_dict['model_components'])
+        model_components_actual = list(experiment_dict['models'].keys())
 
-    # If models element of experiment dictionary contains anything not in model_components_actual
-    # then remove it from model
-    for model in model_components_actual:
-        if model not in model_components_wanted:
-            logger.info(f'Removing model {model} from model_components')
-            del(experiment_dict['models'][model])
-            # Loop over all elements of the comment dictionay and remove any redundant keys
-            for key in list(comment_dict.keys()):
-                if 'models.'+model in key:
-                    del(comment_dict[key])
+        # If models element of experiment dictionary contains anything not in model_components_actual
+        # then remove it from model
+        for model in model_components_actual:
+            if model not in model_components_wanted:
+                logger.info(f'Removing model {model} from model_components')
+                del(experiment_dict['models'][model])
+                # Loop over all elements of the comment dictionay and remove any redundant keys
+                for key in list(comment_dict.keys()):
+                    if 'models.'+model in key:
+                        del(comment_dict[key])
 
     # Add comments to dictionary
     # --------------------------

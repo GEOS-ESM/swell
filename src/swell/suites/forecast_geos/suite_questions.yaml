@@ -18,9 +18,15 @@ r2d2_local_path:
 
 cycle_times:
   ask_question: True
-  default_value: defer_to_model
-  options: defer_to_model
-  models:
-  - all
-  prompt: Enter the cycle times for this model.
+  default_value:
+  - T00
+  - T06
+  - T12
+  - T18
+  options:
+  - T00
+  - T06
+  - T12
+  - T18
+  prompt: Enter the forecast times.
   type: string-check-list

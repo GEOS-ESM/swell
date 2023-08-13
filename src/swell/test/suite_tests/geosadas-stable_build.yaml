@@ -1,0 +1,15 @@
+jedi_build_method: use_existing
+existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
+existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
+bundles: REMOVE
+model_components: ['geos_atmosphere']
+models:
+  geos_atmosphere:
+    observations:
+    - sondes
+    - amsua_n19
+    produce_geovals: false
+    window_type: 3D
+    gradient_norm_reduction: 1e-6
+    number_of_iterations:
+    - 50

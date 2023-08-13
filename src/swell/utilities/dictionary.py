@@ -153,16 +153,26 @@ def update_dict(original_dict, overwrite_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def dictionary_override(logger, original_dict, override_dict):
-    if isinstance(original_dict, dict) and isinstance(override_dict, dict):
-        for key, value in override_dict.items():
-            if key in original_dict:
-                original_dict[key] = dictionary_override(logger, original_dict[key], value)
-            else:
-                logger.abort(f'Key {key} in override dictionary does not exist in original ' +
-                             f'dictionary')
-        return original_dict
-    return override_dict
+#def dictionary_override(logger, original_dict, override_dict):
+#    if isinstance(original_dict, dict) and isinstance(override_dict, dict):
+#        for key, value in override_dict.items():
+#            if value != 'REMOVE':
+#                original_dict[key] = dictionary_override(logger, original_dict[key], value)
+#            else:
+#                del(original_dict[key])
+#        return original_dict
+#    return override_dict
 
+
+def dictionary_override(logger, original_dict, override_dict):
+    for key, value in override_dict.items():
+        if value == 'REMOVE':
+            original_dict.pop(key, None)
+        elif isinstance(value, dict) and key in original_dict and isinstance(original_dict[key], dict):
+            dictionary_override(logger, original_dict[key], value)
+        else:
+            original_dict[key] = value
+
+    return original_dict
 
 # --------------------------------------------------------------------------------------------------

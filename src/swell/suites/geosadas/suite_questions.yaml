@@ -10,12 +10,6 @@ final_cycle_point:
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
-runahead_limit:
-  ask_question: True
-  default_value: 'P4'
-  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
-  type: string
-
 r2d2_local_path:
   ask_question: False
   default_value: defer_to_platform

@@ -85,6 +85,7 @@ bundles:
   - fv3-jedi
   - soca
   - iodaconv
+  - ufo
   depends:
     key: jedi_build_method
     value: create
@@ -227,7 +228,7 @@ geos_bkg_tar_filename_template:
 
 geos_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -326,7 +327,7 @@ jedi_bkg_filename_template:
 
 jedi_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
