@@ -18,7 +18,7 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0044
+  default_value: x0048
 
 background_frequency:
   default_value: PT1H
@@ -51,9 +51,9 @@ gradient_norm_reduction:
   default_value: 10e-5
 
 horizontal_resolution:
-  default_value: 361
+  default_value: '361'
   options:
-  - 361
+  - '361'
 
 jedi_bkg_filename_template:
   default_value: TODO
@@ -79,7 +79,7 @@ number_of_iterations:
   - 50
 
 obs_experiment:
-  default_value: x0044_v3
+  default_value: x0048
 
 obs_provider:
   default_value: ncdiag

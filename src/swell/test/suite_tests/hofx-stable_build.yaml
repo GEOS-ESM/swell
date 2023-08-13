@@ -2,3 +2,12 @@ jedi_build_method: use_existing
 existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
 existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
 bundles: REMOVE
+models:
+  geos_atmosphere:
+    observations:
+    - aircraft
+    - gmi_gpm
+    - amsr2_gcom-w1
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
