@@ -184,4 +184,5 @@ window_offset:
   default_value: PT3H
 
 window_type:
-  default_value: '4D'
+  default_value: 4D
+

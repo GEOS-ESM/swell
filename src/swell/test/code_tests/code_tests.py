@@ -25,7 +25,7 @@ def main():
     logger.test('Running Swell Test Suite')
 
     # Turn off the regular info testing
-    os.environ["LOG_INFO"] = "0"
+    os.environ["LOG_INFO"] = "0"  # Set this to 1 when errors are being debugged
 
     # Create a test suite
     test_suite = unittest.TestSuite()
@@ -40,6 +40,9 @@ def main():
     test_runner = unittest.TextTestRunner()
 
     # Run the tests
-    test_runner.run(test_suite)
+    test_result = test_runner.run(test_suite)
+
+    # Ensure everything was successful
+    logger.assert_abort(test_result.wasSuccessful(), "Swell code tests failed")
 
 # --------------------------------------------------------------------------------------------------

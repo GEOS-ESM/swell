@@ -15,7 +15,6 @@ import os
 import shutil
 import yaml
 
-from swell.deployment.prep_config import prepare_config
 from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
                                            template_modules_file, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2

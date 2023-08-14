@@ -499,8 +499,6 @@ static_background_error_model:
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
-  #models:
-  #- all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology
@@ -589,8 +587,8 @@ window_type:
   models:
   - all
   options:
-  - '3D'
-  - '4D'
+  - 3D
+  - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - GetBackground

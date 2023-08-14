@@ -88,5 +88,5 @@ window_offset:
   default_value: PT6H
 
 window_type:
-  default_value: '3D'
+  default_value: 3D
 
