@@ -104,6 +104,9 @@
             --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
+            {% endif %}
 
     [[CleanCycle]]
         script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"

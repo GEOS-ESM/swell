@@ -55,5 +55,8 @@
             --nodes={{scheduling["BuildGeos"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildGeos"]["constraint"]}}
+            {% if scheduling["BuildGeos"]["partition"] %}
+            --partition={{scheduling["BuildGeos"]["partition"]}}
+            {% endif %}
 
 # --------------------------------------------------------------------------------------------------
