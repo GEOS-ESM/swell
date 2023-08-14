@@ -19,6 +19,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
+
 def copy_eva_files(logger, swell_suite_path, exp_suite_path):
 
     # Repo eva files
@@ -31,13 +32,12 @@ def copy_eva_files(logger, swell_suite_path, exp_suite_path):
     if os.path.exists(destination_directory):
         shutil.rmtree(destination_directory)
 
-    # Make new directory
-    #os.makedirs(destination_directory, 0o755, exist_ok=True)
-
     # Copy all the files
     shutil.copytree(eva_directory, destination_directory)
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 def copy_platform_files(logger, exp_suite_path, platform=None):
 

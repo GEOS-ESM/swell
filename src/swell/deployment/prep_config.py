@@ -21,14 +21,15 @@ from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dic
 
 # --------------------------------------------------------------------------------------------------
 
+
 def update_model_components(logger, experiment_dict, comment_dict):
 
     if 'models' in experiment_dict:
         model_components_wanted = copy.copy(experiment_dict['model_components'])
         model_components_actual = list(experiment_dict['models'].keys())
 
-        # If models element of experiment dictionary contains anything not in model_components_actual
-        # then remove it from model
+        # If models element of experiment dictionary contains anything not in
+        # model_components_actual then remove it from model
         for model in model_components_actual:
             if model not in model_components_wanted:
                 logger.info(f'Removing model {model} from model_components')
@@ -38,7 +39,9 @@ def update_model_components(logger, experiment_dict, comment_dict):
                     if 'models.'+model in key:
                         del(comment_dict[key])
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 def prepare_config(method, suite, platform, override, test):
 

@@ -20,6 +20,7 @@ import traceback
 #
 # --------------------------------------------------------------------------------------------------
 
+
 red = '\033[91m'
 blue = '\033[94m'
 cyan = '\033[96m'
@@ -28,7 +29,9 @@ end = '\033[0m'
 
 under = '\033[4m'
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 class Logger:
 
@@ -76,7 +79,7 @@ class Logger:
 
         if level == 'ABORT':
             task_name = under + self.task_name + end
-            level_show = red + 'ABORT IN ' + end +task_name+': '
+            level_show = red + 'ABORT IN ' + end + task_name+': '
 
         color = end
         if level == 'ABORT':

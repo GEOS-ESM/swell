@@ -115,7 +115,7 @@ class PrepareAnalysis(taskBase):
             'socn': 'Salt',
             'ssh': 'ave_ssh',
             'tocn': 'Temp',
-        }:
+        }
 
         for soca_var in self.soca_ana:
             var = SOCA_dict[soca_var]

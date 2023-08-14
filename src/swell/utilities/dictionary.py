@@ -75,7 +75,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             for ind, dict_str_item in enumerate(dict_str_items):
 
-                if dict_str_item[0:len(key)+1] ==  key + ':':
+                if dict_str_item[0:len(key)+1] == key + ':':
 
                     dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
                     break
@@ -136,10 +136,10 @@ def write_dict_to_yaml(dictionary, file):
 # --------------------------------------------------------------------------------------------------
 
 
-def update_dict(original_dict, overwrite_dict):
+def update_dict(orig_dict, overwrite_dict):
 
     # Create output dictionary from original dictionary
-    output_dict = original_dict.copy()
+    output_dict = orig_dict.copy()
 
     for key, value in overwrite_dict.items():
         if isinstance(value, dict) and key in output_dict and isinstance(output_dict[key], dict):
@@ -153,26 +153,16 @@ def update_dict(original_dict, overwrite_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-#def dictionary_override(logger, original_dict, override_dict):
-#    if isinstance(original_dict, dict) and isinstance(override_dict, dict):
-#        for key, value in override_dict.items():
-#            if value != 'REMOVE':
-#                original_dict[key] = dictionary_override(logger, original_dict[key], value)
-#            else:
-#                del(original_dict[key])
-#        return original_dict
-#    return override_dict
-
-
-def dictionary_override(logger, original_dict, override_dict):
+def dictionary_override(logger, orig_dict, override_dict):
     for key, value in override_dict.items():
         if value == 'REMOVE':
-            original_dict.pop(key, None)
-        elif isinstance(value, dict) and key in original_dict and isinstance(original_dict[key], dict):
-            dictionary_override(logger, original_dict[key], value)
+            orig_dict.pop(key, None)
+        elif isinstance(value, dict) and key in orig_dict and isinstance(orig_dict[key], dict):
+            dictionary_override(logger, orig_dict[key], value)
         else:
-            original_dict[key] = value
+            orig_dict[key] = value
 
-    return original_dict
+    return orig_dict
+
 
 # --------------------------------------------------------------------------------------------------
