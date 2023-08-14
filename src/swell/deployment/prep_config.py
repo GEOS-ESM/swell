@@ -21,6 +21,24 @@ from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dic
 
 # --------------------------------------------------------------------------------------------------
 
+def update_model_components(logger, experiment_dict, comment_dict):
+
+    if 'models' in experiment_dict:
+        model_components_wanted = copy.copy(experiment_dict['model_components'])
+        model_components_actual = list(experiment_dict['models'].keys())
+
+        # If models element of experiment dictionary contains anything not in model_components_actual
+        # then remove it from model
+        for model in model_components_actual:
+            if model not in model_components_wanted:
+                logger.info(f'Removing model {model} from model_components')
+                del(experiment_dict['models'][model])
+                # Loop over all elements of the comment dictionay and remove any redundant keys
+                for key in list(comment_dict.keys()):
+                    if 'models.'+model in key:
+                        del(comment_dict[key])
+
+# --------------------------------------------------------------------------------------------------
 
 def prepare_config(method, suite, platform, override, test):
 
@@ -77,23 +95,27 @@ def prepare_config(method, suite, platform, override, test):
 
         # Method must be defaults if specifying test
         logger.assert_abort(method == 'defaults',
-                            f'If specifying override, the input method must be \'defaults\'')
-
-        # Asser that there is no override
-        logger.assert_abort(override is None, 'Cannot specify override when test is also specified')
-
-        # Set test file
-        test_file = suite + '-' + test + '.yaml'
+                            f'If specifying a test override, the input method must be \'defaults\'')
 
         # Set an override to the test file
-        override = os.path.join(get_swell_path(), 'test', 'suite_tests', test_file)
+        test_override_file = os.path.join(get_swell_path(), 'test', 'suite_tests', suite + '-' +
+                                          test + '.yaml')
 
         # Check that the test file choice is valid
-        logger.assert_abort(os.path.exists(override), f'Requested test \'{test}\' does not ' +
-                            f'exist. Expected file is \'{override}\'')
+        logger.assert_abort(os.path.exists(test_override_file), f'Requested test \'{test}\' does ' +
+                            f'not exist. Expected file is \'{test_override_file}\'')
 
-        # Show information about override
+        # Open the override file
+        with open(test_override_file, 'r') as file:
+            test_override_dict = yaml.safe_load(file)
+
+        # Perform the override
         logger.info(f'Overriding the experiment dictionary using suite test \'{test}\'')
+        dictionary_override(logger, experiment_dict, test_override_dict)
+
+    # Update model components in case the test override changed which are turned on
+    # -----------------------------------------------------------------------------
+    update_model_components(logger, experiment_dict, comment_dict)
 
     # Optionally override dictionary values (only used when method is 'defaults')
     # -------------------------------------
@@ -101,31 +123,17 @@ def prepare_config(method, suite, platform, override, test):
 
         # Method must be defaults if specifying override
         logger.assert_abort(method == 'defaults',
-                            f'If specifying override, the input method must be \'defaults\'')
+                            f'If specifying an override, the input method must be \'defaults\'')
 
         with open(override, 'r') as file:
             override_dict = yaml.safe_load(file)
 
-        if test is None:
-            logger.info(f'Overriding experiment dictionary settings using {override}')
+        logger.info(f'Overriding experiment dictionary settings using {override}')
         dictionary_override(logger, experiment_dict, override_dict)
 
-    # Update model components in case the override changed which are turned on
-    # ------------------------------------------------------------------------
-    if 'models' in experiment_dict:
-        model_components_wanted = copy.copy(experiment_dict['model_components'])
-        model_components_actual = list(experiment_dict['models'].keys())
-
-        # If models element of experiment dictionary contains anything not in model_components_actual
-        # then remove it from model
-        for model in model_components_actual:
-            if model not in model_components_wanted:
-                logger.info(f'Removing model {model} from model_components')
-                del(experiment_dict['models'][model])
-                # Loop over all elements of the comment dictionay and remove any redundant keys
-                for key in list(comment_dict.keys()):
-                    if 'models.'+model in key:
-                        del(comment_dict[key])
+    # Update model components in case the user override changed which are turned on
+    # -----------------------------------------------------------------------------
+    update_model_components(logger, experiment_dict, comment_dict)
 
     # Add comments to dictionary
     # --------------------------
