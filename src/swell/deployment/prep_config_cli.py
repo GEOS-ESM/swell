@@ -35,6 +35,8 @@ class PrepConfigCli(PrepConfigBase):
             answer = self.make_string_widget(quest, default, questionary.text)
         elif widget_type == 'integer':
             answer = self.make_int_widget(quest, default, questionary.text)
+        elif widget_type == 'float':
+            answer = self.make_float_widget(quest, default, questionary.text)
         elif 'drop-list' in widget_type:
             options = val['options']
             answer = self.make_drop_widget(key, quest, options, default, questionary.select)
@@ -100,6 +102,17 @@ class PrepConfigCli(PrepConfigBase):
         answer = prompt(f"{quest} [{default}]",
                         validate=lambda text: True if text.isdigit()
                         else 'Please enter an integer value',
+                        default=default).ask()
+
+        return answer
+
+    # ----------------------------------------------------------------------------------------------
+
+    def make_float_widget(self, quest, default, prompt):
+        default = str(default)
+        answer = prompt(f"{quest} [{default}]",
+                        validate=lambda text: True if text.isdigit()
+                        else 'Please enter a float value',
                         default=default).ask()
 
         return answer

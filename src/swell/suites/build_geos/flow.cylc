@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for building the JEDI code
+# Cylc suite for building the GEOS model
 
 # --------------------------------------------------------------------------------------------------
 
@@ -19,9 +19,9 @@
 
     [[graph]]
         R1 = """
-           CloneJedi => BuildJediByLinking?
+           CloneGeos => BuildGeosByLinking?
 
-           BuildJediByLinking:fail? => BuildJedi
+           BuildGeosByLinking:fail? => BuildGeos
         """
 
 # --------------------------------------------------------------------------------------------------
@@ -38,25 +38,25 @@
 
     # Tasks
     # -----
-    [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+    [[CloneGeos]]
+        script = "swell_task CloneGeos $config"
 
-    [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+    [[BuildGeosByLinking]]
+        script = "swell_task BuildGeosByLinking $config"
 
-    [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+    [[BuildGeos]]
+        script = "swell_task BuildGeos $config"
         platform = {{platform}}
-        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["BuildJedi"]["account"]}}
-            --qos = {{scheduling["BuildJedi"]["qos"]}}
-            --job-name = SwellBuildJedi
-            --nodes={{scheduling["BuildJedi"]["nodes"]}}
-            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
-            --constraint={{scheduling["BuildJedi"]["constraint"]}}
-            {% if scheduling["BuildJedi"]["partition"] %}
-            --partition={{scheduling["BuildJedi"]["partition"]}}
+            --account = {{scheduling["BuildGeos"]["account"]}}
+            --qos = {{scheduling["BuildGeos"]["qos"]}}
+            --job-name = SwellBuildGeos
+            --nodes={{scheduling["BuildGeos"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildGeos"]["constraint"]}}
+            {% if scheduling["BuildGeos"]["partition"] %}
+            --partition={{scheduling["BuildGeos"]["partition"]}}
             {% endif %}
 
 # --------------------------------------------------------------------------------------------------

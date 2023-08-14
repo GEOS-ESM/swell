@@ -39,6 +39,7 @@ setuptools.setup(
                'suites/*/*',
                'suites/*/*/*',
                'tasks/task_questions.yaml',
+               'test/suite_tests/*.yaml',
                'configuration/*',
                'configuration/*/*',
                'configuration/*/*/*',
@@ -60,7 +61,7 @@ setuptools.setup(
             'swell_util_task_question_dicts = swell.utilities.bin.task_question_dicts:tq_dicts',
             'swell_util_task_question_dicts_defaults = \
                 swell.utilities.bin.task_question_dicts_defaults:tq_dicts_defaults',
-            'swell_test_suite = swell.test.test_suite:main',
+            'swell_tests_code = swell.test.code_tests.code_tests:main',
         ],
     },
     )

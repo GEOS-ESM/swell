@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import datetime
 import os
 import importlib
@@ -15,13 +16,34 @@ import yaml
 
 from swell.utilities.logger import Logger
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary import dict_get, add_comments_to_dictionary
+from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dictionary_override
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override):
+def update_model_components(logger, experiment_dict, comment_dict):
+
+    if 'models' in experiment_dict:
+        model_components_wanted = copy.copy(experiment_dict['model_components'])
+        model_components_actual = list(experiment_dict['models'].keys())
+
+        # If models element of experiment dictionary contains anything not in
+        # model_components_actual then remove it from model
+        for model in model_components_actual:
+            if model not in model_components_wanted:
+                logger.info(f'Removing model {model} from model_components')
+                del(experiment_dict['models'][model])
+                # Loop over all elements of the comment dictionay and remove any redundant keys
+                for key in list(comment_dict.keys()):
+                    if 'models.'+model in key:
+                        del(comment_dict[key])
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def prepare_config(method, suite, platform, override, test):
 
     # Create a logger
     # ---------------
@@ -70,36 +92,51 @@ def prepare_config(method, suite, platform, override):
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
 
-    # Override config with kay value pairs coming from override YAML
+    # Point to a particular pre-existing dictionary used for testing
     # --------------------------------------------------------------
+    if test is not None:
+
+        # Method must be defaults if specifying test
+        logger.assert_abort(method == 'defaults',
+                            f'If specifying a test override, the input method must be \'defaults\'')
+
+        # Set an override to the test file
+        test_override_file = os.path.join(get_swell_path(), 'test', 'suite_tests', suite + '-' +
+                                          test + '.yaml')
+
+        # Check that the test file choice is valid
+        logger.assert_abort(os.path.exists(test_override_file), f'Requested test \'{test}\' does ' +
+                            f'not exist. Expected file is \'{test_override_file}\'')
+
+        # Open the override file
+        with open(test_override_file, 'r') as file:
+            test_override_dict = yaml.safe_load(file)
+
+        # Perform the override
+        logger.info(f'Overriding the experiment dictionary using suite test \'{test}\'')
+        dictionary_override(logger, experiment_dict, test_override_dict)
+
+    # Update model components in case the test override changed which are turned on
+    # -----------------------------------------------------------------------------
+    update_model_components(logger, experiment_dict, comment_dict)
+
+    # Optionally override dictionary values (only used when method is 'defaults')
+    # -------------------------------------
     if override is not None:
 
-        # Open override dictionary
-        with open(override, 'r') as override_open:
-            override_dict = yaml.safe_load(override_open)
+        # Method must be defaults if specifying override
+        logger.assert_abort(method == 'defaults',
+                            f'If specifying an override, the input method must be \'defaults\'')
 
-        # List of keys that are allowed to be overridden
-        overridable_keys = [
-            'experiment_id',
-            'experiment_root',
-            'existing_jedi_source_directory',
-            'existing_jedi_build_directory'
-            ]
+        with open(override, 'r') as file:
+            override_dict = yaml.safe_load(file)
 
-        # Loop over keys that user wants to override
-        for over_key, over_value in override_dict.items():
+        logger.info(f'Overriding experiment dictionary settings using {override}')
+        dictionary_override(logger, experiment_dict, override_dict)
 
-            # Assert that the override choice is in fact overridable
-            logger.assert_abort(over_key in overridable_keys, f'The override key \'{over_key}\' ' +
-                                f'is not overridable. Overridable keys: ' +
-                                f'\'{overridable_keys}\'.')
-
-            # Assert that the override choice is in the experiment dictionary
-            logger.assert_abort(over_key in experiment_dict, f'The override key \'{over_key}\' ' +
-                                f'is not part of the experiment dictionary.')
-
-            # Overwrite the element in the experiment dictionary
-            experiment_dict[over_key] = over_value
+    # Update model components in case the user override changed which are turned on
+    # -----------------------------------------------------------------------------
+    update_model_components(logger, experiment_dict, comment_dict)
 
     # Add comments to dictionary
     # --------------------------

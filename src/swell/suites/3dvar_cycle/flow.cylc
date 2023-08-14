@@ -1,0 +1,254 @@
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing Geos forecast
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            # Need first set of restarts to run model
+            GetGeosRestart => PrepGeosRunDir
+
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+
+            {% for model_component in model_components %}
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{{model_component}}
+
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            # First cycle dependencies for JEDI
+            # CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            # GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            {% endfor %}
+        """
+
+        # T00,T06,T12,T18 = """
+        T12 = """
+        {% for model_component in model_components %}
+
+            # Model things
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
+            # MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            PrepGeosRunDir => RunGeosExecutable
+
+            # Data assimilation things
+            GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}
+
+            # Run the analysis
+            # RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable => LinkGeosOutput-{{model_component}}
+
+            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            # Prepare analysis for next forecast
+            RunJediVariationalExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
+
+            # Run analysis diagnostics
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # Move restart to next cycle
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+
+            # Save analysis output
+            # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            # RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Save model output
+            # MoveDaRestart-{{model_component}} => SaveRestart
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+
+            # Remove Run Directory
+            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
+            MoveDaRestart-{{model_component}} => RemoveForecastDir
+
+            # Clean up large files
+            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} =>
+            CleanCycle-{{model_component}}
+        {% endfor %}
+        """
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneGeos]]
+        script = "swell_task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell_task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell_task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildGeos"]["account"]}}
+            --qos = {{scheduling["BuildGeos"]["qos"]}}
+            --job-name = BuildGeos
+            --nodes={{scheduling["BuildGeos"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
+            {% if scheduling["BuildGeos"]["partition"] %}
+            --partition={{scheduling["BuildGeos"]["partition"]}}
+            {% endif %}
+
+    [[CloneJedi]]
+        script = "swell_task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell_task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell_task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
+
+    [[RunGeosExecutable]]
+        script = "swell_task RunGeosExecutable $config -d $datetime"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunGeosExecutable"]["account"]}}
+            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
+            --job-name = RunGeosExecutable
+            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunGeosExecutable"]["constraint"]}}
+            {% if scheduling["RunGeosExecutable"]["partition"] %}
+            --partition={{scheduling["RunGeosExecutable"]["partition"]}}
+            {% endif %}
+
+    [[PrepGeosRunDir]]
+        script = "swell_task PrepGeosRunDir $config -d $datetime"
+
+    [[RemoveForecastDir]]
+        script = "swell_task RemoveForecastDir $config -d $datetime"
+
+    [[GetGeosRestart]]
+        script = "swell_task GetGeosRestart $config -d $datetime"
+
+    {% for model_component in model_components %}
+
+    [[LinkGeosOutput-{{model_component}}]]
+        script = "swell_task LinkGeosOutput $config -d $datetime -m {{model_component}}"
+
+    [[MoveDaRestart-{{model_component}}]]
+        script = "swell_task MoveDaRestart $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
+
+    [[StageJedi-{{model_component}}]]
+        script = "swell_task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
+
+    [[GetObservations-{{model_component}}]]
+        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+
+    [[GenerateBClimatologyByLinking-{{model_component}}]]
+        script = "swell_task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    [[RunJediVariationalExecutable-{{model_component}}]]
+        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
+            --job-name = RunJediVariationalExecutable
+            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
+            {% endif %}
+
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaObservations-{{model_component}}]]
+        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
+
+    [[SaveObsDiags-{{model_component}}]]
+        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    [[PrepareAnalysis-{{model_component}}]]
+        script = "swell_task PrepareAnalysis $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-{{model_component}}]]
+        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
+    {% endfor %}
+
+# --------------------------------------------------------------------------------------------------

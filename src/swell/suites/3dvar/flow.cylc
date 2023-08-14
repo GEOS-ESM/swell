@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based h(x)
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -53,21 +53,28 @@
             # Get observations
             GetObservations-{{model_component}}
 
+            # GenerateBClimatologyByLinking
+            GenerateBClimatologyByLinking-{{model_component}}
+
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
-            # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            # Run Jedi variational executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
 
             # Save observations
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
@@ -127,20 +134,26 @@
     [[GetObservations-{{model_component}}]]
         script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediHofxExecutable-{{model_component}}]]
-        script = "swell_task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
+    [[GenerateBClimatologyByLinking-{{model_component}}]]
+        script = "swell_task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    [[RunJediVariationalExecutable-{{model_component}}]]
+        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediHofxExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediHofxExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediHofxExecutable"]["qos"]}}
-            --job-name = RunJediHofxExecutable
-            --nodes={{scheduling["RunJediHofxExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediHofxExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediHofxExecutable"]["constraint"]}}
-            {% if scheduling["RunJediHofxExecutable"]["partition"] %}
-            --partition={{scheduling["RunJediHofxExecutable"]["partition"]}}
+            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
+            --job-name = RunJediVariationalExecutable
+            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
             {% endif %}
+
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
         script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"

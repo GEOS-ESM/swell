@@ -85,6 +85,10 @@ bundles:
   - fv3-jedi
   - soca
   - iodaconv
+  - ufo
+  depends:
+    key: jedi_build_method
+    value: create
   options:
   - fv3-jedi
   - soca
@@ -173,7 +177,7 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: defer_to_model
+  default_value: P1D
   models:
   - all
   prompt: GEOS forecast duration
@@ -224,7 +228,7 @@ geos_bkg_tar_filename_template:
 
 geos_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -323,7 +327,7 @@ jedi_bkg_filename_template:
 
 jedi_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -495,8 +499,8 @@ static_background_error_model:
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
-  models:
-  - all
+  #models:
+  #- all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology
@@ -509,8 +513,6 @@ swell_static_files:
 swell_static_files_user:
   ask_question: false
   default_value: None
-  models:
-  - all
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - GenerateBClimatologyByLinking
@@ -525,8 +527,6 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - PrepareAnalysis
-  - RunGeosExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer
@@ -585,12 +585,12 @@ window_offset:
 
 window_type:
   ask_question: true
-  default_value: 4D
+  default_value: defer_to_model
   models:
   - all
   options:
-  - 3D
-  - 4D
+  - '3D'
+  - '4D'
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - GetBackground

@@ -59,7 +59,7 @@ class PrepConfigBase(ABC):
         self.comment_dict = {}
 
         # Dictionary validation things
-        self.valid_types = ['string', 'integer',
+        self.valid_types = ['string', 'integer', 'float',
                             'iso-datetime', 'iso-duration',
                             'string-list', 'integer-list',
                             'string-drop-list', 'string-check-list',
@@ -112,6 +112,17 @@ class PrepConfigBase(ABC):
         base_tasks_question_dict = self.task_dictionary_comber(base_tasks)
         self.base_questions_dictionary.update(base_tasks_question_dict)
 
+        # Base model questions (i.e. questions sent to model tasks that do not depend on model)
+        model_task_base_questions_tmp = self.task_dictionary_comber(model_tasks)
+
+        model_task_base_questions = {}
+        for key in model_task_base_questions_tmp.keys():
+            if 'models' not in model_task_base_questions_tmp[key].keys():
+                model_task_base_questions[key] = model_task_base_questions_tmp[key]
+
+        # Add to the base questions
+        self.base_questions_dictionary.update(model_task_base_questions)
+
         # Iterate over base questions
         for k, v in self.base_questions_dictionary.items():
             self.key_passer(k, v)
@@ -131,8 +142,12 @@ class PrepConfigBase(ABC):
             # Prepend model suite question in front of model task questions
             self.prepend_model_dict()
 
+            model_questions_dictionary_copy = copy.deepcopy(self.model_questions_dictionary)
+
             # Iterate over base questions
             for m in self.selected_models:
+                self.model_questions_dictionary[m] =
+                copy.deepcopy(model_questions_dictionary_copy[m])
                 self.model = m
                 for k, v in self.model_questions_dictionary[m].items():
                     self.key_passer(k, v)
@@ -301,7 +316,7 @@ class PrepConfigBase(ABC):
 
     def show_deference(self, key, el_dict):
 
-        if 'defer_to_' in el_dict['default_value']:
+        if 'defer_to_' in str(el_dict['default_value']):
             pass
         else:
             return el_dict
@@ -421,6 +436,7 @@ class PrepConfigBase(ABC):
 
         # Check that dictionary does not already contain the key
         if key in self.experiment_dict.keys():
+
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
 
         # Check if models key is present in experiment dictionary

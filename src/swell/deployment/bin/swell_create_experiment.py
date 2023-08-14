@@ -30,9 +30,8 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
-              'experiment. If not passed questions will be presented for setting up an experiment.')
-def main(config):
+@click.argument('config_file')
+def main(config_file):
 
     # Welcome message
     # ---------------
@@ -41,13 +40,6 @@ def main(config):
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
-
-    # Generate the configuration file
-    # -------------------------------
-    if config is None:
-        config_file = prepare_config('cli', 'hofx', 'nccs_discover')
-    else:
-        config_file = config
 
     # Load experiment file
     # --------------------
@@ -60,7 +52,6 @@ def main(config):
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
     platform = dict_get(logger, experiment_dict, 'platform', None)
     suite_to_run = dict_get(logger, experiment_dict, 'suite_to_run')
-    model_components = dict_get(logger, experiment_dict, 'model_components', None)
 
     # Make the suite directory
     # ------------------------
@@ -77,13 +68,13 @@ def main(config):
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
     copy_platform_files(logger, exp_suite_path, platform)
 
-    if model_components is not None:
-        copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
+    if os.path.exists(os.path.join(swell_suite_path, 'eva')):
+        copy_eva_files(logger, swell_suite_path, exp_suite_path)
 
     # Create R2D2 database file
     # -------------------------
-    data_assimilation_run = dict_get(logger, experiment_dict, 'data_assimilation_run', False)
-    if data_assimilation_run:
+    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
+    if r2d2_local_path is not None:
         r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
 
         # Write R2D2_CONFIG to modules
