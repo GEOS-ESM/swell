@@ -117,6 +117,9 @@
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
@@ -145,6 +148,9 @@
             --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
+            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
+            {% endif %}
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"

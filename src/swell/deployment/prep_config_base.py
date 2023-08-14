@@ -9,9 +9,12 @@
 
 
 from abc import ABC, abstractmethod
+import copy
 import datetime
 import os
 import yaml
+
+import glob
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
@@ -26,15 +29,28 @@ class PrepConfigBase(ABC):
         # Store a logger for all to use
         self.logger = logger
 
+        # Store the name of the class inheriting base
+        self.prep_using = type(self).__name__.split('PrepConfig')[1]
+
         # Swell install path
         swell_path = get_swell_path()
+        self.install_path = swell_path
 
-        # Get the path and filename of the dictionary
+        # Get the path and filename of the suite dictionary
         self.directory = os.path.join(swell_path, 'suites')
         self.filename = os.path.splitext(os.path.basename(dictionary_file))[0]
 
         # Keep track of the model, atmosphere, ocean etc
+        self.model_path = os.path.join(self.install_path,
+                                       'configuration',
+                                       'jedi/interfaces/')
         self.model = None
+        self.model_flag = False
+        self.default_models = ['geos_atmosphere', 'geos_ocean']
+        self.selected_models = None
+
+        # Create executable keys list
+        self.exec_keys = []
 
         # Experiment dictionary to be created and used in swell
         self.experiment_dict = {}
@@ -43,87 +59,321 @@ class PrepConfigBase(ABC):
         self.comment_dict = {}
 
         # Dictionary validation things
-        self.valid_types = ['string', 'iso-datetime', 'iso-duration', 'string-drop-list',
-                            'string-check-list', 'file-drop-list', 'file-check-list', 'boolean']
+        self.valid_types = ['string', 'integer', 'float',
+                            'iso-datetime', 'iso-duration',
+                            'string-list', 'integer-list',
+                            'string-drop-list', 'string-check-list',
+                            'boolean']
 
         # Disallowed element types
         self.dis_elem_types = [datetime.datetime, datetime.date]
 
         # Track the suite and platform that the user may input through the prepare_config path
-        user_inputs_dict = {}
-        user_inputs_dict['suite_to_run'] = suite
-        user_inputs_dict['platform'] = platform
+        self.suite_to_run = suite
+        self.platform = platform
 
         # Open the platform specific defaults
-        platform_suite_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
-                                           'suite_questions.yaml')
+        platform_dict_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
+                                          'suite_questions.yaml')
+        with open(platform_dict_file, 'r') as platform_dict_file_open:
+            platform_dict_str = platform_dict_file_open.read()
+
         platform_task_file = os.path.join(swell_path, 'deployment', 'platforms', platform,
                                           'task_questions.yaml')
-        with open(platform_suite_file, 'r') as platform_dict_file_open:
-            platform_dict_str = platform_dict_file_open.read()
         with open(platform_task_file, 'r') as platform_dict_file_open:
             platform_dict_str = platform_dict_str + platform_dict_file_open.read()
 
-        # Render the templates in the platform dictionary using user inputs
-        platform_dict_str = template_string_jinja2(self.logger, platform_dict_str, user_inputs_dict)
+        # Dictionary of defaults for platform
+        # Use for 'defer_to_platform' default
+        self.platform_dictionary = yaml.safe_load(platform_dict_str)
 
-        # Dictionary of templates to use whenever opening a file
-        platform_dictionary = yaml.safe_load(platform_dict_str)
-
-        # Flatten dictionary
-        self.template_dictionary = {}
-        for key, value in platform_dictionary.items():
-            self.template_dictionary[key] = value['default_value']
-
-        self.template_dictionary.update(user_inputs_dict)
-
-        # Starting dictionary
-        self.dictionary = self.read_dictionary_file(dictionary_file)
+        # Open Master ask questions yaml
+        with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
+            self.all_task_questions = yaml.safe_load(ymlfile)
 
     # ----------------------------------------------------------------------------------------------
 
-    def append_directory_and_filename(self, sub_dict_name):
+    def execute(self):
+        # Open the suite_to_run selected
+        # check_widgets goes in cli
+        # defaults gets nothing
 
-        self.directory = os.path.join(self.directory, sub_dict_name)
-        self.filename = self.filename + '-' + sub_dict_name
+        if self.prep_using == 'Cli':
+            print("Please answer the following questions to generate your experiment " +
+                  "configuration YAML file.\n")
+
+        # Set current dictionary variable which is needed for answer changes
+        self.current_dictionary = {}
+
+        # Generate task lists and question dictionaries
+        base_tasks, model_tasks = self.suite_setup()
+
+        # Add task questions to base question dictionary
+        base_tasks_question_dict = self.task_dictionary_comber(base_tasks)
+        self.base_questions_dictionary.update(base_tasks_question_dict)
+
+        # Base model questions (i.e. questions sent to model tasks that do not depend on model)
+        model_task_base_questions_tmp = self.task_dictionary_comber(model_tasks)
+
+        model_task_base_questions = {}
+        for key in model_task_base_questions_tmp.keys():
+            if 'models' not in model_task_base_questions_tmp[key].keys():
+                model_task_base_questions[key] = model_task_base_questions_tmp[key]
+
+        # Add to the base questions
+        self.base_questions_dictionary.update(model_task_base_questions)
+
+        # Iterate over base questions
+        for k, v in self.base_questions_dictionary.items():
+            self.key_passer(k, v)
+
+        if self.model_flag:
+            # Find out what model components are to be used in the config
+            self.selected_models = self.get_models()
+
+            # Generate default model answer dictionary
+            self.get_model_defaults()
+
+            # Add tasks questions to model question dictionary
+            self.model_questions_dictionary = {}
+            model_tasks_question_dict = self.model_task_comber(model_tasks)
+            self.model_questions_dictionary.update(model_tasks_question_dict)
+
+            # Prepend model suite question in front of model task questions
+            self.prepend_model_dict()
+
+            model_questions_dictionary_copy = copy.deepcopy(self.model_questions_dictionary)
+
+            # Iterate over base questions
+            for m in self.selected_models:
+                self.model_questions_dictionary[m] =
+                copy.deepcopy(model_questions_dictionary_copy[m])
+                self.model = m
+                for k, v in self.model_questions_dictionary[m].items():
+                    self.key_passer(k, v)
+
+        return
 
     # ----------------------------------------------------------------------------------------------
 
-    def subtract_directory_and_filename(self):
+    def suite_setup(self):
 
-        self.directory = os.path.dirname(self.directory)
-        self.filename = '-'.join(self.filename.split('-')[0:-1])
+        # Create dictionary for asking about exp id and root
+        exp_questions = {
+            'experiment_id': {
+                'ask_question': True,
+                'default_value': f'swell-{self.suite_to_run}',
+                'prompt': 'Enter the experiment ID',
+                'type': 'string',
+            },
+            'experiment_root': {
+                'ask_question': True,
+                'default_value': 'defer_to_platform',
+                'prompt': 'Enter the path where experiment will be staged',
+                'type': 'string',
+            },
+            'platform': {
+                'ask_question': False,
+                'default_value': self.platform,
+                'prompt': 'Enter the platform on which experiment will run',
+                'type': 'string'
+            },
+            'suite_to_run': {
+                'ask_question': False,
+                'default_value': self.suite_to_run,
+                'prompt': 'Enter the suite you wish to run',
+                'type': 'string'
+            }
+        }
+
+        # Look in suite_to_run dir and check for suite yaml file, if not, grep the flow.cylc file
+
+        # Check which suite to run, check for suite_questions yaml, and grep flow file
+        self.directory = os.path.join(self.directory, self.suite_to_run)
+        suite_questions_path = os.path.join(self.directory, 'suite_questions.yaml')
+
+        self.base_questions_dictionary = {}
+        self.base_questions_dictionary.update(exp_questions)
+
+        if os.path.exists(suite_questions_path):
+            with open(suite_questions_path, 'r') as suite_dict_file:
+                suite_questions_dict = yaml.safe_load(suite_dict_file.read())
+
+            # Need to create a distint model suite dictionary to prepend later
+            # onto model questions from task_questions.yaml file
+            self.model_suite_questions = {}
+
+            for k, v in suite_questions_dict.items():
+                if 'models' in v.keys():
+                    self.model_flag = True
+                    self.model_suite_questions[k] = v
+                else:
+                    self.base_questions_dictionary[k] = v
+
+        # Get the tasks asked prior to model selection and model-based tasks
+        base_tasks, model_tasks = self.open_flow()
+
+        return base_tasks, model_tasks
 
     # ----------------------------------------------------------------------------------------------
 
-    def open_dictionary(self):
+    def open_flow(self):
+        # open text file in read mode
+        cylc_file = open(os.path.join(self.directory, 'flow.cylc'), "r")
 
-        # Append the filename according the type of files
-        filename_ext = os.path.join(self.directory, self.filename + '.yaml')
+        # read whole file to a string
+        data = cylc_file.read()
 
-        # Open file into dictionary
-        dictionary = self.read_dictionary_file(filename_ext)
+        # close file
+        cylc_file.close()
 
-        # Check that dictionary contained something
-        if dictionary is None:
-            self.logger.abort(f'Dictionary at {filename_ext} returned {None} when opened')
+        # Find the double bracket items in the Tasks section of the flow file to ID required tasks
+        task_s = data[(data.find('Tasks')):]
+        task_s_lines = task_s.split('\n')
 
-        return dictionary
+        base_task_list = []
+        model_task_list = []
+        for line in task_s_lines:
+            if 'script = "swell_task' in line:
+                task_name = line.split('"swell_task')[1].split(' ')[1]
+                if '-m' in line:
+                    if task_name in model_task_list:
+                        continue
+                    model_task_list.append(task_name)
+                else:
+                    if task_name in base_task_list:
+                        continue
+                    base_task_list.append(task_name)
+
+        # add selected tasks to logger
+
+        return base_task_list, model_task_list
 
     # ----------------------------------------------------------------------------------------------
 
-    def read_dictionary_file(self, dictionary_file):
+    def model_task_comber(self, model_tasks):
+        model_task_dict = {}
+        for m in self.selected_models:
+            self.model = m
+            model_task_dict[m] = self.task_dictionary_comber(model_tasks)
+        return model_task_dict
 
-        # Open file as a string
-        with open(dictionary_file, 'r') as dictionary_file_open:
-            dictionary_str = dictionary_file_open.read()
+    # ----------------------------------------------------------------------------------------------
 
-        # Render the templates using the template dictionary
-        dictionary_str = template_string_jinja2(self.logger, dictionary_str,
-                                                self.template_dictionary)
+    def task_dictionary_comber(self, task_list):
+        question_dict = {}
+        for t in task_list:
+            self.current_dictionary = {}
+            task_dict = {}
+            dependent_dict = {}
+            # Pass the task list to get the question dictionaries required for
+            # the task. Do not get the questions that depend on prior questions
+            task_dict = self.build_question_dictionary(t, get_dependents=False)
+            # Get the question dictionaries that depend on previous questions
+            dependent_dict = self.build_question_dictionary(t, get_dependents=True)
+            # Combine the two dictionaries above
+            task_dict.update(dependent_dict)
+            question_dict.update(task_dict)
+            del task_dict
+            del dependent_dict
+        return question_dict
 
-        # Convert string to dictionary
-        return yaml.safe_load(dictionary_str)
+    # ----------------------------------------------------------------------------------------------
+
+    def build_question_dictionary(self, task, get_dependents):
+        question_dictionary = {}
+        model_key_list = ['all'] + [self.model]
+        big_dictionary = copy.deepcopy(self.all_task_questions)
+        for k, v in big_dictionary.items():
+            if self.model is not None:
+                if 'models' in v.keys() and v['models'][0] in model_key_list:
+                    pass
+                else:
+                    continue
+            if task in v['tasks']:
+                if get_dependents:
+                    if 'depends' in v.keys():
+                        question_dictionary[k] = v
+                else:
+                    if 'depends' not in v.keys():
+                        question_dictionary[k] = v
+        del big_dictionary
+        return question_dictionary
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_model_defaults(self):
+        self.model_defaults_dict = {}
+        for m in self.selected_models:
+            self.model_defaults_dict[m] = {}
+            for s in ['suite', 'task']:
+                model_dict_path = os.path.join(self.model_path, m, f'{s}_questions.yaml')
+                with open(model_dict_path, 'r') as model_dict_file:
+                    model_comp_dict = yaml.safe_load(model_dict_file.read())
+                self.model_defaults_dict[m].update(model_comp_dict)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def show_deference(self, key, el_dict):
+
+        if 'defer_to_' in str(el_dict['default_value']):
+            pass
+        else:
+            return el_dict
+
+        if 'defer_to_platform' == el_dict['default_value']:
+            el_dict['default_value'] = self.platform_dictionary[key]['default_value']
+        elif 'defer_to_model' == el_dict['default_value']:
+            el_dict['default_value'] = self.model_defaults_dict[self.model][key]['default_value']
+            if 'options' in self.model_defaults_dict[self.model][key].keys()\
+                    and 'defer_to_model' == el_dict['options']:
+                el_dict['options'] = self.model_defaults_dict[self.model][key]['options']
+
+        return el_dict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def key_passer(self, key, el_dict):
+
+        # Validate the element dictionary
+        self.validate_dictionary(el_dict)
+
+        # Check that the key does not have a dependency
+        depends_flag = True
+        if 'depends' in el_dict.keys():
+            dep_key = el_dict['depends']['key']
+            dep_val = el_dict['depends']['value']
+            if self.model is None:
+                if self.experiment_dict[dep_key] != dep_val:
+                    depends_flag = False
+            else:
+                if self.experiment_dict['models'][self.model][dep_key] != dep_val:
+                    depends_flag = False
+
+        # In this case the key is not expected to refer to a sub dictionary but have
+        # everything needed in the elements dictionary
+        if depends_flag:
+            el_dict = self.show_deference(key, el_dict)
+            if el_dict['ask_question']:
+                el_dict['default_value'] = self.get_answer(key, el_dict)
+            else:
+                pass
+            self.add_to_experiment_dictionary(key, el_dict)
+
+        return
+
+    # ----------------------------------------------------------------------------------------------
+
+    def prepend_model_dict(self):
+        complete_model_dict = {}
+        for m in self.selected_models:
+            model_key_list = ['all'] + [m]
+            for k, v in self.model_suite_questions.items():
+                if v['models'][0] in model_key_list:
+                    complete_model_dict[m] = {}
+                    complete_model_dict[m][k] = v
+            complete_model_dict[m].update(self.model_questions_dictionary[m])
+        self.model_questions_dictionary = complete_model_dict
 
     # ----------------------------------------------------------------------------------------------
 
@@ -144,24 +394,15 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def update_model(self, model):
-
-        if model is None:
-            self.model = None
-        else:
-            self.model = model
-
-            # If models list not already in the dictionary added
-            if 'models' not in self.experiment_dict.keys():
-                self.experiment_dict['models'] = {}
-
-            # If specific model dictionary not added to the list of model then add it
-            if self.model not in self.experiment_dict['models'].keys():
-                self.experiment_dict['models'][self.model] = {}
-
-    # ----------------------------------------------------------------------------------------------
-
     def add_to_experiment_dictionary(self, key, element_dict):
+
+        # Add elements to the current dictionary
+        # --------------------------------------
+        self.current_dictionary[key] = element_dict
+
+        # Add executed key to exec_keys list
+        # ----------------------------------
+        self.exec_keys.append(key)
 
         # Set the element
         # ---------------
@@ -195,7 +436,17 @@ class PrepConfigBase(ABC):
 
         # Check that dictionary does not already contain the key
         if key in self.experiment_dict.keys():
+
             self.logger.abort(f'Key \'{key}\' is already in the experiment dictionary.')
+
+        # Check if models key is present in experiment dictionary
+        if self.model is not None:
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+
+            # If specific model dictionary not added to the list of model then add it
+            if self.model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][self.model] = {}
 
         # Make sure the element was not already added
         # -------------------------------------------
@@ -237,10 +488,14 @@ class PrepConfigBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def execute(self):
+    def get_answer(self, dictionary):
         pass
         # The subclass has to implement an execute method since this is how it is called into
         # action.
 
-
 # --------------------------------------------------------------------------------------------------
+
+
+def camel_to_snake(s):
+    new_string = re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+    return new_string

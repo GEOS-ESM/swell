@@ -75,7 +75,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             for ind, dict_str_item in enumerate(dict_str_items):
 
-                if key + ':' in dict_str_item:
+                if dict_str_item[0:len(key)+1] == key + ':':
 
                     dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
                     break
@@ -87,7 +87,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
                 for line in range(index_of_key, len(dict_str_items)):
 
-                    if key_hierarchy + ':' in dict_str_items[line]:
+                    if ' ' + key_hierarchy + ':' in dict_str_items[line]:
 
                         index_of_key = line
 
@@ -95,6 +95,10 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             dict_str_items.insert(max(0, index_of_key), '\n' + indent + '# ' +
                                   comment_dictionary[key])
+
+    # Remove empty line at the beginning
+    if dict_str_items[0][0] == '\n':
+        dict_str_items[0] = dict_str_items[0][1:]
 
     dictionary_string_with_comments = '\n'.join(dict_str_items)
 
@@ -132,10 +136,10 @@ def write_dict_to_yaml(dictionary, file):
 # --------------------------------------------------------------------------------------------------
 
 
-def update_dict(original_dict, overwrite_dict):
+def update_dict(orig_dict, overwrite_dict):
 
     # Create output dictionary from original dictionary
-    output_dict = original_dict.copy()
+    output_dict = orig_dict.copy()
 
     for key, value in overwrite_dict.items():
         if isinstance(value, dict) and key in output_dict and isinstance(output_dict[key], dict):
@@ -144,6 +148,21 @@ def update_dict(original_dict, overwrite_dict):
             output_dict[key] = value
 
     return output_dict
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def dictionary_override(logger, orig_dict, override_dict):
+    for key, value in override_dict.items():
+        if value == 'REMOVE':
+            orig_dict.pop(key, None)
+        elif isinstance(value, dict) and key in orig_dict and isinstance(orig_dict[key], dict):
+            dictionary_override(logger, orig_dict[key], value)
+        else:
+            orig_dict[key] = value
+
+    return orig_dict
 
 
 # --------------------------------------------------------------------------------------------------

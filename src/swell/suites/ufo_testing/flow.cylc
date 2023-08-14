@@ -97,6 +97,9 @@
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
 
     [[ GetGsiBc ]]
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
@@ -124,6 +127,9 @@
             --nodes={{scheduling["RunJediUfoTestsExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediUfoTestsExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediUfoTestsExecutable"]["constraint"]}}
+            {% if scheduling["RunJediUfoTestsExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediUfoTestsExecutable"]["partition"]}}
+            {% endif %}
 
     [[EvaObservations]]
         script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"

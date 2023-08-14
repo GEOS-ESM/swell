@@ -29,10 +29,6 @@ clean_patterns:
   - '*MOM*'
   - logfile.*.out
 
-forecast_duration:
-  default_value:
-  - P1D
-
 gradient_norm_reduction:
   default_value: 1e-10
 
@@ -53,7 +49,8 @@ minimizer:
   - RPCG
 
 number_of_iterations:
-  default_value: 5
+  default_value:
+  - 5
 
 obs_experiment:
   default_value: s2s
@@ -80,13 +77,16 @@ total_processors:
   default_value: 24
 
 vertical_resolution:
-  default_value: 75
+  default_value: '75'
   options:
-  - 75
+  - '75'
 
 window_length:
   default_value: PT12H
 
 window_offset:
   default_value: PT6H
+
+window_type:
+  default_value: 3D
 
