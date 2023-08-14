@@ -33,11 +33,11 @@ def update_model_components(logger, experiment_dict, comment_dict):
         for model in model_components_actual:
             if model not in model_components_wanted:
                 logger.info(f'Removing model {model} from model_components')
-                del(experiment_dict['models'][model])
+                del (experiment_dict['models'][model])
                 # Loop over all elements of the comment dictionay and remove any redundant keys
                 for key in list(comment_dict.keys()):
                     if 'models.'+model in key:
-                        del(comment_dict[key])
+                        del (comment_dict[key])
 
 
 # --------------------------------------------------------------------------------------------------
