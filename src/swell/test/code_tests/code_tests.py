@@ -25,7 +25,7 @@ def main():
     logger.test('Running Swell Test Suite')
 
     # Turn off the regular info testing
-    os.environ["LOG_INFO"] = "1"  # Set this to 1 when errors are being debugged
+    os.environ["LOG_INFO"] = "0"  # Set this to 1 when errors are being debugged
 
     # Create a test suite
     test_suite = unittest.TestSuite()
