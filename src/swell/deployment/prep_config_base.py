@@ -146,7 +146,8 @@ class PrepConfigBase(ABC):
 
             # Iterate over base questions
             for m in self.selected_models:
-                self.model_questions_dictionary[m] =
+                self.model_questions_dictionary[m] = \
+                    copy.deepcopy(model_questions_dictionary_copy[m])
                 copy.deepcopy(model_questions_dictionary_copy[m])
                 self.model = m
                 for k, v in self.model_questions_dictionary[m].items():
