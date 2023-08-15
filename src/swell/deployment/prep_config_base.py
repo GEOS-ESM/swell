@@ -14,8 +14,6 @@ import datetime
 import os
 import yaml
 
-import glob
-
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
 
