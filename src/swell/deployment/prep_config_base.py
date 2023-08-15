@@ -14,10 +14,7 @@ import datetime
 import os
 import yaml
 
-import glob
-
 from swell.swell_path import get_swell_path
-from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -146,7 +143,8 @@ class PrepConfigBase(ABC):
 
             # Iterate over base questions
             for m in self.selected_models:
-                self.model_questions_dictionary[m] =
+                self.model_questions_dictionary[m] = \
+                    copy.deepcopy(model_questions_dictionary_copy[m])
                 copy.deepcopy(model_questions_dictionary_copy[m])
                 self.model = m
                 for k, v in self.model_questions_dictionary[m].items():
