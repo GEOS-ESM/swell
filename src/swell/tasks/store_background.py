@@ -11,9 +11,7 @@
 from datetime import datetime as dt
 import isodate
 import os
-import re
 from r2d2 import R2D2Data
-
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats

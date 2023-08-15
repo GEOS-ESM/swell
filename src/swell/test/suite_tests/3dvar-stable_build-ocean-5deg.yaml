@@ -1,0 +1,36 @@
+start_cycle_point: '2021-07-01T12:00:00Z'
+final_cycle_point: '2021-07-01T12:00:00Z'
+jedi_build_method: use_existing
+existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
+existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
+model_components: ['geos_ocean']
+models:
+  geos_ocean:
+    cycle_times:
+    - T12
+    window_length: P1D
+    window_offset: PT12H
+    horizontal_resolution: 72x36
+    vertical_resolution: '50'
+    total_processors: 6
+    obs_experiment: s2s_v1
+    observations:
+     - adt_3a_egm2008
+     - adt_3b_egm2008
+     - adt_c2_egm2008
+     - adt_j3_egm2008
+     - adt_sa_egm2008
+     - sst_ostia
+     - salt_profile_fnmoc
+     - sss_smos_esa
+     - sss_trak_fnmoc
+     - sst_gmi_l3u
+     - sst_ship_fnmoc
+     - sst_trak_fnmoc
+     - temp_profile_fnmoc
+    obs_provider: gdas_marine
+    analysis_forecast_window_offset: -PT12H
+    background_time_offset: PT18H
+    clean_patterns:
+    - '*.nc4'
+    - '*.txt'

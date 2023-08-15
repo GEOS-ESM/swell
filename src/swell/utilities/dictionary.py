@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import re
-import string
 import yaml
 from collections.abc import Hashable
 
@@ -77,7 +75,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             for ind, dict_str_item in enumerate(dict_str_items):
 
-                if key + ':' in dict_str_item:
+                if dict_str_item[0:len(key)+1] == key + ':':
 
                     dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
                     break
@@ -89,7 +87,7 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
                 for line in range(index_of_key, len(dict_str_items)):
 
-                    if key_hierarchy + ':' in dict_str_items[line]:
+                    if ' ' + key_hierarchy + ':' in dict_str_items[line]:
 
                         index_of_key = line
 
@@ -97,6 +95,10 @@ def add_comments_to_dictionary(dictionary_string, comment_dictionary):
 
             dict_str_items.insert(max(0, index_of_key), '\n' + indent + '# ' +
                                   comment_dictionary[key])
+
+    # Remove empty line at the beginning
+    if dict_str_items[0][0] == '\n':
+        dict_str_items[0] = dict_str_items[0][1:]
 
     dictionary_string_with_comments = '\n'.join(dict_str_items)
 
@@ -116,3 +118,51 @@ def replace_string_in_dictionary(dictionary, string_in, string_out):
 
     # Convert back to dictionary
     return yaml.safe_load(dictionary_string)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def write_dict_to_yaml(dictionary, file):
+
+    # Convert dictionary to YAML string
+    dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
+
+    # Write string to file
+    with open(file, 'w') as file_open:
+        file_open.write(dictionary_string)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def update_dict(orig_dict, overwrite_dict):
+
+    # Create output dictionary from original dictionary
+    output_dict = orig_dict.copy()
+
+    for key, value in overwrite_dict.items():
+        if isinstance(value, dict) and key in output_dict and isinstance(output_dict[key], dict):
+            output_dict[key] = update_dict(output_dict[key], value)
+        else:
+            output_dict[key] = value
+
+    return output_dict
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def dictionary_override(logger, orig_dict, override_dict):
+    for key, value in override_dict.items():
+        if value == 'REMOVE':
+            orig_dict.pop(key, None)
+        elif isinstance(value, dict) and key in orig_dict and isinstance(orig_dict[key], dict):
+            dictionary_override(logger, orig_dict[key], value)
+        else:
+            orig_dict[key] = value
+
+    return orig_dict
+
+
+# --------------------------------------------------------------------------------------------------

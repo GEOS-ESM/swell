@@ -1,4 +1,4 @@
-# (C) Copyright 2023- United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,14 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime as dt
 import glob
 import netCDF4 as nc
 import os
 import shutil
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -31,17 +29,10 @@ class PrepareAnalysis(taskBase):
 
         self.logger.info('Preparing analysis and updating restarts')
 
-        # This will change with different model types
-        # --------------------------------
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        model_component_meta = self.jedi_rendering.render_interface_meta()
-        self.SOCA_dict = model_component_meta['variables']
-
         # Current and restart time objects
         # --------------------------------
         self.current_cycle = os.path.basename(self.forecast_dir())
         self.cc_dto = self.cycle_time_dto()
-        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
 
         # GEOS restarts have seconds in their filename
         # --------------------------------------------
@@ -54,7 +45,7 @@ class PrepareAnalysis(taskBase):
         # TODO: This could be improved with model dependent atmosphere or ocean
         # model analysis with
         # --------------------------------------------------------------------
-        # model_components = self.get_model_components()
+        #
 
         # Generic rst file format
         # ------------------------
@@ -119,8 +110,15 @@ class PrepareAnalysis(taskBase):
         ds_ana.renameDimension('yaxis_1', 'lath')
         ds_ana.renameDimension('zaxis_1', 'Layer')
 
+        SOCA_dict = {
+            'h': 'hocn',
+            'socn': 'Salt',
+            'ssh': 'ave_ssh',
+            'tocn': 'Temp',
+        }
+
         for soca_var in self.soca_ana:
-            var = self.SOCA_dict[soca_var]
+            var = SOCA_dict[soca_var]
             self.logger.info(f'Updating {var} in restart')
 
             ds_rst.variables[var][:] = ds_ana.variables[var][:]

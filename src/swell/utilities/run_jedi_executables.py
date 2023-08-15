@@ -17,13 +17,16 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             jedi_forecast_model):
+                             jedi_forecast_model=None):
 
     # Assemble configuration YAML file
     # --------------------------------
     for key, value in jedi_config_dict.items():
         if isinstance(value, dict):
             jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, jedi_forecast_model)
+
+        elif isinstance(value, bool):
+            continue
 
         elif isinstance(value, list):
             for item in value:

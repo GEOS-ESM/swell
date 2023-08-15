@@ -29,7 +29,7 @@ analysis_forecast_window_offset:
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 analysis_variables:
   ask_question: false
@@ -78,7 +78,7 @@ background_frequency:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 background_time_offset:
   ask_question: false
@@ -89,11 +89,14 @@ background_time_offset:
     forecast begin?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
-  type: duration
+  type: iso-duration
 
 bundles:
   ask_question: true
@@ -101,6 +104,10 @@ bundles:
   - fv3-jedi
   - soca
   - iodaconv
+  - ufo
+  depends:
+    key: jedi_build_method
+    value: create
   options:
   - fv3-jedi
   - soca
@@ -133,8 +140,11 @@ crtm_coeff_dir:
   prompt: What is the path to the CRTM coefficient files?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string
@@ -186,14 +196,24 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: defer_to_model
+  default_value: P1D
   models:
   - all
   prompt: GEOS forecast duration
   tasks:
-  - PrepGeosRunDir
   - MoveForecastRestart
-  type: duration
+  - PrepGeosRunDir
+  type: iso-duration
+
+generate_yaml_and_exit:
+  ask_question: false
+  default_value: false
+  prompt: Generate JEDI executable YAML and exit?
+  tasks:
+  - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
+  - RunJediVariationalExecutable
+  type: boolean
 
 geos_background_restart_offset:
   ask_question: true
@@ -203,7 +223,7 @@ geos_background_restart_offset:
   prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
   - GetBackgroundGeosExperiment
-  type: duration
+  type: iso-duration
 
 geos_bkg_filename_template:
   ask_question: true
@@ -227,7 +247,7 @@ geos_bkg_tar_filename_template:
 
 geos_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -265,6 +285,26 @@ geos_restarts_directory:
   tasks:
   - GetGeosRestart
   - PrepGeosRunDir
+  type: string
+
+geovals_experiment:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the name of the R2D2 experiment providing the GeoVaLs?
+  tasks:
+  - GetGeovals
+  type: string
+
+geovals_provider:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the name of the R2D2 database providing the GeoVaLs?
+  tasks:
+  - GetGeovals
   type: string
 
 gradient_norm_reduction:
@@ -306,7 +346,7 @@ jedi_bkg_filename_template:
 
 jedi_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -409,11 +449,60 @@ observations:
   prompt: Which observations do you want to include?
   tasks:
   - EvaObservations
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
+  - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string-check-list
+
+path_to_geos_adas_background:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where the cubed sphere backgrounds are in the GEOSadas
+    run?
+  tasks:
+  - GetGeosAdasBackground
+  type: string
+
+path_to_gsi_bc_coefficients:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the location where GSI bias correction files can be found?
+  tasks:
+  - GetGsiBc
+  type: string
+
+path_to_gsi_nc_diags:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where the GSI ncdiags are stored?
+  tasks:
+  - GetGsiNcdiag
+  type: string
+
+produce_geovals:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: When running the ncdiag to ioda converted do you want to produce GeoVaLs
+    files?
+  tasks:
+  - GsiNcdiagToIoda
+  type: boolean
 
 static_background_error_model:
   ask_question: true
@@ -429,8 +518,6 @@ static_background_error_model:
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology
@@ -443,8 +530,6 @@ swell_static_files:
 swell_static_files_user:
   ask_question: false
   default_value: None
-  models:
-  - all
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - GenerateBClimatologyByLinking
@@ -459,7 +544,6 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - RunGeosExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer
@@ -487,12 +571,14 @@ window_length:
   prompt: What is the duration for the data assimilation window?
   tasks:
   - GetBackground
+  - GetGeovals
   - GetObservations
   - MoveDaRestart
   - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_offset:
   ask_question: true
@@ -503,16 +589,20 @@ window_offset:
   tasks:
   - EvaObservations
   - GetBackground
+  - GetGeovals
   - GetObservations
+  - GsiBcToIoda
+  - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_type:
   ask_question: true
-  default_value: 4D
+  default_value: defer_to_model
   models:
   - all
   options:

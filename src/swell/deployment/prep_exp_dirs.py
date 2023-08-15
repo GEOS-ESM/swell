@@ -9,10 +9,7 @@
 
 
 import copy
-import glob
-import importlib
 import os
-import pathlib
 import shutil
 
 from swell.swell_path import get_swell_path
@@ -21,27 +18,25 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
-def copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components):
 
-    # Copy suite related files to the suite directory
-    # -----------------------------------------------
-    for model_component in model_components:
-        # Path to where eva files are
-        eva_config_path = os.path.join(swell_suite_path, model_component)
-        # All eva files
-        eva_files = glob.glob(os.path.join(eva_config_path, 'eva*.yaml'))
-        # Loop over eva files and copy with model name appended
-        for eva_file in eva_files:
-            eva_file_basename = os.path.basename(eva_file)
-            eva_file_basename = os.path.splitext(eva_file_basename)[0]
-            dst_eva_file = f'{eva_file_basename}-{model_component}.yaml'
-            dst_path_file = os.path.join(exp_suite_path, dst_eva_file)
-            if os.path.exists(eva_file):
-                logger.trace(f'Copying {eva_file} to {dst_path_file}')
-                shutil.copy(eva_file, dst_path_file)
+def copy_eva_files(logger, swell_suite_path, exp_suite_path):
+
+    # Repo eva files
+    eva_directory = os.path.join(swell_suite_path, 'eva')
+
+    # Destination for eva files
+    destination_directory = os.path.join(exp_suite_path, 'eva')
+
+    # If destination directory exists, delete it
+    if os.path.exists(destination_directory):
+        shutil.rmtree(destination_directory)
+
+    # Copy all the files
+    shutil.copytree(eva_directory, destination_directory)
 
 
 # --------------------------------------------------------------------------------------------------
+
 
 def copy_platform_files(logger, exp_suite_path, platform=None):
 

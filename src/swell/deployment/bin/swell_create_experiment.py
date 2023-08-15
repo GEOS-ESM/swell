@@ -15,7 +15,6 @@ import os
 import shutil
 import yaml
 
-from swell.deployment.prep_config import prepare_config
 from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, \
                                            template_modules_file, create_modules_csh
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
@@ -30,9 +29,8 @@ from swell.utilities.welcome_message import write_welcome_message
 
 
 @click.command()
-@click.option('-c', '--config', 'config', default=None, help='Path to configuration file for the ' +
-              'experiment. If not passed questions will be presented for setting up an experiment.')
-def main(config):
+@click.argument('config_file')
+def main(config_file):
 
     # Welcome message
     # ---------------
@@ -41,13 +39,6 @@ def main(config):
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
-
-    # Generate the configuration file
-    # -------------------------------
-    if config is None:
-        config_file = prepare_config('cli', 'hofx', 'nccs_discover')
-    else:
-        config_file = config
 
     # Load experiment file
     # --------------------
@@ -60,7 +51,6 @@ def main(config):
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
     platform = dict_get(logger, experiment_dict, 'platform', None)
     suite_to_run = dict_get(logger, experiment_dict, 'suite_to_run')
-    model_components = dict_get(logger, experiment_dict, 'model_components', None)
 
     # Make the suite directory
     # ------------------------
@@ -77,8 +67,8 @@ def main(config):
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
     copy_platform_files(logger, exp_suite_path, platform)
 
-    if model_components is not None:
-        copy_eva_files(logger, swell_suite_path, exp_suite_path, model_components)
+    if os.path.exists(os.path.join(swell_suite_path, 'eva')):
+        copy_eva_files(logger, swell_suite_path, exp_suite_path)
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------

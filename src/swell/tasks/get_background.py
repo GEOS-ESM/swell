@@ -10,10 +10,8 @@
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.store_fetch import fetch
 
-from datetime import datetime as dt
 import isodate
 import os
-import re
 
 # --------------------------------------------------------------------------------------------------
 

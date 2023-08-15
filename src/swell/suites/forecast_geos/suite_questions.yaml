@@ -1,0 +1,26 @@
+start_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T00:00:00Z'
+  prompt: What is the time of the first cycle (middle of the window)?
+  type: iso-datetime
+
+final_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T06:00:00Z'
+  prompt: What is the time of the final cycle (middle of the window)?
+  type: iso-datetime
+
+cycle_times:
+  ask_question: True
+  default_value:
+  - T00
+  - T06
+  - T12
+  - T18
+  options:
+  - T00
+  - T06
+  - T12
+  - T18
+  prompt: Enter the forecast times.
+  type: string-check-list

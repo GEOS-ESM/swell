@@ -9,9 +9,6 @@
 
 
 import os
-import re
-import glob
-from shutil import copyfile
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.filehandler import *
