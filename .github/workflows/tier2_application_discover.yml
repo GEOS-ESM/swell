@@ -13,4 +13,4 @@ defaults:
 
 jobs:
   run-tier2-apps-discover:
-    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier2_application_discover.yml@feature/ufo_tests
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier2_application_discover.yml@develop
