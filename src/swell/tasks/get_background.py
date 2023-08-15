@@ -148,7 +148,6 @@ class GetBackground(taskBase):
 
                 target_dir = os.path.dirname(target_file)
                 os.makedirs(target_dir, exist_ok=True)
-                file_extension = os.path.splitext(target_file)[1].replace(".", "")
 
                 fetched_from = fetch(r2d2_fetch_datastores,
                                      item='forecast',

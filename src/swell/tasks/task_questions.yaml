@@ -1,22 +1,3 @@
-r2d2_fetch_datastores:
-  ask_question: false
-  default_value: defer_to_platform
-  options: defer_to_platform
-  prompt: In what order do you want to search R2D2 data_stores for fetching?
-  tasks:
-  - GetBackground
-  - GetObservation
-  type: string-check-list
-
-r2d2_store_datastores:
-  ask_question: false
-  default_value: defer_to_platform
-  options: defer_to_platform
-  prompt: In which R2D2 data_stores do you want to store new data?
-  tasks:
-  - SaveObsDiags
-  type: string-check-list
-
 analysis_forecast_window_offset:
   ask_question: false
   default_value: defer_to_model
@@ -331,7 +312,6 @@ horizontal_resolution:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StageJedi
-  - StoreBackground
   type: string-drop-list
 
 jedi_bkg_filename_template:
@@ -371,6 +351,14 @@ jedi_forecast_model:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
+
+limit_r2d2_storing:
+  ask_question: true
+  default_value: true
+  prompt: Question
+  tasks:
+  - SaveObsDiags
+  type: bool
 
 minimizer:
   ask_question: false
@@ -503,6 +491,25 @@ produce_geovals:
   tasks:
   - GsiNcdiagToIoda
   type: boolean
+
+r2d2_fetch_datastores:
+  ask_question: false
+  default_value: defer_to_platform
+  options: defer_to_platform
+  prompt: In what order do you want to search R2D2 data_stores for fetching?
+  tasks:
+  - GetBackground
+  - GetObservations
+  type: string-check-list
+
+r2d2_store_datastores:
+  ask_question: false
+  default_value: defer_to_platform
+  options: defer_to_platform
+  prompt: In which R2D2 data_stores do you want to store new data?
+  tasks:
+  - SaveObsDiags
+  type: string-check-list
 
 static_background_error_model:
   ask_question: true

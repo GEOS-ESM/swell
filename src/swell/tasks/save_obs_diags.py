@@ -12,8 +12,6 @@ from swell.utilities.store_fetch import store
 
 import os
 
-from r2d2 import R2D2Data
-
 # --------------------------------------------------------------------------------------------------
 
 

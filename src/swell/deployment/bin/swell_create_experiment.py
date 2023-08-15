@@ -20,7 +20,6 @@ from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, 
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get
-from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
 from swell.utilities.welcome_message import write_welcome_message
 

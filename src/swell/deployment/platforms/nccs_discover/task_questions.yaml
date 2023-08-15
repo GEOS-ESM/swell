@@ -19,9 +19,6 @@ geos_experiment_directory:
 geos_restarts_directory:
   default_value: restarts_20210620_000000
 
-swell_static_files:
-  default_value: /discover/nobackup/drholdaw/SwellStaticFiles
-
 r2d2_fetch_datastores:
   default_value:
   - swell-r2d2-${USER}
@@ -32,11 +29,14 @@ r2d2_fetch_datastores:
   - swell-r2d2-archive
   - swell-r2d2
 
-r2d2_store_datatores:
+r2d2_store_datastores:
   default_value:
-    - swell-r2d2-${USER}
-    - swell-r2d2
+  - swell-r2d2-${USER}
+  - swell-r2d2
   options:
-    - swell-r2d2-${USER}
-    - swell-r2d2
+  - swell-r2d2-${USER}
+  - swell-r2d2
+
+swell_static_files:
+  default_value: /discover/nobackup/drholdaw/SwellStaticFiles
 
