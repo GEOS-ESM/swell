@@ -10,7 +10,6 @@
 
 
 # standard imports
-import glob
 import os
 import random
 import string
@@ -19,7 +18,6 @@ import yaml
 # swell imports
 from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
-from swell.utilities.case_switching import snake_case_to_camel_case
 
 
 # --------------------------------------------------------------------------------------------------
@@ -132,9 +130,6 @@ def tq_dicts_defaults():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
-
-    # Path to JEDI interface code
-    swell_path = get_swell_path()
 
     # Output file
     task_questions_config = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')

@@ -13,8 +13,6 @@ import glob
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
-from datetime import datetime as dt
-
 # --------------------------------------------------------------------------------------------------
 
 

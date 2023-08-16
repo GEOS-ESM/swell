@@ -47,8 +47,8 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
-            # Get background
-            GetBackground-{{model_component}}
+            # Get ensemble FIXME
+            GetEnsemble-{{model_component}}
 
             # Get observations
             GetObservations-{{model_component}}
@@ -57,17 +57,17 @@
             StageJediCycle-{{model_component}}
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediLETKFExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediLETKFExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediLETKFExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediLETKFExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediLETKFExecutable-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediLetkfExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediLetkfExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediLETKFExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediLetkfExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
-            RunJediLETKFExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediLetkfExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
@@ -124,17 +124,17 @@
     [[GetObservations-{{model_component}}]]
         script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediLETKFExecutable-{{model_component}}]]
-        script = "swell_task RunJediLETKFExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediLetkfExecutable-{{model_component}}]]
+        script = "swell_task RunJediLetkfExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediLETKFExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediLetkfExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediLETKFExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediLETKFExecutable"]["qos"]}}
-            --job-name = RunJediLETKFExecutable
-            --nodes={{scheduling["RunJediLETKFExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediLETKFExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediLETKFExecutable"]["constraint"]}}
+            --account = {{scheduling["RunJediLetkfExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediLetkfExecutable"]["qos"]}}
+            --job-name = RunJediLetkfExecutable
+            --nodes={{scheduling["RunJediLetkfExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediLetkfExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediLetkfExecutable"]["constraint"]}}
 
     [[EvaObservations-{{model_component}}]]
         script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
