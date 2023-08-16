@@ -6,12 +6,17 @@
   width="50%"
 />
 
+#
+<br/>
+
 [![Swell code tests](https://github.com/GEOS-ESM/swell/actions/workflows/code_tests.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/code_tests.yml)
 [![Python coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/python_coding_norms.yml)
 [![YAML coding norms](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/yaml_coding_norms.yml)
----
+
 [![Tier 1 Applications Tests (Discover)](https://github.com/GEOS-ESM/swell/actions/workflows/tier1_application_discover.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/tier1_application_discover.yml)
 [![Tier 2 Applications Tests (Discover)](https://github.com/GEOS-ESM/swell/actions/workflows/tier2_application_discover.yml/badge.svg?branch=develop)](https://github.com/GEOS-ESM/swell/actions/workflows/tier2_application_discover.yml)
+
+#
 
 </div>
 
