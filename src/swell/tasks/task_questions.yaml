@@ -19,6 +19,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
+  - GenerateBClimatology
   - PrepareAnalysis
   - RunJediVariationalExecutable
   type: string-check-list
@@ -569,6 +570,7 @@ window_offset:
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - EvaObservations
+  - GenerateBClimatology
   - GetBackground
   - GetGeovals
   - GetObservations
@@ -591,6 +593,7 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - GenerateBClimatology
   - GetBackground
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
