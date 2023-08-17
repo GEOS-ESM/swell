@@ -6,7 +6,6 @@
 
 # -----------------------------------------------
 import os
-import shutil
 
 import yaml
 
