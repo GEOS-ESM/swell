@@ -77,12 +77,6 @@ class GenerateBClimatology(taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Jedi executable name
-        # --------------------
-        # jedi_executable = interface_executable[self.jedi_interface]
-        # jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
-        #                                     'build', 'bin', jedi_executable)
-
         # Get the JEDI interface metadata
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
