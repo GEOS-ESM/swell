@@ -12,7 +12,6 @@ import glob
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
-from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 

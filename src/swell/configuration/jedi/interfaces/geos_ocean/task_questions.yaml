@@ -43,13 +43,16 @@ jedi_forecast_model:
   options:
   - NA
 
-mom6_iau:
-  default_value: false
-
 minimizer:
   default_value: RPCG
   options:
   - RPCG
+
+mom6_iau:
+  default_value: False
+  options:
+  - True
+  - False
 
 number_of_iterations:
   default_value:

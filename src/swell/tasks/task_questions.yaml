@@ -366,13 +366,14 @@ minimizer:
 
 mom6_iau:
   ask_question: false
-  default_value: defer_to_platform
+  default_value: defer_to_model
   models:
   - geos_ocean
+  options: defer_to_model
   prompt: Do you wish to use IAU for MOM6?
   tasks:
-  - PrepareAnalysis
   - MoveDaRestart
+  - PrepareAnalysis
   type: boolean
 
 npx_proc:
@@ -536,6 +537,7 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - PrepareAnalysis
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer

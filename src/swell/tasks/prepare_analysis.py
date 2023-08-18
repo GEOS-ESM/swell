@@ -7,13 +7,11 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime as dt
 import glob
 import netCDF4 as nc
 import os
 import shutil
 
-from swell.utilities.datetime import datetime_formats
 from swell.utilities.shell_commands import run_subprocess
 from swell.tasks.base.task_base import taskBase
 

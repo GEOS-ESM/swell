@@ -12,7 +12,6 @@ import glob
 import yaml
 
 from datetime import datetime as dt
-import isodate
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
@@ -390,9 +389,9 @@ class PrepGeosRunDir(taskBase):
         # ---------------------------------------------------------
 
         if self.agcm_dict['REPLAY_MODE'] == 'Exact' or self.agcm_dict['REPLAY_MODE'] == 'Regular':
-            ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
+            # ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
             ANA_LOCATION = self.agcm_dict['REPLAY_ANA_LOCATION']
-            REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
+            # REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
 
         rply_dict = {
             os.path.join(ANA_LOCATION, 'aod'): '',
