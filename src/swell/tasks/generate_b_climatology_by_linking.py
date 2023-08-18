@@ -48,7 +48,7 @@ class GenerateBClimatologyByLinking(taskBase):
         target_path = os.path.join(self.cycle_dir(), 'background_error_model')
         os.makedirs(target_path, mode=0o777, exist_ok=True)
 
-        # Source path base the part that looks like /path/to/background_error_model/
+        # Source path base the part that looks like /path/to/static_background_error/
         source_path_base = os.path.join('jedi', 'interfaces', self.get_model(), 'model',
                                         'static_background_error', background_error_model)
 
