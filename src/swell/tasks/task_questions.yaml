@@ -33,6 +33,7 @@ background_error_model:
   prompt: Which background error model do you want to use?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   type: string-drop-list
 
 background_experiment:
@@ -485,17 +486,6 @@ produce_geovals:
   tasks:
   - GsiNcdiagToIoda
   type: boolean
-
-static_background_error_model:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Which static background error model do you want to use?
-  tasks:
-  - GenerateBClimatologyByLinking
-  type: string-drop-list
 
 swell_static_files:
   ask_question: false

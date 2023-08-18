@@ -15,13 +15,6 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 # --------------------------------------------------------------------------------------------------
 
 
-# interface_executable = {
-#   'soca': 'soca_error_covariance_toolbox.x',
-# }
-
-# --------------------------------------------------------------------------------------------------
-
-
 class GenerateBClimatology(taskBase):
 
     def jedi_dictionary_iterator(self, jedi_config_dict):
@@ -125,6 +118,7 @@ class GenerateBClimatology(taskBase):
         # -------------------
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
+        background_error_model = self.config.background_error_model()
         self.swell_static_files = self.config.swell_static_files()
         self.horizontal_resolution = self.config.horizontal_resolution()
         self.vertical_resolution = self.config.vertical_resolution()
@@ -135,6 +129,7 @@ class GenerateBClimatology(taskBase):
         self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
 
         # Compute data assimilation window parameters
         # -------------------------------------------
@@ -155,9 +150,9 @@ class GenerateBClimatology(taskBase):
         # ----------------------------
         self.np = eval(str(model_component_meta['total_processors']))
 
-        # Obtain and initialize proper error model (only bump for now)
-        # -----------------------------------------------
-        self.background_error_model = 'bump'
+        # Obtain and initialize proper error model
+        # ----------------------------------------
+        self.background_error_model = background_error_model
         self.initialize_background()
 
 # --------------------------------------------------------------------------------------------------
