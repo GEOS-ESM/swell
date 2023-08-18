@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -12,6 +12,7 @@ import glob
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
+from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
@@ -28,10 +29,15 @@ class MoveDaRestart(taskBase):
         files requiring additional filename handling.
 
         The reason this is a separate task than MoveForecast is that the use of
-        "window_length" will require model argument.
+        "window_length" will require model argument input.
         """
 
         self.logger.info('Moving GEOS restarts to the next forecast cycle')
+        self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
+
+        # Obtain MOM6 IAU bool
+        # ----------------------
+        self.mom6_iau = self.config.mom6_iau()
 
         # Next forecast directory
         # -----------------------
@@ -90,13 +96,16 @@ class MoveDaRestart(taskBase):
         move_files(self.logger, self.forecast_dir('tile.bin'),
                    self.at_next_fcst_dir('tile.bin'))
 
-        # Consider the case of multiple MOM restarts
-        # TODO: this could/should be forced to be a single file (MOM_input option)
-        # so wildcard character can be omitted.
-        # -----------------------------------------------------------------
-        src = self.forecast_dir(['RESTART', 'MOM.res*nc'])
+        # PARALLEL_RESTARTFILES in MOM_input should be set to False or multiple
+        # restart files will be created and we don't want that
+        # ---------------------------------------------------------
+        src = []
+        src.append(self.forecast_dir(['RESTART', 'MOM.res.nc']))
 
-        for filepath in list(glob.glob(src)):
+        if(self.mom6_iau):
+            src.append(os.path.join(self.cycle_dir(), 'mom6_increment.nc'))
+
+        for filepath in src:
             filename = os.path.basename(filepath)
             move_files(self.logger, filepath, self.at_next_fcst_dir(['INPUT', filename]))
 

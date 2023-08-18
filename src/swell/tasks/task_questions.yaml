@@ -364,6 +364,17 @@ minimizer:
   - RunJediVariationalExecutable
   type: string-drop-list
 
+mom6_iau:
+  ask_question: false
+  default_value: defer_to_platform
+  models:
+  - geos_ocean
+  prompt: Do you wish to use IAU for MOM6?
+  tasks:
+  - PrepareAnalysis
+  - MoveDaRestart
+  type: boolean
+
 npx_proc:
   ask_question: true
   default_value: defer_to_model

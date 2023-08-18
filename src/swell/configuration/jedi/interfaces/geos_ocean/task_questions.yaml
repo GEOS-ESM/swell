@@ -43,6 +43,9 @@ jedi_forecast_model:
   options:
   - NA
 
+mom6_iau:
+  default_value: false
+
 minimizer:
   default_value: RPCG
   options:

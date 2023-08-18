@@ -1,4 +1,4 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# (C) Copyright 2023- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -7,11 +7,14 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from datetime import datetime as dt
 import glob
 import netCDF4 as nc
 import os
 import shutil
 
+from swell.utilities.datetime import datetime_formats
+from swell.utilities.shell_commands import run_subprocess
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -29,6 +32,14 @@ class PrepareAnalysis(taskBase):
 
         self.logger.info('Preparing analysis and updating restarts')
 
+        # This will change with different model types
+        # --------------------------------
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
+
+        model_component_meta = self.jedi_rendering.render_interface_meta()
+        self.SOCA_dict = model_component_meta['variables']
+
         # Current and restart time objects
         # --------------------------------
         self.current_cycle = os.path.basename(self.forecast_dir())
@@ -45,7 +56,18 @@ class PrepareAnalysis(taskBase):
         # TODO: This could be improved with model dependent atmosphere or ocean
         # model analysis with
         # --------------------------------------------------------------------
-        #
+        # model_components = self.get_model_components()
+
+        # Below is SOCA specific
+        # Generic analysis and increment file format independent of exp_id
+        # ---------------------------------------------------------------
+        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
+        incr_path = self.at_cycledir(['ocn.*' +
+                                      self.cc_dto.strftime('.incr.%Y-%m-%dT%H:%M:%SZ.nc')])
+
+        # Obtain MOM6 IAU bool
+        # ----------------------
+        mom6_iau = self.config.mom6_iau()
 
         # Generic rst file format
         # ------------------------
@@ -61,7 +83,12 @@ class PrepareAnalysis(taskBase):
                                        + seconds + '.nc'])
 
         self.soca_ana = self.config.analysis_variables()
-        self.replace_ocn(f_rst)
+
+        if mom6_iau:
+            self.mom6_increment(f_rst, ana_path, incr_path)
+        else:
+            self.logger.info(f'Updating restart file {f_rst} with analysis variables')
+            self.replace_ocn(f_rst, ana_path)
 
     # ----------------------------------------------------------------------------------------
 
@@ -79,6 +106,35 @@ class PrepareAnalysis(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
+    def mom6_increment(self, f_rst, ana_path, incr_path):
+
+        # This method prepares MOM6 increment file for IAU during next cycle
+        # SOCA increment does not contain layer thickness (h) variable. Hence
+        # SOCA incr needs to be combined with the h variable from
+        # the SOCA analysis file.
+
+        for filepath in list(glob.glob(ana_path)):
+            f_ana = filepath
+
+        for filepath in list(glob.glob(incr_path)):
+            f_incr = filepath
+
+        mom6_incr = self.at_cycledir('mom6_increment.nc')
+        h_ana = self.at_cycledir('h.nc')
+
+        # Define the command to extract and append the h variable from the increment
+        # file to the analysis file (-O option overwrites the existing file)
+        # -----------------------------------------------------------------------
+        command = f'ncks -O -v h {f_ana} {h_ana} \n' + \
+            f'ncks -A -v h {h_ana} {f_incr} \n' + \
+            f'mv {f_incr} {mom6_incr}'
+
+        # Containerized run of the GEOS build steps
+        # -----------------------------------------
+        run_subprocess(self.logger, ['/bin/bash', '-c', command])
+
+    # --------------------------------------------------------------------------------------------------
+
     def replace_ice(self, f_rst):
 
         '''
@@ -88,13 +144,10 @@ class PrepareAnalysis(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
-    def replace_ocn(self, f_rst):
+    def replace_ocn(self, f_rst, ana_pth):
 
         # TODO: combining stftime format with strings, safe practice?
         # -----------------------------------------------------------------
-        # Generic analysis file format independent of exp_id
-        # --------------------------------------------------
-        ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
 
         for filepath in list(glob.glob(ana_path)):
             f_ana = filepath
@@ -110,15 +163,8 @@ class PrepareAnalysis(taskBase):
         ds_ana.renameDimension('yaxis_1', 'lath')
         ds_ana.renameDimension('zaxis_1', 'Layer')
 
-        SOCA_dict = {
-            'h': 'hocn',
-            'socn': 'Salt',
-            'ssh': 'ave_ssh',
-            'tocn': 'Temp',
-        }
-
         for soca_var in self.soca_ana:
-            var = SOCA_dict[soca_var]
+            var = self.SOCA_dict[soca_var]
             self.logger.info(f'Updating {var} in restart')
 
             ds_rst.variables[var][:] = ds_ana.variables[var][:]
