@@ -50,6 +50,7 @@ setuptools.setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
+            'swell = swell.swell:main',
             'swell_task = swell.tasks.base.task_base:main',
             'swell_create_experiment = swell.deployment.bin.swell_create_experiment:main',
             'swell_prepare_experiment_config = swell.deployment.bin.swell_prepare_config:main',
