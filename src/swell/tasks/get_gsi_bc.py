@@ -27,6 +27,11 @@ class GetGsiBc(taskBase):
         # --------------------
         gsi_bc_location = self.config.path_to_gsi_bc_coefficients()
 
+        # Replace gsi_bc_location datetime string with the actual datetime
+        # --------------------------------------------------------------
+        cycle_time_dto = self.cycle_time_dto()
+        gsi_bc_location = cycle_time_dto.strftime(gsi_bc_location)
+
         # Holding directory
         gsi_bc_dir = os.path.join(self.cycle_dir(), 'gsi_bcs')
         os.makedirs(gsi_bc_dir, 0o755, exist_ok=True)
