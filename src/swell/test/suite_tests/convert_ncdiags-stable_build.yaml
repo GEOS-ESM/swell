@@ -9,6 +9,7 @@ models:
   geos_atmosphere:
     cycle_times:
     - T00
+    - T06
     clean_patterns:
     - gsi_bcs/*.nc4
     - gsi_bcs/*.txt
