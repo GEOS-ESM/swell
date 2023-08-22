@@ -21,21 +21,21 @@ geos_restarts_directory:
 
 r2d2_fetch_datastores:
   default_value:
-  - swell-r2d2-${USER}
-  - swell-r2d2-archive
-  - swell-r2d2
+  - swell-r2d2-discover-${USER}
+  - swell-r2d2-discover-archive
+  - swell-r2d2-discover
   options:
-  - swell-r2d2-${USER}
-  - swell-r2d2-archive
-  - swell-r2d2
+  - swell-r2d2-discover-${USER}
+  - swell-r2d2-discover-archive
+  - swell-r2d2-discover
 
 r2d2_store_datastores:
   default_value:
-  - swell-r2d2-${USER}
-  - swell-r2d2
+  - swell-r2d2-discover-${USER}
+  - swell-r2d2-discover
   options:
-  - swell-r2d2-${USER}
-  - swell-r2d2
+  - swell-r2d2-discover-${USER}
+  - swell-r2d2-discover
 
 swell_static_files:
   default_value: /discover/nobackup/drholdaw/SwellStaticFiles

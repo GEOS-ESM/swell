@@ -57,7 +57,8 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        os.environ['R2D2_HOST'] = 'localhost'
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
 
         # Loop over observation operators
         # -------------------------------

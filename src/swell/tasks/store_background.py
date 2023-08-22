@@ -100,7 +100,8 @@ class StoreBackground(taskBase):
         # Get r2d2 dictionary
         r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
-        os.environ['R2D2_HOST'] = 'localhost'
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
 
         # Loop over fc
         for fc in r2d2_dict['store']['fc']:

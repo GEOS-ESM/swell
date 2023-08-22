@@ -25,8 +25,6 @@ class SaveObsDiags(taskBase):
 
         # Parse config
         # ------------
-        os.environ['R2D2_HOST'] = 'localhost'
-
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observations = self.config.observations()
@@ -43,6 +41,9 @@ class SaveObsDiags(taskBase):
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
+
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
