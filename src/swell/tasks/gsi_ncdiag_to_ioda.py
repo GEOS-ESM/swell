@@ -12,6 +12,7 @@ import copy
 import datetime
 import glob
 import os
+import re
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -286,13 +287,14 @@ class GsiNcdiagToIoda(taskBase):
             if observation not in ozone_observations:
                 Diag.close()
 
-        # Rename avhrr files
-        # ------------------
-        # Rename gps files from gps_bend if they exist
-        if any('avhrr3' in item for item in observations):
-            avhrr_files = glob.glob(os.path.join(self.cycle_dir(), 'avhrr*'))
+        # Rename avhrr files to avhrr3
+        # ----------------------------
+        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]
+        if any('avhrr' in item for item in observations):
+            avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
+                                                 f'avhrr_*_obs_{gsi_datetime}.nc4'))
             for avhrr_file in avhrr_files:
-                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr', 'avhrr3')
+                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
                 os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
 
         # Rename files to be swell compliant
