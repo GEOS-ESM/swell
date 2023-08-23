@@ -13,7 +13,6 @@ models:
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua
-    #- amsua_metop-a
     - amsua_metop-b
     - amsua_metop-c
     - amsua_n15
@@ -28,7 +27,6 @@ models:
     - cris-fsr_npp
     - gmi_gpm
     #- gps
-    - iasi_metop-a
     - iasi_metop-b
     - iasi_metop-c
     - mhs_metop-b
