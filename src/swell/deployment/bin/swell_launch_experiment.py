@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -132,19 +130,11 @@ def main(suite_path, workflow_manager, no_detach, log_path):
     deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.',
                                 False)
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
-    deploy_workflow.logger.info('Workflow manager: ' + workflow_manager)
 
     # Launch the workflow
     # -------------------
     if workflow_manager == 'cylc':
         deploy_workflow.cylc_run_experiment()
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
 
 
 # --------------------------------------------------------------------------------------------------
