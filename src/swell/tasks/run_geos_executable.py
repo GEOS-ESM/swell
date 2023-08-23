@@ -20,9 +20,10 @@ class RunGeosExecutable(taskBase):
     def execute(self):
 
         # Obtain processor information from AGCM.rc
+        # Strip is required in case AGCM.rc file was rewritten
         # -----------------------------------------
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
-        np = eval(agcm_dict['NX'] + '*' + agcm_dict['NY'])
+        np = eval(agcm_dict['NX'].strip("'") + '*' + agcm_dict['NY'].strip("'"))
 
         # Create RESTART folder
         # ---------------------

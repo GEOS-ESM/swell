@@ -25,6 +25,11 @@ class GetGsiNcdiag(taskBase):
         # --------------------
         gsi_diag_path = self.config.path_to_gsi_nc_diags()
 
+        # Replace gsi_diag_path datetime string with the actual datetime
+        # --------------------------------------------------------------
+        cycle_time_dto = self.cycle_time_dto()
+        gsi_diag_path = cycle_time_dto.strftime(gsi_diag_path)
+
         # Get list of ncdiags to test with
         # --------------------------------
         gsi_diag_path_files_pattern = os.path.join(gsi_diag_path, '*ges*.nc*')

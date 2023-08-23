@@ -1,13 +1,15 @@
-final_cycle_point: '2021-12-12T00:00:00Z'
+start_cycle_point: '2021-12-12T00:00:00Z'
+final_cycle_point: '2021-12-12T06:00:00Z'
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
+existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
+existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 bundles: REMOVE
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
     cycle_times:
     - T00
+    - T06
     clean_patterns:
     - gsi_bcs/*.nc4
     - gsi_bcs/*.txt
