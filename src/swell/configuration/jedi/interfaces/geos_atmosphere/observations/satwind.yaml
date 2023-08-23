@@ -307,6 +307,7 @@ obs filters:
         variable: windEastward
         inflation factor: 4
         adjusted_error_name: GsiAdjustObsError
+        geovar_sfc_geomz: surface_geometric_height
 
 - filter: BlackList
   filter variables:
@@ -323,6 +324,7 @@ obs filters:
         variable: windNorthward
         inflation factor: 4
         adjusted_error_name: GsiAdjustObsError
+        geovar_sfc_geomz: surface_geometric_height
 
 #wgu
 # Gross Check
