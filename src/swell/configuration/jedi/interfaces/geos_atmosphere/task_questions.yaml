@@ -167,11 +167,6 @@ produce_geovals:
   - true
   - false
 
-static_background_error_model:
-  default_value: GSIbec
-  options:
-  - GSIbec
-
 vertical_resolution:
   default_value: '72'
   options:
