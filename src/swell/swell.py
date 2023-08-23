@@ -9,6 +9,7 @@
 import click
 
 from swell.deployment.prep_config import prepare_config
+from swell.tasks.base.task_base import task_main
 from swell.utilities.welcome_message import write_welcome_message
 
 # --------------------------------------------------------------------------------------------------
@@ -54,10 +55,12 @@ def launch_experiment():
 # Tasks
 # -----
 @swell_driver.command()
-@click.argument('taskname')
-def task(taskname):
-    click.echo("Task ")
-    print(taskname)
+@click.argument('task')
+@click.argument('config')
+@click.option('-d', '--datetime', 'datetime', default=None)
+@click.option('-m', '--model', 'model', default=None)
+def task(task, config, datetime, model):
+    task_main(task, config, datetime, model)
 
 # Utilities
 # ---------

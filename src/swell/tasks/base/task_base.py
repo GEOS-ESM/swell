@@ -11,7 +11,6 @@
 
 # standard imports
 from abc import ABC, abstractmethod
-import click
 import importlib
 import os
 import time
@@ -259,26 +258,6 @@ def task_main(task, config, datetime, model):
     task_object.logger.info(constrc_time)
     task_object.logger.info(execute_time)
     task_object.logger.info('-----------------------------')
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-@click.command()
-@click.argument('task')
-@click.argument('config')
-@click.option('-d', '--datetime', 'datetime', default=None)
-@click.option('-m', '--model', 'model', default=None)
-def main(task, config, datetime, model):
-
-    task_main(task, config, datetime, model)
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
 
 
 # --------------------------------------------------------------------------------------------------
