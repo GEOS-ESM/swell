@@ -358,7 +358,7 @@ limit_r2d2_storing:
   prompt: Question
   tasks:
   - SaveObsDiags
-  type: bool
+  type: boolean
 
 minimizer:
   ask_question: false
