@@ -1,0 +1,32 @@
+geometry:
+  TASKFILLgeometry
+
+window begin: '{{window_begin_iso}}'
+window length: '{{window_length}}'
+
+background:
+  TASKFILLbackground_ensemble
+
+observations:
+  observers:
+    SPECIALobservations
+
+local ensemble DA:
+  TASKFILLensemble_solver
+
+driver:
+  SPECIALensemble_driver
+
+# CE: These two will conflict without change vvvv
+output:
+  SPECIALensemble_mean_output
+
+output:
+  SPECIALensemble_members_output
+# CE: These two will conflict without change ^^^^
+
+output increment:
+  SPECIALensemble_mean_increment_output
+
+output ensemble increments:
+  SPECIALensemble_members_increment_output
