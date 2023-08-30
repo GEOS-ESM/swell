@@ -50,7 +50,7 @@ class EvaObservations(taskBase):
         # Set channels for which plots will be made
         # This should be configurable once we do the eva refactoring.
         channels_to_plot = {
-            'airs_aqua': [1,6,7],
+            'airs_aqua': [1, 6, 7],
             'cris-fsr_n20': [19, 24, 26],
             'cris-fsr_npp': [19, 24, 26],
             'iasi_metop-b': [16, 29, 32],
