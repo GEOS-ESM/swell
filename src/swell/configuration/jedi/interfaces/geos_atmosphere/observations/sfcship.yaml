@@ -54,8 +54,8 @@ obs filters:
   - name: stationPressure
   where:
   - variable: PreUseFlag/stationPressure
-    # PreUseFlag should =< ijter (1,2,or 3) in GSI
-    minvalue: 4
+    # PreUseFlag should =< ijter ( # of outloop(0,1,2) + 1) in GSI
+    minvalue: 1
   action:
     name: reject
 # PrepBUFR check to be supplemented later
@@ -164,6 +164,7 @@ obs filters:
   defer to post: true
 # Background  check
 # background check for obstype 180,183:
+# threshold 4.0 if PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: stationPressure
@@ -373,7 +374,7 @@ obs filters:
   action:
     name: reject
 # Background  check
-# ratio threshold 7.0
+# ratio threshold 7.0 if PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: airTemperature
@@ -579,7 +580,7 @@ obs filters:
   action:
     name: reject
 # Background  check
-# ratio threshold 7.0
+# ratio threshold 7.0 if PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: virtualTemperature
@@ -684,7 +685,7 @@ obs filters:
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorPressureCheck@ObsFunction
+      name: ObsFunction/ObsErrorFactorPressureCheck
       options:
         variable: specificHumidity
         inflation factor: 8
@@ -692,7 +693,7 @@ obs filters:
         geovar_sfc_geomz: surface_geometric_height
 
 # Background  check
-# ratio threshold 7.0
+# ratio threshold 8.0 PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: specificHumidity
@@ -800,7 +801,7 @@ obs filters:
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorPressureCheck@ObsFunction
+      name: ObsFunction/ObsErrorFactorPressureCheck
       options:
         variable: windEastward
         inflation factor: 4.0
@@ -814,7 +815,7 @@ obs filters:
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorPressureCheck@ObsFunction
+      name: ObsFunction/ObsErrorFactorPressureCheck
       options:
         variable: windNorthward
         inflation factor: 4.0
@@ -822,7 +823,7 @@ obs filters:
         geovar_sfc_geomz: surface_geometric_height
 
 # Background  check
-# ratio threshold 6.0
+# ratio threshold 6.0 if PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: windEastward
@@ -846,7 +847,7 @@ obs filters:
   defer to post: true
 
 # Background  check
-# ratio threshold 6.0
+# ratio threshold 6.0 if PreQC /= 3
 - filter: Background Check
   filter variables:
   - name: windNorthward
@@ -875,7 +876,7 @@ obs filters:
   filter variables:
   - name: windEastward
   function absolute threshold:
-  - name: WindsSPDBCheck@ObsFunction
+  - name: ObsFunction/WindsSPDBCheck
     options:
       satwndtype: [  280, 282, 284 ]
       error_min: [ 1.4, 1.4, 1.4 ]
@@ -893,7 +894,7 @@ obs filters:
   filter variables:
   - name: windNorthward
   function absolute threshold:
-  - name: WindsSPDBCheck@ObsFunction
+  - name: ObsFunction/WindsSPDBCheck
     options:
       satwndtype: [  280, 282, 284 ]
       error_min: [ 1.4, 1.4, 1.4 ]
