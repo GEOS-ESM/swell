@@ -56,7 +56,12 @@ class Config():
         # Save some things that all tasks can use
         self.__experiment_root__ = experiment_dict.get('experiment_root')
         self.__experiment_id__ = experiment_dict.get('experiment_id')
-        self.__model_components__ = experiment_dict.get('model_components')
+
+        # If experiment_dict contains models key add the model components to the object
+        if 'models' in experiment_dict.keys():
+            self.__model_components__ = list(experiment_dict['models'].keys())
+        else:
+            self.__model_components__ = None
 
         # Step1: flatten the dictionary based on the model
         # ------------------------------------------------

@@ -25,91 +25,91 @@ airs_aqua:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 360232
 
 amsr2_gcom-w1:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 54558
 
 amsua_aqua:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
-
-amsua_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 0
 
 amsua_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 71950
 
 amsua_metop-c:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 91419
 
 amsua_n15:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 56139
 
 amsua_n18:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 69693
 
 amsua_n19:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 73421
 
 atms_n20:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 159928
 
 atms_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 158687
 
-avhrr3_metop-a:
+avhrr3_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 4940
 
 avhrr3_n18:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 5455
+
+avhrr3_n19:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 4948
 
 cris-fsr_n20:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 220381
 
 cris-fsr_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 210942
 
 gmi_gpm:
   operator_test:
@@ -117,13 +117,7 @@ gmi_gpm:
   filter_test:
     passedBenchmark: 41937
 
-gnssrobndnbam:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
-iasi_metop-a:
+gps:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
@@ -133,25 +127,31 @@ iasi_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 561875
+
+iasi_metop-c:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 558904
 
 mhs_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 29630
 
 mhs_metop-c:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 29815
 
 mhs_n19:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 27823
 
 mls55_aura:
   operator_test:
@@ -160,12 +160,6 @@ mls55_aura:
     passedBenchmark: 1
 
 omi_aura:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
-ompslpnc_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
@@ -181,7 +175,7 @@ satwind:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 205802   # was 231948
 
 scatwind:
   operator_test:
@@ -211,10 +205,4 @@ ssmis_f17:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
-
-vadwind:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 48462

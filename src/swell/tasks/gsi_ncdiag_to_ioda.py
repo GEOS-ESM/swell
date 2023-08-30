@@ -12,6 +12,7 @@ import copy
 import datetime
 import glob
 import os
+import re
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -111,14 +112,18 @@ class GsiNcdiagToIoda(taskBase):
 
             # Path to search to GSI ncdiag files
             path_to_search = os.path.join(gsi_diag_dir, extra_path,
-                                          f'*{gsi_type_to_process_actual}*{gsi_datetime_str}*')
+                                          f'*{gsi_type_to_process_actual}_*{gsi_datetime_str}*')
 
             # Get the list of files
             gsi_conv_file = glob.glob(path_to_search)
 
-            # Check that at least one file was found
+            # Check that some files where found
+            self.logger.assert_abort(len(gsi_conv_file) != 0, 'The search for GSI ncdiags files ' +
+                                     f'returned no files. Search path: \'{path_to_search}\'')
+
+            # Check that only one file was found
             self.logger.assert_abort(len(gsi_conv_file) == 1, 'The search for GSI ncdiags files ' +
-                                     f'returned more than one file. Search: \'{gsi_conv_file}\'')
+                                     f'returned more than one file. Files: \'{gsi_conv_file}\'')
 
             # Open the file
             Diag = gsid.Conv(gsi_conv_file[0])
@@ -140,6 +145,13 @@ class GsiNcdiagToIoda(taskBase):
 
             Diag.close()
 
+        # Rename gps files from gps_bend if they exist
+        if 'gps' in observations_orig:
+            gps_files = glob.glob(os.path.join(self.cycle_dir(), 'gps_bend*'))
+            for gps_file in gps_files:
+                gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
+                os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
+
         # Combine the conventional data
         # -----------------------------
         for needed_ioda_type in needed_ioda_types:
@@ -151,10 +163,19 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info('-'*len(log_str))
 
             # Check the number of files that are found
-            ioda_type_pattern = f'*{needed_ioda_type}*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
+            ioda_type_pattern = f'{needed_ioda_type}*_obs_*'  # Pattern, e.g.: *aircraft*_obs_*
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
+
+            # For sfc make sure there are no surface ship files
+            if needed_ioda_type == 'sfc':
+                ioda_path_files = [x for x in ioda_path_files if 'sfcship' not in x]
+
+            # Show files that will be combined
+            self.logger.info(f'Files to combine:')
+            for ioda_path_file in ioda_path_files:
+                self.logger.info(f' - {os.path.basename(ioda_path_file)}')
 
             # Check that there are some files to combine
             self.logger.assert_abort(len(ioda_path_files) > 0, f'In combine of ' +
@@ -213,6 +234,7 @@ class GsiNcdiagToIoda(taskBase):
 
             elif len(ioda_file_0_) == 3:
                 self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
+
             else:
                 self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
 
@@ -225,13 +247,24 @@ class GsiNcdiagToIoda(taskBase):
                 if ozone_sensor in observation:
                     ozone_observations.append(observation)
 
-        # Copy all the files into the cycle directory
-        # -------------------------------------------
+        # Transform radiances and ozone
+        # -----------------------------
         for observation in observations:
 
             self.logger.info(f'Converting {observation} to IODA format')
 
-            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation}*'))
+            observation_search_name = copy.copy(observation)
+
+            # For avhrr replace the search with just avhrr
+            if 'avhrr3' in observation_search_name:
+                observation_search_name = observation_search_name.replace('avhrr3', 'avhrr')
+
+            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation_search_name}*'))
+
+            # Skip this observation if not files were found
+            if len(gsi_obs_file) == 0:
+                self.logger.info(f'No observation files found for {observation}. Skipping convert')
+                continue
 
             if observation not in ozone_observations:
 
@@ -254,27 +287,64 @@ class GsiNcdiagToIoda(taskBase):
             if observation not in ozone_observations:
                 Diag.close()
 
+        # Rename avhrr files to avhrr3
+        # ----------------------------
+        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]  # noqa
+        if any('avhrr' in item for item in observations):
+            avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
+                                                 f'avhrr_*_obs_{gsi_datetime}.nc4'))
+            for avhrr_file in avhrr_files:
+                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
+                os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
+
         # Rename files to be swell compliant
         # ----------------------------------
         for observation in observations_orig:
 
-            # Input filename
-            ioda_obs_in_pattern = f'{observation}_obs_*nc*'
-            ioda_obs_in = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))[0]
+            self.logger.info(f'Renaming \'{observation}\' to be swell compliant')
 
-            ioda_obs_out = f'{observation}.{window_begin}.nc4'
+            # Change to gps_bend
+            search_name = observation
+
+            # Input filename
+            ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
+
+            ioda_obs_in_found = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))
+
+            # If nothing found then skipt this observation
+            if len(ioda_obs_in_found) == 0:
+                self.logger.info(f'No observation files found for {observation}. Skipping rename')
+                continue
+
+            ioda_obs_in = ioda_obs_in_found[0]
+
+            ioda_obs_out = f'{search_name}.{window_begin}.nc4'
 
             os.rename(ioda_obs_in, os.path.join(self.cycle_dir(), ioda_obs_out))
 
             # Rename GeoVaLs file if need be
             if produce_geovals:
-                ioda_geoval_in_pattern = f'{observation}_geoval_*.nc*'
+                ioda_geoval_in_pattern = f'{search_name}_geoval_*.nc*'
                 ioda_geoval_in = glob.glob(os.path.join(self.cycle_dir(),
                                                         ioda_geoval_in_pattern))[0]
 
-                ioda_geoval_out = f'{observation}_geovals.{window_begin}.nc4'
+                ioda_geoval_out = f'{search_name}_geovals.{window_begin}.nc4'
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
+        # Remove left over files
+        # ------------------------------
+
+        self.logger.info('Removing residual files...')
+
+        patterns = [
+            '*_geoval_*',
+        ]
+
+        for pattern in patterns:
+            geoval_files = glob.glob(os.path.join(self.cycle_dir(), pattern))
+            for geoval_file in geoval_files:
+                self.logger.info(f' - Removing {os.path.basename(geoval_file)}')
+                os.remove(geoval_file)
 
 # --------------------------------------------------------------------------------------------------

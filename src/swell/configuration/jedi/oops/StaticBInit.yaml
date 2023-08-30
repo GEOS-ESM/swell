@@ -3,7 +3,6 @@
 
 geometry:
   TASKFILLgeometry
-analysis variables: {{analysis_variables}}
 background:
   TASKFILLbackground
 background error:

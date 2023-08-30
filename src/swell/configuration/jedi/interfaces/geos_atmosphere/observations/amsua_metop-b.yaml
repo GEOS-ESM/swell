@@ -80,7 +80,7 @@ obs filters:
     action:
       name: reject
 # Assign obs error
-  - filter: Bounds Check
+  - filter: Perform Action
     filter variables:
     - name: brightnessTemperature
       channels: 1-15
@@ -195,7 +195,7 @@ obs filters:
       channels: 1-15
       options:
         channels: 1-15
-        use passive_bc: true
+#       use passive_bc: true
         use_flag: [-1, -1, -1, -1, -1,
                    -1,  1,  1,  1,  1,
                     1,  1,  1,  1, -1]

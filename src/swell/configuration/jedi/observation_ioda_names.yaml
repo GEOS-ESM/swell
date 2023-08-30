@@ -33,13 +33,15 @@ ioda instrument names:
     full name: AVHRR-3 (NOAA-18)
   - ioda name: avhrr3_n19
     full name: AVHRR-3 (NOAA-19)
+  - ioda name: avhrr3_metop-b
+    full name: AVHRR-3 (METOP-B)
   - ioda name: cris-fsr_n20
     full name: CRIS-FSR (NOAA-20)
   - ioda name: cris-fsr_npp
     full name: CRIS-FSR (NPP)
   - ioda name: gmi_gpm
     full name: GMI (GPM)
-  - ioda name: gnssrobndnbam
+  - ioda name: gps
     full name: GNSSRO
   - ioda name: gome_metop-a
     full name: GOME (METOP-A)
@@ -51,6 +53,8 @@ ioda instrument names:
     full name: IASI (METOP-A)
   - ioda name: iasi_metop-b
     full name: IASI (METOP-B)
+  - ioda name: iasi_metop-c
+    full name: IASI (METOP-C)
   - ioda name: mhs_metop-a
     full name: MHS (METOP-A)
   - ioda name: mhs_metop-b

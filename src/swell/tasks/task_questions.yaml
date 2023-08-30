@@ -10,7 +10,7 @@ analysis_forecast_window_offset:
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 analysis_variables:
   ask_question: false
@@ -19,6 +19,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
+  - GenerateBClimatology
   - PrepareAnalysis
   - RunJediVariationalExecutable
   type: string-check-list
@@ -32,6 +33,7 @@ background_error_model:
   prompt: Which background error model do you want to use?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   type: string-drop-list
 
 background_experiment:
@@ -59,7 +61,7 @@ background_frequency:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 background_time_offset:
   ask_question: false
@@ -77,7 +79,7 @@ background_time_offset:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
-  type: duration
+  type: iso-duration
 
 bundles:
   ask_question: true
@@ -85,6 +87,10 @@ bundles:
   - fv3-jedi
   - soca
   - iodaconv
+  - ufo
+  depends:
+    key: jedi_build_method
+    value: create
   options:
   - fv3-jedi
   - soca
@@ -173,14 +179,14 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: defer_to_model
+  default_value: P1D
   models:
   - all
   prompt: GEOS forecast duration
   tasks:
   - MoveForecastRestart
   - PrepGeosRunDir
-  type: duration
+  type: iso-duration
 
 generate_yaml_and_exit:
   ask_question: false
@@ -200,7 +206,7 @@ geos_background_restart_offset:
   prompt: Duration before the middle of the window used in GEOS restart tar file.
   tasks:
   - GetBackgroundGeosExperiment
-  type: duration
+  type: iso-duration
 
 geos_bkg_filename_template:
   ask_question: true
@@ -224,7 +230,7 @@ geos_bkg_tar_filename_template:
 
 geos_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -323,7 +329,7 @@ jedi_bkg_filename_template:
 
 jedi_build_method:
   ask_question: true
-  default_value: use_existing
+  default_value: create
   options:
   - use_existing
   - create
@@ -481,22 +487,9 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
-static_background_error_model:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Which static background error model do you want to use?
-  tasks:
-  - GenerateBClimatologyByLinking
-  type: string-drop-list
-
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the Swell Static files directory?
   tasks:
   - GenerateBClimatology
@@ -509,8 +502,6 @@ swell_static_files:
 swell_static_files_user:
   ask_question: false
   default_value: None
-  models:
-  - all
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - GenerateBClimatologyByLinking
@@ -525,7 +516,6 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - PrepareAnalysis
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   type: integer
@@ -560,7 +550,7 @@ window_length:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_offset:
   ask_question: true
@@ -570,6 +560,7 @@ window_offset:
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - EvaObservations
+  - GenerateBClimatology
   - GetBackground
   - GetGeovals
   - GetObservations
@@ -580,11 +571,11 @@ window_offset:
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground
-  type: duration
+  type: iso-duration
 
 window_type:
   ask_question: true
-  default_value: 4D
+  default_value: defer_to_model
   models:
   - all
   options:
@@ -592,6 +583,7 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - GenerateBClimatology
   - GetBackground
   - RunJediHofxExecutable
   - RunJediVariationalExecutable

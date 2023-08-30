@@ -1,4 +1,4 @@
-name: Swell Test Suite
+name: Swell Code Testing
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   testsuite:
-    name: Run swell test suite
+    name: Run swell coding testing
     runs-on: ubuntu-latest
 
     steps:
@@ -49,6 +49,6 @@ jobs:
     - name: Put swell in the path
       run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    # Run the swell test suite
-    - name: Run swell test suite
-      run: swell_test_suite
+    # Run the swell code tests
+    - name: Run swell code tests
+      run: swell_tests_code

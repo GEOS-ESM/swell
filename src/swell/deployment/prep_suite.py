@@ -9,6 +9,7 @@
 
 
 import os
+import yaml
 
 from swell.utilities.dictionary import dict_get
 from swell.utilities.jinja2 import template_string_jinja2
@@ -87,57 +88,68 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                          'to gather them from or they are not provided in the experiment ' +
                          'dictionary.')
 
-    # Add scheduling to the render dictionary (TODO: do not hard code this)
-    # ---------------------------------------
+    # Look for a file called $HOME/.swell/slurm.yaml
+    # ----------------------------------------------
+    yaml_path = os.path.expanduser("~/.swell/swell-slurm.yaml")
+    slurm_global = {}
+    if os.path.exists(yaml_path):
+        logger.info(f'Found file contianing swell slurm global values')
+        with open(yaml_path, "r") as yaml_file:
+            slurm_global = yaml.safe_load(yaml_file)
+
+    # Set default values for global slurm values
+    account = 'g0613'
+    qos = 'allnccs'
+    partition = None
+    constraint = 'cas|sky'
+
+    # Extract from slurm global file
+    if 'qos' in slurm_global:
+        qos = slurm_global['qos']
+
+    if 'partition' in slurm_global:
+        partition = slurm_global['partition']
+
+    if 'account' in slurm_global:
+        account = slurm_global['account']
+
+    if 'constraint' in slurm_global:
+        constraint = slurm_global['constraint']
+
+    # List of tasks using slurm
+    # -------------------------
+    slurm_tasks = [
+        'BuildJedi',
+        'BuildGeos',
+        'GenerateBClimatology',
+        'RunJediHofxExecutable',
+        'RunJediVariationalExecutable',
+        'RunJediUfoTestsExecutable',
+        'RunGeosExecutable',
+        ]
+
+    # Fill default values for slurm tasks
+    # -----------------------------------
     render_dictionary['scheduling'] = {}
+    for slurm_task in slurm_tasks:
+        render_dictionary['scheduling'][slurm_task] = {}
+        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
+        render_dictionary['scheduling'][slurm_task]['account'] = account
+        render_dictionary['scheduling'][slurm_task]['qos'] = qos
+        render_dictionary['scheduling'][slurm_task]['nodes'] = 1
+        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 24
+        render_dictionary['scheduling'][slurm_task]['constraint'] = constraint
+        render_dictionary['scheduling'][slurm_task]['partition'] = partition
 
-    render_dictionary['scheduling']['BuildJedi'] = {}
+    # Set some specific values for:
+    # -----------------------------
+
+    # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
-    render_dictionary['scheduling']['BuildJedi']['account'] = 'g0613'
-    render_dictionary['scheduling']['BuildJedi']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['BuildJedi']['nodes'] = 1
-    render_dictionary['scheduling']['BuildJedi']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['BuildJedi']['constraint'] = 'cas|sky|hasw'
-
-    render_dictionary['scheduling']['BuildGeos'] = {}
-    render_dictionary['scheduling']['BuildGeos']['execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['BuildGeos']['account'] = 'g0613'
-    render_dictionary['scheduling']['BuildGeos']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['BuildGeos']['nodes'] = 1
-    render_dictionary['scheduling']['BuildGeos']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['BuildGeos']['constraint'] = 'cas|sky|hasw'
-
-    render_dictionary['scheduling']['GenerateBClimatology'] = {}
-    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT15M'
-    render_dictionary['scheduling']['GenerateBClimatology']['account'] = 'g0613'
-    render_dictionary['scheduling']['GenerateBClimatology']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['GenerateBClimatology']['nodes'] = 1
-    render_dictionary['scheduling']['GenerateBClimatology']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['GenerateBClimatology']['constraint'] = 'cas|sky|hasw'
-
-    render_dictionary['scheduling']['RunJediHofxExecutable'] = {}
     render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediHofxExecutable']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['RunJediHofxExecutable']['constraint'] = 'cas|sky|hasw'
 
-    render_dictionary['scheduling']['RunJediVariationalExecutable'] = {}
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['constraint'] = 'cas|sky|hasw'
-
-    render_dictionary['scheduling']['RunGeosExecutable'] = {}
-    render_dictionary['scheduling']['RunGeosExecutable']['execution_time_limit'] = 'PT30M'
-    render_dictionary['scheduling']['RunGeosExecutable']['account'] = 'g0613'
-    render_dictionary['scheduling']['RunGeosExecutable']['qos'] = 'allnccs'
-    render_dictionary['scheduling']['RunGeosExecutable']['nodes'] = 1
-    render_dictionary['scheduling']['RunGeosExecutable']['ntasks_per_node'] = 24
-    render_dictionary['scheduling']['RunGeosExecutable']['constraint'] = 'cas|sky|hasw'
+    # nodes
+    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
 
     render_dictionary['scheduling']['RunJediUfoTestsExecutable'] = {}
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['execution_time_limit'] = 'PT30M'  # noqa

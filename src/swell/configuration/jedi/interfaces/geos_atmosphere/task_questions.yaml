@@ -18,7 +18,7 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0044
+  default_value: x0048
 
 background_frequency:
   default_value: PT1H
@@ -32,10 +32,6 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
-forecast_duration:
-  default_value:
-  - PT6H
-
 geos_background_restart_offset:
   default_value: TODO
 
@@ -46,7 +42,7 @@ geos_bkg_tar_filename_template:
   default_value: TODO
 
 geovals_experiment:
-  default_value: x0044_test_obs_filters_geovals
+  default_value: x0048-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -55,9 +51,9 @@ gradient_norm_reduction:
   default_value: 10e-5
 
 horizontal_resolution:
-  default_value: C361
+  default_value: '361'
   options:
-  - C361
+  - '361'
 
 jedi_bkg_filename_template:
   default_value: TODO
@@ -79,10 +75,11 @@ npy_proc:
   default_value: 2
 
 number_of_iterations:
-  default_value: 50
+  default_value:
+  - 50
 
 obs_experiment:
-  default_value: x0044_v3
+  default_value: x0048
 
 obs_provider:
   default_value: ncdiag
@@ -90,31 +87,67 @@ obs_provider:
 observations:
   default_value:
   - aircraft
-  - amsua_n19
+  - gps
+  - satwind
+  - scatwind
+  - sfcship
+  - sfc
+  - sondes
+  - airs_aqua
+  - amsr2_gcom-w1
   - amsua_aqua
-  - amsua_metop-a
   - amsua_metop-b
   - amsua_metop-c
   - amsua_n15
   - amsua_n18
   - amsua_n19
+  - atms_n20
+  - atms_npp
+  - avhrr3_metop-b
+  - avhrr3_n18
+  - avhrr3_n19
+  - cris-fsr_n20
+  - cris-fsr_npp
   - gmi_gpm
-  - amsr2_gcom-w1
+  - iasi_metop-b
+  - iasi_metop-c
+  - mhs_metop-b
+  - mhs_metop-c
+  - mhs_n19
+  - ssmis_f17
   - mls55_aura
   - omi_aura
   - ompsnm_npp
   options:
   - aircraft
-  - amsua_n19
+  - gps
+  - satwind
+  - scatwind
+  - sfcship
+  - sfc
+  - sondes
+  - airs_aqua
+  - amsr2_gcom-w1
   - amsua_aqua
-  - amsua_metop-a
   - amsua_metop-b
   - amsua_metop-c
   - amsua_n15
   - amsua_n18
   - amsua_n19
+  - atms_n20
+  - atms_npp
+  - avhrr3_metop-b
+  - avhrr3_n18
+  - avhrr3_n19
+  - cris-fsr_n20
+  - cris-fsr_npp
   - gmi_gpm
-  - amsr2_gcom-w1
+  - iasi_metop-b
+  - iasi_metop-c
+  - mhs_metop-b
+  - mhs_metop-c
+  - mhs_n19
+  - ssmis_f17
   - mls55_aura
   - omi_aura
   - ompsnm_npp
@@ -123,12 +156,10 @@ path_to_geos_adas_background:
   default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
 
 path_to_gsi_bc_coefficients:
-  default_value:
-  - /discover/nobackup/drholdaw/SwellTestData/geosadas/bc
+  default_value: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/bc/%Y%m%d%H
 
 path_to_gsi_nc_diags:
-  default_value:
-  - /discover/nobackup/drholdaw/SwellTestData/geosadas/obs
+  default_value: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiag/%Y%m%d%H
 
 produce_geovals:
   default_value: true
@@ -136,19 +167,17 @@ produce_geovals:
   - true
   - false
 
-static_background_error_model:
-  default_value: GSIbec
-  options:
-  - GSIbec
-
 vertical_resolution:
-  default_value: 72
+  default_value: '72'
   options:
-  - 72
+  - '72'
 
 window_length:
   default_value: PT6H
 
 window_offset:
   default_value: PT3H
+
+window_type:
+  default_value: 4D
 

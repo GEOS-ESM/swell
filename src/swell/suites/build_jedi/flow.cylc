@@ -55,5 +55,8 @@
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
 
 # --------------------------------------------------------------------------------------------------

@@ -42,18 +42,22 @@
             # Convert bias correction to ioda
             GetGsiBc
             GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
 
             # Convert ncdiags to ioda
             GetGsiNcdiag
             GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+            GetGeovals
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediTestObsFiltersExecutable
-            GsiNcdiagToIoda => RunJediTestObsFiltersExecutable
-            GsiBcToIoda => RunJediTestObsFiltersExecutable
+            GsiNcdiagToIoda => RunJediUfoTestsExecutable
+            GsiBcToIoda => RunJediUfoTestsExecutable
+            GetGeovals => RunJediUfoTestsExecutable
 
             # EvaObservations
-            RunJediTestObsFiltersExecutable => EvaObservations
+            RunJediUfoTestsExecutable => EvaObservations
 
             # Clean up large files
             EvaObservations => CleanCycle
@@ -93,6 +97,9 @@
             --nodes={{scheduling["BuildJedi"]["nodes"]}}
             --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
             --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
 
     [[ GetGsiBc ]]
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
@@ -106,6 +113,9 @@
     [[ GsiNcdiagToIoda ]]
         script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
 
+    [[ GetGeovals ]]
+        script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
+
     [[RunJediUfoTestsExecutable]]
         script = "swell_task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
@@ -117,6 +127,9 @@
             --nodes={{scheduling["RunJediUfoTestsExecutable"]["nodes"]}}
             --ntasks-per-node={{scheduling["RunJediUfoTestsExecutable"]["ntasks_per_node"]}}
             --constraint={{scheduling["RunJediUfoTestsExecutable"]["constraint"]}}
+            {% if scheduling["RunJediUfoTestsExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediUfoTestsExecutable"]["partition"]}}
+            {% endif %}
 
     [[EvaObservations]]
         script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"
