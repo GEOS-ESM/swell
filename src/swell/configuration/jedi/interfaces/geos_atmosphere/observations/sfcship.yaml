@@ -318,7 +318,6 @@ obs filters:
         variable: airTemperature
         inflation factor: 8.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
   defer to post: true
 # assign TempObsErrorData/airTemperature  <--- ObsErrorData before changing its Min and Max
 - filter: Variable Assignment
@@ -524,7 +523,6 @@ obs filters:
         variable: virtualTemperature
         inflation factor: 8.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
   defer to post: true
 
 # assign TempObsErrorData/virtualTemperature  <--- ObsErrorData before changing its Min and Max
