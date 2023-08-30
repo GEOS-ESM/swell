@@ -47,6 +47,16 @@ class EvaObservations(taskBase):
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
+        # Set channels for which plots will be made
+        # This should be configurable once we do the eva refactoring.
+        channels_to_plot = {
+            'airs_aqua': [1, 6, 7],
+            'cris-fsr_n20': [19, 24, 26],
+            'cris-fsr_npp': [19, 24, 26],
+            'iasi_metop-b': [16, 29, 32],
+            'iasi_metop-c': [16, 29, 32],
+            }
+
         # Loop over observations
         # -------------------
         for observation in self.config.observations():
@@ -89,7 +99,10 @@ class EvaObservations(taskBase):
 
             if 'channels' in observation_dict['obs space']:
                 need_channels = True
-                eva_override['channels'] = observation_dict['obs space']['channels']
+                if observation in channels_to_plot:
+                    eva_override['channels'] = channels_to_plot[observation]
+                else:
+                    eva_override['channels'] = observation_dict['obs space']['channels']
             else:
                 need_channels = False
                 eva_override['channels'] = ''

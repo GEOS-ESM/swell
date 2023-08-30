@@ -64,7 +64,14 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Make modifications needed for testing
         # -------------------------------------
-        conventional_types = ['aircraft']
+        conventional_types = [
+            'aircraft',
+            'satwind',
+            'scatwind',
+            'sfcship',
+            'sfc',
+            'sondes'
+        ]
 
         # Open the ufo_tests config file
         # ------------------------------
@@ -152,7 +159,7 @@ class RunJediUfoTestsExecutable(taskBase):
             # Run the Test Obs Filters executable
             # -----------------------------------
             if not generate_yaml_and_exit:
-                run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path,
+                run_executable(self.logger, self.cycle_dir(), 24, jedi_executable_path,
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')

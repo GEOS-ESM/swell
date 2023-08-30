@@ -32,7 +32,7 @@ def ioda_name_to_long_name(ioda_name, logger):
     obs_ioda_names = obs_ioda_names_dict['ioda instrument names']
 
     # Loop over list of valid names
-    found = True
+    found = False
     for obs_ioda_name in obs_ioda_names:
         if ioda_name == obs_ioda_name['ioda name']:
             long_name = obs_ioda_name['full name']
@@ -41,7 +41,7 @@ def ioda_name_to_long_name(ioda_name, logger):
 
     # Check something found
     if not found:
-        logger.abort('In ioda_name_to_long_name the string ' + full_string + 'does not ' +
+        logger.abort('In ioda_name_to_long_name the string \'' + ioda_name + '\' does not ' +
                      f'contain one of the valid instruments: {obs_ioda_names} . Additional ' +
                      'instruments can be added to swell/configuration/observation_ioda_names.yaml')
 
