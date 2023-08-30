@@ -1,0 +1,30 @@
+# Cycle start point
+start_cycle_point:
+  default_value: '2021-12-12T00:00:00Z'
+  prompt: What is the time of the first cycle (middle of the window)?
+  type: iso-datetime
+
+# Cycle final point
+final_cycle_point:
+  default_value: '2021-12-12T06:00:00Z'
+  prompt: What is the time of the final cycle (middle of the window)?
+  type: iso-datetime
+
+# R2D2 Configuration
+r2d2_local_path:
+  ask_question: False
+  default_value: defer_to_platform
+  prompt: Enter the path where R2D2 will store experiment output
+  type: string
+
+# LETKF driver options -- where would I put these???
+driver_options:
+  ask_question: True
+  default_value: mean # i.e. 'save posterior mean: true'
+  options:
+    - mean
+    - ensemble
+    - mean increment
+    - ensemble increments
+  prompt: Which posterior to save?
+  type: string-drop-list
