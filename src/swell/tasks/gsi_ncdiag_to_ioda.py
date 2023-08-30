@@ -289,7 +289,7 @@ class GsiNcdiagToIoda(taskBase):
 
         # Rename avhrr files to avhrr3
         # ----------------------------
-        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]
+        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]  # noqa
         if any('avhrr' in item for item in observations):
             avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
                                                  f'avhrr_*_obs_{gsi_datetime}.nc4'))
