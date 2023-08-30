@@ -199,7 +199,7 @@ sfcship:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 99142
 
 sfc:
   operator_test:
