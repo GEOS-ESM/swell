@@ -42,7 +42,7 @@ geos_bkg_tar_filename_template:
   default_value: TODO
 
 geovals_experiment:
-  default_value: x0048-geovals_
+  default_value: x0048-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -79,7 +79,7 @@ number_of_iterations:
   - 50
 
 obs_experiment:
-  default_value: x0048_
+  default_value: x0048
 
 obs_provider:
   default_value: ncdiag
