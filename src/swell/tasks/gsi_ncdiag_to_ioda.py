@@ -93,6 +93,21 @@ class GsiNcdiagToIoda(taskBase):
         gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['gsi_nc_diag_format'])
 
+        # Clean up any files that are the end result of this program, in case of multiple runs
+        # ------------------------------------------------------------------------------------
+        for observation in observations_orig:
+
+            obs_file = f'{observation}_obs.{window_begin}.nc4'
+            geo_file = f'{observation}_geovals.{window_begin}.nc4'
+
+            # If obs_file exists remove it
+            if os.path.exists(os.path.join(self.cycle_dir(), obs_file)):
+                os.remove(os.path.join(self.cycle_dir(), obs_file))
+
+            # If obs_file exists remove it
+            if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
+                os.remove(os.path.join(self.cycle_dir(), geo_file))
+
         # First process the conventional data (if needed)
         # -----------------------------------------------
         for gsi_type_to_process in gsi_types_to_process:
@@ -293,6 +308,9 @@ class GsiNcdiagToIoda(taskBase):
         if any('avhrr' in item for item in observations):
             avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
                                                  f'avhrr_*_obs_{gsi_datetime}.nc4'))
+            # Add geovals files
+            avhrr_files = avhrr_files + glob.glob(os.path.join(self.cycle_dir(),
+                                                 f'avhrr_*_geoval_{gsi_datetime}.nc4'))
             for avhrr_file in avhrr_files:
                 avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
                 os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))

@@ -5,7 +5,6 @@ bundles: REMOVE
 models:
   geos_atmosphere:
     observations:
-    - aircraft
     - gmi_gpm
     - amsr2_gcom-w1
     - mls55_aura

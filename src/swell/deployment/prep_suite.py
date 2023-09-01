@@ -148,9 +148,6 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
 
-    # nodes
-    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
-
     # Render the template
     # -------------------
     new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)

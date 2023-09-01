@@ -9,6 +9,7 @@
 
 
 import glob
+import isodate
 import os
 import shutil
 import tarfile
@@ -26,59 +27,52 @@ class GetGsiBc(taskBase):
         # Get the build method
         # --------------------
         gsi_bc_location = self.config.path_to_gsi_bc_coefficients()
+        window_length = self.config.window_length()
+
+        # Time of GSI analysis providing the bias correction coefficients
+        # ---------------------------------------------------------------
+        gsi_bc_ana_time = self.cycle_time_dto() - isodate.parse_duration(window_length)
 
         # Replace gsi_bc_location datetime string with the actual datetime
         # --------------------------------------------------------------
         cycle_time_dto = self.cycle_time_dto()
-        gsi_bc_location = cycle_time_dto.strftime(gsi_bc_location)
+        gsi_bc_location = gsi_bc_ana_time.strftime(gsi_bc_location)
+
+        # Get list of matching files
+        # --------------------------
+        bc_files = glob.glob(gsi_bc_location)
 
         # Holding directory
         gsi_bc_dir = os.path.join(self.cycle_dir(), 'gsi_bcs')
         os.makedirs(gsi_bc_dir, 0o755, exist_ok=True)
 
-        # Get list of bias correction files to copy
-        # -----------------------------------------
-        files_found = False
+        # Check whether the found file is a tar file
+        # ------------------------------------------
+        if len(bc_files) == 1 and tarfile.is_tarfile(bc_files[0]):
 
-        if os.path.isdir(gsi_bc_location):
+            self.logger.abort('Support for extracting from tar files needs testing. Not supported')
 
-            # Get list of matching files in the directory
-            ana_satbias_rst = glob.glob(os.path.join(gsi_bc_location, '*.ana.satbias.*'))
-            ana_satbiaspc_rst = glob.glob(os.path.join(gsi_bc_location, '*.ana.satbiaspc.*'))
+            # # Extract the tar file
+            # bc_tar = tarfile.open(bc_files[0])
 
-            # Record that files were found
-            if len(ana_satbias_rst) == 1 and len(ana_satbiaspc_rst) == 1:
-                files_found = True
+            # # Loop over files in tar file
+            # for bc_tar_file in bc_tar.getnames():
 
-            # Report if too many files were found
-            if len(ana_satbias_rst) > 1 or len(ana_satbiaspc_rst) > 1:
-                self.logger.abort(f'In GetGsiBc too many files were found in the directory.')
+                # # If bias file found, extract it
+                # if 'bias' in bc_tar_file:
+                    # bc_tar.extract(bc_tar_file, gsi_bc_dir)
 
-            # Copy files
-            shutil.copy(ana_satbias_rst[0], gsi_bc_dir)
-            shutil.copy(ana_satbiaspc_rst[0], gsi_bc_dir)
+            # # Close file
+            # bc_tar.close()
 
-        elif tarfile.is_tarfile(gsi_bc_location):
+            # Should rename the files to be the same e.g. ana.satbias.date etc
 
-            bc_tar = tarfile.open(gsi_bc_location)
-            found_satbias = False
-            found_satbiaspc = False
-            for bc_tar_file in bc_tar.getnames():
-                if 'ana_satbias_rst' in bc_tar_file:
-                    bc_tar.extract(bc_tar_file, gsi_bc_dir)
-                    found_satbias = True
-                if 'ana_satbiaspc_rst' in bc_tar_file:
-                    bc_tar.extract(bc_tar_file, gsi_bc_dir)
-                    found_satbiaspc = True
-            bc_tar.close()
+        else:
 
-            # Record that files were found
-            if found_satbias and found_satbiaspc:
-                files_found = True
-
-        self.logger.assert_abort(files_found, f'When passing \'gsi_bc_location\' it should point '
-                                 f'to either a tar file or directory containing *ana_satbias_rst* '
-                                 f'and *ana_satbiaspc_rst*. gsi_bc_location = {gsi_bc_location}.')
+            # Otherwise just copy all the files
+            # ---------------------------------
+            for bc_file in bc_files:
+                shutil.copy(bc_file, gsi_bc_dir)
 
 
 # --------------------------------------------------------------------------------------------------

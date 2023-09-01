@@ -1,130 +1,194 @@
 ioda instrument names:
   - ioda name: abi_g16
     full name: ABI (GOES-16)
+    inst type: radiance
   - ioda name: ahi_himawari8
     full name: AHI (Himawari-8)
+    inst type: radiance
   - ioda name: aircraft
     full name: Aircraft
+    inst type: conventional
   - ioda name: airs_aqua
     full name: AIRS (AQUA)
+    inst type: radiance
   - ioda name: amsua_aqua
     full name: AMSU-A (AQUA)
+    inst type: radiance
   - ioda name: amsua_metop-a
     full name: AMSU-A (METOP-A)
+    inst type: radiance
   - ioda name: amsua_metop-b
     full name: AMSU-A (METOP-B)
+    inst type: radiance
   - ioda name: amsua_metop-c
     full name: AMSU-A (METOP-C)
+    inst type: radiance
   - ioda name: amsua_n15
     full name: AMSU-A (NOAA-15)
+    inst type: radiance
   - ioda name: amsua_n18
     full name: AMSU-A (NOAA-18)
+    inst type: radiance
   - ioda name: amsua_n19
     full name: AMSU-A (NOAA-19)
+    inst type: radiance
   - ioda name: atms_n20
     full name: ATMS (NOAA-20)
+    inst type: radiance
   - ioda name: atms_npp
     full name: ATMS (NPP)
+    inst type: radiance
   - ioda name: amsr2_gcom-w1
     full name: AMSR2 (GCOM-W1)
+    inst type: radiance
   - ioda name: avhrr3_metop-a
     full name: AVHRR-3 (METOP-A)
+    inst type: radiance
   - ioda name: avhrr3_n18
     full name: AVHRR-3 (NOAA-18)
+    inst type: radiance
   - ioda name: avhrr3_n19
     full name: AVHRR-3 (NOAA-19)
+    inst type: radiance
   - ioda name: avhrr3_metop-b
     full name: AVHRR-3 (METOP-B)
+    inst type: radiance
   - ioda name: cris-fsr_n20
     full name: CRIS-FSR (NOAA-20)
+    inst type: radiance
   - ioda name: cris-fsr_npp
     full name: CRIS-FSR (NPP)
+    inst type: radiance
   - ioda name: gmi_gpm
     full name: GMI (GPM)
+    inst type: radiance
   - ioda name: gps
     full name: GNSSRO
+    inst type: radiance
   - ioda name: gome_metop-a
     full name: GOME (METOP-A)
+    inst type: radiance
   - ioda name: hirs4_metop-a
     full name: HIRS-4 (METOP-A)
+    inst type: radiance
   - ioda name: hirs4_metop-b
     full name: HIRS-4 (METOP-B)
+    inst type: radiance
   - ioda name: iasi_metop-a
     full name: IASI (METOP-A)
+    inst type: radiance
   - ioda name: iasi_metop-b
     full name: IASI (METOP-B)
+    inst type: radiance
   - ioda name: iasi_metop-c
     full name: IASI (METOP-C)
+    inst type: radiance
   - ioda name: mhs_metop-a
     full name: MHS (METOP-A)
+    inst type: radiance
   - ioda name: mhs_metop-b
     full name: MHS (METOP-B)
+    inst type: radiance
   - ioda name: mhs_metop-c
     full name: MHS (METOP-C)
+    inst type: radiance
   - ioda name: mhs_n19
     full name: MHS (NOAA-19)
+    inst type: radiance
   - ioda name: mls55_aura
     full name: MLS (AURA)
+    inst type: ozone
   - ioda name: omi_aura
     full name: OMI (AURA)
+    inst type: ozone
   - ioda name: ompsnp_npp
     full name: OMPS Nadir Profile (NPP)
+    inst type: ozone
   - ioda name: ompsnm_npp
     full name: OMPS Nadir Mapper (NPP)
+    inst type: ozone
   - ioda name: ompslpnc_npp
     full name: OMPS Limb Profiler (NPP)
+    inst type: ozone
   - ioda name: rass_tv
     full name: RASS Virtual Temperature
+    inst type: conventional
   - ioda name: satwind
     full name: Satellite Winds
+    inst type: conventional
   - ioda name: scatwind
     full name: Scatterometer Winds
+    inst type: conventional
   - ioda name: seviri_m11
     full name: SEVIRI (Meteosat-11)
+    inst type: radiance
   - ioda name: sfcship
     full name: Surface Ship
+    inst type: conventional
   - ioda name: sfc
     full name: Surface
+    inst type: conventional
   - ioda name: sondes
     full name: Radiosondes
+    inst type: conventional
   - ioda name: ssmis_f17
     full name: SSMIS (DMSP-F17)
+    inst type: radiance
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
+    inst type: conventional
 # Ocean
   - ioda name: adt_3a_egm2008
     full name: ADT 3a (EGM2008)
+    inst type: conventional
   - ioda name: adt_3b_egm2008
     full name: ADT 3b (EGM2008)
+    inst type: conventional
   - ioda name: adt_c2_egm2008
     full name: ADT c2 (EGM2008)
+    inst type: conventional
   - ioda name: adt_coperl4
     full name: ADT Copernicus Level-4
+    inst type: conventional
   - ioda name: adt_j3_egm2008
     full name: ADT j3 (EGM2008)
+    inst type: conventional
   - ioda name: adt_sa_egm2008
     full name: ADT sa (EGM2008)
+    inst type: conventional
   - ioda name: adt
     full name: ADT
+    inst type: conventional
   - ioda name: insitus
     full name: Insitu Salinity
+    inst type: conventional
   - ioda name: insitut
     full name: Insitu Temperature
+    inst type: conventional
   - ioda name: salt_profile_fnmoc
     full name: FNMOC (In-situ Salinity)
+    inst type: conventional
   - ioda name: sss_smos_esa
     full name: ESA SMOS (SSS)
+    inst type: conventional
   - ioda name: sss_trak_fnmoc
     full name: FNMOC (SSS)
+    inst type: conventional
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
+    inst type: conventional
   - ioda name: sst_gmi_l3u
     full name: GMI (SST)
+    inst type: conventional
   - ioda name: sst_ostia
     full name: OSTIA (SST)
+    inst type: conventional
   - ioda name: sst_ship_fnmoc
     full name: FNMOC Ship (SST)
+    inst type: conventional
   - ioda name: sst_trak_fnmoc
     full name: FNMOC (SST)
+    inst type: conventional
   - ioda name: temp_profile_fnmoc
     full name: FNMOC (In-situ Temperature)
+    inst type: conventional
