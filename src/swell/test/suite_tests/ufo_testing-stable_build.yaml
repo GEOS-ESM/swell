@@ -38,7 +38,7 @@ models:
     #- ompsnm_npp
     - satwind
     - scatwind
-    #- sfcship
+    - sfcship
     #- sfc
     #- sondes
     - ssmis_f17
