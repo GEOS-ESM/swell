@@ -21,7 +21,9 @@ from swell.swell_path import get_swell_path
 
 class PrepConfigBase(ABC):
 
-    def __init__(self, logger, dictionary_file, suite, platform):
+    def __init__(self, logger, dictionary_file, suite, platform, advanced):
+
+        self.show_advanced = advanced
 
         # Store a logger for all to use
         self.logger = logger
@@ -352,6 +354,10 @@ class PrepConfigBase(ABC):
         # everything needed in the elements dictionary
         if depends_flag:
             el_dict = self.show_deference(key, el_dict)
+
+            if self.show_advanced:
+                el_dict['ask_question'] = True
+
             if el_dict['ask_question']:
                 el_dict['default_value'] = self.get_answer(key, el_dict)
             else:

@@ -6,12 +6,6 @@ source /usr/share/lmod/lmod/init/bash
 # -------------
 module purge
 
-# Unlimited Stacksize
-# --------------------
-ulimit -S -s unlimited
-ulimit -S -v unlimited
-umask 022
-
 # Spack stack modules
 # -------------------
 module use /discover/swdev/jcsda/spack-stack/modulefiles
@@ -37,6 +31,7 @@ PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9
 # IODA-Converters from experiement JEDI source
 # --------------------------------------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src/acftbias:$PYTHONPATH
 
 # Load GMAO modules
 # -----------------
