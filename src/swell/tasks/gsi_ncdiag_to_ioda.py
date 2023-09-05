@@ -12,6 +12,7 @@ import copy
 import datetime
 import glob
 import os
+import re
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -91,6 +92,22 @@ class GsiNcdiagToIoda(taskBase):
         # Convert cycle time datetime object to string with format yyyymmdd_hhz
         gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['gsi_nc_diag_format'])
+
+        # Clean up any files that are the end result of this program, in case of multiple runs
+        # ------------------------------------------------------------------------------------
+        for observation in observations_orig:
+
+            obs_file = f'{observation}_obs.{window_begin}.nc4'
+            geo_file = f'{observation}_geovals.{window_begin}.nc4'
+
+            # If obs_file exists remove it
+            if os.path.exists(os.path.join(self.cycle_dir(), obs_file)):
+                os.remove(os.path.join(self.cycle_dir(), obs_file))
+
+            # If geo exists remove it
+            if produce_geovals:
+                if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
+                    os.remove(os.path.join(self.cycle_dir(), geo_file))
 
         # First process the conventional data (if needed)
         # -----------------------------------------------
@@ -286,13 +303,17 @@ class GsiNcdiagToIoda(taskBase):
             if observation not in ozone_observations:
                 Diag.close()
 
-        # Rename avhrr files
-        # ------------------
-        # Rename gps files from gps_bend if they exist
-        if any('avhrr3' in item for item in observations):
-            avhrr_files = glob.glob(os.path.join(self.cycle_dir(), 'avhrr*'))
+        # Rename avhrr files to avhrr3
+        # ----------------------------
+        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]  # noqa
+        if any('avhrr' in item for item in observations):
+            avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
+                                                 f'avhrr_*_obs_{gsi_datetime}.nc4'))
+            # Add geovals files
+            avhrr_files = avhrr_files + glob.glob(os.path.join(self.cycle_dir(),
+                                                  f'avhrr_*_geoval_{gsi_datetime}.nc4'))
             for avhrr_file in avhrr_files:
-                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr', 'avhrr3')
+                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
                 os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
 
         # Rename files to be swell compliant

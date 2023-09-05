@@ -93,7 +93,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     yaml_path = os.path.expanduser("~/.swell/swell-slurm.yaml")
     slurm_global = {}
     if os.path.exists(yaml_path):
-        logger.info(f'Found file contianing swell slurm global values')
+        logger.info(f'Found file containing swell slurm global values')
         with open(yaml_path, "r") as yaml_file:
             slurm_global = yaml.safe_load(yaml_file)
 
@@ -147,9 +147,6 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
-
-    # nodes
-    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
 
     # Render the template
     # -------------------

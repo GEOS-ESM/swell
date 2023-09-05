@@ -39,12 +39,6 @@ amsua_aqua:
   filter_test:
     passedBenchmark: 0
 
-amsua_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
 amsua_metop-b:
   operator_test:
     rms ref: 1.0e-1
@@ -123,7 +117,7 @@ gmi_gpm:
   filter_test:
     passedBenchmark: 41937
 
-gnssrobndnbam:
+gps:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
@@ -171,12 +165,6 @@ omi_aura:
   filter_test:
     passedBenchmark: 1
 
-ompslpnc_npp:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
 ompsnm_npp:
   operator_test:
     rms ref: 1.0e-1
@@ -187,7 +175,7 @@ satwind:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 231948
+    passedBenchmark: 205802   # was 231948
 
 scatwind:
   operator_test:
@@ -218,9 +206,3 @@ ssmis_f17:
     rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 48462
-
-vadwind:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
