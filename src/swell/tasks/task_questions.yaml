@@ -544,6 +544,7 @@ window_length:
   tasks:
   - GetBackground
   - GetGeovals
+  - GetGsiBc
   - GetObservations
   - MoveDaRestart
   - RunJediHofxExecutable
