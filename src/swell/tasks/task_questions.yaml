@@ -19,6 +19,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
+  - GenerateBClimatology
   - PrepareAnalysis
   - RunJediVariationalExecutable
   type: string-check-list
@@ -32,6 +33,7 @@ background_error_model:
   prompt: Which background error model do you want to use?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   type: string-drop-list
 
 background_experiment:
@@ -511,17 +513,6 @@ r2d2_store_datastores:
   - SaveObsDiags
   type: string-check-list
 
-static_background_error_model:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Which static background error model do you want to use?
-  tasks:
-  - GenerateBClimatologyByLinking
-  type: string-drop-list
-
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
@@ -595,6 +586,7 @@ window_offset:
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - EvaObservations
+  - GenerateBClimatology
   - GetBackground
   - GetGeovals
   - GetObservations
@@ -617,6 +609,7 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - GenerateBClimatology
   - GetBackground
   - RunJediHofxExecutable
   - RunJediVariationalExecutable

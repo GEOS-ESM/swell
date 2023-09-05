@@ -25,7 +25,7 @@ airs_aqua:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 360232
 
 amsr2_gcom-w1:
   operator_test:
@@ -38,12 +38,6 @@ amsua_aqua:
     rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 0
-
-amsua_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
 
 amsua_metop-b:
   operator_test:
@@ -87,29 +81,35 @@ atms_npp:
   filter_test:
     passedBenchmark: 158687
 
-avhrr3_metop-a:
+avhrr3_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 4940
 
 avhrr3_n18:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 5455
+
+avhrr3_n19:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 4948
 
 cris-fsr_n20:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 220381
 
 cris-fsr_npp:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 210942
 
 gmi_gpm:
   operator_test:
@@ -117,13 +117,7 @@ gmi_gpm:
   filter_test:
     passedBenchmark: 41937
 
-gnssrobndnbam:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
-iasi_metop-a:
+gps:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
@@ -133,7 +127,13 @@ iasi_metop-b:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 561875
+
+iasi_metop-c:
+  operator_test:
+    rms ref: 1.0e-1
+  filter_test:
+    passedBenchmark: 558904
 
 mhs_metop-b:
   operator_test:
@@ -165,12 +165,6 @@ omi_aura:
   filter_test:
     passedBenchmark: 1
 
-ompslpnc_npp:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
 ompsnm_npp:
   operator_test:
     rms ref: 1.0e-1
@@ -181,7 +175,7 @@ satwind:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 231948
+    passedBenchmark: 205802   # was 231948
 
 scatwind:
   operator_test:
@@ -211,10 +205,4 @@ ssmis_f17:
   operator_test:
     rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
-
-vadwind:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 48462

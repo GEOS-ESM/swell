@@ -50,7 +50,7 @@ obs filters:
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: MetaData/sensorScanPosition
@@ -74,7 +74,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/surface_snow_area_fraction
@@ -83,7 +83,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/ice_area_fraction
@@ -92,7 +92,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -103,7 +103,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -114,7 +114,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -123,9 +123,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: mhs_n19_channels
+      channels: *mhs_n19_channels
       options:
-        channels: mhs_n19_channels
+        channels: *mhs_n19_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -145,7 +145,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: mhs_n19_channels
+    channels: *mhs_n19_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -154,9 +154,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: mhs_n19_channels
+      channels: *mhs_n19_channels
       options:
-        channels: mhs_n19_channels
+        channels: *mhs_n19_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:

@@ -34,7 +34,11 @@ class GenerateBClimatologyByLinking(taskBase):
         """
 
         # Get the flavor of static background error model
-        static_background_error_model = self.config.static_background_error_model()
+        background_error_model = self.config.background_error_model()
+
+        # Get the JEDI interface for this model component
+        # -----------------------------------------------
+        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
 
         # Extract general parts of the config
         swell_static_files_main = self.config.swell_static_files()
@@ -44,13 +48,13 @@ class GenerateBClimatologyByLinking(taskBase):
         target_path = os.path.join(self.cycle_dir(), 'background_error_model')
         os.makedirs(target_path, mode=0o777, exist_ok=True)
 
-        # Source path base the part that looks like /path/to/static_background_error_model/
+        # Source path base the part that looks like /path/to/static_background_error/
         source_path_base = os.path.join('jedi', 'interfaces', self.get_model(), 'model',
-                                        'static_background_error', static_background_error_model)
+                                        'static_background_error', background_error_model)
 
         # Model specific part of the path, i.e. anything that goes between the base path above,
         # and the actual files that need to be linked into the directory.
-        if static_background_error_model == 'bump':
+        if background_error_model == 'bump':
             source_path_model = self.append_source_path_bump()
         else:
             self.logger.abort("Only bump is currently supported")

@@ -1,6 +1,6 @@
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/nightly/latest/jedi_build/build-intel-release/
+existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
+existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 bundles: REMOVE
 models:
   geos_atmosphere:
