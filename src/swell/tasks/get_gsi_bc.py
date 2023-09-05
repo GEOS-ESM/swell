@@ -35,7 +35,6 @@ class GetGsiBc(taskBase):
 
         # Replace gsi_bc_location datetime string with the actual datetime
         # --------------------------------------------------------------
-        cycle_time_dto = self.cycle_time_dto()
         gsi_bc_location = gsi_bc_ana_time.strftime(gsi_bc_location)
 
         # Get list of matching files
