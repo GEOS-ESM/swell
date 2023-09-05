@@ -104,9 +104,10 @@ class GsiNcdiagToIoda(taskBase):
             if os.path.exists(os.path.join(self.cycle_dir(), obs_file)):
                 os.remove(os.path.join(self.cycle_dir(), obs_file))
 
-            # If obs_file exists remove it
-            if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
-                os.remove(os.path.join(self.cycle_dir(), geo_file))
+            # If geo exists remove it
+            if produce_geovals:
+                if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
+                    os.remove(os.path.join(self.cycle_dir(), geo_file))
 
         # First process the conventional data (if needed)
         # -----------------------------------------------
