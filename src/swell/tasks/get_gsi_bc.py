@@ -52,20 +52,20 @@ class GetGsiBc(taskBase):
 
             self.logger.abort('Support for extracting from tar files needs testing. Not supported')
 
-            # # Extract the tar file
-            # bc_tar = tarfile.open(bc_files[0])
-
-            # # Loop over files in tar file
-            # for bc_tar_file in bc_tar.getnames():
-
-                # # If bias file found, extract it
-                # if 'bias' in bc_tar_file:
-                    # bc_tar.extract(bc_tar_file, gsi_bc_dir)
-
-            # # Close file
-            # bc_tar.close()
-
-            # Should rename the files to be the same e.g. ana.satbias.date etc
+#            # Extract the tar file
+#            bc_tar = tarfile.open(bc_files[0])
+#
+#            # Loop over files in tar file
+#            for bc_tar_file in bc_tar.getnames():
+#
+#                # If bias file found, extract it
+#                if 'bias' in bc_tar_file:
+#                    bc_tar.extract(bc_tar_file, gsi_bc_dir)
+#
+#            # Close file
+#            bc_tar.close()
+#
+#            # Should rename the files to be the same e.g. ana.satbias.date etc
 
         else:
 

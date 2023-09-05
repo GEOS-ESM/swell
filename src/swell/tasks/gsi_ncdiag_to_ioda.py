@@ -311,7 +311,7 @@ class GsiNcdiagToIoda(taskBase):
                                                  f'avhrr_*_obs_{gsi_datetime}.nc4'))
             # Add geovals files
             avhrr_files = avhrr_files + glob.glob(os.path.join(self.cycle_dir(),
-                                                 f'avhrr_*_geoval_{gsi_datetime}.nc4'))
+                                                  f'avhrr_*_geoval_{gsi_datetime}.nc4'))
             for avhrr_file in avhrr_files:
                 avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
                 os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))

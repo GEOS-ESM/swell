@@ -73,9 +73,9 @@ class GsiBcToIoda(taskBase):
         bc_files = glob.glob(os.path.join(gsi_bc_dir, '*.txt'))
 
         # Assert that the number of files is 3 or less
-        self.logger.assert_abort(len(bc_files)<=3, f'In GsiBcToIoda too many files found in ' +
-                                                  f'{gsi_bc_dir}. Expected 3 or less, found ' +
-                                                  f'{len(bc_files)}.')
+        self.logger.assert_abort(len(bc_files) <= 3, f'In GsiBcToIoda too many files found in ' +
+                                                     f'{gsi_bc_dir}. Expected 3 or less, found ' +
+                                                     f'{len(bc_files)}.')
 
         # Get index of file that contains satbias but not satbiaspc
         satbias_file_index = None
