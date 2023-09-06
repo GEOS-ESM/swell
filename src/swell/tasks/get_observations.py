@@ -90,9 +90,10 @@ class GetObservations(taskBase):
 
                 for target_file_type in target_file_types:
 
-                    target_file = f'{target_file_type}.{background_time}.csv'
+                    target_file = os.path.join(self.cycle_dir(),
+                                               f'{target_file_type}.{background_time}.csv')
 
-                    self.logger.info(f'Processing aircraft bias file {target_file}'
+                    self.logger.info(f'Processing aircraft bias file {target_file}')
 
                     fetch(date=background_time,
                           target_file=target_file,
