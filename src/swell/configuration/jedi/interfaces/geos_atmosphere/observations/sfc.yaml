@@ -166,7 +166,7 @@ obs filters:
     is_defined:
   defer to post: true
 
-# Background check 
+# Background check
 # background check for obstype 187:
 - filter: Background Check
   filter variables:
