@@ -45,7 +45,7 @@ obs filters:
     function:
       name: ObsFunction/DrawValueFromFile
       options:
-        file: '{{cycle_dir}}/aircraft_abias_constant.{{window_begin}}.csv'
+        file: '{{cycle_dir}}/aircraft_abias_air_constant.{{background_time}}.csv'
         group: BiasCoefficientValue
         interpolation:
         - name: MetaData/stationIdentification
@@ -62,7 +62,7 @@ obs filters:
     function:
       name: ObsFunction/DrawValueFromFile
       options:
-        file: '{{cycle_dir}}/aircraft_abias_ascent.{{window_begin}}.csv'
+        file: '{{cycle_dir}}/aircraft_abias_air_ascent.{{background_time}}.csv'
         group: BiasCoefficientValue
         interpolation:
         - name: MetaData/stationIdentification
@@ -79,7 +79,7 @@ obs filters:
     function:
       name: ObsFunction/DrawValueFromFile
       options:
-        file: '{{cycle_dir}}/aircraft_abias_ascentSquared.{{window_begin}}.csv'
+        file: '{{cycle_dir}}/aircraft_abias_air_ascentSquared.{{background_time}}.csv'
         group: BiasCoefficientValue
         interpolation:
         - name: MetaData/stationIdentification
