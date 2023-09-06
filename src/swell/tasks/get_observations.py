@@ -144,7 +144,6 @@ class GetObservations(taskBase):
                 # Change permission
                 os.chmod(target_file, 0o644)
 
-
     # ----------------------------------------------------------------------------------------------
 
     def get_tlapse_files(self, observation_dict):
@@ -169,3 +168,5 @@ class GetObservations(taskBase):
                 yield p['tlapse']
 
         return
+
+# ----------------------------------------------------------------------------------------------
