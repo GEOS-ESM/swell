@@ -12,9 +12,12 @@ import copy
 import datetime
 import glob
 import h5py
+import isodate
+import numpy as np
 import os
 import re
 import shutil
+import time
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -383,12 +386,17 @@ class GsiNcdiagToIoda(taskBase):
         # satellite wind observations). IODA wrote the files in
         # such a way that h5py needs to be used not netcdf4
         # -----------------------------------------------------
-        if 'satwind' in observations_orig:
-            sat_wind_file = os.path.join(self.cycle_dir(), f'satwind.{window_begin}.nc4')
-            self.logger.info(f'Bumping time in satellite wind files by 1 second ({sat_wind_file})')
-            with h5py.File(sat_wind_file, 'a') as fh:
+        wind_begin = self.cycle_time_dto() - isodate.parse_duration(window_offset)
+        ioda_begin = datetime.datetime(1970, 1, 1)
+        seconds_to_window_begin = (wind_begin - ioda_begin).total_seconds()
+
+        for observation in observations_orig:
+            obs_file = os.path.join(self.cycle_dir(), f'{observation}.{window_begin}.nc4')
+            self.logger.info(f'One second bump for obs at window beg for ({observation})')
+            with h5py.File(obs_file, 'a') as fh:
                 variable = fh['MetaData']['dateTime']
-                variable[:] += 1
+                window_begin_ind = np.where(variable[:] == seconds_to_window_begin)
+                variable[window_begin_ind] += 1
 
         # Remove left over files
         # ------------------------------
