@@ -1,15 +1,15 @@
 obs space:
   name: sfc
-    obsdatain:
-      engine:
-        type: H5File
+  obsdatain:
+    engine:
+      type: H5File
       obsfile: '{{cycle_dir}}/sfc.{{window_begin}}.nc4'
-    obsdataout:
-      engine:
-        type: H5File
+  obsdataout:
+    engine:
+      type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sfc.{{window_begin}}.nc4'
-    simulated variables: [windEastward, windNorthward, virtualTemperature, airTemperature,
-                          specificHumidity, stationPressure]
+  simulated variables: [windEastward, windNorthward, virtualTemperature, airTemperature,
+                        specificHumidity, stationPressure]
 obs operator:
   name: Composite
   components:
