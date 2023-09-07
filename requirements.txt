@@ -6,3 +6,4 @@ pandas>=1.4.0
 isodate>=0.5.4
 f90nml>=1.4.3
 questionary>=1.10.0
+h5py>=3.7.0

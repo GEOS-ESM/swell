@@ -118,7 +118,7 @@ pibal:
 
 satwind:
   filter_test:
-    passedBenchmark: 205802   # was 231948
+    passedBenchmark: 231948
 
 scatwind:
   filter_test:

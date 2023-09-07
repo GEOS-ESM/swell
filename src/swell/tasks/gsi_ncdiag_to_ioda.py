@@ -11,6 +11,7 @@
 import copy
 import datetime
 import glob
+import h5py
 import os
 import re
 import shutil
@@ -376,9 +377,21 @@ class GsiNcdiagToIoda(taskBase):
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
+        # Bump the time in the satellite wind files by 1 second
+        # (because JEDI does not include observations equal to
+        # the beginning of the window where there are a lot of
+        # satellite wind observations). IODA wrote the files in
+        # such a way that h5py needs to be used not netcdf4
+        # -----------------------------------------------------
+        if 'satwind' in observations_orig:
+            sat_wind_file = os.path.join(self.cycle_dir(), f'satwind.{window_begin}.nc4')
+            self.logger.info(f'Bumping time in satellite wind files by 1 second ({sat_wind_file})')
+            with h5py.File(sat_wind_file, 'a') as fh:
+                variable = fh['MetaData']['dateTime']
+                variable[:] += 1
+
         # Remove left over files
         # ------------------------------
-
         self.logger.info('Removing residual files...')
 
         patterns = [
