@@ -17,7 +17,6 @@ import numpy as np
 import os
 import re
 import shutil
-import time
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
