@@ -33,13 +33,12 @@ models:
     - mhs_metop-c
     - mhs_n19
     #- mls55_aura
-    #- obsop_name_map
     #- omi_aura
     #- ompsnm_npp
     - satwind
     - scatwind
     #- sfcship
-    #- sfc
+    - sfc
     #- sondes
     - ssmis_f17
     produce_geovals: false
