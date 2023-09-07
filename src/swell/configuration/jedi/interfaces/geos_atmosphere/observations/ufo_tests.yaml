@@ -130,7 +130,7 @@ sfcship:
 
 sfc:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 71960
 
 sondes:
   filter_test:
