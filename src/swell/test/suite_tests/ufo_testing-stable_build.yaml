@@ -33,9 +33,9 @@ models:
     - mhs_metop-c
     - mhs_n19
     #- mls55_aura
-    #- obsop_name_map
     #- omi_aura
     #- ompsnm_npp
+    - pibal
     - satwind
     - scatwind
     #- sfcship
@@ -48,6 +48,7 @@ models:
     - '*.txt'
     - '*.log'
     - '*.yaml'
+    - '*.csv'
     - gsi_bcs/*.nc4
     - gsi_bcs/*.txt
     - gsi_bcs/*.yaml

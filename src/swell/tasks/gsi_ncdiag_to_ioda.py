@@ -13,6 +13,7 @@ import datetime
 import glob
 import os
 import re
+import shutil
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -40,6 +41,12 @@ class GsiNcdiagToIoda(taskBase):
 
         # Keep copy of the
         observations_orig = observations.copy()
+
+        # If pibal is in the observations then remove it and make sure sonde is there
+        if 'pibal' in observations:
+            if 'sondes' not in observations:
+                observations.append('sondes')
+            observations.remove('pibal')
 
         # Directory containing the ncdiags
         gsi_diag_dir = os.path.join(self.cycle_dir(), 'gsi_ncdiags')
@@ -92,6 +99,9 @@ class GsiNcdiagToIoda(taskBase):
         # Convert cycle time datetime object to string with format yyyymmdd_hhz
         gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['gsi_nc_diag_format'])
+
+        short_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
+                                                        datetime_formats['short_date'])
 
         # Clean up any files that are the end result of this program, in case of multiple runs
         # ------------------------------------------------------------------------------------
@@ -167,6 +177,21 @@ class GsiNcdiagToIoda(taskBase):
             for gps_file in gps_files:
                 gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
                 os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
+
+        # Copy uv sonde files to pibal
+        if 'pibal' in observations_orig:
+            # Copy the uv obs file to pibal
+            shutil.copy(os.path.join(self.cycle_dir(),
+                                     f'sondes_uv_obs_{short_datetime_str}.nc4'),
+                        os.path.join(self.cycle_dir(),
+                                     f'pibal_obs_{short_datetime_str}.nc4'))
+
+            # Copy the geovals file to pibal
+            if produce_geovals:
+                shutil.copy(os.path.join(self.cycle_dir(),
+                                         f'sondes_uv_geoval_{short_datetime_str}.nc4'),
+                            os.path.join(self.cycle_dir(),
+                                         f'pibal_geoval_{short_datetime_str}.nc4'))
 
         # Combine the conventional data
         # -----------------------------

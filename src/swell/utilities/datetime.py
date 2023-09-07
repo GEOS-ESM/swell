@@ -18,6 +18,7 @@ datetime_formats = {
     'directory_format': '%Y%m%dT%H%M%SZ',   # yyyymmddThhMMssZ for directory formats
     'iso_format': '%Y-%m-%dT%H:%M:%SZ',     # yyyy-mm-ddThh:MM:ssZ ISO format
     'gsi_nc_diag_format': '%Y%m%d_%Hz',     # yyyymmdd_hhz Format for GSI netcdf diagnostic files
+    'short_date': '%Y%m%d%H',               # yyyymmddhh Short format
 }
 
 # --------------------------------------------------------------------------------------------------
