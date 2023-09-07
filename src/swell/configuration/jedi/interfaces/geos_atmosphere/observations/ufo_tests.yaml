@@ -126,7 +126,7 @@ scatwind:
 
 sfcship:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 99142
 
 sfc:
   filter_test:
