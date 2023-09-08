@@ -41,7 +41,10 @@ class BuildJedi(taskBase):
                 bundles = []
                 for model_component in model_components:
                     # Open the metadata config for interface
-                    meta = self.jedi_rendering.render_interface_meta()
+                    self.jedi_rendering.add_key('npx_proc', 1)
+                    self.jedi_rendering.add_key('npy_proc', 1)
+                    self.jedi_rendering.add_key('total_processors', 1)
+                    meta = self.jedi_rendering.render_interface_meta(model_component)
                     bundles.append(meta['jedi_interface'])
             else:
                 bundles = get_bundles()
