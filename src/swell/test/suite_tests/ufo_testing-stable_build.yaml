@@ -38,8 +38,8 @@ models:
     - pibal
     - satwind
     - scatwind
-    #- sfcship
-    #- sfc
+    - sfc
+    - sfcship
     #- sondes
     - ssmis_f17
     produce_geovals: false
