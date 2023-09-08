@@ -379,11 +379,11 @@ class GsiNcdiagToIoda(taskBase):
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
-        # Bump the time in the satellite wind files by 1 second
+        # Bump the time in the all observation files by 1 second
         # (because JEDI does not include observations equal to
-        # the beginning of the window where there are a lot of
-        # satellite wind observations). IODA wrote the files in
-        # such a way that h5py needs to be used not netcdf4
+        # the beginning of the window, while GSI does). IODA wrote 
+        # the files in such a way that h5py needs to be used not 
+        # netcdf4 to append the files in place.
         # -----------------------------------------------------
         wind_begin = self.cycle_time_dto() - isodate.parse_duration(window_offset)
         ioda_begin = datetime.datetime(1970, 1, 1)
