@@ -44,10 +44,10 @@ class BuildJedi(taskBase):
                     meta = self.jedi_rendering.render_interface_meta()
                     bundles.append(meta['jedi_interface'])
             else:
-                bundles_default = get_bundles()
+                bundles = get_bundles()
 
             # Generate the build dictionary
-            jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles_default),
+            jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
                                                       jedi_bundle_build_path, 24)
 

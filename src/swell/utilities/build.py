@@ -62,6 +62,9 @@ def set_jedi_bundle_config(bundles, path_to_source, path_to_build, cores_to_use_
     jedi_bundle_config['clone_options']['bundles'] = bundles
     jedi_bundle_config['clone_options']['path_to_source'] = path_to_source
 
+    # Add GSIbec as extra repo
+    jedi_bundle_config['clone_options']['extra_repos'] = ['GSIbec']
+
     # Set the configure stage options
     jedi_bundle_config['configure_options']['path_to_build'] = path_to_build
 
