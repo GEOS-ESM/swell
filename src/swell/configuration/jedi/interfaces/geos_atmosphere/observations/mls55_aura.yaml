@@ -9,10 +9,12 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.mls55_aura.{{window_begin}}.nc4'
   simulated variables: [ozoneProfile]
+
 obs operator:
   name: VertInterp
   vertical coordinate: air_pressure
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+
 obs filters:
   # range sanity check
   - filter: Bounds Check

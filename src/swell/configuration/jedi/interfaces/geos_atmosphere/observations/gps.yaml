@@ -13,6 +13,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gnssrobndnbam.{{window_begin}}.nc4'
   simulated variables: [bendingAngle]
+
 obs operator:
   name: GnssroBndNBAM
   obs options:
@@ -20,6 +21,7 @@ obs operator:
     sr_steps: 2
     vertlayer: full
     super_ref_qc: NBAM
+
 obs filters:
 - filter: Domain Check
   filter variables:

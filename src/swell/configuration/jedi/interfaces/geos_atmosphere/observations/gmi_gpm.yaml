@@ -10,19 +10,21 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gmi_gpm.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
   channels: &gmi_gpm_channels 1-13
+
 obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   Clouds: [Water, Ice, Rain, Snow]
 #  Clouds: [Water, Ice]
   Cloud_Fraction: 1.0
-  linear obs operator:
-    Absorbers: [H2O,O3,CO2]
-    Clouds: [Water]
   obs options:
     Sensor_ID: gmi_gpm
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
+  linear obs operator:
+    Absorbers: [H2O,O3]
+    Clouds: [Water]
+
 obs bias:
   input file: '{{cycle_dir}}/gmi_gpm.{{background_time}}.satbias.nc4'
   variational bc:
@@ -56,6 +58,18 @@ obs bias:
       order: 2
     - name: scan_angle
       var_name: sensorScanPosition
+  covariance:
+    minimal required obs number: 20
+    variance range: [1.0e-6, 10.0]
+    step size: 1.0e-4
+    largest analysis variance: 10000.0
+    prior:
+      input file: '{{cycle_dir}}/gmi_gpm.{{background_time}}.satbias.nc4'
+      inflation:
+        ratio: 1.1
+        ratio for small dataset: 2.0
+    output file: '{{cycle_dir}}/gmi_gpm.{{window_begin}}.satbias.nc4'
+
 obs filters:
 - filter: Bounds Check
   filter variables:
