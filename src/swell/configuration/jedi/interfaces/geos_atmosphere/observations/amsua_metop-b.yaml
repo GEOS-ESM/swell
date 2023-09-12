@@ -1,5 +1,5 @@
 obs space:
-  name: amsua_metop-b
+  name: AMSU-A METOP-B
   obsdatain:
     engine:
       type: H5File

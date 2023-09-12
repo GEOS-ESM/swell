@@ -1,5 +1,5 @@
 obs space:
-  name: omi_aura
+  name: OMI AURA
   obsdatain:
     engine:
       type: H5File

@@ -1,5 +1,5 @@
 obs space:
-  name: mls55_aura
+  name: MLS55 AURA
   obsdatain:
     engine:
       type: H5File

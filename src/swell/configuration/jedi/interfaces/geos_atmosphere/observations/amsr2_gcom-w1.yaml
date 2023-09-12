@@ -1,5 +1,5 @@
 obs space:
-  name: amsr2_gcom-w1
+  name: AMSR2 GCOM-W1
   obsdatain:
     engine:
       type: H5File

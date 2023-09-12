@@ -1,5 +1,5 @@
 obs space:
-  name: *Sensor_ID
+  name: AVHRR-3 NOAA-18
   obsdatain:
     engine:
       type: H5File

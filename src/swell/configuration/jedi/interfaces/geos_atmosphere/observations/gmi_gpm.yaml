@@ -1,5 +1,5 @@
 obs space:
-  name: gmi_gpm
+  name: GMI-GPI
   obsdatain:
     engine:
       type: H5File
@@ -15,7 +15,6 @@ obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   Clouds: [Water, Ice, Rain, Snow]
-#  Clouds: [Water, Ice]
   Cloud_Fraction: 1.0
   obs options:
     Sensor_ID: gmi_gpm

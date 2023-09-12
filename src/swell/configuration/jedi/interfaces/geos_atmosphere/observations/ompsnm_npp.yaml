@@ -1,5 +1,5 @@
 obs space:
-  name: ompsnm_npp
+  name: OMPSNM NPP
   obsdatain:
     engine:
       type: H5File

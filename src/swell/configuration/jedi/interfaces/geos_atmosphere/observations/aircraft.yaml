@@ -1,9 +1,3 @@
-
-obs operator:
-  name: VertInterp
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
-
 obs space:
   name: Aircraft
   obsdatain:
@@ -19,6 +13,11 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.aircraft.{{window_begin}}.nc4'
   simulated variables: [airTemperature, windEastward, windNorthward]
+
+obs operator:
+  name: VertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  apply near surface wind scaling: true
 
 obs filters:
 

@@ -1,5 +1,5 @@
 obs space:
-  name: SurfaceComposite
+  name: Surface Marine Stations
   obsdatain:
     engine:
       type: H5File
