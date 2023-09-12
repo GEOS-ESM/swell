@@ -1,5 +1,5 @@
 obs space:
-  name: sfc
+  name: Surface Land Stations
   obsdatain:
     engine:
       type: H5File
@@ -10,6 +10,7 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sfc.{{window_begin}}.nc4'
   simulated variables: [windEastward, windNorthward, virtualTemperature, airTemperature,
                         specificHumidity, stationPressure]
+
 obs operator:
   name: Composite
   components:

@@ -1,5 +1,5 @@
 obs space:
-  name: sondes
+  name: Radiosondes
   obsdatain:
     engine:
       type: H5File
@@ -13,6 +13,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sondes.{{window_begin}}.nc4'
   simulated variables: [airTemperature, specificHumidity, windEastward, windNorthward, stationPressure]
+
 obs operator:
   name: Composite
   components:
@@ -29,6 +30,7 @@ obs operator:
      da_psfc_scheme: UKMO
 #    geovar_geomz: geopotential_height
 #    geovar_sfc_geomz: surface_geopotential_height
+
 obs filters:
 # Reject all obs with PreQC mark already set above 3
 - filter: PreQC
