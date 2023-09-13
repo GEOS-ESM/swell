@@ -66,6 +66,7 @@ class RunJediUfoTestsExecutable(taskBase):
         # -------------------------------------
         conventional_types = [
             'aircraft',
+            'pibal',
             'satwind',
             'scatwind',
             'sfcship',
