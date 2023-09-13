@@ -16,7 +16,6 @@ import isodate
 import numpy as np
 import os
 import re
-import shutil
 
 # Ioda converters
 import gsi_ncdiag.gsi_ncdiag as gsid
@@ -97,9 +96,6 @@ class GsiNcdiagToIoda(taskBase):
         # Convert cycle time datetime object to string with format yyyymmdd_hhz
         gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['gsi_nc_diag_format'])
-
-        short_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
-                                                        datetime_formats['short_date'])
 
         # Clean up any files that are the end result of this program, in case of multiple runs
         # ------------------------------------------------------------------------------------
