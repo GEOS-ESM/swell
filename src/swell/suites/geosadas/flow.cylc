@@ -18,8 +18,8 @@
 
 [scheduling]
 
-    initial cycle point = 2020-12-15T00:00:00Z
-    final cycle point = 2020-12-15T00:00:00Z
+    initial cycle point = 2021-12-12T00:00:00Z
+    final cycle point = 2021-12-12T00:00:00Z
 
     [[graph]]
         R1 = """
