@@ -18,7 +18,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediLETKFExecutable(taskBase):
+class RunJediLetkfExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -46,17 +46,33 @@ class RunJediLETKFExecutable(taskBase):
         window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
 
+
+        # Ensemble specific
+        # --------------------
+        ensemble_nmembers = self.config.ensemble_nmembers()
+        local_ensemble_solver   = self.config.local_ensemble_solver()
+        local_ensemble_inflation_rtps = self.config.local_ensemble_inflation_rtps()
+        local_ensemble_inflation_rtpp = self.config.local_ensemble_inflation_rtpp()
+        local_ensemble_inflation_mult = self.config.local_ensemble_inflation_mult()
+
+        local_ensemble_save_posterior_mean = self.config.local_ensemble_save_posterior_mean()
+        local_ensemble_save_posterior_ensemble = self.config.local_ensemble_save_posterior_ensemble()
+        local_ensemble_save_posterior_mean_increment = self.config.local_ensemble_save_posterior_mean_increment()
+        local_ensemble_save_posterior_ensemble_increments = self.config.local_ensemble_save_posterior_ensemble_increments()
+
+
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', self.config.window_length())
 
-        # Background
+        # Background - THIS SHOULD BE ENSEMBLE-FETCHING
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+        self.jedi_rendering.add_key('ensemble_nmembers', ensemble_nmembers)
 
-        # Geometry
+        # Geometry - CE: ALL GOOD
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
         self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
         self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
@@ -87,6 +103,11 @@ class RunJediLETKFExecutable(taskBase):
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  jedi_forecast_model)
+
+        # Append an output tag based on driver params
+        # -------------------------------------------
+        # CE: Add final pieces to jedi_config_dict before dumping to yaml below...
+
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

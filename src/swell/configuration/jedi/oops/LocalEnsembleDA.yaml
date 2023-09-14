@@ -15,18 +15,21 @@ local ensemble DA:
   TASKFILLensemble_solver
 
 driver:
-  SPECIALensemble_driver
+  TASKFILLensemble_driver
 
-# CE: These two will conflict without change vvvv
+{% if {{local_ensemble_save_posterior_mean}} or {{local_ensemble_save_posterior_ensemble}} %}
 output:
-  SPECIALensemble_mean_output
-
-output:
-  SPECIALensemble_members_output
-# CE: These two will conflict without change ^^^^
-
+  {% if {{local_ensemble_save_posterior_mean}} %}
+  TASKFILLensemble_mean_output
+  {% elif {{local_ensemble_save_posterior_ensemble}} %}
+  TASKFILLensemble_members_output
+  {% endif %}
+{% endif %}
+{% if {{local_ensemble_save_posterior_mean_increment}} %}
 output increment:
-  SPECIALensemble_mean_increment_output
-
+  TASKFILLensemble_mean_increment_output
+{% endif %}
+{% if {{local_ensemble_save_posterior_ensemble_increments}} %}
 output ensemble increments:
-  SPECIALensemble_members_increment_output
+  TASKFILLensemble_members_increment_output
+{% endif %}
