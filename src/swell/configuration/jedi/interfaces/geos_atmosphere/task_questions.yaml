@@ -32,6 +32,9 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+ensemble_num_members:
+  default_value: 10
+
 geos_background_restart_offset:
   default_value: TODO
 

@@ -51,7 +51,7 @@ class GetEnsemble(taskBase):
             member_file_datetime = datetime.datetime.strptime(datetime_part, '%Y%m%d_%H%Mz')
 
             # Create target filename using the datetime format
-            member_file_target = member_file_datetime.strftime('geos.mem002.%Y%m%d_%H%M%Sz.nc4')
+            member_file_target = member_file_datetime.strftime('geos.mem001.%Y%m%d_%H%M%Sz.nc4')
 
             # Target path and filename
             ensemble_path_file_target = os.path.join(self.cycle_dir(), member_file_target)

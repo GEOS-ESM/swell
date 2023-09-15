@@ -36,6 +36,7 @@ valid_tasks = [
   'RemoveForecastDir',
   'RunGeosExecutable',
   'RunJediHofxExecutable',
+  'RunJediLetkfExecutable',
   'RunJediUfoTestsExecutable',
   'RunJediVariationalExecutable',
   'SaveObsDiags',
