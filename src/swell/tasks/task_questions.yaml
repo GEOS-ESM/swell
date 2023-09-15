@@ -442,6 +442,16 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
+path_to_ensemble:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where ensemble members are stored?
+  tasks:
+  - GetEnsemble
+  type: string
+
 path_to_geos_adas_background:
   ask_question: true
   default_value: defer_to_model

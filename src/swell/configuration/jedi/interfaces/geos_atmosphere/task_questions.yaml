@@ -153,6 +153,9 @@ observations:
   - omi_aura
   - ompsnm_npp
 
+path_to_ensemble:
+  default_value: /discover/nobackup/drholdaw/SwellTestData/letk/ensemble/Y%Y/M%m/D%d/H%H
+
 path_to_geos_adas_background:
   default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
 
