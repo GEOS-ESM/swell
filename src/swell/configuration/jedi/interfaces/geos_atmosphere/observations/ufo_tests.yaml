@@ -114,7 +114,7 @@ ompsnm_npp:
 
 pibal:
   filter_test:
-    passedBenchmark: 1226
+    passedBenchmark: 1204
 
 satwind:
   filter_test:
