@@ -151,7 +151,7 @@ obs post filters:
         inflation factor: 4.0
         adjusted_error_name: GsiAdjustObsError
         geovar_sfc_geomz: surface_geometric_height
-  ross Check
+  # Gross Check
 - filter: Background Check
   filter variables:
   - name: windEastward
