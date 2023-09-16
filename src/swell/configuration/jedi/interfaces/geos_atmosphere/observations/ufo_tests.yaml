@@ -114,7 +114,7 @@ ompsnm_npp:
 
 pibal:
   filter_test:
-    passedBenchmark: 37113
+    passedBenchmark: 1226
 
 satwind:
   filter_test:
@@ -134,7 +134,7 @@ sfc:
 
 sondes:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 116687
 
 ssmis_f17:
   filter_test:
