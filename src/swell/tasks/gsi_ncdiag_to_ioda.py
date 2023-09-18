@@ -22,7 +22,6 @@ import gsi_ncdiag.gsi_ncdiag as gsid
 from gsi_ncdiag.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.datetime import datetime_formats
 
 
@@ -187,6 +186,7 @@ class GsiNcdiagToIoda(taskBase):
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
+            ioda_path_files = sorted(ioda_path_files)
 
             # For sfc make sure there are no surface ship files
             if needed_ioda_type == 'sfc':
@@ -235,16 +235,6 @@ class GsiNcdiagToIoda(taskBase):
                 geo_dir = None
                 if produce_geovals:
                     geo_dir = self.cycle_dir()
-
-                    # Remove wind_reduction_factor_at_10m from non-uv geoval files
-                    geoval_files = glob.glob(os.path.join(self.cycle_dir(),
-                                                          f'{needed_ioda_type}_*_geoval_*.nc4'))
-                    for geoval_file in geoval_files:
-                        if f'{needed_ioda_type}_uv_geoval_' not in geoval_file:
-                            var_remove_command = ['ncks', '-O', '-x', '-v',
-                                                  'wind_reduction_factor_at_10m',
-                                                  geoval_file, geoval_file]
-                            run_track_log_subprocess(self.logger, var_remove_command)
 
                 combine_obsspace(ioda_path_files, new_name, geo_dir)
 
