@@ -18,7 +18,7 @@ obs operator:
   name: Composite
   components:
     - name: VertInterp
-      observation alias file: Config/obsop_name_map.yaml
+      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
       variables:
       - name: windEastward
       - name: windNorthward
