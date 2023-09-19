@@ -135,7 +135,7 @@ crtm_coeff_dir:
   type: string
 
 ensemble_num_members:
-  ask_question: true
+  ask_question: false
   default_value: defer_to_model
   models:
   - geos_atmosphere
