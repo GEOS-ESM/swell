@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n15.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &amsua_n15_channels 1-15
+  channels: &amsua_n15_available_channels 1-15
 
 obs operator:
   name: CRTM
@@ -75,20 +75,20 @@ obs filters:
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     minvalue: 100.0
     maxvalue: 500.0
 #  Hydrometeor Check (cloud/precipitation affected chanels)
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     test variables:
     - name: ObsFunction/HydrometeorCheckAMSUAclr
-      channels: 1-15
+      channels: *amsua_n15_available_channels
       options:
         sensor: *Sensor_ID
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         test_biaspredictor: cloud_liquid_waterPredictor
     maxvalue: 0.0
     action:
@@ -97,7 +97,7 @@ obs filters:
   - filter: Perform Action
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     action:
       name: assign error
       error parameter vector:
@@ -108,39 +108,39 @@ obs filters:
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     action:
       name: inflate error
       inflation variable:
         name: ObsFunction/ObsErrorFactorTopoRad
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         options:
           sensor: *Sensor_ID
-          channels: 1-15
+          channels: *amsua_n15_available_channels
 # Transmittance Top Check
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     action:
       name: inflate error
       inflation variable:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         options:
-          channels: 1-15
+          channels: *amsua_n15_available_channels
 # Surface Jacobian check
   - filter: BlackList
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     action:
       name: inflate error
       inflation variable:
         name: ObsFunction/ObsErrorFactorSurfJacobianRad
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         options:
-          channels: 1-15
+          channels: *amsua_n15_available_channels
           sensor: *Sensor_ID
           use_biasterm: true
           test_biasterm: ObsBiasTerm
@@ -150,27 +150,27 @@ obs filters:
   - filter: Background Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     function absolute threshold:
     - name: ObsFunction/ObsErrorBoundMW
-      channels: 1-15
+      channels: *amsua_n15_available_channels
       options:
         sensor: *Sensor_ID
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         obserr_bound_latitude:
           name: ObsFunction/ObsErrorFactorLatRad
           options:
             latitude_parameters: [25.0, 0.25, 0.04, 3.0]
         obserr_bound_transmittop:
           name: ObsFunction/ObsErrorFactorTransmitTopRad
-          channels: 1-15
+          channels: *amsua_n15_available_channels
           options:
-            channels: 1-15
+            channels: *amsua_n15_available_channels
         obserr_bound_topo:
           name: ObsFunction/ObsErrorFactorTopoRad
-          channels: 1-15
+          channels: *amsua_n15_available_channels
           options:
-            channels: 1-15
+            channels: *amsua_n15_available_channels
             sensor: *Sensor_ID
         error parameter vector:
                   [3.000,  2.000,  2.000,  0.600,  0.300,
@@ -185,12 +185,12 @@ obs filters:
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     test variables:
     - name: ObsFunction/InterChannelConsistencyCheck
-      channels: 1-15
+      channels: *amsua_n15_available_channels
       options:
-        channels: 1-15
+        channels: *amsua_n15_available_channels
         use passive_bc: true
         sensor: *Sensor_ID
         use_flag: [-1, -1, -1,  1,  1,
@@ -203,12 +203,12 @@ obs filters:
   - filter: Bounds Check
     filter variables:
     - name: brightnessTemperature
-      channels: 1-15
+      channels: *amsua_n15_available_channels
     test variables:
     - name: ObsFunction/ChannelUseflagCheckRad
-      channels: 1-15
+      channels: *amsua_n15_available_channels
       options:
-        channels: 1-15
+        channels: *amsua_n15_available_channels
 #       use passive_bc: true
         use_flag: [-1, -1, -1,  1,  1,
                    -1,  1,  1,  1,  1,
