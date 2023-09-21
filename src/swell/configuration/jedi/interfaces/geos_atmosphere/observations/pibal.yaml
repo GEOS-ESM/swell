@@ -19,23 +19,25 @@ obs operator:
   components:
     - name: VertInterp
       observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-      variables:
-      - name: windEastward
-      - name: windNorthward
-      apply near surface wind scaling: true
 
       # Use height vertical coordinate first
       vertical coordinate: geopotential_height
-      observation vertical coordinate: height
+      observation vertical coordinate group: DerivedVariables
+      observation vertical coordinate: adjustedHeight
       interpolation method: linear
-      observation vertical coordinate adjustment function: "subtract scaled station elevation"
 
       # Use pressure vertical coordinate backup
       vertical coordinate backup: air_pressure
+      observation vertical coordinate group backup: MetaData
       observation vertical coordinate backup: pressure
       interpolation method backup: log-linear
 
+      # Hofx scaling
+      hofx scaling field: SurfaceWindScalingCombined
+      hofx scaling field group: DerivedVariables
+
 obs pre filters:
+
   # Reject all observations that are not Pibal
   - filter: Perform Action
     filter variables:
@@ -54,6 +56,25 @@ obs pre filters:
       is_not_in: 221
     action:
       name: reject
+
+obs prior filters:
+
+  # Apply variable changes needed for rescaled height coordinate
+  # ------------------------------------------------------------
+  - filter: Variable Transforms
+    Transform: AdjustedHeightCoordinate
+
+  # Apply variable changes needed wind scaling
+  # ------------------------------------------
+  - filter: Variable Transforms
+    Transform: SurfaceWindScalingHeight
+  - filter: Variable Transforms
+    Transform: SurfaceWindScalingPressure
+
+  # Combining to use pressure where height is missing
+  # -------------------------------------------------
+  - filter: Variable Transforms
+    Transform: SurfaceWindScalingCombined
 
 obs post filters:
 

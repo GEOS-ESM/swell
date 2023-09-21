@@ -17,15 +17,15 @@ obs operator:
 
    # Wind fields are handled using wind reduction factor applied to the lowest level.
    - name: Product
-     geovals to scale hofx by: wind_reduction_factor_at_10m
      variables:
      - name: windEastward
      - name: windNorthward
+     geovals to scale hofx by: SurfaceWindScalingPressure
+     group of geovals to scale hofx by: DerivedVariables
 
    # Temperatures use vertical interpolation
    - name: VertInterp
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-     apply near surface wind scaling: true
      variables:
      - name: airTemperature
      - name: virtualTemperature
@@ -46,6 +46,11 @@ obs operator:
      - name: specificHumidity
 
 obs filters:
+
+# Apply variable changes needed for performing wind scaling
+# ---------------------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingPressure
 
 # ------------------
 # stationPressure (surface pressure)

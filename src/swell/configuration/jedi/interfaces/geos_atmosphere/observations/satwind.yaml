@@ -16,6 +16,12 @@ obs operator:
   apply near surface wind scaling: true
 
 obs filters:
+
+# Apply variable changes needed for performing wind scaling
+# ---------------------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingPressure
+
 # Reject all obs with PreQC mark already set above 3
 - filter: PreQC
   maxvalue: 3
