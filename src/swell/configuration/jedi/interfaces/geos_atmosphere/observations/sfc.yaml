@@ -24,7 +24,7 @@ obs operator:
 
    # Temperatures use vertical interpolation
    - name: VertInterp
-     observation alias file: /discover/nobackup/jjin3/jedi/JediUfoTests_iodav3/Config/obsop_name_map.yaml
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
      apply near surface wind scaling: true
      variables:
      - name: airTemperature
@@ -41,7 +41,7 @@ obs operator:
 
    # Specific humidity is using the lowest model level (identity)
    - name: Identity
-     observation alias file: /discover/nobackup/jjin3/jedi/JediUfoTests_iodav3/Config/obsop_name_map.yaml
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
      variables:
      - name: specificHumidity
 
