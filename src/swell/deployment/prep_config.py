@@ -43,7 +43,7 @@ def update_model_components(logger, experiment_dict, comment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override, test, advanced):
+def prepare_config(method, suite, platform, override, advanced):
 
     # Create a logger
     # ---------------
@@ -64,7 +64,7 @@ def prepare_config(method, suite, platform, override, test, advanced):
     # ---------------------------------------------------------------
     PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
                         'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, advanced)
+    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced)
 
     # Call the config prep step
     # -------------------------
@@ -91,52 +91,6 @@ def prepare_config(method, suite, platform, override, test, advanced):
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
-
-    # Point to a particular pre-existing dictionary used for testing
-    # --------------------------------------------------------------
-    if test is not None:
-
-        # Method must be defaults if specifying test
-        logger.assert_abort(method == 'defaults',
-                            f'If specifying a test override, the input method must be \'defaults\'')
-
-        # Set an override to the test file
-        test_override_file = os.path.join(get_swell_path(), 'test', 'suite_tests', suite + '-' +
-                                          test + '.yaml')
-
-        # Check that the test file choice is valid
-        logger.assert_abort(os.path.exists(test_override_file), f'Requested test \'{test}\' does ' +
-                            f'not exist. Expected file is \'{test_override_file}\'')
-
-        # Open the override file
-        with open(test_override_file, 'r') as file:
-            test_override_dict = yaml.safe_load(file)
-
-        # Perform the override
-        logger.info(f'Overriding the experiment dictionary using suite test \'{test}\'')
-        dictionary_override(logger, experiment_dict, test_override_dict)
-
-    # Update model components in case the test override changed which are turned on
-    # -----------------------------------------------------------------------------
-    update_model_components(logger, experiment_dict, comment_dict)
-
-    # Optionally override dictionary values (only used when method is 'defaults')
-    # -------------------------------------
-    if override is not None:
-
-        # Method must be defaults if specifying override
-        logger.assert_abort(method == 'defaults',
-                            f'If specifying an override, the input method must be \'defaults\'')
-
-        with open(override, 'r') as file:
-            override_dict = yaml.safe_load(file)
-
-        logger.info(f'Overriding experiment dictionary settings using {override}')
-        dictionary_override(logger, experiment_dict, override_dict)
-
-    # Update model components in case the user override changed which are turned on
-    # -----------------------------------------------------------------------------
-    update_model_components(logger, experiment_dict, comment_dict)
 
     # Add comments to dictionary
     # --------------------------
