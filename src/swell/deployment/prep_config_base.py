@@ -271,8 +271,7 @@ class PrepConfigBase(ABC):
 
         # The following lists of tasks added to logger
         self.logger.info(f'Base tasks selected include the following: {base_task_list}. \n' +
-                    f'Model tasks selected include the following: {model_task_list}.')
-        
+                         f'Model tasks selected include the following: {model_task_list}.')
 
         return base_task_list, model_task_list
 
@@ -408,7 +407,7 @@ class PrepConfigBase(ABC):
                             override_dict = self.override_dictionary
                         else:
                             pass
-        
+
             if override_dict is None:
                 return el_dict
             else:
@@ -453,8 +452,6 @@ class PrepConfigBase(ABC):
             el_dict = self.show_deference(key, el_dict)
 
             el_dict = self.override_defaults(key, el_dict)
-
-            print(key, el_dict)
 
             if self.show_advanced:
                 el_dict['ask_question'] = True
