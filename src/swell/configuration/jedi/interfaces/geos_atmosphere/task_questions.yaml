@@ -66,6 +66,51 @@ jedi_forecast_model:
   options:
   - pseudo-model
 
+local_ensemble_inflation_mult:
+  default_value: 1.1
+  options:
+  - 1.1
+
+local_ensemble_inflation_rtpp:
+  default_value: 0.6
+  options:
+  - 0.6
+
+local_ensemble_inflation_rtps:
+  default_value: 0.5
+  options:
+  - 0.5
+
+local_ensemble_save_posterior_ensemble:
+  default_value: true
+  options:
+  - true
+  - false
+
+local_ensemble_save_posterior_ensemble_increments:
+  default_value: true
+  options:
+  - true
+  - false
+
+local_ensemble_save_posterior_mean:
+  default_value: true
+  options:
+  - true
+  - false
+
+local_ensemble_save_posterior_mean_increment:
+  default_value: true
+  options:
+  - true
+  - false
+
+local_ensemble_solver:
+  default_value: LETKF
+  options:
+  - LETKF
+  - GETKF
+
 minimizer:
   default_value: DRIPCG
   options:

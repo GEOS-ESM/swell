@@ -1,0 +1,13 @@
+date: '{{window_begin_iso}}'
+members from template:
+  template:
+    datetime: '{{local_background_time_iso}}'
+    filetype: cube sphere history
+    provider: geos
+    datapath: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/Data/inputs/geos.{{horizontal_resolution}}/ensemble'
+    filename: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/{{experiment_id}}.mem%mem%.%yyyy%mm%ddT%hh%MM%ssZ.nc4'
+    state variables: [ua,va,t,ps,delp,q,qi,ql,qr,qs,o3ppmv,phis,frocean,frlake,frseaice,
+                      sheleg,ts,soilt,soilm,u10m,v10m]
+  pattern: '%mem%'
+  nmembers: '{{ensemble_nmembers}}'
+  zero padding: 3

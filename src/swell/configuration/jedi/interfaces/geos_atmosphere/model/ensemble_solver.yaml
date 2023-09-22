@@ -1,0 +1,5 @@
+solver: '{{local_ensemble_solver}}'
+inflation:
+  rtps: '{{local_ensemble_inflation_rtps}}'
+  rtpp: '{{local_ensemble_inflation_rtpp}}'
+  mult: '{{local_ensemble_inflation_mult}}'

@@ -22,6 +22,13 @@ from swell.tasks.base.task_base import taskBase
 class GetEnsemble(taskBase):
 
     def execute(self):
+        """Acquires ensemble member files for a given experiment and cycle
+
+           Parameters
+           ----------
+             All inputs are extracted from the JEDI experiment file configuration.
+             See the taskBase constructor for more information.
+        """
 
         # Get the path and pattern for the background files
         # -------------------------------------------------

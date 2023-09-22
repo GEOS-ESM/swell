@@ -69,6 +69,16 @@ class RunJediLetkfExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Driver
+        self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
+        self.jedi_rendering.add_key('local_ensemble_inflation_rtps', self.config.local_ensemble_inflation_rtps())
+        self.jedi_rendering.add_key('local_ensemble_inflation_rtpp', self.config.local_ensemble_inflation_rtpp())
+        self.jedi_rendering.add_key('local_ensemble_inflation_mult', self.config.local_ensemble_inflation_mult())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean', self.config.local_ensemble_save_posterior_mean())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble', self.config.local_ensemble_save_posterior_ensemble())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean_increment', self.config.local_ensemble_save_posterior_mean_increment())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments', self.config.local_ensemble_save_posterior_ensemble_increments())
+
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')

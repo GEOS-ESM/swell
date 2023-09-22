@@ -6,6 +6,7 @@ analysis_forecast_window_offset:
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
+  - GetEnsemble
   - LinkGeosOutput
   - MoveDaRestart
   - PrepareAnalysis
@@ -44,6 +45,7 @@ background_experiment:
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
   - GetBackground
+  - GetEnsemble
   - StoreBackground
   type: string
 
@@ -58,7 +60,9 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - GetEnsemble
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: iso-duration
@@ -324,6 +328,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - GetEnsemble
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
@@ -573,6 +578,7 @@ window_length:
   prompt: What is the duration for the data assimilation window?
   tasks:
   - GetBackground
+  - GetEnsemble
   - GetGeovals
   - GetGsiBc
   - GetObservations
@@ -594,6 +600,7 @@ window_offset:
   - EvaObservations
   - GenerateBClimatology
   - GetBackground
+  - GetEnsemble
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -618,6 +625,7 @@ window_type:
   tasks:
   - GenerateBClimatology
   - GetBackground
+  - GetEnsemble
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
