@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gmi_gpm.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &gmi_gpm_channels 1-13
+  channels: &gmi_gpm_available_channels 1-13
 
 obs operator:
   name: CRTM
@@ -85,7 +85,7 @@ obs filters:
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   where:
   - variable:
       name: MetaData/sensorScanPosition
@@ -107,7 +107,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   where:
   - variable:
       name: MetaData/latitude
@@ -132,7 +132,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   test variables:
   - name: ObsFunction/CLWRetMW
     options:
@@ -144,7 +144,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   test variables:
   - name: ObsFunction/CLWRetMW
     options:
@@ -167,7 +167,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   where:
   - variable:
       name: ObsFunction/CLWRetMW
@@ -194,7 +194,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   where:
   - variable:
       name: ObsFunction/CLWRetMW
@@ -221,7 +221,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   where:
   - variable:
       name: ObsFunction/CLWRetMW
@@ -249,14 +249,14 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-13
+    channels: *gmi_gpm_available_channels
   action:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: 1-13
+      channels: *gmi_gpm_available_channels
       options:
-        channels: 1-13
+        channels: *gmi_gpm_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
