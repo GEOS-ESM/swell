@@ -4,10 +4,38 @@ existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/bui
 bundles: REMOVE
 models:
   geos_atmosphere:
+    horizontal_resolution: '13'
     observations:
     - aircraft
-    - gmi_gpm
+    - airs_aqua
     - amsr2_gcom-w1
+    - amsua_aqua
+    - amsua_metop-b
+    - amsua_metop-c
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - cris-fsr_n20
+    - cris-fsr_npp
+    - gmi_gpm
+    #- gps
+    - iasi_metop-b
+    - iasi_metop-c
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
     - mls55_aura
     - omi_aura
     - ompsnm_npp
+    #- pibal
+    - satwind
+    - scatwind
+    #- sfcship
+    #- sfc
+    #- sondes
+    - ssmis_f17

@@ -64,7 +64,15 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Make modifications needed for testing
         # -------------------------------------
-        conventional_types = ['aircraft']
+        conventional_types = [
+            'aircraft',
+            'pibal',
+            'satwind',
+            'scatwind',
+            'sfcship',
+            'sfc',
+            'sondes'
+        ]
 
         # Open the ufo_tests config file
         # ------------------------------
@@ -97,7 +105,7 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Copies for each kind of test
         # ----------------------------
-        jedi_operator_dict = copy.deepcopy(jedi_config_dict)
+        # jedi_operator_dict = copy.deepcopy(jedi_config_dict)
         jedi_filter_dict = copy.deepcopy(jedi_config_dict)
 
         # Loop through observations and moderate based on test needs
@@ -109,22 +117,22 @@ class RunJediUfoTestsExecutable(taskBase):
             ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
 
             # Merge the ufo_tests_obs dictionary with the observation dictionary
-            jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])
+            # jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])
             jedi_filter_dict['observations'][index].update(ufo_tests_obs['filter_test'])
 
-            # Remove filters from operator test
-            if 'obs filters' in jedi_operator_dict['observations'][index]:
-                del jedi_operator_dict['observations'][index]['obs filters']
+            # # Remove filters from operator test
+            # if 'obs filters' in jedi_operator_dict['observations'][index]:
+            #     del jedi_operator_dict['observations'][index]['obs filters']
 
         # Write configuration files for the tests
         # ---------------------------------------
-        file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperator_config.yaml')
-        with open(file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
+        # file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperator_config.yaml')
+        # with open(file, 'w') as jedi_config_file_open:
+        #     yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
 
-        file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperatorTLAD_config.yaml')
-        with open(file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
+        # file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperatorTLAD_config.yaml')
+        # with open(file, 'w') as jedi_config_file_open:
+        #     yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsFilters_config.yaml')
         with open(file, 'w') as jedi_config_file_open:
@@ -152,7 +160,7 @@ class RunJediUfoTestsExecutable(taskBase):
             # Run the Test Obs Filters executable
             # -----------------------------------
             if not generate_yaml_and_exit:
-                run_executable(self.logger, self.cycle_dir(), 1, jedi_executable_path,
+                run_executable(self.logger, self.cycle_dir(), 24, jedi_executable_path,
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')

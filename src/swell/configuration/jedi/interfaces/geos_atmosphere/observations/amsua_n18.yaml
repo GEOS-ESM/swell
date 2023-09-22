@@ -1,5 +1,5 @@
 obs space:
-  name: amsua_n18
+  name: AMSU-A NOAA-18
   obsdatain:
     engine:
       type: H5File
@@ -10,15 +10,17 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n18.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
   channels: &amsua_n18_channels 1-15
+
 obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
-  linear obs operator:
-    Absorbers: [H2O,O3,CO2]
   obs options:
     Sensor_ID: &Sensor_ID amsua_n18
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
+  linear obs operator:
+    Absorbers: [H2O,O3]
+
 obs bias:
   input file: '{{cycle_dir}}/amsua_n18.{{background_time}}.satbias.nc4'
   variables without bc: [brightnessTemperature]
@@ -43,6 +45,18 @@ obs bias:
     - name: scan_angle
       order: 2
     - name: scan_angle
+  covariance:
+    minimal required obs number: 20
+    variance range: [1.0e-6, 10.0]
+    step size: 1.0e-4
+    largest analysis variance: 10000.0
+    prior:
+      input file: '{{cycle_dir}}/amsua_n18.{{background_time}}.satbias.nc4'
+      inflation:
+        ratio: 1.1
+        ratio for small dataset: 2.0
+    output file: '{{cycle_dir}}/amsua_n18.{{window_begin}}.satbias.nc4'
+
 obs filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check

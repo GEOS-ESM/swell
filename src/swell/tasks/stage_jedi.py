@@ -52,7 +52,7 @@ class StageJedi(taskBase):
 
         if not os.path.exists(stage_pathfile):
             self.logger.info('No stage dictionary was found for this configuration')
-            exit(0)
+            return
 
         # Open file and template it
         stage_dict = self.jedi_rendering.render_interface_model(stage_file)

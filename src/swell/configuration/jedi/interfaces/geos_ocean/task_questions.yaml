@@ -74,11 +74,6 @@ observations:
   - insitus
   - insitut
 
-static_background_error_model:
-  default_value: bump
-  options:
-  - bump
-
 total_processors:
   default_value: 24
 

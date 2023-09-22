@@ -1,9 +1,3 @@
-
-obs operator:
-  name: VertInterp
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
-
 obs space:
   name: Aircraft
   obsdatain:
@@ -20,8 +14,126 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.aircraft.{{window_begin}}.nc4'
   simulated variables: [airTemperature, windEastward, windNorthward]
 
+obs operator:
+  name: VertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  apply near surface wind scaling: true
+
 obs filters:
 
+# ------------------
+# airTemperature BC
+# ------------------
+
+# Reassign any AIREP/PIREP (type=130) airTemperature MetaData/stationIdentification to 'KX130   '
+- filter: Variable Assignment
+  where:
+  - variable:
+      name: ObsType/airTemperature
+    is_in: 130
+  assignments:
+  - name: MetaData/stationIdentification
+    value: 'KX130   '
+# The BiasCorrectionTerm/constantPredictor can be pulled directly
+# from the BiasCoefficientValue/constantPredictor, since the
+# term is just the coefficient value * 1.
+- filter: Variable Assignment
+  assignments:
+  - name: BiasCorrectionTerm/constantPredictor
+    type: float
+    function:
+      name: ObsFunction/DrawValueFromFile
+      options:
+        file: '{{cycle_dir}}/aircraft_abias_air_constant.{{background_time}}.csv'
+        group: BiasCoefficientValue
+        interpolation:
+        - name: MetaData/stationIdentification
+          method: exact
+  defer to post: true
+# The BiasCorrectionTerm/ascentPredictor requires use of
+# ObsFunction/AircraftBiasCorrectionTerm to combine the coefficient
+# with the predictor value, so for now we assign the coefficient to
+# its own variable.
+- filter: Variable Assignment
+  assignments:
+  - name: BiasCoefficientValue/ascentPredictor
+    type: float
+    function:
+      name: ObsFunction/DrawValueFromFile
+      options:
+        file: '{{cycle_dir}}/aircraft_abias_air_ascent.{{background_time}}.csv'
+        group: BiasCoefficientValue
+        interpolation:
+        - name: MetaData/stationIdentification
+          method: exact
+  defer to post: true
+# The BiasCorrectionTerm/ascentSquaredPredictor requires use of
+# ObsFunction/AircraftBiasCorrectionTerm to combine the coefficient
+# with the predictor value raised to order=2, so for now we assign
+# the coefficient to its own variable.
+- filter: Variable Assignment
+  assignments:
+  - name: BiasCoefficientValue/ascentSquaredPredictor
+    type: float
+    function:
+      name: ObsFunction/DrawValueFromFile
+      options:
+        file: '{{cycle_dir}}/aircraft_abias_air_ascentSquared.{{background_time}}.csv'
+        group: BiasCoefficientValue
+        interpolation:
+        - name: MetaData/stationIdentification
+          method: exact
+  defer to post: true
+# Reassign any ascent predictor to zero where  MetaData/windUpward >50.
+- filter: Variable Assignment
+  where:
+  - variable:
+      name: MetaData/windUpward
+    minvalue: 50.
+  assignments:
+  - name: MetaData/windUpward
+    value: 0.
+# Compute the BiasCorrectionTerm/ascentPredictor as
+# coefficient * predictor (order=1)
+- filter: Variable Assignment
+  assignments:
+  - name: BiasCorrectionTerm/ascentPredictor
+    type: float
+    function:
+      name: ObsFunction/AircraftBiasCorrectionTerm
+      options:
+        coeff_grpvarname: BiasCoefficientValue/ascentPredictor
+        predi_grpvarname: MetaData/windUpward
+        predi_order: 1.
+  defer to post: true
+# Compute the BiasCorrectionTerm/ascentSquaredPredictor as
+# coefficient * predictor (order=2)
+- filter: Variable Assignment
+  assignments:
+  - name: BiasCorrectionTerm/ascentSquaredPredictor
+    type: float
+    function:
+      name: ObsFunction/AircraftBiasCorrectionTerm
+      options:
+        coeff_grpvarname: BiasCoefficientValue/ascentSquaredPredictor
+        predi_grpvarname: MetaData/windUpward
+        predi_order: 2.
+  defer to post: true
+# Use ObsFunction/LinearCombination to combine ObsValue/airTemperature with the
+# BiasCorrectionPredictor/<predictor> variables to produce a bias-corrected
+# HofX
+- filter: Variable Assignment
+  assignments:
+  - name: HofXBc/airTemperature
+    type: float
+    function:
+      name: ObsFunction/LinearCombination
+      options:
+        variables: [HofX/airTemperature, BiasCorrectionTerm/constantPredictor, BiasCorrectionTerm/ascentPredictor, BiasCorrectionTerm/ascentSquaredPredictor]
+        coefs: [1.0, 1.0, 1.0, 1.0]
+  defer to post: true
+
+# ------------------
 # airTemperature
 # --------------
 
@@ -206,7 +318,31 @@ obs filters:
         inflation factor: 8.0
         surface_obs: false
         adjusted_error_name: GsiAdjustObsError
+        geovar_sfc_geomz: surface_geometric_height
   defer to post: true
+
+# inflate error for tails with uninitialized bias coefficients (i.e. all coefficients equal to zero)
+- filter: Perform Action
+  action:
+    name: inflate error
+    inflation factor: 1.2
+  filter variables:
+  - name: airTemperature
+  where:
+  - variable:
+      name: BiasCorrectionTerm/constantPredictor
+    is_close_to_any_of: [0.0]
+    absolute_tolerance: 1.0e-6
+  - variable:
+      name: BiasCoefficientValue/ascentPredictor
+    is_close_to_any_of: [0.0]
+    absolute_tolerance: 1.0e-6
+  - variable:
+      name: BiasCoefficientValue/ascentSquaredPredictor
+    is_close_to_any_of: [0.0]
+    absolute_tolerance: 1.0e-6
+  defer to post: true
+
 
 # assign TempObsErrorData/airTemperature  <--- ObsErrorData before changing its Min and Max
 - filter: Variable Assignment
@@ -266,6 +402,7 @@ obs filters:
 # Background  check
 # ratio threshold 7.0
 - filter: Background Check
+  test_hofx: HofXBc
   filter variables:
   - name: airTemperature
   threshold: 7.0
@@ -278,6 +415,7 @@ obs filters:
 
 # ratio threshold * 0.7 if PreQC=3
 - filter: Background Check
+  test_hofx: HofXBc
   filter variables:
   - name: airTemperature
   threshold: 4.9
@@ -313,10 +451,6 @@ obs filters:
         use_air_pressure: true
         variable: airTemperature
   defer to post: true
-
-# Note: have not implemented error inflation for new tail. One tail 'RPXTOZBA' had uninitialized
-# errors and its error was inflated by a factor of 1.2
-
 
 # Eastward and northward wind
 # ---------------------------
@@ -501,6 +635,7 @@ obs filters:
         inflation factor: 4.0
         surface_obs: false
         adjusted_error_name: GsiAdjustObsError
+        geovar_sfc_geomz: surface_geometric_height
   defer to post: true
 
 # Error inflation based on pressure check
@@ -516,6 +651,7 @@ obs filters:
         inflation factor: 4.0
         surface_obs: false
         adjusted_error_name: GsiAdjustObsError
+        geovar_sfc_geomz: surface_geometric_height
   defer to post: true
 
   # Gross Check

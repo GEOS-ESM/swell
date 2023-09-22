@@ -19,6 +19,7 @@ analysis_variables:
   - all
   prompt: What are the analysis variables?
   tasks:
+  - GenerateBClimatology
   - PrepareAnalysis
   - RunJediVariationalExecutable
   type: string-check-list
@@ -32,6 +33,7 @@ background_error_model:
   prompt: Which background error model do you want to use?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   type: string-drop-list
 
 background_experiment:
@@ -74,6 +76,7 @@ background_time_offset:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -125,10 +128,21 @@ crtm_coeff_dir:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string
+
+ensemble_num_members:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: How many members comprise the ensemble?
+  tasks:
+  - RunJediLetkfExecutable
+  type: integer
 
 existing_geos_gcm_build_path:
   ask_question: true
@@ -192,6 +206,7 @@ generate_yaml_and_exit:
   prompt: Generate JEDI executable YAML and exit?
   tasks:
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   type: boolean
@@ -310,6 +325,7 @@ horizontal_resolution:
   - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StageJedi
   - StoreBackground
@@ -350,6 +366,7 @@ jedi_forecast_model:
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
 
@@ -386,6 +403,7 @@ npx_proc:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -399,6 +417,7 @@ npy_proc:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -447,10 +466,21 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string-check-list
+
+path_to_ensemble:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where ensemble members are stored?
+  tasks:
+  - GetEnsemble
+  type: string
 
 path_to_geos_adas_background:
   ask_question: true
@@ -497,17 +527,6 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
-static_background_error_model:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Which static background error model do you want to use?
-  tasks:
-  - GenerateBClimatologyByLinking
-  type: string-drop-list
-
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
@@ -539,6 +558,7 @@ total_processors:
   - GenerateBClimatologyByLinking
   - PrepareAnalysis
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -553,6 +573,7 @@ vertical_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StageJedi
   type: string-drop-list
@@ -566,9 +587,11 @@ window_length:
   tasks:
   - GetBackground
   - GetGeovals
+  - GetGsiBc
   - GetObservations
   - MoveDaRestart
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -582,12 +605,14 @@ window_offset:
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
   - EvaObservations
+  - GenerateBClimatology
   - GetBackground
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -604,8 +629,10 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - GenerateBClimatology
   - GetBackground
   - RunJediHofxExecutable
+  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: string-drop-list
