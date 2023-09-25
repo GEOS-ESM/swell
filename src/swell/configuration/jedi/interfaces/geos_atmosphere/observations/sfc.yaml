@@ -16,12 +16,17 @@ obs operator:
   components:
 
    # Wind fields are handled using wind reduction factor applied to the lowest level.
-   - name: Product
+   - name: VertInterp
      variables:
      - name: windEastward
      - name: windNorthward
-     geovals to scale hofx by: SurfaceWindScalingPressure
-     group of geovals to scale hofx by: DerivedVariables
+     # Use height vertical coordinate first
+     vertical coordinate: geopotential_height
+     observation vertical coordinate group: DerivedVariables
+     observation vertical coordinate: adjustedHeight
+     interpolation method: linear
+     hofx scaling field: SurfaceWindScalingHeight
+     hofx scaling field group: DerivedVariables
 
    # Temperatures use vertical interpolation
    - name: VertInterp
@@ -47,10 +52,15 @@ obs operator:
 
 obs filters:
 
-# Apply variable changes needed for performing wind scaling
-# ---------------------------------------------------------
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
 - filter: Variable Transforms
-  Transform: SurfaceWindScalingPressure
+  Transform: AdjustedHeightCoordinate
+
+# Apply variable changes needed wind scaling
+# ------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingHeight
 
 # ------------------
 # stationPressure (surface pressure)

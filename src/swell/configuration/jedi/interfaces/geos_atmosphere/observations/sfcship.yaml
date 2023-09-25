@@ -17,11 +17,23 @@ obs operator:
 
    - name: Product
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+     geovals to scale hofx by: SurfaceWindScalingHeight
+     group of geovals to scale hofx by: DerivedVariables
      variables:
      - name: windEastward
      - name: windNorthward
-     geovals to scale hofx by: SurfaceWindScalingPressure
-     group of geovals to scale hofx by: DerivedVariables
+
+#   - name: VertInterp
+#     variables:
+#     - name: windEastward
+#     - name: windNorthward
+#     # Use height vertical coordinate first
+#     vertical coordinate: geopotential_height
+#     observation vertical coordinate group: DerivedVariables
+#     observation vertical coordinate: adjustedHeight
+#     interpolation method: linear
+#     hofx scaling field: SurfaceWindScalingHeight
+#     hofx scaling field group: DerivedVariables
 
    - name: VertInterp
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
@@ -45,10 +57,15 @@ obs operator:
 
 obs filters:
 
-# Apply variable changes needed for performing wind scaling
-# ---------------------------------------------------------
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
 - filter: Variable Transforms
-  Transform: SurfaceWindScalingPressure
+  Transform: AdjustedHeightCoordinate
+
+# Apply variable changes needed wind scaling
+# ------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingHeight
 
 # ------------------
 # stationPressure (surface pressure)
