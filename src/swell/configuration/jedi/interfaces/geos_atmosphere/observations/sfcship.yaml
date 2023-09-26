@@ -15,25 +15,17 @@ obs operator:
   name: Composite
   components:
 
-   - name: Product
-     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-     geovals to scale hofx by: SurfaceWindScalingHeight
-     group of geovals to scale hofx by: DerivedVariables
+   - name: VertInterp
      variables:
      - name: windEastward
      - name: windNorthward
-
-#   - name: VertInterp
-#     variables:
-#     - name: windEastward
-#     - name: windNorthward
-#     # Use height vertical coordinate first
-#     vertical coordinate: geopotential_height
-#     observation vertical coordinate group: DerivedVariables
-#     observation vertical coordinate: adjustedHeight
-#     interpolation method: linear
-#     hofx scaling field: SurfaceWindScalingHeight
-#     hofx scaling field group: DerivedVariables
+     # Use height vertical coordinate first
+     vertical coordinate: geopotential_height
+     observation vertical coordinate group: DerivedVariables
+     observation vertical coordinate: adjustedHeight
+     interpolation method: linear
+     hofx scaling field: SurfaceWindScalingHeight
+     hofx scaling field group: DerivedVariables
 
    - name: VertInterp
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
