@@ -19,4 +19,4 @@ models:
     - gsi_ncdiags/aircraft/*.nc4
     - gsi_ncdiags/aircraft
     - gsi_ncdiags
-  path_to_gsi_nc_diags: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
+    path_to_gsi_nc_diags: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H

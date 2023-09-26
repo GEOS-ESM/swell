@@ -171,8 +171,6 @@ class GsiNcdiagToIoda(taskBase):
                 gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
                 os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
 
-        exit(1)
-
         # Combine the conventional data
         # -----------------------------
         for needed_ioda_type in needed_ioda_types:
