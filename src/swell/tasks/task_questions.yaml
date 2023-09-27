@@ -6,7 +6,6 @@ analysis_forecast_window_offset:
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
-  - GetEnsemble
   - LinkGeosOutput
   - MoveDaRestart
   - PrepareAnalysis
@@ -45,7 +44,6 @@ background_experiment:
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
   - GetBackground
-  - GetEnsemble
   - StoreBackground
   type: string
 
@@ -60,9 +58,7 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
-  - GetEnsemble
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: iso-duration
@@ -328,7 +324,6 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
-  - GetEnsemble
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
@@ -373,6 +368,94 @@ jedi_forecast_model:
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
+  type: string-drop-list
+
+local_ensemble_inflation_mult:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Specify the multiplicative prior inflation coefficient (0, inf].
+  tasks:
+  - RunJediLetkfExecutable
+  type: float
+
+local_ensemble_inflation_rtpp:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0, 1].
+  tasks:
+  - RunJediLetkfExecutable
+  type: float
+
+local_ensemble_inflation_rtps:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Specify the Relaxation To Prior Spread (RTPS) coefficient (0, 1].
+  tasks:
+  - RunJediLetkfExecutable
+  type: float
+
+local_ensemble_save_posterior_ensemble:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Save the posterior ensemble members?
+  tasks:
+  - RunJediLetkfExecutable
+  type: boolean
+
+local_ensemble_save_posterior_ensemble_increments:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Save the posterior ensemble member increments?
+  tasks:
+  - RunJediLetkfExecutable
+  type: boolean
+
+local_ensemble_save_posterior_mean:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Save the posterior ensemble mean?
+  tasks:
+  - RunJediLetkfExecutable
+  type: boolean
+
+local_ensemble_save_posterior_mean_increment:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Save the posterior ensemble mean increment?
+  tasks:
+  - RunJediLetkfExecutable
+  type: boolean
+
+local_ensemble_solver:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which local ensemble solver type should be implemented?
+  tasks:
+  - RunJediLetkfExecutable
   type: string-drop-list
 
 minimizer:
@@ -578,7 +661,6 @@ window_length:
   prompt: What is the duration for the data assimilation window?
   tasks:
   - GetBackground
-  - GetEnsemble
   - GetGeovals
   - GetGsiBc
   - GetObservations
@@ -600,7 +682,6 @@ window_offset:
   - EvaObservations
   - GenerateBClimatology
   - GetBackground
-  - GetEnsemble
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -625,7 +706,6 @@ window_type:
   tasks:
   - GenerateBClimatology
   - GetBackground
-  - GetEnsemble
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
