@@ -16,7 +16,7 @@ import yaml
 
 from swell.utilities.logger import Logger
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary import dict_get, add_comments_to_dictionary, dictionary_override
+from swell.utilities.dictionary import dict_get, add_comments_to_dictionary
 
 
 # --------------------------------------------------------------------------------------------------
