@@ -29,14 +29,17 @@ class GetEnsemble(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
-
-        # Get the path and pattern for the background files
+        # Get the path and pattern for the ensemble members
         # -------------------------------------------------
         ensemble_path = self.config.path_to_ensemble()
 
+        # Replate ensemble_path with true path
+        # ---------------------------------------------
+        ensemble_location = self.cycle_time_dto().strftime(ensemble_path)
+
         # Fetch list of ensemble members
         # --------------------------------
-        ensemble_members = glob.glob(ensemble_path)
+        ensemble_members = glob.glob(ensemble_location)
 
         # Assert at least one ensemble member was found
         # -----------------------------------------------
@@ -51,17 +54,11 @@ class GetEnsemble(taskBase):
             # Get filename from full path
             member_file = os.path.basename(ensemble_member)
 
-            # Extract the datetime part from the string
-            datetime_part = re.search(r"\d{8}_\d{4}\w", member_file).group()
-
-            # Get datetime for the file from the filename
-            member_file_datetime = datetime.datetime.strptime(datetime_part, '%Y%m%d_%H%Mz')
-
-            # Create target filename using the datetime format
-            member_file_target = member_file_datetime.strftime('geos.mem001.%Y%m%d_%H%M%Sz.nc4')
+            # Extract the member name, excluding path
+            member_part = member_file.split('/')[-1]
 
             # Target path and filename
-            ensemble_path_file_target = os.path.join(self.cycle_dir(), member_file_target)
+            ensemble_path_file_target = os.path.join(self.cycle_dir(), member_part)
 
             # Remove target file if it exists (might be a link)
             if os.path.exists(ensemble_path_file_target):
