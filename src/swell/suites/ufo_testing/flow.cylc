@@ -39,6 +39,9 @@
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
 
+            # Generate satellite channel records
+            GenerateSatelliteChannelRecord
+
             # Convert bias correction to ioda
             GetGsiBc
             GetGsiBc => GsiBcToIoda
@@ -52,6 +55,7 @@
             GetGeovals
 
             # Run Jedi hofx executable
+            GenerateSatelliteChannelRecord => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable
@@ -100,6 +104,9 @@
             {% if scheduling["BuildJedi"]["partition"] %}
             --partition={{scheduling["BuildJedi"]["partition"]}}
             {% endif %}
+
+    [[GenerateSatelliteChannelRecord]]
+        script = "swell_task GenerateSatelliteChannelRecord $config -d $datetime -m geos_atmosphere"
 
     [[ GetGsiBc ]]
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
