@@ -31,9 +31,12 @@ models:
     - mls55_aura
     - omi_aura
     - ompsnm_npp
+    - pibal
     - satwind
     - scatwind
-    #- sfcship
-    #- sfc
-    #- sondes
+    - sfcship
+    - sfc
+    - sondes
     - ssmis_f17
+    obs_experiment: x0048v1
+    geovals_experiment: x0048v1-geovals

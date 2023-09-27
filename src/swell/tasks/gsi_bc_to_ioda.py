@@ -48,6 +48,8 @@ class GsiBcToIoda(taskBase):
         sensors_satbias = []
         sensors_tlapse = []
         for observation in observations:
+
+            print('observation', observation)
             # Open configuration file for observation
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 

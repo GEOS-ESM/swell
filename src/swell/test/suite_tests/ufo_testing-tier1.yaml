@@ -33,14 +33,14 @@ models:
     - mhs_metop-c
     - mhs_n19
     #- mls55_aura
-    #- obsop_name_map
     #- omi_aura
     #- ompsnm_npp
+    - pibal
     - satwind
     - scatwind
-    #- sfcship
-    #- sfc
-    #- sondes
+    - sfc
+    - sfcship
+    - sondes
     - ssmis_f17
     produce_geovals: false
     clean_patterns:
@@ -48,6 +48,7 @@ models:
     - '*.txt'
     - '*.log'
     - '*.yaml'
+    - '*.csv'
     - gsi_bcs/*.nc4
     - gsi_bcs/*.txt
     - gsi_bcs/*.yaml
@@ -56,3 +57,6 @@ models:
     - gsi_ncdiags/aircraft/*.nc4
     - gsi_ncdiags/aircraft
     - gsi_ncdiags
+    path_to_gsi_nc_diags: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiagv1/%Y%m%d%H
+    obs_experiment: x0048v1
+    geovals_experiment: x0048v1-geovals

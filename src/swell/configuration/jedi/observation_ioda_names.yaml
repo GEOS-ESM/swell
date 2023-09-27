@@ -110,6 +110,9 @@ ioda instrument names:
   - ioda name: ompslpnc_npp
     full name: OMPS Limb Profiler (NPP)
     inst type: ozone
+  - ioda name: pibal
+    full name: Pilot Balloon Data (PIBAL)
+    inst type: conventional
   - ioda name: rass_tv
     full name: RASS Virtual Temperature
     inst type: conventional
@@ -123,10 +126,10 @@ ioda instrument names:
     full name: SEVIRI (Meteosat-11)
     inst type: radiance
   - ioda name: sfcship
-    full name: Surface Ship
+    full name: Surface Marine Stations
     inst type: conventional
   - ioda name: sfc
-    full name: Surface
+    full name: Surface Land Stations
     inst type: conventional
   - ioda name: sondes
     full name: Radiosondes

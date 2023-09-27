@@ -1,5 +1,5 @@
 obs space:
-  name: amsr2_gcom-w1
+  name: AMSR2 GCOM-W1
   obsdatain:
     engine:
       type: H5File
@@ -9,19 +9,22 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsr2_gcom-w1.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &amsr2_gcom-w1_channels 1-14
+  channels: &amsr2_gcom-w1_available_channels 1-14
+
 obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   Clouds: [Water, Ice, Rain, Snow]
   Cloud_Fraction: 1.0
-  linear obs operator:
-    Absorbers: [H2O,O3,CO2]
-    Clouds: [Water]
   obs options:
     Sensor_ID: amsr2_gcom-w1
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}'
+
+  linear obs operator:
+    Absorbers: [H2O,O3]
+    Clouds: [Water]
+
 obs bias:
   input file: '{{cycle_dir}}/amsr2_gcom-w1.{{background_time}}.satbias.nc4'
   variational bc:
@@ -44,17 +47,29 @@ obs bias:
       order: 2
     - name: scan_angle
       var_name: sensorScanPosition
+  covariance:
+    minimal required obs number: 20
+    variance range: [1.0e-6, 10.0]
+    step size: 1.0e-4
+    largest analysis variance: 10000.0
+    prior:
+      input file: '{{cycle_dir}}/amsr2_gcom-w1.{{background_time}}.satbias.nc4'
+      inflation:
+        ratio: 1.1
+        ratio for small dataset: 2.0
+    output file: '{{cycle_dir}}/amsr2_gcom-w1.{{window_begin}}.satbias.nc4'
+
 obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   minvalue: 50.0
   maxvalue: 340.0
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -72,14 +87,14 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   test variables:
   - name: ObsFunction/TotalColumnVaporGuess
   minvalue: 10.0
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   test variables:
   - name: ObsFunction/SunGlintAngle
   minvalue: 20.0
@@ -87,7 +102,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   test variables:
   - name: ObsFunction/CLWRetMW
     options:
@@ -105,7 +120,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   test variables:
   - name: ObsFunction/CLWRetMW
     options:
@@ -119,7 +134,7 @@ obs filters:
 - filter: Difference Check
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   value:
     name: ObsFunction/CLWRetMW
     options:
@@ -143,14 +158,14 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   action:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: 1-14
+      channels: *amsr2_gcom-w1_available_channels
       options:
-        channels: 1-14
+        channels: *amsr2_gcom-w1_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -176,7 +191,7 @@ obs filters:
   apply at iterations: 0, 1
   filter variables:
   - name: brightnessTemperature
-    channels: 1-14
+    channels: *amsr2_gcom-w1_available_channels
   threshold: 2.0
   action:
     name: reject

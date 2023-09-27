@@ -1,5 +1,5 @@
 obs space:
-  name: Scatwind
+  name: Scatterometer Winds
   obsdatain:
     engine:
       type: H5File
@@ -9,10 +9,11 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.scatwind.{{window_begin}}.nc4'
   simulated variables: [windEastward, windNorthward]
+
 obs operator:
-  name: VertInterp
+  name: Product
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
+  geovals to scale hofx by: wind_reduction_factor_at_10m
 
 obs filters:
 #
