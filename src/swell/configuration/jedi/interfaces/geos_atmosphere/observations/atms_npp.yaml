@@ -197,7 +197,6 @@ obs filters:
       channels: *atms_npp_channels
       options:
         channels: *atms_npp_channels
-        use passive_bc: true
         sensor: *Sensor_ID
         use_flag: [-1, -1, -1, -1,  1,
                     1,  1,  1,  1,  1,
@@ -217,7 +216,6 @@ obs filters:
       channels: *atms_npp_channels
       options:
         channels: *atms_npp_channels
-        use passive_bc: true
         use_flag: [-1, -1, -1, -1,  1,
                     1,  1,  1,  1,  1,
                     1,  1,  1,  1,  1,
