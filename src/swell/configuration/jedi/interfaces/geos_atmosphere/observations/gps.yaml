@@ -137,7 +137,7 @@ obs filters:
   test variables:
   - name: MetaData/impactHeightRO
   minvalue: 8000.1
-  action: 
+  action:
     name: reject
 # QC below gpstop
 # RO error model
@@ -186,7 +186,7 @@ obs filters:
   - variable:
       name: MetaData/satelliteIdentifier
     is_in:  41,44,440,421,724,725,726,727,728,729,
-            750,751,752,753,754,755,821,825 
+            750,751,752,753,754,755,821,825
   defer to post: true
 # reset ObsErrorData to 10.0 if it is > 10.0.
 - filter: Perform Action
@@ -207,7 +207,7 @@ obs filters:
   filter variables:
   - name: bendingAngle
   threshold: 5
-  action: 
+  action:
     name: reject
   defer to post: true
 # Re-assign error ObsErrorData/bendingAngle <--- JediAdjustObsError/bendingAngle
