@@ -191,6 +191,7 @@ obs filters:
       channels: *amsua_metop-c_available_channels
       options:
         channels: *amsua_metop-c_available_channels
+        use passive_bc: true
         sensor: *Sensor_ID
         use_flag: [-1, -1, -1,  1,  1,
                     1,  1,  1,  1,  1,
