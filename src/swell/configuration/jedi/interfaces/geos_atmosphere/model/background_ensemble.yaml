@@ -9,5 +9,5 @@ members from template:
     state variables: [ua,va,t,ps,delp,q,qi,ql,qr,qs,o3ppmv,phis,frocean,frlake,frseaice,
                       sheleg,ts,soilt,soilm,u10m,v10m]
   pattern: '%mem%'
-  nmembers: '{{ensemble_nmembers}}'
+  nmembers: '{{ensemble_num_members}}'
   zero padding: 3

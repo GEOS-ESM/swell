@@ -47,10 +47,19 @@ class JediConfigRendering():
             'background_frequency',
             'background_time',
             'crtm_coeff_dir',
+            'ensemble_num_members',
             'gradient_norm_reduction',
             'horizontal_resolution',
             'local_background_time',
             'local_background_time_iso',
+            'local_ensemble_inflation_mult',
+            'local_ensemble_inflation_rtpp',
+            'local_ensemble_inflation_rtps',
+            'local_ensemble_save_posterior_ensemble',
+            'local_ensemble_save_posterior_ensemble_increments',
+            'local_ensemble_save_posterior_mean',
+            'local_ensemble_save_posterior_mean_increment',
+            'local_ensemble_solver',
             'minimizer',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
@@ -106,7 +115,7 @@ class JediConfigRendering():
 
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'oops', f'{config_name}.yaml')
-
+        print(config_file)
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
 

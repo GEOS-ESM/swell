@@ -89,7 +89,8 @@ class RunJediLetkfExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file('LocalEnsembleDA')
+
 
         # Perform complete template rendering
         # -----------------------------------
@@ -111,7 +112,7 @@ class RunJediLetkfExecutable(taskBase):
 
         # Jedi executable name
         # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+        jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
