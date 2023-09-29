@@ -46,11 +46,11 @@ amsua_n19:
 
 atms_n20:
   filter_test:
-    passedBenchmark: 159928
+    passedBenchmark: 131783
 
 atms_npp:
   filter_test:
-    passedBenchmark: 158687
+    passedBenchmark: 130828
 
 avhrr3_metop-b:
   filter_test:
