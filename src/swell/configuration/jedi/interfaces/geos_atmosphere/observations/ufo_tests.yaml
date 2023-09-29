@@ -78,7 +78,7 @@ gmi_gpm:
 
 gps:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 467704
 
 iasi_metop-b:
   filter_test:
