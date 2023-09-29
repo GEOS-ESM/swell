@@ -7,3 +7,4 @@ models:
   geos_atmosphere:
     observations:
     - sondes
+    obs_experiment: x0048v1
