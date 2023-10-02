@@ -144,8 +144,8 @@ class PrepareAnalysis(taskBase):
 
     def replace_ocn(self, f_rst, ana_pth):
 
-        # TODO: combining stftime format with strings, safe practice?
-        # -----------------------------------------------------------------
+        # TODO: This will fail for multiple restart files and no IAU
+        # ----------------------------------------------------------
 
         for filepath in list(glob.glob(ana_path)):
             f_ana = filepath

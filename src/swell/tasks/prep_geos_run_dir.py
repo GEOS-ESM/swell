@@ -445,6 +445,9 @@ class PrepGeosRunDir(taskBase):
 
     def rewrite_agcm(self, rcdict, rcfile):
 
+        # This part is relevant for move_da_restart task as well. Be mindful of
+        # your changes.
+
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
