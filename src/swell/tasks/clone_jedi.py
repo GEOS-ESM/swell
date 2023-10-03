@@ -48,13 +48,16 @@ class CloneJedi(taskBase):
                 bundles = []
                 for model_component in model_components:
                     # Open the metadata config for interface
-                    meta = self.jedi_rendering.render_interface_meta()
+                    self.jedi_rendering.add_key('npx_proc', '1')
+                    self.jedi_rendering.add_key('npy_proc', '1')
+                    self.jedi_rendering.add_key('total_processors', '1')
+                    meta = self.jedi_rendering.render_interface_meta(model_component)
                     bundles.append(meta['jedi_interface'])
             else:
-                bundles_default = get_bundles()
+                bundles = get_bundles()
 
             # Generate the build dictionary
-            jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles_default),
+            jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
                                                       jedi_bundle_build_path)
 

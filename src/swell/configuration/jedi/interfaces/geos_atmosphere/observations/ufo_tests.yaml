@@ -2,13 +2,6 @@
 # -----------------------------------------------------------------------
 
 default:
-  operator_test:
-    linear obs operator test:
-      coef TL: 0.1
-      tolerance TL: 1.0e-11
-      tolerance AD: 1.0e-13
-    tolerance: 1.0e-06
-    rms ref: 1.0
   filter_test:
     passedBenchmark: 1
 
@@ -16,205 +9,133 @@ default:
 # ---------------------------------------
 
 aircraft:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 341802
+    passedBenchmark: 342566
 
 airs_aqua:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 360284
 
 amsr2_gcom-w1:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 54558
 
 amsua_aqua:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 0
 
-amsua_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
 amsua_metop-b:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 71950
 
 amsua_metop-c:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 91419
 
 amsua_n15:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 56139
+    passedBenchmark: 56155
 
 amsua_n18:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 69693
+    passedBenchmark: 69700
 
 amsua_n19:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 73421
+    passedBenchmark: 73428
 
 atms_n20:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 159928
+    passedBenchmark: 131783
 
 atms_npp:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 158687
+    passedBenchmark: 130828
 
-avhrr3_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
+avhrr3_metop-b:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 4940
 
 avhrr3_n18:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 5455
+
+avhrr3_n19:
+  filter_test:
+    passedBenchmark: 4948
 
 cris-fsr_n20:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 220521
 
 cris-fsr_npp:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 210980
 
 gmi_gpm:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 41937
+    passedBenchmark: 41975
 
-gnssrobndnbam:
-  operator_test:
-    rms ref: 1.0e-1
+gps:
   filter_test:
-    passedBenchmark: 1
-
-iasi_metop-a:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 467704
 
 iasi_metop-b:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 561875
+
+iasi_metop-c:
+  filter_test:
+    passedBenchmark: 559038
 
 mhs_metop-b:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 29630
 
 mhs_metop-c:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 29815
 
 mhs_n19:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 27823
 
 mls55_aura:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 1
 
 omi_aura:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
-
-ompslpnc_npp:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 1
 
 ompsnm_npp:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 1
 
+pibal:
+  filter_test:
+    passedBenchmark: 1204
+
 satwind:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 231948
 
 scatwind:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
     passedBenchmark: 16384
 
 sfcship:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 99142
 
 sfc:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 71960
 
 sondes:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 116687
 
 ssmis_f17:
-  operator_test:
-    rms ref: 1.0e-1
   filter_test:
-    passedBenchmark: 1
-
-vadwind:
-  operator_test:
-    rms ref: 1.0e-1
-  filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 48492

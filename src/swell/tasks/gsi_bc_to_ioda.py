@@ -11,6 +11,8 @@
 import glob
 import os
 
+from generate_aircraft_bias_csv import csv_write
+
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import write_dict_to_yaml
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -46,6 +48,8 @@ class GsiBcToIoda(taskBase):
         sensors_satbias = []
         sensors_tlapse = []
         for observation in observations:
+
+            print('observation', observation)
             # Open configuration file for observation
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
@@ -70,15 +74,39 @@ class GsiBcToIoda(taskBase):
         # Get list of files from holding directory
         bc_files = glob.glob(os.path.join(gsi_bc_dir, '*.txt'))
 
+        # Assert that the number of files is 3 or less
+        self.logger.assert_abort(len(bc_files) <= 3, f'In GsiBcToIoda too many files found in ' +
+                                                     f'{gsi_bc_dir}. Expected 3 or less, found ' +
+                                                     f'{len(bc_files)}.')
+
+        # Get index of file that contains satbias but not satbiaspc
+        satbias_file_index = None
+        satbiaspc_file_index = None
+        acftbias_file_index = None
+
+        for index, bc_file in enumerate(bc_files):
+            if 'satbias' in bc_file and 'satbiaspc' not in bc_file:
+                satbias_file_index = index
+            if 'satbiaspc' in bc_file:
+                satbiaspc_file_index = index
+            if 'acftbias' in bc_file:
+                acftbias_file_index = index
+
+        # Assert that the files were all found
+        self.logger.assert_abort(satbias_file_index is not None,
+                                 f'In GsiBcToIoda no satbias file found in {gsi_bc_dir}.')
+        self.logger.assert_abort(satbiaspc_file_index is not None,
+                                 f'In GsiBcToIoda no satbiaspc file found in {gsi_bc_dir}.')
+        if 'aircraft' in observations:
+            self.logger.assert_abort(acftbias_file_index is not None,
+                                     f'In GsiBcToIoda no acftbias file found in {gsi_bc_dir}.')
+
         # Create dictionary that will be passed to converter
         satbias_converter_dict = {}
 
         # Add the files
-        for bc_file in bc_files:
-            if '.ana.satbias.' in bc_file:
-                satbias_converter_dict['input coeff file'] = bc_file
-            if '.ana.satbiaspc.' in bc_file:
-                satbias_converter_dict['input err file'] = bc_file
+        satbias_converter_dict['input coeff file'] = bc_files[satbias_file_index]
+        satbias_converter_dict['input err file'] = bc_files[satbiaspc_file_index]
 
         # Add the default predictors
         default_predictors = []
@@ -144,6 +172,40 @@ class GsiBcToIoda(taskBase):
             # Write to tlapse file
             with open(os.path.join(self.cycle_dir(), sensor_tlapse), 'w') as file_open:
                 file_open.write(sensor_tlapse_file)
+
+        # Do the conversion of the aircraft bias correction files
+        # -------------------------------------------------------
+        if 'aircraft' in observations:
+
+            # Input file name
+            coefFileName = bc_files[acftbias_file_index]
+            coordVariableName = 'MetaData/stationIdentification'
+            coordVariableType = 'string'
+            coordVariableColumn = 0
+            drawVariableType = 'float'
+
+            aircraft_properties = [
+                {'csvFileName': f'aircraft_abias_air_constant.{background_time}.csv',
+                 'drawVariableName': 'BiasCoefficientValue/constantPredictor',
+                 'drawVariableColumn': 2},
+                {'csvFileName': f'aircraft_abias_air_ascent.{background_time}.csv',
+                 'drawVariableName': 'BiasCoefficientValue/ascentPredictor',
+                 'drawVariableColumn': 3},
+                {'csvFileName': f'aircraft_abias_air_ascentSquared.{background_time}.csv',
+                 'drawVariableName': 'BiasCoefficientValue/ascentSquaredPredictor',
+                 'drawVariableColumn': 4},
+            ]
+
+            for aircraft_property in aircraft_properties:
+
+                csv_write(os.path.join(self.cycle_dir(), aircraft_property['csvFileName']),
+                          coefFileName,
+                          coordVariableName,
+                          coordVariableType,
+                          coordVariableColumn,
+                          aircraft_property['drawVariableName'],
+                          drawVariableType,
+                          aircraft_property['drawVariableColumn'])
 
 
 # --------------------------------------------------------------------------------------------------

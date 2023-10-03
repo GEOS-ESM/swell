@@ -47,6 +47,21 @@ class EvaObservations(taskBase):
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
+        # Set channels for which plots will be made
+        # This should be configurable once we do the eva refactoring.
+        channels_to_plot = {
+            'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
+                          1088, 1329, 1449, 1766, 1800, 1869, 1918],
+            'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+                             402, 487, 501, 626, 874, 882, 1008],
+            'cris-fsr_npp': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+                             402, 487, 501, 626, 874, 882, 1008],
+            'iasi_metop-b': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
+            'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
+            }
+
         # Loop over observations
         # -------------------
         for observation in self.config.observations():
@@ -89,7 +104,10 @@ class EvaObservations(taskBase):
 
             if 'channels' in observation_dict['obs space']:
                 need_channels = True
-                eva_override['channels'] = observation_dict['obs space']['channels']
+                if observation in channels_to_plot:
+                    eva_override['channels'] = channels_to_plot[observation]
+                else:
+                    eva_override['channels'] = observation_dict['obs space']['channels']
             else:
                 need_channels = False
                 eva_override['channels'] = ''

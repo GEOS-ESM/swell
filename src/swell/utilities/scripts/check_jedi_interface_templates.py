@@ -33,7 +33,6 @@ def main():
                     'interfaces/*/model/r2d2.yaml',
                     'interfaces/*/model/stage*.yaml',
                     'interfaces/*/model/background_error.yaml',
-                    'interfaces/*/model/StaticBInit.yaml',
                     ]
 
     # Path to JEDI interface code
