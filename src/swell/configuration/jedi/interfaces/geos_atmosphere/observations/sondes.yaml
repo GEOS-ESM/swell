@@ -18,23 +18,36 @@ obs space:
 obs operator:
   name: Composite
   components:
-   - name: VertInterp
-     apply near surface wind scaling: true
-     variables:
-     - name: airTemperature
-     - name: virtualTemperature
-     - name: specificHumidity
-     - name: windEastward
-     - name: windNorthward
-   - name: SfcPCorrected
-     variables:
-     - name: stationPressure
-     da_psfc_scheme: GSI
-     geovar_geomz: geopotential_height
-     geovar_sfc_geomz: surface_geometric_height
-     station_altitude: height
+
+  - name: VertInterp
+    variables:
+    - name: windEastward
+    - name: windNorthward
+
+    # Hofx scaling
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
+
+  - name: VertInterp
+    variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    - name: specificHumidity
+
+  - name: SfcPCorrected
+    variables:
+    - name: stationPressure
+    da_psfc_scheme: GSI
+    geovar_geomz: geopotential_height
+    geovar_sfc_geomz: surface_geometric_height
+    station_altitude: height
 
 obs filters:
+
+# Apply variable changes needed for performing wind scaling
+# ---------------------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingPressure
 
 ## Surface pressure
 ## ----------------
