@@ -209,7 +209,6 @@ obs filters:
       channels: *amsua_n19_available_channels
       options:
         channels: *amsua_n19_available_channels
-#       use passive_bc: true
         use_flag: [-1, -1, -1,  1,  1,
                     1, -1, -1,  1,  1,
                     1,  1,  1,  1, -1]
