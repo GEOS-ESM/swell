@@ -8,7 +8,6 @@
 
 
 # standard imports
-import click
 import os
 
 # local imports
@@ -95,16 +94,7 @@ class DeployWorkflow():
 # --------------------------------------------------------------------------------------------------
 
 
-@click.command()
-@click.option('-p', '--suite_path', 'suite_path', default=None,
-              help='Directory containing the suite file needed by the workflow manager')
-@click.option('-w', '--workflow_manager', 'workflow_manager', default='cylc',
-              help='Workflow manager to be used')
-@click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False,
-              help='Tells workflow manager to block until complete')
-@click.option('-l', '--log_path', 'log_path', default=None,
-              help='Directory to receive workflow manager logging output')
-def main(suite_path, workflow_manager, no_detach, log_path):
+def launch(suite_path, no_detach, log_path):
 
     # Welcome message
     # ---------------
@@ -133,8 +123,7 @@ def main(suite_path, workflow_manager, no_detach, log_path):
 
     # Launch the workflow
     # -------------------
-    if workflow_manager == 'cylc':
-        deploy_workflow.cylc_run_experiment()
+    deploy_workflow.cylc_run_experiment()
 
 
 # --------------------------------------------------------------------------------------------------

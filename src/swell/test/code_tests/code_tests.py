@@ -18,7 +18,7 @@ from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
-def main():
+def code_tests():
 
     # Create a logger
     logger = Logger('TestSuite')

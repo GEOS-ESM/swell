@@ -43,7 +43,7 @@ def update_model_components(logger, experiment_dict, comment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override, test):
+def prepare_config(suite, method, platform, override, test):
 
     # Create a logger
     # ---------------
@@ -91,6 +91,11 @@ def prepare_config(method, suite, platform, override, test):
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
     experiment_dict = yaml.safe_load(experiment_dict_string)
+
+    # If method is defaults then override with default suite test
+    # -----------------------------------------------------------
+    if method == 'defaults':
+        test = 'default'
 
     # Point to a particular pre-existing dictionary used for testing
     # --------------------------------------------------------------
@@ -145,21 +150,9 @@ def prepare_config(method, suite, platform, override, test):
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
                                                                  comment_dict)
 
-    # Dictionary file to write
-    # ------------------------
-    cwd = os.getcwd()
-    experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
-    exp_dict_file = os.path.join(cwd, f'{experiment_id}.yaml')
-
-    # Write dictionary to YAML file
-    # -----------------------------
-    with open(exp_dict_file, 'w') as file:
-        file.write(experiment_dict_string_comments)
-    logger.info(f'Prepared configuration file written to {exp_dict_file}', False)
-
     # Return path to dictionary file
     # ------------------------------
-    return exp_dict_file
+    return experiment_dict_string_comments
 
 
 # --------------------------------------------------------------------------------------------------
