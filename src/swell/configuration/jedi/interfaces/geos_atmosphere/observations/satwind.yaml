@@ -22,6 +22,7 @@ obs filters:
 # ---------------------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingPressure
+  SkipWhenNoObs: False
 
 # Reject all obs with PreQC mark already set above 3
 - filter: PreQC
