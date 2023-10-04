@@ -1,4 +1,4 @@
 filetype: auxgrid
 gridtype: latlon
-filename: '{{experiment_root}}/{{experiment_id}}/Data/fv3-jedi/geos_atmosphere/outputs/mem%{member}%-inc.'
+filename: '{{cycle_dir}}/geos.mem%{member}%-inc'
 

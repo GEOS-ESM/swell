@@ -1,4 +1,3 @@
 filetype: auxgrid
 gridtype: latlon
-filename: '{{experiment_root}}/{{experiment_id}}/Data/fv3-jedi/geos_atmosphere/outputs/ensmean.'
-
+filename: '{{cycle_dir}}/geos.analysis.mean.'
