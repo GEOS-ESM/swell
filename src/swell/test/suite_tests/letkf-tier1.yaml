@@ -9,3 +9,4 @@ models:
     - sondes
     obs_experiment: x0048v1
     window_type: 3D
+    horizontal_resolution: 13
