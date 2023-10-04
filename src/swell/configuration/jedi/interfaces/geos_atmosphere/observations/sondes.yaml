@@ -48,6 +48,7 @@ obs filters:
 # ---------------------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingPressure
+  SkipWhenNoObs: False
 
 ## Surface pressure
 ## ----------------

@@ -53,12 +53,13 @@ obs filters:
 # ------------------------------------------------------------
 - filter: Variable Transforms
   Transform: AdjustedHeightCoordinate
+  SkipWhenNoObs: False
 
 # Apply variable changes needed wind scaling
 # ------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingHeight
-
+  SkipWhenNoObs: False
 # ------------------
 # stationPressure (surface pressure)
 # ------------------

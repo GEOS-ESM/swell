@@ -37,6 +37,7 @@ obs filters:
 # ---------------------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingPressure
+  SkipWhenNoObs: False
 
 # ------------------
 # airTemperature BC

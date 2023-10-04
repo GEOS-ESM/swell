@@ -63,18 +63,22 @@ obs prior filters:
   # ------------------------------------------------------------
   - filter: Variable Transforms
     Transform: AdjustedHeightCoordinate
+    SkipWhenNoObs: False
 
   # Apply variable changes needed wind scaling
   # ------------------------------------------
   - filter: Variable Transforms
     Transform: SurfaceWindScalingHeight
+    SkipWhenNoObs: False
   - filter: Variable Transforms
     Transform: SurfaceWindScalingPressure
+    SkipWhenNoObs: False
 
   # Combining to use pressure where height is missing
   # -------------------------------------------------
   - filter: Variable Transforms
     Transform: SurfaceWindScalingCombined
+    SkipWhenNoObs: False
 
 obs post filters:
 
