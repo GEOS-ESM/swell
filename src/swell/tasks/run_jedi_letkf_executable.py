@@ -69,6 +69,17 @@ class RunJediLetkfExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Ensemble Localizations
+        self.jedi_rendering.add_key('horizontal_localization_method', self.config.horizontal_localization_method())
+        self.jedi_rendering.add_key('horizontal_localization_lengthscale', self.config.horizontal_localization_lengthscale())
+        self.jedi_rendering.add_key('horizontal_localization_max_nobs', self.config.horizontal_localization_max_nobs())
+        self.jedi_rendering.add_key('vertical_localization_method', self.config.vertical_localization_method())
+        self.jedi_rendering.add_key('vertical_localization_apply_log_transform', self.config.vertical_localization_apply_log_transform())
+        self.jedi_rendering.add_key('vertical_localization_lengthscale', self.config.vertical_localization_lengthscale())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coordinate', self.config.vertical_localization_ioda_vertical_coordinate())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coordinate_group', self.config.vertical_localization_ioda_vertical_coordinate_group())
+        self.jedi_rendering.add_key('vertical_localization_function', self.config.vertical_localization_function())
+
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
         self.jedi_rendering.add_key('local_ensemble_inflation_rtps', self.config.local_ensemble_inflation_rtps())

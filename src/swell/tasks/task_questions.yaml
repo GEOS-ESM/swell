@@ -313,6 +313,40 @@ gradient_norm_reduction:
   - RunJediVariationalExecutable
   type: float
 
+horizontal_localization_lengthscale:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: What is the length scale for horizontal covariance localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: float
+
+horizontal_localization_max_nobs:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: What is the maximum number of observations to consider for horizontal covariance
+    localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: integer
+
+horizontal_localization_method:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which localization scheme should be applied in the horizontal?
+  tasks:
+  - RunJediLetkfExecutable
+  type: string-drop-list
+
 horizontal_resolution:
   ask_question: true
   default_value: defer_to_model
@@ -415,7 +449,7 @@ local_ensemble_save_posterior_ensemble:
   type: boolean
 
 local_ensemble_save_posterior_ensemble_increments:
-  ask_question: false
+  ask_question: true
   default_value: defer_to_model
   models:
   - geos_atmosphere
@@ -636,6 +670,74 @@ total_processors:
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: integer
+
+vertical_localization_apply_log_transform:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Should a log (base 10) transformation be applied to vertical coordinate
+    when constructing vertical localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: boolean
+
+vertical_localization_function:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which localization scheme should be applied in the vertical?
+  tasks:
+  - RunJediLetkfExecutable
+  type: string
+
+vertical_localization_ioda_vertical_coordinate:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which coordinate should be used in constructing vertical localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: string
+
+vertical_localization_ioda_vertical_coordinate_group:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which vertical coordinate group should be used in constructing vertical
+    localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: string
+
+vertical_localization_lengthscale:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: What is the length scale for vertical covariance localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: integer
+
+vertical_localization_method:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: What localization scheme should be applied in constructing a vertical localization?
+  tasks:
+  - RunJediLetkfExecutable
+  type: string
 
 vertical_resolution:
   ask_question: true

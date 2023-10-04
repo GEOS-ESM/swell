@@ -53,6 +53,19 @@ geovals_provider:
 gradient_norm_reduction:
   default_value: 10e-5
 
+horizontal_localization_lengthscale:
+  default_value: 10000e3
+
+horizontal_localization_max_nobs:
+  default_value: 1000
+
+horizontal_localization_method:
+  default_value: Horizontal Gaspari-Cohn
+  options:
+  - Horizontal Gaspari-Cohn
+  - Horizontal SOAR
+  - Horizontal Box car
+
 horizontal_resolution:
   default_value: '361'
   options:
@@ -82,7 +95,7 @@ local_ensemble_inflation_rtps:
   - 0.5
 
 local_ensemble_save_posterior_ensemble:
-  default_value: false
+  default_value: true
   options:
   - true
   - false
@@ -94,7 +107,7 @@ local_ensemble_save_posterior_ensemble_increments:
   - false
 
 local_ensemble_save_posterior_mean:
-  default_value: true
+  default_value: false
   options:
   - true
   - false
@@ -218,6 +231,35 @@ produce_geovals:
   options:
   - true
   - false
+
+vertical_localization_apply_log_transform:
+  default_value: true
+  options:
+  - true
+  - false
+
+vertical_localization_function:
+  default_value: Gaspari Cohn
+  options:
+  - Gaspari Cohn
+
+vertical_localization_ioda_vertical_coordinate:
+  default_value: pressure
+  options:
+  - pressure
+
+vertical_localization_ioda_vertical_coordinate_group:
+  default_value: MetaData
+  options:
+  - MetaData
+
+vertical_localization_lengthscale:
+  default_value: 4
+
+vertical_localization_method:
+  default_value: Vertical localization
+  options:
+  - Vertical localization
 
 vertical_resolution:
   default_value: '72'
