@@ -32,12 +32,43 @@ def update_model_components(logger, experiment_dict, comment_dict):
         # model_components_actual then remove it from model
         for model in model_components_actual:
             if model not in model_components_wanted:
-                logger.info(f'Removing model {model} from model_components')
                 del (experiment_dict['models'][model])
                 # Loop over all elements of the comment dictionay and remove any redundant keys
                 for key in list(comment_dict.keys()):
                     if 'models.'+model in key:
                         del (comment_dict[key])
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def clone_config(configuration, experiment_id, method, platform, advanced):
+
+    # Create a logger
+    logger = Logger('SwellCloneExperiment')
+
+    # Check that configuration exists and is a YAML file
+    if not os.path.isfile(configuration):
+        logger.abort(f'The provided configuration file {configuration} does not exist')
+
+    # Open the target experiment YAML. It will be used as the override
+    with open(configuration, 'r') as f:
+        override_dict = yaml.safe_load(f)
+
+    # Check that override_dict has a suite key and get the suite name
+    if 'suite_to_run' not in override_dict:
+        logger.abort('The provided configuration file does not have a \'suite_to_run\' key')
+    suite = override_dict['suite_to_run']
+
+    # The user may want to run on a different platform (if so adjust the override)
+    if platform is not None:
+        override_dict['platform'] = platform
+
+    # Set the experiment_id in the override dictionary
+    override_dict['experiment_id'] = experiment_id
+
+    # First create the configuration for the experiment.
+    return prepare_config(suite, method, override_dict['platform'], override_dict, advanced)
 
 
 # --------------------------------------------------------------------------------------------------

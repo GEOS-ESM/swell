@@ -22,9 +22,15 @@ def get_suites():
     # Path to platforms
     suites_directory = os.path.join(get_swell_path(), 'suites')
 
+    # List of suites
+    suites = [dir for dir in os.listdir(suites_directory)
+              if os.path.isdir(os.path.join(suites_directory, dir))]
+
+    # Sort list alphabetically
+    suites = sorted(suites)
+
     # List all directories in platform_directory
-    return [dir for dir in os.listdir(suites_directory)
-            if os.path.isdir(os.path.join(suites_directory, dir))]
+    return suites
 
 
 # --------------------------------------------------------------------------------------------------
@@ -42,6 +48,9 @@ def get_suite_tests():
     suite_tests = []
     for suite_test_file in suite_test_files:
         suite_tests.append(os.path.basename(suite_test_file)[0:-5])
+
+    # Sort list alphabetically
+    suite_tests = sorted(suite_tests)
 
     # Return list of valid task choices
     return suite_tests

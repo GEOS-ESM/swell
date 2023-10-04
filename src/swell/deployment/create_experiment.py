@@ -41,15 +41,13 @@ def create_experiment_directory(experiment_dict_str):
 
     # Write out some info
     # -------------------
-    logger.info(f'Creating experiment: \'{experiment_id}\'')
-    logger.info(f'Experiment root: \'{experiment_root}\'')
+    logger.info(f'Creating experiment: \'{experiment_id}\' in \'{experiment_root}\'')
 
     # Make the suite directory
     # ------------------------
     exp_path = os.path.join(experiment_root, experiment_id)
     exp_suite_path = os.path.join(exp_path, experiment_id+'-suite')
 
-    print(exp_suite_path)
     os.makedirs(exp_suite_path, 0o755, exist_ok=True)
 
     # Write dictionary (with comments) to YAML file
@@ -104,9 +102,10 @@ def create_experiment_directory(experiment_dict_str):
     # Write out launch command for convenience
     # ----------------------------------------
     logger.info(' ')
-    logger.info('  Experiment successfully installed. To launch experiment use: ')
-    logger.info('  swell launch-experiment ' + exp_suite_path, False)
-    logger.info(' ')
+    logger.info('Experiment successfully installed. To launch experiment use: ')
+    logger.info(' ', False)
+    logger.info('  swell launch ' + exp_suite_path, False)
+    logger.info(' ', False)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -323,7 +322,6 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     yaml_path = os.path.expanduser("~/.swell/swell-slurm.yaml")
     slurm_global = {}
     if os.path.exists(yaml_path):
-        logger.info(f'Found file contianing swell slurm global values')
         with open(yaml_path, "r") as yaml_file:
             slurm_global = yaml.safe_load(yaml_file)
 

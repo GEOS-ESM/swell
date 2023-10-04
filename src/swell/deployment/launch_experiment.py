@@ -94,11 +94,7 @@ class DeployWorkflow():
 # --------------------------------------------------------------------------------------------------
 
 
-def launch(suite_path, no_detach, log_path):
-
-    # Welcome message
-    # ---------------
-    write_welcome_message('Launch Experiment')
+def launch_experiment(suite_path, no_detach, log_path):
 
     # Get the path to where the suite files are located
     # -------------------------------------------------

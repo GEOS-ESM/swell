@@ -21,9 +21,14 @@ def get_platforms():
     # Path to platforms
     platform_directory = os.path.join(get_swell_path(), 'deployment', 'platforms')
 
+    platforms = [dir for dir in os.listdir(platform_directory)
+                 if os.path.isdir(os.path.join(platform_directory, dir))]
+
+    # If anything in platforms contains '__' remove it from platforms list
+    platforms = [platform for platform in platforms if '__' not in platform]
+
     # List all directories in platform_directory
-    return [dir for dir in os.listdir(platform_directory)
-            if os.path.isdir(os.path.join(platform_directory, dir))]
+    return platforms
 
 
 # --------------------------------------------------------------------------------------------------
