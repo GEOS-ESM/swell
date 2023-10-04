@@ -1,10 +1,5 @@
-obs operator:
-  name: SfcPCorrected
-  da_psfc_scheme: UKMO
-# geovar_geomz: geopotential_height
-# geovar_sfc_geomz: surface_geopotential_height
 obs space:
-  name: sfc
+  name: Surface Land Stations
   obsdatain:
     engine:
       type: H5File
@@ -13,32 +8,93 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sfc.{{window_begin}}.nc4'
-  simulated variables: [stationPressure] #, airTemperature]
+  simulated variables: [windEastward, windNorthward, virtualTemperature, airTemperature,
+                        specificHumidity, stationPressure]
+
+obs operator:
+  name: Composite
+  components:
+
+   # Wind fields are handled using wind reduction factor applied to the lowest level.
+   - name: VertInterp
+     variables:
+     - name: windEastward
+     - name: windNorthward
+     # Use height vertical coordinate first
+     vertical coordinate: geopotential_height
+     observation vertical coordinate group: DerivedVariables
+     observation vertical coordinate: adjustedHeight
+     interpolation method: linear
+     hofx scaling field: SurfaceWindScalingHeight
+     hofx scaling field group: DerivedVariables
+
+   # Temperatures use vertical interpolation
+   - name: VertInterp
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+     variables:
+     - name: airTemperature
+     - name: virtualTemperature
+
+   # Surface pressure is handled using the correction scheme
+   - name: SfcPCorrected
+     variables:
+     - name: stationPressure
+     da_psfc_scheme: GSI
+     geovar_geomz: geopotential_height
+     geovar_sfc_geomz: surface_geometric_height
+     station_altitude: height
+
+   # Specific humidity is using the lowest model level (identity)
+   - name: Identity
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+     variables:
+     - name: specificHumidity
+
 obs filters:
+
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
+- filter: Variable Transforms
+  Transform: AdjustedHeightCoordinate
+
+# Apply variable changes needed wind scaling
+# ------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingHeight
+
+# ------------------
+# stationPressure (surface pressure)
 # Observation Range Sanity Check
 - filter: Bounds Check
   filter variables:
   - name: stationPressure
-  minvalue: 37499
-  maxvalue: 106999
+  minvalue: 49999
   action:
     name: reject
-# Reject all obs with PreQC mark already set above 3
-- filter: PreQC
-  maxvalue: 3
+# PreUseFlag is assigned in reading programs in GSI.
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  where:
+  - variable: PreUseFlag/stationPressure
+    # PreUseFlag should =< ijter ( # of outloop(0,1,2) + 1) in GSI
+    minvalue: 1
   action:
     name: reject
-# Assign obsError.
-- filter: BlackList
+# PrepBUFR check to be supplemented later
+- filter: RejectList
+  where:
+  - variable:
+      name: PreQC/stationPressure
+    is_in: 4-15
+# error assignments
+# Original error interpolated from the error table
+- filter: Perform Action
   filter variables:
   - name: stationPressure
-  action:
-    name: assign error
-    error parameter: 120             # 120 Pa (1.2mb)
-#
-- filter: BlackList
-  filter variables:
-  - name: stationPressure
+  where:
+  - variable: ObsType/stationPressure
+    is_in: [181]
   action:
     name: assign error
     error function:
@@ -46,16 +102,14 @@ obs filters:
       options:
         xvar:
           name: ObsValue/stationPressure
-        xvals: [80000, 75000]
-        errors: [110, 120]
-  where:
-  - variable:
-      name: ObsType/stationPressure
-    is_in: 181          # Type is SYNOP
-#
-- filter: BlackList
+        xvals: [70000, 65000, 60000, 55000]
+        errors: [100,    120,   120, 1.0e+11]
+- filter: Perform Action
   filter variables:
   - name: stationPressure
+  where:
+  - variable: ObsType/stationPressure
+    is_in: [187]
   action:
     name: assign error
     error function:
@@ -63,15 +117,18 @@ obs filters:
       options:
         xvar:
           name: ObsValue/stationPressure
-        xvals: [85000, 80000]
-        errors: [120, 140]
+        xvals: [80000, 75000, 70000, 65000]
+        errors: [100,    130,   160, 1.0e+11]
+# Ajusted error after reading prep_bufr
+- filter: Perform Action
+  action:
+    name: inflate error
+    inflation factor: 1.2
   where:
-  - variable:
-      name: ObsType/stationPressure
-    is_in: 187          # Type is METAR
-#
-# Inflate ObsError as it is done with GSI
-- filter: BlackList
+  - variable: PreQC/stationPressure
+    is_in: [3]
+# error inflation based on Ps correction
+- filter: Perform Action
   filter variables:
   - name: stationPressure
   action:
@@ -79,46 +136,176 @@ obs filters:
     inflation variable:
       name: ObsFunction/ObsErrorFactorSfcPressure
       options:
-#       original_obserr: ObsError
-        error_min: 100         # 1 mb
-        error_max: 300         # 3 mb
-        geovar_sfc_geomz: surface_geopotential_height
-#
-# If the ObsError is inflated too much, reject the obs
-- filter: Bounds Check
+        geovar_geomz: geopotential_height
+        geovar_sfc_geomz: surface_geometric_height
+        station_altitude: height
+# assign TempObsErrorData/stationPressure <--- ObsErrorData before changing its Min and Max
+- filter: Variable Assignment
+  assignments:
+  - name: TempObsErrorData/stationPressure
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsErrorData/stationPressure
+  defer to post: true
+# set ObsErrorData 100 Pa if it < 100 Pa.
+- filter: Perform Action
   filter variables:
   - name: stationPressure
   action:
-    name: reject
-  maxvalue: 3.6
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/stationPressure   # After inflation step
-      denominator:
-        name: ObsError/stationPressure
-  defer to post: true
+    name: assign error
+    error parameter: 100
   where:
   - variable:
-      name: ObsType/stationPressure
-    is_in: 181          # Type is SYNOP
-#
-- filter: Bounds Check
+      name: TempObsErrorData/stationPressure
+    maxvalue: 100
+  - variable:
+      name: TempObsErrorData/stationPressure
+    is_defined:
+  defer to post: true
+# set ObsErrorData 300 Pa if it > 300 Pa.
+- filter: Perform Action
   filter variables:
   - name: stationPressure
   action:
-    name: reject
-  maxvalue: 4.0
-  test variables:
-  - name: ObsFunction/ObsErrorFactorQuotient
-    options:
-      numerator:
-        name: ObsErrorData/stationPressure   # After inflation step
-      denominator:
-        name: ObsError/stationPressure
-  defer to post: true
+    name: assign error
+    error parameter: 300
   where:
   - variable:
-      name: ObsType/stationPressure
-    is_in: 187          # Type is METAR
+      name: TempObsErrorData/stationPressure
+    minvalue: 300
+  - variable:
+      name: TempObsErrorData/stationPressure
+    is_defined:
+  defer to post: true
+
+# Background check
+# background check for obstype 187:
+- filter: Background Check
+  filter variables:
+  - name: stationPressure
+  threshold: 4.0
+  action:
+    name: reject
+  where:
+  - variable: PreQC/stationPressure
+    is_not_in: [3]
+  - variable: ObsType/stationPressure
+    is_in: 187
+  defer to post: true
+# threshold 4.0 * 0.7 = 2.8 if PreQC=3
+- filter: Background Check
+  filter variables:
+  - name: stationPressure
+  threshold: 2.8
+  action:
+    name: reject
+  where:
+  - variable: PreQC/stationPressure
+    is_in: [3]
+  - variable: ObsType/stationPressure
+    is_in: 187
+  defer to post: true
+# background check for obstype 181:
+# threshold 3.6 if PreQC /= 3
+- filter: Background Check
+  filter variables:
+  - name: stationPressure
+  threshold: 3.6
+  action:
+    name: reject
+  where:
+  - variable: PreQC/stationPressure
+    is_not_in: [3]
+  - variable: ObsType/stationPressure
+    is_in: [181]
+  defer to post: true
+# threshold 3.6 * 0.7 = 2.52 if PreQC=3
+- filter: Background Check
+  filter variables:
+  - name: stationPressure
+  threshold: 2.52
+  action:
+    name: reject
+  where:
+  - variable: PreQC/stationPressure
+    is_in: [3]
+  - variable: ObsType/stationPressure
+    is_in: [181]
+  defer to post: true
+# Re-assign error ObsErrorData/stationPressure <--- TempObsErrorData/stationPressure
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: assign error
+    error function: TempObsErrorData/stationPressure
+  where:
+  - variable:
+      name: TempObsErrorData/stationPressure
+    is_defined:
+  defer to post: true
+# Duplicate factor
+- filter: Perform Action
+  filter variables:
+  - name: stationPressure
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorDuplicateCheck
+      options:
+        use_air_pressure: false
+        variable: stationPressure
+  defer to post: true
+
+## specificHumidity. Both types 181 & 187 are rejected.
+- filter: Perform Action
+  filter variables:
+  - name: specificHumidity
+  where:
+  - variable: ObsType/specificHumidity
+    is_in: 181,187
+  action:
+    name: reject
+
+## airTemperature. Both types 181 & 187 are rejected.
+- filter: Perform Action
+  filter variables:
+  - name: airTemperature
+  where:
+  - variable: ObsType/airTemperature
+    is_in: 181,187
+  action:
+    name: reject
+
+## virtualTemperature. Both types 181 & 187 are rejected.
+- filter: Perform Action
+  filter variables:
+  - name: virtualTemperature
+  where:
+  - variable: ObsType/virtualTemperature
+    is_in: 181,187
+  action:
+    name: reject
+
+## windEastward. Both types 281 & 287 are rejected.
+- filter: Perform Action
+  filter variables:
+  - name: windEastward
+  where:
+  - variable: ObsType/windEastward
+    is_in: 281,287
+  action:
+    name: reject
+
+## windNorthward. Both types 281 & 287 are rejected.
+- filter: Perform Action
+  filter variables:
+  - name: windNorthward
+  where:
+  - variable: ObsType/windNorthward
+    is_in: 281,287
+  action:
+    name: reject

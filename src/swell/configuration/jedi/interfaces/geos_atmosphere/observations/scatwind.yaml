@@ -1,5 +1,5 @@
 obs space:
-  name: Scatwind
+  name: Scatterometer Winds
   obsdatain:
     engine:
       type: H5File
@@ -9,12 +9,32 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.scatwind.{{window_begin}}.nc4'
   simulated variables: [windEastward, windNorthward]
+
 obs operator:
+
   name: VertInterp
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
+
+  # Use height vertical coordinate first
+  vertical coordinate: geopotential_height
+  observation vertical coordinate group: DerivedVariables
+  observation vertical coordinate: adjustedHeight
+  interpolation method: linear
+  hofx scaling field: SurfaceWindScalingHeight
+  hofx scaling field group: DerivedVariables
 
 obs filters:
+
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
+- filter: Variable Transforms
+  Transform: AdjustedHeightCoordinate
+
+# Apply variable changes needed wind scaling
+# ------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingHeight
+
 #
 # Reject all obs with PreQC mark already set above 3
 #- filter: PreQC

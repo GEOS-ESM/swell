@@ -72,7 +72,7 @@ class GetObservations(taskBase):
             # -----------------------
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
 
-            self.logger.info("Processing observation file "+target_file)
+            self.logger.info(f'Processing observation file {target_file}')
 
             target_dir = os.path.dirname(target_file)
             os.makedirs(target_dir, exist_ok=True)
@@ -92,14 +92,44 @@ class GetObservations(taskBase):
             # Change permission
             os.chmod(target_file, 0o644)
 
-            # Fetch bias correction files
-            # ---------------------------
+            # Aircraft bias correction files
+            # ------------------------------
+            if observation == 'aircraft':
+
+                # Aircraft bias correction files
+                target_file_types = [
+                    f'aircraft_abias_air_ascent',
+                    f'aircraft_abias_air_ascentSquared',
+                    f'aircraft_abias_air_constant',
+                ]
+
+                for target_file_type in target_file_types:
+
+                    target_file = os.path.join(self.cycle_dir(),
+                                               f'{target_file_type}.{background_time}.csv')
+
+                    self.logger.info(f'Processing aircraft bias file {target_file}')
+
+                    fetch(date=background_time,
+                          target_file=target_file,
+                          provider='gsi',
+                          obs_type=target_file_type,
+                          type='bc',
+                          experiment=obs_experiment,
+                          file_type='csv')
+
+                    # Change permission
+                    os.chmod(target_file, 0o644)
+
+            # Otherwise there is only work to do if the observation operator has bias correction
+            # ----------------------------------------------------------------------------------
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satbias
+            # Satellite bias correction files
+            # -------------------------------
             target_file = observation_dict['obs bias']['input file']
-            self.logger.info("Processing satbias file "+target_file)
+            self.logger.info(f'Processing satellite bias file {target_file}')
 
             target_dir = os.path.dirname(target_file)
             os.makedirs(target_dir, exist_ok=True)
@@ -121,10 +151,11 @@ class GetObservations(taskBase):
             # Change permission
             os.chmod(target_file, 0o644)
 
-            # Tlapse
+            # Satellite time lapse
+            # --------------------
             for target_file in list(set(list(self.get_tlapse_files(observation_dict)))):
 
-                self.logger.info("Processing tlapse file "+target_file)
+                self.logger.info(f'Processing time lapse file {target_file}')
 
                 target_dir = os.path.dirname(target_file)
                 os.makedirs(target_dir, exist_ok=True)
@@ -170,3 +201,5 @@ class GetObservations(taskBase):
                 yield p['tlapse']
 
         return
+
+# ----------------------------------------------------------------------------------------------

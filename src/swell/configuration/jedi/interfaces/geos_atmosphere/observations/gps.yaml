@@ -13,37 +13,226 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gnssrobndnbam.{{window_begin}}.nc4'
   simulated variables: [bendingAngle]
+
 obs operator:
   name: GnssroBndNBAM
   obs options:
     use_compress: 1
+    vertlayer: mass
     sr_steps: 2
-    vertlayer: full
     super_ref_qc: NBAM
+    GSI_version: GEOStmp
 obs filters:
+#---
+#0 Blacklist data from some satellites
+- filter: BlackList
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 41,265,266,267,268,421,440,724,725,726,727,728,729
+#---
+- filter: Perform Action
+  filter variables:
+  - name: bendingAngle
+  where:
+  - variable: PreUseFlag/bendingAngle
+    # PreUseFlag should =< ijter (1,2,or 3) in GSI
+    minvalue: 1
+  action:
+    name: reject
+#1 gpstop
 - filter: Domain Check
   filter variables:
-  - name: [bendingAngle]
+  - name: bendingAngle
   where:
   - variable:
       name: MetaData/impactHeightRO
     minvalue: 0
-    maxvalue: 50000
+    maxvalue: 55000.1
+  action:
+    name: reject
+# commgpstop for commercial sat (in x0048)
 - filter: Bounds Check
   filter variables:
-  - name: [bendingAngle]
+  - name: bendingAngle
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 265,266,267,268,269
+  test variables:
+  - name: MetaData/impactHeightRO
+  maxvalue: 45000.1
+  action:
+    name: reject
+#2Remove MetOP/GRAS data below 8 km
+- filter: Bounds Check
+  filter variables:
+  - name: bendingAngle
   where:
   - variable:
       name: MetaData/satelliteIdentifier
     is_in: 3-5
   test variables:
   - name: MetaData/impactHeightRO
-  minvalue: 8000
+  minvalue: 8000.1
+  action:
+    name: reject
+#3GMAO Spire - Remove data below 5km for GPS (iclass = 401); 9 km for other (GLONASS/GALILEO/etc.)
+- filter: Bounds Check
+  filter variables:
+  - name: bendingAngle
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 269
+  - variable:
+      name: MetaData/satelliteConstellationRO
+    is_in: 401
+  test variables:
+  - name: MetaData/impactHeightRO
+  minvalue: 5000.1
+  action:
+    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: bendingAngle
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 269
+  - variable:
+      name: MetaData/satelliteConstellationRO
+    is_in: 402-999
+  test variables:
+  - name: MetaData/impactHeightRO
+  minvalue: 9000.1
+  action:
+    name: reject
+#4GMAO GeoOptics - Remove data below 5 km for GPS (iclass = 401); 8 km for other
+- filter: Bounds Check
+  filter variables:
+  - name: bendingAngle
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 265,266
+  - variable:
+      name: MetaData/satelliteConstellationRO
+    is_in: 401
+  test variables:
+  - name: MetaData/impactHeightRO
+  minvalue: 5000.1
+  action:
+    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: bendingAngle
+  where:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in: 265,266
+  - variable:
+      name: MetaData/satelliteConstellationRO
+    is_in: 402-999
+  test variables:
+  - name: MetaData/impactHeightRO
+  minvalue: 8000.1
+  action:
+    name: reject
+# QC below gpstop
+# RO error model
 - filter: ROobserror
   filter variables:
   - name: bendingAngle
-  errmodel: NBAM
+# errmodel: NBAM
+  errmodel: NBAM_GEOStmp
+# Inflate error for spire data (spiregpserrinf=2)
+- filter: Perform Action
+  filter variables:
+  - name: bendingAngle
+  action:
+    name: inflate error
+    inflation factor: 2.0
+  where:
+  - variable: MetaData/satelliteIdentifier
+    is_in: 269
+
+# Gross check -- need to do obserror = min(cerrormax,max(cerrormin,obserr)
+# assign JediAdjustObsError/bendingAngle <--- ObsErrorData before changing its Min and Max
+- filter: Variable Assignment
+  assignments:
+  - name: JediAdjustObsError/bendingAngle
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsErrorData/bendingAngle
+  defer to post: true
+# # reset ObsErrorData to 1.0 if it is < 1.0.
+- filter: Perform Action
+  filter variables:
+  - name: bendingAngle
+  action:
+    name: assign error
+    error parameter: 1.0
+  where:
+  - variable:
+      name: JediAdjustObsError/bendingAngle
+    maxvalue: 1.0
+  - variable:
+      name: JediAdjustObsError/bendingAngle
+    is_defined:
+  - variable:
+      name: MetaData/satelliteIdentifier
+    is_in:  41,44,440,421,724,725,726,727,728,729,
+            750,751,752,753,754,755,821,825
+  defer to post: true
+# reset ObsErrorData to 10.0 if it is > 10.0.
+- filter: Perform Action
+  filter variables:
+  - name: bendingAngle
+  action:
+    name: assign error
+    error parameter: 10.0
+  where:
+  - variable:
+      name: JediAdjustObsError/bendingAngle
+    minvalue: 10.0
+  - variable:
+      name: JediAdjustObsError/bendingAngle
+    is_defined:
+  defer to post: true
+- filter: Background Check
+  filter variables:
+  - name: bendingAngle
+  threshold: 5
+  action:
+    name: reject
+  defer to post: true
+# Re-assign error ObsErrorData/bendingAngle <--- JediAdjustObsError/bendingAngle
+# after gross error check.
+- filter: Perform Action
+  filter variables:
+  - name: bendingAngle
+  action:
+    name: assign error
+    error function: JediAdjustObsError/bendingAngle
+  where:
+  - variable:
+      name: JediAdjustObsError/bendingAngle
+    is_defined:
+  defer to post: true
+
+#5 QC cutoff
 - filter: Background Check RONBAM
   filter variables:
-  - name: [bendingAngle]
-  threshold: 3
+  - name: bendingAngle
+  defer to post: true
+#6 Inflate observation error (final step)
+- filter: Background Check RONBAM
+  filter variables:
+  - name: bendingAngle
+  action:
+    name: RONBAMErrInflate
+  defer to post: true

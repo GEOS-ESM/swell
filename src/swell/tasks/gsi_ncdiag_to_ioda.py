@@ -11,6 +11,9 @@
 import copy
 import datetime
 import glob
+import h5py
+import isodate
+import numpy as np
 import os
 import re
 
@@ -19,8 +22,8 @@ import gsi_ncdiag.gsi_ncdiag as gsid
 from gsi_ncdiag.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.datetime import datetime_formats
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -92,6 +95,22 @@ class GsiNcdiagToIoda(taskBase):
         # Convert cycle time datetime object to string with format yyyymmdd_hhz
         gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['gsi_nc_diag_format'])
+
+        # Clean up any files that are the end result of this program, in case of multiple runs
+        # ------------------------------------------------------------------------------------
+        for observation in observations_orig:
+
+            obs_file = f'{observation}_obs.{window_begin}.nc4'
+            geo_file = f'{observation}_geovals.{window_begin}.nc4'
+
+            # If obs_file exists remove it
+            if os.path.exists(os.path.join(self.cycle_dir(), obs_file)):
+                os.remove(os.path.join(self.cycle_dir(), obs_file))
+
+            # If geo exists remove it
+            if produce_geovals:
+                if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
+                    os.remove(os.path.join(self.cycle_dir(), geo_file))
 
         # First process the conventional data (if needed)
         # -----------------------------------------------
@@ -167,6 +186,7 @@ class GsiNcdiagToIoda(taskBase):
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
+            ioda_path_files = sorted(ioda_path_files)
 
             # For sfc make sure there are no surface ship files
             if needed_ioda_type == 'sfc':
@@ -215,16 +235,6 @@ class GsiNcdiagToIoda(taskBase):
                 geo_dir = None
                 if produce_geovals:
                     geo_dir = self.cycle_dir()
-
-                    # Remove wind_reduction_factor_at_10m from non-uv geoval files
-                    geoval_files = glob.glob(os.path.join(self.cycle_dir(),
-                                                          f'{needed_ioda_type}_*_geoval_*.nc4'))
-                    for geoval_file in geoval_files:
-                        if f'{needed_ioda_type}_uv_geoval_' not in geoval_file:
-                            var_remove_command = ['ncks', '-O', '-x', '-v',
-                                                  'wind_reduction_factor_at_10m',
-                                                  geoval_file, geoval_file]
-                            run_track_log_subprocess(self.logger, var_remove_command)
 
                 combine_obsspace(ioda_path_files, new_name, geo_dir)
 
@@ -293,6 +303,9 @@ class GsiNcdiagToIoda(taskBase):
         if any('avhrr' in item for item in observations):
             avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
                                                  f'avhrr_*_obs_{gsi_datetime}.nc4'))
+            # Add geovals files
+            avhrr_files = avhrr_files + glob.glob(os.path.join(self.cycle_dir(),
+                                                  f'avhrr_*_geoval_{gsi_datetime}.nc4'))
             for avhrr_file in avhrr_files:
                 avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
                 os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
@@ -332,9 +345,26 @@ class GsiNcdiagToIoda(taskBase):
 
                 os.rename(ioda_geoval_in, os.path.join(self.cycle_dir(), ioda_geoval_out))
 
+        # Bump the time in the all observation files by 1 second
+        # (because JEDI does not include observations equal to
+        # the beginning of the window, while GSI does). IODA wrote
+        # the files in such a way that h5py needs to be used not
+        # netcdf4 to append the files in place.
+        # -----------------------------------------------------
+        wind_begin = self.cycle_time_dto() - isodate.parse_duration(window_offset)
+        ioda_begin = datetime.datetime(1970, 1, 1)
+        seconds_to_window_begin = (wind_begin - ioda_begin).total_seconds()
+
+        for observation in observations_orig:
+            obs_file = os.path.join(self.cycle_dir(), f'{observation}.{window_begin}.nc4')
+            self.logger.info(f'One second bump for obs at window beg for ({observation})')
+            with h5py.File(obs_file, 'a') as fh:
+                variable = fh['MetaData']['dateTime']
+                window_begin_ind = np.where(variable[:] == seconds_to_window_begin)
+                variable[window_begin_ind] += 1
+
         # Remove left over files
         # ------------------------------
-
         self.logger.info('Removing residual files...')
 
         patterns = [
