@@ -3,7 +3,7 @@ existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/bu
 existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 models:
   geos_atmosphere:
-    horizontal_resolution: '13'
+    horizontal_resolution: '91'
     observations:
     - aircraft
     - airs_aqua
@@ -38,5 +38,5 @@ models:
     - sfc
     - sondes
     - ssmis_f17
-    obs_experiment: x0048v1
-    geovals_experiment: x0048v1-geovals
+    obs_experiment: x0048v2
+    geovals_experiment: x0048v2-geovals
