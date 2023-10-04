@@ -16,6 +16,7 @@ valid_tasks = [
   'EvaObservations',
   'GenerateBClimatologyByLinking',
   'GenerateBClimatology',
+  'GenerateSatelliteChannelRecord',
   'GetBackgroundGeosExperiment',
   'GetBackground',
   'GetEnsemble',

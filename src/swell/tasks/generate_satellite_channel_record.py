@@ -11,7 +11,7 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
-
+from swell.utilities.satellite_records import SatelliteRecords
 
 # --------------------------------------------------------------------------------------------------
 
@@ -29,7 +29,10 @@ class GenerateSatelliteChannelRecord(taskBase):
         observations = self.config.observations()
 
         # Create files like amsua_n19_channel_record.yaml in self.cycle_dir()/satellite_channel_record
-
-
+        path_to_records = '/discover/nobackup/asewnath/github/GEOSana_GridComp/GEOSaana_GridComp/GSI_GridComp/mksi/sidb/'
+        output_dir = self.cycle_dir() + '/satellite_channel_records'
+        sat_records = SatelliteRecords()
+        sat_records.parse_records(path_to_records)
+        sat_records.save_yamls(output_dir, observations)
 
 # ----------------------------------------------------------------------------------------------
