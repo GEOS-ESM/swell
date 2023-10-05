@@ -141,5 +141,5 @@ class EvaObservations(taskBase):
 
         # Call eva in parallel
         # --------------------
-        with Pool(processes=20) as pool:
+        with Pool(processes=40) as pool:
             pool.map(run_eva, eva_dicts)
