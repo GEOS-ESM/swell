@@ -49,7 +49,8 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                         # Get observation dictionary
                         obs_dict = jedi_rendering.render_interface_observations(ob)
 
-                        # Use the satellite channel record to set the correct channels
+                        # Use the satellite channel record to set the correct channels in useflag
+                         
 
 
                         observations.append(obs_dict)
