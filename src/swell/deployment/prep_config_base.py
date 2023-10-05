@@ -265,8 +265,8 @@ class PrepConfigBase(ABC):
         base_task_list = []
         model_task_list = []
         for line in task_s_lines:
-            if 'script = "swell_task' in line:
-                task_name = line.split('"swell_task')[1].split(' ')[1]
+            if 'script = "swell task' in line:
+                task_name = line.split('"swell task')[1].split(' ')[1]
                 if '-m' in line:
                     if task_name in model_task_list:
                         continue

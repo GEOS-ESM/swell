@@ -162,7 +162,7 @@ def template_modules_file(logger, experiment_dict, exp_suite_path):
 
         # Swell bin path
         # --------------
-        swell_bin_path = shutil.which("swell_task")
+        swell_bin_path = shutil.which("swell")
         swell_bin_path = os.path.split(swell_bin_path)[0]
 
         # Swell lib path
