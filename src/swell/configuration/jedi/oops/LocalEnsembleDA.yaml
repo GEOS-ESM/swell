@@ -17,19 +17,20 @@ local ensemble DA:
 driver:
   TASKFILLensemble_driver
 
-{% if '{{local_ensemble_save_posterior_mean}}' or '{{local_ensemble_save_posterior_ensemble}}' %}
+{% if local_ensemble_save_posterior_mean or local_ensemble_save_posterior_ensemble %}
 output:
-  {% if '{{local_ensemble_save_posterior_mean}}' %}
+  {% if local_ensemble_save_posterior_mean and not local_ensemble_save_posterior_ensemble %}
   TASKFILLensemble_mean_output
-  {% elif '{{local_ensemble_save_posterior_ensemble}}' %}
+  {% endif %}
+  {% if not local_ensemble_save_posterior_mean and local_ensemble_save_posterior_ensemble %}
   TASKFILLensemble_members_output
   {% endif %}
 {% endif %}
-{% if '{{local_ensemble_save_posterior_mean_increment}}' %}
+{% if local_ensemble_save_posterior_mean_increment %}
 output increment:
   TASKFILLensemble_mean_increment_output
 {% endif %}
-{% if '{{local_ensemble_save_posterior_ensemble_increments}}' %}
+{% if local_ensemble_save_posterior_ensemble_increments %}
 output ensemble increments:
   TASKFILLensemble_members_increment_output
 {% endif %}
