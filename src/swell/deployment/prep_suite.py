@@ -148,6 +148,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
+    render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
     # Render the template
     # -------------------
