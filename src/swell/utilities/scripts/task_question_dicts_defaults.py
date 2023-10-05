@@ -124,7 +124,7 @@ def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_
 # --------------------------------------------------------------------------------------------------
 
 
-def tq_dicts_defaults():
+def main():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')

@@ -13,11 +13,11 @@ import os
 import importlib
 
 from swell.swell_path import get_swell_path
-from swell.utilities.case_switching import snake_case_to_camel_case
-from swell.test.code_tests.code_tests import code_tests
+from swell.utilities.case_switching import snake_case_to_camel_case, camel_case_to_snake_case
 
 
 # --------------------------------------------------------------------------------------------------
+
 
 def get_utilities():
 
@@ -34,18 +34,29 @@ def get_utilities():
         if '__' not in base_name:
             util_scripts.append(snake_case_to_camel_case(base_name[0:-3]))
 
+    # Remove UtilityDriver from util_scripts
+    util_scripts.remove('UtilityDriver')
+
     # Return list of valid task choices
     return util_scripts
 
+
 # --------------------------------------------------------------------------------------------------
+
 
 def utility_wrapper(utility):
 
+    # Convert utility to snake case
+    utility_snake = camel_case_to_snake_case(utility)
+
     # Test script
-    test_script_file = 'swell.utility.scripts.'+utility+'.'+utility
+    test_script_file = 'swell.utilities.scripts.'+utility_snake
 
     # Import the correct method
-    utility_method = getattr(importlib.import_module(test_script_file), utility)
+    utility_method = getattr(importlib.import_module(test_script_file), 'main')
 
     # Run the test
     utility_method()
+
+
+# --------------------------------------------------------------------------------------------------

@@ -13,7 +13,6 @@ import os
 # local imports
 from swell.utilities.logger import Logger
 from swell.utilities.shell_commands import run_subprocess
-from swell.utilities.welcome_message import write_welcome_message
 
 # --------------------------------------------------------------------------------------------------
 

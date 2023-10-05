@@ -18,6 +18,7 @@ from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.utilities.suite_utils import get_suites
 from swell.utilities.welcome_message import write_welcome_message
+from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 
 
 # --------------------------------------------------------------------------------------------------
@@ -176,7 +177,7 @@ def task(task, config, datetime, model):
 
 
 @swell_driver.command()
-@click.argument('utility')
+@click.argument('utility', type=click.Choice(get_utilities()))
 def utility(utility):
     """
     Run a utility script
@@ -187,7 +188,7 @@ def utility(utility):
         utility (str): Name of the utility operation to perform.\n
 
     """
-    print(utility)
+    utility_wrapper(utility)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -205,7 +206,6 @@ def test(test):
         test (str): Name of the test to execute.
 
     """
-    print(test)
     test_wrapper(test)
 
 
