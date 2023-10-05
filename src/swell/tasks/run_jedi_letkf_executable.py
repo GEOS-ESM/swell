@@ -90,6 +90,11 @@ class RunJediLetkfExecutable(taskBase):
         self.jedi_rendering.add_key('local_ensemble_save_posterior_mean_increment', self.config.local_ensemble_save_posterior_mean_increment())
         self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments', self.config.local_ensemble_save_posterior_ensemble_increments())
 
+        # Catch unfortunate case in fv3-jedi where 'local_ensemble_save_posterior_mean' & 'local_ensemble_save_posterior_ensemble' are both true
+        # -----------
+        if not self.config.local_ensemble_save_posterior_mean()^self.config.local_ensemble_save_posterior_ensemble():
+            raise ValueError("Only one of 'local_ensemble_save_posterior_mean' and 'local_ensemble_save_posterior_ensemble' may be true at once!")
+
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
