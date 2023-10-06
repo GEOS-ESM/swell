@@ -522,7 +522,6 @@ obs filters:
     channels: *iasi_metop-c_channels
     options:
       channels: *iasi_metop-c_channels
-      # use passive_bc: true
       use_flag: *useflag_iasi_metop-c
   minvalue: 1.0e-12
   action:

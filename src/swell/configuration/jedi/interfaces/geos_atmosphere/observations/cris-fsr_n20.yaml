@@ -443,7 +443,6 @@ obs filters:
     channels: *cris-fsr_n20_channels
     options:
       channels: *cris-fsr_n20_channels
-      # use passive_bc: true
       use_flag: *useflag_cris-fsr_n20
   minvalue: 1.0e-12
   action:

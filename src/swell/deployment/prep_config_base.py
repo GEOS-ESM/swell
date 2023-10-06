@@ -21,7 +21,9 @@ from swell.swell_path import get_swell_path
 
 class PrepConfigBase(ABC):
 
-    def __init__(self, logger, dictionary_file, suite, platform, advanced):
+    def __init__(self, logger, dictionary_file, suite, platform, override, advanced):
+
+        self.override = override
 
         self.show_advanced = advanced
 
@@ -89,6 +91,28 @@ class PrepConfigBase(ABC):
         # Open Master ask questions yaml
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             self.all_task_questions = yaml.safe_load(ymlfile)
+
+        # Open tests override dictionary
+        # do this only on defaults
+        test_file = os.path.join(swell_path, 'test', 'suite_tests', suite + '-tier1.yaml')
+
+        if os.path.exists(test_file):
+            with open(test_file, 'r') as test_yml:
+                self.test_dictionary = yaml.safe_load(test_yml)
+        else:
+            self.test_dictionary = {}
+
+        # Open user selected override dictionary
+        if override is not None:
+
+            logger.info(f'Overriding experiment dictionary settings using {override}')
+
+            select_override_file = os.path.join(override)
+
+            with open(select_override_file, 'r') as select_override_yml:
+                self.override_dictionary = yaml.safe_load(select_override_yml)
+
+        self.override_models()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -245,7 +269,9 @@ class PrepConfigBase(ABC):
                         continue
                     base_task_list.append(task_name)
 
-        # add selected tasks to logger
+        # The following lists of tasks added to logger
+        self.logger.info(f'Base tasks selected include the following: {base_task_list}. \n' +
+                         f'Model tasks selected include the following: {model_task_list}.')
 
         return base_task_list, model_task_list
 
@@ -302,6 +328,15 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def override_models(self):
+        if 'model_components' in self.test_dictionary.keys():
+            self.default_models = self.test_dictionary['model_components']
+        if self.override is not None:
+            if 'model_components' in self.override_dictionary.keys():
+                self.default_models = self.override_dictionary['model_components']
+
+    # ----------------------------------------------------------------------------------------------
+
     def get_model_defaults(self):
         self.model_defaults_dict = {}
         for m in self.selected_models:
@@ -333,6 +368,66 @@ class PrepConfigBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def override_defaults(self, key, el_dict):
+
+        override_dict = None
+
+        if self.model is None:
+            if key in self.test_dictionary.keys():
+                override_dict = self.test_dictionary
+            else:
+                pass
+            if self.override is not None:
+                if key in self.override_dictionary.keys():
+                    override_dict = self.override_dictionary
+                else:
+                    pass
+            if override_dict is None:
+                return el_dict
+            else:
+                override_default = override_dict[key]
+                if 'options' in el_dict.keys():
+                    if isinstance(override_default, list):
+                        override_options = override_default
+                    else:
+                        override_options = [override_default]
+                else:
+                    override_options = None
+        else:
+            if 'models' in self.test_dictionary.keys():
+                if self.model in self.test_dictionary['models'].keys():
+                    if key in self.test_dictionary['models'][self.model].keys():
+                        override_dict = self.test_dictionary
+                    else:
+                        pass
+            if self.override is not None:
+                if 'models' in self.override_dictionary.keys():
+                    if self.model in self.override_dictionary['models'].keys():
+                        if key in self.override_dictionary['models'][self.model].keys():
+                            override_dict = self.override_dictionary
+                        else:
+                            pass
+
+            if override_dict is None:
+                return el_dict
+            else:
+                override_default = override_dict['models'][self.model][key]
+                if 'options' in el_dict.keys():
+                    if isinstance(override_default, list):
+                        override_options = override_default
+                    else:
+                        override_options = [override_default]
+                else:
+                    override_options = None
+
+        el_dict['default_value'] = override_default
+        if 'options' in el_dict.keys():
+            el_dict['options'] = override_options
+
+        return el_dict
+
+    # ----------------------------------------------------------------------------------------------
+
     def key_passer(self, key, el_dict):
 
         # Validate the element dictionary
@@ -353,7 +448,10 @@ class PrepConfigBase(ABC):
         # In this case the key is not expected to refer to a sub dictionary but have
         # everything needed in the elements dictionary
         if depends_flag:
+
             el_dict = self.show_deference(key, el_dict)
+
+            el_dict = self.override_defaults(key, el_dict)
 
             if self.show_advanced:
                 el_dict['ask_question'] = True

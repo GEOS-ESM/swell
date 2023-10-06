@@ -1,10 +1,13 @@
+final_cycle_point: '2021-12-12T00:00:00Z'
 jedi_build_method: use_existing
 existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
 existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 bundles: REMOVE
+model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '13'
+    cycle_times:
+    - T00
     observations:
     - aircraft
     - airs_aqua
@@ -29,13 +32,31 @@ models:
     - mhs_metop-b
     - mhs_metop-c
     - mhs_n19
-    - mls55_aura
-    - omi_aura
-    - ompsnm_npp
-    #- pibal
+    #- mls55_aura
+    #- omi_aura
+    #- ompsnm_npp
+    - pibal
     - satwind
     - scatwind
-    #- sfcship
-    #- sfc
-    #- sondes
+    - sfc
+    - sfcship
+    - sondes
     - ssmis_f17
+    produce_geovals: false
+    clean_patterns:
+    - '*.nc4'
+    - '*.txt'
+    - '*.log'
+    - '*.yaml'
+    - '*.csv'
+    - gsi_bcs/*.nc4
+    - gsi_bcs/*.txt
+    - gsi_bcs/*.yaml
+    - gsi_bcs
+    - gsi_ncdiags/*.nc4
+    - gsi_ncdiags/aircraft/*.nc4
+    - gsi_ncdiags/aircraft
+    - gsi_ncdiags
+    path_to_gsi_nc_diags: /discover/nobackup/drholdaw/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
+    obs_experiment: x0048v2
+    geovals_experiment: x0048v2-geovals

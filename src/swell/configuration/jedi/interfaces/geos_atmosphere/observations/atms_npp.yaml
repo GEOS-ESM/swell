@@ -23,6 +23,8 @@ obs operator:
 
 obs bias:
   input file: '{{cycle_dir}}/atms_npp.{{background_time}}.satbias.nc4'
+  variables without bc: [brightnessTemperature]
+  channels: 15
   variational bc:
     predictors:
     - name: constant
@@ -215,7 +217,6 @@ obs filters:
       channels: *atms_npp_channels
       options:
         channels: *atms_npp_channels
-        use passive_bc: true
         use_flag: [-1, -1, -1, -1,  1,
                     1,  1,  1,  1,  1,
                     1,  1,  1,  1,  1,
