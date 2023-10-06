@@ -694,7 +694,7 @@ vertical_localization_function:
   - RunJediLetkfExecutable
   type: string
 
-vertical_localization_ioda_vertical_coordinate:
+vertical_localization_ioda_vertical_coord:
   ask_question: false
   default_value: defer_to_model
   models:
@@ -705,7 +705,7 @@ vertical_localization_ioda_vertical_coordinate:
   - RunJediLetkfExecutable
   type: string
 
-vertical_localization_ioda_vertical_coordinate_group:
+vertical_localization_ioda_vertical_coord_group:
   ask_question: false
   default_value: defer_to_model
   models:

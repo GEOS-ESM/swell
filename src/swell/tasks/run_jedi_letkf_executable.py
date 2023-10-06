@@ -70,30 +70,49 @@ class RunJediLetkfExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Ensemble Localizations
-        self.jedi_rendering.add_key('horizontal_localization_method', self.config.horizontal_localization_method())
-        self.jedi_rendering.add_key('horizontal_localization_lengthscale', self.config.horizontal_localization_lengthscale())
-        self.jedi_rendering.add_key('horizontal_localization_max_nobs', self.config.horizontal_localization_max_nobs())
-        self.jedi_rendering.add_key('vertical_localization_method', self.config.vertical_localization_method())
-        self.jedi_rendering.add_key('vertical_localization_apply_log_transform', self.config.vertical_localization_apply_log_transform())
-        self.jedi_rendering.add_key('vertical_localization_lengthscale', self.config.vertical_localization_lengthscale())
-        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coordinate', self.config.vertical_localization_ioda_vertical_coordinate())
-        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coordinate_group', self.config.vertical_localization_ioda_vertical_coordinate_group())
-        self.jedi_rendering.add_key('vertical_localization_function', self.config.vertical_localization_function())
+        self.jedi_rendering.add_key('horizontal_localization_method',
+                                    self.config.horizontal_localization_method())
+        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
+                                    self.config.horizontal_localization_lengthscale())
+        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
+                                    self.config.horizontal_localization_max_nobs())
+        self.jedi_rendering.add_key('vertical_localization_method',
+                                    self.config.vertical_localization_method())
+        self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
+                                    self.config.vertical_localization_apply_log_transform())
+        self.jedi_rendering.add_key('vertical_localization_lengthscale',
+                                    self.config.vertical_localization_lengthscale())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
+                                    self.config.vertical_localization_ioda_vertical_coord())
+        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
+                                    self.config.vertical_localization_ioda_vertical_coord_group())
+        self.jedi_rendering.add_key('vertical_localization_function',
+                                    self.config.vertical_localization_function())
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
-        self.jedi_rendering.add_key('local_ensemble_inflation_rtps', self.config.local_ensemble_inflation_rtps())
-        self.jedi_rendering.add_key('local_ensemble_inflation_rtpp', self.config.local_ensemble_inflation_rtpp())
-        self.jedi_rendering.add_key('local_ensemble_inflation_mult', self.config.local_ensemble_inflation_mult())
-        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean', self.config.local_ensemble_save_posterior_mean())
-        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble', self.config.local_ensemble_save_posterior_ensemble())
-        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean_increment', self.config.local_ensemble_save_posterior_mean_increment())
-        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments', self.config.local_ensemble_save_posterior_ensemble_increments())
+        self.jedi_rendering.add_key('local_ensemble_inflation_rtps',
+                                    self.config.local_ensemble_inflation_rtps())
+        self.jedi_rendering.add_key('local_ensemble_inflation_rtpp',
+                                    self.config.local_ensemble_inflation_rtpp())
+        self.jedi_rendering.add_key('local_ensemble_inflation_mult',
+                                    self.config.local_ensemble_inflation_mult())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean',
+                                    self.config.local_ensemble_save_posterior_mean())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble',
+                                    self.config.local_ensemble_save_posterior_ensemble())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_mean_increment',
+                                    self.config.local_ensemble_save_posterior_mean_increment())
+        self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments',
+                                    self.config.local_ensemble_save_posterior_ensemble_increments())
 
-        # Catch unfortunate case in fv3-jedi where 'local_ensemble_save_posterior_mean' & 'local_ensemble_save_posterior_ensemble' are both true
+        # Prevent both 'local_ensemble_save_posterior_mean' and
+        # 'local_ensemble_save_posterior_ensemble' from being true
         # -----------
-        if not self.config.local_ensemble_save_posterior_mean()^self.config.local_ensemble_save_posterior_ensemble():
-            raise ValueError("Only one of 'local_ensemble_save_posterior_mean' and 'local_ensemble_save_posterior_ensemble' may be true at once!")
+        if not self.config.local_ensemble_save_posterior_mean() ^ \
+           self.config.local_ensemble_save_posterior_ensemble():
+            raise ValueError("Only one of 'local_ensemble_save_posterior_mean' and\
+            'local_ensemble_save_posterior_ensemble' may be true at once!")
 
         # Jedi configuration file
         # -----------------------
@@ -106,7 +125,6 @@ class RunJediLetkfExecutable(taskBase):
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file('LocalEnsembleDA')
-
 
         # Perform complete template rendering
         # -----------------------------------

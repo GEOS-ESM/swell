@@ -243,12 +243,12 @@ vertical_localization_function:
   options:
   - Gaspari Cohn
 
-vertical_localization_ioda_vertical_coordinate:
+vertical_localization_ioda_vertical_coord:
   default_value: pressure
   options:
   - pressure
 
-vertical_localization_ioda_vertical_coordinate_group:
+vertical_localization_ioda_vertical_coord_group:
   default_value: MetaData
   options:
   - MetaData

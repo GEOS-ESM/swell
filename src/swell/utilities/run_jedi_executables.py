@@ -51,11 +51,12 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
 
                         # Append ensemble localizations
                         obsLocalize = []
-                        obsLocalize.append({ 'localization method': 'Horizontal Gaspari-Cohn',\
-                                             'lengthscale': 10000e3,\
-                                             'max nobs': 1000 })
+                        obsLocalize.append({'localization method': 'Horizontal Gaspari-Cohn',
+                                            'lengthscale': 10000e3,
+                                            'max nobs': 1000})
                         obs_dict.update({'obs localizations': obsLocalize})
-                        obs_dict['obs space'].update({'distribution': { 'name': 'Halo', 'halo size': 5000e3 }})
+                        obs_dict['obs space'].update({'distribution': {'name': 'Halo',
+                                                                       'halo size': 5000e3}})
 
                         observations.append(obs_dict)
 
