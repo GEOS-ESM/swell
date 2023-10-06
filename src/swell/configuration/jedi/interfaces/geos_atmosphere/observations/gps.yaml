@@ -21,7 +21,7 @@ obs operator:
     vertlayer: mass
     sr_steps: 2
     super_ref_qc: NBAM
-    GSI_version: GEOStmp
+    GSI_version: GEOS
 obs filters:
 #---
 #0 Blacklist data from some satellites
@@ -144,8 +144,7 @@ obs filters:
 - filter: ROobserror
   filter variables:
   - name: bendingAngle
-# errmodel: NBAM
-  errmodel: NBAM_GEOStmp
+  errmodel: NBAM
 # Inflate error for spire data (spiregpserrinf=2)
 - filter: Perform Action
   filter variables:
@@ -234,5 +233,5 @@ obs filters:
   filter variables:
   - name: bendingAngle
   action:
-    name: RONBAMErrInflate
+    name: RONBAMErrInflate_GEOS
   defer to post: true
