@@ -16,7 +16,7 @@ from swell.utilities.satellite_records import SatelliteRecords
 # --------------------------------------------------------------------------------------------------
 
 
-class GenerateSatelliteChannelRecord(taskBase):
+class CloneGeosAna(taskBase):
 
     def execute(self):
 
@@ -26,17 +26,18 @@ class GenerateSatelliteChannelRecord(taskBase):
 
         # Parse config
         # ------------
-        observations = self.config.observations()
-        observing_system_records_path = self.config.observing_system_records_path()
+        path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
 
-        # Create files like amsua_n19_channel_record.yaml in self.cycle_dir()/satellite_channel_record
+        # If observing_system_records_gsi_path is None, clone GEOSana_GridComp repo to experiment
+        # directory
         if observing_system_records_gsi_path is None:
+            # Clone GEOSana_GridComp develop repo to experiment directory
+            os.system('git clone https://github.com/GEOS-ESM/GEOSana_GridComp.git '
+                      + os.path.join(self.experiment_path() + 'GEOSana_GridComp'))
+        else:
+            # Link the source code directory
+            link_path(self.config.observing_system_records_gsi_path(),
+                      os.path.join(self.experiment_path() + 'GEOSana_GridComp'))
 
-        # path_to_record = from
-        path_to_records = os.path.join(self.experiment_path() + '/GEOSana_GridComp/...')
-        output_dir = self.cycle_dir() + '/satellite_channel_records'
-        sat_records = SatelliteRecords(observing_system_records_path)
-        sat_records.parse_records(path_to_records)
-        sat_records.save_yamls(output_dir, observations)
 
 # ----------------------------------------------------------------------------------------------
