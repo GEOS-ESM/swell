@@ -29,8 +29,9 @@ from swell.utilities.welcome_message import write_welcome_message
               'file parameters inside can be overridden using value from the override config file.')
 @click.option('-a', '--advanced', 'advanced', default=False, help='Show configuration questions ' +
               'which are otherwise not shown to the user.')
+@click.option('-t', '--test_tier', 'test_tier', default=1, help='Tier of the tests to run.')
 @click.argument('suite')
-def main(input_method, suite, platform, override, advanced):
+def main(input_method, suite, platform, override, advanced, test_tier):
     """
         SUITE argument determines which set of tasks are going to be run.
     """
@@ -41,7 +42,7 @@ def main(input_method, suite, platform, override, advanced):
 
     # Create suites object
     # --------------------
-    prepare_config(input_method, suite, platform, override, advanced)
+    prepare_config(input_method, suite, platform, override, advanced, test_tier)
 
 
 # --------------------------------------------------------------------------------------------------

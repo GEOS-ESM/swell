@@ -43,7 +43,7 @@ def update_model_components(logger, experiment_dict, comment_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(method, suite, platform, override, advanced):
+def prepare_config(method, suite, platform, override, advanced, test_tier):
 
     # Create a logger
     # ---------------
@@ -64,7 +64,7 @@ def prepare_config(method, suite, platform, override, advanced):
     # ---------------------------------------------------------------
     PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
                         'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced)
+    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced, test_tier)
 
     # Call the config prep step
     # -------------------------

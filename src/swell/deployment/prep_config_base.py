@@ -21,7 +21,7 @@ from swell.swell_path import get_swell_path
 
 class PrepConfigBase(ABC):
 
-    def __init__(self, logger, dictionary_file, suite, platform, override, advanced):
+    def __init__(self, logger, dictionary_file, suite, platform, override, advanced, test_tier):
 
         self.override = override
 
@@ -92,18 +92,56 @@ class PrepConfigBase(ABC):
         with open(os.path.join(swell_path, 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
             self.all_task_questions = yaml.safe_load(ymlfile)
 
-        # Open tests override dictionary
-        # do this only on defaults
-        test_file = os.path.join(swell_path, 'test', 'suite_tests', suite + '-tier1.yaml')
+        # Override section
+        # ----------------
+
+        # Here we use the override mechanism to decide what the defaults answers to questions
+        # should be. The idea here is to provide a four level mechanism to set meaningful defaults.
+        #
+        #  - First the answers are set by what lies in the task and suite questions in the source
+        #    code. Either in the tasks directory or model/platform specific directories.
+        #  - Second the default answers are set by opening the test dictionary for tier 1 tests.
+        #    This is what runs when pull requests get merged so is known to work. If no further
+        #    overrides are provided the resulting configuration should run out of the box.
+        #  - Third the code will search for $HOME/.swell/global-override.yaml and if it exists
+        #    will override the answers with anything found in that file. This is useful for setting
+        #    user specific answers that you do not want to commonly change.
+        #  - Fourth the user can pass an override file by argument to this application.
+        #
+        # If the same override key is provided at all three levels it will take the value from the
+        # final position in the list above. For example if the test dictionary has a default value
+        # of A and the global override has a default value of B then the default answer that will be
+        # used will be B.
+
+        # Initialize the override dictionary to empty
+        self.override_dictionary = {}
+
+        # Override step 1 - open the test tier 1 dictionary and set override to that
+        test_file = os.path.join(swell_path, 'test', 'suite_tests', suite +
+                                 f'-tier{test_tier}.yaml')
 
         if os.path.exists(test_file):
-            with open(test_file, 'r') as test_yml:
-                self.test_dictionary = yaml.safe_load(test_yml)
-        else:
-            self.test_dictionary = {}
+            with open(test_file, 'r') as test_file_yml:
+                self.override_dictionary = yaml.safe_load(test_file_yml)
 
-        # Open user selected override dictionary
+        # Override step 2 - open the global-override.yaml file if it exists
+        global_override_file = os.path.join(os.environ['HOME'], '.swell', 'global-override.yaml')
+        if os.path.exists(global_override_file):
+            with open(global_override_file, 'r') as global_override_yml:
+                global_override_dictionary = yaml.safe_load(global_override_yml)
+
+            # Merge existing override with global
+
+        # Override step 3 - open the dictionary passed by argument
         if override is not None:
+            if os.path.exists(override):
+                with open(override, 'r') as local_override_yml:
+                    local_override_dictionary = yaml.safe_load(local_override_yml)
+
+            # Merge with existing override with locally passed override
+
+
+        if self.override is not None:
 
             logger.info(f'Overriding experiment dictionary settings using {override}')
 
