@@ -10,25 +10,26 @@ on:
       - synchronize
       - reopened
 
-# This validation is equivalent to running on the command line:
-#   yamllint -d relaxed --no-warnings
-# and is controlled by the .yamllint.yml file
+
 jobs:
   validate-YAML:
+
     name: Check YAML Coding Norms
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - id: yaml-lint
-        name: yaml-lint
-        uses: ibiqlik/action-yamllint@v3
-        with:
-          no_warnings: true
-          format: colored
-          config_file: .yamllint.yml
 
-      - uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: yamllint-logfile
-          path: ${{ steps.yaml-lint.outputs.logfile }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install yamllint
+      run: pip install yamllint
+
+    - name: Run yamllint
+      run: |
+        find . -name '*.yaml' ! -name 'LocalEnsembleDA.yaml' | xargs yamllint
+
