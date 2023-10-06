@@ -46,13 +46,15 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                 if value_special == 'observations':
                     observations = []
                     for ob in obs:
-                        # Get observation dictionary
+                        # Need knowledge of both available and active channels
+                        # double rendering? obs_dict to retrieve available channels
+                        # retrieve active channels list using cycle time, create
+                        # use flag arr by list comparison
+                        if ob == 'airs_aqua':
+                            active_channels = [1, 1, 1]
+                            jedi_rendering.add_key('airs_aqua_active_channels', active_channels)
+                        
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-
-                        # Use the satellite channel record to set the correct channels in useflag
-                         
-
-
                         observations.append(obs_dict)
                     jedi_config_dict[key] = observations
 

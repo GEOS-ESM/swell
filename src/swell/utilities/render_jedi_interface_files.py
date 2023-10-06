@@ -42,6 +42,7 @@ class JediConfigRendering():
 
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
+            'airs_aqua_active_channels',
             'analysis_variables',
             'background_error_model',
             'background_frequency',
