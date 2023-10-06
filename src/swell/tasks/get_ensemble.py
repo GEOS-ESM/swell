@@ -8,10 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import datetime
 import glob
 import os
-import re
 
 from swell.tasks.base.task_base import taskBase
 
