@@ -42,6 +42,7 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
+        observing_system_records_path = self.config.observing_system_records_path()
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -59,7 +60,8 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation,
+                                                                      observing_system_records_path)
 
             # Fetch observation files
             # -----------------------

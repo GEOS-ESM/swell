@@ -11,7 +11,7 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-
+from swell.utilities.satellite_records import SatelliteRecords
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,27 +22,29 @@ class JediConfigRendering():
         # Keep a copy of the logger
         self.logger = logger
 
+        # Keep a copy of the cycle directory
+        self.cycle_dir = cycle_dir
+
         # Copy the experiment configuration path
         self.jedi_config_path = os.path.join(experiment_root, experiment_id, 'configuration',
                                              'jedi')
 
         # Dictionary to hold things that can be templated
-        self.template_dict = {}
+        self.__template_dict__ = {}
 
         # Always store the cycle directory in the dictionary
-        self.template_dict['cycle_dir'] = cycle_dir
+        self.__template_dict__['cycle_dir'] = cycle_dir
 
         # Add the jedi interface to the dictionary
         self.jedi_interface = jedi_interface
-        self.template_dict['model_component'] = jedi_interface
+        self.__template_dict__['model_component'] = jedi_interface
 
         # Add experiment info to dictionary
-        self.template_dict['experiment_id'] = experiment_id
-        self.template_dict['experiment_root'] = experiment_root
+        self.__template_dict__['experiment_id'] = experiment_id
+        self.__template_dict__['experiment_root'] = experiment_root
 
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
-            'airs_aqua_active_channels',
             'analysis_variables',
             'background_error_model',
             'background_frequency',
@@ -78,7 +80,7 @@ class JediConfigRendering():
                                  f'of the valid keys: \'{self.valid_template_keys}\'')
 
         # Add element to dictionary
-        self.template_dict[key] = element
+        self.__template_dict__[key] = element
 
     # ----------------------------------------------------------------------------------------------
 
@@ -95,7 +97,7 @@ class JediConfigRendering():
 
         # Fill templates in the configuration file using the config
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
-                                                 self.template_dict)
+                                                 self.__template_dict__)
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)
@@ -131,7 +133,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface observations file and call rendering
-    def render_interface_observations(self, config_name):
+    def render_interface_observations(self, config_name, observing_system_records_path):
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -141,6 +143,24 @@ class JediConfigRendering():
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
                                    'observations', f'{config_name}.yaml')
+
+        # Open file as a string
+        with open(config_file, 'r') as config_file_open:
+            config_file_str_templated = config_file_open.read()
+
+        # Search the file for f'{config_name}_active_channels' and if exists open the channel selection file
+        if f'{config_name}_active_channels' in config_file_str_templated:
+
+            # Create object of SatelliteRecords class
+            satellite_records = SatelliteRecords(observing_system_records_path)
+
+            # Get active channels from satellite records
+            active_channels = satellite_records.get_active_channels(config_name)
+
+            # active_channels = [-1 1 -1 1 1 -1 etc]
+
+            # Add active channels to template dictionary
+            self.__template_dict__[f'{config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

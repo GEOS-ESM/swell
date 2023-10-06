@@ -27,11 +27,12 @@ class GenerateSatelliteChannelRecord(taskBase):
         # Parse config
         # ------------
         observations = self.config.observations()
+        observing_system_records_path = self.config.observing_system_records_path()
 
         # Create files like amsua_n19_channel_record.yaml in self.cycle_dir()/satellite_channel_record
         path_to_records = '/discover/nobackup/asewnath/github/GEOSana_GridComp/GEOSaana_GridComp/GSI_GridComp/mksi/sidb/'
         output_dir = self.cycle_dir() + '/satellite_channel_records'
-        sat_records = SatelliteRecords()
+        sat_records = SatelliteRecords(observing_system_records_path)
         sat_records.parse_records(path_to_records)
         sat_records.save_yamls(output_dir, observations)
 

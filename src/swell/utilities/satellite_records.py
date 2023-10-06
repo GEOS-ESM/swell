@@ -12,15 +12,17 @@ def format_date(old_date):
     return date.isoformat()
 
 
-class SatelliteRecords:
+class ObservingSystemRecords:
 
-    def __init__(self):
-        self.column_names = ['sat', 'start', 'end', 
+    def __init__(self, root_directory):
+        self.column_names = ['sat', 'start', 'end',
                              'instr', 'channel_num',
                              'channels', 'comments']
         self.df = pd.DataFrame(columns=self.column_names)
         self.obs_registry = []
 
+        # Location where directories containing observing system records are located
+        self.root_directory = root_directory
 
     def parse_records(self, path_to_records):
         # Only save satellites that are in list
@@ -43,6 +45,8 @@ class SatelliteRecords:
 
         if not observation_list:
             observation_list = self.obs_registry
+
+        # Switch output directory to root/radiances
 
         if not os.path.exists(output_dir):
             os.mkdir(output_dir)

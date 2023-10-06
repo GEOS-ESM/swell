@@ -625,3 +625,13 @@ window_type:
   - StoreBackground
   type: string-drop-list
 
+observing_system_records_path:
+  ask_question: false
+  default_value: defer_to_platform
+  prompt: What is the path to the observing system records?
+  tasks:
+  - GenerateSatelliteChannelRecord
+  - GetObservations
+  - GsiBcToIoda
+  - ...
+  type: string-drop-list
