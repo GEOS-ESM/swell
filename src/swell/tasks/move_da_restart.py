@@ -1,4 +1,4 @@
-# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -96,12 +96,12 @@ class MoveDaRestart(taskBase):
         move_files(self.logger, self.forecast_dir('tile.bin'),
                    self.at_next_fcst_dir('tile.bin'))
 
-        # Having multiple restart outputs in MOM6 is hard coded and unavoidable for high res
-        # simulations. It is also expected that the MOM restart for the next cycle is created
-        # at the beginning of the current DA window.
+        # Having multiple restart outputs in MOM6 is hard coded and inevitable for high res
+        # simulations. MOM restart for the next cycle should be at the beginning of the
+        # current DA window.
 
         # Due to the mismatch between source & destination filenames a dictionary was created
-        # to handle the difference.
+        # to handle these differences.
         # --------------------------------------------------------------------------
         src_dst_dict = {}
 

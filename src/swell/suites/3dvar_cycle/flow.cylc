@@ -63,8 +63,6 @@
             {% endfor %}
         """
 
-        #T00,T06,T12,T18 = """
-        #T12 = """
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}

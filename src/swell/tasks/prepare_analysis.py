@@ -1,4 +1,4 @@
-# (C) Copyright 2023- United States Government as represented by the Administrator of the
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -127,8 +127,8 @@ class PrepareAnalysis(taskBase):
             f'ncks -A -v h {h_ana} {f_incr} \n' + \
             f'mv {f_incr} {mom6_incr}'
 
-        # Containerized run of the GEOS build steps
-        # -----------------------------------------
+        # Containerized run of NCO tools via CLI
+        # --------------------------------------
         run_subprocess(self.logger, ['/bin/bash', '-c', command])
 
     # --------------------------------------------------------------------------------------------------
