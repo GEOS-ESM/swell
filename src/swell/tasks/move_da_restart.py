@@ -136,13 +136,13 @@ class MoveDaRestart(taskBase):
 
         # If the src/dst dict is empty, abort run as something is messed up
         # -----------------------------------------------------------------
-        if(len(src_dst_dict) == 0):
+        if (len(src_dst_dict) == 0):
             self.logger.abort(f'Restart file(s) do not exist. This indicates ' +
                               'an issue with the restart outputs and/or RECORD_FREQUENCY inputs.')
 
         # Include the increment file if IAU is active
         # -------------------------------------------
-        if(self.mom6_iau):
+        if (self.mom6_iau):
             src_dst_dict.update({
                 os.path.join(self.cycle_dir(), 'mom6_increment.nc'):
                     self.at_next_fcst_dir(['INPUT', 'mom6_increment.nc'])

@@ -76,7 +76,7 @@ class EvaObservations(taskBase):
             with nc.Dataset(obs_path_file, 'r') as ds:
                 loc_size = len(ds.dimensions['Location'])
 
-            if(loc_size) < 1:
+            if (loc_size) < 1:
                 continue
 
             cycle_dir, obs_file = os.path.split(obs_path_file)
