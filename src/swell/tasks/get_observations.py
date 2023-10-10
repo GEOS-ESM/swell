@@ -7,12 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.store_fetch import fetch
 
 import os
-
-from swell.tasks.base.task_base import taskBase
-from r2d2 import fetch
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,6 +41,12 @@ class GetObservations(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
 
+        r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
+        r2d2_fetch_datastores = [r.replace("${USER}", os.getenv('USER'))
+                                 for r in r2d2_fetch_datastores]
+
+        self.logger.info("Fetching from R2D2 data_stores: " + ', '.join(r2d2_fetch_datastores))
+
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(window_offset,
@@ -52,6 +56,9 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
+
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
 
         # Loop over observation operators
         # -------------------------------
@@ -64,15 +71,23 @@ class GetObservations(taskBase):
             # Fetch observation files
             # -----------------------
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+
             self.logger.info(f'Processing observation file {target_file}')
 
-            fetch(date=window_begin,
-                  target_file=target_file,
-                  provider=obs_provider,
-                  obs_type=observation,
-                  time_window=window_length,
-                  type='ob',
-                  experiment=obs_experiment)
+            target_dir = os.path.dirname(target_file)
+            os.makedirs(target_dir, exist_ok=True)
+            file_extension = os.path.splitext(target_file)[1].replace(".", "")
+
+            fetched_from = fetch(r2d2_fetch_datastores,
+                                 item='observation',
+                                 target_file=target_file,
+                                 provider=obs_provider,
+                                 observation_type=observation,
+                                 file_extension=file_extension,
+                                 window_start=window_begin,
+                                 window_length=window_length)
+
+            self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
             # Change permission
             os.chmod(target_file, 0o644)
@@ -116,30 +131,48 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs bias']['input file']
             self.logger.info(f'Processing satellite bias file {target_file}')
 
-            fetch(date=background_time,
-                  target_file=target_file,
-                  provider='gsi',
-                  obs_type=observation,
-                  type='bc',
-                  experiment=obs_experiment,
-                  file_type='satbias')
+            target_dir = os.path.dirname(target_file)
+            os.makedirs(target_dir, exist_ok=True)
+            file_extension = os.path.splitext(target_file)[1].replace(".", "")
+
+            fetched_from = fetch(r2d2_fetch_datastores,
+                                 item='bias_correction',
+                                 target_file=target_file,
+                                 model='geos_atmosphere',
+                                 experiment=obs_experiment,
+                                 provider='gsi',
+                                 observation_type=observation,
+                                 file_extension=file_extension,
+                                 file_type='satbias',
+                                 date=background_time)
+
+            self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
             # Change permission
             os.chmod(target_file, 0o644)
 
             # Satellite time lapse
             # --------------------
-            for target_file in self.get_tlapse_files(observation_dict):
+            for target_file in list(set(list(self.get_tlapse_files(observation_dict)))):
 
                 self.logger.info(f'Processing time lapse file {target_file}')
 
-                fetch(date=background_time,
-                      target_file=target_file,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type='tlapse')
+                target_dir = os.path.dirname(target_file)
+                os.makedirs(target_dir, exist_ok=True)
+                file_extension = os.path.splitext(target_file)[1].replace(".", "")
+
+                fetched_from = fetch(r2d2_fetch_datastores,
+                                     item='bias_correction',
+                                     target_file=target_file,
+                                     model='geos_atmosphere',
+                                     experiment=obs_experiment,
+                                     provider='gsi',
+                                     observation_type=observation,
+                                     file_extension=file_extension,
+                                     file_type='tlapse',
+                                     date=background_time)
+
+                self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

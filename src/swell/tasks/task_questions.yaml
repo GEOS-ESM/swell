@@ -328,7 +328,6 @@ horizontal_resolution:
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   - StageJedi
-  - StoreBackground
   type: string-drop-list
 
 jedi_bkg_filename_template:
@@ -369,6 +368,14 @@ jedi_forecast_model:
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
+
+limit_r2d2_storing:
+  ask_question: true
+  default_value: true
+  prompt: Question
+  tasks:
+  - SaveObsDiags
+  type: boolean
 
 minimizer:
   ask_question: false
@@ -514,6 +521,25 @@ produce_geovals:
   tasks:
   - GsiNcdiagToIoda
   type: boolean
+
+r2d2_fetch_datastores:
+  ask_question: false
+  default_value: defer_to_platform
+  options: defer_to_platform
+  prompt: In what order do you want to search R2D2 data_stores for fetching?
+  tasks:
+  - GetBackground
+  - GetObservations
+  type: string-check-list
+
+r2d2_store_datastores:
+  ask_question: false
+  default_value: defer_to_platform
+  options: defer_to_platform
+  prompt: In which R2D2 data_stores do you want to store new data?
+  tasks:
+  - SaveObsDiags
+  type: string-check-list
 
 swell_static_files:
   ask_question: false

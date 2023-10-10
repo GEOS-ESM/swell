@@ -46,13 +46,12 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
         swell_lib_path = get_swell_path()
         platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
-        for s in ['modules', 'r2d2_config.yaml']:
-            src_file = os.path.split(s)[1]
-            src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
-            dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
-            if os.path.exists(src_path_file):
-                logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
-                shutil.copy(src_path_file, dst_path_file)
+        src_path_file = os.path.join(platform_path, 'modules')
+        dst_path_file = os.path.join(exp_suite_path, 'modules')
+
+        if os.path.exists(src_path_file):
+            logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+            shutil.copy(src_path_file, dst_path_file)
 
 
 # --------------------------------------------------------------------------------------------------

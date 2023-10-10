@@ -7,9 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
 from swell.tasks.base.task_base import taskBase
-from r2d2 import store
+from swell.utilities.store_fetch import store
+
+import os
 
 # --------------------------------------------------------------------------------------------------
 
@@ -29,10 +30,20 @@ class SaveObsDiags(taskBase):
         observations = self.config.observations()
         window_offset = self.config.window_offset()
 
+        r2d2_store_datastores = self.config.r2d2_store_datastores(['swell-r2d2'])
+        r2d2_store_datastores = [r.replace("${USER}", os.getenv('USER'))
+                                 for r in r2d2_store_datastores]
+        limit_store = self.config.limit_r2d2_storing(True)
+
+        self.logger.info("Storing to R2D2 data_stores: " + ', '.join(r2d2_store_datastores))
+
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
+
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
@@ -53,16 +64,26 @@ class SaveObsDiags(taskBase):
 
             # Check for need to add 0000 to the file
             if not os.path.exists(obs_path_file):
+
                 obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
+
                 if not os.path.exists(obs_path_file_0000):
                     self.logger.abort(f'No observation file found for {obs_path_file} or ' +
                                       f'{obs_path_file_0000}')
+
                 obs_path_file = obs_path_file_0000
 
-            store(date=window_begin,
-                  provider='ncdiag',
-                  source_file=obs_path_file,
-                  obs_type=name,
-                  type='ob',
-                  experiment=self.experiment_id())
+            file_extension = os.path.splitext(obs_path_file)[1].replace(".", "")
+
+            stored_to = store(r2d2_store_datastores,
+                              limit_one=limit_store,
+                              item='observation',
+                              source_file=obs_path_file,
+                              provider='x0044',
+                              observation_type=name,
+                              file_extension=file_extension,
+                              window_start=window_begin,
+                              window_length=window_offset)
+
+            self.logger.info("Stored R2D2 data to " + str(stored_to))

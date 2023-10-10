@@ -10,12 +10,6 @@ final_cycle_point:
   prompt: What is the time of the final cycle (middle of the window)?
   type: iso-datetime
 
-r2d2_local_path:
-  ask_question: False
-  default_value: defer_to_platform
-  prompt: Enter the path where R2D2 will store experiment output
-  type: string
-
 cycle_times:
   ask_question: True
   default_value: defer_to_model

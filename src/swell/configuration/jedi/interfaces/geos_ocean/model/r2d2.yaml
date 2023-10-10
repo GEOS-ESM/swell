@@ -5,6 +5,7 @@ fetch:
   fc:
     - file_type: MOM.res
       filename: '{{cycle_dir}}/MOM6.res.{{local_background_time}}.nc'
+      domain: global
 store:
   fc:
     - file_type: MOM.res

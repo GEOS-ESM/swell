@@ -11,8 +11,7 @@
 from datetime import datetime as dt
 import isodate
 import os
-from r2d2 import store
-
+from r2d2 import R2D2Data
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats
@@ -101,11 +100,14 @@ class StoreBackground(taskBase):
         # Get r2d2 dictionary
         r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over fc
         for fc in r2d2_dict['store']['fc']:
 
-            # Reset target file
-            target_file_template = os.path.split(background_dict['filename'])[1]
+            # Reset source file
+            source_file_template = os.path.split(background_dict['filename'])[1]
 
             # Datetime format to use
             user_date_format = fc['user_date_format']
@@ -113,8 +115,8 @@ class StoreBackground(taskBase):
             # Loop over file types
             for file_type in fc['file_type']:
 
-                # Replace filetype in target_file_template
-                target_file_type_template = target_file_template.replace("$(file_type)", file_type)
+                # Replace filetype in source_file_template
+                source_file_type_template = source_file_template.replace("$(file_type)", file_type)
 
                 # Looop over background steps
                 for bkg_step in bkg_steps:
@@ -123,17 +125,20 @@ class StoreBackground(taskBase):
                     background_time = forecast_start_time + isodate.parse_duration(bkg_step)
                     valid_time_str = background_time.strftime(user_date_format)
 
-                    # Set the target file name
-                    target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(self.cycle_dir(), target_file)
+                    # Set the source file name
+                    source_file = source_file_type_template.replace("$(valid_date)", valid_time_str)
+                    source_file = os.path.join(cfg.get('cycle_dir'), source_file)
+
+                    file_extension = os.path.splitext(source_file)[1].replace(".", "")
 
                     # Perform the store
-                    store(date=forecast_start_time,
-                          source_file=target_file,
-                          model='geos',
-                          file_type='bkg',
-                          fc_date_rendering='analysis',
-                          step=bkg_step,
-                          resolution=self.config.horizontal_resolution(),
-                          type='fc',
-                          experiment=background_experiment)
+                    R2D2Data.store(item='forecast',
+                                   source_file=source_file,
+                                   data_store='swell-r2d2',
+                                   model='geos',
+                                   experiment=background_experiment,
+                                   file_extension=file_extension,
+                                   resolution=cfg.get('horizontal_resolution'),
+                                   file_type='bkg',
+                                   step=bkg_step,
+                                   date=forecast_start_time)

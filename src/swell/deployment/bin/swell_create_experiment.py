@@ -20,7 +20,6 @@ from swell.deployment.prep_exp_dirs import copy_eva_files, copy_platform_files, 
 from swell.deployment.prep_suite import prepare_cylc_suite_jinja2
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import dict_get
-from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
 from swell.utilities.welcome_message import write_welcome_message
 
@@ -69,25 +68,6 @@ def main(config_file):
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
         copy_eva_files(logger, swell_suite_path, exp_suite_path)
-
-    # Create R2D2 database file
-    # -------------------------
-    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
-    if r2d2_local_path is not None:
-        r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
-
-        # Write R2D2_CONFIG to modules
-        with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
-            module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
-
-        # Open the r2d2 file to dictionary
-        with open(r2d2_conf_path, 'r') as r2d2_file_open:
-            r2d2_file_str = r2d2_file_open.read()
-        r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
-        r2d2_file_str = os.path.expandvars(r2d2_file_str)
-
-        with open(r2d2_conf_path, 'w') as r2d2_file_open:
-            r2d2_file_open.write(r2d2_file_str)
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------

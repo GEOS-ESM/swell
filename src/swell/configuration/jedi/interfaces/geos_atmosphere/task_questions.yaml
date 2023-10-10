@@ -48,7 +48,7 @@ geovals_experiment:
   default_value: x0048-geovals
 
 geovals_provider:
-  default_value: ncdiag
+  default_value: x0048-geovals
 
 gradient_norm_reduction:
   default_value: 10e-5
@@ -85,7 +85,7 @@ obs_experiment:
   default_value: x0048
 
 obs_provider:
-  default_value: ncdiag
+  default_value: x0048
 
 observations:
   default_value:

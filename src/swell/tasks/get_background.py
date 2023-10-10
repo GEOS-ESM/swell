@@ -7,13 +7,11 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.store_fetch import fetch
 
 import isodate
 import os
-from r2d2 import fetch
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -49,6 +47,12 @@ class GetBackground(taskBase):
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
+
+        r2d2_fetch_datastores = self.config.r2d2_fetch_datastores(['swell-r2d2-archive'])
+        r2d2_fetch_datastores = [r.replace("${USER}", os.getenv('USER'))
+                                 for r in r2d2_fetch_datastores]
+
+        self.logger.info("Fetching from R2D2 data_stores: " + ', '.join(r2d2_fetch_datastores))
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_offset,
@@ -118,6 +122,9 @@ class GetBackground(taskBase):
         # Get r2d2 dictionary
         r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
+        # To force localhost r2d2
+        # os.environ['R2D2_HOST'] = 'localhost'
+
         # Loop over fc
         # ------------
         for fc in r2d2_dict['fetch']['fc']:
@@ -126,6 +133,7 @@ class GetBackground(taskBase):
             # --------------------
             file_type = fc['file_type']
             target_file_template = fc['filename']
+            domain = fc.get('domain', '')
 
             # Loop over background steps
             # --------------------
@@ -139,18 +147,22 @@ class GetBackground(taskBase):
                 # ---------------------------------------------------
                 target_file = background_time.strftime(target_file_template)
 
-                fetch(
-                    date=forecast_start_time,
-                    target_file=target_file,
-                    model=r2d2_model_dict[model_component],
-                    file_type=file_type,
-                    fc_date_rendering='analysis',
-                    step=bkg_step,
-                    resolution=horizontal_resolution,
-                    type='fc',
-                    experiment=background_experiment)
+                target_dir = os.path.dirname(target_file)
+                os.makedirs(target_dir, exist_ok=True)
+
+                fetched_from = fetch(r2d2_fetch_datastores,
+                                     item='forecast',
+                                     target_file=target_file,
+                                     model=r2d2_model_dict[model_component],
+                                     experiment=background_experiment,
+                                     file_extension="nc",
+                                     resolution=horizontal_resolution,
+                                     domain=domain,
+                                     file_type=file_type,
+                                     step=bkg_step,
+                                     date=forecast_start_time)
+
+                self.logger.info("Fetched R2D2 data from " + fetched_from + " to " + target_file)
 
                 # Change permission
                 os.chmod(target_file, 0o644)
-
-# --------------------------------------------------------------------------------------------------

@@ -21,6 +21,24 @@ geos_restarts_directory:
   default_value:
   - /home/geos/restarts
 
+r2d2_fetch_datastores:
+  default_value:
+  - swell-r2d2-${USER}
+  - swell-r2d2-archive
+  - swell-r2d2
+  options:
+  - swell-r2d2-${USER}
+  - swell-r2d2-archive
+  - swell-r2d2
+
+r2d2_store_datastores:
+  default_value:
+  - swell-r2d2-${USER}
+  - swell-r2d2
+  options:
+  - swell-r2d2-${USER}
+  - swell-r2d2
+
 swell_static_files:
   default_value: This would need to be provided by user
 
