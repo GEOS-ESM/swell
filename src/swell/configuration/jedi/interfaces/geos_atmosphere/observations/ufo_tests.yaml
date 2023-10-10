@@ -14,7 +14,7 @@ aircraft:
 
 airs_aqua:
   filter_test:
-    passedBenchmark: 356480
+    passedBenchmark: 360284
 
 amsr2_gcom-w1:
   filter_test:
@@ -34,11 +34,11 @@ amsua_metop-c:
 
 amsua_n15:
   filter_test:
-    passedBenchmark: 48397
+    passedBenchmark: 56155
 
 amsua_n18:
   filter_test:
-    passedBenchmark: 64308
+    passedBenchmark: 69700
 
 amsua_n19:
   filter_test:
@@ -46,31 +46,31 @@ amsua_n19:
 
 atms_n20:
   filter_test:
-    passedBenchmark: 122696
+    passedBenchmark: 131783
 
 atms_npp:
   filter_test:
-    passedBenchmark: 121831
+    passedBenchmark: 130828
 
 avhrr3_metop-b:
   filter_test:
-    passedBenchmark: 4741
+    passedBenchmark: 4940
 
 avhrr3_n18:
   filter_test:
-    passedBenchmark: 5265
+    passedBenchmark: 5455
 
 avhrr3_n19:
   filter_test:
-    passedBenchmark: 4797
+    passedBenchmark: 4948
 
 cris-fsr_n20:
   filter_test:
-    passedBenchmark: 218099
+    passedBenchmark: 220521
 
 cris-fsr_npp:
   filter_test:
-    passedBenchmark: 207944
+    passedBenchmark: 210980
 
 gmi_gpm:
   filter_test:
@@ -82,11 +82,11 @@ gps:
 
 iasi_metop-b:
   filter_test:
-    passedBenchmark: 532953
+    passedBenchmark: 561875
 
 iasi_metop-c:
   filter_test:
-    passedBenchmark: 530555
+    passedBenchmark: 559038
 
 mhs_metop-b:
   filter_test:
