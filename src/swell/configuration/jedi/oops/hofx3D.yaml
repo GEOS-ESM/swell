@@ -9,6 +9,7 @@ state:
 window begin: '{{window_begin_iso}}'
 window length: '{{window_length}}'
 
+{% if local_ensemble_save_posterior_mean or local_ensemble_save_posterior_ensemble %}
 observations:
   observers:
     SPECIALobservations
