@@ -57,7 +57,21 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/atms_npp.{{window_begin}}.satbias.nc4'
 
-obs filters:
+obs prior filters:
+# Assign obs error
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *atms_npp_channels
+    action:
+      name: assign error
+      error parameter vector: &atms_npp_oberr
+                  [5.000,  5.000,  5.000,  3.000,  0.550,
+                   0.300,  0.300,  0.300,  0.300,  0.300,
+                   0.350,  0.400,  0.550,  0.800,  5.000,
+                   5.000,  2.500,  2.500,  2.500,  2.500,
+                   2.500,  2.500]
+obs post filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
     filter variables:
@@ -93,19 +107,6 @@ obs filters:
     maxvalue: 0.0
     action:
       name: reject
-# Assign obs error
-  - filter: Perform Action
-    filter variables:
-    - name: brightnessTemperature
-      channels: *atms_npp_channels
-    action:
-      name: assign error
-      error parameter vector:
-                  [5.000,  5.000,  5.000,  3.000,  0.550,
-                   0.300,  0.300,  0.300,  0.300,  0.300,
-                   0.350,  0.400,  0.550,  0.800,  5.000,
-                   5.000,  2.500,  2.500,  2.500,  2.500,
-                   2.500,  2.500]
 # Topography check
   - filter: BlackList
     filter variables:
@@ -174,12 +175,7 @@ obs filters:
           options:
             channels: *atms_npp_channels
             sensor: *Sensor_ID
-        error parameter vector:
-                  [5.000,  5.000,  5.000,  3.000,  0.550,
-                   0.300,  0.300,  0.300,  0.300,  0.300,
-                   0.350,  0.400,  0.550,  0.800,  5.000,
-                   5.000,  2.500,  2.500,  2.500,  2.500,
-                   2.500,  2.500]
+        error parameter vector: *atms_npp_oberr
         obserr_bound_max: [4.5, 4.5, 3.0, 3.0, 1.0,
                            1.0, 1.0, 1.0, 1.0, 1.0,
                            1.0, 1.0, 1.0, 2.0, 4.5,

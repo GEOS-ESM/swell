@@ -99,7 +99,7 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/iasi_metop-b.{{window_begin}}.satbias.nc4'
 
-obs filters:
+obs prior filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
@@ -180,6 +180,7 @@ obs filters:
         variables:
         - name: ObsErrorData/brightnessTemperature
           channels: *iasi_metop-b_channels
+obs post filters:
 # Wavenumber Check
 - filter: BlackList
   filter variables:
