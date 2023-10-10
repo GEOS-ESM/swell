@@ -121,6 +121,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     slurm_tasks = [
         'BuildJedi',
         'BuildGeos',
+        'EvaObservations',
         'GenerateBClimatology',
         'RunJediHofxExecutable',
         'RunJediLetkfExecutable',
@@ -139,7 +140,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         render_dictionary['scheduling'][slurm_task]['account'] = account
         render_dictionary['scheduling'][slurm_task]['qos'] = qos
         render_dictionary['scheduling'][slurm_task]['nodes'] = 1
-        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 24
+        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 40
         render_dictionary['scheduling'][slurm_task]['constraint'] = constraint
         render_dictionary['scheduling'][slurm_task]['partition'] = partition
 
@@ -148,7 +149,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
-    render_dictionary['scheduling']['RunJediHofxExecutable']['execution_time_limit'] = 'PT2H'
+    render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
     # Render the template
     # -------------------
