@@ -27,3 +27,7 @@ rules:
     level: warning
     allow-non-breakable-inline-mappings: true
   truthy: disable
+
+  # Files to ignore because they include Jinja2 templating around keys
+  ignore: |
+    src/swell/configuration/jedi/oops/LocalEnsembleDA.yaml
