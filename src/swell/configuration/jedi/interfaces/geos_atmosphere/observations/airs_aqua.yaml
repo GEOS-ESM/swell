@@ -74,7 +74,7 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/airs_aqua.{{window_begin}}.satbias.nc4'
 
-obs filters:
+obs prior filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
@@ -122,6 +122,7 @@ obs filters:
         variables:
         - name: ObsErrorData/brightnessTemperature
           channels: *airs_aqua_channels
+obs post filters:
 #  Wavenumber Check
 - filter: BlackList
   filter variables:
@@ -362,7 +363,6 @@ obs filters:
     channels: *airs_aqua_channels
     options:
       channels: *airs_aqua_channels
-#        use passive_bc: true
       use_flag: *useflag_airs_aqua
   minvalue: 1.0e-12
   action:
