@@ -28,6 +28,7 @@ class SaveObsDiags(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observations = self.config.observations()
         window_offset = self.config.window_offset()
+        observing_system_records_path = self.config.observing_system_records_path()
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -44,7 +45,8 @@ class SaveObsDiags(taskBase):
         for observation in observations:
 
             # Load the observation dictionary
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation,
+                                                                                 observing_system_records_path)
 
             # Store observation files
             # -----------------------

@@ -458,7 +458,7 @@ observations:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
-  - GenerateSatelliteChannelRecord
+  - GenerateObservingSystemRecords
   type: string-check-list
 
 path_to_ensemble:
@@ -630,7 +630,7 @@ observing_system_records_gsi_path:
   default_value: None
   prompt: What is the path to the observing system records ?
   tasks:
-  - GenerateSatelliteChannelRecord
+  - GenerateObservingSystemRecords
   type: string
 
 observing_system_records_path:
@@ -638,8 +638,7 @@ observing_system_records_path:
   default_value: None
   prompt: What is the path to the observing system records?
   tasks:
-  - GenerateSatelliteChannelRecord
+  - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
-  - ...
   type: string

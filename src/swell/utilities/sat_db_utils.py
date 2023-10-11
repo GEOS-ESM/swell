@@ -17,6 +17,12 @@ from swell.utilities.instr_state_machine import InstrStateMachine
 
 # --------------------------------------------------------------------------------------------------
 
+def get_active_channels(path_to_yamls, observation):
+
+    return [1, -1, 1]
+
+# --------------------------------------------------------------------------------------------------
+
 
 def read_sat_db(path_to_sat_db, column_names):
 

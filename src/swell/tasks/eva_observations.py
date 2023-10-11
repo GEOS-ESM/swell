@@ -64,10 +64,13 @@ class EvaObservations(taskBase):
 
         # Loop over observations
         # -------------------
+        observing_system_records_path = self.config.observing_system_records_path()
+
         for observation in self.config.observations():
 
             # Load the observation dictionary
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dict = self.jedi_rendering.render_interface_observations(observation,
+                                                                                 observing_system_records_path)
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']

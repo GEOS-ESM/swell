@@ -81,6 +81,3 @@ class ObservingSystemRecords:
                     with open(output_dir+'/'+instr+'_'+sat+'.yaml', 'w') as file:
                         yaml.dump(sat_dict, file)
 
-
-    def read_yaml(self):
-        pass

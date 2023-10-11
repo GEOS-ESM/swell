@@ -50,11 +50,12 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                         # double rendering? obs_dict to retrieve available channels
                         # retrieve active channels list using cycle time, create
                         # use flag arr by list comparison
-                        if ob == 'airs_aqua':
-                            active_channels = [1, 1, 1]
-                            jedi_rendering.add_key('airs_aqua_active_channels', active_channels)
-                        
-                        obs_dict = jedi_rendering.render_interface_observations(ob)
+                        #if ob == 'airs_aqua':
+                        #    active_channels = [1, 1, 1]
+                        #    jedi_rendering.add_key('airs_aqua_active_channels', active_channels)
+                        #
+                        # jedi_rendering.render_interface_obs_run_exec(ob)
+                        obs_dict = jedi_rendering.render_interface_observations(ob, jedi_config_dict)
                         observations.append(obs_dict)
                     jedi_config_dict[key] = observations
 

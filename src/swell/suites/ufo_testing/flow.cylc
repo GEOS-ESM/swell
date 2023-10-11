@@ -34,13 +34,16 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
+
+            # Clone geos ana for generating observing system records
+            CloneGeosAna
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
 
             # Generate satellite channel records
-            GenerateSatelliteChannelRecord
+            GenerateObservingSystemRecords
 
             # Convert bias correction to ioda
             GetGsiBc
@@ -55,7 +58,7 @@
             GetGeovals
 
             # Run Jedi hofx executable
-            GenerateSatelliteChannelRecord => RunJediUfoTestsExecutable
+            GenerateObservingSystemRecords => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
             GetGeovals => RunJediUfoTestsExecutable
@@ -105,8 +108,11 @@
             --partition={{scheduling["BuildJedi"]["partition"]}}
             {% endif %}
 
-    [[GenerateSatelliteChannelRecord]]
-        script = "swell_task GenerateSatelliteChannelRecord $config -d $datetime -m geos_atmosphere"
+    [[CloneGeosAna]]
+        script = "swell_task CloneGeosAna $config -d $datetime -m geos_atmosphere"
+
+    [[GenerateObservingSystemRecords]]
+        script = "swell_task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"
 
     [[ GetGsiBc ]]
         script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"

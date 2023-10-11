@@ -11,7 +11,7 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.satellite_records import SatelliteRecords
+#from swell.utilities.satellite_records import SatelliteRecords
 
 # --------------------------------------------------------------------------------------------------
 
@@ -152,10 +152,10 @@ class JediConfigRendering():
         if f'{config_name}_active_channels' in config_file_str_templated:
 
             # Create object of SatelliteRecords class
-            satellite_records = SatelliteRecords(observing_system_records_path)
+            #satellite_records = SatelliteRecords(observing_system_records_path)
 
             # Get active channels from satellite records
-            active_channels = satellite_records.get_active_channels(config_name)
+            #active_channels = satellite_records.get_active_channels(config_name)
 
             # active_channels = [-1 1 -1 1 1 -1 etc]
 

@@ -37,6 +37,7 @@ class RunJediUfoTestsExecutable(taskBase):
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        observing_system_records_path = self.config.observing_system_records_path()
 
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -76,7 +77,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Open the ufo_tests config file
         # ------------------------------
-        ufo_tests_dict = self.jedi_rendering.render_interface_observations(f'ufo_tests')
+        ufo_tests_dict = self.jedi_rendering.render_interface_observations(f'ufo_tests',
+                                                                           observing_system_records_path)
         ufo_tests_default = ufo_tests_dict['default']
 
         # Insert the GeoVaLs section

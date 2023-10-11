@@ -9,9 +9,7 @@
 
 
 import os
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.satellite_records import SatelliteRecords
 
 # --------------------------------------------------------------------------------------------------
 
