@@ -7,8 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
 import glob
+import os
+import re
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
@@ -28,10 +29,15 @@ class MoveDaRestart(taskBase):
         files requiring additional filename handling.
 
         The reason this is a separate task than MoveForecast is that the use of
-        "window_length" will require model argument.
+        "window_length" will require model argument input.
         """
 
         self.logger.info('Moving GEOS restarts to the next forecast cycle')
+        self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
+
+        # Obtain MOM6 IAU bool
+        # ----------------------
+        self.mom6_iau = self.config.mom6_iau()
 
         # Next forecast directory
         # -----------------------
@@ -90,14 +96,59 @@ class MoveDaRestart(taskBase):
         move_files(self.logger, self.forecast_dir('tile.bin'),
                    self.at_next_fcst_dir('tile.bin'))
 
-        # Consider the case of multiple MOM restarts
-        # TODO: this could/should be forced to be a single file (MOM_input option)
-        # so wildcard character can be omitted.
-        # -----------------------------------------------------------------
-        src = self.forecast_dir(['RESTART', 'MOM.res*nc'])
+        # Having multiple restart outputs in MOM6 is hard coded and inevitable for high res
+        # simulations. MOM restart for the next cycle should be at the beginning of the
+        # current DA window.
 
-        for filepath in list(glob.glob(src)):
-            filename = os.path.basename(filepath)
-            move_files(self.logger, filepath, self.at_next_fcst_dir(['INPUT', filename]))
+        # Due to the mismatch between source & destination filenames a dictionary was created
+        # to handle these differences.
+        # --------------------------------------------------------------------------
+        src_dst_dict = {}
+
+        if 'RECORD_FREQUENCY' in agcm_dict:
+
+            an_fcst_offset = self.config.analysis_forecast_window_offset()
+            rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+            seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
+
+            rst_files = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+                                           + seconds + '*.nc'])
+
+            for filepath in list(glob.glob(rst_files)):
+                filename = os.path.basename(filepath)
+
+                # Use re.sub to remove the time pattern from the string
+                # -----------------------------------------------------
+                filenext = re.sub(rst_dto.strftime('_Y%Y_D%j_S') + seconds, "", filename)
+
+                src_dst_dict.update({
+                        filepath: self.at_next_fcst_dir(['INPUT', filenext]),
+                })
+
+        else:
+            rst_files = self.forecast_dir(['RESTART', 'MOM.res*nc'])
+
+            for filepath in list(glob.glob(rst_files)):
+                filename = os.path.basename(filepath)
+                src_dst_dict.update({
+                        filepath: self.at_next_fcst_dir(['INPUT', filename]),
+                })
+
+        # If the src/dst dict is empty, abort run as something is messed up
+        # -----------------------------------------------------------------
+        if (len(src_dst_dict) == 0):
+            self.logger.abort(f'Restart file(s) do not exist. This indicates ' +
+                              'an issue with the restart outputs and/or RECORD_FREQUENCY inputs.')
+
+        # Include the increment file if IAU is active
+        # -------------------------------------------
+        if (self.mom6_iau):
+            src_dst_dict.update({
+                os.path.join(self.cycle_dir(), 'mom6_increment.nc'):
+                    self.at_next_fcst_dir(['INPUT', 'mom6_increment.nc'])
+            })
+
+        for src, dst in src_dst_dict.items():
+            move_files(self.logger, src, dst)
 
 # --------------------------------------------------------------------------------------------------
