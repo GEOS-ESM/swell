@@ -328,7 +328,6 @@ horizontal_localization_max_nobs:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: What is the maximum number of observations to consider for horizontal covariance
     localization?
   tasks:
