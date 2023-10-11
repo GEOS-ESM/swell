@@ -18,7 +18,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediLetkfExecutable(taskBase):
+class RunJediLocalEnsembleDaExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ class RunJediLetkfExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'letkf'
+        jedi_application = 'localensembleda'
 
         # Parse configuration
         # -------------------

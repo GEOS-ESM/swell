@@ -124,9 +124,8 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         'EvaObservations',
         'GenerateBClimatology',
         'RunJediHofxExecutable',
-        'RunJediLetkfExecutable',
+        'RunJediLocalEnsembleDaExecutable',
         'RunJediVariationalExecutable',
-        'RunJediLetkfExecutable',
         'RunJediUfoTestsExecutable',
         'RunGeosExecutable',
         ]

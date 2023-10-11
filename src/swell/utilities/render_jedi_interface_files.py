@@ -124,7 +124,7 @@ class JediConfigRendering():
 
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'oops', f'{config_name}.yaml')
-        print(config_file)
+
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
 

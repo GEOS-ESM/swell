@@ -76,7 +76,7 @@ background_time_offset:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -128,7 +128,7 @@ crtm_coeff_dir:
   - GetObservations
   - GsiBcToIoda
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -141,7 +141,7 @@ ensemble_num_members:
   - geos_atmosphere
   prompt: How many members comprise the ensemble?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
 existing_geos_gcm_build_path:
@@ -206,7 +206,7 @@ generate_yaml_and_exit:
   prompt: Generate JEDI executable YAML and exit?
   tasks:
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   type: boolean
@@ -321,7 +321,7 @@ horizontal_localization_lengthscale:
   options: defer_to_model
   prompt: What is the length scale for horizontal covariance localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: float
 
 horizontal_localization_max_nobs:
@@ -333,7 +333,7 @@ horizontal_localization_max_nobs:
   prompt: What is the maximum number of observations to consider for horizontal covariance
     localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
 horizontal_localization_method:
@@ -344,7 +344,7 @@ horizontal_localization_method:
   options: defer_to_model
   prompt: Which localization scheme should be applied in the horizontal?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string-drop-list
 
 horizontal_resolution:
@@ -359,7 +359,7 @@ horizontal_resolution:
   - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   - StageJedi
   - StoreBackground
@@ -400,7 +400,7 @@ jedi_forecast_model:
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
 
@@ -409,10 +409,9 @@ local_ensemble_inflation_mult:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: Specify the multiplicative prior inflation coefficient (0, inf].
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: float
 
 local_ensemble_inflation_rtpp:
@@ -420,10 +419,9 @@ local_ensemble_inflation_rtpp:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0, 1].
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: float
 
 local_ensemble_inflation_rtps:
@@ -431,54 +429,61 @@ local_ensemble_inflation_rtps:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: Specify the Relaxation To Prior Spread (RTPS) coefficient (0, 1].
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: float
 
 local_ensemble_save_posterior_ensemble:
   ask_question: false
-  default_value: defer_to_model
+  default_value: true
   models:
   - geos_atmosphere
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Save the posterior ensemble members?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 local_ensemble_save_posterior_ensemble_increments:
   ask_question: true
-  default_value: defer_to_model
+  default_value: false
   models:
   - geos_atmosphere
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Save the posterior ensemble member increments?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 local_ensemble_save_posterior_mean:
   ask_question: true
-  default_value: defer_to_model
+  default_value: false
   models:
   - geos_atmosphere
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Save the posterior ensemble mean?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 local_ensemble_save_posterior_mean_increment:
   ask_question: true
-  default_value: defer_to_model
+  default_value: true
   models:
   - geos_atmosphere
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Save the posterior ensemble mean increment?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 local_ensemble_solver:
@@ -489,7 +494,7 @@ local_ensemble_solver:
   options: defer_to_model
   prompt: Which local ensemble solver type should be implemented?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string-drop-list
 
 minimizer:
@@ -513,7 +518,7 @@ npx_proc:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -527,7 +532,7 @@ npy_proc:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -576,7 +581,7 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -667,20 +672,22 @@ total_processors:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   type: integer
 
 vertical_localization_apply_log_transform:
   ask_question: false
-  default_value: defer_to_model
+  default_value: true
   models:
   - geos_atmosphere
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Should a log (base 10) transformation be applied to vertical coordinate
     when constructing vertical localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 vertical_localization_function:
@@ -691,7 +698,7 @@ vertical_localization_function:
   options: defer_to_model
   prompt: Which localization scheme should be applied in the vertical?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string
 
 vertical_localization_ioda_vertical_coord:
@@ -702,7 +709,7 @@ vertical_localization_ioda_vertical_coord:
   options: defer_to_model
   prompt: Which coordinate should be used in constructing vertical localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string
 
 vertical_localization_ioda_vertical_coord_group:
@@ -714,7 +721,7 @@ vertical_localization_ioda_vertical_coord_group:
   prompt: Which vertical coordinate group should be used in constructing vertical
     localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string
 
 vertical_localization_lengthscale:
@@ -725,7 +732,7 @@ vertical_localization_lengthscale:
   options: defer_to_model
   prompt: What is the length scale for vertical covariance localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
 vertical_localization_method:
@@ -736,7 +743,7 @@ vertical_localization_method:
   options: defer_to_model
   prompt: What localization scheme should be applied in constructing a vertical localization?
   tasks:
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: string
 
 vertical_resolution:
@@ -750,7 +757,7 @@ vertical_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   - StageJedi
   type: string-drop-list
@@ -768,7 +775,7 @@ window_length:
   - GetObservations
   - MoveDaRestart
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -789,7 +796,7 @@ window_offset:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -809,7 +816,7 @@ window_type:
   - GenerateBClimatology
   - GetBackground
   - RunJediHofxExecutable
-  - RunJediLetkfExecutable
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: string-drop-list
