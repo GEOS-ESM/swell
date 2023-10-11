@@ -742,7 +742,6 @@ vertical_localization_lengthscale:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  options: defer_to_model
   prompt: What is the length scale for vertical covariance localization?
   tasks:
   - RunJediLocalEnsembleDaExecutable
