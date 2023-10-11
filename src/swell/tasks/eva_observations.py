@@ -9,6 +9,7 @@
 
 
 from multiprocessing import Pool
+import netCDF4 as nc
 import os
 import yaml
 
@@ -83,6 +84,16 @@ class EvaObservations(taskBase):
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
+
+            # Prevent Eva from failing if there are observation files with 0 observations
+            with nc.Dataset(obs_path_file, 'r') as ds:
+                loc_size = len(ds.dimensions['Location'])
+
+            if (loc_size) < 1:
+                self.logger.info(f'No observations were found for {obs_path_file}. ' +
+                                 'No plots will be produced')
+                continue
+
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Check for need to add 0000 to the file
