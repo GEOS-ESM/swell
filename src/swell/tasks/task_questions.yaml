@@ -386,7 +386,9 @@ mom6_iau:
   default_value: defer_to_model
   models:
   - geos_ocean
-  options: defer_to_model
+  options:
+  - true
+  - false
   prompt: Do you wish to use IAU for MOM6?
   tasks:
   - MoveDaRestart
