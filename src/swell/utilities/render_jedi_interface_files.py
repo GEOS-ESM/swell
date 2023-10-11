@@ -52,6 +52,7 @@ class JediConfigRendering():
             'local_background_time',
             'local_background_time_iso',
             'minimizer',
+            'mom6_iau',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
             'npx_proc',
