@@ -50,18 +50,7 @@ setuptools.setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'swell_task = swell.tasks.base.task_base:main',
-            'swell_create_experiment = swell.deployment.bin.swell_create_experiment:main',
-            'swell_prepare_experiment_config = swell.deployment.bin.swell_prepare_config:main',
-            'swell_launch_experiment = swell.deployment.bin.swell_launch_experiment:main',
-            'swell_sat_db_processing = swell.deployment.bin.swell_sat_db_processing:main',
-            # Utilities
-            'swell_util_check_jedi_interface_templates = \
-                swell.utilities.bin.check_jedi_interface_templates:main',
-            'swell_util_task_question_dicts = swell.utilities.bin.task_question_dicts:tq_dicts',
-            'swell_util_task_question_dicts_defaults = \
-                swell.utilities.bin.task_question_dicts_defaults:tq_dicts_defaults',
-            'swell_tests_code = swell.test.code_tests.code_tests:main',
+            'swell = swell.swell:main'
         ],
     },
     )

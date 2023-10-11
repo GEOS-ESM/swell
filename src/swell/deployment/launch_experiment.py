@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -10,13 +8,11 @@
 
 
 # standard imports
-import click
 import os
 
 # local imports
 from swell.utilities.logger import Logger
 from swell.utilities.shell_commands import run_subprocess
-from swell.utilities.welcome_message import write_welcome_message
 
 # --------------------------------------------------------------------------------------------------
 
@@ -97,20 +93,7 @@ class DeployWorkflow():
 # --------------------------------------------------------------------------------------------------
 
 
-@click.command()
-@click.option('-p', '--suite_path', 'suite_path', default=None,
-              help='Directory containing the suite file needed by the workflow manager')
-@click.option('-w', '--workflow_manager', 'workflow_manager', default='cylc',
-              help='Workflow manager to be used')
-@click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False,
-              help='Tells workflow manager to block until complete')
-@click.option('-l', '--log_path', 'log_path', default=None,
-              help='Directory to receive workflow manager logging output')
-def main(suite_path, workflow_manager, no_detach, log_path):
-
-    # Welcome message
-    # ---------------
-    write_welcome_message('Launch Experiment')
+def launch_experiment(suite_path, no_detach, log_path):
 
     # Get the path to where the suite files are located
     # -------------------------------------------------
@@ -132,19 +115,10 @@ def main(suite_path, workflow_manager, no_detach, log_path):
     deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.',
                                 False)
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
-    deploy_workflow.logger.info('Workflow manager: ' + workflow_manager)
 
     # Launch the workflow
     # -------------------
-    if workflow_manager == 'cylc':
-        deploy_workflow.cylc_run_experiment()
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
+    deploy_workflow.cylc_run_experiment()
 
 
 # --------------------------------------------------------------------------------------------------

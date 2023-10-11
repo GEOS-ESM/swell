@@ -64,6 +64,7 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_mean_increment',
             'local_ensemble_solver',
             'minimizer',
+            'mom6_iau',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
             'npx_proc',

@@ -101,13 +101,13 @@
     # Tasks
     # -----
     [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+        script = "swell task CloneJedi $config"
 
     [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+        script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+        script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
@@ -123,22 +123,22 @@
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
-        script = "swell_task StageJedi $config -m {{model_component}}"
+        script = "swell task StageJedi $config -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
-        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
     [[ GetBackground-{{model_component}} ]]
-        script = "swell_task GetBackground $config -d $datetime -m {{model_component}}"
+        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
-        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
     [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell_task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
-        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -153,10 +153,10 @@
             {% endif %}
 
     [[EvaJediLog-{{model_component}}]]
-        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
+        script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
-        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
         [[[directives]]]
@@ -171,10 +171,10 @@
             {% endif %}
 
     [[SaveObsDiags-{{model_component}}]]
-        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
-        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

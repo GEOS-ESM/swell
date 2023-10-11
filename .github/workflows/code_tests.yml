@@ -51,4 +51,4 @@ jobs:
 
     # Run the swell code tests
     - name: Run swell code tests
-      run: swell_tests_code
+      run: swell test code_tests

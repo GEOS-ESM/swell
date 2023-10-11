@@ -52,6 +52,29 @@ class PrepGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
+        # Augment MOM_oda_incupd (IAU) with MOM_input IF it exists and IF mom6_increment.nc
+        # file is located inside the INPUT directory. This allows not having a mom6_iau
+        # switch in the cycling suite file.
+        # --------------------------------------------------------------------------
+        if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
+            if os.path.exists(self.forecast_dir('MOM_oda_incupd')):
+
+                self.logger.info('MOM6 Increment file found in INPUT directory')
+                self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
+
+                mom_input = self.forecast_dir('MOM_input')
+                mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
+
+                with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
+                    mom_input_txt = inp_f.read()
+                    mom_oda_txt = append_f.read()
+
+                with open(mom_input, 'w') as out_f:
+                    out_f.write(mom_input_txt + mom_oda_txt)
+            else:
+                self.logger.info('MOM6 Increment file found in INPUT directory')
+                self.logger.abort('MOM_oda_incupd not found. Failed augmentation')
+
         # Combine input.nml and fvcore_layout
         # Modify input.nml if not cold start (default)
         # --------------------------------------------
@@ -366,7 +389,9 @@ class PrepGeosRunDir(taskBase):
         # ---------------------------------------------------------
 
         if self.agcm_dict['REPLAY_MODE'] == 'Exact' or self.agcm_dict['REPLAY_MODE'] == 'Regular':
+            # ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
             ANA_LOCATION = self.agcm_dict['REPLAY_ANA_LOCATION']
+            # REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
 
         rply_dict = {
             os.path.join(ANA_LOCATION, 'aod'): '',
@@ -419,6 +444,9 @@ class PrepGeosRunDir(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def rewrite_agcm(self, rcdict, rcfile):
+
+        # This part is relevant for move_da_restart task as well. Be mindful of
+        # your changes.
 
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------

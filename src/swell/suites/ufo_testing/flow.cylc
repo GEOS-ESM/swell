@@ -81,13 +81,13 @@
     # Tasks
     # -----
     [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+        script = "swell task CloneJedi $config"
 
     [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+        script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+        script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
@@ -102,22 +102,22 @@
             {% endif %}
 
     [[ GetGsiBc ]]
-        script = "swell_task GetGsiBc $config -d $datetime -m geos_atmosphere"
+        script = "swell task GetGsiBc $config -d $datetime -m geos_atmosphere"
 
     [[ GsiBcToIoda ]]
-        script = "swell_task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
+        script = "swell task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
 
     [[ GetGsiNcdiag ]]
-        script = "swell_task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
+        script = "swell task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
 
     [[ GsiNcdiagToIoda ]]
-        script = "swell_task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+        script = "swell task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
 
     [[ GetGeovals ]]
-        script = "swell_task GetGeovals $config -d $datetime -m geos_atmosphere"
+        script = "swell task GetGeovals $config -d $datetime -m geos_atmosphere"
 
     [[RunJediUfoTestsExecutable]]
-        script = "swell_task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
+        script = "swell task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediUfoTestsExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -132,7 +132,7 @@
             {% endif %}
 
     [[EvaObservations]]
-        script = "swell_task EvaObservations $config -d $datetime -m geos_atmosphere"
+        script = "swell task EvaObservations $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
         [[[directives]]]
@@ -147,6 +147,6 @@
             {% endif %}
 
     [[CleanCycle]]
-        script = "swell_task CleanCycle $config -d $datetime -m geos_atmosphere"
+        script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"
 
 # --------------------------------------------------------------------------------------------------

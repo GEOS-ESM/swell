@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -95,13 +93,6 @@ def main():
             logger.info(template)
         if config_type != config_types[-1]:
             logger.info(' ', False)
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
 
 
 # --------------------------------------------------------------------------------------------------

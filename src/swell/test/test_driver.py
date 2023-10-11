@@ -4,30 +4,27 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
+# --------------------------------------------------------------------------------------------------
+
+import importlib
+
+# --------------------------------------------------------------------------------------------------
+
+valid_tests = ['code_tests']
 
 # --------------------------------------------------------------------------------------------------
 
 
-import unittest
+def test_wrapper(test):
 
-from swell.utilities.scripts.task_question_dicts import main as tq_dicts
-from swell.utilities.scripts.task_question_dicts_defaults import main as tq_dicts_defaults
+    # Test script
+    test_script_file = 'swell.test.'+test+'.'+test
 
+    # Import the correct method
+    test_method = getattr(importlib.import_module(test_script_file), test)
 
-# --------------------------------------------------------------------------------------------------
-
-
-class QuestionDictionaryTest(unittest.TestCase):
-
-    def test_dictionary_comparison(self):
-
-        # Run main task question dictionary generation
-        tq_dicts_rc = tq_dicts()
-        assert tq_dicts_rc == 0
-
-        # Run generation for defaults
-        tq_dicts_defaults_rc = tq_dicts_defaults()
-        assert tq_dicts_defaults_rc == 0
+    # Run the test
+    test_method()
 
 
 # --------------------------------------------------------------------------------------------------

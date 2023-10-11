@@ -26,7 +26,7 @@ models:
     - cris-fsr_n20
     - cris-fsr_npp
     - gmi_gpm
-    #- gps
+    - gps
     - iasi_metop-b
     - iasi_metop-c
     - mhs_metop-b
