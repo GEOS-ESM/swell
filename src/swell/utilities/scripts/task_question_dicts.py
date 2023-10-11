@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -25,7 +23,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def tq_dicts():
+def main():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -159,13 +157,6 @@ def tq_dicts():
                     f'the existing file: \'tasks/task_questions.yaml\' and resolve differences.')
 
         return 1
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    tq_dicts()
 
 
 # --------------------------------------------------------------------------------------------------

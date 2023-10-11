@@ -90,7 +90,3 @@ def main(config):
 
     # create yamls
     make_yamls(processed_data, yaml_out_dir)
-
-
-if __name__ == '__main__':
-    main()

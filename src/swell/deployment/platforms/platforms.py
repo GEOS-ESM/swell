@@ -8,26 +8,27 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import unittest
+import os
 
-from swell.utilities.scripts.task_question_dicts import main as tq_dicts
-from swell.utilities.scripts.task_question_dicts_defaults import main as tq_dicts_defaults
+from swell.swell_path import get_swell_path
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class QuestionDictionaryTest(unittest.TestCase):
+def get_platforms():
 
-    def test_dictionary_comparison(self):
+    # Path to platforms
+    platform_directory = os.path.join(get_swell_path(), 'deployment', 'platforms')
 
-        # Run main task question dictionary generation
-        tq_dicts_rc = tq_dicts()
-        assert tq_dicts_rc == 0
+    platforms = [dir for dir in os.listdir(platform_directory)
+                 if os.path.isdir(os.path.join(platform_directory, dir))]
 
-        # Run generation for defaults
-        tq_dicts_defaults_rc = tq_dicts_defaults()
-        assert tq_dicts_defaults_rc == 0
+    # If anything in platforms contains '__' remove it from platforms list
+    platforms = [platform for platform in platforms if '__' not in platform]
+
+    # List all directories in platform_directory
+    return platforms
 
 
 # --------------------------------------------------------------------------------------------------

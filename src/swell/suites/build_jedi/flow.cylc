@@ -39,13 +39,13 @@
     # Tasks
     # -----
     [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+        script = "swell task CloneJedi $config"
 
     [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+        script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+        script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
