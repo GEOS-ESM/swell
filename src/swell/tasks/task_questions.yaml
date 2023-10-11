@@ -712,7 +712,7 @@ vertical_localization_function:
   prompt: Which localization scheme should be applied in the vertical?
   tasks:
   - RunJediLocalEnsembleDaExecutable
-  type: string
+  type: string-drop-list
 
 vertical_localization_ioda_vertical_coord:
   ask_question: false
