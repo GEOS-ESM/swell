@@ -50,7 +50,7 @@ obs operator:
      variables:
      - name: specificHumidity
 
-obs filters:
+obs prior filters:
 
 # Apply variable changes needed for rescaled height coordinate
 # ------------------------------------------------------------
@@ -63,6 +63,8 @@ obs filters:
 - filter: Variable Transforms
   Transform: SurfaceWindScalingHeight
   SkipWhenNoObs: False
+
+obs post filters:
 
 # ------------------
 # stationPressure (surface pressure)
