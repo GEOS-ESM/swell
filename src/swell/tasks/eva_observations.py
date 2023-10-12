@@ -15,6 +15,7 @@ import yaml
 
 from eva.eva_driver import eva
 
+from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
@@ -50,6 +51,13 @@ class EvaObservations(taskBase):
         # Get the model
         # -------------
         model = self.get_model()
+
+        # Determine if running on login or compute node and set workers
+        # -------------------------------------------------------------
+        number_of_workers = 6
+        if login_or_compute(self.platform()) == 'compute':
+            number_of_workers = 40
+        self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
 
         # Read Eva template file into dictionary
         # --------------------------------------
@@ -152,5 +160,5 @@ class EvaObservations(taskBase):
 
         # Call eva in parallel
         # --------------------
-        with Pool(processes=40) as pool:
+        with Pool(processes=number_of_workers) as pool:
             pool.map(run_eva, eva_dicts)

@@ -53,9 +53,10 @@ class Config():
         with open(input_file, 'r') as ymlfile:
             experiment_dict = yaml.safe_load(ymlfile)
 
-        # Save some things that all tasks can use
+        # Save some things that all tasks can use (suite level questions)
         self.__experiment_root__ = experiment_dict.get('experiment_root')
         self.__experiment_id__ = experiment_dict.get('experiment_id')
+        self.__platform__ = experiment_dict.get('platform')
 
         # If experiment_dict contains models key add the model components to the object
         if 'models' in experiment_dict.keys():
