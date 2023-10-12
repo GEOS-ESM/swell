@@ -48,18 +48,7 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                     for ob in obs:
                         # Get observation dictionary
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-
-                        # Append ensemble localizations
-                        obsLocalize = []
-                        obsLocalize.append({'localization method': 'Horizontal Gaspari-Cohn',
-                                            'lengthscale': 10000e3,
-                                            'max nobs': 1000})
-                        obs_dict.update({'obs localizations': obsLocalize})
-                        obs_dict['obs space'].update({'distribution': {'name': 'Halo',
-                                                                       'halo size': 5000e3}})
-
                         observations.append(obs_dict)
-
                     jedi_config_dict[key] = observations
 
                 elif value_special == 'model' and window_type == '4D':
