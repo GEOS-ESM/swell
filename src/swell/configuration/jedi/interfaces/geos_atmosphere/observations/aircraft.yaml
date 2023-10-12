@@ -31,13 +31,15 @@ obs operator:
     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
     variables: [airTemperature]
 
-obs filters:
+obs prior filters:
 
 # Apply variable changes needed for performing wind scaling
 # ---------------------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingPressure
   SkipWhenNoObs: False
+
+obs post filters:
 
 # ------------------
 # airTemperature BC

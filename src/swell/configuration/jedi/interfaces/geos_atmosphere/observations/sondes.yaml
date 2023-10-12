@@ -42,13 +42,15 @@ obs operator:
     geovar_sfc_geomz: surface_geometric_height
     station_altitude: height
 
-obs filters:
+obs prior filters:
 
 # Apply variable changes needed for performing wind scaling
 # ---------------------------------------------------------
 - filter: Variable Transforms
   Transform: SurfaceWindScalingPressure
   SkipWhenNoObs: False
+
+obs post filters:
 
 ## Surface pressure
 ## ----------------
