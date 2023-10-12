@@ -23,7 +23,7 @@ obs operator:
   hofx scaling field: SurfaceWindScalingHeight
   hofx scaling field group: DerivedVariables
 
-obs filters:
+obs prior filters:
 
 # Apply variable changes needed for rescaled height coordinate
 # ------------------------------------------------------------
@@ -36,6 +36,8 @@ obs filters:
 - filter: Variable Transforms
   Transform: SurfaceWindScalingHeight
   SkipWhenNoObs: False
+
+obs post filters:
 
 #
 # Reject all obs with PreQC mark already set above 3
