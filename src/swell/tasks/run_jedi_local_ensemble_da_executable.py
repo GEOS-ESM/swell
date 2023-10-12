@@ -131,30 +131,30 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  jedi_forecast_model)
 
-        # Assemble localizations                                                                                                                                                                                                                           
-        # ----------------------                                                                                                                                                                                                                           
+        # Assemble localizations
+        # ----------------------
         horizLoc = {'localization method': self.config.horizontal_localization_method(),
                     'lengthscale': self.config.horizontal_localization_lengthscale(),
                     'max nobs': self.config.horizontal_localization_max_nobs()}
-        vertLoc = {'localization method': self.config.vertical_localization_method(),
-                   'apply log transformation':
-                   self.config.vertical_localization_apply_log_transform(),
-                   'vertical lengthscale': self.config.vertical_localization_lengthscale(),
-                   'ioda vertical coordinate':
-                   self.config.vertical_localization_ioda_vertical_coord(),
-                   'ioda vertical coordinate group':
-                   self.config.vertical_localization_ioda_vertical_coord_group(),
-                   'localization function': self.config.vertical_localization_function()}
         localizations = [horizLoc]
-        # # Vertical localizations have bug(s) - Commented out for now...                                                                                                                                                                                  
-        # localizations = [horizLoc, vertLoc] if len(vertLoc) != 0 else [horizLoc]                                                                                                                                                                         
+        # # Vertical localizations have bug(s) - Commented out for now...
+        # vertLoc = {'localization method': self.config.vertical_localization_method(),
+        #            'apply log transformation':
+        #            self.config.vertical_localization_apply_log_transform(),
+        #            'vertical lengthscale': self.config.vertical_localization_lengthscale(),
+        #            'ioda vertical coordinate':
+        #            self.config.vertical_localization_ioda_vertical_coord(),
+        #            'ioda vertical coordinate group':
+        #            self.config.vertical_localization_ioda_vertical_coord_group(),
+        #            'localization function': self.config.vertical_localization_function()}
+        # localizations = [horizLoc, vertLoc] if len(vertLoc) != 0 else [horizLoc]
 
-	    # Include ensemble localizations and halo types with each observation                                                                                                                                                                                
-        # -------------------------------------------------------------------                                                                                                                                                                                
+        # Include ensemble localizations and halo types with each observation
+        # -------------------------------------------------------------------
         for observer in jedi_config_dict['observations']['observers']:
             observer.update({'obs localizations': localizations})
             observer['obs space'].update({'distribution': {'name': 'Halo', 'halo size': 5000e3}})
-        
+
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
