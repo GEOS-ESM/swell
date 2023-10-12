@@ -10,6 +10,7 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.build import link_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -28,14 +29,14 @@ class CloneGeosAna(taskBase):
 
         # If observing_system_records_gsi_path is None, clone GEOSana_GridComp repo to experiment
         # directory
-        if observing_system_records_gsi_path is None:
+        if path_to_geosana_gridcomp == 'None':
             # Clone GEOSana_GridComp develop repo to experiment directory
             os.system('git clone https://github.com/GEOS-ESM/GEOSana_GridComp.git '
-                      + os.path.join(self.experiment_path() + 'GEOSana_GridComp'))
+                      + os.path.join(self.experiment_path(), 'GEOSana_GridComp'))
         else:
             # Link the source code directory
             link_path(self.config.observing_system_records_gsi_path(),
-                      os.path.join(self.experiment_path() + 'GEOSana_GridComp'))
+                      os.path.join(self.experiment_path(), 'GEOSana_GridComp'))
 
 
 # ----------------------------------------------------------------------------------------------

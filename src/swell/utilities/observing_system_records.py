@@ -14,7 +14,7 @@ def format_date(old_date):
 
 class ObservingSystemRecords:
 
-    def __init__(self, root_directory):
+    def __init__(self):
         self.column_names = ['sat', 'start', 'end',
                              'instr', 'channel_num',
                              'channels', 'comments']
@@ -22,7 +22,7 @@ class ObservingSystemRecords:
         self.obs_registry = []
 
         # Location where directories containing observing system records are located
-        self.root_directory = root_directory
+        #self.root_directory = root_directory
 
     def parse_records(self, path_to_records):
         # Only save satellites that are in list

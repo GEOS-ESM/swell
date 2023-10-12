@@ -32,9 +32,9 @@ class GsiBcToIoda(taskBase):
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observing_system_records_path = self.config.observing_system_records_path()
-        if observation_system_records_path is None:
+        if observing_system_records_path is None:
             cycle_dir = self.config.cycle_dir()
-            observation_system_records_path = cycle_dir() + 'observing_system_records'
+            observing_system_records_path = cycle_dir() + 'observing_system_records'
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_offset)

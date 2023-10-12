@@ -28,17 +28,17 @@ class GenerateObservingSystemRecords(taskBase):
         # --------------------------------------------------
         observations = self.config.observations()
         observing_system_records_path = self.config.observing_system_records_path()
-        if observation_system_records_path is None:
+        if observing_system_records_path == 'None':
             cycle_dir = self.config.cycle_dir()
-            observation_system_records_path = cycle_dir() + 'observing_system_records'
+            observing_system_records_path = cycle_dir() + 'observing_system_records'
 
         path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
-        if path_to_geosana_gridcomp is None:
-            path_to_geosana_gridcomp = os.path.join(self.experiment_path() + 'GEOSana_GridComp'))
+        if path_to_geosana_gridcomp == 'None':
+            path_to_geosana_gridcomp = os.path.join(self.experiment_path(), 'GEOSana_GridComp')
         path_to_gsi_records = os.path.join(path_to_geosana_gridcomp, 'GEOSaana_GridComp', 
                                            'GSI_GridComp', 'mksi', 'sidb')
         sat_records = ObservingSystemRecords()
-        sat_records.parse_records(path_to_records)
+        sat_records.parse_records(path_to_gsi_records)
         sat_records.save_yamls(observing_system_records_path, observations)
 
 # ----------------------------------------------------------------------------------------------

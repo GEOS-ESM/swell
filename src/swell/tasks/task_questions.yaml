@@ -631,6 +631,7 @@ observing_system_records_gsi_path:
   prompt: What is the path to the observing system records ?
   tasks:
   - GenerateObservingSystemRecords
+  - CloneGeosAna
   type: string
 
 observing_system_records_path:

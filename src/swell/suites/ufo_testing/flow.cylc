@@ -44,6 +44,7 @@
 
             # Generate satellite channel records
             GenerateObservingSystemRecords
+            CloneGeosAna => GenerateObservingSystemRecords
 
             # Convert bias correction to ioda
             GetGsiBc

@@ -11,7 +11,7 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-#from swell.utilities.satellite_records import SatelliteRecords
+from swell.utilities.sat_db_utils import get_active_channels
 
 # --------------------------------------------------------------------------------------------------
 
@@ -158,6 +158,7 @@ class JediConfigRendering():
             #active_channels = satellite_records.get_active_channels(config_name)
 
             # active_channels = [-1 1 -1 1 1 -1 etc]
+            active_channels = get_active_channels(config_name, observing_system_records_path)
 
             # Add active channels to template dictionary
             self.__template_dict__[f'{config_name}_active_channels'] = active_channels
