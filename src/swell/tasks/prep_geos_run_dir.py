@@ -125,7 +125,8 @@ class PrepGeosRunDir(taskBase):
         # Generate the complete ExtData.rc
         # TODO: Fix install folders, update task_questions
         # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install-Release', 'bin')
+        # self.geosbin = os.path.join(self.geos_source, 'install-Release', 'bin')
+        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
         self.generate_extdata()
 
         # Get boundary conditions
@@ -235,12 +236,6 @@ class PrepGeosRunDir(taskBase):
         geos_chmdir = self.gcm_dict['CHMDIR']
         geos_bcrslv = self.gcm_dict['BCRSLV']
         geos_abcsdir = self.gcm_dict['ABCSDIR']
-        # TODO: GWD directory is not explicitly stated in gcm_run template, which
-        # requires an additional step to parse that information. It is hard coded
-        # for now but looking at the template there are 4 potential options.
-        # Might also be only relevant for cold start..
-        # geos_gwdrsdir = os.path.join('/discover/nobackup/projects/gmao/osse2',
-        #                              f"stage/BCS_FILES/GWD_RIDGE/gwd_internal_c{AGCM_IM}")
 
         # Obtain tag information from abcsdir
         # -----------------------------------
@@ -293,9 +288,11 @@ class PrepGeosRunDir(taskBase):
                 'topo_gwdvar.data',
             os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
                 'topo_trbvar.data',
-            os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
-            os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
-            # geos_gwdrsdir: 'gwd_internal_rst',
+            # os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
+            # os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
+            os.path.join(geos_obcsdir, 'cice6', 'cice6_grid.nc'): '',
+            os.path.join(geos_obcsdir, 'cice6', 'cice6_kmt.nc'): '',
+            os.path.join(geos_obcsdir, 'cice6', 'cice6_global.bathy.nc'): '',
         }
 
         # Conditional BCs that don't break the model
@@ -315,22 +312,6 @@ class PrepGeosRunDir(taskBase):
         # -------------------------------------
         copy_to_dst_dir(self.logger, os.path.join(geos_obcsdir, 'INPUT'),
                         self.forecast_dir('INPUT'))
-
-        # TODO: Temporary fix for some input files in gcm_run.j
-        # -----------------------------------------------------
-        if self.agcm_dict['OGCM.IM_WORLD'] == '1440':
-            self.logger.info(' OBTAINING EXTRA WOA13 files')
-
-            rst_path = self.config.geos_restarts_directory()
-            src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path,
-                               'woa13_ptemp_monthly.nc')
-            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
-                                                                 'woa13_ptemp_monthly.nc']))
-
-            src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path,
-                               'woa13_s_monthly.nc')
-            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
-                                                                 'woa13_s_monthly.nc']))
 
     # ----------------------------------------------------------------------------------------------
 
@@ -367,7 +348,8 @@ class PrepGeosRunDir(taskBase):
 
         # TODO: install folder name changes (install vs. install-Releaee)
         geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
-                                         'source', 'install-Release', 'bin')
+                                         'source', 'install', 'bin')
+                                        #  'source', 'install-Release', 'bin')
 
         src_dirs = []
 
