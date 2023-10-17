@@ -218,36 +218,34 @@ class InstrStateMachine:
     def update_return_df(self, row, no_comment=False,  missing=False, missing_time={}):
 
         # Updates the return df based on parameters
-
         if (missing):
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": missing_time['begin_time'],
-               "end": missing_time['end_time'],
-               "instr": row["instr"].values[0],
-               "channel_num": 0,
-               "channels": [],
-               "comments": "missing for this period",
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [missing_time['begin_time']],
+                        'end': [missing_time['end_time']],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [0],
+                        'channels': [[]],
+                        'comments': ['missing for this period']})
 
         elif (no_comment):
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
-               "instr": row["instr"].values[0],
-               "channel_num": len(self.curr_channel_list),
-               "channels": self.curr_channel_list,
-               "comments": ""
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [self.start_times[self.idx]],
+                        'end': [self.end_times[self.idx]],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [len(self.curr_channel_list)],
+                        'channels': [self.curr_channel_list],
+                        'comments': ['']})
 
         else:
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
-               "instr": row["instr"].values[0],
-               "channel_num": len(self.curr_channel_list),
-               "channels": self.curr_channel_list,
-               "comments": row["comments"].values[0],
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [self.start_times[self.idx]],
+                        'end': [self.end_times[self.idx]],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [len(self.curr_channel_list)],
+                        'channels': [self.curr_channel_list],
+                        'comments': [row["comments"].values[0]]})
+
+        self.return_df = pd.concat([self.return_df, new_row], ignore_index=True)

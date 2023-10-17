@@ -29,8 +29,8 @@ class GenerateObservingSystemRecords(taskBase):
         observations = self.config.observations()
         observing_system_records_path = self.config.observing_system_records_path()
         if observing_system_records_path == 'None':
-            cycle_dir = self.config.cycle_dir()
-            observing_system_records_path = cycle_dir() + 'observing_system_records'
+            cycle_dir = self.cycle_dir()
+            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
 
         path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
         if path_to_geosana_gridcomp == 'None':

@@ -7,19 +7,58 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
+import yaml
 import os
 import pandas as pd
 import numpy as np
 from swell.utilities.git_utils import git_got
 from swell.utilities.instr_state_machine import InstrStateMachine
-
+from datetime import datetime as dt
 
 # --------------------------------------------------------------------------------------------------
 
-def get_active_channels(path_to_yamls, observation):
+def process_channel_lists(channel_list):
 
-    return [1, -1, 1]
+    final_channels_list = []
+    if not isinstance(channel_list, list):
+        channel_list = [channel_list]
+    for element in channel_list:
+        if '-' in element:
+            start, end = map(int, element.split('-'))
+            result_list = [x for x in range(start, end + 1)]
+            final_channels_list += result_list
+        else:
+            final_channels_list += [int(element)]
+
+    return final_channels_list
+
+
+def get_active_channels(path_to_yamls, observation, cycle_time):
+    use_flags = []
+
+    # Cycle time to datetime object
+    dt_cycle_time = dt.strptime(cycle_time, "%Y%m%dT%H%M%SZ")
+
+    # Retrieve available channels from observation yaml
+    with open('active_channels_test_files/amsua_n19.yaml', 'r') as file:
+        data = yaml.safe_load(file)
+        available_channels = data['obs space']['channels']
+
+    # Retrieve active channels from records yaml
+    with open(path_to_yamls, 'r') as file:
+        data = yaml.safe_load(file)
+        for element in data['amsua']: #change the hardcoding
+            begin_date = dt.strptime(element['begin date'], "%Y-%m-%dT%H:%M:%S")
+            end_date = dt.strptime(element['end date'], "%Y-%m-%dT%H:%M:%S")
+
+            if (dt_cycle_time > begin_date) and (dt_cycle_time < end_date):
+                active_channels = element['channels']
+
+    available_channels_list = process_channel_lists(available_channels)
+    active_channels_list = process_channel_lists(active_channels)
+    use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]    
+
+    return use_flags
 
 # --------------------------------------------------------------------------------------------------
 

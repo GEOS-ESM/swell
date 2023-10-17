@@ -43,8 +43,8 @@
         {{cycle_time.cycle_time}} = """
 
             # Generate satellite channel records
-            GenerateObservingSystemRecords
-            CloneGeosAna => GenerateObservingSystemRecords
+            #GenerateObservingSystemRecords
+            CloneGeosAna[^] => GenerateObservingSystemRecords
 
             # Convert bias correction to ioda
             GetGsiBc

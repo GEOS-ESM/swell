@@ -78,6 +78,6 @@ class ObservingSystemRecords:
 
                     sat_dict[instr] = field_list
 
-                    with open(output_dir+'/'+instr+'_'+sat+'.yaml', 'w') as file:
+                    with open(output_dir+'/'+instr+'_'+sat+'_active_channels.yaml', 'w') as file:
                         yaml.dump(sat_dict, file)
 
