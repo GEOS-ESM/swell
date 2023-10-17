@@ -515,6 +515,19 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
+single_observations:
+  ask_question: true
+  default_value: false
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: Is it a single-observation test?
+  tasks:
+  - GsiNcdiagToIoda
+  type: boolean
+
 swell_static_files:
   ask_question: false
   default_value: defer_to_platform
