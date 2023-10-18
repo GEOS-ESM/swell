@@ -53,6 +53,19 @@ geovals_provider:
 gradient_norm_reduction:
   default_value: 10e-5
 
+horizontal_localization_lengthscale:
+  default_value: 10000e3
+
+horizontal_localization_max_nobs:
+  default_value: 1000
+
+horizontal_localization_method:
+  default_value: Horizontal Gaspari-Cohn
+  options:
+  - Horizontal Gaspari-Cohn
+  - Horizontal SOAR
+  - Horizontal Box car
+
 horizontal_resolution:
   default_value: '361'
   options:
@@ -65,6 +78,21 @@ jedi_forecast_model:
   default_value: pseudo-model
   options:
   - pseudo-model
+
+local_ensemble_inflation_mult:
+  default_value: 1.1
+
+local_ensemble_inflation_rtpp:
+  default_value: 0.6
+
+local_ensemble_inflation_rtps:
+  default_value: 0.5
+
+local_ensemble_solver:
+  default_value: LETKF
+  options:
+  - LETKF
+  - GETKF
 
 minimizer:
   default_value: DRIPCG
@@ -157,7 +185,7 @@ observations:
   - ompsnm_npp
 
 path_to_ensemble:
-  default_value: /discover/nobackup/drholdaw/SwellTestData/letk/ensemble/Y%Y/M%m/D%d/H%H
+  default_value: /discover/nobackup/drholdaw/SwellTestData/letk/ensemble/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
 
 path_to_geos_adas_background:
   default_value: /discover/nobackup/drholdaw/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
@@ -173,6 +201,29 @@ produce_geovals:
   options:
   - true
   - false
+
+vertical_localization_function:
+  default_value: Gaspari Cohn
+  options:
+  - Gaspari Cohn
+
+vertical_localization_ioda_vertical_coord:
+  default_value: pressure
+  options:
+  - pressure
+
+vertical_localization_ioda_vertical_coord_group:
+  default_value: MetaData
+  options:
+  - MetaData
+
+vertical_localization_lengthscale:
+  default_value: 4
+
+vertical_localization_method:
+  default_value: Vertical localization
+  options:
+  - Vertical localization
 
 vertical_resolution:
   default_value: '72'
