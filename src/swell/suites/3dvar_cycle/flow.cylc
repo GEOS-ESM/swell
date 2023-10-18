@@ -63,15 +63,15 @@
             {% endfor %}
         """
 
-        # T00,T06,T12,T18 = """
-        T12 = """
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
 
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
-            # MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            # MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
+            MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
             # Data assimilation things
@@ -116,7 +116,7 @@
             CleanCycle-{{model_component}}
         {% endfor %}
         """
-
+        {% endfor %}
 # --------------------------------------------------------------------------------------------------
 
 [runtime]

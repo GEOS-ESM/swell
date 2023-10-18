@@ -65,6 +65,7 @@ class taskBase(ABC):
         # --------------------------------------------------------
         self.__experiment_root__ = self.config.__experiment_root__
         self.__experiment_id__ = self.config.__experiment_id__
+        self.__platform__ = self.config.__platform__
 
         # Save the model components
         # -------------------------
@@ -126,6 +127,12 @@ class taskBase(ABC):
     # Method to get the experiment directory
     def experiment_path(self):
         return os.path.join(self.__experiment_root__, self.__experiment_id__)
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to get the experiment ID
+    def platform(self):
+        return self.__platform__
 
     # ----------------------------------------------------------------------------------------------
 

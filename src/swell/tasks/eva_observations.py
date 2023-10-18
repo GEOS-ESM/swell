@@ -9,11 +9,13 @@
 
 
 from multiprocessing import Pool
+import netCDF4 as nc
 import os
 import yaml
 
 from eva.eva_driver import eva
 
+from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
@@ -50,6 +52,13 @@ class EvaObservations(taskBase):
         # -------------
         model = self.get_model()
 
+        # Determine if running on login or compute node and set workers
+        # -------------------------------------------------------------
+        number_of_workers = 6
+        if login_or_compute(self.platform()) == 'compute':
+            number_of_workers = 40
+        self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
+
         # Read Eva template file into dictionary
         # --------------------------------------
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
@@ -83,6 +92,16 @@ class EvaObservations(taskBase):
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
+
+            # Prevent Eva from failing if there are observation files with 0 observations
+            with nc.Dataset(obs_path_file, 'r') as ds:
+                loc_size = len(ds.dimensions['Location'])
+
+            if (loc_size) < 1:
+                self.logger.info(f'No observations were found for {obs_path_file}. ' +
+                                 'No plots will be produced')
+                continue
+
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Check for need to add 0000 to the file
@@ -141,5 +160,5 @@ class EvaObservations(taskBase):
 
         # Call eva in parallel
         # --------------------
-        with Pool(processes=40) as pool:
+        with Pool(processes=number_of_workers) as pool:
             pool.map(run_eva, eva_dicts)

@@ -37,6 +37,7 @@ models:
     number_of_iterations:
     - 10
     obs_provider: gdas_marine
+    mom6_iau: True
     analysis_forecast_window_offset: -PT12H
     background_time_offset: P1DT12H
     clean_patterns:

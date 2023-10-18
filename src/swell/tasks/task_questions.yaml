@@ -381,6 +381,20 @@ minimizer:
   - RunJediVariationalExecutable
   type: string-drop-list
 
+mom6_iau:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_ocean
+  options:
+  - true
+  - false
+  prompt: Do you wish to use IAU for MOM6?
+  tasks:
+  - MoveDaRestart
+  - PrepareAnalysis
+  type: boolean
+
 npx_proc:
   ask_question: true
   default_value: defer_to_model
@@ -557,6 +571,7 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - PrepareAnalysis
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
