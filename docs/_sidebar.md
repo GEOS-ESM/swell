@@ -5,11 +5,12 @@
   - [Creating an experiment](creating_an_experiment.md)
   - [Launching an experiment](launching_an_experiment.md)
   - [Monitoring an experiment](monitoring_an_experiment.md)
-  - [Modifying an experiment](modifying_an_experiment.md)
+  - [Manually running tasks](manually_running_tasks.md)
 
 
 - Platform specific instructions
 
+  - [Platforms](platforms/platforms.md)
   - **Discover**
     - [Installing swell](platforms/discover/installing_swell_discover.md)
     - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)

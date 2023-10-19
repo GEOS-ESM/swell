@@ -1,8 +1,8 @@
 # Configuring `cylc` on Discover.
 
- The below shows `$HOME/bin/cylc` for running `cylc` on Discover:
+ Create a file called `$HOME/bin/cylc` for running `cylc` on Discover. Fill it with the following :
 
-```
+```bash
 #!/usr/bin/env bash
 
 # Initialize modules
@@ -20,9 +20,9 @@ module load cylc
 cylc "$@"
 ```
 
-The below shows a typical `$HOME/.cylc/flow/global.cylc` for Discover. Do not deviate from the `nccs_discover` name.
+Create a file called `$HOME/.cylc/flow/global.cylc` and fill it with the following:
 
-```
+```bash
 [scheduler]
   UTC mode = True
   process pool timeout = PT10M
