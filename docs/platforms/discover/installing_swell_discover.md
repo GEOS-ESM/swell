@@ -17,7 +17,7 @@ source /home/drholdaw/jedi_modules/modules-intel
 3. Load the software that is used to perform the install.
 
 ```bash
-module use /discover/nobackup/drholdaw/opt/modulefiles/core
+module use -a /discover/nobackup/drholdaw/opt/modulefiles/core
 module load py_lmod_installer
 ```
 
