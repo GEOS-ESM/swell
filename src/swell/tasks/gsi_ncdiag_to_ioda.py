@@ -196,12 +196,12 @@ class GsiNcdiagToIoda(taskBase):
                     # Pattern, e.g.: *aircraft*_geoval_*.nc4
                     ioda_type_geoval_pattern = f'{needed_ioda_type}*_geoval_*.nc4'
                     ioda_path_geovalfiles = glob.glob(os.path.join(self.cycle_dir(),
-                                            ioda_type_geoval_pattern))
+                                                      ioda_type_geoval_pattern))
                     ioda_path_geovalfiles = sorted(ioda_path_geovalfiles)
                     for ioda_geoval_file_name in ioda_path_geovalfiles:
-                        self.logger.info('Converting to a singler-observation file: ' + \
+                        self.logger.info('Converting to a singler-observation file: ' +
                                          f'{ioda_geoval_file_name}')
-                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name} ' + \
+                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name} ' +
                                   f'{ioda_geoval_file_name}')
 
                 # Save single observation in obs files
@@ -214,7 +214,7 @@ class GsiNcdiagToIoda(taskBase):
                                 f'ml miniconda/py39_23.3.1 \n' + \
                                 f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} ' + \
                                 f'{ioda_obs_file_name}'
-                    self.logger.info('Making a single-observation file by executing ' + \
+                    self.logger.info('Making a single-observation file by executing ' +
                                      f'{make_file_name}')
                     create_executable_file(self.logger, make_file_name, make_file)
                     run_subprocess(self.logger, make_file_name)
