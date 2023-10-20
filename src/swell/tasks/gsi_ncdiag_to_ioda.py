@@ -183,8 +183,8 @@ class GsiNcdiagToIoda(taskBase):
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 
-            # Check the number of files that are found
-            ioda_type_pattern = f'{needed_ioda_type}*_obs_*.nc4'  # Pattern, e.g.: *aircraft*_obs_*.nc4
+            # Check the number of files that are found. Pattern, e.g.: *aircraft*_obs_*.nc4
+            ioda_type_pattern = f'{needed_ioda_type}*_obs_*.nc4'
 
             # List of files for that instrument
             ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
@@ -193,7 +193,8 @@ class GsiNcdiagToIoda(taskBase):
             if single_observations:
                 # Save single observation in geoval files
                 if produce_geovals:
-                    ioda_type_geoval_pattern = f'{needed_ioda_type}*_geoval_*.nc4'  # Pattern, e.g.: *aircraft*_geoval_*.nc4
+                    # Pattern, e.g.: *aircraft*_geoval_*.nc4
+                    ioda_type_geoval_pattern = f'{needed_ioda_type}*_geoval_*.nc4'
                     ioda_path_geovalfiles = glob.glob(os.path.join(self.cycle_dir(), ioda_type_geoval_pattern))
                     ioda_path_geovalfiles = sorted(ioda_path_geovalfiles)
                     for ioda_geoval_file_name in ioda_path_geovalfiles:
@@ -202,7 +203,7 @@ class GsiNcdiagToIoda(taskBase):
 
                 # Save single observation in obs files
                 for ioda_obs_file_name in ioda_path_files:
-                    # Create a bash file to process ioda_obs files 
+                    # Create a bash file to process ioda_obs files
                     # Note: A system command could be simpler, but fails with an error.
                     #       os.system(f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} {ioda_obs_file_name}')
                     make_file_name = ioda_obs_file_name + '.sh'
@@ -364,7 +365,7 @@ class GsiNcdiagToIoda(taskBase):
 
             os.rename(ioda_obs_in, ioda_obs_out)
 
-            # Make single ozone or radiance observation files 
+            # Make single ozone or radiance observation files
             if single_observations and observation in observations:
                 os.system(f'ncks -d Location,0,0,1 -Q -O {ioda_obs_out} {ioda_obs_out}')
 
