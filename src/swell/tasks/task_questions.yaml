@@ -540,6 +540,7 @@ single_observations:
   prompt: Is it a single-observation test?
   tasks:
   - GsiNcdiagToIoda
+  - RunJediUfoTestsExecutable
   type: boolean
 
 swell_static_files:
