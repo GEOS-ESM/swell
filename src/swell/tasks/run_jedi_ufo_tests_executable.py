@@ -118,8 +118,8 @@ class RunJediUfoTestsExecutable(taskBase):
                 ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
             else:
                 # Not to do any benchmark validation
-                ufo_tests_obs = {'filter_test': {"expectVariablesNotToExist": \
-                                [{"name": "Some/DummyVariable"}]}}
+                ufo_tests_obs = {'filter_test': {"expectVariablesNotToExist":
+                                 [{"name": "Some/DummyVariable"}]}}
 
             # Merge the ufo_tests_obs dictionary with the observation dictionary
             # jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])

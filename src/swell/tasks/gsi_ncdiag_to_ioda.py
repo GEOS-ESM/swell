@@ -199,22 +199,23 @@ class GsiNcdiagToIoda(taskBase):
                                             ioda_type_geoval_pattern))
                     ioda_path_geovalfiles = sorted(ioda_path_geovalfiles)
                     for ioda_geoval_file_name in ioda_path_geovalfiles:
-                        self.logger.info(f'Converting to a singler-observation file:
-                                           {ioda_geoval_file_name}')
-                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name}
-                                  {ioda_geoval_file_name}')
+                        self.logger.info('Converting to a singler-observation file: ' + \
+                                         f'{ioda_geoval_file_name}')
+                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name} ' + \
+                                  f'{ioda_geoval_file_name}')
 
                 # Save single observation in obs files
                 for ioda_obs_file_name in ioda_path_files:
-                    # Create a bash file to process ioda_obs files
-                    # Note: A system command could be simpler, but fails with an error.
-                    #       os.system(f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} {ioda_obs_file_name}')
+                    # Create a bash file to process ioda_obs files because command lines fails.
+                    module_path_miniconda = '/discover/nobackup/drholdaw/opt/modulefiles/core/'
                     make_file_name = ioda_obs_file_name + '.sh'
                     make_file = f'#!/bin/bash \n' + \
-                                f'module use -a /discover/nobackup/drholdaw/opt/modulefiles/core/ \n' + \
+                                f'module use -a {module_path_miniconda} \n' + \
                                 f'ml miniconda/py39_23.3.1 \n' + \
-                                f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} {ioda_obs_file_name}'
-                    self.logger.info(f'Making a single-observation file by executing {make_file_name}')
+                                f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} ' + \
+                                f'{ioda_obs_file_name}'
+                    self.logger.info('Making a single-observation file by executing ' + \
+                                     f'{make_file_name}')
                     create_executable_file(self.logger, make_file_name, make_file)
                     run_subprocess(self.logger, make_file_name)
                     os.remove(make_file_name)
