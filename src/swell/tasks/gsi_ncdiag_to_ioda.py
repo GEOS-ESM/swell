@@ -195,11 +195,14 @@ class GsiNcdiagToIoda(taskBase):
                 if produce_geovals:
                     # Pattern, e.g.: *aircraft*_geoval_*.nc4
                     ioda_type_geoval_pattern = f'{needed_ioda_type}*_geoval_*.nc4'
-                    ioda_path_geovalfiles = glob.glob(os.path.join(self.cycle_dir(), ioda_type_geoval_pattern))
+                    ioda_path_geovalfiles = glob.glob(os.path.join(self.cycle_dir(),
+                                            ioda_type_geoval_pattern))
                     ioda_path_geovalfiles = sorted(ioda_path_geovalfiles)
                     for ioda_geoval_file_name in ioda_path_geovalfiles:
-                        self.logger.info(f'Converting to a singler-observation file: {ioda_geoval_file_name}')
-                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name} {ioda_geoval_file_name}')
+                        self.logger.info(f'Converting to a singler-observation file:
+                                           {ioda_geoval_file_name}')
+                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name}
+                                  {ioda_geoval_file_name}')
 
                 # Save single observation in obs files
                 for ioda_obs_file_name in ioda_path_files:
