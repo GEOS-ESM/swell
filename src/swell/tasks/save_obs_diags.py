@@ -29,6 +29,13 @@ class SaveObsDiags(taskBase):
         observations = self.config.observations()
         window_offset = self.config.window_offset()
         observing_system_records_path = self.config.observing_system_records_path()
+        if observing_system_records_path is None:
+            cycle_dir = self.config.cycle_dir()
+            observing_system_records_path = cycle_dir() + 'observing_system_records'
+        experiment_config_path = self.experiment_config_path()
+        path_to_configs = os.path.join(experiment_config_path, 'jedi', 'interfaces',
+                                       'geos_atmosphere', 'observations')
+        cycle_time = os.path.basename(os.path.normpath(cycle_dir))
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -46,7 +53,8 @@ class SaveObsDiags(taskBase):
 
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation,
-                                                                                 observing_system_records_path)
+                                                                                 observing_system_records_path,
+                                                                                 path_to_configs, cycle_time)
 
             # Store observation files
             # -----------------------

@@ -65,12 +65,19 @@ class EvaObservations(taskBase):
         # Loop over observations
         # -------------------
         observing_system_records_path = self.config.observing_system_records_path()
+        if observing_system_records_path is None:
+            cycle_dir = self.config.cycle_dir()
+            observing_system_records_path = cycle_dir() + 'observing_system_records'
+        experiment_config_path = self.experiment_config_path()
+        path_to_configs = os.path.join(experiment_config_path, 'jedi', 'interfaces',
+                                       'geos_atmosphere', 'observations')
 
         for observation in self.config.observations():
 
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation,
-                                                                                 observing_system_records_path)
+                                                                                 observing_system_records_path,
+                                                                                 path_to_configs, cycle_time)
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']

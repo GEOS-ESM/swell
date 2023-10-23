@@ -33,21 +33,26 @@ def process_channel_lists(channel_list):
     return final_channels_list
 
 
-def get_active_channels(path_to_yamls, observation, cycle_time):
+def get_active_channels(path_to_observing_sys_yamls, path_to_configs, observation, cycle_time):
     use_flags = []
 
     # Cycle time to datetime object
     dt_cycle_time = dt.strptime(cycle_time, "%Y%m%dT%H%M%SZ")
 
     # Retrieve available channels from observation yaml
-    with open('active_channels_test_files/amsua_n19.yaml', 'r') as file:
+    #with open('active_channels_test_files/amsua_n19.yaml', 'r') as file:
+    obs_name = observation.split('_')[0]
+    path_to_obs_config = path_to_configs + observation + '.yaml'
+    with open(path_to_obs_config, 'r') as file:
         data = yaml.safe_load(file)
         available_channels = data['obs space']['channels']
 
     # Retrieve active channels from records yaml
-    with open(path_to_yamls, 'r') as file:
+    obs_name = observation.split('_')[0]
+    path_to_observing_sys_config = path_to_observing_sys_yamls + observation +'_active_channels.yaml'
+    with open(path_to_observing_sys_config, 'r') as file:
         data = yaml.safe_load(file)
-        for element in data['amsua']: #change the hardcoding
+        for element in data[obs_name]:
             begin_date = dt.strptime(element['begin date'], "%Y-%m-%dT%H:%M:%S")
             end_date = dt.strptime(element['end date'], "%Y-%m-%dT%H:%M:%S")
 

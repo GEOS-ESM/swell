@@ -133,7 +133,8 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface observations file and call rendering
-    def render_interface_observations(self, config_name, observing_system_records_path):
+    #def render_interface_observations(self, config_name, observing_system_records_path):
+    def render_interface_observations(self, config_name, path_to_observing_sys_yamls, path_to_configs, cycle_time):
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -152,16 +153,27 @@ class JediConfigRendering():
         if f'{config_name}_active_channels' in config_file_str_templated:
 
             # Create object of SatelliteRecords class
-            #satellite_records = SatelliteRecords(observing_system_records_path)
-
-            # Get active channels from satellite records
-            #active_channels = satellite_records.get_active_channels(config_name)
-
-            # active_channels = [-1 1 -1 1 1 -1 etc]
-            active_channels = get_active_channels(config_name, observing_system_records_path)
+            active_channels = get_active_channels(path_to_observing_sys_yamls,
+                                          path_to_configs, observation, cycle_time)
 
             # Add active channels to template dictionary
             self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+
+        # Render templates in file and return dictionary
+        return self.__open_file_render_to_dict__(config_file)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def render_interface_ufo_test(self):
+        config_name = f'ufo_tests'
+        # Assert that there is a jedi interface associated with the task
+        self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
+                                 f'jedi interface config file the task must have an associated' +
+                                 f'jedi interface.')
+
+        # Path to configuration file
+        config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
+                                   'observations', f'{config_name}.yaml')
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

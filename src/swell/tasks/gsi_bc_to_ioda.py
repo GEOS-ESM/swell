@@ -35,6 +35,9 @@ class GsiBcToIoda(taskBase):
         if observing_system_records_path is None:
             cycle_dir = self.config.cycle_dir()
             observing_system_records_path = cycle_dir() + 'observing_system_records'
+        experiment_config_path = self.experiment_config_path()
+        path_to_configs = os.path.join(experiment_config_path, 'jedi', 'interfaces',
+                                       'geos_atmosphere', 'observations')
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -51,12 +54,15 @@ class GsiBcToIoda(taskBase):
         sensors = []
         sensors_satbias = []
         sensors_tlapse = []
+        
+        cycle_time = os.path.basename(os.path.normpath(cycle_dir))
         for observation in observations:
 
             print('observation', observation)
             # Open configuration file for observation
             observation_dict = self.jedi_rendering.render_interface_observations(observation, 
-                                                                                 observing_system_records_path)
+                                                                                 observing_system_records_path,
+                                                                                 path_to_configs, cycle_time)
 
             # Check for sensor key
             try:
