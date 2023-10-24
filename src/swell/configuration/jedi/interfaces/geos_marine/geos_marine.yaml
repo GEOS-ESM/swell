@@ -1,0 +1,14 @@
+jedi_interface: soca
+total_processors: {{total_processors}}
+executables:
+  hofx3D: soca_hofx3d.x
+  hofx4D: soca_hofx.x
+  variational3D: soca_var.x
+  variational4D: soca_var.x
+  variational4DEnsVar: soca_var.x
+  bump: soca_error_covariance_toolbox.x
+variables:
+  hocn: h
+  socn: Salt
+  ssh: ave_ssh
+  tocn: Temp

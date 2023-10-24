@@ -1,0 +1,3 @@
+cycle_times:
+  default_value: ['T00', 'T12']
+  options: ['T00', 'T12']
