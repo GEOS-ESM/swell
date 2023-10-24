@@ -80,5 +80,44 @@ class LinkGeosOutput(taskBase):
 
         return src, dst
 
+    # ----------------------------------------------------------------------------------------------
+
+    def prepare_cice6(self):
+
+        # CICE6 input in SOCA requires aggregation of multiple variables and
+        # time dimension added to the dataset.
+        # --------------------------------------------------------------------
+        soca2cice_vars = {'aicen': 'aicen',
+                        'hicen': 'vicen',
+                        'hsnon': 'vsnon'}
+
+        # read CICE6 restart
+        # -----------------
+        ds = xr.open_dataset(self.forecast_dir(['RESTART', 'iced.nc']))
+        nj = np.shape(ds['aicen'])[1]
+        ni = np.shape(ds['aicen'])[2]
+
+        # populate xarray with aggregated quantities
+        # ------------------------------------------
+        aggds = xr.merge([xr.DataArray(
+                        name=varname,
+                        data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0), (1, nj, ni)),
+                        dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys()])
+
+        # remove fill value
+        # -----------------
+        encoding = {varname: {'_FillValue': False} for varname in soca2cice_vars.keys()}
+
+        # save datasets
+        # -------------
+        aggds.to_netcdf(fname_out, format='NETCDF4', unlimited_dims='time', encoding=encoding)
+
+        # xarray doesn't allow variables and dim that have the same name, switch to netCDF4
+        # ---------------------------------------------------------------------------------
+        ncf = Dataset(fname_out, 'a')
+        t = ncf.createVariable('time', 'f8', ('time'))
+        t[:] = 1.0
+        ncf.close()
+
 
 # --------------------------------------------------------------------------------------------------
