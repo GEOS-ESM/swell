@@ -52,9 +52,10 @@ class BuildJedi(taskBase):
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
-                                                      jedi_bundle_build_path, 24)
+                                                      jedi_bundle_build_path, self.platform(), 24)
 
             # Perform the clone of JEDI repos
+            execute_tasks(['configure', 'make'], jedi_bundle_dict)
             try:
                 execute_tasks(['configure', 'make'], jedi_bundle_dict)
             except Exception:
