@@ -59,7 +59,8 @@ class CloneJedi(taskBase):
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
-                                                      jedi_bundle_build_path)
+                                                      jedi_bundle_build_path,
+                                                      self.platform())
 
             # Perform the clone of JEDI repos
             try:

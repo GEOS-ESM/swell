@@ -6,3 +6,4 @@ executables:
   variational3D: fv3jedi_var.x
   variational4D: fv3jedi_var.x
   variational4DEnsVar: fv3jedi_var.x
+  localensembleda: fv3jedi_letkf.x

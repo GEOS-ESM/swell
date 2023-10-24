@@ -19,9 +19,7 @@ module load stack-python/3.9.7
 module load jedi-fv3-env/unified-dev
 module load ewok-env/unified-dev
 module load soca-env/unified-dev
-module unload gsibec
-module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/compiler/intel/2022.0.1
-module load crtm/v2.4-jedi.2
+module unload gsibec crtm
 
 # IODA from experiement JEDI build
 # --------------------------------
@@ -44,7 +42,7 @@ module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.5
 module load eva/1.6.0-spackstack1.4
-module load jedi_bundle/1.0.14-swell
+module load jedi_bundle/1.0.15-swell
 
 # Set the swell paths
 # -------------------
