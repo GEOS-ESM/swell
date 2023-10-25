@@ -10,7 +10,9 @@ drivers:
 
 correlation:
 - name: 'ocn'
-  variables: {{analysis_variables}}
+  variables: [socn, tocn, ssh, hocn]
+- name: ice
+  variables: [cicen, hicen, hsnon]
 
 linear variable change:
   input variables: {{analysis_variables}}
