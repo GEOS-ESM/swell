@@ -288,8 +288,6 @@ class PrepGeosRunDir(taskBase):
                 'topo_gwdvar.data',
             os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
                 'topo_trbvar.data',
-            # os.path.join(geos_obcsdir, 'cice', 'kmt_cice.bin'): 'kmt_cice.bin',
-            # os.path.join(geos_obcsdir, 'cice', 'grid_cice.bin'): 'grid_cice.bin',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_grid.nc'): '',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_kmt.nc'): '',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_global.bathy.nc'): '',

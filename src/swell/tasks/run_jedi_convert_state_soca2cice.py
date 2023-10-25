@@ -18,7 +18,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediVariationalExecutable(taskBase):
+class RunJediConvertStateSoca2Cice(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,20 +26,14 @@ class RunJediVariationalExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'variational'
+        jedi_application = 'convertstate_soca2cice'
 
         # Parse configuration
         # -------------------
         window_type = self.config.window_type()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
-        number_of_iterations = self.config.number_of_iterations()
-        observations = self.config.observations()
-        jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-
-        npx_proc = self.config.npx_proc(None)
-        npy_proc = self.config.npy_proc(None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -56,11 +50,7 @@ class RunJediVariationalExecutable(taskBase):
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', self.config.window_length())
-        self.jedi_rendering.add_key('minimizer', self.config.minimizer())
-        self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
-        self.jedi_rendering.add_key('gradient_norm_reduction',
-                                    self.config.gradient_norm_reduction())
 
         # Background
         # ----------
@@ -70,27 +60,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Geometry
         # --------
-        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
-        self.jedi_rendering.add_key('npx_proc', npx_proc)
-        self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-
-        # Observations
-        # ------------
-        self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
-        self.jedi_rendering.add_key('window_begin', window_begin)
-
-        # Atmosphere background error model
-        # ---------------------------------
-        if npx_proc is not None and npy_proc is not None:
-            self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
-            self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
-
-        # Model
-        # -----
-        if window_type == '4D':
-            self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
         # Jedi configuration file
         # -----------------------
@@ -102,7 +72,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
 
         # Perform complete template rendering
         # -----------------------------------
@@ -119,12 +89,14 @@ class RunJediVariationalExecutable(taskBase):
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
         # Compute number of processors
-        # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
+        # TODO: For now this task can only run serial (SOCA limitation)
+        # so for now using 1 processor only
+        # ----------------------------------------------------------------
+        np = 1
 
         # Jedi executable name
         # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+        jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 

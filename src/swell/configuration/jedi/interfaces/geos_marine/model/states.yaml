@@ -1,0 +1,12 @@
+- input:
+    read_from_file: 1
+    basename: ./
+    ocn_filename: ocn.{{experiment_id}}.an.{{local_background_time}}.nc
+    ice_filename: ice.{{experiment_id}}.an.{{local_background_time}}.nc
+    date: '{{local_background_time_iso}}'
+    state variables: [tocn, socn, hocn, cicen, hicen, hsnon]
+  output:
+    datadir: ./
+    exp: {{experiment_id}}
+    type: fc
+    date: '{{local_background_time_iso}}'
