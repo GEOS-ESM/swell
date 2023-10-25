@@ -48,7 +48,7 @@ class PrepConfigBase(ABC):
                                        'jedi/interfaces/')
         self.model = None
         self.model_flag = False
-        self.default_models = ['geos_atmosphere', 'geos_ocean']
+        self.default_models = ['geos_atmosphere', 'geos_marine']
         self.selected_models = None
 
         # Create executable keys list

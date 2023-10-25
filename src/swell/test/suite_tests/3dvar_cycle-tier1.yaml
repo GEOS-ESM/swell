@@ -6,9 +6,9 @@ existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/bui
 geos_build_method: use_existing
 existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm
 existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm/install-Release
-model_components: ['geos_ocean']
+model_components: ['geos_marine']
 models:
-  geos_ocean:
+  geos_marine:
     cycle_times:
     - T00
     - T06

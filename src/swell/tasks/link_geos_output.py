@@ -8,6 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+from netCDF4 import Dataset
+import numpy as np
+import xarray as xr
 
 from swell.tasks.base.task_base import taskBase
 
@@ -29,14 +32,20 @@ class LinkGeosOutput(taskBase):
         """
 
         self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
-        # src, dst = self.link_restart()
-        src, dst = self.link_history()
 
+        # Create source and destination files
+        # ----------------------------------
+        src, dst = self.link_restart()
+        # src, dst = self.link_history()
+
+        self.prepare_cice6()
+
+        # for src, dst in src_dst_dict.items():
         if os.path.exists(src):
             self.geos.linker(src, dst, self.cycle_dir())
         else:
             self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
-                              'without a proper background file.')
+                            'without a proper background file.')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -108,6 +117,9 @@ class LinkGeosOutput(taskBase):
         # -----------------
         encoding = {varname: {'_FillValue': False} for varname in soca2cice_vars.keys()}
 
+        dst = 'cice.res.' + self.current_cycle + '.nc'
+        fname_out = os.path.join(self.cycle_dir(), dst)
+        
         # save datasets
         # -------------
         aggds.to_netcdf(fname_out, format='NETCDF4', unlimited_dims='time', encoding=encoding)
