@@ -41,15 +41,15 @@ def get_active_channels(path_to_observing_sys_yamls, path_to_configs, observatio
 
     # Retrieve available channels from observation yaml
     #with open('active_channels_test_files/amsua_n19.yaml', 'r') as file:
-    obs_name = observation.split('_')[0]
-    path_to_obs_config = path_to_configs + observation + '.yaml'
-    with open(path_to_obs_config, 'r') as file:
-        data = yaml.safe_load(file)
-        available_channels = data['obs space']['channels']
+    #obs_name = observation.split('_')[0]
+    #path_to_obs_config = path_to_configs + '/' + observation + '.yaml'
+    #with open(path_to_obs_config, 'r') as file:
+    #    data = yaml.safe_load(file)
+    #    available_channels = data['obs space']['channels']
 
-    # Retrieve active channels from records yaml
+    # Retrieve available and active channels from records yaml
     obs_name = observation.split('_')[0]
-    path_to_observing_sys_config = path_to_observing_sys_yamls + observation +'_active_channels.yaml'
+    path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + observation +'_active_channels.yaml'
     with open(path_to_observing_sys_config, 'r') as file:
         data = yaml.safe_load(file)
         for element in data[obs_name]:
@@ -61,7 +61,9 @@ def get_active_channels(path_to_observing_sys_yamls, path_to_configs, observatio
 
     available_channels_list = process_channel_lists(available_channels)
     active_channels_list = process_channel_lists(active_channels)
-    use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]    
+    #use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
+    #use_flags = [1] * len(available_channels_list)
+    use_flags = '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
 
     return use_flags
 
@@ -72,7 +74,8 @@ def read_sat_db(path_to_sat_db, column_names):
 
     # read data into a dataframe, throw line away if it starts with # or newline
     # ---------------------------------------------------------------------------
-    filename = os.path.join(path_to_sat_db, 'active_channels.tbl')
+    #filename = os.path.join(path_to_sat_db, 'active_channels.tbl')
+    filename = path_to_sat_db
     df = pd.DataFrame(columns=column_names)
 
     file = open(filename, 'r')
@@ -85,17 +88,16 @@ def read_sat_db(path_to_sat_db, column_names):
         if (line_parts):
 
             if (line_parts[0][0] != '#' and line_parts[0][0] != '\n'):
+                new_row = pd.DataFrame.from_dict({
+                    'sat': [''],
+                    'start': [''],
+                    'end': [''],
+                    'instr': [''],
+                    'channel_num': [0],
+                    'channels': [[]],
+                    'comments': ['']})
 
-                df = df.append({
-                    'sat': '',
-                    'start': '',
-                    'end': '',
-                    'instr': '',
-                    'channel_num': 0,
-                    'channels': [],
-                    'comments': ''
-                }, ignore_index=True)
-
+                df = pd.concat([df, new_row], ignore_index=True)
                 df['sat'][idx] = line_parts[0]
                 df['start'][idx] = line_parts[1]+line_parts[2]
                 df['end'][idx] = line_parts[3]+line_parts[4]
@@ -116,7 +118,6 @@ def read_sat_db(path_to_sat_db, column_names):
 
                 df['channels'][idx] = channel_list
                 idx += 1
-
     return df
 
 

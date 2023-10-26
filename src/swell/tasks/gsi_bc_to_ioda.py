@@ -32,9 +32,9 @@ class GsiBcToIoda(taskBase):
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observing_system_records_path = self.config.observing_system_records_path()
-        if observing_system_records_path is None:
-            cycle_dir = self.config.cycle_dir()
-            observing_system_records_path = cycle_dir() + 'observing_system_records'
+        cycle_dir = self.cycle_dir()
+        if observing_system_records_path == 'None':
+            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         experiment_config_path = self.experiment_config_path()
         path_to_configs = os.path.join(experiment_config_path, 'jedi', 'interfaces',
                                        'geos_atmosphere', 'observations')
@@ -55,7 +55,8 @@ class GsiBcToIoda(taskBase):
         sensors_satbias = []
         sensors_tlapse = []
         
-        cycle_time = os.path.basename(os.path.normpath(cycle_dir))
+        #cycle_time = os.path.basename(os.path.normpath(cycle_dir))
+        cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
         for observation in observations:
 
             print('observation', observation)

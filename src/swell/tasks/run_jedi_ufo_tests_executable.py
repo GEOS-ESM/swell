@@ -37,7 +37,14 @@ class RunJediUfoTestsExecutable(taskBase):
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        #observing_system_records_path = self.config.observing_system_records_path()
+        observing_system_records_path = self.config.observing_system_records_path()
+        cycle_dir = self.cycle_dir()
+        if observing_system_records_path == 'None':
+            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
+        experiment_config_path = self.experiment_config_path()
+        path_to_configs = os.path.join(experiment_config_path, 'jedi', 'interfaces',
+                                       'geos_atmosphere', 'observations')
+        cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
 
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -61,7 +68,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations)
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations,
+                                 observing_system_records_path, path_to_configs, cycle_time)
 
         # Make modifications needed for testing
         # -------------------------------------

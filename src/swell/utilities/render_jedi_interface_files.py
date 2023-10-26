@@ -154,7 +154,7 @@ class JediConfigRendering():
 
             # Create object of SatelliteRecords class
             active_channels = get_active_channels(path_to_observing_sys_yamls,
-                                          path_to_configs, observation, cycle_time)
+                                          path_to_configs, config_name, cycle_time)
 
             # Add active channels to template dictionary
             self.__template_dict__[f'{config_name}_active_channels'] = active_channels
