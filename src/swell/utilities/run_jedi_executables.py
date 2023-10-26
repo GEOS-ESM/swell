@@ -17,7 +17,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             observing_system_records_path, experiment_config_path, cycle_time,
+                             observing_system_records_path, cycle_time,
                              jedi_forecast_model=None):
 
     # Assemble configuration YAML file
@@ -25,7 +25,7 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
     for key, value in jedi_config_dict.items():
         if isinstance(value, dict):
             jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, 
-                                     observing_system_records_path, experiment_config_path, 
+                                     observing_system_records_path, 
                                      cycle_time,jedi_forecast_model)
 
         elif isinstance(value, bool):
@@ -35,7 +35,7 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
             for item in value:
                 if isinstance(item, dict):
                     jedi_dictionary_iterator(item, jedi_rendering, window_type, obs, 
-                                     observing_system_records_path, experiment_config_path, 
+                                     observing_system_records_path, 
                                      cycle_time, jedi_forecast_model)
 
         else:
@@ -51,7 +51,7 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                     observations = []
                     for ob in obs:
                         obs_dict = jedi_rendering.render_interface_observations(ob, 
-                                     observing_system_records_path, experiment_config_path,
+                                     observing_system_records_path,
                                      cycle_time)
                         observations.append(obs_dict)
                     jedi_config_dict[key] = observations

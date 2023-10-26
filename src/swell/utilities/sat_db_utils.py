@@ -32,49 +32,42 @@ def process_channel_lists(channel_list):
 
     return final_channels_list
 
+# --------------------------------------------------------------------------------------------------
 
-def get_active_channels(path_to_observing_sys_yamls, path_to_configs, observation, cycle_time):
-    use_flags = []
+def get_channel_list(input_dict, dt_cycle_time):
+    for element in input_dict:
+        begin_date = dt.strptime(element['begin date'], "%Y-%m-%dT%H:%M:%S")
+        end_date = dt.strptime(element['end date'], "%Y-%m-%dT%H:%M:%S")
+        if (dt_cycle_time > begin_date) and (dt_cycle_time < end_date):
+            return element['channels']
+
+# --------------------------------------------------------------------------------------------------
+
+def get_active_channels(path_to_observing_sys_yamls, observation, cycle_time):
 
     # Cycle time to datetime object
     dt_cycle_time = dt.strptime(cycle_time, "%Y%m%dT%H%M%SZ")
 
-    # Retrieve available channels from observation yaml
-    #with open('active_channels_test_files/amsua_n19.yaml', 'r') as file:
-    #obs_name = observation.split('_')[0]
-    #path_to_obs_config = path_to_configs + '/' + observation + '.yaml'
-    #with open(path_to_obs_config, 'r') as file:
-    #    data = yaml.safe_load(file)
-    #    available_channels = data['obs space']['channels']
-
     # Retrieve available and active channels from records yaml
     obs_name = observation.split('_')[0]
-    path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + observation +'_active_channels.yaml'
+    path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + observation +'_channel_info.yaml'
     with open(path_to_observing_sys_config, 'r') as file:
         data = yaml.safe_load(file)
-        for element in data[obs_name]:
-            begin_date = dt.strptime(element['begin date'], "%Y-%m-%dT%H:%M:%S")
-            end_date = dt.strptime(element['end date'], "%Y-%m-%dT%H:%M:%S")
-
-            if (dt_cycle_time > begin_date) and (dt_cycle_time < end_date):
-                active_channels = element['channels']
+        available_channels = get_channel_list(data['available'], dt_cycle_time)
+        active_channels = get_channel_list(data['active'], dt_cycle_time)
 
     available_channels_list = process_channel_lists(available_channels)
     active_channels_list = process_channel_lists(active_channels)
-    #use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
-    #use_flags = [1] * len(available_channels_list)
-    use_flags = '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
+    use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
 
     return use_flags
 
 # --------------------------------------------------------------------------------------------------
 
-
 def read_sat_db(path_to_sat_db, column_names):
 
     # read data into a dataframe, throw line away if it starts with # or newline
     # ---------------------------------------------------------------------------
-    #filename = os.path.join(path_to_sat_db, 'active_channels.tbl')
     filename = path_to_sat_db
     df = pd.DataFrame(columns=column_names)
 

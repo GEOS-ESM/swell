@@ -193,7 +193,7 @@ obs filters:
         channels: *amsua_n19_available_channels
         use passive_bc: true
         sensor: *Sensor_ID
-        use_flag: &amsua_n19_use_flag [{{amsua_n19_active_channels}}]
+        use_flag: &amsua_n19_use_flag {{amsua_n19_active_channels}}
         #use_flag: [-1, -1, -1,  1,  1,
         #            1, -1, -1,  1,  1,
         #            1,  1,  1,  1, -1]
