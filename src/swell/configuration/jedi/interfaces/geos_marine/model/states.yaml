@@ -1,8 +1,8 @@
 - input:
     read_from_file: 1
     basename: ./
-    ocn_filename: ocn.{{experiment_id}}.an.{{local_background_time}}.nc
-    ice_filename: ice.{{experiment_id}}.an.{{local_background_time}}.nc
+    ocn_filename: ocn.{{experiment_id}}.an.{{local_background_time_iso}}.nc
+    ice_filename: ice.{{experiment_id}}.an.{{local_background_time_iso}}.nc
     date: '{{local_background_time_iso}}'
     state variables: [tocn, socn, hocn, cicen, hicen, hsnon]
   output:

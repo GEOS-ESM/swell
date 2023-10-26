@@ -18,7 +18,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediConvertStateSoca2Cice(taskBase):
+class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,35 +26,29 @@ class RunJediConvertStateSoca2Cice(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'convertstate_soca2cice'
+        jedi_application = 'convert_state_soca2cice'
 
         # Parse configuration
         # -------------------
         window_type = self.config.window_type()
         window_offset = self.config.window_offset()
-        background_time_offset = self.config.background_time_offset()
+        observations = self.config.observations(None)
+        jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
         local_background_time = self.da_window_params.local_background_time(window_offset,
                                                                             window_type)
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
                                                                                     window_type)
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
-        self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
-        self.jedi_rendering.add_key('window_length', self.config.window_length())
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
 
         # Background
         # ----------
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 

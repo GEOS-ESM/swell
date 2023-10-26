@@ -21,6 +21,7 @@ analysis_variables:
   tasks:
   - GenerateBClimatology
   - PrepareAnalysis
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediVariationalExecutable
   type: string-check-list
 
@@ -205,6 +206,7 @@ generate_yaml_and_exit:
   default_value: false
   prompt: Generate JEDI executable YAML and exit?
   tasks:
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -807,6 +809,7 @@ window_offset:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -827,6 +830,7 @@ window_type:
   tasks:
   - GenerateBClimatology
   - GetBackground
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable

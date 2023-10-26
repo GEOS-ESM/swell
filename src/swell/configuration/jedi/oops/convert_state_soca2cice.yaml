@@ -1,6 +1,6 @@
-inner geometry:
+input geometry:
   TASKFILLgeometry
-outer geometry:
+output geometry:
   TASKFILLgeometry
 variable change:
   TASKFILLvariable_change
