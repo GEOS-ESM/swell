@@ -79,7 +79,7 @@ class MoveForecastRestart(taskBase):
                    }
 
         for src, dst in src_dst.items():
-            dst = os.path.join(dst, src)
+            dst = os.path.join(dst, src.split('/')[-1])
             move_files(self.logger, self.forecast_dir(src), self.at_next_fcst_dir(dst))
 
         # Consider the case of multiple MOM restarts
