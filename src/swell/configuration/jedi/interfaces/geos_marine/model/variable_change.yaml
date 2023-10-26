@@ -2,12 +2,12 @@
 variable change:
   variable change name: Soca2Cice
   do inverse: false
-  seaice edge: 0.15
+  seaice edge: 0.8
   shuffle: true
   rescale prior:
     min hice: 0.5
     min hsno: 0.1
-  domain: arctic
+  domain: {{cice6_domain}}
   cice background state:
     restart: 'iced.res.{{local_background_time}}.nc'
     ncat: 5

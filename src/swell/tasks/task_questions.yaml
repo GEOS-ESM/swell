@@ -107,6 +107,19 @@ bundles:
   - CloneJedi
   type: string-check-list
 
+cice6_domains:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_marine
+  options:
+  - arctic
+  - antarctic
+  prompt: Which CICE6 domains do you wish to run DA for?
+  tasks:
+  - RunJediConvertStateSoca2ciceExecutable
+  type: string-check-list
+
 clean_patterns:
   ask_question: false
   default_value: defer_to_model

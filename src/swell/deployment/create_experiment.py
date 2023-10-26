@@ -476,6 +476,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
+    # render_dictionary['scheduling']['RunJediConvertStateSoca2Cice']['execution_time_limit'] = 'PT15M'
 
     # nodes
     render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
