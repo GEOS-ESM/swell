@@ -643,4 +643,5 @@ observing_system_records_path:
   - GetObservations
   - GsiBcToIoda
   - RunJediUfoTestsExecutable
+  - EvaObservations
   type: string
