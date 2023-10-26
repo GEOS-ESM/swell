@@ -347,7 +347,7 @@ class PrepGeosRunDir(taskBase):
         # TODO: install folder name changes (install vs. install-Releaee)
         geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
                                          'source', 'install', 'bin')
-                                        #  'source', 'install-Release', 'bin')
+        #  'source', 'install-Release', 'bin')
 
         src_dirs = []
 

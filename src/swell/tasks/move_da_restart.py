@@ -96,8 +96,8 @@ class MoveDaRestart(taskBase):
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
         src_dst = {'tile.bin': '',
-                   'RESTART/iced.nc' : 'INPUT',
-        }
+                   'RESTART/iced.nc': 'INPUT',
+                   }
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, src)

@@ -51,7 +51,7 @@ class LinkGeosOutput(taskBase):
                 self.geos.linker(src, dst, self.cycle_dir())
             else:
                 self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
-                                'without a proper background file.')
+                                  'without a proper background file.')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -103,8 +103,8 @@ class LinkGeosOutput(taskBase):
         # time dimension added to the dataset.
         # --------------------------------------------------------------------
         soca2cice_vars = {'aicen': 'aicen',
-                        'hicen': 'vicen',
-                        'hsnon': 'vsnon'}
+                          'hicen': 'vicen',
+                          'hsnon': 'vsnon'}
 
         # read CICE6 restart
         # -----------------
@@ -116,7 +116,8 @@ class LinkGeosOutput(taskBase):
         # ------------------------------------------
         aggds = xr.merge([xr.DataArray(
                         name=varname,
-                        data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0), (1, nj, ni)),
+                        data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0),
+                                        (1, nj, ni)),
                         dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys()])
 
         # remove fill value

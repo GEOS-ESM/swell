@@ -57,13 +57,13 @@ class GetGeosRestart(taskBase):
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
         src_dst = {'tile.bin': '',
-                   'iced.nc' : 'INPUT',
-        }
+                   'iced.nc': 'INPUT',
+                   }
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, src)
             copy_to_dst_dir(self.logger, os.path.join(self.swell_static_files, 'geos', 'restarts',
-                                                     rst_path, src), self.forecast_dir(dst))
+                                                      rst_path, src), self.forecast_dir(dst))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
