@@ -90,13 +90,14 @@
 
             # Prepare analysis for next forecast
             RunJediVariationalExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
+            PrepareAnalysis-{{model_component}} =>  RunJediConvertStateSoca2ciceExecutable-{{model_component}}
 
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
 
             # Move restart to next cycle
-            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -219,6 +220,21 @@
 
     [[GenerateBClimatologyByLinking-{{model_component}}]]
         script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
+        script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["qos"]}}
+            --job-name = RunJediConvertStateSoca2ciceExecutable
+            --nodes={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["constraint"]}}
+            {% if scheduling["RunJediConvertStateSoca2ciceExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["partition"]}}
+            {% endif %}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"

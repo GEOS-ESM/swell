@@ -3,6 +3,6 @@ input geometry:
 output geometry:
   TASKFILLgeometry
 variable change:
-  TASKFILLvariable_change
+  TASKFILLvariable_change_soca2cice
 states:
   TASKFILLstates
