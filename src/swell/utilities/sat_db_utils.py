@@ -51,16 +51,21 @@ def get_active_channels(path_to_observing_sys_yamls, observation, cycle_time):
     # Retrieve available and active channels from records yaml
     obs_name = observation.split('_')[0]
     path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + observation +'_channel_info.yaml'
-    with open(path_to_observing_sys_config, 'r') as file:
-        data = yaml.safe_load(file)
-        available_channels = get_channel_list(data['available'], dt_cycle_time)
-        active_channels = get_channel_list(data['active'], dt_cycle_time)
 
-    available_channels_list = process_channel_lists(available_channels)
-    active_channels_list = process_channel_lists(active_channels)
-    use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
+    if os.path.isfile(path_to_observing_sys_config): 
+        with open(path_to_observing_sys_config, 'r') as file:
+            data = yaml.safe_load(file)
+            available_channels = get_channel_list(data['available'], dt_cycle_time)
+            active_channels = get_channel_list(data['active'], dt_cycle_time)
 
-    return use_flags
+        available_channels_list = process_channel_lists(available_channels)
+        active_channels_list = process_channel_lists(active_channels)
+        use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
+
+        return use_flags
+
+    else:
+        return None
 
 # --------------------------------------------------------------------------------------------------
 
