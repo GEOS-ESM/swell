@@ -655,7 +655,7 @@ produce_geovals:
   type: boolean
 
 single_observations:
-  ask_question: true
+  ask_question: false
   default_value: false
   models:
   - geos_atmosphere
