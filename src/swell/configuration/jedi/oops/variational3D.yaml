@@ -21,6 +21,13 @@ variational:
     ninner: '{{number_of_iterations}}'
     diagnostics:
       departures: ombg
+    online diagnostics:
+      write increment: true
+      increment:
+        datadir: ./
+        date: '{{window_begin_iso}}'
+        exp: {{experiment_id}}
+        type: incr
 final:
   diagnostics:
     departures: oman

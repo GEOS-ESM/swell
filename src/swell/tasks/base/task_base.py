@@ -11,14 +11,14 @@
 
 # standard imports
 from abc import ABC, abstractmethod
-import click
+import glob
 import importlib
 import os
 import time
 
 # swell imports
-from swell.tasks.base.task_registry import valid_tasks
-from swell.utilities.case_switching import camel_case_to_snake_case
+from swell.swell_path import get_swell_path
+from swell.utilities.case_switching import camel_case_to_snake_case, snake_case_to_camel_case
 from swell.utilities.config import Config
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.datetime import Datetime
@@ -65,6 +65,7 @@ class taskBase(ABC):
         # --------------------------------------------------------
         self.__experiment_root__ = self.config.__experiment_root__
         self.__experiment_id__ = self.config.__experiment_id__
+        self.__platform__ = self.config.__platform__
 
         # Save the model components
         # -------------------------
@@ -126,6 +127,12 @@ class taskBase(ABC):
     # Method to get the experiment directory
     def experiment_path(self):
         return os.path.join(self.__experiment_root__, self.__experiment_id__)
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Method to get the experiment ID
+    def platform(self):
+        return self.__platform__
 
     # ----------------------------------------------------------------------------------------------
 
@@ -224,19 +231,28 @@ class taskFactory():
 
 # --------------------------------------------------------------------------------------------------
 
+def get_tasks():
 
-def task_main(task, config, datetime, model):
+    # Path to tasks
+    tasks_directory = os.path.join(get_swell_path(), 'tasks', '*.py')
 
-    # For security check that task is in the registry
-    if task not in valid_tasks:
-        valid_task_logger = Logger('CheckValidTasks')
-        valid_task_logger.info(' ')
-        valid_task_logger.info('Task \'' + task + '\' not found in registry; valid tasks are:')
-        valid_tasks.sort()
-        for valid_task in valid_tasks:
-            valid_task_logger.info('  ' + valid_task)
-        valid_task_logger.info(' ')
-        valid_task_logger.abort('ABORT: Task not found in task registry.')
+    # List of tasks
+    task_files = sorted(glob.glob(tasks_directory))
+
+    # Get just the task name
+    tasks = []
+    for task_file in task_files:
+        base_name = os.path.basename(task_file)
+        if '__' not in base_name:
+            tasks.append(snake_case_to_camel_case(base_name[0:-3]))
+
+    # Return list of valid task choices
+    return tasks
+
+# --------------------------------------------------------------------------------------------------
+
+
+def task_wrapper(task, config, datetime, model):
 
     # Create the object
     constrc_start = time.perf_counter()
@@ -259,26 +275,6 @@ def task_main(task, config, datetime, model):
     task_object.logger.info(constrc_time)
     task_object.logger.info(execute_time)
     task_object.logger.info('-----------------------------')
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-@click.command()
-@click.argument('task')
-@click.argument('config')
-@click.option('-d', '--datetime', 'datetime', default=None)
-@click.option('-m', '--model', 'model', default=None)
-def main(task, config, datetime, model):
-
-    task_main(task, config, datetime, model)
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    main()
 
 
 # --------------------------------------------------------------------------------------------------

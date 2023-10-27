@@ -63,15 +63,15 @@
             {% endfor %}
         """
 
-        # T00,T06,T12,T18 = """
-        T12 = """
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
 
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
-            # MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            # MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
+            MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
             # Data assimilation things
@@ -116,7 +116,7 @@
             CleanCycle-{{model_component}}
         {% endfor %}
         """
-
+        {% endfor %}
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -133,13 +133,13 @@
     # Tasks
     # -----
     [[CloneGeos]]
-        script = "swell_task CloneGeos $config"
+        script = "swell task CloneGeos $config"
 
     [[BuildGeosByLinking]]
-        script = "swell_task BuildGeosByLinking $config"
+        script = "swell task BuildGeosByLinking $config"
 
     [[BuildGeos]]
-        script = "swell_task BuildGeos $config"
+        script = "swell task BuildGeos $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
@@ -153,13 +153,13 @@
             {% endif %}
 
     [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+        script = "swell task CloneJedi $config"
 
     [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+        script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+        script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
@@ -174,7 +174,7 @@
             {% endif %}
 
     [[RunGeosExecutable]]
-        script = "swell_task RunGeosExecutable $config -d $datetime"
+        script = "swell task RunGeosExecutable $config -d $datetime"
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -189,39 +189,39 @@
             {% endif %}
 
     [[PrepGeosRunDir]]
-        script = "swell_task PrepGeosRunDir $config -d $datetime"
+        script = "swell task PrepGeosRunDir $config -d $datetime"
 
     [[RemoveForecastDir]]
-        script = "swell_task RemoveForecastDir $config -d $datetime"
+        script = "swell task RemoveForecastDir $config -d $datetime"
 
     [[GetGeosRestart]]
-        script = "swell_task GetGeosRestart $config -d $datetime"
+        script = "swell task GetGeosRestart $config -d $datetime"
 
     {% for model_component in model_components %}
 
     [[LinkGeosOutput-{{model_component}}]]
-        script = "swell_task LinkGeosOutput $config -d $datetime -m {{model_component}}"
+        script = "swell task LinkGeosOutput $config -d $datetime -m {{model_component}}"
 
     [[MoveDaRestart-{{model_component}}]]
-        script = "swell_task MoveDaRestart $config -d $datetime -m {{model_component}}"
+        script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
 
     [[SaveRestart-{{model_component}}]]
-        script = "swell_task SaveRestart $config -d $datetime -m {{model_component}}"
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[StageJedi-{{model_component}}]]
-        script = "swell_task StageJedi $config -m {{model_component}}"
+        script = "swell task StageJedi $config -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
-        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
-        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
     [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell_task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
-        script = "swell_task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -236,19 +236,31 @@
             {% endif %}
 
     [[EvaJediLog-{{model_component}}]]
-        script = "swell_task EvaJediLog $config -d $datetime -m {{model_component}}"
+        script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
-        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["EvaObservations"]["account"]}}
+            --qos = {{scheduling["EvaObservations"]["qos"]}}
+            --job-name = EvaObservations
+            --nodes={{scheduling["EvaObservations"]["nodes"]}}
+            --ntasks-per-node={{scheduling["EvaObservations"]["ntasks_per_node"]}}
+            --constraint={{scheduling["EvaObservations"]["constraint"]}}
+            {% if scheduling["EvaObservations"]["partition"] %}
+            --partition={{scheduling["EvaObservations"]["partition"]}}
+            {% endif %}
 
     [[SaveObsDiags-{{model_component}}]]
-        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
     [[PrepareAnalysis-{{model_component}}]]
-        script = "swell_task PrepareAnalysis $config -d $datetime -m {{model_component}}"
+        script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
-        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

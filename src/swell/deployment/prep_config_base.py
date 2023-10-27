@@ -16,6 +16,7 @@ import yaml
 
 from swell.swell_path import get_swell_path
 
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -105,12 +106,18 @@ class PrepConfigBase(ABC):
         # Open user selected override dictionary
         if override is not None:
 
-            logger.info(f'Overriding experiment dictionary settings using {override}')
+            logger.info(f'Overriding experiment dictionary settings using override dictionary')
 
-            select_override_file = os.path.join(override)
-
-            with open(select_override_file, 'r') as select_override_yml:
-                self.override_dictionary = yaml.safe_load(select_override_yml)
+            # If override is a dictionary then use it directly
+            if isinstance(override, dict):
+                self.override_dictionary = override
+            elif isinstance(override, str):
+                # If override is a string then assume it is a path to a yaml file
+                with open(override, 'r') as select_override_yml:
+                    self.override_dictionary = yaml.safe_load(select_override_yml)
+            else:
+                logger.abort(f'Override must be a dictionary or a path to a yaml file. ' +
+                             f'Instead it is {type(override)}')
 
         self.override_models()
 
@@ -122,8 +129,8 @@ class PrepConfigBase(ABC):
         # defaults gets nothing
 
         if self.prep_using == 'Cli':
-            print("Please answer the following questions to generate your experiment " +
-                  "configuration YAML file.\n")
+            self.logger.info("Please answer the following questions to generate your experiment " +
+                             "configuration YAML file.\n")
 
         # Set current dictionary variable which is needed for answer changes
         self.current_dictionary = {}
@@ -258,8 +265,8 @@ class PrepConfigBase(ABC):
         base_task_list = []
         model_task_list = []
         for line in task_s_lines:
-            if 'script = "swell_task' in line:
-                task_name = line.split('"swell_task')[1].split(' ')[1]
+            if 'script = "swell task' in line:
+                task_name = line.split('"swell task')[1].split(' ')[1]
                 if '-m' in line:
                     if task_name in model_task_list:
                         continue
@@ -268,10 +275,6 @@ class PrepConfigBase(ABC):
                     if task_name in base_task_list:
                         continue
                     base_task_list.append(task_name)
-
-        # The following lists of tasks added to logger
-        self.logger.info(f'Base tasks selected include the following: {base_task_list}. \n' +
-                         f'Model tasks selected include the following: {model_task_list}.')
 
         return base_task_list, model_task_list
 

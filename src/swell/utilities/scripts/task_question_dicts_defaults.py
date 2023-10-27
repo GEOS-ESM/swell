@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -126,7 +124,7 @@ def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_
 # --------------------------------------------------------------------------------------------------
 
 
-def tq_dicts_defaults():
+def main():
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -245,13 +243,6 @@ def tq_dicts_defaults():
         return 1
     else:
         return 0
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-if __name__ == '__main__':
-    tq_dicts_defaults()
 
 
 # --------------------------------------------------------------------------------------------------

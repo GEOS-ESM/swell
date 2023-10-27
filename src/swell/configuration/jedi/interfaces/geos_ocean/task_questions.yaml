@@ -48,6 +48,12 @@ minimizer:
   options:
   - RPCG
 
+mom6_iau:
+  default_value: false
+  options:
+  - true
+  - false
+
 number_of_iterations:
   default_value:
   - 5

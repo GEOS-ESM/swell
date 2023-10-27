@@ -4,9 +4,9 @@ date: '{{local_background_time_iso}}'
 bump:
   io:
     data directory: '{{cycle_dir}}/background_error_model/'
-  drivers:
-    multivariate strategy: 'univariate'
-    read local nicas: true
+drivers:
+  multivariate strategy: 'univariate'
+  read local nicas: true
 
 correlation:
 - name: 'ocn'
@@ -17,7 +17,7 @@ linear variable change:
   output variables: {{analysis_variables}}
   linear variable changes:
   - linear variable change name: BkgErrFILT
-    ocean_depth_min: 1000 # [m]
+    ocean_depth_min: 100 # [m]
     rescale_bkgerr: 1.0
     efold_z: 2500.0       # [m]
 
@@ -38,17 +38,20 @@ linear variable change:
     hicen_max: 100.0
 
   - linear variable change name: VertConvSOCA
-    Lz_min: 2.0
-    Lz_mld: 1
-    Lz_mld_max: 500.0
-    scale_layer_thick: 1.5
+    Lz_min: 10.0
+    Lz_mld: 0
+    Lz_mld_max: 1.0
+    scale_layer_thick: 5
 
   - linear variable change name: HorizFiltSOCA
     niter: 2
     filter variables: {{analysis_variables}}
 
   - linear variable change name: BalanceSOCA
-    dsdtmax: 0.1
-    dsdzmin: 3.0e-6
-    dtdzmin: 1.0e-6
-    nlayers: 10
+    kst:
+      dsdtmax: 0.1
+      dsdzmin: 3.0e-6
+      dtdzmin: 1.0e-6
+      nlayers: 2
+    ksshts:
+      nlayers: 2

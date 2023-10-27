@@ -8,15 +8,27 @@
 # --------------------------------------------------------------------------------------------------
 
 
+from multiprocessing import Pool
+import netCDF4 as nc
 import os
 import yaml
 
-from eva.eva_base import eva
+from eva.eva_driver import eva
 
+from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+# Pass through to avoid confusion with optional logger argument inside eva
+def run_eva(eva_dict):
+    eva(eva_dict)
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,6 +52,13 @@ class EvaObservations(taskBase):
         # -------------
         model = self.get_model()
 
+        # Determine if running on login or compute node and set workers
+        # -------------------------------------------------------------
+        number_of_workers = 6
+        if login_or_compute(self.platform()) == 'compute':
+            number_of_workers = 40
+        self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
+
         # Read Eva template file into dictionary
         # --------------------------------------
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
@@ -62,6 +81,7 @@ class EvaObservations(taskBase):
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
 
+<<<<<<< HEAD
         # Loop over observations
         # -------------------
         observing_system_records_path = self.config.observing_system_records_path()
@@ -69,6 +89,11 @@ class EvaObservations(taskBase):
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
+=======
+        # Loop over observations and create dictionaries
+        # ----------------------------------------------
+        eva_dicts = []  # Empty list of dictionaries
+>>>>>>> develop
 
         for observation in self.config.observations():
 
@@ -79,6 +104,16 @@ class EvaObservations(taskBase):
 
             # Split the full path into path and filename
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
+
+            # Prevent Eva from failing if there are observation files with 0 observations
+            with nc.Dataset(obs_path_file, 'r') as ds:
+                loc_size = len(ds.dimensions['Location'])
+
+            if (loc_size) < 1:
+                self.logger.info(f'No observations were found for {obs_path_file}. ' +
+                                 'No plots will be produced')
+                continue
+
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Check for need to add 0000 to the file
@@ -93,13 +128,6 @@ class EvaObservations(taskBase):
             # Get instrument ioda and full name
             ioda_name = observation
             full_name = ioda_name_to_long_name(ioda_name, self.logger)
-
-            # Log the operator being worked on
-            # --------------------------------
-            info_string = 'Running Eva for ' + full_name
-            self.logger.info('')
-            self.logger.info(info_string)
-            self.logger.info('-'*len(info_string))
 
             # Create dictionary used to override the eva config
             eva_override = {}
@@ -138,6 +166,11 @@ class EvaObservations(taskBase):
             with open(conf_output, 'w') as outfile:
                 yaml.dump(eva_dict, outfile, default_flow_style=False)
 
-            # Call eva
-            # --------
-            eva(eva_dict)
+            # Add eva dictionary to list
+            # --------------------------
+            eva_dicts.append(eva_dict)
+
+        # Call eva in parallel
+        # --------------------
+        with Pool(processes=number_of_workers) as pool:
+            pool.map(run_eva, eva_dicts)

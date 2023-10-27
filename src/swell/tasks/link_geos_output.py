@@ -25,16 +25,17 @@ class LinkGeosOutput(taskBase):
         This will depend on the model type (ocean vs. atmosphere), model output
         type (history vs. restart), DA method, and window length.
 
-        Options could be offered in yamls, for instance history vs. restart.
+        TODO: Options could be offered in yamls, for instance history vs. restart.
         """
 
         self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
-        src, dst = self.link_restart()
+        # src, dst = self.link_restart()
+        src, dst = self.link_history()
 
         if os.path.exists(src):
             self.geos.linker(src, dst, self.cycle_dir())
         else:
-            self.logger.abort('Source file does not exist. JEDI will fail ' +
+            self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
                               'without a proper background file.')
 
     # ----------------------------------------------------------------------------------------------
@@ -42,8 +43,8 @@ class LinkGeosOutput(taskBase):
     def link_history(self):
 
         # Create GEOS history to SOCA background link
-        # TODO: this will only work for 3Dvar
-        # --------------------------------------------
+        # TODO: this will only work for 3Dvar as FGAT requires multiple files
+        # --------------------------------------------------------------------
         cc_dto = self.cycle_time_dto()
         src = self.forecast_dir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 

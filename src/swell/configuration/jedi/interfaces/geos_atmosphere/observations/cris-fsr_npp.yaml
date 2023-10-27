@@ -83,7 +83,7 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/cris-fsr_npp.{{window_begin}}.satbias.nc4'
 
-obs filters:
+obs prior filters:
 - filter: Perform Action
   filter variables:
   - name: brightnessTemperature
@@ -146,6 +146,7 @@ obs filters:
         variables:
         - name: ObsErrorData/brightnessTemperature
           channels: *cris-fsr_npp_channels
+obs post filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
@@ -443,7 +444,6 @@ obs filters:
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
-      # use passive_bc: true
       use_flag: *useflag_cris-fsr_npp
   minvalue: 1.0e-12
   action:

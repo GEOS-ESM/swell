@@ -39,13 +39,13 @@
     # Tasks
     # -----
     [[CloneGeos]]
-        script = "swell_task CloneGeos $config"
+        script = "swell task CloneGeos $config"
 
     [[BuildGeosByLinking]]
-        script = "swell_task BuildGeosByLinking $config"
+        script = "swell task BuildGeosByLinking $config"
 
     [[BuildGeos]]
-        script = "swell_task BuildGeos $config"
+        script = "swell task BuildGeos $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]

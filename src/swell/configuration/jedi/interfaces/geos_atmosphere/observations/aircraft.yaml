@@ -15,11 +15,31 @@ obs space:
   simulated variables: [airTemperature, windEastward, windNorthward]
 
 obs operator:
-  name: VertInterp
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
+  name: Composite
+  components:
 
-obs filters:
+  - name: VertInterp
+    variables:
+    - name: windEastward
+    - name: windNorthward
+
+    # Hofx scaling
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
+
+  - name: VertInterp
+    observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+    variables: [airTemperature]
+
+obs prior filters:
+
+# Apply variable changes needed for performing wind scaling
+# ---------------------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingPressure
+  SkipWhenNoObs: False
+
+obs post filters:
 
 # ------------------
 # airTemperature BC

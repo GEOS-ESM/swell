@@ -11,11 +11,34 @@ obs space:
   simulated variables: [windEastward, windNorthward]
 
 obs operator:
-  name: Product
-  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  geovals to scale hofx by: wind_reduction_factor_at_10m
 
-obs filters:
+  name: VertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+
+  # Use height vertical coordinate first
+  vertical coordinate: geopotential_height
+  observation vertical coordinate group: DerivedVariables
+  observation vertical coordinate: adjustedHeight
+  interpolation method: linear
+  hofx scaling field: SurfaceWindScalingHeight
+  hofx scaling field group: DerivedVariables
+
+obs prior filters:
+
+# Apply variable changes needed for rescaled height coordinate
+# ------------------------------------------------------------
+- filter: Variable Transforms
+  Transform: AdjustedHeightCoordinate
+  SkipWhenNoObs: False
+
+# Apply variable changes needed wind scaling
+# ------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingHeight
+  SkipWhenNoObs: False
+
+obs post filters:
+
 #
 # Reject all obs with PreQC mark already set above 3
 #- filter: PreQC

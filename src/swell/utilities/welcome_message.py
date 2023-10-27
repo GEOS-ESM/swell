@@ -14,7 +14,7 @@ from swell.utilities.logger import Logger
 # --------------------------------------------------------------------------------------------------
 
 
-def write_welcome_message(application):
+def write_welcome_message():
 
     logger = Logger('')
 
@@ -24,5 +24,4 @@ def write_welcome_message(application):
     logger.blank(f"\__ \\\ V  V /  __/ | |  Version {__version__}", False)  # noqa
     logger.blank(f"|___/ \_/\_/ \___|_|_|  \x1B[4m\x1B[34mhttps://geos-esm.github.io/swell\033[0m", False)  # noqa
     logger.blank(f"                                         ", False)  # noqa
-    logger.blank(f"Executing swell \'{application.lower()}\' application", False)  # noqa
     logger.blank('', False)  # noqa

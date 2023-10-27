@@ -36,6 +36,7 @@ class RunJediUfoTestsExecutable(taskBase):
         window_length = self.config.window_length()
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
+        single_observations = self.config.single_observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         observing_system_records_path = self.config.observing_system_records_path()
         cycle_dir = self.cycle_dir()
@@ -117,10 +118,14 @@ class RunJediUfoTestsExecutable(taskBase):
         # Loop through observations and moderate based on test needs
         # ----------------------------------------------------------
         for index in range(len(observations)):
-
-            # Overwrite the defaults with the values in ufo_tests_obs
-            ufo_tests_obs = ufo_tests_dict[observations[index]]
-            ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
+            if not single_observations:
+                # Overwrite the defaults with the values in ufo_tests_obs
+                ufo_tests_obs = ufo_tests_dict[observations[index]]
+                ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
+            else:
+                # Not to do any benchmark validation
+                ufo_tests_obs = {'filter_test': {"expectVariablesNotToExist":
+                                 [{"name": "Some/DummyVariable"}]}}
 
             # Merge the ufo_tests_obs dictionary with the observation dictionary
             # jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])
@@ -166,7 +171,7 @@ class RunJediUfoTestsExecutable(taskBase):
             # Run the Test Obs Filters executable
             # -----------------------------------
             if not generate_yaml_and_exit:
-                run_executable(self.logger, self.cycle_dir(), 24, jedi_executable_path,
+                run_executable(self.logger, self.cycle_dir(), 36, jedi_executable_path,
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')

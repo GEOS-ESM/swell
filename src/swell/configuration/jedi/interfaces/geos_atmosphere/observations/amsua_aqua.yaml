@@ -55,7 +55,19 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/amsua_aqua.{{window_begin}}.satbias.nc4'
 
-obs filters:
+obs prior filters:
+# Assign obs error
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_aqua_available_channels
+    action:
+      name: assign error
+      error parameter vector: &amsua_aqua_oberr
+                  [2.500,  2.000,  2.000,  0.500,  0.400,
+                   0.400,  0.500,  0.300,  0.350,  0.350,
+                   0.450,  1.000,  1.500,  3.750,  6.300]
+obs post filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
     filter variables:
@@ -91,17 +103,6 @@ obs filters:
     maxvalue: 0.0
     action:
       name: reject
-# Assign obs error
-  - filter: Perform Action
-    filter variables:
-    - name: brightnessTemperature
-      channels: *amsua_aqua_available_channels
-    action:
-      name: assign error
-      error parameter vector:
-                  [2.500,  2.000,  2.000,  0.500,  0.400,
-                   0.400,  0.500,  0.300,  0.350,  0.350,
-                   0.450,  1.000,  1.500,  3.750,  6.300]
 # Topography check
   - filter: BlackList
     filter variables:
@@ -170,10 +171,7 @@ obs filters:
           options:
             channels: *amsua_aqua_available_channels
             sensor: *Sensor_ID
-        error parameter vector:
-                  [2.500,  2.000,  2.000,  0.500,  0.400,
-                   0.400,  0.500,  0.300,  0.350,  0.350,
-                   0.450,  1.000,  1.500,  3.750,  6.300]
+        error parameter vector: *amsua_aqua_oberr
         obserr_bound_max: [4.5, 4.5, 4.5, 3.0, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
                            3.0, 3.5, 4.5, 4.5, 4.5]
@@ -207,7 +205,6 @@ obs filters:
       channels: *amsua_aqua_available_channels
       options:
         channels: *amsua_aqua_available_channels
-#       use passive_bc: true
         use_flag: [-1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1,
                    -1, -1, -1, -1, -1]

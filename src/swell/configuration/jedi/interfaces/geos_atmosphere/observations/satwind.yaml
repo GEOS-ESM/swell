@@ -13,9 +13,19 @@ obs space:
 obs operator:
   name: VertInterp
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
-  apply near surface wind scaling: true
+  hofx scaling field: SurfaceWindScalingPressure
+  hofx scaling field group: DerivedVariables
 
-obs filters:
+obs prior filters:
+
+# Apply variable changes needed for performing wind scaling
+# ---------------------------------------------------------
+- filter: Variable Transforms
+  Transform: SurfaceWindScalingPressure
+  SkipWhenNoObs: False
+
+obs post filters:
+
 # Reject all obs with PreQC mark already set above 3
 - filter: PreQC
   maxvalue: 3

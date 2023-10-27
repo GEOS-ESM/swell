@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based h(x)
+# Cylc suite for executing JEDI-based LocalEnsembleDA Algorithm
 
 # --------------------------------------------------------------------------------------------------
 
@@ -57,17 +57,17 @@
             StageJediCycle-{{model_component}}
 
             # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediLetkfExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediLetkfExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
-            GetEnsemble-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediLetkfExecutable-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            GetEnsemble-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediLetkfExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
-            RunJediLetkfExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
@@ -94,13 +94,13 @@
     # Tasks
     # -----
     [[CloneJedi]]
-        script = "swell_task CloneJedi $config"
+        script = "swell task CloneJedi $config"
 
     [[BuildJediByLinking]]
-        script = "swell_task BuildJediByLinking $config"
+        script = "swell task BuildJediByLinking $config"
 
     [[BuildJedi]]
-        script = "swell_task BuildJedi $config"
+        script = "swell task BuildJedi $config"
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
@@ -116,40 +116,40 @@
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
-        script = "swell_task StageJedi $config -m {{model_component}}"
+        script = "swell task StageJedi $config -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
-        script = "swell_task StageJedi $config -d $datetime -m {{model_component}}"
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
     [[ GetEnsemble-{{model_component}} ]]
-        script = "swell_task GetEnsemble $config -d $datetime -m {{model_component}}"
+        script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
-        script = "swell_task GetObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediLetkfExecutable-{{model_component}}]]
-        script = "swell_task RunJediLetkfExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediLocalEnsembleDaExecutable-{{model_component}}]]
+        script = "swell task RunJediLocalEnsembleDaExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediLetkfExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediLocalEnsembleDaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediLetkfExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediLetkfExecutable"]["qos"]}}
-            --job-name = RunJediLetkfExecutable
-            --nodes={{scheduling["RunJediLetkfExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediLetkfExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediLetkfExecutable"]["constraint"]}}
-            {% if scheduling["RunJediLetkfExecutable"]["partition"] %}
-            --partition={{scheduling["RunJediLetkfExecutable"]["partition"]}}
+            --account = {{scheduling["RunJediLocalEnsembleDaExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediLocalEnsembleDaExecutable"]["qos"]}}
+            --job-name = RunJediLocalEnsembleDaExecutable
+            --nodes={{scheduling["RunJediLocalEnsembleDaExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediLocalEnsembleDaExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediLocalEnsembleDaExecutable"]["constraint"]}}
+            {% if scheduling["RunJediLocalEnsembleDaExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediLocalEnsembleDaExecutable"]["partition"]}}
             {% endif %}
 
     [[EvaObservations-{{model_component}}]]
-        script = "swell_task EvaObservations $config -d $datetime -m {{model_component}}"
+        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
-        script = "swell_task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
-        script = "swell_task CleanCycle $config -d $datetime -m {{model_component}}"
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

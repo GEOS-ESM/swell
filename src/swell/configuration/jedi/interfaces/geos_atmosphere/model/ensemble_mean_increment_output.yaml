@@ -1,0 +1,4 @@
+filetype: auxgrid
+gridtype: latlon
+filename: '{{cycle_dir}}/geos.mean-inc.'
+
