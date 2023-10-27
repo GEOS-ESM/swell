@@ -11,6 +11,7 @@ import os
 import shutil
 
 from jedi_bundle.bin.jedi_bundle import get_default_config
+from jedi_bundle.config.config import check_platform
 
 
 # --------------------------------------------------------------------------------------------------
@@ -50,7 +51,8 @@ def link_path(source, target):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_jedi_bundle_config(bundles, path_to_source, path_to_build, cores_to_use_for_make=6):
+def set_jedi_bundle_config(bundles, path_to_source, path_to_build, platform,
+                           cores_to_use_for_make=6):
 
     # Start from the default jedi_bundle config file
     jedi_bundle_config = get_default_config()
@@ -71,6 +73,13 @@ def set_jedi_bundle_config(bundles, path_to_source, path_to_build, cores_to_use_
 
     # Set the make stage options
     jedi_bundle_config['make_options']['cores_to_use_for_make'] = cores_to_use_for_make
+
+    # Check is swell platform is a jedi_bundle platform and if so use it
+    if check_platform(platform):
+        jedi_bundle_config['configure_options']['platform'] = platform
+
+    # Always use the swell defined modules to build
+    jedi_bundle_config['configure_options']['external_modules'] = True
 
     # Return the dictionary object
     return jedi_bundle_config

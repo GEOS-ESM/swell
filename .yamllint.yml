@@ -2,6 +2,9 @@
 
 extends: default
 
+ignore: |
+  src/swell/configuration/jedi/oops/LocalEnsembleDA.yaml
+
 rules:
   braces:
     level: warning
@@ -27,3 +30,4 @@ rules:
     level: warning
     allow-non-breakable-inline-mappings: true
   truthy: disable
+
