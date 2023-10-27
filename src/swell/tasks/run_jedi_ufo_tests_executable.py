@@ -36,6 +36,7 @@ class RunJediUfoTestsExecutable(taskBase):
         window_length = self.config.window_length()
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
+        single_observations = self.config.single_observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
         # Compute data assimilation window parameters
@@ -111,10 +112,14 @@ class RunJediUfoTestsExecutable(taskBase):
         # Loop through observations and moderate based on test needs
         # ----------------------------------------------------------
         for index in range(len(observations)):
-
-            # Overwrite the defaults with the values in ufo_tests_obs
-            ufo_tests_obs = ufo_tests_dict[observations[index]]
-            ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
+            if not single_observations:
+                # Overwrite the defaults with the values in ufo_tests_obs
+                ufo_tests_obs = ufo_tests_dict[observations[index]]
+                ufo_tests_obs = update_dict(ufo_tests_default, ufo_tests_obs)
+            else:
+                # Not to do any benchmark validation
+                ufo_tests_obs = {'filter_test': {"expectVariablesNotToExist":
+                                 [{"name": "Some/DummyVariable"}]}}
 
             # Merge the ufo_tests_obs dictionary with the observation dictionary
             # jedi_operator_dict['observations'][index].update(ufo_tests_obs['operator_test'])
