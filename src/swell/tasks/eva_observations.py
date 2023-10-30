@@ -81,19 +81,15 @@ class EvaObservations(taskBase):
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
 
-<<<<<<< HEAD
+
         # Loop over observations
         # -------------------
+        eva_dicts = []  # Empty list of dictionaries
         observing_system_records_path = self.config.observing_system_records_path()
         cycle_dir = self.cycle_dir()
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
-=======
-        # Loop over observations and create dictionaries
-        # ----------------------------------------------
-        eva_dicts = []  # Empty list of dictionaries
->>>>>>> develop
 
         for observation in self.config.observations():
 

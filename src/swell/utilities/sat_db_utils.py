@@ -18,7 +18,6 @@ from datetime import datetime as dt
 # --------------------------------------------------------------------------------------------------
 
 def process_channel_lists(channel_list):
-
     final_channels_list = []
     if not isinstance(channel_list, list):
         channel_list = [channel_list]
@@ -44,7 +43,6 @@ def get_channel_list(input_dict, dt_cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 def get_active_channels(path_to_observing_sys_yamls, observation, cycle_time):
-
     # Cycle time to datetime object
     dt_cycle_time = dt.strptime(cycle_time, "%Y%m%dT%H%M%SZ")
 
@@ -70,7 +68,6 @@ def get_active_channels(path_to_observing_sys_yamls, observation, cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 def read_sat_db(path_to_sat_db, column_names):
-
     # read data into a dataframe, throw line away if it starts with # or newline
     # ---------------------------------------------------------------------------
     filename = path_to_sat_db
