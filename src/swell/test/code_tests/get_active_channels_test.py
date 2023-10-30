@@ -9,4 +9,4 @@ observation = 'amsua_n19'
 
 generated_use_flags = get_active_channels(path_to_observing_sys_yamls,
                                           path_to_configs, observation, cycle_time)
-assert(use_flags == generated_use_flags)
+assert (use_flags == generated_use_flags)
