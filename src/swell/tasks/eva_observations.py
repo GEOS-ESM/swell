@@ -84,7 +84,7 @@ class EvaObservations(taskBase):
         # Loop over observations
         # -------------------
         eva_dicts = []  # Empty list of dictionaries
-        observing_sys_records_path = self.config.observing_system_records_path()
+        observing_system_records_path = self.config.observing_system_records_path()
         cycle_dir = self.cycle_dir()
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
