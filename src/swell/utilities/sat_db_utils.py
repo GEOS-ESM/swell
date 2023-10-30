@@ -50,7 +50,6 @@ def get_active_channels(path_to_observing_sys_yamls, observation, cycle_time):
     dt_cycle_time = dt.strptime(cycle_time, "%Y%m%dT%H%M%SZ")
 
     # Retrieve available and active channels from records yaml
-    obs_name = observation.split('_')[0]
     path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + \
         observation + '_channel_info.yaml'
 
