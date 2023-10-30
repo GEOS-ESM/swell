@@ -49,9 +49,11 @@ class SaveObsDiags(taskBase):
         for observation in observations:
 
             # Load the observation dictionary
-            observation_dict = self.jedi_rendering.render_interface_observations(observation,
-                                                                                 observing_system_records_path,
-                                                                                 cycle_time)
+            observation_dict = self.jedi_rendering.render_interface_observations(
+                observation,
+                observing_system_records_path,
+                cycle_time
+            )
 
             # Store observation files
             # -----------------------

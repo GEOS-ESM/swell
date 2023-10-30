@@ -24,9 +24,9 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
     # --------------------------------
     for key, value in jedi_config_dict.items():
         if isinstance(value, dict):
-            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs, 
-                                     observing_system_records_path, 
-                                     cycle_time,jedi_forecast_model)
+            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs,
+                                     observing_system_records_path,
+                                     cycle_time, jedi_forecast_model)
 
         elif isinstance(value, bool):
             continue
@@ -34,9 +34,11 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
         elif isinstance(value, list):
             for item in value:
                 if isinstance(item, dict):
-                    jedi_dictionary_iterator(item, jedi_rendering, window_type, obs, 
-                                     observing_system_records_path, 
-                                     cycle_time, jedi_forecast_model)
+                    jedi_dictionary_iterator(
+                        item, jedi_rendering, window_type, obs,
+                        observing_system_records_path,
+                        cycle_time, jedi_forecast_model
+                    )
 
         else:
             if 'TASKFILL' in value:
@@ -50,9 +52,11 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                 if value_special == 'observations':
                     observations = []
                     for ob in obs:
-                        obs_dict = jedi_rendering.render_interface_observations(ob, 
-                                     observing_system_records_path,
-                                     cycle_time)
+                        obs_dict = jedi_rendering.render_interface_observations(
+                            ob,
+                            observing_system_records_path,
+                            cycle_time
+                        )
                         observations.append(obs_dict)
                     jedi_config_dict[key] = observations
 

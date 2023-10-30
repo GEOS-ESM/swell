@@ -35,7 +35,7 @@ class GenerateObservingSystemRecords(taskBase):
         path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
         if path_to_geosana_gridcomp == 'None':
             path_to_geosana_gridcomp = os.path.join(self.experiment_path(), 'GEOSana_GridComp')
-        path_to_gsi_records = os.path.join(path_to_geosana_gridcomp, 'GEOSaana_GridComp', 
+        path_to_gsi_records = os.path.join(path_to_geosana_gridcomp, 'GEOSaana_GridComp',
                                            'GSI_GridComp', 'mksi', 'sidb')
         sat_records = ObservingSystemRecords()
         sat_records.parse_records(path_to_gsi_records)

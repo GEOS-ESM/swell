@@ -51,16 +51,17 @@ class GsiBcToIoda(taskBase):
         sensors = []
         sensors_satbias = []
         sensors_tlapse = []
-        
-        #cycle_time = os.path.basename(os.path.normpath(cycle_dir))
+
         cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
         for observation in observations:
 
             print('observation', observation)
             # Open configuration file for observation
-            observation_dict = self.jedi_rendering.render_interface_observations(observation, 
-                                                                                 observing_system_records_path,
-                                                                                 cycle_time)
+            observation_dict = self.jedi_rendering.render_interface_observations(
+                observation,
+                observing_system_records_path,
+                cycle_time
+            )
 
             # Check for sensor key
             try:

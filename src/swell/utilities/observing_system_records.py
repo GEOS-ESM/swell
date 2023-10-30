@@ -22,7 +22,6 @@ class ObservingSystemRecords:
         self.available_df = None
         self.obs_registry = []
 
-
     def parse_records(self, path_to_sat_db):
 
         channel_types = ['active', 'available']
@@ -51,7 +50,6 @@ class ObservingSystemRecords:
                 self.available_df = df
             else:
                 print('record parsing unavailable for this type')
-
 
     def save_yamls(self, output_dir, observation_list=None):
 
@@ -101,4 +99,3 @@ class ObservingSystemRecords:
 
                     with open(output_dir+'/'+instr+'_'+sat+'_channel_info.yaml', 'w') as file:
                         yaml.dump(sat_dict, file)
-

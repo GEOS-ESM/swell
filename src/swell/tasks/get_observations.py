@@ -64,9 +64,11 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.jedi_rendering.render_interface_observations(observation,
-                                                                      observing_system_records_path,
-                                                                      cycle_time)
+            observation_dict = self.jedi_rendering.render_interface_observations(
+                observation,
+                observing_system_records_path,
+                cycle_time
+            )
 
             # Fetch observation files
             # -----------------------
