@@ -43,7 +43,6 @@
         {{cycle_time.cycle_time}} = """
 
             # Generate satellite channel records
-            #GenerateObservingSystemRecords
             CloneGeosAna[^] => GenerateObservingSystemRecords
 
             # Convert bias correction to ioda
@@ -110,7 +109,7 @@
             {% endif %}
 
     [[CloneGeosAna]]
-        script = "swell task CloneGeosAna $config -d $datetime -m geos_atmosphere"
+        script = "swell task CloneGeosAna $config"
 
     [[GenerateObservingSystemRecords]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"

@@ -40,7 +40,7 @@ class RunJediHofxExecutable(taskBase):
         cycle_dir = self.cycle_dir()
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
+        cycle_time = self.cycle_time_dto()
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -91,8 +91,12 @@ class RunJediHofxExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
+        # Set cycle time and observing_system_records_path in jedi_rendering 
+        self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
+        self.jedi_rendering.set_cycle_time(cycle_time)
+
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 observing_system_records_path, cycle_time, jedi_forecast_model)
+                                 jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

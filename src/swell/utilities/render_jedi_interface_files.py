@@ -11,7 +11,7 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.sat_db_utils import get_active_channels
+from swell.utilities.get_active_channels import get_active_channels
 
 # --------------------------------------------------------------------------------------------------
 
@@ -29,6 +29,10 @@ class JediConfigRendering():
         # Copy the experiment configuration path
         self.jedi_config_path = os.path.join(experiment_root, experiment_id, 'configuration',
                                              'jedi')
+
+        # Fields needed for get_active_channels
+        self.cycle_time = None
+        self.observing_system_records_path = None
 
         # Dictionary to hold things that can be templated
         self.__template_dict__ = {}
@@ -152,8 +156,23 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
+    def set_observing_system_records_path(self, path):
+        self.observing_system_records_path = path
+
+    # ----------------------------------------------------------------------------------------------
+
+    def set_cycle_time(self, cycle_time):
+        self.cycle_time = cycle_time
+
+    # ----------------------------------------------------------------------------------------------
+
     # Prepare path to interface observations file and call rendering
-    def render_interface_observations(self, config_name, path_to_observing_sys_yamls, cycle_time):
+    def render_interface_observations(self, config_name):
+
+        # Check that observing_system_records_path and cycle_time are set
+        self.logger.assert_abort(self.cycle_time is None, f'cycle_time must be set.')
+        self.logger.assert_abort(self.observing_system_records_path is None, 
+                                 f'observing_system_records_path must be set.')
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -164,33 +183,21 @@ class JediConfigRendering():
         config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
                                    'observations', f'{config_name}.yaml')
 
-        # Get active channels
-        active_channels = get_active_channels(path_to_observing_sys_yamls,
-                                              config_name, cycle_time)
+        # If yaml is ufo_tests, skip get_active_channels
+        if config_name != 'ufo_tests':
 
-        # Add active channels to template dictionary
-        self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+            # Get active channels
+            active_channels = get_active_channels(self.observing_system_records_path,
+                                                  config_name, self.cycle_time)
 
-        # Render templates in file and return dictionary
-        return self.__open_file_render_to_dict__(config_file)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def render_interface_ufo_test(self):
-        config_name = f'ufo_tests'
-        # Assert that there is a jedi interface associated with the task
-        self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
-                                 f'jedi interface config file the task must have an associated' +
-                                 f'jedi interface.')
-
-        # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
-                                   'observations', f'{config_name}.yaml')
+            # Add active channels to template dictionary
+            self.__template_dict__[f'{config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
 
     # ----------------------------------------------------------------------------------------------
+
 
     # Prepare path to interface metadata file and call rendering
     def render_interface_meta(self, model_component_in=None):

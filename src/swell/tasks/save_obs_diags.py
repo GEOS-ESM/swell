@@ -32,7 +32,11 @@ class SaveObsDiags(taskBase):
         cycle_dir = self.cycle_dir()
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = os.path.normpath(cycle_dir).split('/')[-2]
+        cycle_time = self.cycle_time_dto()
+
+       # Set cycle time and observing_system_records_path in jedi_rendering 
+        self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
+        self.jedi_rendering.set_cycle_time(cycle_time)
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -49,11 +53,7 @@ class SaveObsDiags(taskBase):
         for observation in observations:
 
             # Load the observation dictionary
-            observation_dict = self.jedi_rendering.render_interface_observations(
-                observation,
-                observing_system_records_path,
-                cycle_time
-            )
+            observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Store observation files
             # -----------------------

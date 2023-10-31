@@ -1,4 +1,4 @@
-from swell.utilities.sat_db_utils import get_active_channels
+from swell.utilities.get_active_channels import get_active_channels
 
 use_flags = [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, -1]
 

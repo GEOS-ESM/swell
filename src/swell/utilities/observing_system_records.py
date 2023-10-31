@@ -3,16 +3,82 @@ import yaml
 import pandas as pd
 import numpy as np
 import datetime as dt
-from swell.utilities.sat_db_utils import read_sat_db
-from swell.utilities.instr_state_machine import InstrStateMachine
+from swell.utilities.gsi_record_parser import GSIRecordParser
 
+# --------------------------------------------------------------------------------------------------
 
 def format_date(old_date):
+
+    ''' Formatting date into expected template '''
+
     date = dt.datetime.strptime(old_date, '%Y%m%d%H%M%S')
     return date.isoformat()
 
+# --------------------------------------------------------------------------------------------------
+
+
+def read_sat_db(path_to_sat_db, column_names):
+
+    '''
+        Reading GSI observing system records row by row into
+        a pandas dataframe to be used by the gsi_record_parser
+    '''
+
+    filename = path_to_sat_db
+    df = pd.DataFrame(columns=column_names)
+
+    file = open(filename, 'r')
+    lines = file.readlines()
+
+    # Read blindly into an array, throw line away if it starts with # or newline
+    idx = 0
+    for line in lines:
+        line_parts = line.split()
+        if (line_parts):
+
+            if (line_parts[0][0] != '#' and line_parts[0][0] != '\n'):
+                new_row = pd.DataFrame.from_dict({
+                    'sat': [''],
+                    'start': [''],
+                    'end': [''],
+                    'instr': [''],
+                    'channel_num': [0],
+                    'channels': [[]],
+                    'comments': ['']})
+
+                df = pd.concat([df, new_row], ignore_index=True)
+                df['sat'][idx] = line_parts[0]
+                df['start'][idx] = line_parts[1]+line_parts[2]
+                df['end'][idx] = line_parts[3]+line_parts[4]
+                df['instr'][idx] = line_parts[5]
+                df['channel_num'][idx] = line_parts[6]
+
+                comment_present = next((i for i, x in enumerate(line_parts) if x == '#'), None)
+
+                if (comment_present):
+                    channel_list = line_parts[7:comment_present]
+                    comment = line_parts[comment_present:]
+                    comment_str = ' '.join(comment)
+                    # Accounting for no comment
+                    if (len(comment_str) != 1):
+                        df['comments'][idx] = comment_str
+                else:
+                    channel_list = line_parts[7:]
+
+                df['channels'][idx] = channel_list
+                idx += 1
+    return df
+
+# --------------------------------------------------------------------------------------------------
+
 
 class ObservingSystemRecords:
+
+    '''
+        Class handles calls to parse GSI observing system records. Parsed
+        records are saved internally in dataframes and can be outputted into
+        yaml files.
+    '''
 
     def __init__(self):
         self.column_names = ['sat', 'start', 'end',
@@ -24,6 +90,13 @@ class ObservingSystemRecords:
 
     def parse_records(self, path_to_sat_db):
 
+        '''
+            This method reads in the active.tbl and available.tbl files
+            from GEOSAna and loads them into dataframes. These dataframes
+            are parsed using GSIRecordParser to get the final dataframes.
+        '''
+
+        parser = GSIRecordParser()
         channel_types = ['active', 'available']
         for channel_type in channel_types:
             df = pd.DataFrame(columns=self.column_names)
@@ -37,9 +110,8 @@ class ObservingSystemRecords:
 
                 for instr in instr_list:
                     instr_df = sat_df.loc[sat_df['instr'] == instr]
-                    state_machine = InstrStateMachine(instr_df)
-                    state_machine.run()
-                    new_instr_df = state_machine.get_instr_df()
+                    parser.run(instr_df)
+                    new_instr_df = parser.get_instr_df()
                     df = pd.concat([df, new_instr_df], ignore_index=True)
                     if instr+'_'+sat not in self.obs_registry:
                         self.obs_registry.append(instr+'_'+sat)
@@ -49,9 +121,15 @@ class ObservingSystemRecords:
             elif channel_type == 'available':
                 self.available_df = df
             else:
+                # logger assert abort?
                 print('record parsing unavailable for this type')
 
     def save_yamls(self, output_dir, observation_list=None):
+
+        '''
+            Fields are taken from the internal dataframes populated
+            by parse_records and saved to yaml files.
+        '''
 
         if not observation_list:
             observation_list = self.obs_registry
