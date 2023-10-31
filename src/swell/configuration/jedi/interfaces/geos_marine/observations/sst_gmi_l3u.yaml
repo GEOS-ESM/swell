@@ -28,14 +28,11 @@ obs filters:
   where:
   - variable: {name: ObsError/seaSurfaceTemperature}
     minvalue: 0.001
-# Make all MW sst passive for now
-- filter: Domain Check
-  action:
-    name: passivate
-  where:
-  - variable: {name: GeoVaLs/sea_area_fraction}
-    maxvalue: 0.9
 - filter: Domain Check
   where:
   - variable: {name: GeoVaLs/distance_from_coast}
     minvalue: 100e3
+- filter: Domain Check
+  where:
+  - variable: { name: GeoVaLs/sea_ice_area_fraction}
+    maxvalue: 0.00001
