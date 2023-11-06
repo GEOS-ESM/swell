@@ -170,8 +170,8 @@ class JediConfigRendering():
     def render_interface_observations(self, config_name):
 
         # Check that observing_system_records_path and cycle_time are set
-        self.logger.assert_abort(self.cycle_time is None, f'cycle_time must be set.')
-        self.logger.assert_abort(self.observing_system_records_path is None, 
+        self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
+        self.logger.assert_abort(self.observing_system_records_path is not None,
                                  f'observing_system_records_path must be set.')
 
         # Assert that there is a jedi interface associated with the task
@@ -198,8 +198,8 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
-
     # Prepare path to interface metadata file and call rendering
+
     def render_interface_meta(self, model_component_in=None):
 
         # Optionally open a different model interface

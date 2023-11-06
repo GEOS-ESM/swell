@@ -7,6 +7,7 @@ from swell.utilities.gsi_record_parser import GSIRecordParser
 
 # --------------------------------------------------------------------------------------------------
 
+
 def format_date(old_date):
 
     ''' Formatting date into expected template '''

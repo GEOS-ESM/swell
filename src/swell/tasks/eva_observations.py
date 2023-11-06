@@ -90,7 +90,7 @@ class EvaObservations(taskBase):
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         cycle_time = self.cycle_time_dto()
 
-        # Set cycle time and observing_system_records_path in jedi_rendering 
+        # Set cycle time and observing_system_records_path in jedi_rendering
         self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
         self.jedi_rendering.set_cycle_time(cycle_time)
 

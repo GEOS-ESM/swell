@@ -851,8 +851,6 @@ window_type:
 observing_system_records_gsi_path:
   ask_question: false
   default_value: None
-  models:
-  - all
   prompt: What is the path to the observing system records ?
   tasks:
   - GenerateObservingSystemRecords

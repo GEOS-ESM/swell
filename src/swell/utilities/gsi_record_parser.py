@@ -33,7 +33,7 @@ class GSIRecordParser:
 
     def __init__(self):
 
-        ''' 
+        '''
             This class employs a state machine algorithm to process raw data from GSI
             .tbl files. The different states work together to parse through an initial
             dataframe. The rows of the resulting dataframe correspond to clean entries
