@@ -598,7 +598,6 @@ observations:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
-  - GenerateObservingSystemRecords
   type: string-check-list
 
 observing_system_records_gsi_path:
@@ -606,8 +605,8 @@ observing_system_records_gsi_path:
   default_value: None
   prompt: What is the path to the observing system records?
   tasks:
-  - GenerateObservingSystemRecords
   - CloneGeosAna
+  - GenerateObservingSystemRecords
   type: string
 
 observing_system_records_path:
@@ -617,15 +616,16 @@ observing_system_records_path:
   - all
   prompt: What is the path to the observing system records?
   tasks:
+  - EvaObservations
   - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
-  - RunJediUfoTestsExecutable
   - RunJediHofxExecutable
-  - RunJediVariationalExecutable
   - RunJediLocalEnsembleDaExecutable
-  - EvaObservations
-  type: string 
+  - RunJediUfoTestsExecutable
+  - RunJediVariationalExecutable
+  - SaveObsDiags
+  type: string
 
 path_to_ensemble:
   ask_question: true
