@@ -588,6 +588,7 @@ observations:
   prompt: Which observations do you want to include?
   tasks:
   - EvaObservations
+  - GenerateObservingSystemRecords
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -599,6 +600,32 @@ observations:
   - SaveObsDiags
   - GenerateObservingSystemRecords
   type: string-check-list
+
+observing_system_records_gsi_path:
+  ask_question: false
+  default_value: None
+  prompt: What is the path to the observing system records?
+  tasks:
+  - GenerateObservingSystemRecords
+  - CloneGeosAna
+  type: string
+
+observing_system_records_path:
+  ask_question: false
+  default_value: None
+  models:
+  - all
+  prompt: What is the path to the observing system records?
+  tasks:
+  - GenerateObservingSystemRecords
+  - GetObservations
+  - GsiBcToIoda
+  - RunJediUfoTestsExecutable
+  - RunJediHofxExecutable
+  - RunJediVariationalExecutable
+  - RunJediLocalEnsembleDaExecutable
+  - EvaObservations
+  type: string 
 
 path_to_ensemble:
   ask_question: true
@@ -848,28 +875,3 @@ window_type:
   - StoreBackground
   type: string-drop-list
 
-observing_system_records_gsi_path:
-  ask_question: false
-  default_value: None
-  prompt: What is the path to the observing system records ?
-  tasks:
-  - GenerateObservingSystemRecords
-  - CloneGeosAna
-  type: string
-
-observing_system_records_path:
-  ask_question: false
-  default_value: None
-  models:
-  - all
-  prompt: What is the path to the observing system records?
-  tasks:
-  - GenerateObservingSystemRecords
-  - GetObservations
-  - GsiBcToIoda
-  - RunJediUfoTestsExecutable
-  - RunJediHofxExecutable
-  - RunJediVariationalExecutable
-  - RunJediLocalEnsembleDaExecutable
-  - EvaObservations
-  type: string
