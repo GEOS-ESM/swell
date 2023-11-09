@@ -47,6 +47,34 @@ obs operator:
      variables:
      - name: specificHumidity
 
+linear obs operator:
+  name: Composite
+  components:
+
+   - name: VertInterp
+     variables:
+     - name: windEastward
+     - name: windNorthward
+     # Use height vertical coordinate first
+     vertical coordinate: geopotential_height
+     observation vertical coordinate group: DerivedVariables
+     observation vertical coordinate: adjustedHeight
+     interpolation method: linear
+     hofx scaling field: SurfaceWindScalingHeight
+     hofx scaling field group: DerivedVariables
+
+   - name: VertInterp
+     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+     variables:
+     - name: airTemperature
+     - name: virtualTemperature
+
+   # Specific humidity and station pressure is using the lowest model level (identity)
+   - name: Identity
+     variables:
+     - name: stationPressure
+     - name: specificHumidity
+
 obs prior filters:
 
 # Apply variable changes needed for rescaled height coordinate
