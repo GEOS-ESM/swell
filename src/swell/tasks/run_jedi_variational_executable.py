@@ -109,7 +109,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
         self.jedi_rendering.set_cycle_time(cycle_time)
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 observing_system_records_path, cycle_time, jedi_forecast_model)
+                                 jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

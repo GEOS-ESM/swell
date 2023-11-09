@@ -39,12 +39,19 @@
             # Stage JEDI static files
             CloneJedi => StageJedi-{{model_component}}
             {% endfor %}
+
+            # Clone geos ana for generating observing system records
+            CloneGeosAna
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
+            # Generate satellite channel records
+            CloneGeosAna[^] => GenerateObservingSystemRecords
+
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
+
             # Task triggers for: {{model_component}}
             # ------------------
             # Get background
@@ -114,7 +121,14 @@
             --partition={{scheduling["BuildJedi"]["partition"]}}
             {% endif %}
 
+    [[CloneGeosAna]]
+        script = "swell task CloneGeosAna $config"
+
+    [[GenerateObservingSystemRecords]]
+        script = "swell task GenerateObservingSystemRecords $config -d $datetime"
+
     {% for model_component in model_components %}
+
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 

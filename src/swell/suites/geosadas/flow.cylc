@@ -31,9 +31,15 @@
 
             # Stage JEDI static files
             CloneJedi => StageJedi
+
+            # Clone geos ana for generating observing system records
+            CloneGeosAna
         """
 
         T00 = """
+            # Generate satellite channel records
+            CloneGeosAna[^] => GenerateObservingSystemRecords
+
             # Get and convert bias correction coefficients
             GetGsiBc => GsiBcToIoda
 
@@ -44,6 +50,7 @@
             GetGeosAdasBackground
 
             # Run Jedi variational executable
+            GenerateObservingSystemRecords => RunJediVariationalExecutable
             BuildJediByLinking[^]  => RunJediVariationalExecutable
             StageJedi[^] => RunJediVariationalExecutable
             GsiBcToIoda => RunJediVariationalExecutable
@@ -69,6 +76,12 @@
 
     # Tasks
     # -----
+    [[CloneGeosAna]]
+        script = "swell task CloneGeosAna $config"
+
+    [[GenerateObservingSystemRecords]]
+        script = "swell task GenerateObservingSystemRecords $config -d $datetime"
+
     [[CloneJedi]]
         script = "swell task CloneJedi $config"
 
