@@ -313,7 +313,7 @@ class GsiNcdiagToIoda(taskBase):
                 # Radiances
                 Diag = gsid.Radiances(gsi_obs_file[0])
                 Diag.read()
-                Diag.toIODAobs(self.cycle_dir(), False, False, False)
+                Diag.toIODAobs(self.cycle_dir(), False, False, False, False)
 
             else:
 
