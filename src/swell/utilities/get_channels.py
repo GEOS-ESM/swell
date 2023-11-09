@@ -51,7 +51,7 @@ def get_channel_list(input_dict, dt_cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
 
     '''
         Comparing available channels and active channels from the observing
@@ -73,7 +73,7 @@ def get_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time)
         active_channels_list = process_channel_lists(active_channels)
         use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
 
-        return use_flags
+        return available_channels_list, use_flags
 
     else:
         return None
