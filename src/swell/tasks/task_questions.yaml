@@ -5,7 +5,8 @@ analysis_forecast_window_offset:
   - all
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - LinkGeosOutput
   - MoveDaRestart
   - PrepareAnalysis
@@ -43,21 +44,23 @@ background_experiment:
   - all
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - StoreBackground
   type: string
 
 background_frequency:
   ask_question: false
   default_value: defer_to_model
-  depends:
-    key: window_type
-    value: 4D
+#  depends:
+#    key: window_type
+#    value: 4D
   models:
   - all
   prompt: What is the frequency of the background files?
   tasks:
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -323,7 +326,8 @@ horizontal_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - RunJediHofxExecutable
   - RunJediLetkfExecutable
   - RunJediVariationalExecutable
@@ -357,9 +361,9 @@ jedi_build_method:
 jedi_forecast_model:
   ask_question: true
   default_value: defer_to_model
-  depends:
-    key: window_type
-    value: 4D
+#   depends:
+#     key: window_type
+#     value: 4D
   models:
   - all
   options: defer_to_model
@@ -587,7 +591,8 @@ window_length:
   - all
   prompt: What is the duration for the data assimilation window?
   tasks:
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - GetGeovals
   - GetGsiBc
   - GetObservations
@@ -608,7 +613,8 @@ window_offset:
   tasks:
   - EvaObservations
   - GenerateBClimatology
-  - GetBackground
+  - GetBackground3d
+  - GetBackground4d
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -621,21 +627,21 @@ window_offset:
   - StoreBackground
   type: iso-duration
 
-window_type:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options:
-  - 3D
-  - 4D
-  prompt: Do you want to use a 3D or 4D (including FGAT) window?
-  tasks:
-  - GenerateBClimatology
-  - GetBackground
-  - RunJediHofxExecutable
-  - RunJediLetkfExecutable
-  - RunJediVariationalExecutable
-  - StoreBackground
-  type: string-drop-list
+# window_type:
+#   ask_question: true
+#   default_value: defer_to_model
+#   models:
+#   - all
+#   options:
+#   - 3D
+#   - 4D
+#   prompt: Do you want to use a 3D or 4D (including FGAT) window?
+#   tasks:
+#   - GenerateBClimatology
+#   - GetBackground
+#   - RunJediHofxExecutable
+#   - RunJediLocalEnsembleDaExecutable
+#   - RunJediVariationalExecutable
+#   - StoreBackground
+#   type: string-drop-list
 

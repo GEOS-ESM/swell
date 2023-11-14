@@ -1,3 +1,10 @@
+window_type:
+  ask_question: True
+  default_value: 3D
+  options: ['3D', '4D']
+  prompt: Do you want to use a 3D or 4D (including FGAT) window?
+  type: string-drop-list
+
 start_cycle_point:
   ask_question: True
   default_value: '2021-12-12T00:00:00Z'

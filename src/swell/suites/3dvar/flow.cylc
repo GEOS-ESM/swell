@@ -48,7 +48,7 @@
             # Task triggers for: {{model_component}}
             # ------------------
             # Get background
-            GetBackground-{{model_component}}
+            GetBackground3d-{{model_component}}
 
             # Get observations
             GetObservations-{{model_component}}
@@ -63,7 +63,7 @@
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackground3d-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
@@ -128,8 +128,8 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[ GetBackground-{{model_component}} ]]
-        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+    [[ GetBackground3d-{{model_component}} ]]
+        script = "swell task GetBackground3d $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
