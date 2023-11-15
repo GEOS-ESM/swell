@@ -18,7 +18,8 @@ from swell.utilities.get_active_channels import get_active_channels
 
 class JediConfigRendering():
 
-    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, jedi_interface=None):
+    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, cycle_time,
+                 jedi_interface=None):
 
         # Keep a copy of the logger
         self.logger = logger
@@ -31,7 +32,7 @@ class JediConfigRendering():
                                              'jedi')
 
         # Fields needed for get_active_channels
-        self.cycle_time = None
+        self.cycle_time = cycle_time
         self.observing_system_records_path = None
 
         # Dictionary to hold things that can be templated
@@ -156,23 +157,19 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_observing_system_records_path(self, path):
-        self.observing_system_records_path = path
+    def set_obs_records_path(self, path):
 
-    # ----------------------------------------------------------------------------------------------
-
-    def set_cycle_time(self, cycle_time):
-        self.cycle_time = cycle_time
+        # Never put a path that is string None in place
+        if path == 'None':
+            self.observing_system_records_path = os.path.join(cycle_dir(),
+                                                             'observing_system_records')
+        else:
+            self.observing_system_records_path = path
 
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface observations file and call rendering
     def render_interface_observations(self, config_name):
-
-        # Check that observing_system_records_path and cycle_time are set
-        self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
-        self.logger.assert_abort(self.observing_system_records_path is not None,
-                                 f'observing_system_records_path must be set.')
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -183,15 +180,21 @@ class JediConfigRendering():
         config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
                                    'observations', f'{config_name}.yaml')
 
-        # If yaml is ufo_tests, skip get_active_channels
-        if config_name != 'ufo_tests':
+        # Check that the self.observing_system_records_path was set
+        if self.observing_system_records_path is not None:
 
-            # Get active channels
-            active_channels = get_active_channels(self.observing_system_records_path,
-                                                  config_name, self.cycle_time)
+            # Check that observing_system_records_path and cycle_time are set
+            self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
 
-            # Add active channels to template dictionary
-            self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+            # Check that the config_name is not ufo_tests
+            if config_name != 'ufo_tests':
+
+                # Get active channels
+                active_channels = get_active_channels(self.observing_system_records_path,
+                                                      config_name, self.cycle_time)
+
+                # Add active channels to template dictionary
+                self.__template_dict__[f'{config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

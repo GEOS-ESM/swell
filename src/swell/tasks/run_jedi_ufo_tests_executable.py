@@ -38,15 +38,9 @@ class RunJediUfoTestsExecutable(taskBase):
         observations = self.config.observations()
         single_observations = self.config.single_observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        observing_system_records_path = self.config.observing_system_records_path()
-        cycle_dir = self.cycle_dir()
-        if observing_system_records_path == 'None':
-            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = self.cycle_time_dto()
 
-        # Set cycle time and observing_system_records_path in jedi_rendering
-        self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
-        self.jedi_rendering.set_cycle_time(cycle_time)
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_offset)

@@ -31,11 +31,6 @@ class GsiBcToIoda(taskBase):
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        observing_system_records_path = self.config.observing_system_records_path()
-        cycle_dir = self.cycle_dir()
-        if observing_system_records_path == 'None':
-            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = self.cycle_time_dto()
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_offset)
@@ -53,9 +48,8 @@ class GsiBcToIoda(taskBase):
         sensors_satbias = []
         sensors_tlapse = []
 
-        # Set cycle time and observing_system_records_path in jedi_rendering
-        self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
-        self.jedi_rendering.set_cycle_time(cycle_time)
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         for observation in observations:
 
