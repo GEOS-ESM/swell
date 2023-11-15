@@ -23,6 +23,12 @@ class CloneGeosAna(taskBase):
         Generate the satellite channel record from GEOSadas files
         """
 
+        # This task should only execute for geos_atmosphere
+        # -------------------------------------------------
+        if self.get_model() != 'geos_atmosphere':
+            self.logger.info('Skipping GenerateObservingSystemRecords for: ' + self.get_model())
+            return
+
         # Parse config
         # ------------
         path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()

@@ -80,7 +80,7 @@
         script = "swell task CloneGeosAna $config"
 
     [[GenerateObservingSystemRecords]]
-        script = "swell task GenerateObservingSystemRecords $config -d $datetime"
+        script = "swell task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"
 
     [[CloneJedi]]
         script = "swell task CloneJedi $config"

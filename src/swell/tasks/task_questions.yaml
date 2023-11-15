@@ -602,8 +602,10 @@ observations:
 
 observing_system_records_gsi_path:
   ask_question: false
-  default_value: None
-  prompt: What is the path to the observing system records?
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to the GSI formatted observing system records?
   tasks:
   - CloneGeosAna
   - GenerateObservingSystemRecords
@@ -613,8 +615,8 @@ observing_system_records_path:
   ask_question: false
   default_value: None
   models:
-  - all
-  prompt: What is the path to the observing system records?
+  - geos_atmosphere
+  prompt: What is the path to the Swell formatted observing system records?
   tasks:
   - EvaObservations
   - GenerateObservingSystemRecords
