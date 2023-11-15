@@ -62,7 +62,6 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground{{window_type}}
-  - GetBackground3d
   - GetBackground4d
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
