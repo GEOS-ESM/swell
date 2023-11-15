@@ -32,7 +32,9 @@ class JediConfigRendering():
                                              'jedi')
 
         # Fields needed for get_active_channels
-        self.cycle_time = cycle_time.dto()
+        self.cycle_time = None
+        if cycle_time is not None:
+            self.cycle_time = cycle_time.dto()
         self.observing_system_records_path = None
 
         # Dictionary to hold things that can be templated
