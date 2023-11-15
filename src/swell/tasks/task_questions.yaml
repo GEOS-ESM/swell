@@ -5,6 +5,7 @@ analysis_forecast_window_offset:
   - all
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - LinkGeosOutput
@@ -44,6 +45,7 @@ background_experiment:
   - all
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - StoreBackground
@@ -54,11 +56,12 @@ background_frequency:
   default_value: defer_to_model
 #  depends:
 #    key: window_type
-#    value: 4D
+#    value: 4d
   models:
   - all
   prompt: What is the frequency of the background files?
   tasks:
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - RunJediHofxExecutable
@@ -326,6 +329,7 @@ horizontal_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - RunJediHofxExecutable
@@ -363,7 +367,7 @@ jedi_forecast_model:
   default_value: defer_to_model
 #   depends:
 #     key: window_type
-#     value: 4D
+#     value: 4d
   models:
   - all
   options: defer_to_model
@@ -591,6 +595,7 @@ window_length:
   - all
   prompt: What is the duration for the data assimilation window?
   tasks:
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - GetGeovals
@@ -613,6 +618,7 @@ window_offset:
   tasks:
   - EvaObservations
   - GenerateBClimatology
+  - GetBackground{{window_type}}
   - GetBackground3d
   - GetBackground4d
   - GetGeovals

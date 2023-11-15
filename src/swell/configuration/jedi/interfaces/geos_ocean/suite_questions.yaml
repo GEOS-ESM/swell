@@ -3,5 +3,4 @@ cycle_times:
   options: ['T00', 'T12']
 
 window_type:
-  default_value: '3D'
-  options: ['3D']
+  default_value: '3d'
