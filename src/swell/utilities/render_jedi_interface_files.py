@@ -161,8 +161,8 @@ class JediConfigRendering():
 
         # Never put a path that is string None in place
         if path == 'None':
-            self.observing_system_records_path = os.path.join(cycle_dir(),
-                                                             'observing_system_records')
+            cd = self.cycle_dir
+            self.observing_system_records_path = os.path.join(cd, 'observing_system_records')
         else:
             self.observing_system_records_path = path
 
