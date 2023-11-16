@@ -12,7 +12,7 @@ from swell.tasks.base.task_base import taskBase
 
 import isodate
 import os
-#from r2d2 import fetch
+from r2d2 import fetch
 
 
 # --------------------------------------------------------------------------------------------------
@@ -98,30 +98,18 @@ class GetBackground3d(taskBase):
             # ---------------------------------------------------
             target_file = background_time.strftime(target_file_template)
 
-            args = {'data': str(forecast_start_time),          
-                    'target_file': str(target_file),                           
-                    'model': str(r2d2_model_dict[model_component]),            
-                    'file_type': str(file_type),                               
-                    'fc_date_rendering': 'analysis',                           
-                    'step': str(bkg_step),                                     
-                    'resolution': str(horizontal_resolution),                  
-                    'type': 'fc',                                              
-                    'experiment': str(background_experiment)}
+            fetch(
+                date=forecast_start_time,
+                target_file=target_file,
+                model=r2d2_model_dict[model_component],
+                file_type=file_type,
+                fc_date_rendering='analysis',
+                step=bkg_step,
+                resolution=horizontal_resolution,
+                type='fc',
+                experiment=background_experiment)
 
-            print(str(args), '\n')
-
-            # fetch(
-            #     date=forecast_start_time,
-            #     target_file=target_file,
-            #     model=r2d2_model_dict[model_component],
-            #     file_type=file_type,
-            #     fc_date_rendering='analysis',
-            #     step=bkg_step,
-            #     resolution=horizontal_resolution,
-            #     type='fc',
-            #     experiment=background_experiment)
-
-            # # Change permission
-            # os.chmod(target_file, 0o644)
+            # Change permission
+            os.chmod(target_file, 0o644)
 
 # --------------------------------------------------------------------------------------------------
