@@ -26,18 +26,34 @@
         R1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
+	    # Clone GEOS source code
+	    CloneGeos
+
             # Clone JEDI source code
             CloneJedi
+
+	    # Build GEOS source code by linking
+	    CloneGeos => BuildGeosByLinking?
 
             # Build JEDI source code by linking
             CloneJedi => BuildJediByLinking?
 
+	    # If not able to link to build create the build
+	    BuildGeosByLinking:fail? => BuildGeos
+
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
 
+	    # Model cannot run unless GEOS has been built
+	    BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+
             {% for model_component in model_components %}
+
+	    # JEDI cannot run unless it has been built
+	    BuildJediByLinking? | BuildJedi => RunJediLocalEnsembleDaExecutable-{{model_component}}
+
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}}
+            CloneJedi => StageJedi-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% endfor %}
         """
 
@@ -93,6 +109,26 @@
 
     # Tasks
     # -----
+    [[CloneGeos]]
+        script = "swell task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildGeos"]["account"]}}
+            --qos = {{scheduling["BuildGeos"]["qos"]}}
+            --job-name = BuildGeos
+            --nodes={{scheduling["BuildGeos"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
+            {% if scheduling["BuildGeos"]["partition"] %}
+            --partition={{scheduling["BuildGeos"]["partition"]}}
+            {% endif %}
+
     [[CloneJedi]]
         script = "swell task CloneJedi $config"
 
@@ -114,7 +150,23 @@
             --partition={{scheduling["BuildJedi"]["partition"]}}
             {% endif %}
 
+    [[RunGeosExecutable]]
+        script = "swell task RunGeosExecutable $config -d $datetime"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunGeosExecutable"]["account"]}}
+            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
+            --job-name = RunGeosExecutable
+            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunGeosExecutable"]["constraint"]}}
+            {% if scheduling["RunGeosExecutable"]["partition"] %}
+            --partition={{scheduling["RunGeosExecutable"]["partition"]}}
+            {% endif %}
+
     {% for model_component in model_components %}
+
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 
