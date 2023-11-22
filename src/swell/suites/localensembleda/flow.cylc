@@ -144,6 +144,18 @@
 
     [[EvaObservations-{{model_component}}]]
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["EvaObservations"]["account"]}}
+            --qos = {{scheduling["EvaObservations"]["qos"]}}
+            --job-name = EvaObservations
+            --nodes={{scheduling["EvaObservations"]["nodes"]}}
+            --ntasks-per-node={{scheduling["EvaObservations"]["ntasks_per_node"]}}
+            --constraint={{scheduling["EvaObservations"]["constraint"]}}
+            {% if scheduling["EvaObservations"]["partition"] %}
+            --partition={{scheduling["EvaObservations"]["partition"]}}
+            {% endif %}
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
