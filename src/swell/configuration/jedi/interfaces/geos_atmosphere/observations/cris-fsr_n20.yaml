@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.cris-fsr_n20.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &cris-fsr_n20_channels {{cris-fsr_n20_avail_channels}}
+  channels: &cris-fsr_n20_channels {{crisfsr_n20_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -185,7 +185,7 @@ obs post filters:
     channels: *cris-fsr_n20_channels
     options:
       channels: *cris-fsr_n20_channels
-      use_flag: &useflag_cris-fsr_n20 {{cris-fsr_n20_active_channels}}
+      use_flag: &useflag_cris-fsr_n20 {{crisfsr_n20_active_channels}}
       use_flag_clddet: &clddet_cris-fsr_n20 [ 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
                            31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
                            31, 31, 31, 31, 31, 31, 31, 31, 31, 31,

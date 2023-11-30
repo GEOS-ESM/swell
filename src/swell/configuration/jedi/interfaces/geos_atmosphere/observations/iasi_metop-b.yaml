@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.iasi_metop-b.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &iasi_metop-b_channels {{iasi_metop-b_avail_channels}}
+  channels: &iasi_metop-b_channels {{iasi_metopb_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -207,7 +207,7 @@ obs post filters:
     channels: *iasi_metop-b_channels
     options:
       channels: *iasi_metop-b_channels
-      use_flag: &useflag_iasi_metop-b {{iasi_metop-b_active_channels}}
+      use_flag: &useflag_iasi_metop-b {{iasi_metopb_active_channels}}
       use_flag_clddet: &clddet_iasi_metop-b [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

@@ -42,7 +42,7 @@ def create_range_string(avail_list):
         Function converts integer list into string of ranges
     '''
     ranges = []
-    for _, g in groupby(enumerate(avail_list), lambda i_x:i_x[0]-i_x[1]):
+    for _, g in groupby(enumerate(avail_list), lambda i_x: i_x[0]-i_x[1]):
         group = list(map(lambda x: x[1], g))
         if len(group) > 1:
             ranges.append(f'{group[0]}-{group[-1]}')

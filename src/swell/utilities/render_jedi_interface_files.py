@@ -119,6 +119,8 @@ class JediConfigRendering():
         with open(config_file, 'r') as config_file_open:
             config_file_str_templated = config_file_open.read()
 
+        print(self.__template_dict__)
+
         # Fill templates in the configuration file using the config
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
                                                  self.__template_dict__)
@@ -186,14 +188,20 @@ class JediConfigRendering():
         # If yaml is ufo_tests, skip get_active_channels
         if config_name != 'ufo_tests':
 
-
             # Get available and active channels
-            available_channels, active_channels = get_channels(self.observing_system_records_path,
-                                                  config_name, self.cycle_time)
+            result = get_channels(self.observing_system_records_path,
+                                  config_name, self.cycle_time)
+            if result is None:
+                available_channels = active_channels = None
+
+            else:
+                available_channels, active_channels = result
 
             # Add available and active channels to template dictionary
-            self.__template_dict__[f'{config_name}_avail_channels'] = available_channels
-            self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+            # If config_name contains a hyphen, remove for jinja2 templating
+            new_config_name = config_name.replace('-', '')
+            self.__template_dict__[f'{new_config_name}_avail_channels'] = available_channels
+            self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
