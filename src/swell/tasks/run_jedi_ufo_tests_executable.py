@@ -48,6 +48,9 @@ class RunJediUfoTestsExecutable(taskBase):
         self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
         self.jedi_rendering.set_cycle_time(cycle_time)
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         # Compute data assimilation window parameters
         window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
@@ -89,8 +92,8 @@ class RunJediUfoTestsExecutable(taskBase):
         ufo_tests_dict = self.jedi_rendering.render_interface_observations(f'ufo_tests')
         ufo_tests_default = ufo_tests_dict['default']
 
-        # Insert the GeoVaLs section
-        # --------------------------
+        # Remove the LinObsOperatror and Insert the GeoVaLs section
+        # ---------------------------------------------------------
 
         # Loop over the observations
         for index in range(len(observations)):
@@ -112,6 +115,10 @@ class RunJediUfoTestsExecutable(taskBase):
                 geo_va_ls_dict['levels_are_top_down'] = False
 
             jedi_config_dict['observations'][index]['geovals'] = geo_va_ls_dict
+
+            # Check if jedi_config_dict['observations'][index] has linear obs operator and remove
+            if 'linear obs operator' in jedi_config_dict['observations'][index]:
+                del jedi_config_dict['observations'][index]['linear obs operator']
 
         # Copies for each kind of test
         # ----------------------------

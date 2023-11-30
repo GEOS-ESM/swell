@@ -94,6 +94,9 @@ class EvaObservations(taskBase):
         self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
         self.jedi_rendering.set_cycle_time(cycle_time)
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         for observation in self.config.observations():
 
             # Load the observation dictionary

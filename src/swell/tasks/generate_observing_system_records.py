@@ -24,10 +24,17 @@ class GenerateObservingSystemRecords(taskBase):
         Generate the observing system channel records from GEOSadas files
         """
 
+        # This task should only execute for geos_atmosphere
+        # -------------------------------------------------
+        if self.get_model() != 'geos_atmosphere':
+            self.logger.info('Skipping GenerateObservingSystemRecords for: ' + self.get_model())
+            return
+
         # Parse GSI records and save channel selection yamls
         # --------------------------------------------------
         observations = self.config.observations()
-        observing_system_records_path = self.config.observing_system_records_path()
+        observing_system_records_path = self.config.observing_system_records_path(None)
+
         if observing_system_records_path == 'None':
             cycle_dir = self.cycle_dir()
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')

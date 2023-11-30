@@ -43,6 +43,9 @@ class RunJediVariationalExecutable(taskBase):
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         cycle_time = self.cycle_time_dto()
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
 

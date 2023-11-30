@@ -109,7 +109,7 @@
             {% endif %}
 
     [[CloneGeosAna]]
-        script = "swell task CloneGeosAna $config"
+        script = "swell task CloneGeosAna $config -m geos_atmosphere"
 
     [[GenerateObservingSystemRecords]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"

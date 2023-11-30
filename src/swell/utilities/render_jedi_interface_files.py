@@ -13,12 +13,14 @@ import yaml
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
 
+
 # --------------------------------------------------------------------------------------------------
 
 
 class JediConfigRendering():
 
-    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, jedi_interface=None):
+    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, cycle_time,
+                 jedi_interface=None):
 
         # Keep a copy of the logger
         self.logger = logger
@@ -32,6 +34,10 @@ class JediConfigRendering():
 
         # Fields needed for get_active_channels
         self.cycle_time = None
+
+        if cycle_time is not None:
+            self.cycle_time = cycle_time.dto()
+
         self.observing_system_records_path = None
 
         # Dictionary to hold things that can be templated
@@ -157,14 +163,16 @@ class JediConfigRendering():
         return self.__open_file_render_to_dict__(config_file)
 
     # ----------------------------------------------------------------------------------------------
+    
+    
+    def set_obs_records_path(self, path):
 
-    def set_observing_system_records_path(self, path):
-        self.observing_system_records_path = path
-
-    # ----------------------------------------------------------------------------------------------
-
-    def set_cycle_time(self, cycle_time):
-        self.cycle_time = cycle_time
+        # Never put a path that is string None in place
+        if path == 'None':
+            cd = self.cycle_dir
+            self.observing_system_records_path = os.path.join(cd, 'observing_system_records')
+        else:
+            self.observing_system_records_path = path
 
     # ----------------------------------------------------------------------------------------------
 
@@ -185,23 +193,29 @@ class JediConfigRendering():
         config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
                                    'observations', f'{config_name}.yaml')
 
-        # If yaml is ufo_tests, skip get_active_channels
-        if config_name != 'ufo_tests':
+        # Check that the self.observing_system_records_path was set
+        if self.observing_system_records_path is not None:
 
-            # Get available and active channels
-            result = get_channels(self.observing_system_records_path,
-                                  config_name, self.cycle_time)
-            if result is None:
-                available_channels = active_channels = None
+            # Check that observing_system_records_path and cycle_time are set
+            self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
 
-            else:
-                available_channels, active_channels = result
+            # Check that the config_name is not ufo_tests
+            if config_name != 'ufo_tests':
 
-            # Add available and active channels to template dictionary
-            # If config_name contains a hyphen, remove for jinja2 templating
-            new_config_name = config_name.replace('-', '')
-            self.__template_dict__[f'{new_config_name}_avail_channels'] = available_channels
-            self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
+                # Get available and active channels
+                result = get_channels(self.observing_system_records_path,
+                                      config_name, self.cycle_time)
+                if result is None:
+                    available_channels = active_channels = None
+
+                else:
+                    available_channels, active_channels = result
+
+                # Add available and active channels to template dictionary
+                # If config_name contains a hyphen, remove for jinja2 templating
+                new_config_name = config_name.replace('-', '')
+                self.__template_dict__[f'{new_config_name}_avail_channels'] = available_channels
+                self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

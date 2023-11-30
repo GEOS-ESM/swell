@@ -184,6 +184,12 @@ observations:
   - omi_aura
   - ompsnm_npp
 
+observing_system_records_gsi_path:
+  default_value: None
+
+observing_system_records_path:
+  default_value: None
+
 path_to_ensemble:
   default_value: /discover/nobackup/drholdaw/SwellTestData/letk/ensemble/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
 

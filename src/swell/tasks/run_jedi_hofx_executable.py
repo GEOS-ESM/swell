@@ -42,6 +42,9 @@ class RunJediHofxExecutable(taskBase):
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
         cycle_time = self.cycle_time_dto()
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
