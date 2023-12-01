@@ -163,8 +163,7 @@ class JediConfigRendering():
         return self.__open_file_render_to_dict__(config_file)
 
     # ----------------------------------------------------------------------------------------------
-    
-    
+
     def set_obs_records_path(self, path):
 
         # Never put a path that is string None in place
