@@ -1,0 +1,18 @@
+active:
+- begin date: '2005-05-20T18:00:00'
+  channels:
+  - '4'
+  - '5'
+  comments: no comment
+  end date: '2023-09-12T18:00:00'
+- begin date: '2023-09-13T00:00:00'
+  channels: []
+  comments: '# NOAA-18 satellite will be fully transitioned to Parsons'
+  end date: '2100-12-31T18:00:00'
+available:
+- begin date: '2005-05-20T00:00:00'
+  channels:
+  - '3'
+  - '4'
+  - '5'
+  end date: '2999-12-31T18:00:00'
