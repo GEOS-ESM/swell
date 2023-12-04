@@ -35,7 +35,6 @@ class GsiBcToIoda(taskBase):
         cycle_dir = self.cycle_dir()
         if observing_system_records_path == 'None':
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = self.cycle_time_dto()
 
         # Get window beginning time
         window_begin = self.da_window_params.window_begin(window_offset)
