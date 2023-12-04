@@ -42,15 +42,6 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
-        observing_system_records_path = self.config.observing_system_records_path()
-        cycle_dir = self.cycle_dir()
-        if observing_system_records_path == 'None':
-            observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
-        cycle_time = self.cycle_time_dto()
-
-        # Set cycle time and observing_system_records_path in jedi_rendering
-        self.jedi_rendering.set_observing_system_records_path(observing_system_records_path)
-        self.jedi_rendering.set_cycle_time(cycle_time)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))

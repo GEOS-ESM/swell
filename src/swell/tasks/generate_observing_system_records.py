@@ -34,7 +34,6 @@ class GenerateObservingSystemRecords(taskBase):
         # --------------------------------------------------
         observations = self.config.observations()
         observing_system_records_path = self.config.observing_system_records_path(None)
-
         if observing_system_records_path == 'None':
             cycle_dir = self.cycle_dir()
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')

@@ -125,8 +125,6 @@ class JediConfigRendering():
         with open(config_file, 'r') as config_file_open:
             config_file_str_templated = config_file_open.read()
 
-        print(self.__template_dict__)
-
         # Fill templates in the configuration file using the config
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
                                                  self.__template_dict__)
@@ -177,11 +175,6 @@ class JediConfigRendering():
 
     # Prepare path to interface observations file and call rendering
     def render_interface_observations(self, config_name):
-
-        # Check that observing_system_records_path and cycle_time are set
-        self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
-        self.logger.assert_abort(self.observing_system_records_path is not None,
-                                 f'observing_system_records_path must be set.')
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
