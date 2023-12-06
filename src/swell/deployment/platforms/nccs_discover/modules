@@ -31,18 +31,22 @@ PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src/acftbias:$PYTHONPATH
 
-# Load GMAO modules
+# Load GEOS modules
 # -----------------
 module use -a /discover/swdev/gmao_SIteam/modulefiles-SLES12
 module load other/mepo
 
-# Load workflow modules
-# ---------------------
+# Load r2d2 modules
+# -----------------
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
 module load solo/swell-1.0.0
 module load r2d2/swell-1.0.5
-module load eva/1.6.0-spackstack1.4
-module load jedi_bundle/1.0.15-swell
+
+# Load eva and jedi_bundle
+# ------------------------
+module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
+module load eva/1.6.1-spack-stack-dev-20231114
+module load jedi_bundle/1.0.18-spack-stack-dev-20231114
 
 # Set the swell paths
 # -------------------
@@ -54,3 +58,6 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
+
+# Placeholder for the swell path
+# ------------------------------
