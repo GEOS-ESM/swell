@@ -12,13 +12,13 @@ module use /discover/swdev/jcsda/spack-stack/modulefiles
 module load miniconda/3.9.7
 module load ecflow/5.8.4
 module load mysql/8.0.31
-module use /gpfsm/dswdev/jcsda/spack-stack/spack-stack-1.4.0/envs/unified-env/install/modulefiles/Core
+module use /gpfsm/dswdev/jcsda/spack-stack/spack-stack-dev-20231114/envs/unified-env/install/modulefiles/Core
 module load stack-intel/2022.0.1
 module load stack-intel-oneapi-mpi/2021.5.0
-module load stack-python/3.9.7
-module load jedi-fv3-env/unified-dev
-module load ewok-env/unified-dev
-module load soca-env/unified-dev
+module load stack-python/3.10.8
+module load jedi-fv3-env
+module load soca-env
+module load gmao-swell-env/1.0.0
 module unload gsibec crtm
 
 # IODA from experiement JEDI build
@@ -59,5 +59,3 @@ ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
 
-# Placeholder for the swell path
-# ------------------------------
