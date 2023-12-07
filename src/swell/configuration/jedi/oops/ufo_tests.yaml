@@ -1,3 +1,6 @@
-window begin: '{{window_begin_iso}}'
-window end: '{{window_end_iso}}'
+time window:
+  begin: '{{window_begin_iso}}'
+  end: '{{window_end_iso}}'
+  bound to include: begin
+
 observations: SPECIALobservations
