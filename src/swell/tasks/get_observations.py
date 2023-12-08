@@ -8,11 +8,12 @@
 # --------------------------------------------------------------------------------------------------
 
 import isodate
+import numpy as np
 import os
 import sys
 import netCDF4 as nc
 
-from datetime import timedelta
+from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats
 from r2d2 import fetch
@@ -115,12 +116,9 @@ class GetObservations(taskBase):
         # feasible and this helps user to have more flexibility in terms R2D2 structure
         # -----------------------------------------------------------------------
         obs_timesteps = ['T03', 'T09', 'T15', 'T21']
+        obs_window_length = 'PT6H'
 
         obs_list_dto = self.create_obs_time_list(obs_timesteps, window_begin_dto, window_end_dto)
-
-        print(obs_list_dto)
-        print(window_begin)
-        sys.exit()
         # Add to JEDI template rendering dictionary
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
@@ -136,17 +134,23 @@ class GetObservations(taskBase):
 
             # Fetch observation files
             # -----------------------
+            combine_input_files = []
+            # Here, we are fetching
+            for obs_num, obs_time in enumerate(obs_list_dto):
+                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                combine_input_files.append(target_file)
+                fetch(date=obs_window_begin,
+                    target_file=target_file,
+                    provider=obs_provider,
+                    obs_type=observation,
+                    time_window=obs_window_length,
+                    type='ob',
+                    experiment=obs_experiment)
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info(f'Processing observation file {target_file}')
 
-            fetch(date=window_begin,
-                  target_file=target_file,
-                  provider=obs_provider,
-                  obs_type=observation,
-                  time_window=window_length,
-                  type='ob',
-                  experiment=obs_experiment)
-
+            self.read_and_combine(combine_input_files, target_file)
             # Change permission
             os.chmod(target_file, 0o644)
 
@@ -283,6 +287,13 @@ class GetObservations(taskBase):
         subset_list = [dt for dt in obs_time_list if start_date <= dt < end_date]
 
         return subset_list
+    # ----------------------------------------------------------------------------------------------
+
+    # Get the target data from the netcdf file
+    # ----------------------------------------
+    def get_data(self, input_file, group, var_name):
+        with nc.Dataset(input_file, 'r') as ds:
+            return ds[group][var_name][:]
 
     # ----------------------------------------------------------------------------------------------
 
@@ -345,7 +356,7 @@ class GetObservations(taskBase):
                         # Loop over all the files and combine the variable data into a list
                         # ----------------------------------------------------------------
                         for input_file in input_filenames:
-                            list_data.append(get_data(input_file, group_name, var_name))
+                            list_data.append(self.get_data(input_file, group_name, var_name))
 
                         # Concatenate the masked arrays
                         # -----------------------------
