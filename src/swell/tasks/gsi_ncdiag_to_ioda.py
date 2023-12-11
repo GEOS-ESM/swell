@@ -11,9 +11,6 @@
 import copy
 import datetime
 import glob
-import h5py
-import isodate
-import numpy as np
 import os
 import re
 
