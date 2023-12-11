@@ -29,6 +29,9 @@ class SaveObsDiags(taskBase):
         observations = self.config.observations()
         window_offset = self.config.window_offset()
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(window_offset,

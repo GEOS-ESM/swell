@@ -38,6 +38,9 @@ class RunJediVariationalExecutable(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
 

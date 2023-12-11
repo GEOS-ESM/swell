@@ -47,6 +47,10 @@ class GsiBcToIoda(taskBase):
         sensors = []
         sensors_satbias = []
         sensors_tlapse = []
+
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
         for observation in observations:
 
             print('observation', observation)

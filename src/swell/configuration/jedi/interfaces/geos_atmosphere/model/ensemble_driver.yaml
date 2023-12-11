@@ -1,0 +1,4 @@
+save posterior mean: {{local_ensemble_save_posterior_mean}}
+save posterior ensemble: {{local_ensemble_save_posterior_ensemble}}
+save posterior mean increment: {{local_ensemble_save_posterior_mean_increment}}
+save posterior ensemble increments: {{local_ensemble_save_posterior_ensemble_increments}}

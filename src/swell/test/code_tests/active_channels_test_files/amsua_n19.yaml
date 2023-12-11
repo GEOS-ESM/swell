@@ -57,19 +57,7 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/amsua_n19.{{window_begin}}.satbias.nc4'
 
-obs prior filters:
-# Assign obs error
-  - filter: Perform Action
-    filter variables:
-    - name: brightnessTemperature
-      channels: *amsua_n19_available_channels
-    action:
-      name: assign error
-      error parameter vector: &amsua_n19_oberr
-                  [2.500,  2.000,  2.000,  0.550,  0.300,
-                   0.230,  0.230,  0.250,  0.250,  0.350,
-                   0.400,  0.550,  0.800,  5.000,  2.500]
-obs post filters:
+obs filters:
 # Window and surface-sensitive channels check
   - filter: Bounds Check
     filter variables:
@@ -105,6 +93,17 @@ obs post filters:
     maxvalue: 0.0
     action:
       name: reject
+# Assign obs error
+  - filter: Perform Action
+    filter variables:
+    - name: brightnessTemperature
+      channels: *amsua_n19_available_channels
+    action:
+      name: assign error
+      error parameter vector:
+                  [2.500,  2.000,  2.000,  0.550,  0.300,
+                   0.230,  0.230,  0.250,  0.250,  0.350,
+                   0.400,  0.550,  0.800,  5.000,  2.500]
 # Topography check
   - filter: BlackList
     filter variables:
@@ -173,7 +172,10 @@ obs post filters:
           options:
             channels: *amsua_n19_available_channels
             sensor: *Sensor_ID
-        error parameter vector: *amsua_n19_oberr
+        error parameter vector:
+                  [2.500,  2.000,  2.000,  0.550,  0.300,
+                   0.230,  0.230,  0.250,  0.250,  0.350,
+                   0.400,  0.550,  0.800,  5.000,  2.500]
         obserr_bound_max: [4.5, 4.5, 4.5, 2.5, 2.0,
                            2.0, 2.0, 2.0, 2.0, 2.0,
                            2.5, 3.5, 4.5, 4.5, 4.5]
@@ -191,7 +193,9 @@ obs post filters:
         channels: *amsua_n19_available_channels
         use passive_bc: true
         sensor: *Sensor_ID
-        use_flag: &amsua_n19_use_flag {{amsua_n19_active_channels}}
+        use_flag: [-1, -1, -1,  1,  1,
+                    1, -1, -1,  1,  1,
+                    1,  1,  1,  1, -1]
     maxvalue: 1.0e-12
     action:
       name: reject
@@ -206,7 +210,9 @@ obs post filters:
       options:
         channels: *amsua_n19_available_channels
 #       use passive_bc: true
-        use_flag: *amsua_n19_use_flag
+        use_flag: [-1, -1, -1,  1,  1,
+                    1, -1, -1,  1,  1,
+                    1,  1,  1,  1, -1]
     minvalue: 1.0e-12
     action:
       name: reject

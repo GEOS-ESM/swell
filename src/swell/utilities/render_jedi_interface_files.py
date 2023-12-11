@@ -11,34 +11,45 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-
+from swell.utilities.get_active_channels import get_active_channels
 
 # --------------------------------------------------------------------------------------------------
 
+
 class JediConfigRendering():
 
-    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, jedi_interface=None):
+    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, cycle_time,
+                 jedi_interface=None):
 
         # Keep a copy of the logger
         self.logger = logger
+
+        # Keep a copy of the cycle directory
+        self.cycle_dir = cycle_dir
 
         # Copy the experiment configuration path
         self.jedi_config_path = os.path.join(experiment_root, experiment_id, 'configuration',
                                              'jedi')
 
+        # Fields needed for get_active_channels
+        self.cycle_time = None
+        if cycle_time is not None:
+            self.cycle_time = cycle_time.dto()
+        self.observing_system_records_path = None
+
         # Dictionary to hold things that can be templated
-        self.template_dict = {}
+        self.__template_dict__ = {}
 
         # Always store the cycle directory in the dictionary
-        self.template_dict['cycle_dir'] = cycle_dir
+        self.__template_dict__['cycle_dir'] = cycle_dir
 
         # Add the jedi interface to the dictionary
         self.jedi_interface = jedi_interface
-        self.template_dict['model_component'] = jedi_interface
+        self.__template_dict__['model_component'] = jedi_interface
 
         # Add experiment info to dictionary
-        self.template_dict['experiment_id'] = experiment_id
-        self.template_dict['experiment_root'] = experiment_root
+        self.__template_dict__['experiment_id'] = experiment_id
+        self.__template_dict__['experiment_root'] = experiment_root
 
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
@@ -47,10 +58,22 @@ class JediConfigRendering():
             'background_frequency',
             'background_time',
             'crtm_coeff_dir',
+            'ensemble_num_members',
             'gradient_norm_reduction',
+            'horizontal_localization_lengthscale',
+            'horizontal_localization_max_nobs',
+            'horizontal_localization_method',
             'horizontal_resolution',
             'local_background_time',
             'local_background_time_iso',
+            'local_ensemble_inflation_mult',
+            'local_ensemble_inflation_rtpp',
+            'local_ensemble_inflation_rtps',
+            'local_ensemble_save_posterior_ensemble',
+            'local_ensemble_save_posterior_ensemble_increments',
+            'local_ensemble_save_posterior_mean',
+            'local_ensemble_save_posterior_mean_increment',
+            'local_ensemble_solver',
             'minimizer',
             'mom6_iau',
             'gsibec_npx_proc',
@@ -60,6 +83,12 @@ class JediConfigRendering():
             'number_of_iterations',
             'swell_static_files',
             'total_processors',
+            'vertical_localization_apply_log_transform',
+            'vertical_localization_function',
+            'vertical_localization_ioda_vertical_coord',
+            'vertical_localization_ioda_vertical_coord_group',
+            'vertical_localization_lengthscale',
+            'vertical_localization_method',
             'vertical_resolution',
             'window_begin',
             'window_begin_iso',
@@ -78,7 +107,7 @@ class JediConfigRendering():
                                  f'of the valid keys: \'{self.valid_template_keys}\'')
 
         # Add element to dictionary
-        self.template_dict[key] = element
+        self.__template_dict__[key] = element
 
     # ----------------------------------------------------------------------------------------------
 
@@ -95,7 +124,7 @@ class JediConfigRendering():
 
         # Fill templates in the configuration file using the config
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
-                                                 self.template_dict)
+                                                 self.__template_dict__)
 
         # Convert string to dictionary
         return yaml.safe_load(config_file_str)
@@ -130,6 +159,17 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
+    def set_obs_records_path(self, path):
+
+        # Never put a path that is string None in place
+        if path == 'None':
+            cd = self.cycle_dir
+            self.observing_system_records_path = os.path.join(cd, 'observing_system_records')
+        else:
+            self.observing_system_records_path = path
+
+    # ----------------------------------------------------------------------------------------------
+
     # Prepare path to interface observations file and call rendering
     def render_interface_observations(self, config_name):
 
@@ -142,12 +182,29 @@ class JediConfigRendering():
         config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
                                    'observations', f'{config_name}.yaml')
 
+        # Check that the self.observing_system_records_path was set
+        if self.observing_system_records_path is not None:
+
+            # Check that observing_system_records_path and cycle_time are set
+            self.logger.assert_abort(self.cycle_time is not None, f'cycle_time must be set.')
+
+            # Check that the config_name is not ufo_tests
+            if config_name != 'ufo_tests':
+
+                # Get active channels
+                active_channels = get_active_channels(self.observing_system_records_path,
+                                                      config_name, self.cycle_time)
+
+                # Add active channels to template dictionary
+                self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
 
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface metadata file and call rendering
+
     def render_interface_meta(self, model_component_in=None):
 
         # Optionally open a different model interface

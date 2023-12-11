@@ -12,15 +12,15 @@ from datetime import datetime as dt
 
 def check_end_times(end_times):
 
-    # Checks end times for 24 hour strings and converts them to 18
+    ''' Checks end times for 24 hour strings and converts them to 18 '''
 
     new_end_times = []
 
     for end_time in end_times:
-        # note that python datetime does not allow for times with hour = 24
+        # Note that python datetime does not allow for times with hour = 24
         hour = end_time[8:10]
         if (hour == '24'):
-            # subtract 6 hours
+            # Subtract 6 hours
             tmp = int(end_time) - 60000
             new_end_times.append(str(tmp))
         else:
@@ -29,28 +29,52 @@ def check_end_times(end_times):
     return new_end_times
 
 
-class InstrStateMachine:
+class GSIRecordParser:
 
-    def __init__(self, instr_df):
+    def __init__(self):
 
-        # Intakes a dataframe representing the rows for a particular
-        # instrument on a particular satellite.
+        '''
+            This class employs a state machine algorithm to process raw data from GSI
+            .tbl files. The different states work together to parse through an initial
+            dataframe. The rows of the resulting dataframe correspond to clean entries
+            for a given instrument and satellite.
 
+        '''
+
+        self.idx = None
+        self.main_idx = None
+        self.start_times = None
+        self.end_times = None
+        self.instr_df = None
+        self.compare_channels = None
+        self.curr_channel_list = None
+        self.main_channel_list = None
+        self.return_df = None
+
+    def reset(self):
         self.idx = 0
         self.main_idx = 0
         self.start_times = []
         self.end_times = []
-        self.instr_df = instr_df
         self.compare_channels = []
         self.curr_channel_list = []
         self.main_channel_list = []
+
+    def run(self, instr_df):
+
+        '''
+            Effectively state one of the state machine.
+            Generates an ordered list of start times and corresponding
+            end times. Checks the end times and then proceeds to condition one.
+
+            input:
+                instr_df = a dataframe containing raw data for a given satellite and
+                           instrument
+        '''
+
+        self.reset()
+        self.instr_df = instr_df
         self.return_df = pd.DataFrame(columns=list(instr_df.columns.values))
-
-    def run(self):
-
-        # Effectively state one of the state machine.
-        # Generates an ordered list of start times and corresponding
-        # end times. Checks the end times and then proceeds to condition one.
 
         self.start_times = list(np.unique(self.instr_df["start"].values))
         self.start_times.sort(key=int)
@@ -63,8 +87,10 @@ class InstrStateMachine:
 
     def condition_one(self):
 
-        # If there is one row for the date range, go to state 2. Otherwise,
-        # go to state 3.
+        '''
+            If there is one row for the date range, go to state 2. Otherwise,
+            go to state 3.
+        '''
 
         start_time_df = self.instr_df.loc[self.instr_df["start"] == self.start_times[self.idx]]
         n_curr_start_rows = len(start_time_df)
@@ -78,8 +104,10 @@ class InstrStateMachine:
 
     def state_two(self):
 
-        # Update return_df with new row, increment idx, and then go to
-        # condition 4.
+        '''
+            Update return_df with new row, increment idx, and then go to
+            condition 4.
+        '''
 
         row = self.instr_df.loc[self.instr_df["start"] == self.start_times[self.idx]]
         self.update_return_df(row)
@@ -88,12 +116,14 @@ class InstrStateMachine:
 
     def state_three(self):
 
-        # Gather channels for all rows in current datetime. If there are more
-        # than one end time within the rows, set main_start_idx and
-        # main_channels_list, set compare_channels to the current channel list,
-        # update return_df with a new row, increment index,
-        # and then go to condition 2.
-        # Else, go to state 2 with the updated current channel list.
+        '''
+            Gather channels for all rows in current datetime. If there are more
+            than one end time within the rows, set main_start_idx and
+            main_channels_list, set compare_channels to the current channel list,
+            update return_df with a new row, increment index,
+            and then go to condition 2.
+            Else, go to state 2 with the updated current channel list.
+        '''
 
         rows = self.instr_df.loc[self.instr_df["start"] == self.start_times[self.idx]]
         [self.curr_channel_list.extend(i) for i in rows["channels"].values]
@@ -122,10 +152,12 @@ class InstrStateMachine:
 
     def condition_two(self):
 
-        # If curr start/end is in main range, go to condition 3. Otherwise
-        # go to state 2
+        '''
+            If curr start/end is in main range, go to condition 3. Otherwise
+            go to state 2
+        '''
 
-        # return if end of df is reached
+        # Return if end of df is reached
         if (self.idx == len(self.start_times)):
             return
 
@@ -143,23 +175,25 @@ class InstrStateMachine:
 
     def state_four(self):
 
-        # Update current channel list by whether values need to be turned
-        # on or turned off. Then update the return df, increment the index
-        # and go to condition 2.
+        '''
+            Update current channel list by whether values need to be turned
+            on or turned off. Then update the return df, increment the index
+            and go to condition 2.
+        '''
 
         row = self.instr_df.loc[self.instr_df["start"] == self.start_times[self.idx]]
         row_channel_list = row["channels"].values[0]
 
-        # if these are the same, the logic is off
+        # If these are the same, the logic is off
         assert (len(row_channel_list) != len(self.compare_channels))
         self.curr_channel_list = self.main_channel_list
 
         if (len(row_channel_list) > len(self.compare_channels)):
-            # turn on
+            # Turn on
             turn_on = list(set(row_channel_list) - set(self.compare_channels))
             self.curr_channel_list += turn_on
         else:
-            # turn off
+            # Turn off
             turn_off = list(set(self.compare_channels) - set(row_channel_list))
             self.curr_channel_list = [x for x in self.curr_channel_list if x not in turn_off]
 
@@ -170,9 +204,11 @@ class InstrStateMachine:
 
     def condition_four(self):
 
-        # If next date range is right after previous date range, go to
-        # condition one. Otherwise, go to state 6. If there's no next
-        # then return.
+        '''
+            If next date range is right after previous date range, go to
+            condition one. Otherwise, go to state 6. If there's no next
+            then return.
+        '''
 
         assert (self.idx != 0)
         if (self.idx == len(self.start_times)):
@@ -191,8 +227,10 @@ class InstrStateMachine:
 
     def state_six(self):
 
-        # Create new empty date range, update return df with new row, and then
-        # head over to state one. No update to the index.
+        '''
+            Create new empty date range, update return df with new row, and then
+            head over to state one. No update to the index.
+        '''
 
         missing_time = {}
 
@@ -211,43 +249,43 @@ class InstrStateMachine:
 
     def get_instr_df(self):
 
-        # Returns the dataframe that the state machine generated!
+        ''' Returns the dataframe that the state machine generated! '''
 
         return self.return_df
 
     def update_return_df(self, row, no_comment=False,  missing=False, missing_time={}):
 
-        # Updates the return df based on parameters
+        ''' Adding rows to final dataframe that will be returned through get_instr_df '''
 
+        # Updates the return df based on parameters
         if (missing):
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": missing_time['begin_time'],
-               "end": missing_time['end_time'],
-               "instr": row["instr"].values[0],
-               "channel_num": 0,
-               "channels": [],
-               "comments": "missing for this period",
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [missing_time['begin_time']],
+                        'end': [missing_time['end_time']],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [0],
+                        'channels': [[]],
+                        'comments': ['missing for this period']})
 
         elif (no_comment):
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
-               "instr": row["instr"].values[0],
-               "channel_num": len(self.curr_channel_list),
-               "channels": self.curr_channel_list,
-               "comments": ""
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [self.start_times[self.idx]],
+                        'end': [self.end_times[self.idx]],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [len(self.curr_channel_list)],
+                        'channels': [self.curr_channel_list],
+                        'comments': ['']})
 
         else:
-            self.return_df = self.return_df.append({
-               "sat": row["sat"].values[0],
-               "start": self.start_times[self.idx],
-               "end": self.end_times[self.idx],
-               "instr": row["instr"].values[0],
-               "channel_num": len(self.curr_channel_list),
-               "channels": self.curr_channel_list,
-               "comments": row["comments"].values[0],
-             }, ignore_index=True)
+            new_row = pd.DataFrame.from_dict({
+                        'sat': [row["sat"].values[0]],
+                        'start': [self.start_times[self.idx]],
+                        'end': [self.end_times[self.idx]],
+                        'instr': [row['instr'].values[0]],
+                        'channel_num': [len(self.curr_channel_list)],
+                        'channels': [self.curr_channel_list],
+                        'comments': [row["comments"].values[0]]})
+
+        self.return_df = pd.concat([self.return_df, new_row], ignore_index=True)

@@ -130,7 +130,7 @@ class PrepConfigBase(ABC):
 
         if self.prep_using == 'Cli':
             self.logger.info("Please answer the following questions to generate your experiment " +
-                        "configuration YAML file.\n")
+                             "configuration YAML file.\n")
 
         # Set current dictionary variable which is needed for answer changes
         self.current_dictionary = {}

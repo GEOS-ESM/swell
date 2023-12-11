@@ -42,6 +42,29 @@ obs operator:
     geovar_sfc_geomz: surface_geometric_height
     station_altitude: height
 
+linear obs operator:
+  name: Composite
+  components:
+
+  - name: VertInterp
+    variables:
+    - name: windEastward
+    - name: windNorthward
+
+    # Hofx scaling
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
+
+  - name: VertInterp
+    variables:
+    - name: airTemperature
+    - name: virtualTemperature
+    - name: specificHumidity
+
+  - name: Identity
+    variables:
+    - name: stationPressure
+
 obs prior filters:
 
 # Apply variable changes needed for performing wind scaling
