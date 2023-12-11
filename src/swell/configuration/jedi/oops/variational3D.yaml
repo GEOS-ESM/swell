@@ -1,7 +1,9 @@
 cost function:
   cost type: 3D-Var
-  window begin: '{{window_begin_iso}}'
-  window length: '{{window_length}}'
+  time window:
+    begin: '{{window_begin_iso}}'
+    end: '{{window_end_iso}}'
+    bound to include: begin
   geometry:
     TASKFILLgeometry
   analysis variables: {{analysis_variables}}

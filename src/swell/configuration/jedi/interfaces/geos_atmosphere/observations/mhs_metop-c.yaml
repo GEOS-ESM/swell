@@ -19,7 +19,7 @@ obs operator:
   obs options:
     Sensor_ID: &Sensor_ID mhs_metop-c
     EndianType: little_endian
-    CoefficientPath: '{{crtm_coeff_dir}}'
+    CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
     Absorbers: [H2O,O3,CO2]
     Clouds: [Water]
