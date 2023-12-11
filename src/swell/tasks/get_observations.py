@@ -10,7 +10,6 @@
 import isodate
 import numpy as np
 import os
-import sys
 import netCDF4 as nc
 
 from datetime import timedelta, datetime as dt
@@ -30,9 +29,10 @@ class GetObservations(taskBase):
         Acquires observation files for a given experiment and cycle.
 
         To have additional flexibility in terms of R2D2 files, this task combines
-        observation files that are organized under sub-windows.
+        observation files that are organized under sub-windows. Currently, this
+        combination can only handle Location and Channel dimensions.
 
-        First, it needs to find the observation files that encompass the desired
+        First, it finds the observation files that encompass the desired
         time window. For example, if the file time window is 6 hours and the middle
         of the DA window is 9Z, it needs to find the first observation file
         that starts at or before 6Z and the last observation file that ends at or
@@ -52,31 +52,31 @@ class GetObservations(taskBase):
         happen in two ways (examples are given for inputs (PT6H) to output (P1D)
         conversion).
 
-            a) The DA window is perfectly covered by multiple observation files.
+        a) The DA window is perfectly covered by multiple observation files.
 
-                Note for the few people that might actually care about this part:
-                If you are considering using MERRA2 replay with GEOS, this is what
-                you should be aiming for. R2D2 observations times (PT6H) are adjusted
-                for that type of compatibility pertaining model and obs start times.
+            Note for the few people that might actually care about this part:
+            If you are considering using MERRA2 replay with GEOS, this is what
+            you should be aiming for. R2D2 observations times (PT6H) are adjusted
+            for that type of compatibility pertaining model and obs start times.
 
-            inputs:       FILE1          FILE2           FILE3            FILE4
-                    ------------------------------------------------------------------
-                            |              |               |                |
-                           21Z            03Z             09Z              15Z
-                            |              |               |                |
-                    ------------------------------------------------------------------
-            output:                                      FILE1
+        inputs:       FILE1          FILE2           FILE3            FILE4
+                ------------------------------------------------------------------
+                        |              |               |                |
+                       21Z            03Z             09Z              15Z
+                        |              |               |                |
+                ------------------------------------------------------------------
+        output:                                      FILE1
 
-            b) The DA window falls outside of observation file boundaries. There
-            will be extra observations but JEDI can handle that.
+        b) The DA window falls outside of observation file boundaries. There
+        will be extra observations in the combined file but JEDI can handle that.
 
-            inputs:       FILE1           FILE2           FILE3             FILE4           FILE5
-                    ------------------------------------------------------------------------------------
-                            |       !       |               |        !        |               |        !
-                           21Z      !      03Z             09Z      12Z      15Z             21Z       !
-                            |       !       |               |        !        |               |        !
-                    ------------------------------------------------------------------------------------
-            output:                                                FILE1
+        inputs:       FILE1           FILE2           FILE3             FILE4           FILE5
+                ------------------------------------------------------------------------------------
+                        |       !       |               |        !        |               |        !
+                       21Z      !      03Z             09Z      12Z      15Z             21Z       !
+                        |       !       |               |        !        |               |        !
+                ------------------------------------------------------------------------------------
+        output:                                                FILE1
 
         Parameters
         ----------
@@ -105,7 +105,7 @@ class GetObservations(taskBase):
         window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_dto = self.da_window_params.window_begin_iso(window_offset, dto=True)
         window_end_dto = self.da_window_params.window_end_iso(window_offset, window_length,
-                                                                dto=True)
+                                                              dto=True)
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
 
@@ -141,12 +141,12 @@ class GetObservations(taskBase):
                 target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
                 combine_input_files.append(target_file)
                 fetch(date=obs_window_begin,
-                    target_file=target_file,
-                    provider=obs_provider,
-                    obs_type=observation,
-                    time_window=obs_window_length,
-                    type='ob',
-                    experiment=obs_experiment)
+                      target_file=target_file,
+                      provider=obs_provider,
+                      obs_type=observation,
+                      time_window=obs_window_length,
+                      type='ob',
+                      experiment=obs_experiment)
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info(f'Processing observation file {target_file}')
 
@@ -276,7 +276,7 @@ class GetObservations(taskBase):
         # find the latest datetime in obs_time_list that is less than or equal to window_begin_dto
         start_date = max(dt for dt in obs_time_list if dt <= window_begin_dto)
 
-        # find the earliest datetime in obs_time_list that is greater than or equal to window_end_dto
+        # find the earliest datetime in obs_time_list that is greater or equal to window_end_dto
         end_date = min(dt for dt in obs_time_list if dt >= window_end_dto)
 
         # create a list from obs_time_list that falls between start date and end date
@@ -299,9 +299,16 @@ class GetObservations(taskBase):
 
     def read_and_combine(self, input_filenames, output_filename):
         '''
-        Combines multiple netcdf input files into a single output. Combining
-        multiple files require final (total) location dimension size to be
-        calculated before hand.
+        Combines multiple IODA v3 netcdf input files into a single output.
+        Combining multiple files require final (total) location dimension size to be
+        calculated in advance.
+
+        Basically, this function creates an output file that duplicates the first
+        input file's attributes and then fills with appended data from the input files.
+
+        Channel dimension shows up as a second dimension and sometimes as a single
+        dimension. Both cases require special handling and introduces additional
+        exceptions to the code. Final channel dimension size remains the same.
         '''
 
         # Create a new file for writing, remove the file if it already exists
@@ -309,18 +316,22 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
-        # Loop through the input files and get the total dimension size
-        # -------------------------------------------------------------
-        total_dim_size = 0
+
+        # Loop through the input files and get the total dimension size for each dimension
+        # Location requires special handling to get the cumulative sum of the dimension size
+        # ---------------------------------------------------------------------------------
+        out_dim_size = {'Location': 0}
         for input_filename in input_filenames:
             with nc.Dataset(input_filename, 'r') as ds:
                 for dim_name, dim in ds.dimensions.items():
-                    total_dim_size += dim.size
+                    if dim_name == 'Location':
+                        out_dim_size[dim_name] += dim.size
+                    else:
+                        out_dim_size[dim_name] = dim.size
 
         with nc.Dataset(output_filename, 'w') as out_ds:
             # Open the input NetCDF files for reading
             # ---------------------------------------
-
             self.logger.info(f"Combining files {input_filenames} ")
 
             # Create an output file template based on the first input file
@@ -333,7 +344,7 @@ class GetObservations(taskBase):
                 # Create dimensions
                 # -----------------
                 for dim_name, dim in ds.dimensions.items():
-                    out_ds.createDimension(dim_name, total_dim_size)
+                    out_ds.createDimension(dim_name, out_dim_size[dim_name])
 
                 # Loop through groups and process variables
                 # -----------------------------------------
@@ -353,19 +364,29 @@ class GetObservations(taskBase):
                     for var_name in variables_in_group:
                         list_data = []
 
+                        # Get the dimensions of the variable
+                        # ----------------------------------
+                        var_dims = group[var_name].dimensions
+
                         # Loop over all the files and combine the variable data into a list
+                        # Channel dimensions remain the same, so we can break the loop
                         # ----------------------------------------------------------------
                         for input_file in input_filenames:
                             list_data.append(self.get_data(input_file, group_name, var_name))
+                            # Only break if the first dimension is Channel
+                            if var_dims[0] == 'Channel':
+                                break
 
-                        # Concatenate the masked arrays
-                        # -----------------------------
-                        variable_data = np.ma.concatenate(list_data)
+                        # Concatenate the masked arrays along the first dimension
+                        # --------------------------------------------------------
+                        variable_data = np.ma.concatenate(list_data, axis=0)
 
                         # Fill value needs to be assigned while creating variables
                         # --------------------------------------------------------
-                        subset_var = out_group.createVariable(var_name, variable_data.dtype, dim_name,
-                                                            fill_value=group[var_name].getncattr('_FillValue'))
+                        subset_var = out_group.createVariable(var_name,
+                                                              variable_data.dtype,
+                                                              var_dims,
+                                                              fill_value=group[var_name].getncattr('_FillValue'))
                         for attr_name in group[var_name].ncattrs():
                             if(attr_name == '_FillValue'):
                                 continue
