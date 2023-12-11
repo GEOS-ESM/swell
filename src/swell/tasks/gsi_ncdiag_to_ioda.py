@@ -18,8 +18,8 @@ import os
 import re
 
 # Ioda converters
-import gsi_ncdiag.gsi_ncdiag as gsid
-from gsi_ncdiag.combine_obsspace import combine_obsspace
+import pyiodaconv.gsi_ncdiag as gsid
+from pyiodaconv.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats
