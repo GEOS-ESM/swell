@@ -11,15 +11,12 @@
 import copy
 import datetime
 import glob
-import h5py
-import isodate
-import numpy as np
 import os
 import re
 
 # Ioda converters
-import gsi_ncdiag.gsi_ncdiag as gsid
-from gsi_ncdiag.combine_obsspace import combine_obsspace
+import pyiodaconv.gsi_ncdiag as gsid
+from pyiodaconv.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats
@@ -387,24 +384,6 @@ class GsiNcdiagToIoda(taskBase):
 
                 if single_observations and observation in observations:
                     os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_out} {ioda_geoval_out}')
-
-        # Bump the time in the all observation files by 1 second
-        # (because JEDI does not include observations equal to
-        # the beginning of the window, while GSI does). IODA wrote
-        # the files in such a way that h5py needs to be used not
-        # netcdf4 to append the files in place.
-        # -----------------------------------------------------
-        wind_begin = self.cycle_time_dto() - isodate.parse_duration(window_offset)
-        ioda_begin = datetime.datetime(1970, 1, 1)
-        seconds_to_window_begin = (wind_begin - ioda_begin).total_seconds()
-
-        for observation in observations_orig:
-            obs_file = os.path.join(self.cycle_dir(), f'{observation}.{window_begin}.nc4')
-            self.logger.info(f'One second bump for obs at window beg for ({observation})')
-            with h5py.File(obs_file, 'a') as fh:
-                variable = fh['MetaData']['dateTime']
-                window_begin_ind = np.where(variable[:] == seconds_to_window_begin)
-                variable[window_begin_ind] += 1
 
         # Remove left over files
         # ------------------------------

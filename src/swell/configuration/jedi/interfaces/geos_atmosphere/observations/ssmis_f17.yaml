@@ -6,7 +6,7 @@
     obs options:
       Sensor_ID: &Sensor_ID ssmis_f17
       EndianType: little_endian
-      CoefficientPath: '{{crtm_coeff_dir}}'
+      CoefficientPath: '{{crtm_coeff_dir}}/'
   obs space:
     name: *Sensor_ID
     obsdatain:

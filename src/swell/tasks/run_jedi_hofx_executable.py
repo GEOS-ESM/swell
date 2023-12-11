@@ -31,6 +31,7 @@ class RunJediHofxExecutable(taskBase):
         # Parse configuration
         # -------------------
         window_type = self.config.window_type()
+        window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
@@ -49,11 +50,13 @@ class RunJediHofxExecutable(taskBase):
                                                                                     window_type)
         window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
+        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
-        self.jedi_rendering.add_key('window_length', self.config.window_length())
+        self.jedi_rendering.add_key('window_length', window_length)
+        self.jedi_rendering.add_key('window_end_iso', window_end_iso)
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
