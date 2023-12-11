@@ -65,7 +65,7 @@ obs operator:
   obs options:
     Sensor_ID: &Sensor_ID iasi_metop-b
     EndianType: little_endian
-    CoefficientPath: '{{crtm_coeff_dir}}'
+    CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
     Absorbers: [H2O,O3]
 

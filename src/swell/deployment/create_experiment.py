@@ -13,6 +13,7 @@ import datetime
 import importlib
 import os
 import shutil
+import sys
 import yaml
 
 from swell.swell_path import get_swell_path
@@ -278,6 +279,10 @@ def template_modules_file(logger, experiment_dict, exp_suite_path):
         modules_dict['swell_bin_path'] = swell_bin_path
         modules_dict['swell_lib_path'] = swell_lib_path
         modules_dict['swell_sui_path'] = swell_sui_path
+
+        # Determine the python major/minor version and put in template dict
+        # -----------------------------------------------------------------
+        modules_dict['python_majmin'] = f'{sys.version_info.major}.{sys.version_info.minor}'
 
         # Open the file
         # -------------

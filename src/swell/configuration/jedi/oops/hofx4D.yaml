@@ -1,17 +1,21 @@
-# Defines what model components (*.yaml files) will be written in config.
-# For instance, TASKFILLgeometry will utilize soca/model/geometry.yaml
+time window:
+  begin: '{{window_begin_iso}}'
+  end: '{{window_end_iso}}'
+  bound to include: begin
 
-window begin: '{{window_begin_iso}}'
-window length: {{window_length}}
-forecast length: {{window_length}}
 geometry:
   TASKFILLgeometry
-model:
-  SPECIALmodel
+
 initial condition:
   TASKFILLbackground
+
 observations:
   get values:
     TASKFILLgetvalues
   observers:
     SPECIALobservations
+
+model:
+  SPECIALmodel
+
+forecast length: {{window_length}}
