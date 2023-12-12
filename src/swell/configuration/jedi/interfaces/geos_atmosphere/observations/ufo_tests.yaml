@@ -10,7 +10,7 @@ default:
 
 aircraft:
   filter_test:
-    passedBenchmark: 342566
+    passedBenchmark: 341973
 
 airs_aqua:
   filter_test:
@@ -30,7 +30,7 @@ amsua_metop-b:
 
 amsua_metop-c:
   filter_test:
-    passedBenchmark: 91419
+    passedBenchmark: 91408
 
 amsua_n15:
   filter_test:
@@ -38,7 +38,7 @@ amsua_n15:
 
 amsua_n18:
   filter_test:
-    passedBenchmark: 69700
+    passedBenchmark: 69692
 
 amsua_n19:
   filter_test:
@@ -94,7 +94,7 @@ mhs_metop-b:
 
 mhs_metop-c:
   filter_test:
-    passedBenchmark: 29815
+    passedBenchmark: 29812
 
 mhs_n19:
   filter_test:
