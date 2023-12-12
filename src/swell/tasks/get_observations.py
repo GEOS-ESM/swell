@@ -150,7 +150,13 @@ class GetObservations(taskBase):
             target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info(f'Processing observation file {target_file}')
 
-            self.read_and_combine(combine_input_files, target_file)
+            # If obs_list_dto has one member, then just rename the file
+            # ---------------------------------------------------------
+            if len(obs_list_dto) == 1:
+                os.rename(combine_input_files[0], target_file)
+            else:
+                self.read_and_combine(combine_input_files, target_file)
+
             # Change permission
             os.chmod(target_file, 0o644)
 
@@ -337,12 +343,10 @@ class GetObservations(taskBase):
             # Create an output file template based on the first input file
             # ------------------------------------------------------------
             with nc.Dataset(input_filenames[0], 'r') as ds:
-                # Access groups
-                # -------------
+                # Access groups and create dimensions
+                # -----------------------------------
                 input_groups = ds.groups.keys()
 
-                # Create dimensions
-                # -----------------
                 for dim_name, dim in ds.dimensions.items():
                     out_ds.createDimension(dim_name, out_dim_size[dim_name])
 
