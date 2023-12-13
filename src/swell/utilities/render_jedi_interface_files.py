@@ -195,18 +195,13 @@ class JediConfigRendering():
             if config_name != 'ufo_tests':
 
                 # Get available and active channels
-                result = get_channels(self.observing_system_records_path,
-                                      config_name, self.cycle_time)
-                if result is None:
-                    available_channels = active_channels = None
-
-                else:
-                    available_channels, active_channels = result
+                avail_channels, active_channels = get_channels(self.observing_system_records_path,
+                                                               config_name, self.cycle_time)
 
                 # Add available and active channels to template dictionary
                 # If config_name contains a hyphen, remove for jinja2 templating
                 new_config_name = config_name.replace('-', '')
-                self.__template_dict__[f'{new_config_name}_avail_channels'] = available_channels
+                self.__template_dict__[f'{new_config_name}_avail_channels'] = avail_channels
                 self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
