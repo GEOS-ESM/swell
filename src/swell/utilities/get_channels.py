@@ -94,6 +94,6 @@ def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
         return available_range_string, use_flags
 
     else:
-        return None
+        return None, None
 
 # --------------------------------------------------------------------------------------------------
