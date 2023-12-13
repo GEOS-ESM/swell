@@ -9,15 +9,44 @@
 
 
 import os
-
+import netCDF4 as nc
 from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilities.get_channels import num_active_channels
+
+# --------------------------------------------------------------------------------------------------
+
+
+def check_observation(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
+
+    use_observations = False
+
+    # Check if file exists
+    filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
+    if os.path.exists(filename):
+
+        # Open file and check if number of locations is nonzero
+        dataset = nc.Dataset(filename, 'r')
+        locs = dataset.variables['locs']
+        num_locs = locs.shape[0]
+        if num_locs > 0:
+            use_observations = True
+
+        # If CRTM section is present, check for nonzero active channels number
+        if obs_dict['obs operator']['name'] == 'CRTM':
+            num_active = num_active_channels(path_to_observing_sys_yamls, observation, cycle_time)
+            if num_active > 0:
+                use_observations = True
+            else:
+                use_observations = False
+
+    return use_observation
 
 
 # --------------------------------------------------------------------------------------------------
 
 
 def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             jedi_forecast_model=None):
+                             cycle_time, jedi_forecast_model=None):
 
     # Assemble configuration YAML file
     # --------------------------------
@@ -50,7 +79,9 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                     observations = []
                     for ob in obs:
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-                        observations.append(obs_dict)
+                        use_observation = check_observation(ob, obs_dict, cycle_time)
+                        if use_observation:
+                            observations.append(obs_dict)
                     jedi_config_dict[key] = observations
 
                 elif value_special == 'model' and window_type == '4D':

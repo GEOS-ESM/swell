@@ -97,3 +97,19 @@ def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
         return None
 
 # --------------------------------------------------------------------------------------------------
+
+
+def num_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+
+    # Retrieve available and active channels from records yaml
+    path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + \
+        observation + '_channel_info.yaml'
+
+    if os.path.isfile(path_to_observing_sys_config):
+        with open(path_to_observing_sys_config, 'r') as file:
+            data = yaml.safe_load(file)
+            active_channels = get_channel_list(data['active'], dt_cycle_time)
+
+        active_channels_list = process_channel_lists(active_channels)
+
+        return len(active_channels_list)
