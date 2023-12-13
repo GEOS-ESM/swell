@@ -390,9 +390,10 @@ class GetObservations(taskBase):
                         subset_var = out_group.createVariable(var_name,
                                                               variable_data.dtype,
                                                               var_dims,
-                                                              fill_value=group[var_name].getncattr('_FillValue'))
+                                                              fill_value=group[var_name].
+                                                              getncattr('_FillValue'))
                         for attr_name in group[var_name].ncattrs():
-                            if(attr_name == '_FillValue'):
+                            if attr_name == '_FillValue':
                                 continue
                             subset_var.setncattr(attr_name, group[var_name].getncattr(attr_name))
 
