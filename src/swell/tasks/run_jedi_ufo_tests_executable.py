@@ -64,7 +64,7 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations)
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations, self.cycle_time_dto())
 
         # Make modifications needed for testing
         # -------------------------------------

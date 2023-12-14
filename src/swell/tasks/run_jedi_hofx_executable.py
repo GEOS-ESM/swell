@@ -93,7 +93,7 @@ class RunJediHofxExecutable(taskBase):
         # Perform complete template rendering
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 jedi_forecast_model)
+                                 self.cycle_time_dt, jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

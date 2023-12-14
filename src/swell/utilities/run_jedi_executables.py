@@ -18,26 +18,27 @@ from swell.utilities.get_channels import num_active_channels
 
 def check_observation(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
 
-    use_observations = False
+    use_observation = False
 
     # Check if file exists
     filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
+    print(filename)
     if os.path.exists(filename):
 
         # Open file and check if number of locations is nonzero
         dataset = nc.Dataset(filename, 'r')
-        locs = dataset.variables['locs']
-        num_locs = locs.shape[0]
-        if num_locs > 0:
-            use_observations = True
+        locs = dataset.variables['Location']
+        #print(locs)
+        #print(locs.shape[0])
+        #num_locs = locs.shape[0]
+        if locs:
+            use_observation = True
 
         # If CRTM section is present, check for nonzero active channels number
         if obs_dict['obs operator']['name'] == 'CRTM':
             num_active = num_active_channels(path_to_observing_sys_yamls, observation, cycle_time)
-            if num_active > 0:
-                use_observations = True
-            else:
-                use_observations = False
+            if num_active == 0:
+                use_observation = False
 
     return use_observation
 
@@ -79,7 +80,8 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                     observations = []
                     for ob in obs:
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-                        use_observation = check_observation(ob, obs_dict, cycle_time)
+                        use_observation = check_observation(jedi_rendering.path_to_observing_sys_yamls,
+                                                            ob, obs_dict, cycle_time)
                         if use_observation:
                             observations.append(obs_dict)
                     jedi_config_dict[key] = observations
