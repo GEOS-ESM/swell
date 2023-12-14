@@ -1,5 +1,5 @@
-start_cycle_point: '2021-06-21T12:00:00Z'
-final_cycle_point: '2021-06-24T12:00:00Z'
+start_cycle_point: '2021-06-01T12:00:00Z'
+final_cycle_point: '2021-06-02T00:00:00Z'
 jedi_build_method: use_existing
 existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
 existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
@@ -14,8 +14,8 @@ models:
     - T06
     - T12
     - T18
-    window_length: P1D
-    window_offset: PT12H
+    window_length: PT6H
+    window_offset: PT3H
     horizontal_resolution: 72x36
     vertical_resolution: '50'
     total_processors: 6
@@ -38,8 +38,8 @@ models:
     - 10
     obs_provider: gdas_marine
     mom6_iau: True
-    analysis_forecast_window_offset: -PT12H
-    background_time_offset: P1DT12H
+    analysis_forecast_window_offset: -PT3H
+    background_time_offset: PT9H
     clean_patterns:
     - '*.nc4'
     - '*.txt'
