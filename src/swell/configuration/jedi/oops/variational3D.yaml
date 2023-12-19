@@ -26,10 +26,11 @@ variational:
     online diagnostics:
       write increment: true
       increment:
-        datadir: ./
-        date: '{{window_begin_iso}}'
-        exp: {{experiment_id}}
-        type: incr
+        state component:
+          datadir: ./
+          date: '{{window_begin_iso}}'
+          exp: {{experiment_id}}
+          type: incr
 final:
   diagnostics:
     departures: oman
