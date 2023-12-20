@@ -11,7 +11,6 @@ from swell.utilities.gsi_record_parser import GSIRecordParser
 def format_date(old_date):
 
     ''' Formatting date into expected template '''
-
     date = dt.datetime.strptime(old_date, '%Y%m%d%H%M%S')
     return date.isoformat()
 
