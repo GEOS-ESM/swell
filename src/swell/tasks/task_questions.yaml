@@ -141,6 +141,7 @@ ensemble_num_members:
   - geos_atmosphere
   prompt: How many members comprise the ensemble?
   tasks:
+  - RunJediHofxEnsembleExecutable
   - RunJediLocalEnsembleDaExecutable
   type: integer
 
