@@ -40,3 +40,18 @@ models:
     - ssmis_f17
     obs_experiment: x0048v2
     geovals_experiment: x0048v2-geovals
+  geos_ocean:
+    obs_experiment: s2s_v1
+    obs_provider: gdas_marine
+    observations:
+    - adt_3a_egm2008
+    - adt_3b_egm2008
+    - adt_c2_egm2008
+    - adt_j3_egm2008
+    - adt_sa_egm2008
+    - sst_ostia
+    - salt_profile_fnmoc
+    - sss_smos_esa
+    - sst_gmi_l3u
+    - sst_ship_fnmoc
+    - temp_profile_fnmoc
