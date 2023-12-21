@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.atms_n20.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &atms_n20_channels 1-22
+  channels: &atms_n20_channels {{atms_n20_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -196,11 +196,7 @@ obs post filters:
         channels: *atms_n20_channels
         use passive_bc: true
         sensor: *Sensor_ID
-        use_flag: [-1, -1, -1, -1,  1,
-                    1,  1,  1,  1,  1,
-                    1,  1,  1,  1,  1,
-                   -1,  1,  1,  1,  1,
-                    1,  1]
+        use_flag: &atms_n20_use_flag {{atms_n20_active_channels}}
     maxvalue: 1.0e-12
     action:
       name: reject

@@ -1,7 +1,7 @@
 import os
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
-observations = ['amsua_n19']
+observations = ['airs_aqua']
 observing_system_records_path = './yaml_output/'
 
 # Clone GeosAna
