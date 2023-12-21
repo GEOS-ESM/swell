@@ -684,6 +684,17 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
+save_geovals:
+  ask_question: false
+  default_value: false
+  options:
+  - true
+  - false
+  prompt: When running hofx do you want to output the GeoVaLs?
+  tasks:
+  - RunJediHofxExecutable
+  type: boolean
+
 single_observations:
   ask_question: false
   default_value: false
