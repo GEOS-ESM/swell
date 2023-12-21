@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def check_end_time(end_time):
 
     ''' Checks end times for 24 hour strings and converts them to 18 '''
