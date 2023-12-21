@@ -30,3 +30,15 @@ cycle_times:
   - all
   prompt: Enter the cycle times for this model.
   type: string-check-list
+
+window_type:
+  ask_question: False
+  default_value: defer_to_model
+  options: ['3D', '4D']
+  models:
+  - all
+  prompt: Enter the cycle times for this model.
+  type: string-check-list
+  task_determination:
+    GetBackground4d: 4d
+    value:

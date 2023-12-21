@@ -20,6 +20,32 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
+"""
+Preparation of the configuration happens in several steps. Note that the configuration determines
+templates and construction of the flow.cylc file.
+
+1. The user chooses the suite they wish to run.
+
+2. The code then builds a list of suite questions that do not depend on the model. At around the
+   same time the code determines all the tasks within that suite that do not depend on the model
+   component. At that point all these questions are asked using the question client.
+
+3. If there is some dependency on model component(s) in the flow.cylc then the code will ask the
+   user which model components should be included. Then all the suite questions depending on the
+   model will be
+
+3. All the
+"""
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+
+class PrepConfigBase(ABC):
+
+
+
 class PrepConfigBase(ABC):
 
     def __init__(self, logger, dictionary_file, suite, platform, override, advanced):
