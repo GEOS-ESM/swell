@@ -38,6 +38,9 @@
             {% for model_component in model_components %}
             # Stage JEDI static files
             CloneJedi => StageJedi-{{model_component}}
+
+            # Clone geos ana for generating observing system records
+            CloneGeosAna-{{model_component}}
             {% endfor %}
         """
 
@@ -45,8 +48,12 @@
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
+
             # Task triggers for: {{model_component}}
             # ------------------
+            # Generate satellite channel records
+            CloneGeosAna-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
+
             # Get background
             GetBackground-{{model_component}}
 
@@ -62,6 +69,7 @@
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -115,6 +123,13 @@
             {% endif %}
 
     {% for model_component in model_components %}
+
+    [[CloneGeosAna-{{model_component}}]]
+        script = "swell task CloneGeosAna $config -m {{model_component}}"
+
+    [[GenerateObservingSystemRecords-{{model_component}}]]
+        script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
+
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 

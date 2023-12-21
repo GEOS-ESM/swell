@@ -81,9 +81,12 @@ class EvaObservations(taskBase):
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
 
-        # Loop over observations and create dictionaries
-        # ----------------------------------------------
+        # Loop over observations
+        # -------------------
         eva_dicts = []  # Empty list of dictionaries
+
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         for observation in self.config.observations():
 

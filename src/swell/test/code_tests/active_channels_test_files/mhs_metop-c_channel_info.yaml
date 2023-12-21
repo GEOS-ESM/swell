@@ -1,0 +1,19 @@
+active:
+- begin date: '2019-09-17T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  comments: '# active for parallel testing'
+  end date: '2100-12-31T18:00:00'
+available:
+- begin date: '2019-09-17T00:00:00'
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  end date: '2100-12-31T18:00:00'

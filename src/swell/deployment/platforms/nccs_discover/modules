@@ -12,37 +12,40 @@ module use /discover/swdev/jcsda/spack-stack/modulefiles
 module load miniconda/3.9.7
 module load ecflow/5.8.4
 module load mysql/8.0.31
-module use /gpfsm/dswdev/jcsda/spack-stack/spack-stack-1.4.0/envs/unified-env/install/modulefiles/Core
+module use /gpfsm/dswdev/jcsda/spack-stack/spack-stack-dev-20231114/envs/unified-env/install/modulefiles/Core
 module load stack-intel/2022.0.1
 module load stack-intel-oneapi-mpi/2021.5.0
-module load stack-python/3.9.7
-module load jedi-fv3-env/unified-dev
-module load ewok-env/unified-dev
-module load soca-env/unified-dev
+module load stack-python/3.10.8
+module load jedi-fv3-env
+module load soca-env
+module load gmao-swell-env/1.0.0
 module unload gsibec crtm
 
-# IODA from experiement JEDI build
-# --------------------------------
-PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9:$PYTHONPATH
-PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python3.9/pyioda:$PYTHONPATH
+# JEDI Python Path
+# ----------------
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python{{python_majmin}}:$PYTHONPATH
 
-# IODA-Converters from experiement JEDI source
-# --------------------------------------------
-PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src:$PYTHONPATH
+# Aircraft Bias Python Path
+# -------------------------
 PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src/acftbias:$PYTHONPATH
 
-# Load GMAO modules
+# Load GEOS modules
 # -----------------
 module use -a /discover/swdev/gmao_SIteam/modulefiles-SLES12
 module load other/mepo
 
-# Load workflow modules
-# ---------------------
+# Load r2d2 modules
+# -----------------
 module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
 module load solo/swell-1.0.0
+module load py-boto3
 module load r2d2/swell-1.0.5
-module load eva/1.6.0-spackstack1.4
-module load jedi_bundle/1.0.15-swell
+
+# Load eva and jedi_bundle
+# ------------------------
+module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
+module load eva/1.6.1-spack-stack-dev-20231114
+module load jedi_bundle/1.0.18-spack-stack-dev-20231114
 
 # Set the swell paths
 # -------------------
@@ -54,3 +57,4 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
+

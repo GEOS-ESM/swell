@@ -31,12 +31,16 @@ class RunJediVariationalExecutable(taskBase):
         # Parse configuration
         # -------------------
         window_type = self.config.window_type()
+        window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         number_of_iterations = self.config.number_of_iterations()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
@@ -50,11 +54,13 @@ class RunJediVariationalExecutable(taskBase):
                                                                                     window_type)
         window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
+        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
-        self.jedi_rendering.add_key('window_length', self.config.window_length())
+        self.jedi_rendering.add_key('window_end_iso', window_end_iso)
+        self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
