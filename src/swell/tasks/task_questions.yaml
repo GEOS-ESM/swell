@@ -191,7 +191,7 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: P1D
+  default_value: PT12H
   models:
   - all
   prompt: GEOS forecast duration
