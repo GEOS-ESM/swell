@@ -11,7 +11,6 @@
 import glob
 import os
 import yaml
-import xarray as xr
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
