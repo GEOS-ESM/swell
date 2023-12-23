@@ -20,7 +20,7 @@ from questionary import Choice
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepConfigCli:
+class GetAnswerCli:
 
     def get_answer(self, key, val):
         # Set questionary variable

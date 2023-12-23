@@ -95,11 +95,8 @@ def create(suite, input_method, platform, override, advanced):
         suite (str): Name of the suite you wish to run. \n
 
     """
-    # First create the configuration for the experiment.
-    experiment_dict_str = prepare_config(suite, input_method, platform, override, advanced)
-
     # Create the experiment directory
-    create_experiment_directory(experiment_dict_str)
+    create_experiment_directory(suite, input_method, platform, override, advanced)
 
 
 # --------------------------------------------------------------------------------------------------

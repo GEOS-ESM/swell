@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepConfigDefaults:
+class GetAnswerDefaults:
 
     def get_answer(self, key, val):
         return val['default_value']

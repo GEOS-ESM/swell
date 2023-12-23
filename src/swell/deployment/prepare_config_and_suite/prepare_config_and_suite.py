@@ -13,8 +13,8 @@ import os
 import yaml
 
 from swell.swell_path import get_swell_path
-from swell.deployment.prepare_config.prep_config_cli import PrepConfigCli
-from swell.deployment.prepare_config.prep_config_cli import PrepConfigDefaults
+from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
+from swell.deployment.prepare_config_and_suite.question_and_answer_defaults import GetAnswerDefaults
 from swell.utilities.jinja2 import template_string_jinja2
 
 
@@ -46,7 +46,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, suite, platform, config_client, override, advanced)
+    def __init__(self, logger, suite, platform, config_client, override, advanced):
 
         # Store local copy of the inputs
         self.logger = logger
@@ -56,13 +56,15 @@ class PrepareExperimentConfigAndSuite:
         self.advanced = advanced
 
         # Assign the client that will take care of providing responses
-        if config_client == 'Cli':
-            self.config_client = PrepConfigCli()
-        elif config_client == 'Defaults':
-            self.config_client = PrepConfigDefaults()
+        if config_client.lower() == 'cli':
+            self.config_client = GetAnswerCli()
+        elif config_client.lower() == 'defaults':
+            self.config_client = GetAnswerDefaults()
 
-        # Big dictionary that contains all user responses
+        # Big dictionary that contains all user responses as well a dictionary containing the
+        # questions that were asked
         self.experiment_dict = {}
+        self.questions_dict = {}
 
         # Get list of all possible models
         self.possible_model_components = os.listdir(os.path.join(get_swell_path(), 'configuration',
@@ -338,7 +340,7 @@ class PrepareExperimentConfigAndSuite:
 
         # 9. Iterate over the model_dep dictionary and ask task questions
         # ---------------------------------------------------------------
-        for model in self.experiment_dict['model_components']
+        for model in self.experiment_dict['model_components']:
 
             # Iterate over the model_dep dictionary and ask questions
             # -------------------------------------------------------
@@ -359,7 +361,7 @@ class PrepareExperimentConfigAndSuite:
 
 
         # Return the main experiment dictionary
-        return self.experiment_dict
+        return self.experiment_dict, self.question_dict, self.suite_str
 
 
     # ----------------------------------------------------------------------------------------------
@@ -393,6 +395,7 @@ class PrepareExperimentConfigAndSuite:
         # Ask the question using the selected client
         if ask_question:
             self.experiment_dict[question_key] = self.config_client.get_answer(question_key, qd)
+            self.question_dict[question_key] = qd['prompt']
 
 
     # ----------------------------------------------------------------------------------------------

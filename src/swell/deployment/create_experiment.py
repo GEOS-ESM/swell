@@ -16,7 +16,8 @@ import shutil
 import sys
 import yaml
 
-from swell.deployment.prepare_config.prep_config_base import PrepConfigBase
+from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
+     PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
@@ -77,18 +78,13 @@ def prepare_config(suite, method, platform, override, advanced):
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
-                        'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
+                                                                method, override, advanced)
 
-    # Call the config prep step
-    # -------------------------
-    prep_using.execute()
-
-    # Copy the experiment dictionary
-    # ------------------------------
-    experiment_dict = prep_using.experiment_dict
-    comment_dict = prep_using.comment_dict
+    # Ask questions as the suite gets configured
+    # ------------------------------------------
+    experiment_dict, comment_dict, suite_file = \
+        prepare_config_and_suite.ask_questions_and_configure_suite()
 
     # Add the datetime to the dictionary
     # ----------------------------------
@@ -116,17 +112,21 @@ def prepare_config(suite, method, platform, override, advanced):
 
     # Return path to dictionary file
     # ------------------------------
-    return experiment_dict_string_comments
+    return experiment_dict_string_comments, suite_file
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(experiment_dict_str):
+def create_experiment_directory(suite, method, platform, override, advanced):
 
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
+
+    # Call the experiment config and suite generation
+    # ------------------------------------------------
+    experiment_dict_str, suite_file = prepare_config(suite, method, platform, override, advanced)
 
     # Load the string using yaml
     # --------------------------
@@ -154,6 +154,13 @@ def create_experiment_directory(experiment_dict_str):
     # ---------------------------------------------
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
+
+    # Write the suite file to the suite directory
+    # -------------------------------------------
+    with open(os.path.join(exp_suite_path, 'suite.yaml'), 'w') as file:
+        file.write(suite_file)
+
+    exit(0)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
