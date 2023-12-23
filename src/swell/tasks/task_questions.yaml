@@ -684,6 +684,17 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
+r2d2_local_path:
+  ask_question: false
+  default_value: defer_to_platform
+  prompt: What is the path to the R2D2 local directory?
+  tasks:
+  - GetBackground
+  - GetGeovals
+  - GetObservations
+  - StoreBackground
+  type: string
+
 single_observations:
   ask_question: false
   default_value: false

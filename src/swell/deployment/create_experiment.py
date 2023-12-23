@@ -162,25 +162,6 @@ def create_experiment_directory(experiment_dict_str):
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
         copy_eva_files(logger, swell_suite_path, exp_suite_path)
 
-    # Create R2D2 database file
-    # -------------------------
-    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
-    if r2d2_local_path is not None:
-        r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
-
-        # Write R2D2_CONFIG to modules
-        with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
-            module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
-
-        # Open the r2d2 file to dictionary
-        with open(r2d2_conf_path, 'r') as r2d2_file_open:
-            r2d2_file_str = r2d2_file_open.read()
-        r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
-        r2d2_file_str = os.path.expandvars(r2d2_file_str)
-
-        with open(r2d2_conf_path, 'w') as r2d2_file_open:
-            r2d2_file_open.write(r2d2_file_str)
-
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
     template_modules_file(logger, experiment_dict, exp_suite_path)
@@ -237,7 +218,7 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
         swell_lib_path = get_swell_path()
         platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
-        for s in ['modules', 'r2d2_config.yaml']:
+        for s in ['modules']:
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
