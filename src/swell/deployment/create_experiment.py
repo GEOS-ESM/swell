@@ -16,6 +16,7 @@ import shutil
 import sys
 import yaml
 
+from swell.deployment.prepare_config.prep_config_base import PrepConfigBase
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
