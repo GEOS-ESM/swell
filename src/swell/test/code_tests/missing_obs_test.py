@@ -27,6 +27,7 @@ jedi_rendering = JediConfigRendering(logger, experiment_root,
                                      datetime, model)
 jedi_rendering.add_key('window_begin', '20211211T210000Z')
 jedi_rendering.add_key('background_time', '20211211T150000Z')
+jedi_rendering.set_obs_records_path(path_to_observing_sys_yamls)
 
 # Test 1: Observation file does not exist
 # ---------------------------------------
