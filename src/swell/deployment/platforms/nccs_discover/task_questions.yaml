@@ -17,7 +17,7 @@ geos_experiment_directory:
   default_value: 5deg_v11
 
 geos_restarts_directory:
-  default_value: restarts_20210620_000000
+  default_value: restarts_20210601_030000
 
 swell_static_files:
   default_value: /discover/nobackup/drholdaw/SwellStaticFiles
