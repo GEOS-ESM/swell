@@ -111,5 +111,7 @@ def num_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time)
             active_channels = get_channel_list(data['active'], dt_cycle_time)
 
         active_channels_list = process_channel_lists(active_channels)
-
         return len(active_channels_list)
+
+    else:
+        print('path_to_observing_sys_config undefined')
