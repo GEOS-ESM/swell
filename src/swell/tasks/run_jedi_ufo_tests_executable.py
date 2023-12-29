@@ -86,10 +86,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Remove the LinObsOperatror and Insert the GeoVaLs section
         # ---------------------------------------------------------
-
         # Loop over the observations
         for index in range(len(observations)):
-
             # Remove GetValues if present
             if 'get values' in jedi_config_dict['observations'][index]:
                 del jedi_config_dict['observations'][index]['get values']

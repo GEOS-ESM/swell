@@ -74,12 +74,16 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
                 value_special = value.replace('SPECIAL', '')
                 if value_special == 'observations':
                     observations = []
-                    for ob in obs:
+                    obs_list = obs.copy()
+                    for ob in obs_list:
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-                        use_observation = check_obs(jedi_rendering.path_to_observing_sys_yamls,
+                        use_observation = check_obs(jedi_rendering.observing_system_records_path,
                                                     ob, obs_dict, cycle_time)
                         if use_observation:
                             observations.append(obs_dict)
+                        else:
+                            # Remove observation from obs list passed into function
+                            obs.remove(ob)
                     jedi_config_dict[key] = observations
 
                 elif value_special == 'model' and window_type == '4D':
