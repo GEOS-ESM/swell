@@ -1,4 +1,4 @@
-geometry:
+geometry: &geom
   TASKFILLgeometry
 
 background:

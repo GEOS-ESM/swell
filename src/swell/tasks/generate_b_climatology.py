@@ -100,13 +100,17 @@ class GenerateBClimatology(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
-        """Acquires B Matrix files for background error model(s):
+        """ Creates B Matrix files for background error model(s):
 
-            - Bump:
-            Tries fetching existing bump files (contingent upon the number of
-            total processors), creates new ones in 'cycle_dir' otherwise.
+            - BUMP:
+             Creates bump files in 'cycle_dir' that depend upon the number of total 
+             processors and active model components (sea-ice or no sea-ice).
 
-            - TODO GSI:
+            - EXPLICIT_DIFFUSION:
+             Uses the methodology described in Weaver et al. (20xx). This requires
+             creating horizontal (offline) and vertical diffusion (online with irregular
+             frequency) parameter files. With SOCA, implementation, it is also required
+             to have horizontal length scales defined beforehand.
 
         Parameters
         ----------
