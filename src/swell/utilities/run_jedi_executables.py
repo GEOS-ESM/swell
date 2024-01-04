@@ -34,7 +34,7 @@ def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
         if obs_dict['obs operator']['name'] == 'CRTM':
             num_active = num_active_channels(path_to_observing_sys_yamls, observation, cycle_time)
             #if num_active == 0:
-                use_observation = False
+                #use_observation = False
 
     return use_observation
 
