@@ -13,17 +13,28 @@ import jinja2
 # --------------------------------------------------------------------------------------------------
 
 
+class SilentUndefined(jinja2.Undefined):
+    """
+    A custom undefined class that doesn't raise errors and returns empty strings.
+    """
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''
+
+
+# --------------------------------------------------------------------------------------------------
+
+
 def template_string_jinja2(logger, templated_string, dictionary_of_templates,
                            allow_unresolved=False):
 
     # Undefined
     undefined = jinja2.StrictUndefined
     if allow_unresolved:
-        undefined = jinja2.Undefined
+        print('here here')
+        undefined = SilentUndefined
 
     # Load the templated string
-    t = jinja2.Template(templated_string, trim_blocks=True, lstrip_blocks=True,
-                        undefined=undefined)
+    t = jinja2.Template(templated_string, trim_blocks=True, lstrip_blocks=True)
 
     # Render the templates using the dictionary
     string_rendered = t.render(dictionary_of_templates)

@@ -107,6 +107,9 @@ def prepare_config(suite, method, platform, override, advanced):
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
+    print(experiment_dict_string)
+    print(yaml.dump(comment_dict, default_flow_style=False, sort_keys=False))
+
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
                                                                  comment_dict)
 
