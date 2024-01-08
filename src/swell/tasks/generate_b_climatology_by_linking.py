@@ -45,7 +45,7 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Set the destination directory
         # ------------------------------
-        target_path = os.path.join(self.cycle_dir(), 'background_error_model')
+        target_path = os.path.join(self.cycle_dir(), 'bem')
         os.makedirs(target_path, mode=0o777, exist_ok=True)
 
         # Source path base the part that looks like /path/to/static_background_error/
