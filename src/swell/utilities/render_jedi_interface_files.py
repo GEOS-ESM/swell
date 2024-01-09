@@ -11,7 +11,8 @@ import os
 import yaml
 
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.get_active_channels import get_active_channels
+from swell.utilities.get_channels import get_channels
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -33,8 +34,10 @@ class JediConfigRendering():
 
         # Fields needed for get_active_channels
         self.cycle_time = None
+
         if cycle_time is not None:
             self.cycle_time = cycle_time.dto()
+
         self.observing_system_records_path = None
 
         # Dictionary to hold things that can be templated
@@ -191,12 +194,15 @@ class JediConfigRendering():
             # Check that the config_name is not ufo_tests
             if config_name != 'ufo_tests':
 
-                # Get active channels
-                active_channels = get_active_channels(self.observing_system_records_path,
-                                                      config_name, self.cycle_time)
+                # Get available and active channels
+                avail_channels, active_channels = get_channels(self.observing_system_records_path,
+                                                               config_name, self.cycle_time)
 
-                # Add active channels to template dictionary
-                self.__template_dict__[f'{config_name}_active_channels'] = active_channels
+                # Add available and active channels to template dictionary
+                # If config_name contains a hyphen, remove for jinja2 templating
+                new_config_name = config_name.replace('-', '')
+                self.__template_dict__[f'{new_config_name}_avail_channels'] = avail_channels
+                self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

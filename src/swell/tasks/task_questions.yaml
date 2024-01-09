@@ -191,7 +191,7 @@ existing_jedi_source_directory:
 
 forecast_duration:
   ask_question: true
-  default_value: P1D
+  default_value: PT12H
   models:
   - all
   prompt: GEOS forecast duration
@@ -694,6 +694,17 @@ r2d2_local_path:
   - GetObservations
   - StoreBackground
   type: string
+
+save_geovals:
+  ask_question: false
+  default_value: false
+  options:
+  - true
+  - false
+  prompt: When running hofx do you want to output the GeoVaLs?
+  tasks:
+  - RunJediHofxExecutable
+  type: boolean
 
 single_observations:
   ask_question: false

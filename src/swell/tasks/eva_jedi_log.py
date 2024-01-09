@@ -11,7 +11,7 @@
 import os
 import yaml
 
-from eva.eva_base import eva
+from eva.eva_driver import eva
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2

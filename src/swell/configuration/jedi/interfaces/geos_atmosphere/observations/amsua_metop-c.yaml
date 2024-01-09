@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_metop-c.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &amsua_metop-c_available_channels 1-15
+  channels: &amsua_metop-c_available_channels {{amsua_metopc_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -192,9 +192,7 @@ obs post filters:
         channels: *amsua_metop-c_available_channels
         use passive_bc: true
         sensor: *Sensor_ID
-        use_flag: [-1, -1, -1,  1,  1,
-                    1,  1,  1,  1,  1,
-                    1,  1,  1,  1, -1]
+        use_flag: &amsua_metop-c_use_flag {{amsua_metopc_active_channels}}
     maxvalue: 1.0e-12
     action:
       name: reject
@@ -208,9 +206,7 @@ obs post filters:
       channels: *amsua_metop-c_available_channels
       options:
         channels: *amsua_metop-c_available_channels
-        use_flag: [-1, -1, -1,  1,  1,
-                    1,  1,  1,  1,  1,
-                    1,  1,  1,  1, -1]
+        use_flag: *amsua_metop-c_use_flag
     minvalue: 1.0e-12
     action:
       name: reject

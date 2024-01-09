@@ -44,7 +44,6 @@ models:
     - ssmis_f17
     produce_geovals: false
     clean_patterns:
-    - '*.nc4'
     - '*.txt'
     - '*.log'
     - '*.yaml'
