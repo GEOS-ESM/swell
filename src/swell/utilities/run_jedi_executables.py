@@ -11,7 +11,6 @@
 import os
 import netCDF4 as nc
 from swell.utilities.shell_commands import run_track_log_subprocess
-from swell.utilities.get_channels import num_active_channels
 
 # --------------------------------------------------------------------------------------------------
 
