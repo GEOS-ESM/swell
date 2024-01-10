@@ -154,7 +154,7 @@ obs filters:
     inflation factor: 2.0
   where:
   - variable: MetaData/satelliteIdentifier
-    is_in: 269
+    is_in: 267,268,269
 
 # Gross check -- need to do obserror = min(cerrormax,max(cerrormin,obserr)
 # assign JediAdjustObsError/bendingAngle <--- ObsErrorData before changing its Min and Max
