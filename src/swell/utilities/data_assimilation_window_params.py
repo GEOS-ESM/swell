@@ -55,18 +55,24 @@ class DataAssimilationWindowParams():
     def window_begin(self, window_offset):
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
+
         return window_begin_dto.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin_iso(self, window_offset):
+    def window_begin_iso(self, window_offset, dto=False):
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
+
+        # Return datetime object if asked
+        if dto:
+            return window_begin_dto
+
         return window_begin_dto.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_end_iso(self, window_offset, window_length):
+    def window_end_iso(self, window_offset, window_length, dto=False):
 
         # Compute window length duration
         window_length_dur = isodate.parse_duration(window_length)
@@ -76,6 +82,10 @@ class DataAssimilationWindowParams():
 
         # Window end time
         window_end_dto = window_begin_dto + window_length_dur
+
+        # Return datetime object if asked
+        if dto:
+            return window_end_dto
 
         return window_end_dto.strftime(datetime_formats['iso_format'])
 
