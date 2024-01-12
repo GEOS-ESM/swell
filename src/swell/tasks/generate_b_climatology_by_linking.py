@@ -54,7 +54,7 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Set the destination directory
         # ------------------------------
-        target_path = os.path.join(self.cycle_dir(), 'bem')
+        target_path = os.path.join(self.cycle_dir(), 'background_error_model')
         os.makedirs(target_path, mode=0o777, exist_ok=True)
 
         # Source path base the part that looks like /path/to/static_background_error/
@@ -83,7 +83,7 @@ class GenerateBClimatologyByLinking(taskBase):
             vertical_resolution = self.config.vertical_resolution()
             res_path = horizontal_resolution + 'x' + vertical_resolution
 
-            correlation_files = 'vt_' + local_background_time + '.nc'
+            correlation_files = 'vt.' + local_background_time + '.nc'
         else:
             self.logger.abort("Only explicit diffusion is supported")
 

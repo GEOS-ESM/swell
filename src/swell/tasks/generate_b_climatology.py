@@ -6,9 +6,6 @@
 
 # -----------------------------------------------
 import os
-import numpy as np
-import netCDF4 as nc
-from scipy.ndimage import gaussian_filter, distance_transform_edt
 import yaml
 
 from swell.tasks.base.task_base import taskBase
@@ -105,22 +102,23 @@ class GenerateBClimatology(taskBase):
         # -------
         run_track_log_subprocess(self.logger, command)
 
-        return
-
     # ----------------------------------------------------------------------------------------------
 
     def generate_explicit_diffusion(self):
 
-        self.logger.info(' Generating vertical correlation files.')
+        self.logger.info(' Generating files required by EXPLICIT_DIFFUSION.')
         self.obtain_scales()
+        self.parameters_diffusion_vt()
 
     # ----------------------------------------------------------------------------------------------
 
     def obtain_scales(self):
 
-        # This is the copy of calc_scales.py under SOCA/tools to obtain the vertical scale.
+        # This executes calc_scales.py under SOCA/tools to obtain the vertical scale.
         # The output then will be used to generate the vertical correlation files via
         # parameters_diffusion_vt
+        # ----------------------------------------------------------------------------
+        self.logger.info(' Creating the horizontal and vertical scales.')
 
         # Jedi application name
         # ---------------------
@@ -139,11 +137,11 @@ class GenerateBClimatology(taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        mod_file = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'modules')
-
-        # Source JEDI modules and execute calc_scales.py
+        # Source JEDI modules (scipy and numpy dependent) and execute calc_scales.py
         # Could be a generalized function depending on the repeated use of this
         # -----------------------------------------------------------------------
+        mod_file = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'modules')
+
         command = f'source {mod_file} \n' + \
             f'cd {self.cycle_dir()} \n' + \
             f'{self.cycle_dir()}/soca/calc_scales.py {self.cycle_dir()}/calc_scales.yaml'
@@ -151,6 +149,63 @@ class GenerateBClimatology(taskBase):
         # Containerized run of the script
         # -------------------------------
         run_subprocess(self.logger, ['/bin/bash', '-c', command])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def parameters_diffusion_vt(self):
+
+        # This generates the MLD dependent vertical correlation file using the
+        # calculated_scales
+        # ---------------------------------------------------------------------
+
+        # Jedi application name
+        # ---------------------
+        jedi_application = 'parameters_diffusion_vt'
+
+        # Open the JEDI config file and fill initial templates
+        # ----------------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
+
+        # Jedi configuration file
+        # -----------------------
+        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
+
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
+
+        # Perform complete template rendering
+        # -----------------------------------
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering)
+
+        with open(jedi_config_file, 'w') as jedi_config_file_open:
+            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+
+        # Get the JEDI interface metadata
+        # -------------------------------
+        model_component_meta = self.jedi_rendering.render_interface_meta()
+
+        # Jedi executable name
+        # --------------------
+        jedi_executable = model_component_meta['executables']['explicit_diffusion']
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                            'build', 'bin', jedi_executable)
+
+        # Run the JEDI executable
+        # -----------------------
+        self.logger.info('Running '+jedi_executable_path+' with '+str(self.np)+' processors.')
+
+        command = ['mpirun', '-np', str(self.np), jedi_executable_path, jedi_config_file]
+
+        # Move to the cycle directory
+        # ---------------------------
+        os.chdir(self.cycle_dir())
+        if not os.path.exists('background_error_model'):
+            os.mkdir('background_error_model')
+
+        # Execute
+        # -------
+        run_track_log_subprocess(self.logger, command, output_log_file)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -192,12 +247,15 @@ class GenerateBClimatology(taskBase):
 
         # Compute data assimilation window parameters
         # -------------------------------------------
-        self.local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_offset,
                                                                             window_type)
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+                                                                                    window_type)
 
         # Background
         # ----------
-        self.jedi_rendering.add_key('local_background_time', self.local_background_time)
+        self.jedi_rendering.add_key('local_background_time', local_background_time)
+        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         model_component_meta = self.jedi_rendering.render_interface_meta()
         self.jedi_interface = model_component_meta['jedi_interface']

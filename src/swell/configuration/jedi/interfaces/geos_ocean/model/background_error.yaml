@@ -15,12 +15,12 @@ saber central block:
     groups:
     - name: ocn_3d
       horizontal:
-        filename: '{{cycle_dir}}/bem/hz_rossby.nc'
+        filename: 'background_error_model/hz_rossby.nc'
       vertical:
-        filename: '{{cycle_dir}}/bem/vt.{{local_background_time}}.nc'
+        filename: 'background_error_model/vt.{{local_background_time}}.nc'
     - name: ocn_2d
       horizontal:
-        filename: '{{cycle_dir}}/bem/hz_rossby_1p5.nc'
+        filename: 'background_error_model/hz_rossby_1p5.nc'
 
 date: '{{local_background_time_iso}}'
 
