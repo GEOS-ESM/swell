@@ -857,6 +857,7 @@ window_offset:
   tasks:
   - EvaObservations
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - GetGeovals
   - GetObservations
@@ -881,6 +882,7 @@ window_type:
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable

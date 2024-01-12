@@ -17,7 +17,7 @@ saber central block:
       horizontal:
         filename: '{{cycle_dir}}/bem/hz_rossby.nc'
       vertical:
-        filename: '{{cycle_dir}}/bem/vt.nc'
+        filename: '{{cycle_dir}}/bem/vt.{{local_background_time}}.nc'
     - name: ocn_2d
       horizontal:
         filename: '{{cycle_dir}}/bem/hz_rossby_1p5.nc'

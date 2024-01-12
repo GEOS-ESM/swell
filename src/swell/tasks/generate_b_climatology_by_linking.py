@@ -5,8 +5,6 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 # --------------------------------------------------------------------------------------------------
-
-
 import os
 
 from swell.tasks.base.task_base import taskBase
@@ -21,8 +19,19 @@ class GenerateBClimatologyByLinking(taskBase):
     def execute(self):
         """Acquires B Matrix files for background error model(s):
 
-            - Explicit_Diffusion:
-            Tries fetching existing horizontal diffusion files.
+            - EXPLICIT_DIFFUSION:
+
+            For geos_marine, horizontal corr. scales solely depend on the tripolar grid
+            hence they are located in the swell_static_files directory. Meanwhile,
+            vertical corr. scales are MLD dependent. Hence, this task will check
+            for the vertical diffusion files corresponding to the current cycle.
+            If it fails, it will move onto generate these files via the
+            GenerateBClimatology task.
+
+            - BUMP:
+
+            This one is currently not supported. However, it will likely become
+            an option again once higher resolution grid tests are executed.
 
         Parameters
         ----------
@@ -53,13 +62,28 @@ class GenerateBClimatologyByLinking(taskBase):
         source_path_base = os.path.join('jedi', 'interfaces', self.get_model(), 'model',
                                         'static_background_error', background_error_model)
 
+        # Compute data assimilation window parameters to obtain the local background time
+        # -------------------------------------------------------------------------------
+        window_offset = self.config.window_offset()
+        window_type = self.config.window_type()
+        local_background_time = self.da_window_params.local_background_time(window_offset,
+                                                                            window_type)
+
+        # Background
+        # ----------
+        self.jedi_rendering.add_key('local_background_time', local_background_time)
+
         # Model specific part of the path, i.e. anything that goes between the base path above,
         # and the actual files that need to be linked into the directory.
-        # -------------------------------------------------------------------------------------
+        # The name of the correlation file is also defined, which could be useful in the
+        # long run.
+        # ------------------------------------------------------------------------------
         if background_error_model == 'explicit_diffusion':
             horizontal_resolution = self.config.horizontal_resolution()
             vertical_resolution = self.config.vertical_resolution()
             res_path = horizontal_resolution + 'x' + vertical_resolution
+
+            correlation_files = 'vt_' + local_background_time + '.nc'
         else:
             self.logger.abort("Only explicit diffusion is supported")
 
@@ -75,11 +99,11 @@ class GenerateBClimatologyByLinking(taskBase):
         # ------------------------------------------
         if swell_static_files_user is not None:
             source_paths.append(os.path.join(swell_static_files_user, source_path_base,
-                                             res_path))
+                                             res_path, correlation_files))
         # Second, append with centrally controlled path
         # ----------------------------------------------
         source_paths.append(os.path.join(swell_static_files_main, source_path_base,
-                                         res_path))
+                                         res_path, correlation_files))
 
         # First check the users swell static files path
         # ----------------------------------------------
