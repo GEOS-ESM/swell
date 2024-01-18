@@ -58,6 +58,8 @@ class JediConfigRendering():
             'background_frequency',
             'background_time',
             'crtm_coeff_dir',
+            'ensemble_hofx_packets',
+            'ensemble_hofx_strategy',
             'ensemble_num_members',
             'gradient_norm_reduction',
             'horizontal_localization_lengthscale',

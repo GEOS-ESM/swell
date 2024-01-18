@@ -32,6 +32,15 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+ensemble_hofx_packets:
+  default_value: 1
+
+ensemble_hofx_strategy:
+  default_value: serial
+  options:
+  - serial
+  - parallel
+
 ensemble_num_members:
   default_value: 10
 

@@ -134,6 +134,30 @@ crtm_coeff_dir:
   - SaveObsDiags
   type: string
 
+ensemble_hofx_packets:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: How many packets should be used to compute observers for ensemble members?
+    (Ignored if strategy = serial)
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
+  type: integer
+
+ensemble_hofx_strategy:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which strategy should be used to compute observers for ensemble members?
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
+  type: string
+
 ensemble_num_members:
   ask_question: false
   default_value: defer_to_model
