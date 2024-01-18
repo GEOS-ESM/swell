@@ -59,15 +59,15 @@
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
-
+	    {{ensemble_hofx_strategy}}
 	    # Run hofx for ensemble members according to strategy
-	    {% if ensemble_strategy == 'serial' %}
+	    {% if ensemble_hofx_strategy == 'serial' %}
 	    BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediHofxEnsembleExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
             GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
-	    {% elif ensemble_strategy == 'parallel' %}
+	    {% elif ensemble_hofx_strategy == 'parallel' %}
 	    {% for packet in ensemble_packets %}
 	    BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
             StageJedi-{{model_component}}[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
@@ -78,14 +78,11 @@
 	    {% endif %}
 
             # Run Jedi DA executable
-	    {% if ensemble_strategy == 'serial' %}
+	    {% if ensemble_hofx_strategy == 'serial' %}
 	    RunJediHofxEnsembleExecutable-{{model_components}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
-	    {% elif ensemble_strategy == 'parallel' %}
+	    {% elif ensemble_hofx_strategy == 'parallel' %}
 	    {% set packet_hofx_statuses = [] %}
 	    # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
-	    {% for packet in ensemble_packets %}
-	       {% set packet_hofx_statuses = packet_hofx_statuses + [RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}] %}
-	    {% endfor %}
 	    {{ packet_hofx_statuses|join(' & ') }} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 	    {% endif %}
 
@@ -154,13 +151,13 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
-    {% if ensemble_strategy == 'serial' %}
+    {% if ensemble_hofx_strategy == 'serial' %}
     [[RunJediHofxEnsembleExecutable-{{model_component}}]]
         script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}}"
 	platform = {{platform}}
 	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-    {% elif ensemble_strategy == 'parallel' %}
+    {% elif ensemble_hofx_strategy == 'parallel' %}
     {% for packet in ensemble_packets %}
     [[RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}]]
 	script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}} -e {{packet}}"
