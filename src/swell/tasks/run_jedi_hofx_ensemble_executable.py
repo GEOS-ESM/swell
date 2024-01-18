@@ -23,7 +23,23 @@ class RunJediHofxEnsembleExecutable(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self):
-        pass
 
+        # Jedi application name
+        # ---------------------
+        # jedi_application = 'ensemblehofx'
+
+        # Ensemble hofx components
+        ensemble_hofx_packets = self.config.ensemble_hofx_packets()
+        ensemble_hofx_strategy = self.config.ensemble_hofx_strategy()
+        ensemble_num_members = self.config.ensemble_num_members()
+
+        if ensemble_num_numbers%ensemble_hofx_packets != 0:
+            raise ValueError("Number of ensemble packets must evenly divide number of ensemble members!")
+
+        self.jedi_rendering.add_key('ensemble_hofx_packets', ensemble_hofx_packets)
+        self.jedi_rendering.add_key('ensemble_hofx_strategy', ensemble_hofx_strategy)
+        self.jedi_rendering.add_key('ensemble_num_members', ensemble_num_members)
+
+        self.logger.info('Running ensemble hofx strategy %s in %i packets'%(ensemble_hofx_strategy, ensemble_packets))
 
 # --------------------------------------------------------------------------------------------------
