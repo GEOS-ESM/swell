@@ -460,7 +460,7 @@ class PrepGeosRunDir(taskBase):
 
         # Prepend day information
         # -----------------------
-        time_string = f'0000{int(days):02d} ' + time_string
+        time_string = f'0000{int(days):04d} ' + time_string
 
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = time_string

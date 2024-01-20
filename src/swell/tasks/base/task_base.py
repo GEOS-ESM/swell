@@ -88,7 +88,8 @@ class taskBase(ABC):
         # Add JEDI config rendering helper
         # --------------------------------
         self.jedi_rendering = JediConfigRendering(self.logger, self.__experiment_root__,
-                                                  self.__experiment_id__, cycle_dir, self.__model__)
+                                                  self.__experiment_id__, cycle_dir,
+                                                  self.__datetime__, self.__model__)
 
         # Add GEOS utils
         # --------------

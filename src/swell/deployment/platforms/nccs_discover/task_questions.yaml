@@ -1,5 +1,5 @@
 crtm_coeff_dir:
-  default_value: /discover/nobackup/drholdaw/SwellStaticFiles/jedi/crtm_coefficients/2.4/
+  default_value: /discover/nobackup/drholdaw/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
 
 existing_geos_gcm_build_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm/install-Release
@@ -17,7 +17,7 @@ geos_experiment_directory:
   default_value: 5deg_v11
 
 geos_restarts_directory:
-  default_value: restarts_20210620_000000
+  default_value: restarts_20210601_030000
 
 swell_static_files:
   default_value: /discover/nobackup/drholdaw/SwellStaticFiles
