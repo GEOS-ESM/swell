@@ -59,7 +59,7 @@
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
-	    {{ensemble_hofx_strategy}}
+
 	    # Run hofx for ensemble members according to strategy
 	    {% if ensemble_hofx_strategy == 'serial' %}
 	    BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}
