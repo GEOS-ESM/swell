@@ -20,14 +20,17 @@ def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
     use_observation = False
 
     # Check if file exists
+    # --------------------
     filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
     if os.path.exists(filename):
 
-        # Open file and check if number of locations is nonzero
+        # Open file and check if number of location dimension is nonzero
+        # --------------------------------------------------------------
         dataset = nc.Dataset(filename, 'r')
-        locs = dataset.variables['Location']
-        if locs:
-            use_observation = True
+
+        for dim_name, dim in dataset.dimensions.items():
+            if dim_name == 'Location' and dim.size > 0:
+                use_observation = True
 
     return use_observation
 
