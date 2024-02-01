@@ -34,7 +34,8 @@ r2d2_local_path:
 ensemble_hofx_strategy:
   ask_question: True
   default_value: defer_to_model
+  options: defer_to_model
   models:
   - geos_atmosphere
   prompt: Enter hofx strategy.
-  type: string
+  type: string-drop-list
