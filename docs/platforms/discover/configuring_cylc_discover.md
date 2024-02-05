@@ -13,7 +13,7 @@ module use /discover/swdev/jcsda/spack-stack/modulefiles
 module load miniconda/3.9.7
 
 # Load cylc module
-module use -a /discover/nobackup/drholdaw/opt/modulefiles/core/
+module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core/
 module load cylc
 
 # Run cylc command
