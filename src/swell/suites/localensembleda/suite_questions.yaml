@@ -39,3 +39,21 @@ ensemble_hofx_strategy:
   - geos_atmosphere
   prompt: Enter hofx strategy.
   type: string-drop-list
+
+ensemble_hofx_packets:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: Enter number of packets in which ensemble observers should be computed.
+  type: integer
+
+ensemble_num_members:
+  ask_question: False
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: How many members comprise the ensemble?
+  type: integer

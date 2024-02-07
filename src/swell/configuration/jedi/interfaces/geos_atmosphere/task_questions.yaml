@@ -32,12 +32,6 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
-ensemble_hofx_packets:
-  default_value: 1
-
-ensemble_num_members:
-  default_value: 10
-
 geos_background_restart_offset:
   default_value: TODO
 
