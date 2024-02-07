@@ -43,6 +43,8 @@ models:
   geos_ocean:
     obs_experiment: s2s_v1
     obs_provider: gdas_marine
+    horizontal_resolution: 72x36
+    vertical_resolution: '50'
     observations:
     - adt_3a_egm2008
     - adt_3b_egm2008
