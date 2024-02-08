@@ -75,6 +75,7 @@ background_time_offset:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -133,6 +134,39 @@ crtm_coeff_dir:
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string
+
+ensemble_hofx_strategy:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: Enter hofx strategy.
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  type: string-drop-list
+
+ensemble_hofx_packets:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: Enter number of packets in which ensemble observers should be computed.
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  type: integer
+
+ensemble_num_members:
+  ask_question: False
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: How many members comprise the ensemble?
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  type: integer
 
 existing_geos_gcm_build_path:
   ask_question: true
@@ -195,6 +229,7 @@ generate_yaml_and_exit:
   default_value: false
   prompt: Generate JEDI executable YAML and exit?
   tasks:
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -346,6 +381,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -387,6 +423,7 @@ jedi_forecast_model:
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -583,6 +620,7 @@ observations:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -612,6 +650,7 @@ observing_system_records_path:
   - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -802,6 +841,7 @@ vertical_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -820,6 +860,7 @@ window_length:
   - GetGsiBc
   - GetObservations
   - MoveDaRestart
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -841,6 +882,7 @@ window_offset:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -861,6 +903,7 @@ window_type:
   tasks:
   - GenerateBClimatology
   - GetBackground
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable

@@ -22,7 +22,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self, ensemble=False):
 
         # Jedi application name
         # ---------------------
@@ -78,49 +78,52 @@ class RunJediHofxExecutable(taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
-        # Jedi configuration file
-        # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
+        # Proceed for non-ensemble scenarios
+        # ----------------------------------
+        if not ensemble:
+            # Jedi configuration file
+            # -----------------------
+            jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
 
-        # Output log file
-        # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
+            # Output log file
+            # ---------------
+            output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+            # Open the JEDI config file and fill initial templates
+            # ----------------------------------------------------
+            jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
 
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 jedi_forecast_model)
+            # Perform complete template rendering
+            # -----------------------------------
+            jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
+                                     jedi_forecast_model)
 
-        # Write the expanded dictionary to YAML file
-        # ------------------------------------------
-        with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            # Write the expanded dictionary to YAML file
+            # ------------------------------------------
+            with open(jedi_config_file, 'w') as jedi_config_file_open:
+                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Get the JEDI interface metadata
-        # -------------------------------
-        model_component_meta = self.jedi_rendering.render_interface_meta()
+            # Get the JEDI interface metadata
+            # -------------------------------
+            model_component_meta = self.jedi_rendering.render_interface_meta()
 
-        # Compute number of processors
-        # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
+            # Compute number of processors
+            # ----------------------------
+            np = eval(str(model_component_meta['total_processors']))
 
-        # Jedi executable name
-        # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
+            # Jedi executable name
+            # --------------------
+            jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
+                                                jedi_executable)
 
-        # Run the JEDI executable
-        # -----------------------
-        if not generate_yaml_and_exit:
-            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
-        else:
-            self.logger.info('YAML generated, now exiting.')
+            # Run the JEDI executable
+            # -----------------------
+            if not generate_yaml_and_exit:
+                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                               jedi_config_file, output_log_file)
+            else:
+                self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
