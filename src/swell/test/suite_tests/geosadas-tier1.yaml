@@ -1,5 +1,6 @@
 jedi_build_method: use_existing
 bundles: REMOVE
+window_type: 3d
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
@@ -39,7 +40,6 @@ models:
     #- sondes
     - ssmis_f17
     produce_geovals: false
-    window_type: 3D
     gradient_norm_reduction: 1e-6
     number_of_iterations:
     - 5

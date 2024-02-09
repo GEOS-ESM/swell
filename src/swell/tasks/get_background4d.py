@@ -25,11 +25,11 @@ r2d2_model_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
-class GetBackground(taskBase):
+class GetBackground4d(taskBase):
 
     def execute(self):
 
-        """Acquires background files for a given experiment and cycle
+        """Acquires 4D background files for a given experiment and cycle
 
            Parameters
            ----------
@@ -40,6 +40,7 @@ class GetBackground(taskBase):
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
+        #raise ValueError(str(self.config.__model_components__))
 
         # Parse config
         background_experiment = self.config.background_experiment()
@@ -48,11 +49,9 @@ class GetBackground(taskBase):
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
-        window_type = self.config.window_type()
 
         # Get window parameters
-        local_background_time = self.da_window_params.local_background_time(window_offset,
-                                                                            window_type)
+        local_background_time = self.da_window_params.local_background_time(window_offset, "4D")
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
@@ -70,9 +69,8 @@ class GetBackground(taskBase):
         # If the window type is 4D then remove the window offset as first background
         # occurs at the beginning of the window
         # -------------------------------------------------------------------------------
-        if window_type == "4D":
-            window_offset_dur = isodate.parse_duration(window_offset)
-            forecast_duration_for_background = forecast_duration_for_background - window_offset_dur
+        window_offset_dur = isodate.parse_duration(window_offset)
+        forecast_duration_for_background = forecast_duration_for_background - window_offset_dur
 
         # Append the list of backgrounds to get with the first background
         # -----------------------------------------------------------------
@@ -80,28 +78,27 @@ class GetBackground(taskBase):
 
         # If background is provided though files get all backgrounds
         # ----------------------------------------------------------
-        if window_type == "4D":
+        bkg_freq_dur = isodate.parse_duration(background_frequency)
 
-            bkg_freq_dur = isodate.parse_duration(background_frequency)
+        # Check for a sensible frequency
+        # ------------------------------
+        if (window_length_dur/bkg_freq_dur) % 2:
+            self.logger.abort('Window length not divisible by background frequency')
 
-            # Check for a sensible frequency
-            # ------------------------------
-            if (window_length_dur/bkg_freq_dur) % 2:
-                self.logger.abort('Window length not divisible by background frequency')
+        print('self.cycle_time_dto()', self.cycle_time_dto())
+        print('window_offset_dur', window_offset_dur)
 
-            # Loop over window
-            print('self.cycle_time_dto()', self.cycle_time_dto())
-            print('window_offset_dur', window_offset_dur)
+        start_date = self.cycle_time_dto() - window_offset_dur
+        final_date = self.cycle_time_dto() + window_offset_dur
 
-            start_date = self.cycle_time_dto() - window_offset_dur
-            final_date = self.cycle_time_dto() + window_offset_dur
+        loop_date = start_date + bkg_freq_dur
 
-            loop_date = start_date + bkg_freq_dur
-
-            while loop_date <= final_date:
-                duration_in = loop_date - start_date + forecast_duration_for_background
-                bkg_steps.append(isodate.duration_isoformat(duration_in))
-                loop_date += bkg_freq_dur
+        # Loop over window
+        # ----------------
+        while loop_date <= final_date:
+            duration_in = loop_date - start_date + forecast_duration_for_background
+            bkg_steps.append(isodate.duration_isoformat(duration_in))
+            loop_date += bkg_freq_dur
 
         # Get the forecast start time
         # ---------------------------

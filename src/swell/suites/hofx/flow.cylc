@@ -55,7 +55,7 @@
             CloneGeosAna-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
             # Get background
-            GetBackground-{{model_component}}
+            GetBackground{{window_type}}-{{model_component}}
 
             # Get observations
             GetObservations-{{model_component}}
@@ -67,7 +67,7 @@
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediHofxExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetBackground{{window_type}}-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
@@ -136,8 +136,8 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[ GetBackground-{{model_component}} ]]
-        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+    [[ GetBackground{{window_type}}-{{model_component}} ]]
+        script = "swell task GetBackground{{window_type}} $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"

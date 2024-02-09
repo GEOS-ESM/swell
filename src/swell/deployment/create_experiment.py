@@ -367,8 +367,9 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         'start_cycle_point',
         'final_cycle_point',
         'runahead_limit',
+        'window_type',
         'model_components',
-        'platform',
+        'platform'
     ]
 
     # Copy elements from experiment dictionary to render dictionary
