@@ -198,7 +198,7 @@ obs post filters:
     maxvalue: 100
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 # set ObsErrorData 300 Pa if it > 300 Pa.
 - filter: Perform Action
@@ -213,7 +213,7 @@ obs post filters:
     minvalue: 300
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # Background check
@@ -280,7 +280,7 @@ obs post filters:
   where:
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 # Duplicate factor
 - filter: Perform Action
