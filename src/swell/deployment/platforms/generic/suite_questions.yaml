@@ -1,8 +1,2 @@
-experiment_id:
-  default_value: swell-{{suite_to_run}}
-
 experiment_root:
   default_value: $HOME/SwellExperiments
-
-r2d2_local_path:
-  default_value: $HOME/R2D2DataStore/Local

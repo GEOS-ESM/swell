@@ -19,6 +19,9 @@ geos_experiment_directory:
 geos_restarts_directory:
   default_value: restarts_20210601_030000
 
+r2d2_local_path:
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
+
 swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 

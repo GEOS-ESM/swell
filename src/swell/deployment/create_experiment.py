@@ -16,6 +16,8 @@ import shutil
 import sys
 import yaml
 
+from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
+     PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
@@ -76,18 +78,13 @@ def prepare_config(suite, method, platform, override, advanced):
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
-                        'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
+                                                                method, override, advanced)
 
-    # Call the config prep step
-    # -------------------------
-    prep_using.execute()
-
-    # Copy the experiment dictionary
-    # ------------------------------
-    experiment_dict = prep_using.experiment_dict
-    comment_dict = prep_using.comment_dict
+    # Ask questions as the suite gets configured
+    # ------------------------------------------
+    experiment_dict, comment_dict, suite_file = \
+        prepare_config_and_suite.ask_questions_and_configure_suite()
 
     # Add the datetime to the dictionary
     # ----------------------------------
@@ -110,22 +107,29 @@ def prepare_config(suite, method, platform, override, advanced):
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
+    print(experiment_dict_string)
+    print(yaml.dump(comment_dict, default_flow_style=False, sort_keys=False))
+
     experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
                                                                  comment_dict)
 
     # Return path to dictionary file
     # ------------------------------
-    return experiment_dict_string_comments
+    return experiment_dict_string_comments, suite_file
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(experiment_dict_str):
+def create_experiment_directory(suite, method, platform, override, advanced):
 
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
+
+    # Call the experiment config and suite generation
+    # ------------------------------------------------
+    experiment_dict_str, suite_file = prepare_config(suite, method, platform, override, advanced)
 
     # Load the string using yaml
     # --------------------------
@@ -154,6 +158,13 @@ def create_experiment_directory(experiment_dict_str):
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
 
+    # Write the suite file to the suite directory
+    # -------------------------------------------
+    with open(os.path.join(exp_suite_path, 'suite.yaml'), 'w') as file:
+        file.write(suite_file)
+
+    exit(0)
+
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
@@ -161,25 +172,6 @@ def create_experiment_directory(experiment_dict_str):
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
         copy_eva_files(logger, swell_suite_path, exp_suite_path)
-
-    # Create R2D2 database file
-    # -------------------------
-    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
-    if r2d2_local_path is not None:
-        r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
-
-        # Write R2D2_CONFIG to modules
-        with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
-            module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
-
-        # Open the r2d2 file to dictionary
-        with open(r2d2_conf_path, 'r') as r2d2_file_open:
-            r2d2_file_str = r2d2_file_open.read()
-        r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
-        r2d2_file_str = os.path.expandvars(r2d2_file_str)
-
-        with open(r2d2_conf_path, 'w') as r2d2_file_open:
-            r2d2_file_open.write(r2d2_file_str)
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
@@ -237,7 +229,7 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
         swell_lib_path = get_swell_path()
         platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
-        for s in ['modules', 'r2d2_config.yaml']:
+        for s in ['modules']:
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
