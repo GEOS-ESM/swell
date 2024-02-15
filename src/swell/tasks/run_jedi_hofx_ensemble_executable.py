@@ -18,9 +18,7 @@ from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
 # --------------------------------------------------------------------------------------------------
 
-# Watch out for MRO!!!
 class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
-# class RunJediHofxEnsembleExecutable(taskBase, RunJediHofxExecutable):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -60,11 +58,10 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # Force packets of equal size (i.e., members handled)
         # ---------------------------------------------------
         if ensemble_num_members%ensemble_hofx_packets != 0:
-            raise ValueError("Number of ensemble packets must evenly divide number of ensemble members!")
+            raise ValueError('  Number of ensemble packets must evenly divide number of ensemble members!')
 
-        self.logger.info('Running ensemble hofx strategy %s in %i packets'%
-                         (ensemble_hofx_strategy, ensemble_hofx_packets))
-        self.logger.info('Calling RunJediHofxExecutable execute!')
+        self.logger.info('  Running ensemble hofx with strategy %s in %i packets'%
+                         (ensemble_hofx_strategy.upper(), ensemble_hofx_packets))
 
         # Call execute of RunJediHofxExecutable - sets many self.jedi_rendering entires
         # -----------------------------------------------------------------------------
@@ -102,8 +99,6 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Compute number of processors
         # ----------------------------
-        print(model_component_meta)
-        print(model_component_meta['total_processors'])
         np = eval(str(model_component_meta['total_processors']))
 
         # Jedi executable name
