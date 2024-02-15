@@ -556,6 +556,7 @@ npx_proc:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -570,6 +571,7 @@ npy_proc:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -757,6 +759,7 @@ total_processors:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - PrepareAnalysis
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
