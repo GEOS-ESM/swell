@@ -1,4 +1,4 @@
 files:
-  {% for packet in range(ensemble_hofx_packets|int) %}
-  - enshofx_pack{{packet}}
+  {% for member in packet_ensemble_members %}
+  - jedi_hofx_mem{{member}}_config.yaml
   {% endfor %}
