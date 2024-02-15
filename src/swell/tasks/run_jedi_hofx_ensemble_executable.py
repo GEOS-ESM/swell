@@ -30,16 +30,35 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # ---------------------
         jedi_application = 'ensemblehofx'
 
-        # Parse configuration ... for window_type
-        # ---------------------------------------
+        # Parse configuration ... despite same block in RunJediHofxExecutable (only local versions of below)
+        # -------------------------------------------------------------------------------------------------
         window_type = self.config.window_type()
+        window_length = self.config.window_length()
+        window_offset = self.config.window_offset()
+        background_time_offset = self.config.background_time_offset()
+        observations = self.config.observations()
+        jedi_forecast_model = self.config.jedi_forecast_model(None)
+        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+
+        # Compute data assimilation window parameters
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+        local_background_time = self.da_window_params.local_background_time(window_offset,
+                                                                            window_type)
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+                                                                                    window_type)
+        window_begin = self.da_window_params.window_begin(window_offset)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
+        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
 
         # Ensemble hofx components
-        # -------------------
+        # ------------------------
         ensemble_hofx_packets = self.config.ensemble_hofx_packets()
         ensemble_hofx_strategy = self.config.ensemble_hofx_strategy()
         ensemble_num_members = self.config.ensemble_num_members()
 
+        # Force packets of equal size (i.e., members handled)
+        # ---------------------------------------------------
         if ensemble_num_members%ensemble_hofx_packets != 0:
             raise ValueError("Number of ensemble packets must evenly divide number of ensemble members!")
 
@@ -47,8 +66,13 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
                          (ensemble_hofx_strategy, ensemble_hofx_packets))
         self.logger.info('Calling RunJediHofxExecutable execute!')
 
-        # Call execute of RunJediHofxExecutable
+        # Call execute of RunJediHofxExecutable - sets many self.jedi_rendering entires
+        # -----------------------------------------------------------------------------
         super().execute(ensemble=True)
+
+        # Populate remaining entries of jedi interface templates dictionary - those not set by super()
+        # --------------------------------------------------------------------------------------------
+        self.jedi_rendering.add_key('ensemble_hofx_packets', ensemble_hofx_packets)
 
         # Jedi configuration file
         # -----------------------
@@ -78,6 +102,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Compute number of processors
         # ----------------------------
+        print(model_component_meta)
+        print(model_component_meta['total_processors'])
         np = eval(str(model_component_meta['total_processors']))
 
         # Jedi executable name
