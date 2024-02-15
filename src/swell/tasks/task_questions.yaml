@@ -607,7 +607,7 @@ observing_system_records_gsi_path:
   - geos_atmosphere
   prompt: What is the path to the GSI formatted observing system records?
   tasks:
-  - CloneGeosAna
+  - CloneGeosMksi
   - GenerateObservingSystemRecords
   type: string
 

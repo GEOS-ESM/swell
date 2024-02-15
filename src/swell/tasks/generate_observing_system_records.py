@@ -21,7 +21,7 @@ class GenerateObservingSystemRecords(taskBase):
     def execute(self):
 
         """
-        Generate the observing system channel records from GEOSadas files
+        Generate the observing system channel records from GEOS_mksi files
         """
 
         # This task should only execute for geos_atmosphere
@@ -38,11 +38,10 @@ class GenerateObservingSystemRecords(taskBase):
             cycle_dir = self.cycle_dir()
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
 
-        path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
-        if path_to_geosana_gridcomp == 'None':
-            path_to_geosana_gridcomp = os.path.join(self.experiment_path(), 'GEOSana_GridComp')
-        path_to_gsi_records = os.path.join(path_to_geosana_gridcomp, 'GEOSaana_GridComp',
-                                           'GSI_GridComp', 'mksi', 'sidb')
+        path_to_geos_mksi = self.config.observing_system_records_gsi_path()
+        if path_to_geos_mksi == 'None':
+            path_to_geos_mksi = os.path.join(self.experiment_path(), 'GEOS_mksi')
+        path_to_gsi_records = os.path.join(path_to_geos_mksi, 'sidb')
         sat_records = ObservingSystemRecords()
         sat_records.parse_records(path_to_gsi_records)
         sat_records.save_yamls(observing_system_records_path, observations)
