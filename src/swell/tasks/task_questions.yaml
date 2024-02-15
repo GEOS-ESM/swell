@@ -600,7 +600,7 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
-observing_system_records_gsi_path:
+observing_system_records_mksi_path:
   ask_question: false
   default_value: defer_to_model
   models:
@@ -611,7 +611,7 @@ observing_system_records_gsi_path:
   - GenerateObservingSystemRecords
   type: string
 
-observing_system_records_gsi_path_tag:
+observing_system_records_mksi_path_tag:
   ask_question: false
   default_value: defer_to_model
   models:

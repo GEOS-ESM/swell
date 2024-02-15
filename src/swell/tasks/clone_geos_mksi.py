@@ -31,10 +31,10 @@ class CloneGeosMksi(taskBase):
 
         # Parse config
         # ------------
-        path_to_geos_mksi = self.config.observing_system_records_gsi_path()
-        tag = self.config.observing_system_records_gsi_path_tag()
+        path_to_geos_mksi = self.config.observing_system_records_mksi_path()
+        tag = self.config.observing_system_records_mksi_path_tag()
 
-        # If observing_system_records_gsi_path is None, clone GEOS_mksi repo to experiment
+        # If observing_system_records_mksi_path is None, clone GEOS_mksi repo to experiment
         # directory
         if path_to_geos_mksi == 'None':
             if tag == 'None':
@@ -46,7 +46,7 @@ class CloneGeosMksi(taskBase):
                       + os.path.join(self.experiment_path(), 'GEOS_mksi'))
         else:
             # Link the source code directory
-            link_path(self.config.observing_system_records_gsi_path(),
+            link_path(self.config.observing_system_records_mksi_path(),
                       os.path.join(self.experiment_path(), 'GEOS_mksi'))
 
 
