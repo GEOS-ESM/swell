@@ -187,6 +187,9 @@ observations:
 observing_system_records_gsi_path:
   default_value: None
 
+observing_system_records_gsi_path_tag:
+  default_value: None
+
 observing_system_records_path:
   default_value: None
 

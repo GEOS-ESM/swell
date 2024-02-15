@@ -32,12 +32,17 @@ class CloneGeosMksi(taskBase):
         # Parse config
         # ------------
         path_to_geos_mksi = self.config.observing_system_records_gsi_path()
+        tag = self.config.observing_system_records_gsi_path_tag()
 
         # If observing_system_records_gsi_path is None, clone GEOS_mksi repo to experiment
         # directory
         if path_to_geos_mksi == 'None':
+            if tag == 'None':
+                branch = 'develop'
+            else:
+                branch = tag
             # Clone GEOS_mksi develop repo to experiment directory
-            os.system('git clone https://github.com/GEOS-ESM/GEOS_mksi.git '
+            os.system(f'git clone -b {branch} https://github.com/GEOS-ESM/GEOS_mksi.git '
                       + os.path.join(self.experiment_path(), 'GEOS_mksi'))
         else:
             # Link the source code directory

@@ -611,6 +611,16 @@ observing_system_records_gsi_path:
   - GenerateObservingSystemRecords
   type: string
 
+observing_system_records_gsi_path_tag:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the GSI formatted observing system records tag?
+  tasks:
+  - CloneGeosMksi
+  type: string
+
 observing_system_records_path:
   ask_question: false
   default_value: defer_to_model
