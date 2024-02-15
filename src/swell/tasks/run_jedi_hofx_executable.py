@@ -22,7 +22,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble=False):
+    def execute(self, ensemble_members=None):
 
         # Jedi application name
         # ---------------------
@@ -78,9 +78,9 @@ class RunJediHofxExecutable(taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
-        # Proceed for non-ensemble scenarios
-        # ----------------------------------
-        if not ensemble:
+        # Run the JEDI executable - or render hofx templates for each ensemble member
+        # ---------------------------------------------------------------------------
+        if ensemble_members is None:
             # Jedi configuration file
             # -----------------------
             jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
@@ -125,5 +125,29 @@ class RunJediHofxExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')
+
+        else:
+            for mem in ensemble_members:
+                # Jedi configuration file
+                # -----------------------
+                jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_mem{mem}_config.yaml')
+
+                # Output log file
+                # ---------------
+                output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_mem{mem}_log.log')
+
+                # Open the JEDI config file and fill initial templates
+                # ----------------------------------------------------
+                jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+
+                # Perform complete template rendering
+                # -----------------------------------
+                jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
+                                         jedi_forecast_model)
+
+                # Write the expanded dictionary to YAML file
+                # ------------------------------------------
+                with open(jedi_config_file, 'w') as jedi_config_file_open:
+                    yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
 # --------------------------------------------------------------------------------------------------
