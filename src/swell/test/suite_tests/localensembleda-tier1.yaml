@@ -5,8 +5,20 @@ existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/bui
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
+    ensemble_hofx_strategy: parallel
+    local_ensemble_save_posterior_mean: false
+    local_ensemble_save_posterior_ensemble_increments: true
     observations:
     - sondes
     obs_experiment: x0048v1
     window_type: 3D
     horizontal_resolution: 13
+    clean_patterns:
+    - 'geos.mem*.nc4'
+    - '*log*'
+    - '*.txt'
