@@ -9,7 +9,6 @@
 
 
 from multiprocessing import Pool
-import netCDF4 as nc
 import os
 import yaml
 
