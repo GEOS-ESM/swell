@@ -184,7 +184,10 @@ observations:
   - omi_aura
   - ompsnm_npp
 
-observing_system_records_gsi_path:
+observing_system_records_mksi_path:
+  default_value: None
+
+observing_system_records_mksi_path_tag:
   default_value: None
 
 observing_system_records_path:
