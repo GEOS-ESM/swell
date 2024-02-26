@@ -28,12 +28,12 @@ obs filters:
   - variable: {name: GeoVaLs/sea_area_fraction}
     minvalue: 0.9
 # Passivate obs where ocean fraction is > 90%
-- filter: Domain Check
-  action:
-    name: passivate
-  where:
-  - variable: {name: GeoVaLs/sea_area_fraction}
-    maxvalue: 0.9
+# - filter: Domain Check
+#   action:
+#     name: passivate
+#   where:
+#   - variable: {name: GeoVaLs/sea_area_fraction}
+#     maxvalue: 0.9
 # Reject obs outside of [-2.0C,36.0C]
 - filter: Bounds Check
   action:
