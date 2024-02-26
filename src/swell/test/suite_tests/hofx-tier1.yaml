@@ -1,6 +1,4 @@
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 save_geovals: true
 models:
   geos_atmosphere:
@@ -45,13 +43,14 @@ models:
   geos_ocean:
     obs_experiment: s2s_v1
     obs_provider: gdas_marine
+    horizontal_resolution: 72x36
+    vertical_resolution: '50'
     observations:
     - adt_3a_egm2008
     - adt_3b_egm2008
     - adt_c2_egm2008
     - adt_j3_egm2008
     - adt_sa_egm2008
-    - sst_ostia
     - salt_profile_fnmoc
     - sss_smos_esa
     - sst_gmi_l3u

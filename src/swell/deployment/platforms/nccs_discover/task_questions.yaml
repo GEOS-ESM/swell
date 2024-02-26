@@ -1,5 +1,5 @@
 crtm_coeff_dir:
-  default_value: /discover/nobackup/drholdaw/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
 
 existing_geos_gcm_build_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm/install-Release
@@ -8,10 +8,10 @@ existing_geos_gcm_source_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm
 
 existing_jedi_build_directory:
-  default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
+  default_value: /discover/nobackup/dardag/JediBundles/fv3_soca/build-intel-release/
 
 existing_jedi_source_directory:
-  default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
+  default_value: /discover/nobackup/dardag/JediBundles/fv3_soca/
 
 geos_experiment_directory:
   default_value: 5deg_v11
@@ -20,5 +20,5 @@ geos_restarts_directory:
   default_value: restarts_20210601_030000
 
 swell_static_files:
-  default_value: /discover/nobackup/drholdaw/SwellStaticFiles
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
