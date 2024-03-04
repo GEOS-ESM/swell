@@ -280,7 +280,6 @@ geos_restarts_directory:
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
-  - PrepGeosRunDir
   type: string
 
 geovals_experiment:
@@ -528,7 +527,6 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -542,7 +540,6 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -599,6 +596,17 @@ observations:
   - RunJediVariationalExecutable
   - SaveObsDiags
   type: string-check-list
+
+observing_system_records_gsi_path:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - all
+  options: defer_to_model
+  prompt: Question
+  tasks:
+  - CloneGeosAna
+  type: string
 
 observing_system_records_mksi_path:
   ask_question: false
@@ -694,6 +702,7 @@ produce_geovals:
   - GsiNcdiagToIoda
   type: boolean
 
+
 save_geovals:
   ask_question: false
   default_value: false
@@ -747,7 +756,6 @@ total_processors:
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - PrepareAnalysis
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
