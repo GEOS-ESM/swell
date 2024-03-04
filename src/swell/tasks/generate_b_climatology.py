@@ -50,12 +50,12 @@ class GenerateBClimatology(taskBase):
 
         if self.background_error_model == 'bump':
 
-            self.logger.abort('  BUMP method is not actively supported.')
-            return self.generate_bump()
+            self.logger.abort('  BUMP method is not currently supported.')
+            self.generate_bump()
 
         elif self.background_error_model == 'explicit_diffusion':
 
-            return self.generate_explicit_diffusion()
+            self.generate_explicit_diffusion()
         else:
             self.logger.abort('  Unknown background error model')
 
@@ -141,10 +141,15 @@ class GenerateBClimatology(taskBase):
         # Could be a generalized function depending on the repeated use of this
         # -----------------------------------------------------------------------
         mod_file = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'modules')
+        exec_file = os.path.join(self.cycle_dir(), 'soca', 'calc_scales.py')
+
+        # Make sure the file is executable
+        # --------------------------------
+        os.chmod(exec_file, 0o755)
 
         command = f'source {mod_file} \n' + \
             f'cd {self.cycle_dir()} \n' + \
-            f'{self.cycle_dir()}/soca/calc_scales.py {self.cycle_dir()}/calc_scales.yaml'
+            f'{exec_file} {self.cycle_dir()}/calc_scales.yaml'
 
         # Containerized run of the script
         # -------------------------------
