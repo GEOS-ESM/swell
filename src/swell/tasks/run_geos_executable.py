@@ -50,12 +50,15 @@ class RunGeosExecutable(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
+        geos_lib_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'source',
+                                     'install-SLES12', 'lib')
         self.run_executable(self.forecast_dir(), np, geos_executable_path,
-                            geos_modules_path, output_log_file)
+                            geos_modules_path, output_log_file, geos_lib_path)
 
     # ----------------------------------------------------------------------------------------------
 
-    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log):
+    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log,
+                       geos_lib_path=None):
 
         # Run the GEOS executable
         # -----------------------
@@ -63,6 +66,7 @@ class RunGeosExecutable(taskBase):
 
         command = f'source {geos_modules} \n' + \
             f'cd {cycle_dir} \n' + \
+            f'env LD_PRELOAD={geos_lib_path}/libmom6.so:{geos_lib_path}/libCICE4.so ' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'
 

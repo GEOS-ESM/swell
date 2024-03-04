@@ -125,7 +125,7 @@ class PrepGeosRunDir(taskBase):
         # Generate the complete ExtData.rc
         # TODO: Fix install folders, update task_questions
         # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install-Release', 'bin')
+        self.geosbin = os.path.join(self.geos_source, 'install-SLES12', 'bin')
         self.generate_extdata()
 
         # Get boundary conditions
@@ -316,22 +316,6 @@ class PrepGeosRunDir(taskBase):
         copy_to_dst_dir(self.logger, os.path.join(geos_obcsdir, 'INPUT'),
                         self.forecast_dir('INPUT'))
 
-        # TODO: Temporary fix for some input files in gcm_run.j
-        # -----------------------------------------------------
-        if self.agcm_dict['OGCM.IM_WORLD'] == '1440':
-            self.logger.info(' OBTAINING EXTRA WOA13 files')
-
-            rst_path = self.config.geos_restarts_directory()
-            src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path,
-                               'woa13_ptemp_monthly.nc')
-            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
-                                                                 'woa13_ptemp_monthly.nc']))
-
-            src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path,
-                               'woa13_s_monthly.nc')
-            copy_to_dst_dir(self.logger, src, self.forecast_dir(['INPUT',
-                                                                 'woa13_s_monthly.nc']))
-
     # ----------------------------------------------------------------------------------------------
 
     def get_dynamic(self):
@@ -367,7 +351,7 @@ class PrepGeosRunDir(taskBase):
 
         # TODO: install folder name changes (install vs. install-Releaee)
         geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
-                                         'source', 'install-Release', 'bin')
+                                         'source', 'install-SLES12', 'bin')
 
         src_dirs = []
 

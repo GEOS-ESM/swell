@@ -38,8 +38,8 @@ def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs,
-                             cycle_time, jedi_forecast_model=None):
+def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type=None, obs=None,
+                             cycle_time=None, jedi_forecast_model=None):
 
     # Assemble configuration YAML file
     # --------------------------------
