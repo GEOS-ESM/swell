@@ -9,9 +9,9 @@ analysis_variables:
   - hocn
 
 background_error_model:
-  default_value: bump
+  default_value: explicit_diffusion
   options:
-  - bump
+  - explicit_diffusion
 
 background_experiment:
   default_value: s2s
@@ -28,6 +28,7 @@ clean_patterns:
   - '*.txt'
   - '*MOM*'
   - logfile.*.out
+  - background_error_model/*.nc
 
 gradient_norm_reduction:
   default_value: 1e-10
