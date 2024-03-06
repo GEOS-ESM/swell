@@ -266,7 +266,7 @@ geos_experiment_directory:
 
 geos_gcm_tag:
   ask_question: true
-  default_value: v11.0.2
+  default_value: v11.5.1
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - CloneGeos

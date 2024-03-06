@@ -1,6 +1,4 @@
 start_cycle_point: '2021-06-20T00:00:00Z'
 final_cycle_point: '2021-06-21T00:00:00Z'
 geos_build_method: use_existing
-existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm
-existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm/install-Release
 forecast_duration: PT6H
