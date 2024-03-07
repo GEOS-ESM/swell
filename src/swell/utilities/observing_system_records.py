@@ -11,7 +11,6 @@ from swell.utilities.gsi_record_parser import GSIRecordParser
 def format_date(old_date):
 
     ''' Formatting date into expected template '''
-
     date = dt.datetime.strptime(old_date, '%Y%m%d%H%M%S')
     return date.isoformat()
 
@@ -93,7 +92,7 @@ class ObservingSystemRecords:
 
         '''
             This method reads in the active.tbl and available.tbl files
-            from GEOSAna and loads them into dataframes. These dataframes
+            from GEOS_mksi and loads them into dataframes. These dataframes
             are parsed using GSIRecordParser to get the final dataframes.
         '''
 

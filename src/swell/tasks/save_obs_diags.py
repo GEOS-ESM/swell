@@ -10,6 +10,7 @@
 import os
 from swell.tasks.base.task_base import taskBase
 from r2d2 import store
+from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,6 +49,12 @@ class SaveObsDiags(taskBase):
 
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
+
+            # Check if observation was used
+            use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
+                                observation_dict, self.cycle_time_dto())
+            if not use_obs:
+                continue
 
             # Store observation files
             # -----------------------

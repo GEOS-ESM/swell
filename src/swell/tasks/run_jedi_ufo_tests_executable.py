@@ -64,7 +64,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D', observations)
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D',
+                                 observations, self.cycle_time_dto())
 
         # Make modifications needed for testing
         # -------------------------------------
@@ -85,10 +86,8 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Remove the LinObsOperatror and Insert the GeoVaLs section
         # ---------------------------------------------------------
-
         # Loop over the observations
         for index in range(len(observations)):
-
             # Remove GetValues if present
             if 'get values' in jedi_config_dict['observations'][index]:
                 del jedi_config_dict['observations'][index]['get values']

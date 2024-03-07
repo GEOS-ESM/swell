@@ -8,10 +8,12 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import glob
 import os
 import yaml
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.netcdf_files import combine_files_without_groups
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 
@@ -37,6 +39,7 @@ class RunJediHofxExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        save_geovals = self.config.save_geovals()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -81,6 +84,7 @@ class RunJediHofxExecutable(taskBase):
         # Run the JEDI executable - or render hofx templates for each ensemble member
         # ---------------------------------------------------------------------------
         if ensemble_members is None:
+
             # Jedi configuration file
             # -----------------------
             jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
@@ -98,6 +102,43 @@ class RunJediHofxExecutable(taskBase):
             jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                      jedi_forecast_model)
 
+            # If window type is 4D add time interpolation to each observer
+            # ------------------------------------------------------------
+            if window_type == '4D':
+                for observer in jedi_config_dict['observations']['observers']:
+                    observer['get values'] = {
+                        'time interpolation': 'linear'
+                    }
+
+            # Update config filters to save the GeoVaLs from the model interface
+            # ------------------------------------------------------------------
+            if save_geovals:
+
+                for index, observation in enumerate(observations):
+
+                    # Define the GeoVaLs saver dictionary
+                    gom_saver_dict = {
+                        'filter': 'GOMsaver',
+                        'filename': os.path.join(self.cycle_dir(),
+                                                 f'{observation}-geovals.{window_begin}.nc4')
+                    }
+
+                    # Get pointer to observer
+                    observer = jedi_config_dict['observations']['observers'][index]
+
+                    # Check if observer has obs filters and if so add them to the jedi_config_dict
+                    if 'obs filters' in observer:
+                        filter_dict = 'obs filters'
+                    elif 'obs post filters' in observer:
+                        filter_dict = 'obs post filters'
+                    else:
+                        # Create some post filters
+                        observer['obs post filters'] = []
+                        filter_dict = 'obs post filters'
+
+                    # Append the GOMsaver dictionary to the observer filters
+                    observer[filter_dict].append(gom_saver_dict)
+                    
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
             with open(jedi_config_file, 'w') as jedi_config_file_open:
@@ -149,5 +190,31 @@ class RunJediHofxExecutable(taskBase):
                 # ------------------------------------------
                 with open(jedi_config_file, 'w') as jedi_config_file_open:
                     yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+
+        # If saving the geovals they need to be combined
+        # ----------------------------------------------
+        if save_geovals:
+
+            # Combine the GeoVaLs
+            # -------------------
+            for observation in observations:
+
+                self.logger.info('Combining GeoVaLs files for {observation}')
+
+                # List of GeoVaLs input files
+                input_files = f'{observation}-geovals.{window_begin}_*.nc4'
+                output_file = f'{self.experiment_id()}.{observation}-geovals.{window_begin}.nc4'
+                output_file = os.path.join(self.cycle_dir(), output_file)
+
+                # Build list of input files
+                geovals_files = sorted(glob.glob(os.path.join(self.cycle_dir(), input_files)))
+
+                # Assert that there are np files
+                self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs files ' +
+                                         f'does not match number of processors.')
+
+                # Write the concatenated dataset to a new file
+                combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs', True)
+
 
 # --------------------------------------------------------------------------------------------------

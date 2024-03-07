@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.avhrr3_metop-b.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &avhrr3_metop-b_channels 3,4,5
+  channels: &avhrr3_metop-b_channels {{avhrr3_metopb_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -142,7 +142,7 @@ obs post filters:
     channels: *avhrr3_metop-b_channels
     options:
       channels: *avhrr3_metop-b_channels
-      use_flag: &useflag_avhrr3_metop-b [ -1,  1,  1 ]
+      use_flag: &useflag_avhrr3_metop-b {{avhrr3_metopb_active_channels}}
       use_flag_clddet: [ 1,  1,  1 ]
       obserr_dtempf: [0.50,2.00,4.00,2.00,4.00]
   maxvalue: 1.0e-12

@@ -16,6 +16,12 @@ r2d2_local_path:
   prompt: Enter the path where R2D2 will store experiment output
   type: string
 
+runahead_limit:
+  ask_question: True
+  default_value: 'P2'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  type: string
+
 cycle_times:
   ask_question: True
   default_value: defer_to_model

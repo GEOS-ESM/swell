@@ -10,6 +10,7 @@
 import yaml
 import os
 from datetime import datetime as dt
+from itertools import groupby
 
 # --------------------------------------------------------------------------------------------------
 
@@ -36,6 +37,22 @@ def process_channel_lists(channel_list):
 # --------------------------------------------------------------------------------------------------
 
 
+def create_range_string(avail_list):
+    '''
+        Function converts integer list into string of ranges
+    '''
+    ranges = []
+    for _, g in groupby(enumerate(avail_list), lambda i_x: i_x[0]-i_x[1]):
+        group = list(map(lambda x: x[1], g))
+        if len(group) > 1:
+            ranges.append(f'{group[0]}-{group[-1]}')
+        else:
+            ranges.append(str(group[0]))
+    return ', '.join(ranges)
+
+# --------------------------------------------------------------------------------------------------
+
+
 def get_channel_list(input_dict, dt_cycle_time):
 
     '''
@@ -51,7 +68,7 @@ def get_channel_list(input_dict, dt_cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
 
     '''
         Comparing available channels and active channels from the observing
@@ -70,12 +87,31 @@ def get_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time)
             active_channels = get_channel_list(data['active'], dt_cycle_time)
 
         available_channels_list = process_channel_lists(available_channels)
+        available_range_string = create_range_string(available_channels_list)
         active_channels_list = process_channel_lists(active_channels)
         use_flags = [1 if x in active_channels_list else -1 for x in available_channels_list]
 
-        return use_flags
+        return available_range_string, use_flags
 
     else:
-        return None
+        return None, None
 
 # --------------------------------------------------------------------------------------------------
+
+
+def num_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+
+    # Retrieve available and active channels from records yaml
+    path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + \
+        observation + '_channel_info.yaml'
+
+    if os.path.isfile(path_to_observing_sys_config):
+        with open(path_to_observing_sys_config, 'r') as file:
+            data = yaml.safe_load(file)
+            active_channels = get_channel_list(data['active'], dt_cycle_time)
+
+        active_channels_list = process_channel_lists(active_channels)
+        return len(active_channels_list)
+
+    else:
+        print('path_to_observing_sys_config undefined')

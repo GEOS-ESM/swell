@@ -1,11 +1,7 @@
-start_cycle_point: '2021-06-21T12:00:00Z'
-final_cycle_point: '2021-06-24T12:00:00Z'
+start_cycle_point: '2021-06-01T12:00:00Z'
+final_cycle_point: '2021-06-02T00:00:00Z'
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 geos_build_method: use_existing
-existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm
-existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.0.2/GEOSgcm/install-Release
 model_components: ['geos_ocean']
 models:
   geos_ocean:
@@ -14,32 +10,32 @@ models:
     - T06
     - T12
     - T18
-    window_length: P1D
-    window_offset: PT12H
+    window_length: PT6H
+    window_offset: PT3H
     horizontal_resolution: 72x36
     vertical_resolution: '50'
     total_processors: 6
     obs_experiment: s2s_v1
     observations:
-     - adt_3a_egm2008
-     - adt_3b_egm2008
-     - adt_c2_egm2008
-     - adt_j3_egm2008
-     - adt_sa_egm2008
-     - sst_ostia
-     - salt_profile_fnmoc
-     - sss_smos_esa
-     - sss_trak_fnmoc
-     - sst_gmi_l3u
-     - sst_ship_fnmoc
-     - sst_trak_fnmoc
-     - temp_profile_fnmoc
+    - adt_3a_egm2008
+    - adt_3b_egm2008
+    - adt_c2_egm2008
+    - adt_j3_egm2008
+    - adt_sa_egm2008
+    - sst_ostia
+    - salt_profile_fnmoc
+    - sss_smos_esa
+    - sss_trak_fnmoc
+    - sst_gmi_l3u
+    - sst_ship_fnmoc
+    - sst_trak_fnmoc
+    - temp_profile_fnmoc
     number_of_iterations:
     - 10
     obs_provider: gdas_marine
     mom6_iau: True
-    analysis_forecast_window_offset: -PT12H
-    background_time_offset: P1DT12H
+    analysis_forecast_window_offset: -PT3H
+    background_time_offset: PT9H
     clean_patterns:
     - '*.nc4'
     - '*.txt'

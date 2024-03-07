@@ -36,14 +36,14 @@
             BuildJediByLinking:fail? => BuildJedi
 
             # Clone geos ana for generating observing system records
-            CloneGeosAna
+            CloneGeosMksi
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
 
             # Generate satellite channel records
-            CloneGeosAna[^] => GenerateObservingSystemRecords
+            CloneGeosMksi[^] => GenerateObservingSystemRecords
 
             # Convert bias correction to ioda
             GetGsiBc
@@ -108,8 +108,8 @@
             --partition={{scheduling["BuildJedi"]["partition"]}}
             {% endif %}
 
-    [[CloneGeosAna]]
-        script = "swell task CloneGeosAna $config -m geos_atmosphere"
+    [[CloneGeosMksi]]
+        script = "swell task CloneGeosMksi $config -m geos_atmosphere"
 
     [[GenerateObservingSystemRecords]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"

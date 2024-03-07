@@ -36,16 +36,16 @@ module load other/mepo
 
 # Load r2d2 modules
 # -----------------
-module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
-module load solo/swell-1.0.0
+module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
+module load solo/spack-202311
 module load py-boto3
-module load r2d2/swell-1.0.5
+module load r2d2/spack-202311
 
 # Load eva and jedi_bundle
 # ------------------------
-module use -a /discover/nobackup/drholdaw/JediOpt/modulefiles/core
-module load eva/1.6.1-spack-stack-dev-20231114
-module load jedi_bundle/1.0.18-spack-stack-dev-20231114
+module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
+module load eva/1.6.1
+module load jedi_bundle/1.0.18_py310
 
 # Set the swell paths
 # -------------------

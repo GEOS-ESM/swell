@@ -98,15 +98,15 @@ graphics:
             variable: experiment::hofx0PassedQc::${variable}
           markersize: 5
           color: 'black'
-          label: 'JEDI h(x) versus obs (all obs)'
+          label: 'JEDI h(x)_0 versus obs (passed QC in JEDI)'
         - type: Scatter
           x:
             variable: experiment::ObsValue::${variable}
           y:
-            variable: experiment::hofx1::${variable}
+            variable: experiment::hofx1PassedQc::${variable}
           markersize: 5
           color: 'red'
-          label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+          label: 'JEDI h(x)_1 versus obs (passed QC in JEDI)'
 
   # Histogram plots
   # ---------------

@@ -1,0 +1,21 @@
+  covariance model: SABER
+  saber central block:
+    saber block name: EXPLICIT_DIFFUSION
+    geometry:
+      mom6_input_nml: 'soca/input.nml'
+      fields metadata: 'soca/fields_metadata.yaml'
+      geom_grid_file: 'INPUT/soca_gridspec.nc'
+    calibration:
+      normalization:
+        # NOTE, not actually used here, since the normalization spec is only used for hz
+        method: randomization
+        iterations: 1000
+
+      groups:
+      - name: vt
+        vertical:
+          from file:
+            filename: '{{cycle_dir}}/calculated_scales.nc'
+            variable name: vt
+        write:
+          filename: 'background_error_model/vt.{{local_background_time}}.nc'
