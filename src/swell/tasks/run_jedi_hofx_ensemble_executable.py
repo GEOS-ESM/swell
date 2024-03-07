@@ -119,8 +119,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(),
-                                       f'jedi_{jedi_application}_pack{this_packet}_log.log')
+        # output_log_file = os.path.join(self.cycle_dir(),
+        #                               f'jedi_{jedi_application}_pack{this_packet}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
