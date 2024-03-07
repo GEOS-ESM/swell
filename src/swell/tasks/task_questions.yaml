@@ -58,6 +58,7 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -128,6 +129,7 @@ crtm_coeff_dir:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -135,37 +137,40 @@ crtm_coeff_dir:
   - SaveObsDiags
   type: string
 
-ensemble_hofx_strategy:
-  ask_question: True
-  default_value: defer_to_model
-  options: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: Enter hofx strategy.
-  tasks:
-  - RunJediHofxEnsembleExecutable
-  type: string-drop-list
-
 ensemble_hofx_packets:
-  ask_question: True
+  ask_question: true
   default_value: defer_to_model
-  options: defer_to_model
   models:
   - geos_atmosphere
+  options: defer_to_model
   prompt: Enter number of packets in which ensemble observers should be computed.
   tasks:
   - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
-ensemble_num_members:
-  ask_question: False
+ensemble_hofx_strategy:
+  ask_question: true
   default_value: defer_to_model
-  options: defer_to_model
   models:
   - geos_atmosphere
+  options: defer_to_model
+  prompt: Enter hofx strategy.
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
+  type: string-drop-list
+
+ensemble_num_members:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
   prompt: How many members comprise the ensemble?
   tasks:
   - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
 existing_geos_gcm_build_path:
@@ -554,7 +559,6 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -569,7 +573,6 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -629,6 +632,17 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
+observing_system_records_gsi_path:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - all
+  options: defer_to_model
+  prompt: Question
+  tasks:
+  - CloneGeosAna
+  type: string
+
 observing_system_records_mksi_path:
   ask_question: false
   default_value: defer_to_model
@@ -661,7 +675,6 @@ observing_system_records_path:
   - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
-  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
