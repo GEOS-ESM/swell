@@ -1,0 +1,50 @@
+start_cycle_point: '2021-12-12T00:00:00Z'
+final_cycle_point: '2021-12-12T06:00:00Z'
+jedi_build_method: use_existing
+model_components: ['geos_atmosphere']
+models:
+  geos_atmosphere:
+    cycle_times:
+    - T00
+    window_length: PT6H
+    window_offset: PT3H
+    horizontal_resolution: '91'
+    vertical_resolution: '72'
+    total_processors: 6
+    observations:
+    - aircraft
+    - airs_aqua
+    - amsr2_gcom-w1
+    - amsua_aqua
+    - amsua_metop-b
+    - amsua_metop-c
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - cris-fsr_n20
+    - cris-fsr_npp
+    - gmi_gpm
+    - gps
+    - iasi_metop-b
+    - iasi_metop-c
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
+    - pibal
+    - satwind
+    - scatwind
+    - sfcship
+    - sfc
+    - sondes
+    - ssmis_f17
+    obs_experiment: x0048v2
+    geovals_experiment: x0048v2-geovals
+    clean_patterns: []
