@@ -18,6 +18,7 @@ from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
 # --------------------------------------------------------------------------------------------------
 
+
 class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
     # ----------------------------------------------------------------------------------------------
@@ -33,8 +34,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         this_packet = self.get_ensemble_packet()
         packet_ensemble_members = None
 
-        # Parse configuration ... despite same block in RunJediHofxExecutable (only local versions of below)
-        # -------------------------------------------------------------------------------------------------
+        # Parse configuration ... despite same block in RunJediHofxExecutable
+        # -------------------------------------------------------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
@@ -62,19 +63,22 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Force packets of equal size (i.e., members handled)
         # ---------------------------------------------------
-        if ensemble_num_members%ensemble_hofx_packets != 0:
-            raise ValueError('  Number of ensemble packets must evenly divide number of ensemble members!')
+        if ensemble_num_members % ensemble_hofx_packets != 0:
+            raise ValueError('Number of ensemble packets must evenly ' +
+                             'divide number of ensemble members!')
 
         # Report strategy and packet (if defined)
         # ---------------------------------------
         if this_packet is None:
-            self.logger.info('  Running ensemble hofx via %s strategy'%ensemble_hofx_strategy.upper())
+            self.logger.info('  Running ensemble hofx via %s strategy' %
+                             ensemble_hofx_strategy.upper())
         else:
             # Determine ensemble members
             _q = int(ensemble_num_members/ensemble_hofx_packets)
             packet_ensemble_members = [int(this_packet)*_q+i for i in range(_q)]
-            self.logger.info('  Running ensemble hofx via %s strategy'%ensemble_hofx_strategy.upper())
-            self.logger.info('     - this packet     = %s'%this_packet)
+            self.logger.info('  Running ensemble hofx via %s strategy' %
+                             ensemble_hofx_strategy.upper())
+            self.logger.info('     - this packet     = %s' % this_packet)
             self.logger.info(f'     - selects members = {packet_ensemble_members}')
 
         # Populate jedi interface templates dictionary
@@ -103,18 +107,20 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
-        # Populate remaining entries of jedi interface templates dictionary - those not set by super()
-        # --------------------------------------------------------------------------------------------
+        # Populate remaining entries of jedi interface templates dictionary
+        # -----------------------------------------------------------------
         self.jedi_rendering.add_key('ensemble_hofx_packets', ensemble_hofx_packets)
         self.jedi_rendering.add_key('packet_ensemble_members', packet_ensemble_members)
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_pack{this_packet}_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(),
+                                        f'jedi_{jedi_application}_pack{this_packet}_config.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_pack{this_packet}_log.log')
+        output_log_file = os.path.join(self.cycle_dir(),
+                                       f'jedi_{jedi_application}_pack{this_packet}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -152,8 +158,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # -----------------------
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-#            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
- #                          jedi_config_file, output_log_file)
+            # run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+            #                jedi_config_file, output_log_file)
         else:
             self.logger.info('YAML generated, now exiting.')
 

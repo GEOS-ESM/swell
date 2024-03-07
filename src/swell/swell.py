@@ -73,8 +73,8 @@ datetime_help = 'Datetime to use for task execution. Format is yyyy-mm-ddThh:mm:
 
 model_help = 'Data assimilation system. I.e. the model being initialized by data assimilation.'
 
-ensemble_help = 'When handling ensemble workflows using a parallel strategy, specify which packet ' + \
-                'of ensemble members to consider.'
+ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' + \
+                'specify which packet of ensemble members to consider.'
 
 
 # --------------------------------------------------------------------------------------------------
