@@ -266,7 +266,7 @@ geos_experiment_directory:
 
 geos_gcm_tag:
   ask_question: true
-  default_value: v11.0.2
+  default_value: v11.5.1
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - CloneGeos
@@ -280,7 +280,6 @@ geos_restarts_directory:
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
-  - PrepGeosRunDir
   type: string
 
 geovals_experiment:
@@ -528,7 +527,6 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -542,7 +540,6 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -747,7 +744,6 @@ total_processors:
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - PrepareAnalysis
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -867,6 +863,7 @@ window_offset:
   tasks:
   - EvaObservations
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - GetGeovals
   - GetObservations
@@ -891,6 +888,7 @@ window_type:
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
