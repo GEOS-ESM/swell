@@ -10,7 +10,7 @@
 
 import unittest
 
-# from swell.utilities.scripts.task_question_dicts import main as tq_dicts
+from swell.utilities.scripts.task_question_dicts import main as tq_dicts
 from swell.utilities.scripts.task_question_dicts_defaults import main as tq_dicts_defaults
 
 
@@ -22,8 +22,8 @@ class QuestionDictionaryTest(unittest.TestCase):
     def test_dictionary_comparison(self):
 
         # Run main task question dictionary generation
-        # tq_dicts_rc = tq_dicts()
-        # assert tq_dicts_rc == 0
+        tq_dicts_rc = tq_dicts()
+        assert tq_dicts_rc == 0
 
         # Run generation for defaults
         tq_dicts_defaults_rc = tq_dicts_defaults()
