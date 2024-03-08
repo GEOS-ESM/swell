@@ -632,17 +632,6 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
-observing_system_records_gsi_path:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - all
-  options: defer_to_model
-  prompt: Question
-  tasks:
-  - CloneGeosAna
-  type: string
-
 observing_system_records_mksi_path:
   ask_question: false
   default_value: defer_to_model

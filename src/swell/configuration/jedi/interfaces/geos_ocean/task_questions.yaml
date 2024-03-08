@@ -75,10 +75,6 @@ observations:
   - insitus
   - insitut
 
-observing_system_records_gsi_path:
-  default_value: None
-  options: None
-
 total_processors:
   default_value: 24
 
