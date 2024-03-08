@@ -10,7 +10,7 @@
 
 import unittest
 
-from swell.utilities.scripts.task_question_dicts import main as tq_dicts
+# from swell.utilities.scripts.task_question_dicts import main as tq_dicts
 from swell.utilities.scripts.task_question_dicts_defaults import main as tq_dicts_defaults
 
 
