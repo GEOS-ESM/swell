@@ -32,6 +32,18 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+ensemble_hofx_packets:
+  default_value: None
+  options: None
+
+ensemble_hofx_strategy:
+  default_value: None
+  options: None
+
+ensemble_num_members:
+  default_value: 10
+  options: None
+
 geos_background_restart_offset:
   default_value: TODO
 
@@ -180,6 +192,10 @@ observations:
   - mls55_aura
   - omi_aura
   - ompsnm_npp
+
+observing_system_records_gsi_path:
+  default_value: None
+  options: None
 
 observing_system_records_mksi_path:
   default_value: None
