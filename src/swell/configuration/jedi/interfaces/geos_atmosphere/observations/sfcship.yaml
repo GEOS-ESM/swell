@@ -24,8 +24,8 @@ obs operator:
      observation vertical coordinate group: DerivedVariables
      observation vertical coordinate: adjustedHeight
      interpolation method: linear
-     hofx scaling field: SurfaceWindScalingHeight
-     hofx scaling field group: DerivedVariables
+#    hofx scaling field: SurfaceWindScalingHeight
+#    hofx scaling field group: DerivedVariables
 
    - name: VertInterp
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
@@ -60,8 +60,8 @@ linear obs operator:
      observation vertical coordinate group: DerivedVariables
      observation vertical coordinate: adjustedHeight
      interpolation method: linear
-     hofx scaling field: SurfaceWindScalingHeight
-     hofx scaling field group: DerivedVariables
+#    hofx scaling field: SurfaceWindScalingHeight
+#    hofx scaling field group: DerivedVariables
 
    - name: VertInterp
      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
