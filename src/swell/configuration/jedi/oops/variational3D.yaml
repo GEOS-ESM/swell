@@ -23,18 +23,8 @@ variational:
     ninner: '{{number_of_iterations}}'
     diagnostics:
       departures: ombg
-# This might work for the ocean, but it is incorrect for atmos. 
-# I know the correct settings for atmos, but am afraid to break
-# ocean; I suppose this should be treated as a TASK to be filled
-# differently for O and A.
-#   online diagnostics:
-#     write increment: true
-#     increment:
-#       state component:
-#         datadir: ./
-#         date: '{{window_begin_iso}}'
-#         exp: {{experiment_id}}
-#         type: incr
+    online diagnostics:
+      TASKFILLvarincrement1
 final:
   diagnostics:
     departures: oman

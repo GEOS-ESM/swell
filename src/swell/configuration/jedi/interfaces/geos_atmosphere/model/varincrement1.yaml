@@ -1,0 +1,7 @@
+write increment: true
+increment:
+  state component:
+    filetype: auxgrid
+    gridtype: latlon
+    datapath: ./
+    filename: swell-3dvar_atmos.increment-iter1.
