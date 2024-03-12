@@ -1,5 +1,11 @@
 datasets:
 
+- group: increment
+  type: LatLon
+  filename: {{cycle_dir}}/swell-3dvar_atmos.increment-iter1.20211212_000000z.nc4
+  name: experiment_increment
+  variables: [t, lat, lon]
+
 - name: experiment
   type: IodaObsSpace
   filenames:
@@ -10,8 +16,8 @@ datasets:
       variables: &variables {{simulated_variables}}
     - name: GsiHofXBc
     #- name: GsiEffectiveQC
-    - name: hofx
-    - name: EffectiveQC
+    - name: hofx0
+    - name: EffectiveQC0
     - name: MetaData
 
 transforms:
@@ -25,24 +31,24 @@ transforms:
 
 # Generate omb for JEDI
 - transform: arithmetic
-  new name: experiment::ObsValueMinusHofx::${variable}
-  equals: experiment::ObsValue::${variable}-experiment::hofx::${variable}
+  new name: experiment::ObsValueMinusHofx0::${variable}
+  equals: experiment::ObsValue::${variable}-experiment::hofx0::${variable}
   for:
     variable: *variables
 
 # Generate hofx difference
 - transform: arithmetic
-  new name: experiment::HofxMinusGsiHofXBc::${variable}
-  equals: experiment::hofx::${variable}-experiment::GsiHofXBc::${variable}
+  new name: experiment::Hofx0MinusGsiHofXBc::${variable}
+  equals: experiment::hofx0::${variable}-experiment::GsiHofXBc::${variable}
   for:
     variable: *variables
 
 # Generate hofx that passed QC for JEDI
 - transform: accept where
-  new name: experiment::hofxPassedQc::${variable}
-  starting field: experiment::hofx::${variable}
+  new name: experiment::hofx0PassedQc::${variable}
+  starting field: experiment::hofx0::${variable}
   where:
-    - experiment::EffectiveQC::${variable} == 0
+    - experiment::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
@@ -51,16 +57,16 @@ transforms:
   new name: experiment::GsiHofXBcPassedQc::${variable}
   starting field: experiment::GsiHofXBc::${variable}
   where:
-    - experiment::EffectiveQC::${variable} == 0
+    - experiment::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
 # Generate omb that passed QC for JEDI
 - transform: accept where
-  new name: experiment::ObsValueMinushofxPassedQc::${variable}
-  starting field: experiment::ObsValueMinusHofx::${variable}
+  new name: experiment::ObsValueMinushofx0PassedQc::${variable}
+  starting field: experiment::ObsValueMinusHofx0::${variable}
   where:
-    - experiment::EffectiveQC::${variable} == 0
+    - experiment::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
@@ -69,7 +75,7 @@ transforms:
   new name: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
   starting field: experiment::ObsValueMinusGsiHofXBc::${variable}
   where:
-    - experiment::EffectiveQC::${variable} == 0
+    - experiment::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
 
@@ -88,7 +94,7 @@ graphics:
     figure:
       layout: [1,1]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
@@ -100,7 +106,7 @@ graphics:
           x:
             variable: experiment::ObsValue::${variable}
           y:
-            variable: experiment::hofx::${variable}
+            variable: experiment::hofx0::${variable}
           channel: ${channel}
           markersize: 5
           color: 'black'
@@ -109,7 +115,7 @@ graphics:
           x:
             variable: experiment::ObsValue::${variable}
           y:
-            variable: experiment::hofxPassedQc::${variable}
+            variable: experiment::hofx0PassedQc::${variable}
           channel: ${channel}
           markersize: 5
           color: 'red'
@@ -122,7 +128,7 @@ graphics:
     figure:
       layout: [1,1]
       title: 'Observations vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_obs_{{instrument}}_${variable}${channel}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'GSI h(x)'
@@ -156,7 +162,7 @@ graphics:
     figure:
       layout: [1,1]
       title: 'JEDI h(x) vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi_hofx_{{instrument}}_${variable}${channel}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi0_hofx_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'GSI h(x)'
         add_ylabel: 'JEDI h(x)'
@@ -168,7 +174,7 @@ graphics:
           x:
             variable: experiment::GsiHofXBc::${variable}
           y:
-            variable: experiment::hofx::${variable}
+            variable: experiment::hofx0::${variable}
           channel: ${channel}
           markersize: 5
           color: 'black'
@@ -177,7 +183,7 @@ graphics:
           x:
             variable: experiment::GsiHofXBcPassedQc::${variable}
           y:
-            variable: experiment::hofxPassedQc::${variable}
+            variable: experiment::hofx0PassedQc::${variable}
           channel: ${channel}
           markersize: 5
           color: 'red'
@@ -202,7 +208,7 @@ graphics:
           x:
             variable: experiment::ObsValueMinusGsiHofXBc::${variable}
           y:
-            variable: experiment::ObsValueMinusHofx::${variable}
+            variable: experiment::ObsValueMinusHofx0::${variable}
           channel: ${channel}
           markersize: 5
           color: 'black'
@@ -211,7 +217,7 @@ graphics:
           x:
             variable: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
           y:
-            variable: experiment::ObsValueMinushofxPassedQc::${variable}
+            variable: experiment::ObsValueMinushofx0PassedQc::${variable}
           channel: ${channel}
           markersize: 5
           color: 'red'
@@ -262,7 +268,7 @@ graphics:
     dynamic options:
       - type: vminvmaxcmap
         channel: ${channel}
-        data variable: experiment::ObsValueMinusHofx::${variable}
+        data variable: experiment::ObsValueMinusHofx0::${variable}
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -283,7 +289,7 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::ObsValueMinusHofx::${variable}
+            variable: experiment::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           markersize: 2
           label: '${variable}'
@@ -336,12 +342,12 @@ graphics:
     dynamic options:
       - type: vminvmaxcmap
         channel: ${channel}
-        data variable: experiment::HofxMinusGsiHofXBc::${variable}
+        data variable: experiment::Hofx0MinusGsiHofXBc::${variable}
     figure:
       figure size: [20,10]
       layout: [1,1]
-      title: 'Hofx Difference | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx_difference_{{instrument}}_${variable}${channel}.png'
+      title: 'Hofx0 Difference | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx0_difference_{{instrument}}_${variable}${channel}.png'
     plots:
       - mapping:
           projection: plcarr
@@ -357,7 +363,7 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::HofxMinusGsiHofXBc::${variable}
+            variable: experiment::Hofx0MinusGsiHofXBc::${variable}
             channel: ${channel}
           markersize: 2
           label: '${variable}'
@@ -375,7 +381,7 @@ graphics:
       - type: histogram_bins
         channel: ${channel}
         number of bins rule: sturges
-        data variable: experiment::ObsValueMinusHofx::${variable}
+        data variable: experiment::ObsValueMinusHofx0::${variable}
     figure:
       layout: [1,1]
       title: 'JEDI omb vs. GSI omb | {{instrument_title}} | ${variable_title}'
@@ -396,9 +402,40 @@ graphics:
           alpha: 0.5
         - type: Histogram
           data:
-            variable: experiment::ObsValueMinusHofx::${variable}
+            variable: experiment::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           color: 'red'
           label: 'JEDI omb (all obs)'
           bins: ${dynamic_bins}
           alpha: 0.5
+
+  #map plot for increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[-1,...]'
+          label: T increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
