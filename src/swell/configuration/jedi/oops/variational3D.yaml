@@ -1,5 +1,6 @@
 cost function:
   cost type: 3D-Var
+  jb evaluation: false
   time window:
     begin: '{{window_begin_iso}}'
     end: '{{window_end_iso}}'
