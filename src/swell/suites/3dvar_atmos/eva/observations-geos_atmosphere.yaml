@@ -448,7 +448,7 @@ graphics:
     figure:
       figure size: [20,10]
       layout: [1,1]
-      title: 'Hofx0 Difference | {{instrument_title}} | ${variable_title}'
+      title: 'RMS Residual Difference | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/rmsres_difference_{{instrument}}_${variable}${channel}.png'
     plots:
       - mapping:

@@ -1,10 +1,17 @@
 datasets:
 
 - type: JediLog
-  collection_name: jedi_log_test
+  collection_name: JediLogTest
   jedi_log_to_parse: '{{cycle_dir}}/jedi_variational_log.log'
   data_to_parse:
     convergence: true
+
+transforms:
+- transform: arithmetic
+  new name: JediLogTest::convergence::${variable}_log
+  equals: log(JediLogTest::convergence::${variable})
+  for:
+    variable: [residual_norm, norm_reduction]
 
 graphics:
 
@@ -22,36 +29,36 @@ graphics:
         layers:
         - type: LinePlot
           x:
-            variable: jedi_log_test::convergence::total_iteration
+            variable: JediLogTest::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::residual_norm
+            variable: JediLogTest::convergence::residual_norm
           color: 'black'
 
       - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Norm reduction'
+        add_ylabel: 'Log(norm reduction)'
         layers:
         - type: LinePlot
           x:
-            variable: jedi_log_test::convergence::total_iteration
+            variable: JediLogTest::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::norm_reduction
+            variable: JediLogTest::convergence::norm_reduction
           color: 'black'
 
       - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Normalized Value'
+        add_ylabel: 'Log(reduction)'
         add_legend:
         layers:
         - type: LinePlot
           x:
-            variable: jedi_log_test::convergence::total_iteration
+            variable: JediLogTest::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::residual_norm_normalized
+            variable: JediLogTest::convergence::residual_norm_log
           color: 'red'
-          label: 'Normalized residual norm'
+          label: 'Log(residual norm)'
         - type: LinePlot
           x:
-            variable: jedi_log_test::convergence::total_iteration
+            variable: JediLogTest::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::norm_reduction_normalized
+            variable: JediLogTest::convergence::norm_reduction_log
           color: 'blue'
-          label: 'Normalized norm reduction'
+          label: 'Log norm reduction'
