@@ -102,11 +102,11 @@ transforms:
     variable: *variables
 
 # Generate obs contribution to analysis (OmA*OmA)-(OmB*OmB)
-#- transform: arithmetic
-#  new name: experiment::ResidualRMSdiff::${variable}
-#  equals: (experiment::omanPassedQc::${variable})*(experiment::omanPassedQc::${variable})-(experiment::ombgPassedQc::${variable})*(experiment::ombgPassedQc::${variable})
-#  for:
-#    variable: *variables
+- transform: arithmetic
+  new name: experiment::ResidualRMSdiff::${variable}
+  equals: (experiment::omanPassedQc::${variable})*(experiment::omanPassedQc::${variable})-(experiment::ombgPassedQc::${variable})*(experiment::ombgPassedQc::${variable})
+  for:
+    variable: *variables
 
 graphics:
 
@@ -435,6 +435,44 @@ graphics:
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
+
+
+  # RMS(oma)-RMS(omb) difference
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::ResidualRMSdiff::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Hofx0 Difference | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/rmsres_difference_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: '${variable}'
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::ResidualRMSdiff::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: '${variable}'
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
 # Histogram plots# ---------------
 
   # hofx0 vs hofx0
@@ -483,7 +521,7 @@ graphics:
     figure:
       layout: [1,1]
       title: 'OmB vs. OmA | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/ombg_oman_{{instrument}}_${variable}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}/ombg_oman_{{instrument}}_${variable}.png'
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
@@ -554,12 +592,11 @@ graphics:
             variable: experiment_increment::increment::lat
           data:
             variable: experiment_increment::increment::ps
-            slices: '[0,...]'
           label: PS increment
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -100
+          vmax: 100
   #map plot for temperature increment (lowest level)
   - batch figure:
       variables: [t]
@@ -1131,8 +1168,8 @@ graphics:
           label: Q increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.001
+          vmax: 0.001
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
@@ -1161,8 +1198,8 @@ graphics:
           label: Q increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.001
+          vmax: 0.001
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
@@ -1191,8 +1228,8 @@ graphics:
           label: Q increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.001
+          vmax: 0.001
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
@@ -1221,8 +1258,8 @@ graphics:
           label: Q increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.001
+          vmax: 0.001
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
@@ -1251,5 +1288,5 @@ graphics:
           label: Q increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.001
+          vmax: 0.001
