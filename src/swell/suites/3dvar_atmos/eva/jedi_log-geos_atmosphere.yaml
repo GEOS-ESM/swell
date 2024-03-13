@@ -14,17 +14,17 @@ graphics:
   - figure:
       layout: [3,1]
       figure size: [12,10]
-      title: 'Gradient and Norm Reduction Plots'
-      output name: '{{cycle_dir}}/eva/jedi_log/convergence/norm_gradient_reduction.png'
+      title: 'Residual Norm and Norm Reduction Plots'
+      output name: '{{cycle_dir}}/eva/jedi_log/convergence/residual_norm_reduction.png'
     plots:
       - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Gradient reduction'
+        add_ylabel: 'Residual norm'
         layers:
         - type: LinePlot
           x:
             variable: jedi_log_test::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::gradient_reduction
+            variable: jedi_log_test::convergence::residual_norm
           color: 'black'
 
       - add_xlabel: 'Total inner iteration number'
@@ -45,9 +45,9 @@ graphics:
           x:
             variable: jedi_log_test::convergence::total_iteration
           y:
-            variable: jedi_log_test::convergence::gradient_reduction_normalized
+            variable: jedi_log_test::convergence::residual_norm_normalized
           color: 'red'
-          label: 'Normalized gradient reduction'
+          label: 'Normalized residual norm'
         - type: LinePlot
           x:
             variable: jedi_log_test::convergence::total_iteration
