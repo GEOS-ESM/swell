@@ -432,7 +432,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ps
             slices: '[0,...]'
           label: PS increment
           colorbar: true
@@ -643,7 +643,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[71,...]'
           label: U increment (1000 hPa)
           colorbar: true
@@ -673,7 +673,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[62,...]'
           label: U increment (850 hPa)
           colorbar: true
@@ -703,7 +703,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[49,...]'
           label: U increment (500 hPa)
           colorbar: true
@@ -733,7 +733,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[42,...]'
           label: U increment (200 hPa)
           colorbar: true
@@ -763,7 +763,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[24,...]'
           label: U increment (10 hPa)
           colorbar: true
@@ -793,7 +793,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::ua
             slices: '[14,...]'
           label: U increment (1 hPa)
           colorbar: true
@@ -824,7 +824,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[71,...]'
           label: V increment (1000 hPa)
           colorbar: true
@@ -854,7 +854,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[62,...]'
           label: V increment (850 hPa)
           colorbar: true
@@ -884,7 +884,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[49,...]'
           label: V increment (500 hPa)
           colorbar: true
@@ -914,7 +914,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[42,...]'
           label: V increment (200 hPa)
           colorbar: true
@@ -944,7 +944,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[24,...]'
           label: V increment (10 hPa)
           colorbar: true
@@ -974,7 +974,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::va
             slices: '[14,...]'
           label: V increment (1 hPa)
           colorbar: true
@@ -1005,7 +1005,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::q
             slices: '[71,...]'
           label: Q increment (1000 hPa)
           colorbar: true
@@ -1035,7 +1035,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::q
             slices: '[62,...]'
           label: Q increment (850 hPa)
           colorbar: true
@@ -1065,7 +1065,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::q
             slices: '[49,...]'
           label: Q increment (500 hPa)
           colorbar: true
@@ -1095,7 +1095,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::q
             slices: '[42,...]'
           label: Q increment (200 hPa)
           colorbar: true
@@ -1125,7 +1125,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::t
+            variable: experiment_increment::increment::q
             slices: '[24,...]'
           label: Q increment (10 hPa)
           colorbar: true
