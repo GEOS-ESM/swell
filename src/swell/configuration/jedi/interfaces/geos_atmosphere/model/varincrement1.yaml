@@ -4,4 +4,4 @@ increment:
     filetype: auxgrid
     gridtype: latlon
     datapath: ./
-    filename: swell-3dvar_atmos.increment-iter1.
+    filename: {{experiment_id}}.increment-iter1.
