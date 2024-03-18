@@ -4,7 +4,7 @@ saber central block:
   read:
     gsi akbk: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/akbk{{vertical_resolution}}.nc4'
     gsi error covariance file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
-    gsi berror namelist file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_configuration_c{{horizontal_resolution}}.nml'
+    gsi berror namelist file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml'
     processor layout x direction: {{gsibec_npx_proc}}
     processor layout y direction: {{gsibec_npy_proc}}
     debugging mode: false
@@ -16,7 +16,7 @@ saber outer blocks:
                                       sfc_geopotential_height_times_grav]
   gsi akbk: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/akbk{{vertical_resolution}}.nc4'
   gsi error covariance file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
-  gsi berror namelist file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_configuration_c{{horizontal_resolution}}.nml'
+  gsi berror namelist file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml'
   processor layout x direction: {{gsibec_npx_proc}}
   processor layout y direction: {{gsibec_npy_proc}}
   debugging mode: false

@@ -1,17 +1,17 @@
 cost function:
-  cost type: 4D-Var
+  cost type:
+    TASKFILLcost_type
   jb evaluation: false
   time window:
     begin: '{{window_begin_iso}}'
     length: '{{window_length}}'
     bound to include: begin
+  subwindow: PT1H
+  parallel subwindows: false
   geometry:
     TASKFILLgeometry
-  model:
-    TASKFILLpseudo-model
   variable change:
     variable change name: Analysis2Model
-  forecast length: {{window_length}}
   analysis variables: {{analysis_variables}}
   background:
     TASKFILLbackground

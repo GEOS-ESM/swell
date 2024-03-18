@@ -30,6 +30,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Parse configuration
         # -------------------
+        cost_type = self.config.cost_type()
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
@@ -58,6 +59,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
+        self.jedi_rendering.add_key('cost_type', cost_type)
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
@@ -85,6 +87,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Atmosphere background error model
         if npx_proc is not None and npy_proc is not None:
+            self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
             self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
@@ -102,7 +105,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{cost_type}')
 
         # Perform complete template rendering
         # -----------------------------------
@@ -124,7 +127,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Jedi executable name
         # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+        jedi_executable = model_component_meta['executables'][f'{jedi_application}{cost_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 

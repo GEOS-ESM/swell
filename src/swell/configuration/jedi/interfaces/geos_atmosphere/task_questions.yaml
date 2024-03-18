@@ -27,6 +27,12 @@ background_frequency:
 background_time_offset:
   default_value: PT9H
 
+cost_type:
+  default_value: 3D-Var
+  options:
+  - 4D-Var
+  - 4D-En-Var
+
 clean_patterns:
   default_value:
   - '*.nc4'
@@ -50,6 +56,11 @@ geovals_experiment:
 
 geovals_provider:
   default_value: ncdiag
+
+gsibec_configuration:
+  default_value: cli_gsibec_configuration
+  options:
+  - hyb_gsibec_configuration
 
 gradient_norm_reduction:
   default_value: 10e-5
