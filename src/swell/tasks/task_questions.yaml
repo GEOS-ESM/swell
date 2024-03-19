@@ -734,7 +734,6 @@ save_geovals:
   - false
   prompt: When running hofx do you want to output the GeoVaLs?
   tasks:
-  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   type: boolean
 
