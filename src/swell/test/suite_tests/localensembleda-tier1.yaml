@@ -9,11 +9,13 @@ models:
     - T12
     - T18
     ensemble_hofx_strategy: parallel
+    ensemble_hofx_packets: 2
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     observations:
     - sondes
     obs_experiment: x0048v1
+    background_experiment: geos
     window_type: 3D
     horizontal_resolution: 13
     clean_patterns:

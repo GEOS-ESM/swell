@@ -33,12 +33,14 @@ clean_patterns:
   - logfile.*.out
 
 ensemble_hofx_packets:
-  default_value: None
+  default_value: 2
   options: None
 
 ensemble_hofx_strategy:
-  default_value: None
-  options: None
+  default_value: parallel
+  options:
+  - serial
+  - parallel
 
 ensemble_num_members:
   default_value: 10
