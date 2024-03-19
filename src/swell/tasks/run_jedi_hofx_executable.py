@@ -160,18 +160,20 @@ class RunJediHofxExecutable(taskBase):
 
                     # List of GeoVaLs input files
                     input_files = f'{observation}-geovals.{window_begin}_*.nc4'
-                    output_file = f'{self.experiment_id()}.{observation}-geovals.{window_begin}.nc4'
+                    output_file = \
+                        f'{self.experiment_id()}.{observation}-geovals.{window_begin}.nc4'
                     output_file = os.path.join(self.cycle_dir(), output_file)
 
                     # Build list of input files
                     geovals_files = sorted(glob.glob(os.path.join(self.cycle_dir(), input_files)))
 
                     # Assert that there are np files
-                    self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs files ' +
-                                            f'does not match number of processors.')
+                    self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs' +
+                                             f' files does not match number of processors.')
 
                     # Write the concatenated dataset to a new file
-                    combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs', True)
+                    combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs',
+                                                 True)
 
         else:
             for mem in ensemble_members:
@@ -250,7 +252,7 @@ class RunJediHofxExecutable(taskBase):
             gom_saver_dict = {
                 'filter': 'GOMsaver',
                 'filename': os.path.join(self.cycle_dir(),
-                                            f'{observation}-geovals.{window_begin}{mem_str}.nc4')
+                                         f'{observation}-geovals.{window_begin}{mem_str}.nc4')
             }
 
             # Get pointer to observer

@@ -121,7 +121,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # Output log file
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(),
-                                      f'jedi_{jedi_application}_pack{this_packet}_log.log')
+                                       f'jedi_{jedi_application}_pack{this_packet}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -162,7 +162,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
             run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                            jedi_config_file, output_log_file)
 
-            #TODO: save_geovals combination, if ever needed
+        # TODO: save_geovals combination, if ever needed
         else:
             self.logger.info('YAML generated, now exiting.')
 
