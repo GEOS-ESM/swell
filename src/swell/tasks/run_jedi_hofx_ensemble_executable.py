@@ -14,8 +14,8 @@ import yaml
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
 
-# from swell.utilities.run_jedi_executables import run_executable
-# from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
+from swell.utilities.run_jedi_executables import run_executable
+from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
 # --------------------------------------------------------------------------------------------------
 
@@ -120,8 +120,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Output log file
         # ---------------
-        # output_log_file = os.path.join(self.cycle_dir(),
-        #                               f'jedi_{jedi_application}_pack{this_packet}_log.log')
+        output_log_file = os.path.join(self.cycle_dir(),
+                                      f'jedi_{jedi_application}_pack{this_packet}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -145,9 +145,9 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
-        # Compute number of processors
-        # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
+        # Compute number of processors while considering packet ensemble members
+        # -----------------------------------------------------------------------
+        np = _q * eval(str(model_component_meta['total_processors']))
 
         # Jedi executable name
         # --------------------
@@ -159,8 +159,10 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # -----------------------
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            # run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-            #                jedi_config_file, output_log_file)
+            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                           jedi_config_file, output_log_file)
+
+            #TODO: save_geovals combination, if ever needed
         else:
             self.logger.info('YAML generated, now exiting.')
 
