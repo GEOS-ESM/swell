@@ -65,6 +65,9 @@ geovals_provider:
 gradient_norm_reduction:
   default_value: 10e-5
 
+gsibec_configuration:
+   default_value: cli_gsibec_configuration
+
 horizontal_localization_lengthscale:
   default_value: 10000e3
 
