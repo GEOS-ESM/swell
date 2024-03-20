@@ -65,6 +65,7 @@ class JediConfigRendering():
             'ensemble_hofx_strategy',
             'ensemble_num_members',
             'gradient_norm_reduction',
+            'gsibec_configuration',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
             'horizontal_localization_lengthscale',

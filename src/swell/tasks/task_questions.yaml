@@ -332,6 +332,16 @@ geovals_provider:
   - GetGeovals
   type: string
 
+gsibec_configuration:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  prompt: Which GSIBEC climatological or hybrid?
+  tasks:
+  - RunJediVariationalExecutable
+  type: float
+
 gradient_norm_reduction:
   ask_question: false
   default_value: defer_to_model
@@ -340,7 +350,8 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
-  type: float
+  - StageJedi
+  type: string-drop-list
 
 horizontal_localization_lengthscale:
   ask_question: false
