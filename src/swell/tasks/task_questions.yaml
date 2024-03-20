@@ -340,6 +340,7 @@ gsibec_configuration:
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
   - RunJediVariationalExecutable
+  - StageJedi
   type: float
 
 gradient_norm_reduction:
@@ -350,7 +351,6 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
-  - StageJedi
   type: string-drop-list
 
 horizontal_localization_lengthscale:
