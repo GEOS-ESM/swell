@@ -1,0 +1,36 @@
+cost function:
+  cost type:
+    TASKFILLcost_type
+  jb evaluation: false
+  time window:
+    begin: '{{window_begin_iso}}'
+    end: '{{window_end_iso}}'
+    bound to include: begin
+  geometry:
+    TASKFILLgeometry
+  analysis variables: {{analysis_variables}}
+  background:
+    TASKFILLbackground
+  background error:
+    TASKFILLbackground_error
+  observations:
+    observers:
+      SPECIALobservations
+variational:
+  minimizer:
+    algorithm: {{minimizer}}
+  iterations:
+  - geometry: TASKFILLgeometry_inner
+    gradient norm reduction: '{{gradient_norm_reduction}}'
+    ninner: '{{number_of_iterations}}'
+    diagnostics:
+      departures: ombg
+    online diagnostics:
+      TASKFILLvarincrement1
+final:
+  diagnostics:
+    departures: oman
+  prints:
+    frequency: PT3H  #TODO: Define this as a default value in suite config
+output:
+  TASKFILLanalysis
