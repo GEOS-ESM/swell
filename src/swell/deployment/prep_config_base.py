@@ -473,9 +473,9 @@ class PrepConfigBase(ABC):
         complete_model_dict = {}
         for m in self.selected_models:
             model_key_list = ['all'] + [m]
+            complete_model_dict[m] = {}
             for k, v in self.model_suite_questions.items():
                 if v['models'][0] in model_key_list:
-                    complete_model_dict[m] = {}
                     complete_model_dict[m][k] = v
             complete_model_dict[m].update(self.model_questions_dictionary[m])
         self.model_questions_dictionary = complete_model_dict
