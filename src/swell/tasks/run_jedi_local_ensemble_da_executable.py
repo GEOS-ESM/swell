@@ -75,6 +75,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
+        # Ensemble hofx components
+        self.jedi_rendering.add_key('ensemble_hofx_strategy', self.config.ensemble_hofx_strategy())
+        self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.ensemble_hofx_packets())
+
         # Ensemble Localizations
         self.jedi_rendering.add_key('horizontal_localization_method',
                                     self.config.horizontal_localization_method())

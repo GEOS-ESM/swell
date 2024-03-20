@@ -26,7 +26,7 @@
         R1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
-	    # Clone JEDI source code
+            # Clone JEDI source code
             CloneJedi
 
             # Build JEDI source code by linking
@@ -37,8 +37,8 @@
 
             {% for model_component in model_components %}
 
-	    # JEDI cannot run unless it has been built
-	    BuildJediByLinking? | BuildJedi => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            # JEDI cannot run unless it has been built
+            BuildJediByLinking? | BuildJedi => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
             # Stage JEDI static files
             CloneJedi => StageJedi-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
@@ -60,12 +60,37 @@
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
-            # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediLocalEnsembleDaExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediLocalEnsembleDaExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
-            GetEnsemble-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            # Run hofx for ensemble members according to strategy
+            {% if ensemble_hofx_strategy == 'serial' %}
+                BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}
+                StageJedi-{{model_component}}[^] => RunJediHofxEnsembleExecutable-{{model_component}}
+                StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+            {% elif ensemble_hofx_strategy == 'parallel' %}
+            {% for packet in range(ensemble_hofx_packets) %}
+                # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
+                BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                StageJedi-{{model_component}}[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+
+                # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
+                # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
+                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} =>RunJediLocalEnsembleDaExecutable-{{model_component}}
+            {% endfor %}
+            {% endif %}
+
+        # LETKF solver can be executed only after all the hofx ensemble members have been combined
+        # RunEnsembleHofxCombiner-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+
+        # Run Jedi DA executable
+	    {% if ensemble_hofx_strategy == 'serial' %}
+	    RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+	    {% endif %}
 
             # EvaObservations
             RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -126,11 +151,31 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
+    [[ GetBackground-{{model_component}} ]]
+        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+
     [[GetEnsemble-{{model_component}}]]
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+
+    {% if ensemble_hofx_strategy == 'serial' %}
+    [[RunJediHofxEnsembleExecutable-{{model_component}}]]
+        script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+    {% elif ensemble_hofx_strategy == 'parallel' %}
+    {% for packet in range(ensemble_hofx_packets) %}
+    [[RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}]]
+	script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}} -p {{packet}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+
+    {% endfor %}
+    {% endif %}
 
     [[RunJediLocalEnsembleDaExecutable-{{model_component}}]]
         script = "swell task RunJediLocalEnsembleDaExecutable $config -d $datetime -m {{model_component}}"
