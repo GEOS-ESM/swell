@@ -484,8 +484,8 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
         render_dictionary['scheduling'][slurm_task]['account'] = account
         render_dictionary['scheduling'][slurm_task]['qos'] = qos
-        render_dictionary['scheduling'][slurm_task]['nodes'] = 1
-        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 24
+        render_dictionary['scheduling'][slurm_task]['nodes'] = 3
+        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 36
         render_dictionary['scheduling'][slurm_task]['constraint'] = constraint
         render_dictionary['scheduling'][slurm_task]['partition'] = partition
 

@@ -115,14 +115,14 @@ minimizer:
   - DRPCG
 
 npx_proc:
-  default_value: 2
+  default_value: 4
 
 npy_proc:
-  default_value: 2
+  default_value: 4
 
 number_of_iterations:
   default_value:
-  - 50
+  - 5
 
 obs_experiment:
   default_value: x0048
