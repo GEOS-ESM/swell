@@ -12,9 +12,7 @@ import os
 import yaml
 
 from eva.eva_driver import eva
-
 from datetime import timedelta
-from datetime import datetime as dt
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
