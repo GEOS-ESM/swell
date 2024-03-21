@@ -77,6 +77,9 @@
             # EvaJediLog
             RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
 
+            # EvaIncrement
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
             # Save observations
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
@@ -165,6 +168,9 @@
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
