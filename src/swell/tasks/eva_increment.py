@@ -13,6 +13,9 @@ import yaml
 
 from eva.eva_driver import eva
 
+from datetime import timedelta
+from datetime import datetime as dt
+
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 
@@ -41,9 +44,16 @@ class EvaIncrement(taskBase):
         self.logger.info(info_string)
         self.logger.info('-'*len(info_string))
 
+        # Create time strings for eva_override directory
+        cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
+        window_begin_dto = self.cycle_time_dto() - timedelta(hours=3)
+        window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
+
         # Create dictionary used to override the eva config
         eva_override = {}
         eva_override['cycle_dir'] = self.cycle_dir()
+        eva_override['cycle_time'] = cycle_time_reformat
+        eva_override['window_begin'] = window_begin
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
