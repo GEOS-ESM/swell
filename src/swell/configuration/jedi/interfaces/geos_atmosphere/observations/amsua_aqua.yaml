@@ -24,6 +24,8 @@ obs operator:
 
 obs bias:
   input file: '{{cycle_dir}}/amsua_aqua.{{background_time}}.satbias.nc4'
+  variables without bc: [brightnessTemperature]
+  channels: 14
   variational bc:
     predictors:
     - name: constant
