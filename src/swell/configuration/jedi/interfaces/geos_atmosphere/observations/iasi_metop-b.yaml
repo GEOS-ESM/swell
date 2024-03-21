@@ -52,9 +52,9 @@ obs bias:
         ratio for small dataset: 2.0
     output file: '{{cycle_dir}}/iasi_metop-b.{{window_begin}}.satbias.nc4'
 
-#obs error:
-#  covariance model: cross variable covariances
-#  input file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/rcov/iasi_metop_141_jedi_rcov.nc4'
+obs error:
+  covariance model: cross variable covariances
+  input file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/rcov/iasi_metop_141_jedi_rcov.nc4'
 
 obs prior filters:
 - filter: Perform Action
