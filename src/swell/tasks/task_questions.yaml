@@ -332,6 +332,16 @@ geovals_provider:
   - GetGeovals
   type: string
 
+gradient_norm_reduction:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  prompt: What value of gradient norm reduction for convergence?
+  tasks:
+  - RunJediVariationalExecutable
+  type: string-drop-list
+
 gsibec_configuration:
   ask_question: false
   default_value: defer_to_model
@@ -342,16 +352,6 @@ gsibec_configuration:
   - RunJediVariationalExecutable
   - StageJedi
   type: float
-
-gradient_norm_reduction:
-  ask_question: false
-  default_value: defer_to_model
-  models:
-  - all
-  prompt: What value of gradient norm reduction for convergence?
-  tasks:
-  - RunJediVariationalExecutable
-  type: string-drop-list
 
 horizontal_localization_lengthscale:
   ask_question: false
