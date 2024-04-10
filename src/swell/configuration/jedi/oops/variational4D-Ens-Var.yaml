@@ -14,7 +14,8 @@ cost function:
     variable change name: Analysis2Model
   analysis variables: {{analysis_variables}}
   background:
-    TASKFILLbackground
+    states:
+      TASKFILLbackground4D
   background error:
     TASKFILLbackground_error
   observations:
@@ -35,7 +36,7 @@ variational:
     diagnostics:
       departures: ombg
     online diagnostics:
-      TASKFILLvarincrement1
+      TASKFILLvar4Dincrement1
 final:
   diagnostics:
     departures: oman

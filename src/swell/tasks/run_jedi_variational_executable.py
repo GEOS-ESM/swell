@@ -95,6 +95,10 @@ class RunJediVariationalExecutable(taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
+        # Access to ensemble
+#       if cost_type == '4D-Ens-Var':
+#           self.jedi_rendering.add_key('path_to_ensemble', self.config.path_to_ensemble())
+
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')

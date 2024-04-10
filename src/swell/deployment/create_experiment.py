@@ -466,7 +466,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     render_dictionary['scheduling'] = {}
     for slurm_task in slurm_tasks:
         render_dictionary['scheduling'][slurm_task] = {}
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
+        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT3H'
         render_dictionary['scheduling'][slurm_task]['account'] = account
         render_dictionary['scheduling'][slurm_task]['qos'] = qos
         render_dictionary['scheduling'][slurm_task]['nodes'] = 9

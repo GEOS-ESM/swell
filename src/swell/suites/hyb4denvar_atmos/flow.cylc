@@ -57,6 +57,9 @@
             # Get background
             GetBackground-{{model_component}}
 
+            # Get ensemble
+            GetEnsemble-{{model_component}}
+
             # Get observations
             GetObservations-{{model_component}}
 
@@ -68,6 +71,7 @@
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetEnsemble-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
@@ -141,6 +145,9 @@
 
     [[ GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+
+    [[GetEnsemble-{{model_component}}]]
+        script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
