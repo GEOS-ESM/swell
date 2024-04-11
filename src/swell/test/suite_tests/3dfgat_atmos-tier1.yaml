@@ -4,6 +4,9 @@ models:
   geos_atmosphere:
     cycle_times:
     - T00
+    - T06
+    - T12
+    - T18
     horizontal_resolution: '91'
     window_type: 4D
     observations:
@@ -41,7 +44,7 @@ models:
     - sondes
     - ssmis_f17
     gradient_norm_reduction: 1e-3
-    number_of_iterations: 
+    number_of_iterations:
     - 5
     obs_experiment: x0048v2
     geovals_experiment: x0048v2-geovals

@@ -910,6 +910,7 @@ window_offset:
   - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
+  - EvaIncrement
   - EvaObservations
   - GenerateBClimatology
   - GenerateBClimatologyByLinking

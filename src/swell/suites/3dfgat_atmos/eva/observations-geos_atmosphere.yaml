@@ -85,7 +85,7 @@ transforms:
     - experiment::EffectiveQC0::${variable} == 0
   for:
     variable: *variables
-    
+
 # Generate oman that passed QC for JEDI
 - transform: accept where
   new name: experiment::omanPassedQc::${variable}
@@ -280,7 +280,8 @@ graphics:
           color: 'red'
           label: 'OmA versus OmB (passed QC)'
 
-# Map plots# ---------
+# Map plots
+# ---------
 
   # Observations
   - batch figure:
@@ -467,7 +468,9 @@ graphics:
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
-# Histogram plots# ---------------
+
+# Histogram plots
+# ---------------
 
   # hofx0 vs hofx0
   - batch figure:

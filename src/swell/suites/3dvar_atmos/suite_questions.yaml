@@ -12,7 +12,7 @@ final_cycle_point:
 
 runahead_limit:
   ask_question: True
-  default_value: 'P4'
+  default_value: 'P3'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   type: string
 

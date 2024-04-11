@@ -6,6 +6,9 @@ models:
   geos_atmosphere:
     cycle_times:
     - T00
+    - T06
+    - T12
+    - T18
     window_length: PT6H
     window_offset: PT3H
     window_type: 3D

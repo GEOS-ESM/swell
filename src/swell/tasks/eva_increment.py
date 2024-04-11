@@ -12,11 +12,9 @@ import os
 import yaml
 
 from eva.eva_driver import eva
-from datetime import timedelta
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -44,13 +42,23 @@ class EvaIncrement(taskBase):
 
         # Create time strings for eva_override directory
         cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
-        window_begin_dto = self.cycle_time_dto() - timedelta(hours=3)
+        window_begin_dto = self.da_window_params.window_begin(self.config.window_offset(),
+                                                              dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
+
+        # Define the increment filename and path
+        # TODO: Increment iteration number may change according to outer iteration loops
+        # which is currenly manually set in varincrement1.yaml
+        # For now we are only plotting the first one
+        iter_no = 1
+        incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 
         # Create dictionary used to override the eva config
         eva_override = {}
         eva_override['cycle_dir'] = self.cycle_dir()
         eva_override['cycle_time'] = cycle_time_reformat
+        eva_override['increment_file_path'] = increment_file_path
         eva_override['window_begin'] = window_begin
 
         # Override the eva dictionary

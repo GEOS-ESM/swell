@@ -1,8 +1,7 @@
 datasets:
-
 - group: increment
   type: LatLon
-  filename: {{cycle_dir}}/swell-3dfgat_atmos.increment-iter1.{{window_begin}}.nc4
+  filename: {{increment_file_path}}
   name: experiment_increment
   variables: [ps, ua, va, t, q, lat, lon]
 
@@ -12,7 +11,7 @@ graphics:
   figure_list:
 
   #map plot for surface pressure increment
-  - batch figure: 
+  - batch figure:
       variables: [ps]
     figure:
       figure size: [20,10]

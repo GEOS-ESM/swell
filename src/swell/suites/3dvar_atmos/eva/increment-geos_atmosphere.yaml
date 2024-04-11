@@ -2,10 +2,9 @@ datasets:
 
 - group: increment
   type: LatLon
-  filename: {{cycle_dir}}/swell-3dvar_atmos.increment-iter1.{{cycle_time}}.nc4
+  filename: {{increment_file_path}}
   name: experiment_increment
   variables: [ps, ua, va, t, q, lat, lon]
-
 
 graphics:
 
