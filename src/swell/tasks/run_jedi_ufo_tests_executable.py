@@ -84,7 +84,7 @@ class RunJediUfoTestsExecutable(taskBase):
         ufo_tests_dict = self.jedi_rendering.render_interface_observations(f'ufo_tests')
         ufo_tests_default = ufo_tests_dict['default']
 
-        # Remove the LinObsOperatror and Insert the GeoVaLs section
+        # Remove the LinObsOperator and Insert the GeoVaLs section
         # ---------------------------------------------------------
         # Loop over the observations
         for index in range(len(observations)):
@@ -109,6 +109,10 @@ class RunJediUfoTestsExecutable(taskBase):
             # Check if jedi_config_dict['observations'][index] has linear obs operator and remove
             if 'linear obs operator' in jedi_config_dict['observations'][index]:
                 del jedi_config_dict['observations'][index]['linear obs operator']
+
+            # Check if jedi_config_dict['observations'][index] has obs_config and remove
+            if 'obs error' in jedi_config_dict['observations'][index]:
+                del jedi_config_dict['observations'][index]['obs error']
 
         # Copies for each kind of test
         # ----------------------------
