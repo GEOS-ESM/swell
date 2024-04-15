@@ -1,0 +1,1292 @@
+datasets:
+
+- group: increment
+  type: LatLon
+  filename: {{cycle_dir}}/swell-3dfgat_atmos.increment-iter1.20211212_000000z.nc4
+  name: experiment_increment
+  variables: [ps, ua, va, t, q, lat, lon]
+
+- name: experiment
+  type: IodaObsSpace
+  filenames:
+    - {{obs_path_file}}
+  channels: &channels {{channels}}
+  groups:
+    - name: ObsValue
+      variables: &variables {{simulated_variables}}
+    - name: GsiHofXBc
+    #- name: GsiEffectiveQC
+    - name: hofx0
+    - name: hofx1
+    - name: ombg
+    - name: oman
+    - name: EffectiveQC0
+    - name: EffectiveQC1
+    - name: MetaData
+
+transforms:
+
+# Generate hofx0 for GSI
+- transform: arithmetic
+  new name: experiment::ObsValueMinusGsiHofXBc::${variable}
+  equals: experiment::ObsValue::${variable}-experiment::GsiHofXBc::${variable}
+  for:
+    variable: *variables
+
+# Generate hofx0 for JEDI
+- transform: arithmetic
+  new name: experiment::ObsValueMinusHofx0::${variable}
+  equals: experiment::ObsValue::${variable}-experiment::hofx0::${variable}
+  for:
+    variable: *variables
+
+# Generate hofx difference
+- transform: arithmetic
+  new name: experiment::Hofx0MinusGsiHofXBc::${variable}
+  equals: experiment::hofx0::${variable}-experiment::GsiHofXBc::${variable}
+  for:
+    variable: *variables
+
+# Generate hofx that passed QC for JEDI
+- transform: accept where
+  new name: experiment::hofx0PassedQc::${variable}
+  starting field: experiment::hofx0::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate GSI hofx that passed JEDI QC
+- transform: accept where
+  new name: experiment::GsiHofXBcPassedQc::${variable}
+  starting field: experiment::GsiHofXBc::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate hofx0 that passed QC for JEDI
+- transform: accept where
+  new name: experiment::ObsValueMinushofx0PassedQc::${variable}
+  starting field: experiment::ObsValueMinusHofx0::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate hofx0 that passed QC for GSI
+- transform: accept where
+  new name: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+  starting field: experiment::ObsValueMinusGsiHofXBc::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate ombg that passed QC for JEDI
+- transform: accept where
+  new name: experiment::ombgPassedQc::${variable}
+  starting field: experiment::ombg::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+    
+# Generate oman that passed QC for JEDI
+- transform: accept where
+  new name: experiment::omanPassedQc::${variable}
+  starting field: experiment::oman::${variable}
+  where:
+    - experiment::EffectiveQC1::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate obs contribution to analysis (OmA*OmA)-(OmB*OmB)
+- transform: arithmetic
+  new name: experiment::ResidualRMSdiff::${variable}
+  equals: (experiment::omanPassedQc::${variable})*(experiment::omanPassedQc::${variable})-(experiment::ombgPassedQc::${variable})*(experiment::ombgPassedQc::${variable})
+  for:
+    variable: *variables
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  # Correlation scatter plots
+  # -------------------------
+
+  # JEDI h(x) vs Observations
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'JEDI h(x)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::ObsValue::${variable}
+          y:
+            variable: experiment::hofx0::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'JEDI h(x) versus obs (all obs)'
+        - type: Scatter
+          x:
+            variable: experiment::ObsValue::${variable}
+          y:
+            variable: experiment::hofx0PassedQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+
+  # GSI h(x) vs Observations
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'Observations vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'GSI h(x)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::ObsValue::${variable}
+          y:
+            variable: experiment::GsiHofXBc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'GSI h(x) versus obs (all obs)'
+        - type: Scatter
+          x:
+            variable: experiment::ObsValue::${variable}
+          y:
+            variable: experiment::GsiHofXBcPassedQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'GSI h(x) versus obs (passed QC in JEDI)'
+
+  # JEDI h(x) vs GSI h(x)
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'JEDI h(x) vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi0_hofx_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'GSI h(x)'
+        add_ylabel: 'JEDI h(x)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::GsiHofXBc::${variable}
+          y:
+            variable: experiment::hofx0::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'JEDI h(x) versus GSI h(x)'
+        - type: Scatter
+          x:
+            variable: experiment::GsiHofXBcPassedQc::${variable}
+          y:
+            variable: experiment::hofx0PassedQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'JEDI h(x) versus GSI h(x) (passed QC in JEDI)'
+
+  # JEDI hofx0 vs GSI hofx0
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'JEDI hofx0 vs. GSI hofx0 | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI observation minus h(x)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+          y:
+            variable: experiment::ObsValueMinusHofx0::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'GSI hofx0 vs JEDI hofx0 (all obs)'
+        - type: Scatter
+          x:
+            variable: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
+          y:
+            variable: experiment::ObsValueMinushofx0PassedQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'GSI hofx0 vs JEDI hofx0 (passed QC in JEDI)'
+
+  # JEDI oma vs omb
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'OmA vs. OmB | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_oma_vs_omb_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'OmA'
+        add_ylabel: 'OmB'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::oman::${variable}
+          y:
+            variable: experiment::ombg::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'OmA versus OmB (all residuals)'
+        - type: Scatter
+          x:
+            variable: experiment::omanPassedQc::${variable}
+          y:
+            variable: experiment::ombgPassedQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'OmA versus OmB (passed QC)'
+
+# Map plots# ---------
+
+  # Observations
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::ObsValue::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Observations | {{instrument_title}} | Obs Value'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/observations_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: ObsValue
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::ObsValue::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: ObsValue
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+  # hofx0 jedi
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::ObsValueMinusHofx0::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'JEDI hofx0 | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx0_jedi_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: '${variable}'
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::ObsValueMinusHofx0::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: '${variable}'
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+  # hofx0 gsi
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'GSI hofx0 | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx0_gsi_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: '${variable}'
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: '${variable}'
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+  # hofx difference
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::Hofx0MinusGsiHofXBc::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Hofx0 Difference | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/hofx0_difference_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: '${variable}'
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::Hofx0MinusGsiHofXBc::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: '${variable}'
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+
+  # RMS(oma)-RMS(omb) difference
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: vminvmaxcmap
+        channel: ${channel}
+        data variable: experiment::ResidualRMSdiff::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'RMS Residual Difference | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}${channel}/rmsres_difference_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: '${variable}'
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::ResidualRMSdiff::${variable}
+            channel: ${channel}
+          markersize: 2
+          label: '${variable}'
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+# Histogram plots# ---------------
+
+  # hofx0 vs hofx0
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    dynamic options:
+      - type: histogram_bins
+        channel: ${channel}
+        number of bins rule: sturges
+        data variable: experiment::ObsValueMinusHofx0::${variable}
+    figure:
+      layout: [1,1]
+      title: 'JEDI hofx0 vs. GSI hofx0 | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'Observation minus h(x)'
+        add_ylabel: 'Count'
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Histogram
+          data:
+            variable: experiment::ObsValueMinusGsiHofXBc::${variable}
+            channel: ${channel}
+          color: 'blue'
+          label: 'GSI hofx0 (all obs)'
+          bins: ${dynamic_bins}
+          alpha: 0.5
+        - type: Histogram
+          data:
+            variable: experiment::ObsValueMinusHofx0::${variable}
+            channel: ${channel}
+          color: 'red'
+          label: 'JEDI hofx0 (all obs)'
+          bins: ${dynamic_bins}
+          alpha: 0.5
+
+  # JEDI omb vs oma
+  - batch figure:
+      variables: *variables
+    dynamic options:
+      - type: histogram_bins
+        data variable: experiment::omanPassedQc::${variable}
+        number of bins rule: 'rice'
+    figure:
+      layout: [1,1]
+      title: 'OmB vs. OmA | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}/ombg_oman_{{instrument}}_${variable}.png'
+    plots:
+      - add_xlabel: 'Difference'
+        add_ylabel: 'Count'
+        set_xlim: [-3, 3]
+        add_legend:
+          loc: 'upper left'
+        statistics:
+          fields:
+            - field_name: experiment::ombgPassedQc::${variable}
+              xloc: 0.5
+              yloc: -0.10
+              kwargs:
+                color: 'black'
+                fontsize: 8
+                fontfamily: monospace
+            - field_name: experiment::omanPassedQc::${variable}
+              xloc: 0.5
+              yloc: -0.13
+              kwargs:
+                color: 'red'
+                fontsize: 8
+                fontfamily: monospace
+          statistics_variables:
+          - n
+          - min
+          - mean
+          - max
+          - std
+        layers:
+        - type: Histogram
+          data:
+            variable: experiment::ombgPassedQc::${variable}
+          color: 'red'
+          label: 'observations minus background '
+          bins: ${dynamic_bins}
+          alpha: 0.5
+          density: true
+        - type: Histogram
+          data:
+            variable: experiment::omanPassedQc::${variable}
+          color: 'blue'
+          label: 'observations minus analysis'
+          bins: ${dynamic_bins}
+          alpha: 0.5
+          density: true
+
+  #map plot for surface pressure increment
+  - batch figure:
+      variables: [ps]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Surface Pressure Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ps
+          label: PS increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -100
+          vmax: 100
+  #map plot for temperature increment (lowest level)
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[71,...]'
+          label: T increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[62,...]'
+          label: T increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[49,...]'
+          label: T increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[42,...]'
+          label: T increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[24,...]'
+          label: T increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[14,...]'
+          label: T increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+
+  #map plot for Zonal Wind increment (lowest level)
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[71,...]'
+          label: U increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[62,...]'
+          label: U increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[49,...]'
+          label: U increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[42,...]'
+          label: U increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[24,...]'
+          label: U increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[14,...]'
+          label: U increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+
+  #map plot for Meridional Wind increment (lowest level)
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[71,...]'
+          label: V increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[62,...]'
+          label: V increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[49,...]'
+          label: V increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[42,...]'
+          label: V increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[24,...]'
+          label: V increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[14,...]'
+          label: V increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+
+  #map plot for Specific Humidity increment (lowest level)
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[71,...]'
+          label: Q increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[62,...]'
+          label: Q increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[49,...]'
+          label: Q increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[42,...]'
+          label: Q increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[24,...]'
+          label: Q increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001

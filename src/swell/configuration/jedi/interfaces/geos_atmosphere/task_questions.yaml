@@ -10,7 +10,8 @@ analysis_variables:
   - ps
   - qi
   - ql
-  - o3
+  - o3ppmv
+  - phis
 
 background_error_model:
   default_value: GSIbec
@@ -25,6 +26,12 @@ background_frequency:
 
 background_time_offset:
   default_value: PT9H
+
+cost_type:
+  default_value: 3D-Var
+  options:
+  - 4D-Var
+  - 4D-En-Var
 
 clean_patterns:
   default_value:
@@ -60,6 +67,11 @@ geovals_experiment:
 
 geovals_provider:
   default_value: ncdiag
+
+gsibec_configuration:
+  default_value: cli_gsibec_configuration
+  options:
+  - hyb_gsibec_configuration
 
 gradient_norm_reduction:
   default_value: 10e-5
@@ -106,9 +118,9 @@ local_ensemble_solver:
   - GETKF
 
 minimizer:
-  default_value: DRIPCG
+  default_value: DRPCG
   options:
-  - DRIPCG
+  - DRPCG
 
 npx_proc:
   default_value: 2

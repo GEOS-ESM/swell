@@ -108,6 +108,17 @@ bundles:
   - CloneJedi
   type: string-check-list
 
+cost_type:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  options: defer_to_model
+  prompt: Define cost function to minimize
+  tasks:
+  - RunJediVariationalExecutable
+  type: string-drop-list
+
 clean_patterns:
   ask_question: false
   default_value: defer_to_model
@@ -331,6 +342,18 @@ geovals_provider:
   tasks:
   - GetGeovals
   type: string
+
+gsibec_configuration:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  options: defer_to_model
+  prompt: Which GSIBEC climatological or hybrid?
+  tasks:
+  - RunJediVariationalExecutable
+  - StageJedi
+  type: string-drop-list
 
 gradient_norm_reduction:
   ask_question: false

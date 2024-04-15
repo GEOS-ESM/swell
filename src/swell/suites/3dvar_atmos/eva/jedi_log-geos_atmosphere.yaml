@@ -1,0 +1,64 @@
+datasets:
+
+- type: JediLog
+  collection_name: JediLogTest
+  jedi_log_to_parse: '{{cycle_dir}}/jedi_variational_log.log'
+  data_to_parse:
+    convergence: true
+
+transforms:
+- transform: arithmetic
+  new name: JediLogTest::convergence::${variable}_log
+  equals: log(JediLogTest::convergence::${variable})
+  for:
+    variable: [residual_norm, norm_reduction]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  - figure:
+      layout: [3,1]
+      figure size: [12,10]
+      title: 'Residual Norm and Norm Reduction Plots'
+      output name: '{{cycle_dir}}/eva/jedi_log/convergence/residual_norm_reduction.png'
+    plots:
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Residual norm'
+        layers:
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::residual_norm
+          color: 'black'
+
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Log(norm reduction)'
+        layers:
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::norm_reduction
+          color: 'black'
+
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Log(reduction)'
+        add_legend:
+        layers:
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::residual_norm_log
+          color: 'red'
+          label: 'Log(residual norm)'
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::norm_reduction_log
+          color: 'blue'
+          label: 'Log norm reduction'

@@ -20,8 +20,8 @@ obs operator:
   observation vertical coordinate group: DerivedVariables
   observation vertical coordinate: adjustedHeight
   interpolation method: linear
-  hofx scaling field: SurfaceWindScalingHeight
-  hofx scaling field group: DerivedVariables
+# hofx scaling field: SurfaceWindScalingHeight
+# hofx scaling field group: DerivedVariables
 
 obs prior filters:
 
