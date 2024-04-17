@@ -106,8 +106,8 @@ class PrepareAnalysis(taskBase):
 
     def mom6_increment(self, f_rst, ana_path, incr_path):
 
-        # This method prepares MOM6 increment file for IAU during next cycle
-        # SOCA increment does not contain layer thickness (h) variable. Hence
+        # This method prepares MOM6 increment file for IAU during next cycle.
+        # SOCA increment does not contain layer thickness (h) variable. Hence,
         # SOCA incr needs to be combined with the h variable from
         # the SOCA analysis file.
 

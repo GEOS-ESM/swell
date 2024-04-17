@@ -10,7 +10,8 @@ analysis_variables:
   - ps
   - qi
   - ql
-  - o3
+  - o3ppmv
+  - phis
 
 background_error_model:
   default_value: GSIbec
@@ -47,13 +48,13 @@ ensemble_num_members:
   options: None
 
 geos_background_restart_offset:
-  default_value: TODO
+  default_value: None
 
 geos_bkg_filename_template:
-  default_value: TODO
+  default_value: None
 
 geos_bkg_tar_filename_template:
-  default_value: TODO
+  default_value: None
 
 geovals_experiment:
   default_value: x0048-geovals
@@ -63,6 +64,9 @@ geovals_provider:
 
 gradient_norm_reduction:
   default_value: 10e-5
+
+gsibec_configuration:
+  default_value: cli_gsibec_configuration
 
 horizontal_localization_lengthscale:
   default_value: 10000e3
@@ -83,7 +87,7 @@ horizontal_resolution:
   - '361'
 
 jedi_bkg_filename_template:
-  default_value: TODO
+  default_value: None
 
 jedi_forecast_model:
   default_value: pseudo-model
@@ -106,19 +110,19 @@ local_ensemble_solver:
   - GETKF
 
 minimizer:
-  default_value: DRIPCG
+  default_value: DRPCG
   options:
-  - DRIPCG
+  - DRPCG
 
 npx_proc:
-  default_value: 2
+  default_value: 4
 
 npy_proc:
-  default_value: 2
+  default_value: 4
 
 number_of_iterations:
   default_value:
-  - 50
+  - 5
 
 obs_experiment:
   default_value: x0048
