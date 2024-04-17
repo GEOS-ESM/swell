@@ -938,6 +938,7 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - EvaIncrement
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground

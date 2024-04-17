@@ -23,9 +23,10 @@ class EvaIncrement(taskBase):
 
     def execute(self):
 
-        # Get the model
-        # -------------
+        # Get the model and window type
+        # -----------------------------
         model = self.get_model()
+        window_type = self.config.window_type()
 
         # Read Eva template file into dictionary
         # --------------------------------------
@@ -52,6 +53,8 @@ class EvaIncrement(taskBase):
         # For now we are only plotting the first one
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        if window_type == '4D':
+            incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
         increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 
         # Create dictionary used to override the eva config
