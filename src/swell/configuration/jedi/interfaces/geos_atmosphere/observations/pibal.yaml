@@ -33,8 +33,8 @@ obs operator:
       interpolation method backup: log-linear
 
       # Hofx scaling
-      hofx scaling field: SurfaceWindScalingCombined
-      hofx scaling field group: DerivedVariables
+#     hofx scaling field: SurfaceWindScalingCombined
+#     hofx scaling field group: DerivedVariables
 
 obs pre filters:
 

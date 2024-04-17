@@ -41,9 +41,9 @@ obs filters:
   action:
     name: reject
 # Gross check
-- filter: Background Check
-  filter variables:
-  - name: ozoneTotal
-  threshold: 5.0
-  action:
-    name: reject
+#- filter: Background Check
+#  filter variables:
+#  - name: ozoneTotal
+#  threshold: 5.0
+#  action:
+#    name: reject

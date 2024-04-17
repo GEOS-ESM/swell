@@ -340,6 +340,17 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
+  type: string-drop-list
+
+gsibec_configuration:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  prompt: Which GSIBEC climatological or hybrid?
+  tasks:
+  - RunJediVariationalExecutable
+  - StageJedi
   type: float
 
 horizontal_localization_lengthscale:
@@ -899,6 +910,7 @@ window_offset:
   - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
+  - EvaIncrement
   - EvaObservations
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
@@ -926,6 +938,7 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - EvaIncrement
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground

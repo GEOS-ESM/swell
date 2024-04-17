@@ -1,0 +1,732 @@
+datasets:
+
+- group: increment
+  type: LatLon
+  filename: {{increment_file_path}}
+  name: experiment_increment
+  variables: [ps, ua, va, t, q, lat, lon]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  #map plot for surface pressure increment
+  - batch figure:
+      variables: [ps]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Surface Pressure Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ps
+          label: PS increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -100
+          vmax: 100
+  #map plot for temperature increment (lowest level)
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[71,...]'
+          label: T increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[62,...]'
+          label: T increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[49,...]'
+          label: T increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[42,...]'
+          label: T increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[24,...]'
+          label: T increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for temperature increment
+  - batch figure:
+      variables: [t]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Temperature Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::t
+            slices: '[14,...]'
+          label: T increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment (lowest level)
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[71,...]'
+          label: U increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[62,...]'
+          label: U increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[49,...]'
+          label: U increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[42,...]'
+          label: U increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[24,...]'
+          label: U increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::ua
+            slices: '[14,...]'
+          label: U increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment (lowest level)
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[71,...]'
+          label: V increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[62,...]'
+          label: V increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[49,...]'
+          label: V increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[42,...]'
+          label: V increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[24,...]'
+          label: V increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Meridional Wind increment
+  - batch figure:
+      variables: [va]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Meridional Wind Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::va
+            slices: '[14,...]'
+          label: V increment (1 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  #map plot for Specific Humidity increment (lowest level)
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[71,...]'
+          label: Q increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[62,...]'
+          label: Q increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[49,...]'
+          label: Q increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[42,...]'
+          label: Q increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
+  #map plot for Specific Humidity increment
+  - batch figure:
+      variables: [q]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Specific Humidity Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::increment::lon
+          latitude:
+            variable: experiment_increment::increment::lat
+          data:
+            variable: experiment_increment::increment::q
+            slices: '[24,...]'
+          label: Q increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.001
+          vmax: 0.001
