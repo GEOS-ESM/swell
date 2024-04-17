@@ -3,6 +3,8 @@ save_geovals: true
 models:
   geos_atmosphere:
     horizontal_resolution: '91'
+    npx_proc: 2
+    npy_proc: 2
     observations:
     - aircraft
     - airs_aqua
