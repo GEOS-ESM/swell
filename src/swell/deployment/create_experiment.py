@@ -446,7 +446,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     account = 'g0613'
     qos = 'allnccs'
     partition = None
-    constraint = 'cas'
+    constraint = 'cas|sky'
 
     # Extract from slurm global file
     if 'qos' in slurm_global:
