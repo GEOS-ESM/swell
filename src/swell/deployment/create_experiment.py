@@ -65,10 +65,6 @@ def prepare_config(suite, method, platform, override, advanced):
     # ---------------
     logger = Logger('SwellPrepSuiteConfig')
 
-    # Starting point for configuration generation
-    # -------------------------------------------
-    config_file = os.path.join(get_swell_path(), 'suites', 'suite_questions.yaml')
-
     # Assert valid method
     # -------------------
     valid_tasks = ['defaults', 'cli']
@@ -107,10 +103,7 @@ def prepare_config(suite, method, platform, override, advanced):
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
-    print(experiment_dict_string)
-    print(yaml.dump(comment_dict, default_flow_style=False, sort_keys=False))
-
-    experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
+    experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)
 
     # Return path to dictionary file
@@ -135,12 +128,10 @@ def create_experiment_directory(suite, method, platform, override, advanced):
     # --------------------------
     experiment_dict = yaml.safe_load(experiment_dict_str)
 
-    # Extract from the config
-    # -----------------------
+    # Experiment ID and root from the user input
+    # ------------------------------------------
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
-    platform = dict_get(logger, experiment_dict, 'platform', None)
-    suite_to_run = dict_get(logger, experiment_dict, 'suite_to_run')
 
     # Write out some info
     # -------------------
@@ -163,11 +154,9 @@ def create_experiment_directory(suite, method, platform, override, advanced):
     with open(os.path.join(exp_suite_path, 'suite.yaml'), 'w') as file:
         file.write(suite_file)
 
-    exit(0)
-
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
     copy_platform_files(logger, exp_suite_path, platform)
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
@@ -177,10 +166,6 @@ def create_experiment_directory(suite, method, platform, override, advanced):
     # ---------------------------------------------------------------
     template_modules_file(logger, experiment_dict, exp_suite_path)
     create_modules_csh(logger, exp_suite_path)
-
-    # Set the jinja2 file for cylc
-    # ----------------------------
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
 
     # Copy config directory to experiment
     # -----------------------------------

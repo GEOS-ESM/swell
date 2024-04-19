@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import copy
 import yaml
 from collections.abc import Hashable
 
@@ -61,48 +62,70 @@ def remove_matching_keys(d, key):
 # --------------------------------------------------------------------------------------------------
 
 
-def add_comments_to_dictionary(dictionary_string, comment_dictionary):
+def add_comments_to_dictionary(logger, dictionary_string_as_yaml, comment_dictionary):
 
-    dict_str_items = dictionary_string.split('\n')
+    # Split the dictionary string lines into list
+    dict_str_items = dictionary_string_as_yaml.split('\n')
 
-    for key in comment_dictionary.keys():
+    # Insertion elements
+    insert_elements = []
 
-        keys_hierarchy = key.split('.')
-        indent_ind = len(key.split('.')) - 1
-        indent = indent_ind*2*' '
+    # Enumerate through the dictionary string items
+    for ind, dict_str_item in enumerate(dict_str_items):
 
-        if indent_ind == 0:
+        # Skip empty lines
+        if dict_str_item.strip() == '':
+            continue
 
-            for ind, dict_str_item in enumerate(dict_str_items):
+        # To make sure we are not on a list item skip if the first non-white space character is '-'
+        if dict_str_item.strip()[0] == '-':
+            continue
 
-                if dict_str_item[0:len(key)+1] == key + ':':
+        # The first key is the string before the first colon
+        key_in_comment_dict = dict_str_item.split(':')[0].strip()
 
-                    dict_str_items.insert(max(0, ind), '\n# ' + comment_dictionary[key])
+        # Count number of spaces at the beginning of the line
+        num_spaces = len(dict_str_item) - len(dict_str_item.lstrip())
+
+        # Abort if the number of spaces is greater than two.
+        if num_spaces > 2:
+            logger.abort('The add_comments_to_dictionary function is not able to dictionaries ' +
+                         'more than doubly nested.')
+
+        # If there are two spaces at the beginning of the line, then the item is nested. Iterate
+        # backwards through the list until the number of spaces at the beginning of the line is
+        # reduced to zero. This will give the nesting of the item.
+        if num_spaces == 2:
+
+            found = False
+
+            for ind2 in range(ind, -1, -1):
+
+                if dict_str_item.strip()[0] == '-':
+                    continue
+
+                # Count number of spaces at the beginning of the line
+                if len(dict_str_items[ind2]) - len(dict_str_items[ind2].lstrip()) == 0:
+                    key_in_comment_dict = dict_str_items[ind2].split(':')[0].strip() + '.' + \
+                        key_in_comment_dict
+                    found = True
                     break
 
-        else:
+            if not found:
+                logger.abort('The add_comments_to_dictionary function did not find the parent ' +
+                             'of a nested dictionary item.')
 
-            index_of_key = 0
-            for key_hierarchy in keys_hierarchy:
+        insert_elements.append((ind, "\n" + " "*num_spaces + "# " + comment_dictionary[key_in_comment_dict]))
 
-                for line in range(index_of_key, len(dict_str_items)):
+    # Loop backwards through the insert elements and insert the comment
+    for ind, comment in insert_elements[::-1]:
+       dict_str_items.insert(ind, comment)
 
-                    if ' ' + key_hierarchy + ':' in dict_str_items[line]:
+    # Strip new line marker from first item
+    dict_str_items[0] = dict_str_items[0].split('\n')[1]
 
-                        index_of_key = line
-
-                        break
-
-            dict_str_items.insert(max(0, index_of_key), '\n' + indent + '# ' +
-                                  comment_dictionary[key])
-
-    # Remove empty line at the beginning
-    if dict_str_items[0][0] == '\n':
-        dict_str_items[0] = dict_str_items[0][1:]
-
-    dictionary_string_with_comments = '\n'.join(dict_str_items)
-
-    return dictionary_string_with_comments
+    # Return rejoined dictionary string
+    return '\n'.join(dict_str_items)
 
 
 # --------------------------------------------------------------------------------------------------

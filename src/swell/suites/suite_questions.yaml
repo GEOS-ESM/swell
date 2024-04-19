@@ -96,6 +96,3 @@ window_type:
   - hofx
   prompt: Enter the cycle times for this model.
   type: string-check-list
-  task_determination:
-    GetBackground4d: 4d
-    value:

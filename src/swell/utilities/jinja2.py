@@ -7,18 +7,34 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import jinja2
+import jinja2 as j2
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class SilentUndefined(jinja2.Undefined):
+class SilentUndefined(j2.Undefined):
     """
-    A custom undefined class that doesn't raise errors and returns empty strings.
+    A custom undefined class that doesn't raise errors when variables are missing and handles
+    nested structures by returning another instance of SilentUndefined if an attribute or item
+    is missing.
     """
-    def _fail_with_undefined_error(self, *args, **kwargs):
-        return ''
+    def __str__(self):
+        try:
+            # Attempt to render the placeholder as it was in the template
+            return f'{{{{ {self._undefined_name} }}}}'
+        except AttributeError:
+            # Fallback in case the name isn't set
+            return self._undefined_hint or self._undefined_obj
+
+    def __unicode__(self):
+        return str(self)
+
+    def __getattr__(self, name):
+        return SilentUndefined()
+
+    def __getitem__(self, name):
+        return SilentUndefined()
 
 
 # --------------------------------------------------------------------------------------------------
@@ -27,19 +43,28 @@ class SilentUndefined(jinja2.Undefined):
 def template_string_jinja2(logger, templated_string, dictionary_of_templates,
                            allow_unresolved=False):
 
-    # Undefined
-    undefined = jinja2.StrictUndefined
-    if allow_unresolved:
-        print('here here')
-        undefined = SilentUndefined
+    # Handling of templates that cannot be resolved
+    # ---------------------------------------------
+    undefined = SilentUndefined if allow_unresolved else j2.StrictUndefined
 
-    # Load the templated string
-    t = jinja2.Template(templated_string, trim_blocks=True, lstrip_blocks=True)
+    # Create the Jinja2 environment
+    # -----------------------------
+    env = j2.Environment(undefined=undefined)
 
-    # Render the templates using the dictionary
-    string_rendered = t.render(dictionary_of_templates)
+    # Load the algorithm template
+    # ---------------------------
+    template = env.from_string(templated_string)
+
+    # Render the template hierarchy
+    # -----------------------------
+    try:
+        string_rendered = template.render(dictionary_of_templates)
+    except j2.exceptions.UndefinedError as e:
+        logger.abort(f'Resolving templates for templated_string failed with the following '
+                     f'exception: {e}')
 
     # Extra safety checks
+    # -------------------
     if not allow_unresolved:
         logger.assert_abort('{{' not in string_rendered, f'In template_string_jinja2 ' +
                             f'the output string still contains template directives. ' +

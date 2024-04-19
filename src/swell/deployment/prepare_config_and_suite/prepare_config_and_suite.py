@@ -131,7 +131,17 @@ class PrepareExperimentConfigAndSuite:
         # Read task questions into a dictionary
         task_questions_file = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
         with open(task_questions_file, 'r') as ymlfile:
-            question_dictionary.update(yaml.safe_load(ymlfile))
+            question_dictionary_tasks = yaml.safe_load(ymlfile)
+
+        # Loop through question_dictionary_tasks. If the key does not already exist add to the
+        # question_dictionary.
+        for key, val in question_dictionary_tasks.items():
+            if key not in question_dictionary.keys():
+                question_dictionary[key] = val
+            else:
+                # In this case the question is both a suite question and a task question.
+                # To avoid any confusion, only the tasks key is taken from the task dictionary
+                question_dictionary[key]['tasks'] = val['tasks']
 
         # Create copies that will be the task question that do and do not depend on the choice of
         # model component
@@ -349,14 +359,22 @@ class PrepareExperimentConfigAndSuite:
 
         # 6. Iterate over the model_dep dictionary and ask suite questions
         # ----------------------------------------------------------------
-        for question_key in self.question_dictionary_model_dep.keys():
+        for model in self.question_dictionary_model_dep.keys():
 
-            # Ask only the suite questions first
-            # ----------------------------------
-            if 'suites' in self.question_dictionary_model_dep[question_key].keys():
+            model_dict = self.question_dictionary_model_dep[model]
 
-                # Ask the question
-                self.ask_a_question(self.question_dictionary_model_dep, question_key)
+            # Make sure self.questions_dict has an entry for each model
+            if model not in self.questions_dict.keys():
+                self.questions_dict[model] = f"Configuration for the {model} model component."
+
+            # Loop over keys of each model
+            for question_key in model_dict:
+
+                # Ask only the suite questions first
+                if 'suites' in model_dict[question_key].keys():
+
+                    # Ask the question
+                    self.ask_a_question(model_dict, question_key)
 
         # 7. Perform an exhaustive resolving of suite file templates
         # ----------------------------------------------------------
@@ -413,8 +431,6 @@ class PrepareExperimentConfigAndSuite:
         if model is not None:
             if model not in self.experiment_dict.keys():
                 self.experiment_dict[model] = {}
-            if model not in self.questions_dict.keys():
-                self.questions_dict[model] = {}
 
         # Check the dependency chain for the question
         if 'depends' in qd.keys():
@@ -436,8 +452,7 @@ class PrepareExperimentConfigAndSuite:
                 self.questions_dict[question_key] = qd['prompt']
             else:
                 self.experiment_dict[model][question_key] = self.config_client.get_answer(question_key, qd)
-                self.questions_dict[model][question_key] = qd['prompt']
-
+                self.questions_dict[f"{model}.{question_key}"] = qd['prompt']
 
 
     # ----------------------------------------------------------------------------------------------
