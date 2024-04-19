@@ -181,7 +181,7 @@ obs filters:
     maxvalue: 1.0
   - variable:
       name: JediAdjustObsError/bendingAngle
-    is_defined:
+    value: is_valid
   - variable:
       name: MetaData/satelliteIdentifier
     is_in:  41,44,440,421,724,725,726,727,728,729,
@@ -200,7 +200,7 @@ obs filters:
     minvalue: 10.0
   - variable:
       name: JediAdjustObsError/bendingAngle
-    is_defined:
+    value: is_valid
   defer to post: true
 - filter: Background Check
   filter variables:
@@ -220,7 +220,7 @@ obs filters:
   where:
   - variable:
       name: JediAdjustObsError/bendingAngle
-    is_defined:
+    value: is_valid
   defer to post: true
 
 #5 QC cutoff

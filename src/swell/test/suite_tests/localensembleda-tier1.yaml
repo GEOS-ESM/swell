@@ -1,12 +1,24 @@
 final_cycle_point: '2021-12-12T00:00:00Z'
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
+    ensemble_hofx_strategy: parallel
+    ensemble_hofx_packets: 2
+    local_ensemble_save_posterior_mean: false
+    local_ensemble_save_posterior_ensemble_increments: true
     observations:
     - sondes
     obs_experiment: x0048v1
+    background_experiment: geos
     window_type: 3D
     horizontal_resolution: 13
+    clean_patterns:
+    - 'geos.mem*.nc4'
+    - '*log*'
+    - '*.txt'

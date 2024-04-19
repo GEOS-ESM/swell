@@ -73,6 +73,9 @@ datetime_help = 'Datetime to use for task execution. Format is yyyy-mm-ddThh:mm:
 
 model_help = 'Data assimilation system. I.e. the model being initialized by data assimilation.'
 
+ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' + \
+                'specify which packet of ensemble members to consider.'
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -156,7 +159,8 @@ def launch(suite_path, no_detach, log_path):
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
-def task(task, config, datetime, model):
+@click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+def task(task, config, datetime, model, ensemblePacket):
     """
     Run a workflow task
 
@@ -167,7 +171,7 @@ def task(task, config, datetime, model):
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model)
+    task_wrapper(task, config, datetime, model, ensemblePacket)
 
 
 # --------------------------------------------------------------------------------------------------

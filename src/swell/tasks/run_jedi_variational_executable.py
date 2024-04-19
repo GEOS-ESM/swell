@@ -85,6 +85,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Atmosphere background error model
         if npx_proc is not None and npy_proc is not None:
+            self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
             self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
@@ -107,7 +108,7 @@ class RunJediVariationalExecutable(taskBase):
         # Perform complete template rendering
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 jedi_forecast_model)
+                                 self.cycle_time_dto(), jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

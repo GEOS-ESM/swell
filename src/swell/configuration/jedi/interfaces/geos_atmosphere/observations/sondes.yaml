@@ -52,8 +52,8 @@ linear obs operator:
     - name: windNorthward
 
     # Hofx scaling
-    hofx scaling field: SurfaceWindScalingPressure
-    hofx scaling field group: DerivedVariables
+#   hofx scaling field: SurfaceWindScalingPressure
+#   hofx scaling field group: DerivedVariables
 
   - name: VertInterp
     variables:
@@ -156,7 +156,7 @@ obs post filters:
     maxvalue: 100
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 # set ObsErrorData 300 Pa if it > 300 Pa.
 - filter: Perform Action
@@ -171,7 +171,7 @@ obs post filters:
     minvalue: 300
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # Background  check
@@ -207,7 +207,7 @@ obs post filters:
   where:
   - variable:
       name: TempObsErrorData/stationPressure
-    is_defined:
+    value: is_valid
   defer to post: true
 # Duplicate factor
 - filter: Perform Action
@@ -353,7 +353,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 ## error inflation based on pressure check
 - filter: Perform Action
@@ -392,7 +392,7 @@ obs post filters:
     maxvalue: 1.3
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 # set ObsErrorData 5.6 K if it > 5.6 K.
 - filter: Perform Action
@@ -407,7 +407,7 @@ obs post filters:
     minvalue: 5.6
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 # Screen data by PreUseFlag
 # PreUseFlag is assigned in reading programs in GSI.
@@ -453,7 +453,7 @@ obs post filters:
   where:
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 ## Duplicate factor
 - filter: Perform Action
@@ -535,7 +535,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/virtualTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 ## error inflation based on pressure check
 - filter: Perform Action
@@ -575,7 +575,7 @@ obs post filters:
     maxvalue: 1.3
   - variable:
       name: TempObsErrorData/virtualTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 # set ObsErrorData 5.6 K if it > 5.6 K.
 - filter: Perform Action
@@ -590,7 +590,7 @@ obs post filters:
     minvalue: 5.6
   - variable:
       name: TempObsErrorData/virtualTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # Screen data by PreUseFlag
@@ -637,7 +637,7 @@ obs post filters:
   where:
   - variable:
       name: TempObsErrorData/virtualTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 ## Duplicate factor
 - filter: Perform Action
@@ -705,7 +705,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windEastward
-    is_defined:
+    value: is_valid
 - filter: Perform Action
   filter variables:
   - name: windNorthward
@@ -715,7 +715,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windNorthward
-    is_defined:
+    value: is_valid
 - filter: Perform Action
   filter variables:
   - name: windEastward

@@ -1,0 +1,15 @@
+gridspec_filename: 'INPUT/soca_gridspec.nc'
+restart_filename: 'MOM6.res.{{local_background_time}}.nc'
+mld_filename: 'MOM6.res.{{local_background_time}}.nc'
+output_filename: '{{cycle_dir}}/calculated_scales.nc'
+output_variable_vt: 'vt'
+output_variable_hz: 'hz'
+
+# Parameters for the vertical scale
+VT_MIN: 1.5
+VT_MAX: 10
+
+# Parameters for the horizontal scale
+HZ_ROSSBY_MULT: 1.0
+HZ_MAX: 200e3
+HZ_MIN_GRID_MULT: 1.0

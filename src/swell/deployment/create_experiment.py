@@ -372,12 +372,13 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
 
+    # Convenience - fetch model_components prior to search for 'cycle_times' and 'ensemble_*'
+    model_components = dict_get(logger, experiment_dict, 'model_components', [])
+
     # Check if 'cycle_times' appears anywhere in the suite_file
     if 'cycle_times' in suite_file:
 
         # Since cycle times are used, the render_dictionary will need to include cycle_times
-        model_components = dict_get(logger, experiment_dict, 'model_components', [])
-
         # If there are different model components then process each to gather cycle times
         if len(model_components) > 0:
             cycle_times = []
@@ -411,6 +412,19 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
             logger.abort('The suite file required cycle_times but there are no model components ' +
                          'to gather them from or they are not provided in the experiment ' +
                          'dictionary.')
+
+    # Check if 'ensemble_hofx_strategy' appears anywhere in suite_file
+    ensemble_list = ['ensemble_'+s for s in ['num_members', 'hofx_strategy', 'hofx_packets']]
+    for ensemble_aspect in ensemble_list:
+        if ensemble_aspect in suite_file:
+            if len(model_components) > 0:
+                for model_component in model_components:
+                    render_dictionary[ensemble_aspect] = \
+                        experiment_dict['models'][model_component][ensemble_aspect]
+            else:
+                logger.abort(f'The suite file required {ensemble_aspect} ' +
+                             'there are no model components to gather them from or ' +
+                             'they are not provided in the experiment dictionary.')
 
     # Look for a file called $HOME/.swell/slurm.yaml
     # ----------------------------------------------
@@ -446,6 +460,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         'BuildGeos',
         'EvaObservations',
         'GenerateBClimatology',
+        'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
         'RunJediUfoTestsExecutable',
@@ -467,7 +482,10 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
         render_dictionary['scheduling'][slurm_task]['partition'] = partition
 
     # Set some specific values for:
-    # -----------------------------
+    # ------------------------------
+    # Variatonal tasks
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 3
+    render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 36
 
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'

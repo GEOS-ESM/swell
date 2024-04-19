@@ -1,5 +1,6 @@
 cost function:
   cost type: 3D-Var
+  jb evaluation: false
   time window:
     begin: '{{window_begin_iso}}'
     end: '{{window_end_iso}}'
@@ -24,13 +25,7 @@ variational:
     diagnostics:
       departures: ombg
     online diagnostics:
-      write increment: true
-      increment:
-        state component:
-          datadir: ./
-          date: '{{window_begin_iso}}'
-          exp: {{experiment_id}}
-          type: incr
+      TASKFILLvarincrement1
 final:
   diagnostics:
     departures: oman
