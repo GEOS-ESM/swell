@@ -8,9 +8,6 @@
 
 
 import os
-import sys
-import textwrap
-import traceback
 
 from swell.swell_path import get_swell_path
 

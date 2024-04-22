@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import copy
 import yaml
 from collections.abc import Hashable
 

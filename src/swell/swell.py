@@ -12,7 +12,6 @@ import click
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
-from swell.deployment.create_experiment import prepare_config
 from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests

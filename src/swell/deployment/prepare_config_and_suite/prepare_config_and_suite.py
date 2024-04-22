@@ -300,8 +300,7 @@ class PrepareExperimentConfigAndSuite:
                 with open(self.override, 'r') as ymlfile:
                     override_dict.update(yaml.safe_load(ymlfile))
             else:
-                self.logger.abort(f'Override must be a dictionary or a path to a yaml file. ' +
-                                  f'Instead it is {type(override)}')
+                self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 
         # In this case the user is sending in a dictionary that looks like the experiment dictionary
         # that they will ultimately be looking at. This means the dictionary does not contain
