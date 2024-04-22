@@ -79,13 +79,17 @@ def prepare_config(suite, method, platform, override, advanced):
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
-    experiment_dict, comment_dict, suite_file = \
-        prepare_config_and_suite.ask_questions_and_configure_suite()
+    experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
 
     # Add the datetime to the dictionary
     # ----------------------------------
     experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
     comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
+
+    # Add the platform the dictionary
+    # -------------------------------
+    experiment_dict['platform'] = platform
+    comment_dict['platform'] = 'Computing platform to run the experiment'
 
     # Add the model components to the dictionary
     # ------------------------------------------
@@ -108,7 +112,7 @@ def prepare_config(suite, method, platform, override, advanced):
 
     # Return path to dictionary file
     # ------------------------------
-    return experiment_dict_string_comments, suite_file
+    return experiment_dict_string_comments
 
 
 # --------------------------------------------------------------------------------------------------
@@ -122,7 +126,7 @@ def create_experiment_directory(suite, method, platform, override, advanced):
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str, suite_file = prepare_config(suite, method, platform, override, advanced)
+    experiment_dict_str = prepare_config(suite, method, platform, override, advanced)
 
     # Load the string using yaml
     # --------------------------
@@ -149,10 +153,12 @@ def create_experiment_directory(suite, method, platform, override, advanced):
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
 
-    # Write the suite file to the suite directory
-    # -------------------------------------------
-    with open(os.path.join(exp_suite_path, 'suite.yaml'), 'w') as file:
-        file.write(suite_file)
+    # At this point we need to write the complete suite file with all templates resolved. Call the
+    # function to build the scheduling dictionary, combine with the experiment dictionary,
+    # resolve the templates and write the suite file to the experiment suite directory.
+    # --------------------------------------------------------------------------------------------
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
+    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
@@ -336,23 +342,8 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
-    render_dictionary = {}
+    render_dictionary = copy.deepcopy(experiment_dict)
 
-    # Elements to copy from the experiment dictionary
-    # -----------------------------------------------
-    render_elements = [
-        'start_cycle_point',
-        'final_cycle_point',
-        'runahead_limit',
-        'model_components',
-        'platform',
-    ]
-
-    # Copy elements from experiment dictionary to render dictionary
-    # -------------------------------------------------------------
-    for element in render_elements:
-        if element in experiment_dict:
-            render_dictionary[element] = experiment_dict[element]
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
@@ -481,7 +472,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Render the template
     # -------------------
-    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
 
     # Write suite file to experiment
     # ------------------------------

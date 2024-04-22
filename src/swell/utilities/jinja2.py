@@ -15,26 +15,25 @@ import jinja2 as j2
 
 class SilentUndefined(j2.Undefined):
     """
-    A custom undefined class that doesn't raise errors when variables are missing and handles
-    nested structures by returning another instance of SilentUndefined if an attribute or item
-    is missing.
+    A custom undefined class that doesn't raise errors when variables are missing and returns the
+    original template variable placeholder.
     """
-    def __str__(self):
-        try:
-            # Attempt to render the placeholder as it was in the template
-            return f'{{{{ {self._undefined_name} }}}}'
-        except AttributeError:
-            # Fallback in case the name isn't set
-            return self._undefined_hint or self._undefined_obj
-
-    def __unicode__(self):
-        return str(self)
-
     def __getattr__(self, name):
-        return SilentUndefined()
+        # Return a new SilentUndefined instance but append the attribute access to the name.
+        return SilentUndefined(name=f"{self._undefined_name}.{name}")
 
-    def __getitem__(self, name):
-        return SilentUndefined()
+    def __getitem__(self, key):
+        # Similar to __getattr__, return a new instance with the key access incorporated.
+        if isinstance(key, str):
+            return SilentUndefined(name=f"{self._undefined_name}['{key}']")
+        return SilentUndefined(name=f"{self._undefined_name}[{key}]")
+
+    def __str__(self):
+        # Ensure the name returned reflects the original template placeholder.
+        return f"{{{{ {self._undefined_name} }}}}"
+
+    def __repr__(self):
+        return str(self)
 
 
 # --------------------------------------------------------------------------------------------------

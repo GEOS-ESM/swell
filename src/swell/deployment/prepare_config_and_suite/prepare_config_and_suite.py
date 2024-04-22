@@ -119,22 +119,14 @@ class PrepareExperimentConfigAndSuite:
         with open(suite_questions_file, 'r') as ymlfile:
             question_dictionary = yaml.safe_load(ymlfile)
 
-        # Iterate over the suite_questions dictionary and remove keys not associated with this suite
-        keys_to_remove = []
-        for key, val in question_dictionary.items():
-            if 'suites' in val:
-                if val['suites'] != ['all'] and self.suite not in val['suites']:
-                    keys_to_remove.append(key)
-        for key in keys_to_remove:
-            del question_dictionary[key]
-
         # Read task questions into a dictionary
         task_questions_file = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
         with open(task_questions_file, 'r') as ymlfile:
             question_dictionary_tasks = yaml.safe_load(ymlfile)
 
         # Loop through question_dictionary_tasks. If the key does not already exist add to the
-        # question_dictionary.
+        # question_dictionary. If the key does exist then only add the tasks key to the existing
+        # question_dictionary
         for key, val in question_dictionary_tasks.items():
             if key not in question_dictionary.keys():
                 question_dictionary[key] = val
@@ -143,10 +135,31 @@ class PrepareExperimentConfigAndSuite:
                 # To avoid any confusion, only the tasks key is taken from the task dictionary
                 question_dictionary[key]['tasks'] = val['tasks']
 
-        # Create copies that will be the task question that do and do not depend on the choice of
-        # model component
+        # Iterate over the question_dictionary dictionary and remove keys not associated with this
+        # suite. Note that there might be questions that are not needed by the suite but could still
+        # be needed by the tasks in the suite. These are not removed but the suite key is removed.
+        # Note also that at this point we do not know which tasks will actually be needed so we
+        # can only remove questions that are known not to be needed by the suite.
+        keys_to_remove = []
+        for key, val in question_dictionary.items():
+            if 'suites' in val:
+                # If this suite question needed then skip to the next question
+                if val['suites'] == ['all'] or self.suite in val['suites']:
+                    continue
+                else:
+                    if 'tasks' not in val:
+                        # Question not needed by suite and not a task question: remove
+                        keys_to_remove.append(key)
+                    else:
+                        # Question not needed by suite but might be needed by tasks.
+                        # Reduce to a task only question.
+                        val.pop('suites')
+        for key in keys_to_remove:
+            del question_dictionary[key]
+
+
+        # Create copy of the question_dictionary for model independent questions
         question_dictionary_model_ind = copy.deepcopy(question_dictionary)
-        question_dictionary_model_dep = copy.deepcopy(question_dictionary)
 
         # Iterate through the model_ind dictionary and remove questions associated with models
         # and questions not required by the suite
@@ -156,8 +169,16 @@ class PrepareExperimentConfigAndSuite:
                 keys_to_remove.append(key)
         for key in keys_to_remove:
             del question_dictionary_model_ind[key]
-
         self.question_dictionary_model_ind = copy.deepcopy(question_dictionary_model_ind)
+
+        # At this point we can check to see if this is a suite that requires model components
+        self.suite_needs_model_components = True
+        if 'model_components' not in question_dictionary.keys():
+            self.suite_needs_model_components = False
+            return
+
+        # Create copy of the question_dictionary for model dependent questions
+        question_dictionary_model_dep = copy.deepcopy(question_dictionary)
 
         # Iterate through the model_dep dictionary and remove questions not associated with models
         # and questions not required by the suite
@@ -201,7 +222,6 @@ class PrepareExperimentConfigAndSuite:
         for key, val in self.question_dictionary_model_ind.items():
             if key in platform_defaults.keys():
                 self.question_dictionary_model_ind[key].update(platform_defaults[key])
-
 
         # Perform a model override on the model_dep dictionary
         # ----------------------------------------------------
@@ -328,8 +348,12 @@ class PrepareExperimentConfigAndSuite:
 
         # 2. Perform a non-exhaustive resolving of suite file templates
         # -------------------------------------------------------------
-        self.suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
-                                                True)
+
+        # Note that if there are no model components considered in this suite then at this point
+        # the suite_str should be fully resolved. If there are model components then the suite_str
+        # more information is needed before all templates can be properly resolved.
+        suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
+                                                self.suite_needs_model_components)
 
         # 3. Get a list of tasks that do not depend on the model component
         # ----------------------------------------------------------------
@@ -354,18 +378,14 @@ class PrepareExperimentConfigAndSuite:
 
         # 5. Check that the suite in question has model_components
         # --------------------------------------------------------
-        if 'model_components' not in self.experiment_dict.keys():
-            return
+        if not self.suite_needs_model_components:
+            return self.experiment_dict, self.questions_dict
 
         # 6. Iterate over the model_dep dictionary and ask suite questions
         # ----------------------------------------------------------------
         for model in self.question_dictionary_model_dep.keys():
 
             model_dict = self.question_dictionary_model_dep[model]
-
-            # Make sure self.questions_dict has an entry for each model
-            if model not in self.questions_dict.keys():
-                self.questions_dict[model] = f"Configuration for the {model} model component."
 
             # Loop over keys of each model
             for question_key in model_dict:
@@ -374,10 +394,16 @@ class PrepareExperimentConfigAndSuite:
                 if 'suites' in model_dict[question_key].keys():
 
                     # Ask the question
-                    self.ask_a_question(model_dict, question_key)
+                    self.ask_a_question(model_dict, question_key, model)
 
         # 7. Perform an exhaustive resolving of suite file templates
         # ----------------------------------------------------------
+        # Note that we reset the suite file to avoid templates having been left unresolved
+        # (removed) from the previous attempt. We still do not ask for an exhaustive resolving
+        # of templates because there are things related to scheduling that are not yet able to be
+        # resolved. In the future it might be good to bring some of that information into the
+        # sphere of suite questions but that requires some careful thought so as not to overload
+        # the user with questions.
         self.suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
                                                 True)
 
@@ -409,13 +435,16 @@ class PrepareExperimentConfigAndSuite:
 
 
         # Return the main experiment dictionary
-        return self.experiment_dict, self.questions_dict, self.suite_str
+        return self.experiment_dict, self.questions_dict
 
 
     # ----------------------------------------------------------------------------------------------
 
 
     def ask_a_question(self, full_question_dictionary, question_key, model=None):
+
+        #if question_key == 'window_type':
+            #self.logger.abort('fail')
 
         # Set flag for whether the question should be asked
         ask_question = True
@@ -429,8 +458,13 @@ class PrepareExperimentConfigAndSuite:
 
         # If model is not none then ensure the experiment dictionary has a dictionary for the model
         if model is not None:
-            if model not in self.experiment_dict.keys():
-                self.experiment_dict[model] = {}
+            if 'models' not in self.experiment_dict.keys():
+                self.experiment_dict['models'] = {}
+                self.questions_dict['models'] = f"Configurations for the model components."
+            if model not in self.experiment_dict['models'].keys():
+                self.experiment_dict['models'][model] = {}
+                self.questions_dict[f'models.{model}'] = \
+                    f"Configuration for the {model} model component."
 
         # Check the dependency chain for the question
         if 'depends' in qd.keys():
@@ -442,8 +476,13 @@ class PrepareExperimentConfigAndSuite:
                 self.ask_a_question(full_question_dictionary, qd['depends']['key'], model)
 
             # Check that answer for dependency is matches the required value
-            if self.experiment_dict[qd['depends']['key']] != qd['depends']['value']:
-                ask_question = False
+            if model is None:
+                if self.experiment_dict[qd['depends']['key']] != qd['depends']['value']:
+                    ask_question = False
+            else:
+                if self.experiment_dict['models'][model][qd['depends']['key']] != \
+                    qd['depends']['value']:
+                    ask_question = False
 
         # Ask the question using the selected client
         if ask_question:
@@ -451,8 +490,9 @@ class PrepareExperimentConfigAndSuite:
                 self.experiment_dict[question_key] = self.config_client.get_answer(question_key, qd)
                 self.questions_dict[question_key] = qd['prompt']
             else:
-                self.experiment_dict[model][question_key] = self.config_client.get_answer(question_key, qd)
-                self.questions_dict[f"{model}.{question_key}"] = qd['prompt']
+                self.experiment_dict['models'][model][question_key] = \
+                    self.config_client.get_answer(question_key, qd)
+                self.questions_dict[f'models.{model}.{question_key}'] = qd['prompt']
 
 
     # ----------------------------------------------------------------------------------------------
