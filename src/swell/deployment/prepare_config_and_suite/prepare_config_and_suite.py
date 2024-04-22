@@ -465,7 +465,8 @@ class PrepareExperimentConfigAndSuite:
                 if 'suites' not in self.question_dictionary_model_dep[model][question_key].keys():
 
                     # Get list of tasks for the question
-                    question_tasks = self.question_dictionary_model_dep[model][question_key]['tasks']
+                    question_tasks = \
+                        self.question_dictionary_model_dep[model][question_key]['tasks']
 
                     # Check whether any of model_dep_tasks are in question_tasks
                     if any(elem in question_tasks for elem in model_dep_tasks[model]):
@@ -477,9 +478,7 @@ class PrepareExperimentConfigAndSuite:
         # Return the main experiment dictionary
         return self.experiment_dict, self.questions_dict
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def ask_a_question(self, full_question_dictionary, question_key, model=None):
 
@@ -512,13 +511,13 @@ class PrepareExperimentConfigAndSuite:
                 # Iteratively ask the dependent question
                 self.ask_a_question(full_question_dictionary, qd['depends']['key'], model)
 
-            # Check that answer for dependency is matches the required value
+            # Check that answer for dependency matches the required value
             if model is None:
                 if self.experiment_dict[qd['depends']['key']] != qd['depends']['value']:
                     ask_question = False
             else:
-                if self.experiment_dict['models'][model][qd['depends']['key']] != \
-                    qd['depends']['value']:
+                prev = self.experiment_dict['models'][model][qd['depends']['key']]
+                if prev != qd['depends']['value']:
                     ask_question = False
 
         # Ask the question using the selected client
@@ -531,9 +530,7 @@ class PrepareExperimentConfigAndSuite:
                     self.config_client.get_answer(question_key, qd)
                 self.questions_dict[f'models.{model}.{question_key}'] = qd['prompt']
 
-
     # ----------------------------------------------------------------------------------------------
-
 
     def get_suite_task_list_model_ind(self, suite_str):
 
@@ -554,7 +551,6 @@ class PrepareExperimentConfigAndSuite:
 
         # Return tasks
         return tasks
-
 
     # ----------------------------------------------------------------------------------------------
 
@@ -602,6 +598,5 @@ class PrepareExperimentConfigAndSuite:
 
         # Return the dictionary
         return model_tasks, all_tasks
-
 
 # --------------------------------------------------------------------------------------------------

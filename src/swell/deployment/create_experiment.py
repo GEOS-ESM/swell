@@ -75,7 +75,7 @@ def prepare_config(suite, method, platform, override, advanced):
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
-                                                                method, override, advanced)
+                                                               method, override, advanced)
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
@@ -367,7 +367,6 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
     render_dictionary = copy.deepcopy(experiment_dict)
-
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
