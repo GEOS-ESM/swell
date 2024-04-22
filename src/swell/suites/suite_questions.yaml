@@ -19,6 +19,8 @@ start_cycle_point:
   default_value: '2021-12-12T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
@@ -33,6 +35,8 @@ final_cycle_point:
   default_value: '2021-12-12T06:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
@@ -47,7 +51,10 @@ runahead_limit:
   default_value: 'P4'
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
   - 3dvar
+  - 3dvar_cycle
   - convert_ncdiags
   - hofx
   - localensembleda
@@ -59,10 +66,11 @@ model_components:
   default_value: defer_to_code
   options: defer_to_code
   suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
-  - forecast_geos
   - hofx
   - localensembleda
   - ufo_testing
@@ -76,6 +84,8 @@ cycle_times:
   models:
   - all
   suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
@@ -95,4 +105,40 @@ window_type:
   suites:
   - hofx
   prompt: Enter the cycle times for this model.
-  type: string-check-list
+  type: string-drop-list
+
+ensemble_hofx_strategy:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the ensemble hofx strategy.
+  type: string
+
+ensemble_hofx_packets:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the number of ensemble packets.
+  type: string
+
+r2d2_local_path:
+  ask_question: False
+  default_value: defer_to_platform
+  prompt: What is the path to the R2D2 local directory?
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - forecast_geos
+  - hofx
+  - localensembleda
+  - ufo_testing
+  type: string

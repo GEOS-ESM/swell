@@ -96,6 +96,17 @@
     [[BuildJedi]]
         script = "swell task BuildJedi $config"
         platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["BuildJedi"]["account"]}}
+            --qos = {{scheduling["BuildJedi"]["qos"]}}
+            --job-name = BuildJedi
+            --nodes={{scheduling["BuildJedi"]["nodes"]}}
+            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
+            --constraint={{scheduling["BuildJedi"]["constraint"]}}
+            {% if scheduling["BuildJedi"]["partition"] %}
+            --partition={{scheduling["BuildJedi"]["partition"]}}
+            {% endif %}
 
     [[CloneGeosMksi]]
         script = "swell task CloneGeosMksi $config -m geos_atmosphere"
@@ -121,10 +132,32 @@
     [[RunJediUfoTestsExecutable]]
         script = "swell task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
+        execution time limit = {{scheduling["RunJediUfoTestsExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["RunJediUfoTestsExecutable"]["account"]}}
+            --qos = {{scheduling["RunJediUfoTestsExecutable"]["qos"]}}
+            --job-name = RunJediUfoTestsExecutable
+            --nodes={{scheduling["RunJediUfoTestsExecutable"]["nodes"]}}
+            --ntasks-per-node={{scheduling["RunJediUfoTestsExecutable"]["ntasks_per_node"]}}
+            --constraint={{scheduling["RunJediUfoTestsExecutable"]["constraint"]}}
+            {% if scheduling["RunJediUfoTestsExecutable"]["partition"] %}
+            --partition={{scheduling["RunJediUfoTestsExecutable"]["partition"]}}
+            {% endif %}
 
     [[EvaObservations]]
         script = "swell task EvaObservations $config -d $datetime -m geos_atmosphere"
         platform = {{platform}}
+        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+            --account = {{scheduling["EvaObservations"]["account"]}}
+            --qos = {{scheduling["EvaObservations"]["qos"]}}
+            --job-name = EvaObservations
+            --nodes={{scheduling["EvaObservations"]["nodes"]}}
+            --ntasks-per-node={{scheduling["EvaObservations"]["ntasks_per_node"]}}
+            --constraint={{scheduling["EvaObservations"]["constraint"]}}
+            {% if scheduling["EvaObservations"]["partition"] %}
+            --partition={{scheduling["EvaObservations"]["partition"]}}
+            {% endif %}
 
     [[CleanCycle]]
         script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"

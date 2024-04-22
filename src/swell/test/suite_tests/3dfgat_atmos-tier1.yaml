@@ -1,5 +1,6 @@
 jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
+runahead_limit: 'P3'
 models:
   geos_atmosphere:
     cycle_times:

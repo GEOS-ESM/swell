@@ -221,8 +221,6 @@ existing_jedi_source_directory:
 forecast_duration:
   ask_question: true
   default_value: PT12H
-  models:
-  - all
   prompt: GEOS forecast duration
   tasks:
   - MoveForecastRestart
@@ -287,8 +285,6 @@ geos_build_method:
 geos_experiment_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - PrepGeosRunDir
@@ -305,8 +301,6 @@ geos_gcm_tag:
 geos_restarts_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
