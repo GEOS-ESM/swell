@@ -8,10 +8,10 @@ existing_geos_gcm_source_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.5.1-Intel-SLES12/GEOSgcm
 
 existing_jedi_build_directory:
-  default_value: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca/build-intel-release/
+  default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/build-intel-release/
 
 existing_jedi_source_directory:
-  default_value: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca/
+  default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/
 
 geos_experiment_directory:
   default_value: 5deg_v11
