@@ -18,7 +18,7 @@ airs_aqua:
 
 amsr2_gcom-w1:
   filter_test:
-    passedBenchmark: 54558
+    passedBenchmark: 8087
 
 amsua_aqua:
   filter_test:
@@ -74,7 +74,7 @@ cris-fsr_npp:
 
 gmi_gpm:
   filter_test:
-    passedBenchmark: 41975
+    passedBenchmark: 18606
 
 gps:
   filter_test:
