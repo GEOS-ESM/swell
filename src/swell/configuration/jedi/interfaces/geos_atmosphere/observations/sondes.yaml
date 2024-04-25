@@ -52,8 +52,8 @@ linear obs operator:
     - name: windNorthward
 
     # Hofx scaling
-#   hofx scaling field: SurfaceWindScalingPressure
-#   hofx scaling field group: DerivedVariables
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
 
   - name: VertInterp
     variables:
