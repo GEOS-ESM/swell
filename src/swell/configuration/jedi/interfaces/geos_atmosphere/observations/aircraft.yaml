@@ -24,8 +24,25 @@ obs operator:
     - name: windNorthward
 
     # Hofx scaling
-#   hofx scaling field: SurfaceWindScalingPressure
-#   hofx scaling field group: DerivedVariables
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
+
+  - name: VertInterp
+    observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+    variables: [airTemperature]
+
+linear obs operator:
+  name: Composite
+  components:
+
+  - name: VertInterp
+    variables:
+    - name: windEastward
+    - name: windNorthward
+
+    # Hofx scaling
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
 
   - name: VertInterp
     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'

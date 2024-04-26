@@ -122,11 +122,11 @@ satwind:
 
 scatwind:
   filter_test:
-    passedBenchmark: 16262
+    passedBenchmark: 16384
 
 sfcship:
   filter_test:
-    passedBenchmark: 99068
+    passedBenchmark: 99142
 
 sfc:
   filter_test:
