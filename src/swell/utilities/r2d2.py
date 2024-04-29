@@ -10,12 +10,12 @@
 import os
 
 from swell.swell_path import get_swell_path
-
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
 
-def create_r2d2_config(platform, cycle_dir, r2d2_local_path):
+def create_r2d2_config(logger, platform, cycle_dir, r2d2_local_path):
 
     # R2D2 config file that will be created
     r2d2_config_file = os.path.join(cycle_dir, 'r2d2_config.yaml')

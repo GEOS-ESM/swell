@@ -60,7 +60,7 @@ class StoreBackground(taskBase):
 
         # Set R2D2 config file
         # --------------------
-        create_r2d2_config(self.platform(), self.cycle_dir(), r2d2_local_path)
+        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Depending on window type get the time of the background
         if window_type == "3D":

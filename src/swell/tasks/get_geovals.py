@@ -39,7 +39,7 @@ class GetGeovals(taskBase):
 
         # Set R2D2 config file
         # --------------------
-        create_r2d2_config(self.platform(), self.cycle_dir(), r2d2_local_path)
+        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Add to JEDI template rendering dictionary
         self.jedi_rendering.add_key('background_time', background_time)

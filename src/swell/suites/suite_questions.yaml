@@ -126,19 +126,3 @@ ensemble_hofx_packets:
   - localensembleda
   prompt: Enter the number of ensemble packets.
   type: string
-
-r2d2_local_path:
-  ask_question: False
-  default_value: defer_to_platform
-  prompt: What is the path to the R2D2 local directory?
-  suites:
-  - 3dfgat_atmos
-  - 3dvar_atmos
-  - 3dvar_cycle
-  - 3dvar
-  - convert_ncdiags
-  - forecast_geos
-  - hofx
-  - localensembleda
-  - ufo_testing
-  type: string
