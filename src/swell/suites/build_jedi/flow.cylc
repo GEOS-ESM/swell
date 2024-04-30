@@ -49,14 +49,8 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["BuildJedi"]["account"]}}
-            --qos = {{scheduling["BuildJedi"]["qos"]}}
-            --job-name = SwellBuildJedi
-            --nodes={{scheduling["BuildJedi"]["nodes"]}}
-            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
-            --constraint={{scheduling["BuildJedi"]["constraint"]}}
-            {% if scheduling["BuildJedi"]["partition"] %}
-            --partition={{scheduling["BuildJedi"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["BuildJedi"]["directives"].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

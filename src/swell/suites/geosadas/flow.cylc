@@ -111,15 +111,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
-            --job-name = RunJediVariationalExecutable
-            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
-            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
-            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     [[CleanCycle]]
         script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"

@@ -20,6 +20,7 @@ from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
+from swell.utilities.slurm import prepare_scheduling_dict
 
 
 # --------------------------------------------------------------------------------------------------
@@ -434,73 +435,13 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                              'there are no model components to gather them from or ' +
                              'they are not provided in the experiment dictionary.')
 
-    # Look for a file called $HOME/.swell/slurm.yaml
-    # ----------------------------------------------
-    yaml_path = os.path.expanduser("~/.swell/swell-slurm.yaml")
-    slurm_global = {}
-    if os.path.exists(yaml_path):
-        with open(yaml_path, "r") as yaml_file:
-            slurm_global = yaml.safe_load(yaml_file)
-
-    # Set default values for global slurm values
-    account = 'g0613'
-    qos = 'allnccs'
-    partition = None
-    constraint = 'cas|sky'
-
-    # Extract from slurm global file
-    if 'qos' in slurm_global:
-        qos = slurm_global['qos']
-
-    if 'partition' in slurm_global:
-        partition = slurm_global['partition']
-
-    if 'account' in slurm_global:
-        account = slurm_global['account']
-
-    if 'constraint' in slurm_global:
-        constraint = slurm_global['constraint']
-
-    # List of tasks using slurm
-    # -------------------------
-    slurm_tasks = [
-        'BuildJedi',
-        'BuildGeos',
-        'EvaObservations',
-        'GenerateBClimatology',
-        'RunJediHofxEnsembleExecutable',
-        'RunJediHofxExecutable',
-        'RunJediLocalEnsembleDaExecutable',
-        'RunJediUfoTestsExecutable',
-        'RunJediVariationalExecutable',
-        'RunGeosExecutable',
-        ]
-
-    # Fill default values for slurm tasks
-    # -----------------------------------
-    render_dictionary['scheduling'] = {}
-    for slurm_task in slurm_tasks:
-        render_dictionary['scheduling'][slurm_task] = {}
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
-        render_dictionary['scheduling'][slurm_task]['account'] = account
-        render_dictionary['scheduling'][slurm_task]['qos'] = qos
-        render_dictionary['scheduling'][slurm_task]['nodes'] = 1
-        render_dictionary['scheduling'][slurm_task]['ntasks_per_node'] = 24
-        render_dictionary['scheduling'][slurm_task]['constraint'] = constraint
-        render_dictionary['scheduling'][slurm_task]['partition'] = partition
+    render_dictionary["scheduling"] = prepare_scheduling_dict(logger, experiment_dict)
 
     # Set some specific values for:
     # ------------------------------
-    # Variatonal tasks
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['nodes'] = 3
-    render_dictionary['scheduling']['RunJediVariationalExecutable']['ntasks_per_node'] = 36
-
     # run time
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
-
-    # nodes
-    render_dictionary['scheduling']['RunJediUfoTestsExecutable']['ntasks_per_node'] = 1
 
     # Render the template
     # -------------------
