@@ -23,7 +23,7 @@ obs filters:
   - name: ozoneTotal
   action:
     name: assign error
-    error parameter: 6.0
+    error parameter: 5.0
  # range sanity check
 - filter: Bounds Check
   filter variables:
@@ -42,20 +42,20 @@ obs filters:
   action:
     name: reject
 # Reject rows 25+ (somewhat stringent but thats what we do in GEOS)
-#- filter: Bounds Check
-#  filter variables:
-#  - name: ozoneTotal
-#  test variables:
-#  - name: MetaData/sensorScanPosition
-#  minvalue: 3
-#  maxvalue: 24
-#  action:
-#    name: reject
+- filter: Bounds Check
+  filter variables:
+  - name: ozoneTotal
+  test variables:
+  - name: MetaData/sensorScanPosition
+  minvalue: 3
+  maxvalue: 24
+  action:
+    name: reject
 
  # Gross check
-#- filter: Background Check
-#  filter variables:
-#  - name: ozoneTotal
-#  threshold: 5.0
-#  action:
-#    name: reject
+- filter: Background Check
+  filter variables:
+  - name: ozoneTotal
+  threshold: 5.0
+  action:
+    name: reject
