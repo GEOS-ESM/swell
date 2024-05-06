@@ -1,6 +1,6 @@
 covariance model: SABER
 saber central block:
-  saber block name: gsi covariance
+  saber block name: gsi hybrid covariance
   read:
     gsi akbk: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/akbk{{vertical_resolution}}.nc4'
     gsi error covariance file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
