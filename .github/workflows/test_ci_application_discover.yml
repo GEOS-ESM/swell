@@ -1,0 +1,12 @@
+name: Test Applications Tests (Discover)
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  run-test-apps-discover:
+    uses: GEOS-ESM/CI-workflows/.github/workflows/test_swell.yml@refs/heads/feature/test_swell_application
