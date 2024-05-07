@@ -1,4 +1,4 @@
-name: Test Applications Tests (Discover)
+name: Test CI Applications (Discover)
 
 on:
   workflow_dispatch:
@@ -9,4 +9,4 @@ defaults:
 
 jobs:
   run-test-apps-discover:
-    uses: GEOS-ESM/CI-workflows/.github/workflows/test_swell.yml@refs/heads/feature/test_swell_application
+    uses: GEOS-ESM/CI-workflows/.github/workflows/test_swell.yml@feature/test_swell_application
