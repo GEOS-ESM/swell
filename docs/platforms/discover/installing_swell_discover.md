@@ -35,12 +35,12 @@ The setting `<local_name>` should be replaced with what you want to refer to the
 
 <details>
   <summary> <strong> Advanced Tip:</strong> </summary>
-  
+
 If you would like to install a particular branch, you can use the `-b` option:
 
 ```bash
 py_installer GEOS-ESM/swell -b <branch_name> <local_name>
-``` 
+```
 </details>
 
 After the install is completed you should have directories `src`, `modulefiles` and `core` containing the things needed to use swell. In particular you should have `modulefiles/core/swell/<local_name>.lua`.

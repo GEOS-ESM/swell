@@ -15,6 +15,12 @@
     - [Installing swell](platforms/discover/installing_swell_discover.md)
     - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)
 
+- Practical Examples
+
+  - [Description](examples/description.md)
+  - **SOCA**
+    -  [3DVAR](examples/soca/3dvar.md)
+
 - Configuration files in swell
 
   - [Observation configuration](observation_configuration.md)
