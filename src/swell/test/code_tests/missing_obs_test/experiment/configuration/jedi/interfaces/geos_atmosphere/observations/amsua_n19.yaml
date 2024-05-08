@@ -28,23 +28,23 @@ obs bias:
   variational bc:
     predictors:
     - name: constant
-    - name: cloud_liquid_water
+    - name: cloudWaterContent
       sensor: AMSUA
       clwdif_ch238: 1
       clwdif_ch314: 2
-    - name: lapse_rate
+    - name: lapseRate
       order: 2
       tlapse: &amsua_n19_tlapse '{{cycle_dir}}/amsua_n19.{{background_time}}.tlapse.txt'
-    - name: lapse_rate
+    - name: lapseRate
       tlapse: *amsua_n19_tlapse
-    - name: emissivity
-    - name: scan_angle
+    - name: emissivityJacobian
+    - name: sensorScanAngle
       order: 4
-    - name: scan_angle
+    - name: sensorScanAngle
       order: 3
-    - name: scan_angle
+    - name: sensorScanAngle
       order: 2
-    - name: scan_angle
+    - name: sensorScanAngle
   covariance:
     minimal required obs number: 20
     variance range: [1.0e-6, 10.0]
