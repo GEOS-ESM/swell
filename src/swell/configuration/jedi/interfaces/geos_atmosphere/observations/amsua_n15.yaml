@@ -102,7 +102,7 @@ obs post filters:
       options:
         sensor: *Sensor_ID
         channels: *amsua_n15_available_channels
-        test_biaspredictor: cloud_liquid_waterPredictor
+        test_biaspredictor: cloudWaterContentPredictor
     maxvalue: 0.0
     action:
       name: reject
