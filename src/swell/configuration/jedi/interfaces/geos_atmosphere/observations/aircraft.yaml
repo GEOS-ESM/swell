@@ -31,6 +31,23 @@ obs operator:
     observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
     variables: [airTemperature]
 
+linear obs operator:
+  name: Composite
+  components:
+
+  - name: VertInterp
+    variables:
+    - name: windEastward
+    - name: windNorthward
+
+    # Hofx scaling
+    hofx scaling field: SurfaceWindScalingPressure
+    hofx scaling field group: DerivedVariables
+
+  - name: VertInterp
+    observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+    variables: [airTemperature]
+
 obs prior filters:
 
 # Apply variable changes needed for performing wind scaling
@@ -322,7 +339,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # error inflation based on pressure check
@@ -389,7 +406,7 @@ obs post filters:
     maxvalue: 1.3
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # set ObsErrorData 5.6 K if it > 5.6 K.
@@ -405,7 +422,7 @@ obs post filters:
     minvalue: 5.6
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # Screen data by PreUseFlag. PreUseFlag is assigned in reading programs in GSI.
@@ -456,7 +473,7 @@ obs post filters:
   where:
   - variable:
       name: TempObsErrorData/airTemperature
-    is_defined:
+    value: is_valid
   defer to post: true
 
 ## Duplicate factor
@@ -627,7 +644,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windEastward
-    is_defined:
+    value: is_valid
   defer to post: true
 
 - filter: Perform Action
@@ -639,7 +656,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windNorthward
-    is_defined:
+    value: is_valid
   defer to post: true
 
 # Error inflation based on pressure check

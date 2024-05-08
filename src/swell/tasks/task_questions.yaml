@@ -59,6 +59,7 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -76,6 +77,7 @@ background_time_offset:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -141,6 +143,7 @@ crtm_coeff_dir:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -148,13 +151,39 @@ crtm_coeff_dir:
   - SaveObsDiags
   type: string
 
+ensemble_hofx_packets:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Enter number of packets in which ensemble observers should be computed.
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
+  type: integer
+
+ensemble_hofx_strategy:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Enter hofx strategy.
+  tasks:
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
+  type: string-drop-list
+
 ensemble_num_members:
   ask_question: false
   default_value: defer_to_model
   models:
   - geos_atmosphere
+  options: defer_to_model
   prompt: How many members comprise the ensemble?
   tasks:
+  - RunJediHofxEnsembleExecutable
   - RunJediLocalEnsembleDaExecutable
   type: integer
 
@@ -220,6 +249,7 @@ generate_yaml_and_exit:
   prompt: Generate JEDI executable YAML and exit?
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -281,7 +311,7 @@ geos_experiment_directory:
 
 geos_gcm_tag:
   ask_question: true
-  default_value: v11.0.2
+  default_value: v11.5.1
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - CloneGeos
@@ -295,7 +325,6 @@ geos_restarts_directory:
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
-  - PrepGeosRunDir
   type: string
 
 geovals_experiment:
@@ -326,6 +355,17 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
+  type: string-drop-list
+
+gsibec_configuration:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - all
+  prompt: Which GSIBEC climatological or hybrid?
+  tasks:
+  - RunJediVariationalExecutable
+  - StageJedi
   type: float
 
 horizontal_localization_lengthscale:
@@ -371,6 +411,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -412,6 +453,7 @@ jedi_forecast_model:
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -543,7 +585,7 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -557,7 +599,7 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -608,6 +650,7 @@ observations:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -615,15 +658,25 @@ observations:
   - SaveObsDiags
   type: string-check-list
 
-observing_system_records_gsi_path:
+observing_system_records_mksi_path:
   ask_question: false
   default_value: defer_to_model
   models:
   - geos_atmosphere
   prompt: What is the path to the GSI formatted observing system records?
   tasks:
-  - CloneGeosAna
+  - CloneGeosMksi
   - GenerateObservingSystemRecords
+  type: string
+
+observing_system_records_mksi_path_tag:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the GSI formatted observing system records tag?
+  tasks:
+  - CloneGeosMksi
   type: string
 
 observing_system_records_path:
@@ -752,8 +805,8 @@ total_processors:
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology
-  - GenerateBClimatologyByLinking
   - PrepareAnalysis
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -838,6 +891,7 @@ vertical_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
@@ -856,6 +910,7 @@ window_length:
   - GetGsiBc
   - GetObservations
   - MoveDaRestart
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -870,14 +925,17 @@ window_offset:
   - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
+  - EvaIncrement
   - EvaObservations
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -896,9 +954,12 @@ window_type:
   - 4D
   prompt: Do you want to use a 3D or 4D (including FGAT) window?
   tasks:
+  - EvaIncrement
   - GenerateBClimatology
+  - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable

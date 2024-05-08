@@ -9,7 +9,6 @@
 
 
 from multiprocessing import Pool
-import netCDF4 as nc
 import os
 import yaml
 
@@ -20,7 +19,7 @@ from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
-
+from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
@@ -93,18 +92,14 @@ class EvaObservations(taskBase):
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Split the full path into path and filename
-            obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
-
-            # Prevent Eva from failing if there are observation files with 0 observations
-            with nc.Dataset(obs_path_file, 'r') as ds:
-                loc_size = len(ds.dimensions['Location'])
-
-            if (loc_size) < 1:
-                self.logger.info(f'No observations were found for {obs_path_file}. ' +
-                                 'No plots will be produced')
+            # Check if observation was used
+            use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
+                                observation_dict, self.cycle_time_dto())
+            if not use_obs:
                 continue
 
+            # Split the full path into path and filename
+            obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Check for need to add 0000 to the file

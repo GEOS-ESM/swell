@@ -1,0 +1,54 @@
+jedi_build_method: use_existing
+model_components: ['geos_atmosphere']
+models:
+  geos_atmosphere:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
+    horizontal_resolution: '91'
+    window_type: 4D
+    observations:
+    - aircraft
+    - airs_aqua
+    - amsr2_gcom-w1
+    - amsua_aqua
+    - amsua_metop-b
+    - amsua_metop-c
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - cris-fsr_n20
+    - cris-fsr_npp
+    - gmi_gpm
+    - gps
+    - iasi_metop-b
+    - iasi_metop-c
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
+    - pibal
+    - satwind
+    - scatwind
+    - sfcship
+    - sfc
+    - sondes
+    - ssmis_f17
+    gradient_norm_reduction: 1e-3
+    number_of_iterations:
+    - 10
+    obs_experiment: x0048v2
+    geovals_experiment: x0048v2-geovals
+    clean_patterns:
+    - '*.txt'
+    - '*.csv'
+    - '*satbias.nc4'

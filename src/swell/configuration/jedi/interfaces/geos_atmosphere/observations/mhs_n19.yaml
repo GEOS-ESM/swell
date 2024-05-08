@@ -21,7 +21,7 @@ obs operator:
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
-    Absorbers: [H2O,O3,CO2]
+    Absorbers: [H2O,O3]
     Clouds: [Water]
     Surfaces: [Water_Temperature]
 

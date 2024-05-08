@@ -1,8 +1,6 @@
 start_cycle_point: '2021-07-01T12:00:00Z'
 final_cycle_point: '2021-07-01T12:00:00Z'
 jedi_build_method: use_existing
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
 model_components: ['geos_marine']
 models:
   geos_marine:

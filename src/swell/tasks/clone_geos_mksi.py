@@ -15,12 +15,12 @@ from swell.utilities.build import link_path
 # --------------------------------------------------------------------------------------------------
 
 
-class CloneGeosAna(taskBase):
+class CloneGeosMksi(taskBase):
 
     def execute(self):
 
         """
-        Generate the satellite channel record from GEOSadas files
+        Generate the satellite channel record from GEOSmksi files
         """
 
         # This task should only execute for geos_atmosphere
@@ -31,18 +31,23 @@ class CloneGeosAna(taskBase):
 
         # Parse config
         # ------------
-        path_to_geosana_gridcomp = self.config.observing_system_records_gsi_path()
+        path_to_geos_mksi = self.config.observing_system_records_mksi_path()
+        tag = self.config.observing_system_records_mksi_path_tag()
 
-        # If observing_system_records_gsi_path is None, clone GEOSana_GridComp repo to experiment
+        # If observing_system_records_mksi_path is None, clone GEOS_mksi repo to experiment
         # directory
-        if path_to_geosana_gridcomp == 'None':
-            # Clone GEOSana_GridComp develop repo to experiment directory
-            os.system('git clone https://github.com/GEOS-ESM/GEOSana_GridComp.git '
-                      + os.path.join(self.experiment_path(), 'GEOSana_GridComp'))
+        if path_to_geos_mksi == 'None':
+            if tag == 'None':
+                branch = 'develop'
+            else:
+                branch = tag
+            # Clone GEOS_mksi develop repo to experiment directory
+            os.system(f'git clone -b {branch} https://github.com/GEOS-ESM/GEOS_mksi.git '
+                      + os.path.join(self.experiment_path(), 'GEOS_mksi'))
         else:
             # Link the source code directory
-            link_path(self.config.observing_system_records_gsi_path(),
-                      os.path.join(self.experiment_path(), 'GEOSana_GridComp'))
+            link_path(self.config.observing_system_records_mksi_path(),
+                      os.path.join(self.experiment_path(), 'GEOS_mksi'))
 
 
 # ----------------------------------------------------------------------------------------------

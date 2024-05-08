@@ -52,9 +52,13 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_offset):
+    def window_begin(self, window_offset, dto=False):
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
+
+        # Return datetime object if asked
+        if dto:
+            return window_begin_dto
 
         return window_begin_dto.strftime(datetime_formats['directory_format'])
 

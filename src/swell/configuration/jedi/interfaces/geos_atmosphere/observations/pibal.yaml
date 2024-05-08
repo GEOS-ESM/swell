@@ -36,6 +36,28 @@ obs operator:
       hofx scaling field: SurfaceWindScalingCombined
       hofx scaling field group: DerivedVariables
 
+linear obs operator:
+  name: Composite
+  components:
+    - name: VertInterp
+      observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+
+      # Use height vertical coordinate first
+      vertical coordinate: geopotential_height
+      observation vertical coordinate group: DerivedVariables
+      observation vertical coordinate: adjustedHeight
+      interpolation method: linear
+
+      # Use pressure vertical coordinate backup
+      vertical coordinate backup: air_pressure
+      observation vertical coordinate group backup: MetaData
+      observation vertical coordinate backup: pressure
+      interpolation method backup: log-linear
+
+      # Hofx scaling
+      hofx scaling field: SurfaceWindScalingCombined
+      hofx scaling field group: DerivedVariables
+
 obs pre filters:
 
   # Reject all observations that are not Pibal
@@ -131,7 +153,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windEastward
-    is_defined:
+    value: is_valid
 
 - filter: Perform Action
   filter variables:
@@ -142,7 +164,7 @@ obs post filters:
   where:
   - variable:
       name: GsiAdjustObsError/windNorthward
-    is_defined:
+    value: is_valid
 
 - filter: Perform Action
   filter variables:

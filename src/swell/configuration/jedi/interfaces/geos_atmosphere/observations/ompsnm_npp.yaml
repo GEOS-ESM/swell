@@ -22,7 +22,7 @@ obs filters:
   - name: ozoneTotal
   action:
     name: assign error
-    error parameter: 6.0
+    error parameter: 5.216
  # range sanity check
 - filter: Bounds Check
   filter variables:

@@ -26,7 +26,10 @@ class GSIRecordParser:
     def get_channel_list(self, start):
         channel_list = []
         rows = self.instr_df.loc[self.instr_df["start"] == start]
-        [channel_list.extend(i) for i in rows["channels"].values]
+        for row_ch_list in rows["channels"].values:
+            ch_list = eval(row_ch_list)
+            channel_list.extend(ch_list)
+
         channel_list = list(set(channel_list))
         channel_list.sort(key=int)
         return channel_list
@@ -62,7 +65,7 @@ class GSIRecordParser:
             start_df = self.instr_df.loc[self.instr_df['start'] == main_start]
             if (len(start_df) == 1):
                 # Only one row to process
-                channel_list = start_df['channels'].values[0]
+                channel_list = eval(start_df['channels'].values[0])
                 comment = start_df['comments'].values[0]
                 self.update_return_df(main_start, main_end, channel_list, comment)
                 done.append(main_start)

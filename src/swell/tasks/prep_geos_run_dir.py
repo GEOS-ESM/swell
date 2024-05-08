@@ -125,8 +125,7 @@ class PrepGeosRunDir(taskBase):
         # Generate the complete ExtData.rc
         # TODO: Fix install folders, update task_questions
         # --------------------------------
-        # self.geosbin = os.path.join(self.geos_source, 'install-Release', 'bin')
-        self.geosbin = os.path.join(self.geos_source, 'install', 'bin')
+        self.geosbin = os.path.join(self.geos_source, 'install-SLES12', 'bin')
         self.generate_extdata()
 
         # Get boundary conditions
@@ -346,8 +345,7 @@ class PrepGeosRunDir(taskBase):
 
         # TODO: install folder name changes (install vs. install-Releaee)
         geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
-                                         'source', 'install', 'bin')
-        #  'source', 'install-Release', 'bin')
+                                         'source', 'install-SLES12', 'bin')
 
         src_dirs = []
 

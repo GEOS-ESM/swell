@@ -9,15 +9,37 @@
 
 
 import os
-
+import netCDF4 as nc
 from swell.utilities.shell_commands import run_track_log_subprocess
+
+# --------------------------------------------------------------------------------------------------
+
+
+def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
+
+    use_observation = False
+
+    # Check if file exists
+    # --------------------
+    filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
+    if os.path.exists(filename):
+
+        # Open file and check if number of location dimension is nonzero
+        # --------------------------------------------------------------
+        dataset = nc.Dataset(filename, 'r')
+
+        for dim_name, dim in dataset.dimensions.items():
+            if dim_name == 'Location' and dim.size > 0:
+                use_observation = True
+
+    return use_observation
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs=None,
-                             jedi_forecast_model=None):
+def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type=None, obs=None,
+                             cycle_time=None, jedi_forecast_model=None):
 
     # Assemble configuration YAML file
     # --------------------------------
@@ -48,9 +70,16 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type, obs=
                 value_special = value.replace('SPECIAL', '')
                 if value_special == 'observations':
                     observations = []
-                    for ob in obs:
+                    obs_list = obs.copy()
+                    for ob in obs_list:
                         obs_dict = jedi_rendering.render_interface_observations(ob)
-                        observations.append(obs_dict)
+                        use_observation = check_obs(jedi_rendering.observing_system_records_path,
+                                                    ob, obs_dict, cycle_time)
+                        if use_observation:
+                            observations.append(obs_dict)
+                        else:
+                            # Remove observation from obs list passed into function
+                            obs.remove(ob)
                     jedi_config_dict[key] = observations
 
                 elif value_special == 'model' and window_type == '4D':

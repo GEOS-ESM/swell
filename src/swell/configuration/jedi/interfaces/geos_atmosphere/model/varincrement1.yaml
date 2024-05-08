@@ -1,0 +1,7 @@
+write increment: true
+increment:
+  state component:
+    filetype: auxgrid
+    gridtype: latlon
+    datapath: ./
+    filename: {{experiment_id}}.increment-iter1.

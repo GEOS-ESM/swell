@@ -43,15 +43,15 @@ def read_sat_db(path_to_sat_db, column_names):
                     'end': [''],
                     'instr': [''],
                     'channel_num': [0],
-                    'channels': [[]],
+                    'channels': [''],
                     'comments': ['']})
 
                 df = pd.concat([df, new_row], ignore_index=True)
-                df['sat'][idx] = line_parts[0]
-                df['start'][idx] = line_parts[1]+line_parts[2]
-                df['end'][idx] = line_parts[3]+line_parts[4]
-                df['instr'][idx] = line_parts[5]
-                df['channel_num'][idx] = line_parts[6]
+                df.loc[idx, 'sat'] = line_parts[0]
+                df.loc[idx, 'start'] = line_parts[1]+line_parts[2]
+                df.loc[idx, 'end'] = line_parts[3]+line_parts[4]
+                df.loc[idx, 'instr'] = line_parts[5]
+                df.loc[idx, 'channel_num'] = line_parts[6]
 
                 comment_present = next((i for i, x in enumerate(line_parts) if x == '#'), None)
 
@@ -61,11 +61,12 @@ def read_sat_db(path_to_sat_db, column_names):
                     comment_str = ' '.join(comment)
                     # Accounting for no comment
                     if (len(comment_str) != 1):
-                        df['comments'][idx] = comment_str
+                        df.loc[idx, 'comments'] = comment_str
                 else:
                     channel_list = line_parts[7:]
 
-                df['channels'][idx] = channel_list
+                # convert channel list to string
+                df.loc[idx, 'channels'] = str(channel_list)
                 idx += 1
     return df
 
@@ -92,7 +93,7 @@ class ObservingSystemRecords:
 
         '''
             This method reads in the active.tbl and available.tbl files
-            from GEOSAna and loads them into dataframes. These dataframes
+            from GEOS_mksi and loads them into dataframes. These dataframes
             are parsed using GSIRecordParser to get the final dataframes.
         '''
 

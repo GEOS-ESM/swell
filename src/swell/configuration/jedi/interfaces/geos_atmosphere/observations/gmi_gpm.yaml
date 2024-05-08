@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gmi_gpm.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &gmi_gpm_available_channels 1-13
+  channels: &gmi_gpm_available_channels {{gmi_gpm_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -17,7 +17,7 @@ obs operator:
   Clouds: [Water, Ice, Rain, Snow]
   Cloud_Fraction: 1.0
   obs options:
-    Sensor_ID: gmi_gpm
+    Sensor_ID: &Sensor_ID gmi_gpm
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
@@ -325,5 +325,21 @@ obs filters:
     channels: 7
   threshold: 2.0
   absolute threshold: 5.0
+  action:
+    name: reject
+#  Useflag check
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *gmi_gpm_available_channels
+  test variables:
+  - name: ObsFunction/ChannelUseflagCheckRad
+    channels: *gmi_gpm_available_channels
+    options:
+      channels: *gmi_gpm_available_channels
+#     use passive_bc: true
+      sensor: *Sensor_ID
+      use_flag: &gmi_gpm_use_flag {{gmi_gpm_active_channels}}
+  minvalue: 1.0e-12
   action:
     name: reject

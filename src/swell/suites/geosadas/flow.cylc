@@ -33,12 +33,12 @@
             CloneJedi => StageJedi
 
             # Clone geos ana for generating observing system records
-            CloneGeosAna
+            CloneGeosMksi
         """
 
         T00 = """
             # Generate satellite channel records
-            CloneGeosAna[^] => GenerateObservingSystemRecords
+            CloneGeosMksi[^] => GenerateObservingSystemRecords
 
             # Get and convert bias correction coefficients
             GetGsiBc => GsiBcToIoda
@@ -76,8 +76,8 @@
 
     # Tasks
     # -----
-    [[CloneGeosAna]]
-        script = "swell task CloneGeosAna $config"
+    [[CloneGeosMksi]]
+        script = "swell task CloneGeosMksi $config"
 
     [[GenerateObservingSystemRecords]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m geos_atmosphere"

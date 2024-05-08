@@ -1,0 +1,45 @@
+cost function:
+  cost type: 4D-Var
+  jb evaluation: false
+  time window:
+    begin: '{{window_begin_iso}}'
+    length: '{{window_length}}'
+    bound to include: begin
+  geometry:
+    TASKFILLgeometry
+  model:
+    TASKFILLpseudo-model
+  variable change:
+    variable change name: Analysis2Model
+  forecast length: {{window_length}}
+  analysis variables: {{analysis_variables}}
+  background:
+    TASKFILLbackground
+  background error:
+    TASKFILLbackground_error
+  observations:
+    observers:
+      SPECIALobservations
+variational:
+  minimizer:
+    algorithm: {{minimizer}}
+  iterations:
+  - geometry: TASKFILLgeometry_inner
+    gradient norm reduction: '{{gradient_norm_reduction}}'
+    ninner: '{{number_of_iterations}}'
+    linear model:
+      name: Identity
+      increment variables: {{analysis_variables}}
+      variable change: Identity
+      tstep: PT1H
+    diagnostics:
+      departures: ombg
+    online diagnostics:
+      TASKFILLvarincrement1
+final:
+  diagnostics:
+    departures: oman
+  prints:
+    frequency: PT3H  #TODO: Define this as a default value in suite config
+output:
+  TASKFILLanalysis
