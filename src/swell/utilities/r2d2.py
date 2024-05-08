@@ -20,8 +20,8 @@ def create_r2d2_config(logger, platform, cycle_dir, r2d2_local_path):
     # R2D2 config file that will be created
     r2d2_config_file = os.path.join(cycle_dir, 'r2d2_config.yaml')
 
-    # Set the environment variable R2D2_CONFIG_FILE
-    os.environ['R2D2_CONFIG_FILE'] = r2d2_config_file
+    # Set the environment variable R2D2_CONFIG
+    os.environ["R2D2_CONFIG"] = r2d2_config_file
 
     # If the file already exists then return
     if os.path.isfile(r2d2_config_file):
