@@ -210,11 +210,7 @@ obs post filters:
       channels: *atms_n20_channels
       options:
         channels: *atms_n20_channels
-        use_flag: [-1, -1, -1, -1,  1,
-                    1,  1,  1,  1,  1,
-                    1,  1,  1,  1,  1,
-                   -1,  1,  1,  1,  1,
-                    1,  1]
+        use_flag: *atms_n20_use_flag
     minvalue: 1.0e-12
     action:
       name: reject
