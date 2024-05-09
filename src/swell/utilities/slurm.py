@@ -50,7 +50,7 @@ def prepare_scheduling_dict(logger, experiment_dict):
 
     # List of tasks using slurm
     # -------------------------
-    default_slurm_tasks = {
+    slurm_tasks = {
         'BuildJedi',
         'BuildGeos',
         'EvaObservations',
@@ -63,8 +63,12 @@ def prepare_scheduling_dict(logger, experiment_dict):
         'RunGeosExecutable'
         }
 
+    # Throw an error if a user tries to set SLURM directives for a task that
+    # doesn't use SLURM.
     experiment_slurm_tasks = set(experiment_task_directives.keys())
-    slurm_tasks = default_slurm_tasks.union(experiment_slurm_tasks)
+    non_slurm_tasks = experiment_slurm_tasks.difference(slurm_tasks)
+    assert len(non_slurm_tasks) == 0, \
+        f"The following tasks cannot use SLURM: {non_slurm_tasks}"
 
     model_components = experiment_dict["model_components"]
 
