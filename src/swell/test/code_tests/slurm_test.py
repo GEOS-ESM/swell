@@ -15,6 +15,7 @@ from swell.utilities.slurm import prepare_scheduling_dict
 
 # --------------------------------------------------------------------------------------------------
 
+
 class SLURMConfigTest(unittest.TestCase):
 
     def test_slurm_config(self):

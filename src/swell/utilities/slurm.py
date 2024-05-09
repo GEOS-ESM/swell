@@ -9,6 +9,7 @@
 import os
 import yaml
 
+
 def prepare_scheduling_dict(logger, experiment_dict):
     # Hard-coded defaults
     # ----------------------------------------------
@@ -70,17 +71,22 @@ def prepare_scheduling_dict(logger, experiment_dict):
     scheduling_dict = {}
     for slurm_task in slurm_tasks:
         # Priority order (first = highest priority)
-            # 1. Task- *and* model-specific directives from experiment
-            #    (experiment_task_directives[slurm_task][model_component])
-            # 2. Task-specific (model-generic) directives from experiment
-            #    (experiment_task_directives[slurm_task]["all"])
-            # 3. Global directives from experiment (experiment_globals)
-            # 4. Directives from user config (user_globals)
-            # 5. Hard-coded task-specific defaults (task_defaults)
-            # 6. Hard-coded global defaults (global_defaults)
+        # 1. Task- *and* model-specific directives from experiment
+        #    (experiment_task_directives[slurm_task][model_component])
+        # 2. Task-specific (model-generic) directives from experiment
+        #    (experiment_task_directives[slurm_task]["all"])
+        # 3. Global directives from experiment (experiment_globals)
+        # 4. Directives from user config (user_globals)
+        # 5. Hard-coded task-specific defaults (task_defaults)
+        # 6. Hard-coded global defaults (global_defaults)
         # NOTE: Hard-code "job-name" to SWELL task here but it can be
         # overwritten in task-specific directives.
-        directives = {"job-name": slurm_task, **global_defaults, **user_globals, **experiment_globals}
+        directives = {
+            "job-name": slurm_task,
+            **global_defaults,
+            **user_globals,
+            **experiment_globals
+        }
         if slurm_task in task_defaults:
             directives = {**directives, **task_defaults[slurm_task]}
         if slurm_task in experiment_task_directives:
