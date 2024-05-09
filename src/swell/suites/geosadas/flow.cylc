@@ -111,7 +111,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"].items() %}
+        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 

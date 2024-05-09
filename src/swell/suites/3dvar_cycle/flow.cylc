@@ -143,7 +143,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["BuildGeos"]["directives"].items() %}
+        {% for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 
@@ -158,7 +158,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["BuildJedi"]["directives"].items() %}
+        {% for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 
@@ -167,7 +167,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["RunGeosExecutable"]["directives"].items() %}
+        {% for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 
@@ -208,7 +208,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"].items() %}
+        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 
@@ -220,7 +220,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["EvaObservations"]["directives"].items() %}
+        {% for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {% endfor %}
 

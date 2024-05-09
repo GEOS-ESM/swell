@@ -20,8 +20,8 @@ def prepare_scheduling_dict(logger, experiment_dict):
     }
 
     task_defaults = {
-        "RunJediVariationalExecutable": { "nodes": 3, "ntasks_per_node": 36},
-        "RunJediUfoTestsExecutable": {"ntasks_per_node": 1}
+        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks_per_node": 36}},
+        "RunJediUfoTestsExecutable": {"all": {"ntasks_per_node": 1}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
@@ -49,7 +49,7 @@ def prepare_scheduling_dict(logger, experiment_dict):
 
     # List of tasks using slurm
     # -------------------------
-    slurm_tasks = [
+    default_slurm_tasks = {
         'BuildJedi',
         'BuildGeos',
         'EvaObservations',
@@ -59,25 +59,52 @@ def prepare_scheduling_dict(logger, experiment_dict):
         'RunJediLocalEnsembleDaExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
-        'RunGeosExecutable',
-        ]
+        'RunGeosExecutable'
+        }
 
-    # Ap
+    experiment_slurm_tasks = set(experiment_task_directives.keys())
+    slurm_tasks = default_slurm_tasks.union(experiment_slurm_tasks)
+
+    model_components = experiment_dict["model_components"]
+
     scheduling_dict = {}
     for slurm_task in slurm_tasks:
         # Priority order (first = highest priority)
-            # 1. Task-specific directives from experiment (experiment_task_directives)
-            # 2. Global directives from experiment (experiment_globals)
-            # 3. Directives from user config (user_globals)
-            # 4. Hard-coded task-specific defaults (task_defaults)
-            # 5. Hard-coded global defaults (global_defaults)
-        # NOTE: Hard-code "job-name" to SWELL task here...
+            # 1. Task- *and* model-specific directives from experiment
+            #    (experiment_task_directives[slurm_task][model_component])
+            # 2. Task-specific (model-generic) directives from experiment
+            #    (experiment_task_directives[slurm_task]["all"])
+            # 3. Global directives from experiment (experiment_globals)
+            # 4. Directives from user config (user_globals)
+            # 5. Hard-coded task-specific defaults (task_defaults)
+            # 6. Hard-coded global defaults (global_defaults)
+        # NOTE: Hard-code "job-name" to SWELL task here but it can be
+        # overwritten in task-specific directives.
         directives = {"job-name": slurm_task, **global_defaults, **user_globals, **experiment_globals}
         if slurm_task in task_defaults:
             directives = {**directives, **task_defaults[slurm_task]}
         if slurm_task in experiment_task_directives:
-            directives = {**directives, **experiment_task_directives[slurm_task]}
-        scheduling_dict[slurm_task]["directives"] = directives
+            if "all" in experiment_task_directives[slurm_task]:
+                directives = {
+                    **directives,
+                    **experiment_task_directives[slurm_task]["all"]
+                }
+        # Set model_agnostic directives
+        scheduling_dict[slurm_task] = {"directives": {"all": directives}}
+        # Now, for every model component, set the model-generic directives
+        # (`directives`) but overwrite with model-specific directives if
+        # present.
+        for model_component in model_components:
+            model_specific_directives = {}
+            if (slurm_task in experiment_task_directives) and \
+                    (model_component in experiment_task_directives[slurm_task]):
+                model_specific_directives = experiment_task_directives[slurm_task][model_component]
+            model_directives = {
+                "job-name": f"{slurm_task}-{model_component}",
+                **directives,
+                **model_specific_directives
+            }
+            scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
     return scheduling_dict
 
