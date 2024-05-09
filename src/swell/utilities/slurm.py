@@ -37,9 +37,9 @@ def prepare_scheduling_dict(logger, experiment_dict):
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
     experiment_globals = {}
-    if "slurm_directives_common" in experiment_dict:
+    if "slurm_directives_global" in experiment_dict:
         logger.info(f"Loading additional SLURM globals from experiment dict")
-        experiment_globals = experiment_dict["slurm_directives_common"]
+        experiment_globals = experiment_dict["slurm_directives_global"]
 
     # Task-specific SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------

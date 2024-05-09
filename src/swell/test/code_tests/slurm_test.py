@@ -25,7 +25,7 @@ class SLURMConfigTest(unittest.TestCase):
         # Nested example
         experiment_dict = {
             "model_components": ["geos_atmosphere", "geos_ocean"],
-            "slurm_directives_globals": {
+            "slurm_directives_global": {
                 "account": "x1234",
                 "nodes": 1
             },
