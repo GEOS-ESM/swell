@@ -435,11 +435,15 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                              'there are no model components to gather them from or ' +
                              'they are not provided in the experiment dictionary.')
 
-    render_dictionary["scheduling"] = prepare_scheduling_dict(logger, experiment_dict)
+    render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict)
+
+    # Default execution time limit for everthing is PT1H
+    for slurm_task in render_dictionary['scheduling'].keys():
+        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
 
     # Set some specific values for:
     # ------------------------------
-    # run time
+    # run time (note: these overwrite defaults above)
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
