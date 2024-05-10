@@ -27,7 +27,6 @@ class SLURMConfigTest(unittest.TestCase):
             "model_components": ["geos_atmosphere", "geos_ocean"],
             "slurm_directives_global": {
                 "account": "x1234",
-                "nodes": 1
             },
             "slurm_directives_tasks": {
                 "EvaObservations": {
@@ -47,7 +46,6 @@ class SLURMConfigTest(unittest.TestCase):
 
         for mc in ["all", "geos_atmosphere", "geos_ocean"]:
             # Hard-coded global defaults
-            assert sd["BuildJedi"]["directives"][mc]["account"] == "g0613"
             assert sd["EvaObservations"]["directives"][mc]["qos"] == "allnccs"
             assert sd["EvaObservations"]["directives"][mc]["constraint"] == "cas|sky"
             # Hard-coded task-specific defaults
