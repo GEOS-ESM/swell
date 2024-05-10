@@ -58,7 +58,7 @@ def clone_config(configuration, experiment_id, method, platform, advanced):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(suite, method, platform, override, advanced):
+def prepare_config(suite, method, platform, override, advanced, slurm):
 
     # Create a logger
     # ---------------
@@ -100,6 +100,26 @@ def prepare_config(suite, method, platform, override, advanced):
     if 'models' in experiment_dict:
         experiment_dict['model_components'] = list(experiment_dict['models'].keys())
         comment_dict['model_components'] = 'List of models in this experiment'
+
+    # Expand experiment dict with SLURM overrides.
+    # NOTE: This is a bit of a hack. We should really either commit to using a
+    # separate file and pass it around everywhere, or commit fully to keeping
+    # everything in `experiment.yaml` and support it through the Questionary
+    # infrastructure.
+    # ----------------------------------
+    if slurm is not None:
+        logger.info(f"Reading SLURM directives from {slurm}.")
+        assert os.path.exists(slurm)
+        with open(slurm, "r") as slurmfile:
+            slurm_dict = yaml.safe_load(slurmfile)
+        # Ensure that SLURM dict is _only_ used for SLURM directives.
+        slurm_invalid_keys = set(slurm_dict.keys()).difference({
+            "slurm_directives_global",
+            "slurm_directives_tasks"
+        })
+        if slurm_invalid_keys:
+            logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
+        experiment_dict = {**experiment_dict, **slurm_dict}
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
