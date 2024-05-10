@@ -75,14 +75,12 @@ def prepare_scheduling_dict(logger, experiment_dict):
     scheduling_dict = {}
     for slurm_task in slurm_tasks:
         # Priority order (first = highest priority)
-        # 1. Task- *and* model-specific directives from experiment
-        #    (experiment_task_directives[slurm_task][model_component])
-        # 2. Task-specific (model-generic) directives from experiment
+        # 1. Task-specific directives from experiment
         #    (experiment_task_directives[slurm_task]["all"])
-        # 3. Global directives from experiment (experiment_globals)
-        # 4. Directives from user config (user_globals)
-        # 5. Hard-coded task-specific defaults (task_defaults)
-        # 6. Hard-coded global defaults (global_defaults)
+        # 2. Global directives from experiment (experiment_globals)
+        # 3. Directives from user config (user_globals)
+        # 4. Hard-coded task-specific defaults (task_defaults)
+        # 5. Hard-coded global defaults (global_defaults)
         # NOTE: Hard-code "job-name" to SWELL task here but it can be
         # overwritten in task-specific directives.
         directives = {
@@ -92,7 +90,11 @@ def prepare_scheduling_dict(logger, experiment_dict):
             **experiment_globals
         }
         if slurm_task in task_defaults:
-            directives = {**directives, **task_defaults[slurm_task]}
+            if "all" in task_defaults[slurm_task]:
+                directives = {
+                    **directives,
+                    **task_defaults[slurm_task]["all"]
+                }
         if slurm_task in experiment_task_directives:
             if "all" in experiment_task_directives[slurm_task]:
                 directives = {
@@ -101,21 +103,61 @@ def prepare_scheduling_dict(logger, experiment_dict):
                 }
         # Set model_agnostic directives
         scheduling_dict[slurm_task] = {"directives": {"all": directives}}
+
+        # Now, add model component-specific logic. The inheritance here is more
+        # complicated:
+        # - Experiment global defaults (`experiment_globals`)
+        # - User global defaults (`user_globals`)
+        # - Task- and model-specific hard-coded defaults
+        # - Task-specific, model-generic hard-coded defaults
+        # - Global hard-coded defaults
         # Now, for every model component, set the model-generic directives
         # (`directives`) but overwrite with model-specific directives if
         # present.
         for model_component in model_components:
-            model_specific_directives = {}
-            if (slurm_task in experiment_task_directives) and \
-                    (model_component in experiment_task_directives[slurm_task]):
-                model_specific_directives = experiment_task_directives[slurm_task][model_component]
             model_directives = {
                 "job-name": f"{slurm_task}-{model_component}",
-                **directives,
-                **model_specific_directives
+                **global_defaults
             }
+            if slurm_task in task_defaults:
+                model_directives = add_directives(
+                    model_directives,
+                    task_defaults[slurm_task],
+                    "all"
+                )
+                model_directives = add_directives(
+                    model_directives,
+                    task_defaults[slurm_task],
+                    model_component
+                )
+            model_directives = {
+                **model_directives,
+                **user_globals,
+                **experiment_globals
+            }
+            if slurm_task in experiment_task_directives:
+                model_directives = add_directives(
+                    model_directives,
+                    experiment_task_directives[slurm_task],
+                    "all"
+                )
+                model_directives = add_directives(
+                    model_directives,
+                    experiment_task_directives[slurm_task],
+                    model_component
+                )
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
     return scheduling_dict
+
+
+def add_directives(target_dict, input_dict, key):
+    if key in input_dict:
+        return {
+            **target_dict,
+            **input_dict[key]
+        }
+    else:
+        return target_dict
 
 # --------------------------------------------------------------------------------------------------
