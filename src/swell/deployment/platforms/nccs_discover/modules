@@ -26,7 +26,7 @@ PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/build/lib/python{{p
 
 # Aircraft Bias Python Path
 # -------------------------
-PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src/acftbias:$PYTHONPATH
+PYTHONPATH={{experiment_root}}/{{experiment_id}}/jedi_bundle/source/iodaconv/src/gsi_varbc:$PYTHONPATH
 
 # Load GEOS modules
 # -----------------

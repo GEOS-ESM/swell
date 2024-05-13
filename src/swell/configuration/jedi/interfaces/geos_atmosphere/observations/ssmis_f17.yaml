@@ -25,7 +25,7 @@
     variational bc:
       predictors:
       - name: constant
-      - name: cloud_liquid_water
+      - name: cloudWaterContent
         sensor: SSMIS
         ch19h: 12
         ch19v: 13
@@ -34,24 +34,24 @@
         ch37v: 16
         ch91v: 17
         ch91h: 18
-      - name: lapse_rate
+      - name: lapseRate
         order: 2
         tlapse: &ssmis_f17_tlapse '{{cycle_dir}}/ssmis_f17.{{background_time}}.tlapse.txt'
-      - name: lapse_rate
+      - name: lapseRate
         tlapse: *ssmis_f17_tlapse
-      - name: cosine_of_latitude_times_orbit_node
-      - name: sine_of_latitude
-      - name: emissivity
-      - name: scan_angle
+      - name: cosineOfLatitudeTimesOrbitNode
+      - name: sineOfLatitude
+      - name: emissivityJacobian
+      - name: sensorScanAngle
         var_name: sensorScanPosition
         order: 4
-      - name: scan_angle
+      - name: sensorScanAngle
         var_name: sensorScanPosition
         order: 3
-      - name: scan_angle
+      - name: sensorScanAngle
         var_name: sensorScanPosition
         order: 2
-      - name: scan_angle
+      - name: sensorScanAngle
         var_name: sensorScanPosition
     covariance:
       minimal required obs number: 20
