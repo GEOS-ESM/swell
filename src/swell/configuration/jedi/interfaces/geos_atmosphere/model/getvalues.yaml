@@ -1,3 +1,7 @@
 variable change:
   variable change name: Model2GeoVaLs
   vegetation scheme: gfs13
+  tropopause pressure method: gsi
+  midlev pressures choice: layer-mean
+# vader custom cookbook:
+#   air_pressure: [AirPressure_B]
