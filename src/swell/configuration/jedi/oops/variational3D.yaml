@@ -13,6 +13,8 @@ cost function:
   background error:
     TASKFILLbackground_error
   observations:
+    get values:
+      TASKFILLgetvalues
     observers:
       SPECIALobservations
 variational:
