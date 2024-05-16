@@ -17,7 +17,6 @@ def prepare_scheduling_dict(logger, experiment_dict):
     global_defaults = {
         "account": "g0613",
         "qos": "allnccs",
-        "partition": None,
         "nodes": 1,
         "ntasks-per-node": 24,
         "constraint": "cas|sky"
