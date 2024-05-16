@@ -18,13 +18,13 @@ def prepare_scheduling_dict(logger, experiment_dict):
         "qos": "allnccs",
         "partition": None,
         "nodes": 1,
-        "ntasks_per_node": 24,
+        "ntasks-per-node": 24,
         "constraint": "cas|sky"
     }
 
     task_defaults = {
-        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks_per_node": 36}},
-        "RunJediUfoTestsExecutable": {"all": {"ntasks_per_node": 1}}
+        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
+        "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
