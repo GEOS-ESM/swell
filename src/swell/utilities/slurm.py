@@ -168,13 +168,19 @@ def add_directives(target_dict, input_dict, key):
 
 def validate_directives(directive_dict):
     directive_pattern = r'(?<=--)[a-zA-Z-]+'
+    # Parse sbatch docs and extract all directives (e.g., `--account`)
     directive_list = {
         re.search(directive_pattern, s).group(0)
         for s in man_sbatch.split("\n")
         if re.search(directive_pattern, s)
     }
+    # Make sure that everything in `directive_dict` is in `directive_list`;
+    # i.e., that all entries are valid slurm directives.
     invalid_directives = set(directive_dict.keys()).difference(directive_list)
-    assert len(invalid_directives) == 0, f"The following are invalid SLURM directives: {invalid_directives}"
+    assert \
+        len(invalid_directives) == 0, \
+        f"The following are invalid SLURM directives: {invalid_directives}"
+
 
 man_sbatch = """
 Parallel run options:
