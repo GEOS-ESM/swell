@@ -55,6 +55,11 @@ class EvaIncrement(taskBase):
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
         if window_type == '4D':
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
+
+        # Soca case
+        if model == 'geos_ocean':
+            ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
+            incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
         increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 
         # Create dictionary used to override the eva config
