@@ -33,7 +33,7 @@ class SLURMConfigTest(unittest.TestCase):
                     "all": {
                         "account": "x5678",
                         "nodes": 2,
-                        "ntasks_per_node": 4
+                        "ntasks-per-node": 4
                     },
                     "geos_atmosphere": {
                         "nodes": 4
@@ -50,14 +50,14 @@ class SLURMConfigTest(unittest.TestCase):
             assert sd["EvaObservations"]["directives"][mc]["constraint"] == "cas|sky"
             # Hard-coded task-specific defaults
             assert sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"] == 3
-            assert sd["RunJediVariationalExecutable"]["directives"][mc]["ntasks_per_node"] == 36
-            assert sd["RunJediUfoTestsExecutable"]["directives"][mc]["ntasks_per_node"] == 1
+            assert sd["RunJediVariationalExecutable"]["directives"][mc]["ntasks-per-node"] == 36
+            assert sd["RunJediUfoTestsExecutable"]["directives"][mc]["ntasks-per-node"] == 1
             # Global defaults from experiment dict
             assert sd["BuildJedi"]["directives"][mc]["account"] == "x1234"
             assert sd["RunJediUfoTestsExecutable"]["directives"][mc]["account"] == "x1234"
             # Task-specific, model-generic config
             assert sd["EvaObservations"]["directives"][mc]["account"] == "x5678"
-            assert sd["EvaObservations"]["directives"][mc]["ntasks_per_node"] == 4
+            assert sd["EvaObservations"]["directives"][mc]["ntasks-per-node"] == 4
 
         # Task-specific, model-specific configs
         assert sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"] == 2
