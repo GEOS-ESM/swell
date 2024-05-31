@@ -104,7 +104,7 @@ window_type:
   - all
   suites:
   - hofx
-  prompt: Enter the cycle times for this model.
+  prompt: Enter the window type for this model.
   type: string-drop-list
 
 ensemble_hofx_strategy:
