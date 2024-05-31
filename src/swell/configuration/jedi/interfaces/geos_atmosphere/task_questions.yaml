@@ -84,6 +84,7 @@ horizontal_localization_method:
 horizontal_resolution:
   default_value: '361'
   options:
+  - '91'
   - '361'
 
 jedi_bkg_filename_template:
