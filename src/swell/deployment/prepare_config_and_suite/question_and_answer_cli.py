@@ -128,12 +128,12 @@ class GetAnswerCli:
 
         class durValidator(questionary.Validator):
             def validate(self, document):
-                r = re.compile('PT\d{1,2}H')  # noqa
+                r = re.compile('[-]?PT\d{1,2}H')  # noqa
                 if r.match(document.text) is None and document.text != 'EXIT':
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
                         cursor_position=len(document.text),
-                    )
+                    ) # Need to add validation to allow negative sign in the front.
 
         if isinstance(default, list):
             answer_list = []
@@ -150,7 +150,7 @@ class GetAnswerCli:
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
-            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
+            answer = prompt(f"{quest}\n[format PThhH or -PThhH e.g. {default}]",
                             validate=durValidator, default=default).ask()
 
         return answer
