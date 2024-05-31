@@ -340,12 +340,12 @@ gsibec_configuration:
   ask_question: false
   default_value: defer_to_model
   models:
-  - all
+  - geos_atmosphere
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
   - RunJediVariationalExecutable
   - StageJedi
-  type: float
+  type: string
 
 horizontal_localization_lengthscale:
   ask_question: false
