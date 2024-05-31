@@ -72,7 +72,9 @@ def prepare_scheduling_dict(logger, experiment_dict):
     assert len(non_slurm_tasks) == 0, \
         f"The following tasks cannot use SLURM: {non_slurm_tasks}"
 
-    model_components = experiment_dict["model_components"]
+    model_components = experiment_dict["model_components"] \
+        if "model_components" in experiment_dict \
+        else []
 
     scheduling_dict = {}
     for slurm_task in slurm_tasks:
