@@ -112,15 +112,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["BuildJedi"]["account"]}}
-            --qos = {{scheduling["BuildJedi"]["qos"]}}
-            --job-name = BuildJedi
-            --nodes={{scheduling["BuildJedi"]["nodes"]}}
-            --ntasks-per-node={{scheduling["BuildJedi"]["ntasks_per_node"]}}
-            --constraint={{scheduling["BuildJedi"]["constraint"]}}
-            {% if scheduling["BuildJedi"]["partition"] %}
-            --partition={{scheduling["BuildJedi"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     {% for model_component in model_components %}
     [[StageJedi-{{model_component}}]]
@@ -143,30 +137,18 @@
         platform = {{platform}}
         execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["GenerateBClimatology"]["account"]}}
-            --qos = {{scheduling["GenerateBClimatology"]["qos"]}}
-            --job-name = GenerateBClimatology
-            --nodes={{scheduling["GenerateBClimatology"]["nodes"]}}
-            --ntasks-per-node={{scheduling["GenerateBClimatology"]["ntasks_per_node"]}}
-            --constraint={{scheduling["GenerateBClimatology"]["constraint"]}}
-            {% if scheduling["GenerateBClimatology"]["partition"] %}
-            --partition={{scheduling["GenerateBClimatology"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediVariationalExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediVariationalExecutable"]["qos"]}}
-            --job-name = RunJediVariationalExecutable
-            --nodes={{scheduling["RunJediVariationalExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediVariationalExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediVariationalExecutable"]["constraint"]}}
-            {% if scheduling["RunJediVariationalExecutable"]["partition"] %}
-            --partition={{scheduling["RunJediVariationalExecutable"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
@@ -176,15 +158,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["EvaObservations"]["account"]}}
-            --qos = {{scheduling["EvaObservations"]["qos"]}}
-            --job-name = EvaObservations
-            --nodes={{scheduling["EvaObservations"]["nodes"]}}
-            --ntasks-per-node={{scheduling["EvaObservations"]["ntasks_per_node"]}}
-            --constraint={{scheduling["EvaObservations"]["constraint"]}}
-            {% if scheduling["EvaObservations"]["partition"] %}
-            --partition={{scheduling["EvaObservations"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"

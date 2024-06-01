@@ -13,6 +13,7 @@ import unittest
 
 from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
 from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
+from swell.test.code_tests.slurm_test import SLURMConfigTest
 from swell.utilities.logger import Logger
 
 
@@ -35,6 +36,9 @@ def code_tests():
 
     # Load tests from UnusedVariablesTest
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(QuestionDictionaryTest))
+
+    # Load SLURM tests
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SLURMConfigTest))
 
     # Create a test runner
     test_runner = unittest.TextTestRunner()
