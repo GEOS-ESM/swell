@@ -80,7 +80,6 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
     # Ask questions as the suite gets configured
     # ------------------------------------------
     experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
-
     # Add the datetime to the dictionary
     # ----------------------------------
     experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
@@ -143,7 +142,7 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(suite, method, platform, override, advanced):
+def create_experiment_directory(suite, method, platform, override, advanced, slurm):
 
     # Create a logger
     # ---------------
@@ -151,7 +150,7 @@ def create_experiment_directory(suite, method, platform, override, advanced):
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, method, platform, override, advanced)
+    experiment_dict_str = prepare_config(suite, method, platform, override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------

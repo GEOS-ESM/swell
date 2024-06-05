@@ -28,6 +28,10 @@ class SilentUndefined(j2.Undefined):
             return SilentUndefined(name=f"{self._undefined_name}['{key}']")
         return SilentUndefined(name=f"{self._undefined_name}[{key}]")
 
+    def items(self):
+        # Return an empty list when items method is called.
+        return []
+
     def __str__(self):
         # Ensure the name returned reflects the original template placeholder.
         return f"{{{{ {self._undefined_name} }}}}"
@@ -59,7 +63,7 @@ def template_string_jinja2(logger, templated_string, dictionary_of_templates,
     try:
         string_rendered = template.render(dictionary_of_templates)
     except j2.exceptions.UndefinedError as e:
-        logger.abort(f'Resolving templates for templated_string failed with the following '
+        logger.abort('Resolving templates for templated_string failed with the following ' +
                      f'exception: {e}')
 
     # Extra safety checks

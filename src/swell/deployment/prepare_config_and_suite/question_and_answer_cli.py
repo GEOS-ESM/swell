@@ -133,7 +133,7 @@ class GetAnswerCli:
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
                         cursor_position=len(document.text),
-                    ) # Need to add validation to allow negative sign in the front.
+                    )  # Need to add validation to allow negative sign in the front.
 
         if isinstance(default, list):
             answer_list = []
