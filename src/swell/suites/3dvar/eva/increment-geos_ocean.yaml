@@ -26,7 +26,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Surface Pressure Increment
+          label: SSH Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -39,8 +39,8 @@ graphics:
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
-          vmin: -100
-          vmax: 100
+          vmin: -0.25
+          vmax: 0.25
 
   - batch figure:
       variables: [Temp]
@@ -55,7 +55,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment
+          label: SST Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -65,12 +65,12 @@ graphics:
             variable: experiment_increment::SOCAgrid::lat
           data:
             variable: experiment_increment::SOCAVars::Temp
-            slices: '[20,...]'
-          label: Temp increment
+            slices: '[0,...]'
+          label: SST increment
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -3
+          vmax: 3
 
   - batch figure:
       variables: [Salt]
@@ -85,7 +85,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment
+          label: SSS Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -95,8 +95,8 @@ graphics:
             variable: experiment_increment::SOCAgrid::lat
           data:
             variable: experiment_increment::SOCAVars::Salt
-            slices: '[20,...]'
-          label: Salt increment
+            slices: '[0,...]'
+          label: SSS increment
           colorbar: true
           cmap: 'bwr'
           vmin: -1
