@@ -74,7 +74,7 @@ cris-fsr_npp:
 
 gmi_gpm:
   filter_test:
-    passedBenchmark: 18606
+    passedBenchmark: 18608
 
 gps:
   filter_test:

@@ -85,14 +85,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["BuildGeos"]["account"]}}
-            --qos = {{scheduling["BuildGeos"]["qos"]}}
-            --job-name = BuildGeos
-            --nodes={{scheduling["BuildGeos"]["nodes"]}}
-            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
-            {% if scheduling["BuildGeos"]["partition"] %}
-            --partition={{scheduling["BuildGeos"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
     [[PrepGeosRunDir]]
         script = "swell task PrepGeosRunDir $config -d $datetime"
@@ -114,13 +109,8 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunGeosExecutable"]["account"]}}
-            --qos = {{scheduling["RunGeosExecutable"]["qos"]}}
-            --job-name = RunGeosExecutable
-            --nodes={{scheduling["RunGeosExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunGeosExecutable"]["ntasks_per_node"]}}
-            {% if scheduling["RunGeosExecutable"]["partition"] %}
-            --partition={{scheduling["RunGeosExecutable"]["partition"]}}
-            {% endif %}
+        {% for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
