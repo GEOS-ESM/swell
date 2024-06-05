@@ -76,6 +76,11 @@ model_help = 'Data assimilation system. I.e. the model being initialized by data
 ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' + \
                 'specify which packet of ensemble members to consider.'
 
+slurm_help = """
+Customize SLURM directives, globally (e.g., account name), for specific tasks,
+or for task-model combinations.
+"""
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -88,7 +93,8 @@ ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' +
               type=click.Choice(get_platforms()), help=platform_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
-def create(suite, input_method, platform, override, advanced):
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+def create(suite, input_method, platform, override, advanced, slurm):
     """
     Create a new experiment
 
@@ -99,7 +105,7 @@ def create(suite, input_method, platform, override, advanced):
 
     """
     # First create the configuration for the experiment.
-    experiment_dict_str = prepare_config(suite, input_method, platform, override, advanced)
+    experiment_dict_str = prepare_config(suite, input_method, platform, override, advanced, slurm)
 
     # Create the experiment directory
     create_experiment_directory(experiment_dict_str)
