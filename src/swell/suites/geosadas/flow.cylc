@@ -111,9 +111,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["RunJediVariationalExecutable"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
-        {% endfor %}
+        {%- endfor %}
 
     [[CleanCycle]]
         script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"

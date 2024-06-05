@@ -49,8 +49,8 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
-        {% endfor %}
+        {%- endfor %}
 
 # --------------------------------------------------------------------------------------------------

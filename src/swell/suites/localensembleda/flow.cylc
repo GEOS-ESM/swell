@@ -133,9 +133,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
-        {% endfor %}
+        {%- endfor %}
 
     {% for model_component in model_components %}
 
@@ -176,18 +176,18 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediLocalEnsembleDaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
-        {% endfor %}
+        {%- endfor %}
 
     [[EvaObservations-{{model_component}}]]
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
         [[[directives]]]
-        {% for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
-        {% endfor %}
+        {%- endfor %}
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
