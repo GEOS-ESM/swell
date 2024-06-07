@@ -16,7 +16,6 @@ import tarfile
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime import datetime_formats
 
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -24,56 +23,92 @@ class GetBackgroundGeosExperiment(taskBase):
 
     def execute(self):
 
-        """Acquires background files from a GEOS experiment. Expects traj files stored in a tarfile
+        """Acquires background files from a previous GEOS-FP experiment. This task
+        is specific to a 6-hour DA window and GEOS-FP experiment. Hence, it makes
+        certain assumptions about the file structure and naming conventions
+        (examples are provided for the x0048 experiment):
 
-           Parameters
-           ----------
-             All inputs are extracted from the JEDI experiment file configuration.
-             See the taskBase constructor for more information.
+            - Background archive file:       x0048.bkgcrst.20211211_15z.tar
+            - First background file:         x0048.bkg_clcv_rst.20211211_2100z.nc4
+            .
+            .
+            .
+            - Last background file:          x0048.bkg_clcv_rst.20211212_0300z.nc4
+
+        The name of the *bkgcrst.*.tar files correspond to the forecast start time.
+        The file names in these tar archives corresponds to the background files
+        within the DA window, therefore 7 background files are extracted for a
+        6-hour window.
+
         """
 
         # Parse config
         # ------------
-        geos_background_restart_offset = self.config.geos_background_restart_offset()
-        tar_filename_template_geos = self.config.geos_bkg_tar_filename_template()
-        bkg_filename_template_geos = self.config.geos_bkg_filename_template()
-        bkg_filename_template_jedi = self.config.jedi_bkg_filename_template()
+        background_experiment = self.config.background_experiment()
+        geos_fp_background_directory = self.config.geos_fp_background_directory()
+        background_time_offset = self.config.background_time_offset()
 
-        # Current cycle time (middle of the window)
+        # Convert to datetime duration
+        # ----------------------------
+        background_time_offset_dur = isodate.parse_duration(background_time_offset)
+
+        # Get the background experiment start time
         # -----------------------------------------
-        current_cycle_dt = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
-
-        # Hours before middle of window that forecast began
-        # -------------------------------------------------
-        forecast_offset = isodate.parse_duration(geos_background_restart_offset)
-        forecast_rst_dt = current_cycle_dt - forecast_offset
+        bkgr_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
+        bkgr_exp_start_geos = bkgr_exp_start_dto.strftime(datetime_formats['gsi_nc_diag_format'])
 
         # Create cycle directory if needed
         # --------------------------------
         if not os.path.exists(self.cycle_dir()):
             os.makedirs(self.cycle_dir(), 0o755, exist_ok=True)
 
-        # Path to restarts
-        # ----------------
-        traj_tar = forecast_rst_dt.strftime(tar_filename_template_geos)
+        # Define the source tar folder and file
+        # -------------------------------------
+        bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
+        bkgr_tar = os.path.join(geos_fp_background_directory,
+                                background_experiment,
+                                'rs',
+                                bkgr_exp_start_dto.strftime('Y%Y'),
+                                bkgr_exp_start_dto.strftime('M%m'),
+                                bkgr_tar_file)
 
-        # Untar the trajectory file
-        # -------------------------
-        with tarfile.open(traj_tar) as traj_tar_file:
-            for member in traj_tar_file.getmembers():
-                if member.isreg():  # Only files
+        # Link the background tar archive to the cycle directory
+        # ------------------------------------------------------
+        self.logger.info(' Linking GEOS-FP archive file: ' + bkgr_tar)
+        self.geos.linker(bkgr_tar, bkgr_tar_file, dst_dir=self.cycle_dir())
+
+        # Path to restarts in the cycle directory
+        # ---------------------------------------
+        cycle_tar = os.path.join(self.cycle_dir(), bkgr_tar_file)
+
+        # Untar the background files
+        # --------------------------
+        with tarfile.open(cycle_tar) as cycle_tar_file:
+            for member in cycle_tar_file.getmembers():
+                if member.isreg():  # Use files only
 
                     # Extract files
                     # -------------
                     member.name = os.path.basename(member.name)
-                    traj_tar_file.extract(member, self.cycle_dir())
+                    cycle_tar_file.extract(member, self.cycle_dir())
+
+                    # Get the date information from the filename (example):
+                    # x0048.bkg_clcv_rst.20211211_2100z.nc4
+                    # Strip the filename to get the date information
+                    # -----------------------------------------------------
+                    member_date_str = member.name.split('.')[2]
+                    member_date_dto = dt.strptime(member_date_str, '%Y%m%d_%H00z')
+
+                    # Create the JEDI bkgr filename
+                    # -----------------------------
+                    jedi_date = member_date_dto.strftime(datetime_formats["directory_format"])
+                    bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
 
                     # Rename the files
                     # ----------------
-                    bkg_filename_dt = dt.strptime(member.name, bkg_filename_template_geos)
-                    bkg_filename_jedi = bkg_filename_dt.strftime(bkg_filename_template_jedi)
+                    self.logger.info(' Renaming GEOS-FP bkgr from: ' + member.name +
+                                     ' to: ' + bkg_filename_jedi)
                     os.rename(os.path.join(self.cycle_dir(), member.name),
                               os.path.join(self.cycle_dir(), bkg_filename_jedi))
-
 
 # --------------------------------------------------------------------------------------------------
