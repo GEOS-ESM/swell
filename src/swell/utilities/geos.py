@@ -164,7 +164,6 @@ class Geos():
 
         # Link files from BC directories
         # ------------------------------
-
         if dst_dir is None:
             dst_dir = self.forecast_dir
 
