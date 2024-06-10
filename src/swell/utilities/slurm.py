@@ -10,8 +10,13 @@ import os
 import re
 import yaml
 
+from swell.utilities.logger import Logger
 
-def prepare_scheduling_dict(logger, experiment_dict):
+
+def prepare_scheduling_dict(
+    logger: Logger,
+    experiment_dict: dict
+):
     # Hard-coded defaults
     # ----------------------------------------------
     global_defaults = {
@@ -29,12 +34,9 @@ def prepare_scheduling_dict(logger, experiment_dict):
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
     # ----------------------------------------------
-    yaml_path = os.path.expanduser("~/.swell/swell-slurm.yaml")
-    user_globals = {}
-    if os.path.exists(yaml_path):
-        logger.info(f"Loading SLURM user configuration from {yaml_path}")
-        with open(yaml_path, "r") as yaml_file:
-            user_globals = yaml.safe_load(yaml_file)
+    # NOTE: Separate function to allow it to be mocked in unit tests.
+    # See https://github.com/GEOS-ESM/swell/issues/351
+    user_globals = slurm_global_defaults(logger)
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
@@ -181,6 +183,19 @@ def validate_directives(directive_dict):
     assert \
         len(invalid_directives) == 0, \
         f"The following are invalid SLURM directives: {invalid_directives}"
+
+
+def slurm_global_defaults(
+    logger: Logger,
+    yaml_path: str = "~/.swell/swell-slurm.yaml"
+) -> dict:
+    yaml_path = os.path.expanduser(yaml_path)
+    user_globals = {}
+    if os.path.exists(yaml_path):
+        logger.info(f"Loading SLURM user configuration from {yaml_path}")
+        with open(yaml_path, "r") as yaml_file:
+            user_globals = yaml.safe_load(yaml_file)
+    return user_globals
 
 
 man_sbatch = """
