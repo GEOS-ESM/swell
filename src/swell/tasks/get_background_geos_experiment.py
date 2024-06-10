@@ -45,8 +45,15 @@ class GetBackgroundGeosExperiment(taskBase):
         # Parse config
         # ------------
         background_experiment = self.config.background_experiment()
-        geos_fp_background_directory = self.config.geos_fp_background_directory()
+        geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()
+
+        # Since this is an optional task, check if the geos_x_background_directory is
+        # set to /dev/null, if so fail the task
+        # ---------------------------------------------------------------------
+        if geos_x_background_directory == '/dev/null':
+            self.logger.abort('No X background location specified, failing task')
+            return
 
         # Convert to datetime duration
         # ----------------------------
@@ -65,7 +72,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # Define the source tar folder and file
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
-        bkgr_tar = os.path.join(geos_fp_background_directory,
+        bkgr_tar = os.path.join(geos_x_background_directory,
                                 background_experiment,
                                 'rs',
                                 bkgr_exp_start_dto.strftime('Y%Y'),

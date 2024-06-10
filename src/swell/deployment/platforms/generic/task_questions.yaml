@@ -13,9 +13,6 @@ existing_jedi_build_directory:
 existing_jedi_source_directory:
   default_value: This would need to be provided by user
 
-geos_fp_background_directory:
-  default_value: This would need to be provided by user
-
 geos_experiment_directory:
   default_value:
   - /home/geos/

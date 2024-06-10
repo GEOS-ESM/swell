@@ -13,9 +13,6 @@ existing_jedi_build_directory:
 existing_jedi_source_directory:
   default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
 
-geos_fp_background_directory:
-  default_value: /gpfsm/dnb05/projects/p139/dao_it/archive/
-
 geos_experiment_directory:
   default_value: 5deg_v11
 

@@ -266,16 +266,6 @@ geos_experiment_directory:
   - PrepGeosRunDir
   type: string
 
-geos_fp_background_directory:
-  ask_question: false
-  default_value: defer_to_platform
-  models:
-  - geos_atmosphere
-  prompt: What is the path to the GEOS-FP backgrounds directory?
-  tasks:
-  - GetBackgroundGeosExperiment
-  type: string
-
 geos_gcm_tag:
   ask_question: true
   default_value: v11.5.1
@@ -292,6 +282,19 @@ geos_restarts_directory:
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
+  type: string
+
+geos_x_background_directory:
+  ask_question: true
+  default_value: /dev/null/
+  models:
+  - geos_atmosphere
+  options:
+  - /dev/null/
+  - /gpfsm/dnb05/projects/p139/dao_it/archive/
+  prompt: What is the path to the GEOS X-backgrounds directory?
+  tasks:
+  - GetBackgroundGeosExperiment
   type: string
 
 geovals_experiment:
