@@ -9,6 +9,7 @@
 
 import jinja2 as j2
 
+from swell.utilties.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,8 +44,12 @@ class SilentUndefined(j2.Undefined):
 # --------------------------------------------------------------------------------------------------
 
 
-def template_string_jinja2(logger, templated_string, dictionary_of_templates,
-                           allow_unresolved=False):
+def template_string_jinja2(
+    logger: Logger,
+    templated_string: str,
+    dictionary_of_templates: dict,
+    allow_unresolved: bool = False
+) -> str:
 
     # Handling of templates that cannot be resolved
     # ---------------------------------------------

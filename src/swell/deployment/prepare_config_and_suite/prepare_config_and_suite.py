@@ -11,6 +11,7 @@
 import copy
 import os
 import yaml
+from typing import Union, Tuple, Optional
 
 from swell.swell_path import get_swell_path
 from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
@@ -83,7 +84,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_question_dictionaries(self):
+    def prepare_question_dictionaries(self) -> None:
 
         """
         Read the suite and task question YAML files and perform various steps:
@@ -225,7 +226,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def override_with_defaults(self):
+    def override_with_defaults(self) -> None:
 
         # Perform a platform override on the model_ind dictionary
         # -------------------------------------------------------
@@ -279,7 +280,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def override_with_external(self):
+    def override_with_external(self) -> None:
 
         # Create and override dictionary
         override_dict = {}
@@ -309,7 +310,7 @@ class PrepareExperimentConfigAndSuite:
         # Iterate over the model_ind dictionary and override
         # --------------------------------------------------
         for key, val in self.question_dictionary_model_ind.items():
-            if key in override_dict.keys():
+            if key in override_dict:
                 val['default_value'] = override_dict[key]
 
         # Iterate over the model_dep dictionary and override
@@ -317,8 +318,8 @@ class PrepareExperimentConfigAndSuite:
         if self.suite_needs_model_components:
             for model, model_dict in self.question_dictionary_model_dep.items():
                 for key, val in model_dict.items():
-                    if model in override_dict['models'].keys():
-                        if key in override_dict['models'][model].keys():
+                    if model in override_dict['models']:
+                        if key in override_dict['models'][model]:
                             val['default_value'] = override_dict['models'][model][key]
 
     # ----------------------------------------------------------------------------------------------
@@ -361,11 +362,11 @@ class PrepareExperimentConfigAndSuite:
 
         # 1. Iterate over the model_ind dictionary and ask questions
         # ----------------------------------------------------------
-        for question_key in self.question_dictionary_model_ind.keys():
+        for question_key in self.question_dictionary_model_ind:
 
             # Ask only the suite questions first
             # ----------------------------------
-            if 'suites' in self.question_dictionary_model_ind[question_key].keys():
+            if 'suites' in self.question_dictionary_model_ind[question_key]:
 
                 # Ask the question
                 self.ask_a_question(self.question_dictionary_model_ind, question_key)
@@ -380,11 +381,11 @@ class PrepareExperimentConfigAndSuite:
 
         # 4.1 Iterate over the model_ind dictionary and ask task questions
         # ----------------------------------------------------------------
-        for question_key in self.question_dictionary_model_ind.keys():
+        for question_key in self.question_dictionary_model_ind:
 
             # Ask the task questions
             # ----------------------
-            if 'suites' not in self.question_dictionary_model_ind[question_key].keys():
+            if 'suites' not in self.question_dictionary_model_ind[question_key]:
 
                 # Get list of tasks for the question
                 question_tasks = self.question_dictionary_model_ind[question_key]['tasks']
@@ -405,7 +406,7 @@ class PrepareExperimentConfigAndSuite:
 
         # At this point the user should have provided the model components answer. Check that it is
         # in the experiment dictionary and retrieve the response
-        if 'model_components' not in self.experiment_dict.keys():
+        if 'model_components' not in self.experiment_dict:
             self.logger.abort('The model components question has not been answered.')
 
         for model in self.experiment_dict['model_components']:
@@ -416,7 +417,7 @@ class PrepareExperimentConfigAndSuite:
             for question_key in model_dict:
 
                 # Ask only the suite questions first
-                if 'suites' in model_dict[question_key].keys():
+                if 'suites' in model_dict[question_key]:
 
                     # Ask the question
                     self.ask_a_question(model_dict, question_key, model)
@@ -438,9 +439,9 @@ class PrepareExperimentConfigAndSuite:
 
         # 9.1 Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
-        for question_key in self.question_dictionary_model_ind.keys():
+        for question_key in self.question_dictionary_model_ind:
 
-            if 'tasks' in self.question_dictionary_model_ind[question_key].keys():
+            if 'tasks' in self.question_dictionary_model_ind[question_key]:
 
                 # Get list of tasks for the question
                 question_tasks = self.question_dictionary_model_ind[question_key]['tasks']
@@ -457,11 +458,11 @@ class PrepareExperimentConfigAndSuite:
 
             # Iterate over the model_dep dictionary and ask questions
             # -------------------------------------------------------
-            for question_key in self.question_dictionary_model_dep[model].keys():
+            for question_key in self.question_dictionary_model_dep[model]:
 
                 # Ask only the task questions first
                 # ----------------------------------
-                if 'suites' not in self.question_dictionary_model_dep[model][question_key].keys():
+                if 'suites' not in self.question_dictionary_model_dep[model][question_key]:
 
                     # Get list of tasks for the question
                     question_tasks = \
@@ -478,14 +479,18 @@ class PrepareExperimentConfigAndSuite:
         return self.experiment_dict, self.questions_dict
 
     # ----------------------------------------------------------------------------------------------
-
-    def ask_a_question(self, full_question_dictionary, question_key, model=None):
+    def ask_a_question(
+        self,
+        full_question_dictionary: dict,
+        question_key: str,
+        model: Optional[str]=None
+    ) -> None:
 
         # Set flag for whether the question should be asked
         ask_question = True
 
         # Has the question already been asked?
-        if question_key in self.experiment_dict.keys():
+        if question_key in self.experiment_dict:
             ask_question = False
 
         # Dictionary for this question
@@ -493,19 +498,19 @@ class PrepareExperimentConfigAndSuite:
 
         # If model is not none then ensure the experiment dictionary has a dictionary for the model
         if model is not None:
-            if 'models' not in self.experiment_dict.keys():
+            if 'models' not in self.experiment_dict:
                 self.experiment_dict['models'] = {}
                 self.questions_dict['models'] = f"Configurations for the model components."
-            if model not in self.experiment_dict['models'].keys():
+            if model not in self.experiment_dict['models']:
                 self.experiment_dict['models'][model] = {}
                 self.questions_dict[f'models.{model}'] = \
                     f"Configuration for the {model} model component."
 
         # Check the dependency chain for the question
-        if 'depends' in qd.keys():
+        if 'depends' in qd:
 
             # Check is dependency has been asked
-            if qd['depends']['key'] not in self.experiment_dict.keys():
+            if qd['depends']['key'] not in self.experiment_dict:
 
                 # Iteratively ask the dependent question
                 self.ask_a_question(full_question_dictionary, qd['depends']['key'], model)
@@ -531,7 +536,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_suite_task_list_model_ind(self, suite_str):
+    def get_suite_task_list_model_ind(self, suite_str: str) -> list:
 
         # Search the suite string for lines containing 'swell task' and not '-m'
         swell_task_lines = [line for line in suite_str.split('\n') if 'swell task' in line and
@@ -553,7 +558,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_suite_task_list_model_dep(self, suite_str):
+    def get_suite_task_list_model_dep(self, suite_str: str) -> Tuple[dict, list]:
 
         # Search the suite string for lines containing 'swell task' and '-m'
         swell_task_lines = [line for line in suite_str.split('\n') if 'swell task' in line and
