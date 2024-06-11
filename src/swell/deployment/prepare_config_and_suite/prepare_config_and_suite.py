@@ -34,9 +34,8 @@ templates and construction of the flow.cylc file.
 
 3. If there is some dependency on model component(s) in the flow.cylc then the code will ask the
    user which model components should be included. Then all the suite questions depending on the
-   model will be
+   model will be... (TODO: incomplete description, see methods below)
 
-3. All the
 """
 
 
@@ -47,14 +46,20 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, suite, platform, config_client, override, advanced):
+    def __init__(
+        self,
+        logger: Logger,
+        suite: str,
+        platform: str,
+        config_client: str,
+        override: Union[str, dict, None]
+    ) -> None:
 
         # Store local copy of the inputs
         self.logger = logger
         self.suite = suite
         self.platform = platform
         self.override = override
-        self.advanced = advanced
 
         # Assign the client that will take care of providing responses
         if config_client.lower() == 'cli':
@@ -324,7 +329,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def ask_questions_and_configure_suite(self):
+    def ask_questions_and_configure_suite(self) -> Tuple[dict, dict]:
 
         """
         This is where we ask all the questions and as we go configure the suite file. The process

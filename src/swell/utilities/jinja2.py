@@ -74,13 +74,15 @@ def template_string_jinja2(
     # Extra safety checks
     # -------------------
     if not allow_unresolved:
-        logger.assert_abort('{{' not in string_rendered, f'In template_string_jinja2 ' +
-                            f'the output string still contains template directives. ' +
-                            f'{string_rendered}')
-
-        logger.assert_abort('}}' not in string_rendered, f'In template_string_jinja2 ' +
-                            f'the output string still contains template directives. ' +
-                            f'{string_rendered}')
+        logger.assert_abort(
+            not (('{{' in string_rendered) or ('}}' in string_rendered)),
+            f"""
+            In template_string_jinja2, the output string still contains template directives:
+            '''
+            {string_rendered}
+            '''
+            """
+        )
 
     return string_rendered
 
