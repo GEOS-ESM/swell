@@ -10,7 +10,7 @@ analysis_forecast_window_offset:
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
-  type: iso-duration
+  type: string-check-list
 
 analysis_variables:
   ask_question: false
@@ -118,7 +118,7 @@ clean_patterns:
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - CleanCycle
-  type: string-list
+  type: string-check-list
 
 crtm_coeff_dir:
   ask_question: false
@@ -223,8 +223,6 @@ existing_jedi_source_directory:
 forecast_duration:
   ask_question: true
   default_value: PT12H
-  models:
-  - all
   prompt: GEOS forecast duration
   tasks:
   - MoveForecastRestart
@@ -259,8 +257,6 @@ geos_build_method:
 geos_experiment_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - PrepGeosRunDir
@@ -277,8 +273,6 @@ geos_gcm_tag:
 geos_restarts_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
@@ -325,18 +319,18 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
-  type: string-drop-list
+  type: string
 
 gsibec_configuration:
   ask_question: false
   default_value: defer_to_model
   models:
-  - all
+  - geos_atmosphere
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
   - RunJediVariationalExecutable
   - StageJedi
-  type: float
+  type: string
 
 horizontal_localization_lengthscale:
   ask_question: false
@@ -711,6 +705,18 @@ produce_geovals:
   tasks:
   - GsiNcdiagToIoda
   type: boolean
+
+r2d2_local_path:
+  ask_question: false
+  default_value: defer_to_platform
+  prompt: What is the path to the R2D2 local directory?
+  tasks:
+  - GetBackground
+  - GetGeovals
+  - GetObservations
+  - SaveObsDiags
+  - StoreBackground
+  type: string
 
 save_geovals:
   ask_question: false

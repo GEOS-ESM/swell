@@ -1,0 +1,128 @@
+cycle_times:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - all
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - forecast_geos
+  - hofx
+  - localensembleda
+  - ufo_testing
+  prompt: Enter the cycle times for this model.
+  type: string-check-list
+
+ensemble_hofx_strategy:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the ensemble hofx strategy.
+  type: string
+
+ensemble_hofx_packets:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the number of ensemble packets.
+  type: string
+
+experiment_id:
+  ask_question: True
+  default_value: defer_to_code
+  prompt: What is the experiment id?
+  suites:
+  - all
+  type: string
+
+experiment_root:
+  ask_question: True
+  default_value: defer_to_platform
+  prompt: What is the experiment root (the directory where the experiment will be stored)?
+  suites:
+  - all
+  type: string
+
+start_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T00:00:00Z'
+  prompt: What is the time of the first cycle (middle of the window)?
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - forecast_geos
+  - hofx
+  - localensembleda
+  - ufo_testing
+  type: iso-datetime
+
+final_cycle_point:
+  ask_question: True
+  default_value: '2021-12-12T06:00:00Z'
+  prompt: What is the time of the final cycle (middle of the window)?
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - forecast_geos
+  - hofx
+  - localensembleda
+  - ufo_testing
+  type: iso-datetime
+
+runahead_limit:
+  ask_question: True
+  default_value: 'P4'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar
+  - 3dvar_cycle
+  - convert_ncdiags
+  - hofx
+  - localensembleda
+  - ufo_testing
+  type: string
+
+model_components:
+  ask_question: True
+  default_value: defer_to_code
+  options: defer_to_code
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - hofx
+  - localensembleda
+  - ufo_testing
+  prompt: Enter the model components for this model.
+  type: string-check-list
+
+window_type:
+  ask_question: False
+  default_value: defer_to_model
+  options: ['3D', '4D']
+  models:
+  - all
+  suites:
+  - hofx
+  prompt: Enter the window type for this model.
+  type: string-drop-list
