@@ -489,7 +489,7 @@ class PrepareExperimentConfigAndSuite:
         self,
         full_question_dictionary: dict,
         question_key: str,
-        model: Optional[str]=None
+        model: Optional[str] = None
     ) -> None:
 
         # Set flag for whether the question should be asked
