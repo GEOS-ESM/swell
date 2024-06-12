@@ -12,6 +12,9 @@ analysis_variables:
   - ql
   - o3ppmv
   - phis
+  - frocean 
+  - frlake  
+  - frseaice
 
 background_error_model:
   default_value: GSIbec
