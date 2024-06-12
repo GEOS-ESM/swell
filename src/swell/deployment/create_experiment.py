@@ -75,7 +75,7 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
-                                                               method, override, advanced)
+                                                               method, override)
 
     # Ask questions as the suite gets configured
     # ------------------------------------------

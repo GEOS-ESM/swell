@@ -1,3 +1,42 @@
+cycle_times:
+  ask_question: True
+  default_value: defer_to_model
+  options: defer_to_model
+  models:
+  - all
+  suites:
+  - 3dfgat_atmos
+  - 3dvar_atmos
+  - 3dvar_cycle
+  - 3dvar
+  - convert_ncdiags
+  - forecast_geos
+  - hofx
+  - localensembleda
+  - ufo_testing
+  prompt: Enter the cycle times for this model.
+  type: string-check-list
+
+ensemble_hofx_strategy:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the ensemble hofx strategy.
+  type: string
+
+ensemble_hofx_packets:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter the number of ensemble packets.
+  type: string
+
 experiment_id:
   ask_question: True
   default_value: defer_to_code
@@ -77,25 +116,6 @@ model_components:
   prompt: Enter the model components for this model.
   type: string-check-list
 
-cycle_times:
-  ask_question: True
-  default_value: defer_to_model
-  options: defer_to_model
-  models:
-  - all
-  suites:
-  - 3dfgat_atmos
-  - 3dvar_atmos
-  - 3dvar_cycle
-  - 3dvar
-  - convert_ncdiags
-  - forecast_geos
-  - hofx
-  - localensembleda
-  - ufo_testing
-  prompt: Enter the cycle times for this model.
-  type: string-check-list
-
 window_type:
   ask_question: False
   default_value: defer_to_model
@@ -106,23 +126,3 @@ window_type:
   - hofx
   prompt: Enter the window type for this model.
   type: string-drop-list
-
-ensemble_hofx_strategy:
-  ask_question: False
-  default_value: 'defer_to_model'
-  models:
-  - all
-  suites:
-  - localensembleda
-  prompt: Enter the ensemble hofx strategy.
-  type: string
-
-ensemble_hofx_packets:
-  ask_question: False
-  default_value: 'defer_to_model'
-  models:
-  - all
-  suites:
-  - localensembleda
-  prompt: Enter the number of ensemble packets.
-  type: string

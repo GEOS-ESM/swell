@@ -9,7 +9,7 @@
 
 import jinja2 as j2
 
-from swell.utilties.logger import Logger
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -18,6 +18,15 @@ class SilentUndefined(j2.Undefined):
     """
     A custom undefined class that doesn't raise errors when variables are missing and returns the
     original template variable placeholder.
+
+    In order to identify which tasks are used and to define questions for the CLI
+    configuration method, two Jinja2 passes occur on each suite's flow.cylc files
+    where "swell task" commands are defined. By design, first pass leaves most of
+    the templates as is (non-exhaustive). Hence, this class ensures that we ignore
+    the exceptions defined here, silently.
+
+    See `ask_questions_and_configure_suite` method in `prepare_config_and_suite.py`
+    for more details on Jinja2 passes.
     """
     def __getattr__(self, name):
         # Return a new SilentUndefined instance but append the attribute access to the name.

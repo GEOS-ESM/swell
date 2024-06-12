@@ -1,8 +1,15 @@
 analysis_forecast_window_offset:
   default_value: -PT6H
+  options:
+  - -PT12H
 
 analysis_variables:
   default_value:
+  - socn
+  - tocn
+  - ssh
+  - hocn
+  options:
   - socn
   - tocn
   - ssh
@@ -21,14 +28,20 @@ background_frequency:
 
 background_time_offset:
   default_value: PT9H
+  options:
+  - PT9H
 
 clean_patterns:
   default_value:
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
+  options:
   - logfile.*.out
   - background_error_model/*.nc
+  - '*.nc4'
+  - '*.txt'
+  - '*MOM*'
 
 gradient_norm_reduction:
   default_value: 1e-10

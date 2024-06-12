@@ -10,7 +10,7 @@ analysis_forecast_window_offset:
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
-  type: iso-duration
+  type: string-check-list
 
 analysis_variables:
   ask_question: false
@@ -116,7 +116,7 @@ clean_patterns:
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - CleanCycle
-  type: string-list
+  type: string-check-list
 
 crtm_coeff_dir:
   ask_question: false
@@ -334,7 +334,7 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
-  type: string-drop-list
+  type: string
 
 gsibec_configuration:
   ask_question: false
