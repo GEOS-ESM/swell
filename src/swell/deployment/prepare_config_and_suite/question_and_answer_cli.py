@@ -128,7 +128,7 @@ class GetAnswerCli:
 
         class durValidator(questionary.Validator):
             def validate(self, document):
-                r = re.compile('[-]?PT\d{1,2}H')  # noqa
+                r = re.compile('[-]?P(T\d{1,2}H|\d{1,2}D)')  # noqa
                 if r.match(document.text) is None and document.text != 'EXIT':
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
