@@ -54,8 +54,8 @@
             # Generate satellite channel records
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-            # Get background
-            GetBackground-{{model_component}}
+            # Get background, provide a way to get background directly from GEOS experiment
+            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
             # Get observations
             GetObservations-{{model_component}}
@@ -67,7 +67,7 @@
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
@@ -136,8 +136,11 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[ GetBackground-{{model_component}} ]]
+    [[GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+
+    [[GetBackgroundGeosExperiment-{{model_component}} ]]
+        script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
