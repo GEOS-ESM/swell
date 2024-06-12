@@ -101,4 +101,3 @@ graphics:
           cmap: 'bwr'
           vmin: -1
           vmax: 1
-

@@ -1,8 +1,15 @@
 analysis_forecast_window_offset:
   default_value: -PT6H
+  options:
+  - -PT12H
 
 analysis_variables:
   default_value:
+  - socn
+  - tocn
+  - ssh
+  - hocn
+  options:
   - socn
   - tocn
   - ssh
@@ -21,25 +28,28 @@ background_frequency:
 
 background_time_offset:
   default_value: PT9H
+  options:
+  - PT9H
 
 clean_patterns:
   default_value:
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
+  options:
   - logfile.*.out
   - background_error_model/*.nc
+  - '*.nc4'
+  - '*.txt'
+  - '*MOM*'
 
 gradient_norm_reduction:
   default_value: 1e-10
 
-gsibec_configuration:
-  default_value:
-  - None
-
 horizontal_resolution:
   default_value: 1440x1080
   options:
+  - 72x36
   - 360x320
   - 1440x1080
 
@@ -78,6 +88,16 @@ observations:
   - adt
   - insitus
   - insitut
+  - adt_3a_egm2008
+  - adt_3b_egm2008
+  - adt_c2_egm2008
+  - adt_j3_egm2008
+  - adt_sa_egm2008
+  - salt_profile_fnmoc
+  - sss_smos_esa
+  - sst_gmi_l3u
+  - sst_ship_fnmoc
+  - temp_profile_fnmoc
 
 total_processors:
   default_value: 24
@@ -85,6 +105,7 @@ total_processors:
 vertical_resolution:
   default_value: '75'
   options:
+  - '50'
   - '75'
 
 window_length:
