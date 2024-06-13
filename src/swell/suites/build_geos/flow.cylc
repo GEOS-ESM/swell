@@ -49,14 +49,8 @@
         platform = {{platform}}
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["BuildGeos"]["account"]}}
-            --qos = {{scheduling["BuildGeos"]["qos"]}}
-            --job-name = SwellBuildGeos
-            --nodes={{scheduling["BuildGeos"]["nodes"]}}
-            --ntasks-per-node={{scheduling["BuildGeos"]["ntasks_per_node"]}}
-            --constraint={{scheduling["BuildGeos"]["constraint"]}}
-            {% if scheduling["BuildGeos"]["partition"] %}
-            --partition={{scheduling["BuildGeos"]["partition"]}}
-            {% endif %}
+        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
 # --------------------------------------------------------------------------------------------------

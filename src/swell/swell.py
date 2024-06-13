@@ -12,7 +12,6 @@ import click
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
-from swell.deployment.create_experiment import prepare_config
 from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
@@ -76,6 +75,11 @@ model_help = 'Data assimilation system. I.e. the model being initialized by data
 ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' + \
                 'specify which packet of ensemble members to consider.'
 
+slurm_help = """
+Customize SLURM directives, globally (e.g., account name), for specific tasks,
+or for task-model combinations.
+"""
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -88,7 +92,8 @@ ensemble_help = 'When handling ensemble workflows using a parallel strategy, ' +
               type=click.Choice(get_platforms()), help=platform_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
-def create(suite, input_method, platform, override, advanced):
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+def create(suite, input_method, platform, override, advanced, slurm):
     """
     Create a new experiment
 
@@ -98,11 +103,8 @@ def create(suite, input_method, platform, override, advanced):
         suite (str): Name of the suite you wish to run. \n
 
     """
-    # First create the configuration for the experiment.
-    experiment_dict_str = prepare_config(suite, input_method, platform, override, advanced)
-
     # Create the experiment directory
-    create_experiment_directory(experiment_dict_str)
+    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
 
 # --------------------------------------------------------------------------------------------------

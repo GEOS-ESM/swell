@@ -47,15 +47,6 @@ ensemble_num_members:
   default_value: 10
   options: None
 
-geos_background_restart_offset:
-  default_value: None
-
-geos_bkg_filename_template:
-  default_value: None
-
-geos_bkg_tar_filename_template:
-  default_value: None
-
 geovals_experiment:
   default_value: x0048-geovals
 
@@ -84,10 +75,8 @@ horizontal_localization_method:
 horizontal_resolution:
   default_value: '361'
   options:
+  - '91'
   - '361'
-
-jedi_bkg_filename_template:
-  default_value: None
 
 jedi_forecast_model:
   default_value: pseudo-model

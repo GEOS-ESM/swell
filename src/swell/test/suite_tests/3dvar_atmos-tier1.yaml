@@ -1,5 +1,6 @@
 start_cycle_point: '2021-12-12T00:00:00Z'
 final_cycle_point: '2021-12-12T06:00:00Z'
+runahead_limit: 'P3'
 jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
 models:
