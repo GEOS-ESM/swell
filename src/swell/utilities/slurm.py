@@ -11,23 +11,26 @@ import platform as pltfrm
 import re
 import yaml
 
+from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
-
 
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
     platform: str,
 ):
-    # Hard-coded defaults
-    # ----------------------------------------------
-    global_defaults = {
-        "account": "g0613",
-        "qos": "allnccs",
-        "nodes": 1,
-        "ntasks-per-node": 24,
-        "constraint": "cas|sky"
-    }
+
+    # Obtain platform-specific SLURM directives and set them as global defaults
+    # -----------------------------------------------------------------------
+    swell_lib_path = get_swell_path()
+    platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
+    platform_slurm = os.path.join(platform_path, "slurm.yaml")
+
+    if os.path.exists(platform_slurm):
+        logger.info(f'Loading SLURM user configuration from {platform_slurm}' +
+                    f' for the "{platform}" platform')
+        with open(platform_slurm, "r") as yaml_file:
+            global_defaults = yaml.safe_load(yaml_file)
 
     task_defaults = {
         "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
@@ -40,13 +43,9 @@ def prepare_scheduling_dict(
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
 
-    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15,
-    # and request Milan nodes with 64 tasks per node (1 node has 128 cores).
-    # Hacky way to hijack user_globals for now
+    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
     if 'Linux-5.14.21' in pltfrm.platform():
         current_platform = "nccs_discover_sles15"
-        user_globals["ntasks-per-node"] = 64
-        user_globals["constraint"] = "mil"
         assert platform == current_platform, \
             f"Inconsistent platfrom choice: {platform} vs. {current_platform}"
 
