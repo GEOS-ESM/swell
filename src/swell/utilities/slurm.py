@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import platform as pltfrm
 import re
 import yaml
 
@@ -15,7 +16,8 @@ from swell.utilities.logger import Logger
 
 def prepare_scheduling_dict(
     logger: Logger,
-    experiment_dict: dict
+    experiment_dict: dict,
+    platform: str,
 ):
     # Hard-coded defaults
     # ----------------------------------------------
@@ -37,6 +39,16 @@ def prepare_scheduling_dict(
     # NOTE: Separate function to allow it to be mocked in unit tests.
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
+
+    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15,
+    # and request Milan nodes with 64 tasks per node (1 node has 128 cores).
+    # Hacky way to hijack user_globals for now
+    if 'Linux-5.14.21' in pltfrm.platform():
+        current_platform = "nccs_discover_sles15"
+        user_globals["ntasks-per-node"] = 64
+        user_globals["constraint"] = "mil"
+        assert platform == current_platform, \
+            f"Inconsistent platfrom choice: {platform} vs. {current_platform}"
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
