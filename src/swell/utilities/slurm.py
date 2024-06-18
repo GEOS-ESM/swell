@@ -14,6 +14,7 @@ import yaml
 from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
 
+
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
