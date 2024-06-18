@@ -7,6 +7,3 @@
 import os
 
 repo_directory = os.path.dirname(__file__)
-
-# Set the version for swell
-__version__ = '1.9.5'

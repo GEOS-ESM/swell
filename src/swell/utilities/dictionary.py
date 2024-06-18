@@ -60,8 +60,7 @@ def remove_matching_keys(d, key):
 
 # --------------------------------------------------------------------------------------------------
 
-
-def add_comments_to_dictionary(dictionary_string, comment_dictionary):
+def add_comments_to_dictionary(logger, dictionary_string, comment_dictionary):
 
     dict_str_items = dictionary_string.split('\n')
 

@@ -10,12 +10,13 @@
 
 import copy
 import datetime
-import importlib
 import os
 import shutil
 import sys
 import yaml
 
+from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
+     PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
@@ -64,10 +65,6 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
     # ---------------
     logger = Logger('SwellPrepSuiteConfig')
 
-    # Starting point for configuration generation
-    # -------------------------------------------
-    config_file = os.path.join(get_swell_path(), 'suites', 'suite_questions.yaml')
-
     # Assert valid method
     # -------------------
     valid_tasks = ['defaults', 'cli']
@@ -77,23 +74,26 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    PrepUsing = getattr(importlib.import_module('swell.deployment.prep_config_'+method),
-                        'PrepConfig'+method.capitalize())
-    prep_using = PrepUsing(logger, config_file, suite, platform, override, advanced)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
+                                                               method, override)
 
-    # Call the config prep step
-    # -------------------------
-    prep_using.execute()
-
-    # Copy the experiment dictionary
-    # ------------------------------
-    experiment_dict = prep_using.experiment_dict
-    comment_dict = prep_using.comment_dict
-
+    # Ask questions as the suite gets configured
+    # ------------------------------------------
+    experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
     # Add the datetime to the dictionary
     # ----------------------------------
     experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
     comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
+
+    # Add the platform the dictionary
+    # -------------------------------
+    experiment_dict['platform'] = platform
+    comment_dict['platform'] = 'Computing platform to run the experiment'
+
+    # Add the suite_to_run to the dictionary
+    # --------------------------------------
+    experiment_dict['suite_to_run'] = suite
+    comment_dict['suite_to_run'] = 'Record of the suite being executed'
 
     # Add the model components to the dictionary
     # ------------------------------------------
@@ -131,7 +131,7 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
     # --------------------------
     experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
 
-    experiment_dict_string_comments = add_comments_to_dictionary(experiment_dict_string,
+    experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)
 
     # Return path to dictionary file
@@ -142,22 +142,24 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(experiment_dict_str):
+def create_experiment_directory(suite, method, platform, override, advanced, slurm):
 
     # Create a logger
     # ---------------
     logger = Logger('SwellCreateExperiment')
 
+    # Call the experiment config and suite generation
+    # ------------------------------------------------
+    experiment_dict_str = prepare_config(suite, method, platform, override, advanced, slurm)
+
     # Load the string using yaml
     # --------------------------
     experiment_dict = yaml.safe_load(experiment_dict_str)
 
-    # Extract from the config
-    # -----------------------
+    # Experiment ID and root from the user input
+    # ------------------------------------------
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
-    platform = dict_get(logger, experiment_dict, 'platform', None)
-    suite_to_run = dict_get(logger, experiment_dict, 'suite_to_run')
 
     # Write out some info
     # -------------------
@@ -175,41 +177,25 @@ def create_experiment_directory(experiment_dict_str):
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
 
+    # At this point we need to write the complete suite file with all templates resolved. Call the
+    # function to build the scheduling dictionary, combine with the experiment dictionary,
+    # resolve the templates and write the suite file to the experiment suite directory.
+    # --------------------------------------------------------------------------------------------
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
+    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
+
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_to_run)
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
     copy_platform_files(logger, exp_suite_path, platform)
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
         copy_eva_files(logger, swell_suite_path, exp_suite_path)
 
-    # Create R2D2 database file
-    # -------------------------
-    r2d2_local_path = dict_get(logger, experiment_dict, 'r2d2_local_path', None)
-    if r2d2_local_path is not None:
-        r2d2_conf_path = os.path.join(exp_suite_path, 'r2d2_config.yaml')
-
-        # Write R2D2_CONFIG to modules
-        with open(os.path.join(exp_suite_path, 'modules'), 'a') as module_file:
-            module_file.write(f'export R2D2_CONFIG={r2d2_conf_path}')
-
-        # Open the r2d2 file to dictionary
-        with open(r2d2_conf_path, 'r') as r2d2_file_open:
-            r2d2_file_str = r2d2_file_open.read()
-        r2d2_file_str = template_string_jinja2(logger, r2d2_file_str, experiment_dict)
-        r2d2_file_str = os.path.expandvars(r2d2_file_str)
-
-        with open(r2d2_conf_path, 'w') as r2d2_file_open:
-            r2d2_file_open.write(r2d2_file_str)
-
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
     template_modules_file(logger, experiment_dict, exp_suite_path)
     create_modules_csh(logger, exp_suite_path)
-
-    # Set the jinja2 file for cylc
-    # ----------------------------
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
 
     # Copy config directory to experiment
     # -----------------------------------
@@ -258,7 +244,7 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
         swell_lib_path = get_swell_path()
         platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
 
-        for s in ['modules', 'r2d2_config.yaml']:
+        for s in ['modules']:
             src_file = os.path.split(s)[1]
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
@@ -380,23 +366,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
-    render_dictionary = {}
-
-    # Elements to copy from the experiment dictionary
-    # -----------------------------------------------
-    render_elements = [
-        'start_cycle_point',
-        'final_cycle_point',
-        'runahead_limit',
-        'model_components',
-        'platform',
-    ]
-
-    # Copy elements from experiment dictionary to render dictionary
-    # -------------------------------------------------------------
-    for element in render_elements:
-        if element in experiment_dict:
-            render_dictionary[element] = experiment_dict[element]
+    render_dictionary = copy.deepcopy(experiment_dict)
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
@@ -469,7 +439,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
 
     # Render the template
     # -------------------
-    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
 
     # Write suite file to experiment
     # ------------------------------
