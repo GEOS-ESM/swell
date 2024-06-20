@@ -806,6 +806,7 @@ total_processors:
   tasks:
   - GenerateBClimatology
   - PrepareAnalysis
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable

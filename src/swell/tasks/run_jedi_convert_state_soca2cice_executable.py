@@ -93,11 +93,11 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
             # -------------------------------
             model_component_meta = self.jedi_rendering.render_interface_meta()
 
-            # Compute number of processors
-            # TODO: For now this task can only run serial (SOCA limitation)
-            # so for now using 1 processor only
-            # ----------------------------------------------------------------
-            np = 1
+            # Compute number of processors (only requires a single node and fails
+            # for multiple nodes, so we set it to 36 processors for now)
+            # ----------------------------------------------------------
+            np = 36
+            # np = eval(str(model_component_meta['total_processors']))
 
             # Jedi executable name
             # --------------------

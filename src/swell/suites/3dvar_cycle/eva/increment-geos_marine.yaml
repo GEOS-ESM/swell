@@ -1,0 +1,72 @@
+datasets:
+- group: increment
+  type: SocaRestart
+  # filename: {{increment_file_path}}
+  soca_filenames: '{{cycle_dir}}/ice.cice6_01.incr.2021-07-02T06:00:00Z.nc'
+  geometry_file: '{{cycle_dir}}/INPUT/soca_gridspec.nc'
+  name: experiment_increment
+  variables: [aicen, hicen]
+  coordinate variables: [lon, lat]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  #map plot for surface pressure increment
+  - batch figure:
+      variables: [aicen]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_s_${variable}.png'
+    plots:
+      - mapping:
+          projection: spstere
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Surface Pressure Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment::SOCAgrid::lat
+          data:
+            variable: experiment_increment::SOCAVars::aicen
+          label: Sea ice concentration increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+  - batch figure:
+      variables: [aicen]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_n_${variable}.png'
+    plots:
+      - mapping:
+          projection: npstere
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Surface Pressure Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment::SOCAgrid::lat
+          data:
+            variable: experiment_increment::SOCAVars::aicen
+          label: Sea ice concentration increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1

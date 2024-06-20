@@ -5,3 +5,4 @@
   link_files:
     directories:
       - ['{{swell_static_files}}/jedi/interfaces/geos_marine/model/geometry/{{horizontal_resolution}}x{{vertical_resolution}}/INPUT/*', '{{cycle_dir}}/INPUT']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_marine/model/static_background_error/explicit_diffusion/{{horizontal_resolution}}x{{vertical_resolution}}/*', '{{cycle_dir}}/background_error_model']

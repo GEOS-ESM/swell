@@ -6,7 +6,7 @@ executables:
   variational3D: soca_var.x
   variational4D: soca_var.x
   variational4DEnsVar: soca_var.x
-  bump: soca_error_covariance_toolbox.x
+  explicit_diffusion: soca_error_covariance_toolbox.x
   convert_state_soca2cice: soca_convertstate.x
 variables:
   hocn: h
