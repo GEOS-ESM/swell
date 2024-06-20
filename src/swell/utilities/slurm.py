@@ -6,6 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import importlib.resources
 import os
 import platform as pltfrm
 import re
@@ -22,17 +23,20 @@ def prepare_scheduling_dict(
 ):
 
     # Obtain platform-specific SLURM directives and set them as global defaults
-    # -----------------------------------------------------------------------
-    swell_lib_path = get_swell_path()
-    platform_path = os.path.join(swell_lib_path, 'deployment', 'platforms', platform)
-    platform_slurm = os.path.join(platform_path, "slurm.yaml")
+    # Start by constructing the full platforms path
+    # -------------------------------------------
+    platform_path = f"swell.deployment.platforms.{platform}"
 
-    if os.path.exists(platform_slurm):
-        logger.info(f'Loading SLURM user configuration from {platform_slurm}' +
-                    f' for the "{platform}" platform')
-        with open(platform_slurm, "r") as yaml_file:
-            global_defaults = yaml.safe_load(yaml_file)
+    # Import the path dynamically
+    # ------------------------------
+    path_import = __import__(platform_path, fromlist=[''])
 
+    logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
+    with importlib.resources.open_text(path_import, 'slurm.yaml') as yaml_file:
+        global_defaults = yaml.safe_load(yaml_file)
+
+    # Hard-coded SLURM defaults for certain tasks
+    # -------------------------------------------
     task_defaults = {
         "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}}
