@@ -136,10 +136,10 @@ class PrepGeosRunDir(taskBase):
         # -----------------
         self.get_dynamic()
 
-        # Create cap_restart
-        # ------------------
+        # Create cap_restart in GEOSgcm preferred format
+        # ----------------------------------------------
         with open(self.forecast_dir('cap_restart'), 'w') as file:
-            file.write(dt.strftime(self.fc_dto, "%Y%m%d %H%M%S"))
+            file.write(self.fc_dto.strftime("%Y%m%d %H%M%S"))
 
         # Run bundleParser
         # ------------------
@@ -423,13 +423,18 @@ class PrepGeosRunDir(taskBase):
 
     def rewrite_agcm(self, rcdict, rcfile):
 
-        # This part is relevant for move_da_restart task as well. Be mindful of
-        # your changes.
+        # This part is relevant for move_da_restart task. Be mindful of your changes
+        # and what impacts they might have on others (also a good motto in life).
 
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        [time_string, days] = self.geos.iso_to_time_str(self.config.forecast_duration(), half=True)
+        [time_string, days, half_duration] = self.geos.iso_to_time_str(self.config.forecast_duration(), half=True)
+
+        # We are assuming the beginning of the DA window is half of the forecast
+        # duration. We don't need DA information in GEOS preparation tasks (for now).
+        # --------------------------------------------------------------------------
+        da_begin_dto = self.fc_dto + half_duration
 
         # Prepend day information only record frequency is longer than a day
         # ------------------------------------------------------------------
@@ -438,8 +443,8 @@ class PrepGeosRunDir(taskBase):
             time_string = f'0000{int(days):02d} ' + time_string
 
         rcdict['RECORD_FREQUENCY'] = time_string
-        rcdict['RECORD_REF_DATE'] = self.fc_dto.strftime("%Y%m%d")
-        rcdict['RECORD_REF_TIME'] = self.fc_dto.strftime("%H%M%S")
+        rcdict['RECORD_REF_DATE'] = da_begin_dto.strftime("%Y%m%d")
+        rcdict['RECORD_REF_TIME'] = da_begin_dto.strftime("%H%M%S")
 
         with open(rcfile, "w") as f:
             yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
@@ -454,7 +459,7 @@ class PrepGeosRunDir(taskBase):
         # This method returns rcdict with the bool fix
         # ---------------------------------------------
         self.logger.info('Modifying CAP.rc')
-        [time_string, days] = self.geos.iso_to_time_str(self.config.forecast_duration())
+        [time_string, days, _] = self.geos.iso_to_time_str(self.config.forecast_duration())
 
         # Prepend day information
         # -----------------------

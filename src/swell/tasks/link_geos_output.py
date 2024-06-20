@@ -37,8 +37,8 @@ class LinkGeosOutput(taskBase):
         # ----------------------------------
         src_dst_dict = {}
 
-        src, dst = self.link_mom6_restart()
-        # src, dst = self.link_mom6_history()
+        # src, dst = self.link_mom6_restart()
+        src, dst = self.link_mom6_history()
         src_dst_dict[src] = dst
 
         # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)

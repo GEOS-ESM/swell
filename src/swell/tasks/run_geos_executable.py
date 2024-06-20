@@ -66,7 +66,7 @@ class RunGeosExecutable(taskBase):
 
         command = f'source {geos_modules} \n' + \
             f'cd {cycle_dir} \n' + \
-            f'env LD_PRELOAD={geos_lib_path}/libmom6.so:{geos_lib_path}/libCICE4.so ' + \
+            f'env LD_PRELOAD={geos_lib_path}/libmom6.so:{geos_lib_path}/libcice6.so ' + \
             f'mpirun -np {np} {geos_executable} ' + \
             f'--logging_config logging.yaml'
 

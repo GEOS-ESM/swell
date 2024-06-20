@@ -141,8 +141,11 @@ class Geos():
         duration_seconds = duration.total_seconds()
 
         # RESTART is produced at the half of the forecast cycle
-        # -----------------------------------------------------
+        # We will also assume that the beginning of the DA window is half of the
+        # forecast cycle which is when we need the first checkpoint dumps.
+        # -----------------------------------------------------------------------
         if half:
+            duration = duration / 2
             duration_seconds = duration_seconds / 2
 
         # Calculate days in case of long forecast time
@@ -156,7 +159,7 @@ class Geos():
         minutes, seconds = divmod(remainder, 60)
         time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
 
-        return time_string, days
+        return time_string, days, duration
 
     # ----------------------------------------------------------------------------------------------
 
