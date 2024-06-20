@@ -429,7 +429,8 @@ class PrepGeosRunDir(taskBase):
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        [time_string, days, half_duration] = self.geos.iso_to_time_str(self.config.forecast_duration(), half=True)
+        forecast_dur = self.config.forecast_duration()
+        [time_string, days, half_duration] = self.geos.iso_to_time_str(forecast_dur, half=True)
 
         # We are assuming the beginning of the DA window is half of the forecast
         # duration. We don't need DA information in GEOS preparation tasks (for now).
