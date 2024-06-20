@@ -17,6 +17,12 @@ jobs:
 
     steps:
 
+    # Clone the swell code
+    - name: Clone swell repo
+      uses: actions/checkout@v2
+      with:
+        lfs: true
+
     # Setup Python
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
@@ -34,12 +40,6 @@ jobs:
     # Upgrade pip
     - name: Upgrade pip
       run: $CONDA/bin/pip3 install --upgrade pip
-
-    # Clone the swell code
-    - name: Clone swell repo
-      uses: actions/checkout@v2
-      with:
-        lfs: true
 
     # Install swell
     - name: Install swell and dependencies
