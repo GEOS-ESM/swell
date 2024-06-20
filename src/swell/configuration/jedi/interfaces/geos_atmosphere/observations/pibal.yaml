@@ -114,7 +114,7 @@ obs post filters:
   action:
     name: assign error
     error function:
-      name: ObsErrorModelStepwiseLinear@ObsFunction
+      name: ObsFunction/ObsErrorModelStepwiseLinear
       options:
         xvar:
           name: MetaData/pressure
@@ -276,7 +276,7 @@ obs post filters:
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorDuplicateCheck@ObsFunction
+      name: ObsFunction/ObsErrorFactorDuplicateCheck
       options:
         use_air_pressure: true
         variable: windEastward
@@ -291,7 +291,7 @@ obs post filters:
   action:
     name: inflate error
     inflation variable:
-      name: ObsErrorFactorDuplicateCheck@ObsFunction
+      name: ObsFunction/ObsErrorFactorDuplicateCheck
       options:
         use_air_pressure: true
         variable: windNorthward

@@ -1,4 +1,5 @@
 start_cycle_point: '2021-06-20T00:00:00Z'
 final_cycle_point: '2021-06-21T00:00:00Z'
+cycle_times: ['T00', 'T06', 'T12', 'T18']
 geos_build_method: use_existing
 forecast_duration: PT6H

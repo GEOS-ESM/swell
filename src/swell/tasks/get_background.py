@@ -9,6 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.r2d2 import create_r2d2_config
 
 import isodate
 import os
@@ -49,6 +50,7 @@ class GetBackground(taskBase):
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
+        r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_offset,
@@ -56,6 +58,10 @@ class GetBackground(taskBase):
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
+
+        # Set R2D2 config file
+        # --------------------
+        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Convert to datetime durations
         # -----------------------------

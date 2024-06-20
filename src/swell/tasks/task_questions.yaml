@@ -10,7 +10,7 @@ analysis_forecast_window_offset:
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
-  type: iso-duration
+  type: string-check-list
 
 analysis_variables:
   ask_question: false
@@ -45,6 +45,7 @@ background_experiment:
   prompt: What is the name of the name of the experiment providing the backgrounds?
   tasks:
   - GetBackground
+  - GetBackgroundGeosExperiment
   - StoreBackground
   type: string
 
@@ -74,6 +75,7 @@ background_time_offset:
     forecast begin?
   tasks:
   - EvaObservations
+  - GetBackgroundGeosExperiment
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -130,7 +132,7 @@ clean_patterns:
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - CleanCycle
-  type: string-list
+  type: string-check-list
 
 crtm_coeff_dir:
   ask_question: false
@@ -235,8 +237,6 @@ existing_jedi_source_directory:
 forecast_duration:
   ask_question: true
   default_value: PT12H
-  models:
-  - all
   prompt: GEOS forecast duration
   tasks:
   - MoveForecastRestart
@@ -256,36 +256,6 @@ generate_yaml_and_exit:
   - RunJediVariationalExecutable
   type: boolean
 
-geos_background_restart_offset:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: Duration before the middle of the window used in GEOS restart tar file.
-  tasks:
-  - GetBackgroundGeosExperiment
-  type: iso-duration
-
-geos_bkg_filename_template:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: Name of the background files as output by GEOS (with date and time templated).
-  tasks:
-  - GetBackgroundGeosExperiment
-  type: string
-
-geos_bkg_tar_filename_template:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: Name of the GEOS backgrounds tar file (with date and time templated
-  tasks:
-  - GetBackgroundGeosExperiment
-  type: string
-
 geos_build_method:
   ask_question: true
   default_value: create
@@ -302,8 +272,6 @@ geos_build_method:
 geos_experiment_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - PrepGeosRunDir
@@ -320,11 +288,22 @@ geos_gcm_tag:
 geos_restarts_directory:
   ask_question: true
   default_value: defer_to_platform
-  models:
-  - all
   prompt: What is the path to the GEOS restarts directory?
   tasks:
   - GetGeosRestart
+  type: string
+
+geos_x_background_directory:
+  ask_question: true
+  default_value: /dev/null/
+  models:
+  - geos_atmosphere
+  options:
+  - /dev/null/
+  - /gpfsm/dnb05/projects/p139/dao_it/archive/
+  prompt: What is the path to the GEOS X-backgrounds directory?
+  tasks:
+  - GetBackgroundGeosExperiment
   type: string
 
 geovals_experiment:
@@ -355,18 +334,18 @@ gradient_norm_reduction:
   prompt: What value of gradient norm reduction for convergence?
   tasks:
   - RunJediVariationalExecutable
-  type: string-drop-list
+  type: string
 
 gsibec_configuration:
   ask_question: false
   default_value: defer_to_model
   models:
-  - all
+  - geos_atmosphere
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
   - RunJediVariationalExecutable
   - StageJedi
-  type: float
+  type: string
 
 horizontal_localization_lengthscale:
   ask_question: false
@@ -418,16 +397,6 @@ horizontal_resolution:
   - StageJedi
   - StoreBackground
   type: string-drop-list
-
-jedi_bkg_filename_template:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the name of the background as used by JEDI (with date and time templated)
-  tasks:
-  - GetBackgroundGeosExperiment
-  type: string
 
 jedi_build_method:
   ask_question: true
@@ -751,6 +720,18 @@ produce_geovals:
   tasks:
   - GsiNcdiagToIoda
   type: boolean
+
+r2d2_local_path:
+  ask_question: false
+  default_value: defer_to_platform
+  prompt: What is the path to the R2D2 local directory?
+  tasks:
+  - GetBackground
+  - GetGeovals
+  - GetObservations
+  - SaveObsDiags
+  - StoreBackground
+  type: string
 
 save_geovals:
   ask_question: false

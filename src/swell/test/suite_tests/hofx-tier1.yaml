@@ -1,5 +1,6 @@
 jedi_build_method: use_existing
 save_geovals: true
+model_components: ['geos_atmosphere', 'geos_ocean']
 models:
   geos_atmosphere:
     horizontal_resolution: '91'

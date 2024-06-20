@@ -30,33 +30,33 @@ obs bias:
   variational bc:
     predictors:
     - name: constant
-    - name: lapse_rate
+    - name: lapseRate
       order: 2
       tlapse: &gmi_gpm_tlapse '{{cycle_dir}}/gmi_gpm.{{background_time}}.tlapse.txt'
-    - name: lapse_rate
+    - name: lapseRate
       tlapse: *gmi_gpm_tlapse
-    - name: emissivity
-    - name: cloud_liquid_water
+    - name: emissivityJacobian
+    - name: cloudWaterContent
       sensor: GMI_GPM
       ch37v: 6
       ch37h: 7
       order: 2
       tlapse: *gmi_gpm_tlapse
-    - name: cloud_liquid_water
+    - name: cloudWaterContent
       sensor: GMI_GPM
       ch37v: 6
       ch37h: 7
       tlapse: *gmi_gpm_tlapse
-    - name: scan_angle
+    - name: sensorScanAngle
       var_name: sensorScanPosition
       order: 4
-    - name: scan_angle
+    - name: sensorScanAngle
       var_name: sensorScanPosition
       order: 3
-    - name: scan_angle
+    - name: sensorScanAngle
       var_name: sensorScanPosition
       order: 2
-    - name: scan_angle
+    - name: sensorScanAngle
       var_name: sensorScanPosition
   covariance:
     minimal required obs number: 20
@@ -121,7 +121,7 @@ obs filters:
 # Save CLW retrievals from ObsValue
 - filter: Variable Assignment
   assignments:
-  - name: DerivedMetaData/clw_obs
+  - name: DerivedMetaData/cloudWaterContent_obs
     type: float
     function:
       name: ObsFunction/CLWRetMW
@@ -156,7 +156,7 @@ obs filters:
 # Save CLW retrievals from HofX
 - filter: Variable Assignment
   assignments:
-  - name: DerivedMetaData/clw_hofx
+  - name: DerivedMetaData/cloudWaterContent_hofx
     type: float
     function:
       name: ObsFunction/CLWRetMW

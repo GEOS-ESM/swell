@@ -8,20 +8,17 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import glob
-import os
 import re
 import sys
 
 import questionary
 from questionary import Choice
 
-from swell.deployment.prep_config_base import PrepConfigBase
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepConfigCli(PrepConfigBase):
+class GetAnswerCli:
 
     def get_answer(self, key, val):
         # Set questionary variable
@@ -60,33 +57,6 @@ class PrepConfigCli(PrepConfigBase):
             sys.exit()
 
         return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_models(self):
-
-        model_options = glob.glob(os.path.join(self.model_path, '*'))
-        model_options.sort()
-
-        model_options = [os.path.basename(x) for x in model_options]
-
-        choices = []
-
-        for mod in model_options:
-            if mod in self.default_models:
-                choices.append(Choice(mod, checked=True))
-            else:
-                choices.append(Choice(mod, checked=False))
-
-        selected_models = self.make_check_widget('Which model components are required?',
-                                                 choices,
-                                                 default=None,
-                                                 prompt=questionary.checkbox)
-
-        if 'None' in selected_models:
-            selected_models = []
-
-        return selected_models
 
     # ----------------------------------------------------------------------------------------------
 
@@ -158,12 +128,12 @@ class PrepConfigCli(PrepConfigBase):
 
         class durValidator(questionary.Validator):
             def validate(self, document):
-                r = re.compile('PT\d{1,2}H')  # noqa
+                r = re.compile('[-]?P(T\d{1,2}H|\d{1,2}D)')  # noqa
                 if r.match(document.text) is None and document.text != 'EXIT':
                     raise questionary.ValidationError(
                         message="Please enter a duration with the following format: PThhH",
                         cursor_position=len(document.text),
-                    )
+                    )  # Need to add validation to allow negative sign in the front.
 
         if isinstance(default, list):
             answer_list = []
@@ -180,7 +150,7 @@ class PrepConfigCli(PrepConfigBase):
                 else:
                     answer_list.append(answer)
         elif isinstance(default, str):
-            answer = prompt(f"{quest}\n[format PThhH e.g. {default}]",
+            answer = prompt(f"{quest}\n[format PThhH or -PThhH e.g. {default}]",
                             validate=durValidator, default=default).ask()
 
         return answer
@@ -203,33 +173,5 @@ class PrepConfigCli(PrepConfigBase):
                         else 'Please select one option').ask()
         return answer
 
-    # ----------------------------------------------------------------------------------------------
-
-    def before_next(self):
-        changer = self.make_boolean('Do you wish to change any of your entries?',
-                                    False,
-                                    questionary.confirm)
-        if changer:
-            keys = self.exec_keys
-            for k in keys:
-                if k not in list(self.current_dictionary.keys()):
-                    non_exec_idx = keys.index(k)
-                    keys.pop(non_exec_idx)
-            # Show user key change options and retrieve new values
-            change_keys = self.make_check_widget('Which elements would you like to change?',
-                                                 keys,
-                                                 None,
-                                                 questionary.checkbox)
-
-            for k in change_keys:
-                changed_dict = self.current_dictionary[k]
-                new_default_value = self.get_answer(k, changed_dict)
-                if k == keys[-1]:
-                    changed_dict['default_value'] = new_default_value
-                    return changed_dict
-                else:
-                    self.update_experiment_dictionary(k, new_default_value)
-        self.exec_keys = []
-        return None
 
 # --------------------------------------------------------------------------------------------------
