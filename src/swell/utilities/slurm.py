@@ -12,7 +12,6 @@ import platform as pltfrm
 import re
 import yaml
 
-from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
 
 
