@@ -60,6 +60,13 @@ obs filters:
   filter variables:
   - name: brightnessTemperature
     channels: *mhs_metop-c_channels
+  - name: ObsFunction/InterChannelConsistencyCheck
+    channels: *mhs_metop-c_available_channels
+    options:
+      channels: *mhs_metop-c_available_channels
+      use passive_bc: true
+      sensor: *Sensor_ID
+      use_flag: &mhs_metop-c_use_flag {{mhs_metop-c_active_channels}}
   minvalue: 50.0
   maxvalue: 550.0
 - filter: Domain Check
