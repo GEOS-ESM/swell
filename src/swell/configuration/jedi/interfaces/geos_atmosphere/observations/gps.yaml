@@ -184,7 +184,7 @@ obs filters:
     value: is_valid
   - variable:
       name: MetaData/satelliteIdentifier
-    is_in:  41,44,440,421,724,725,726,727,728,729,
+    is_in:  41,44,269,440,421,724,725,726,727,728,729,
             750,751,752,753,754,755,821,825
   defer to post: true
 # reset ObsErrorData to 10.0 if it is > 10.0.
