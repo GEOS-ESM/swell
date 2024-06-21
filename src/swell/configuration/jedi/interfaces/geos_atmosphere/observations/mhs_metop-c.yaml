@@ -72,7 +72,7 @@ obs filters:
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: MetaData/sensorScanPosition
