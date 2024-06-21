@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.mhs_n19.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &mhs_n19_channels 1-5
+  channels: &mhs_n19_available_channels {{mhs_n19_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -59,7 +59,7 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
     test variables:
   - name: ObsFunction/InterChannelConsistencyCheck
     channels: *mhs_n19_available_channels
@@ -73,7 +73,7 @@ obs filters:
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: MetaData/sensorScanPosition
@@ -97,7 +97,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/surface_snow_area_fraction
@@ -106,7 +106,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/ice_area_fraction
@@ -115,7 +115,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -126,7 +126,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -137,7 +137,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -146,9 +146,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       options:
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -168,7 +168,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -177,9 +177,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       options:
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -200,42 +200,42 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTopoRad
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       options:
         sensor: *Sensor_ID
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
 #Transmittnace Top Check
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTransmitTopRad
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       options:
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
 #Gross check
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundMW
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
     options:
       sensor: *Sensor_ID
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       threshold: 2.0
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
@@ -243,20 +243,20 @@ obs filters:
           latitude_parameters: [0.0, 1.0, 0.0, 1.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
       obserr_bound_topo:
         name: ObsFunction/ObsErrorFactorTopoRad
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
           sensor: *Sensor_ID
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
           xvar:
             name: ObsFunction/CLWRetSymmetricMW
             options:
@@ -279,17 +279,17 @@ obs filters:
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
     minvalue: 0.99
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundMW
-    channels: *mhs_n19_channels
+    channels: *mhs_n19_available_channels
     options:
       sensor: *Sensor_ID
-      channels: *mhs_n19_channels
+      channels: *mhs_n19_available_channels
       threshold: 2.0
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
@@ -297,20 +297,20 @@ obs filters:
           latitude_parameters: [0.0, 1.0, 0.0, 1.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
       obserr_bound_topo:
         name: ObsFunction/ObsErrorFactorTopoRad
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
           sensor: *Sensor_ID
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *mhs_n19_channels
+        channels: *mhs_n19_available_channels
         options:
-          channels: *mhs_n19_channels
+          channels: *mhs_n19_available_channels
           xvar:
             name: ObsFunction/CLWRetSymmetricMW
             options:
