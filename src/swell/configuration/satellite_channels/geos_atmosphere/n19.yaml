@@ -102,6 +102,11 @@ hirs4:
   end date: '2100-12-31T18:00:00'
 mhs:
 - begin date: '2009-04-14T12:00:00'
-  channels: []
+  channels:
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
   comments: no comment
   end date: '2100-12-31T18:00:00'

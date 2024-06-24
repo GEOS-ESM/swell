@@ -9,7 +9,7 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.mhs_metop-c.{{window_begin}}.nc4'
   simulated variables: [brightnessTemperature]
-  channels: &mhs_metop-c_channels 1-5
+  channels: &mhs_metop-c_available_channels {{mhs_metopc_avail_channels}}
 
 obs operator:
   name: CRTM
@@ -59,13 +59,28 @@ obs filters:
 - filter: Bounds Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   minvalue: 50.0
   maxvalue: 550.0
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *mhs_metop-c_available_channels
+  test variables:
+  - name: ObsFunction/ChannelUseflagCheckRad
+    channels: *mhs_metop-c_available_channels
+    options:
+      channels: *mhs_metop-c_available_channels
+#     use passive_bc: true
+      sensor: *Sensor_ID
+      use_flag: &mhs_metop-c_use_flag {{mhs_metopc_active_channels}}
+  minvalue: 1.0e-12
+  action:
+    name: reject
 - filter: Domain Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: MetaData/sensorScanPosition
@@ -89,7 +104,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/surface_snow_area_fraction
@@ -98,7 +113,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/ice_area_fraction
@@ -107,7 +122,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -118,7 +133,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -129,7 +144,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -138,9 +153,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       options:
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -160,7 +175,7 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
@@ -169,9 +184,9 @@ obs filters:
     name: assign error
     error function:
       name: ObsFunction/ObsErrorModelRamp
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       options:
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         xvar:
           name: ObsFunction/CLWRetSymmetricMW
           options:
@@ -192,42 +207,42 @@ obs filters:
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTopoRad
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       options:
         sensor: *Sensor_ID
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
 #Transmittnace Top Check
 - filter: BlackList
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   action:
     name: inflate error
     inflation variable:
       name: ObsFunction/ObsErrorFactorTransmitTopRad
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       options:
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
 #Gross check
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundMW
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
     options:
       sensor: *Sensor_ID
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       threshold: 2.0
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
@@ -235,20 +250,20 @@ obs filters:
           latitude_parameters: [0.0, 1.0, 0.0, 1.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
       obserr_bound_topo:
         name: ObsFunction/ObsErrorFactorTopoRad
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
           sensor: *Sensor_ID
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
           xvar:
             name: ObsFunction/CLWRetSymmetricMW
             options:
@@ -271,17 +286,17 @@ obs filters:
 - filter: Background Check
   filter variables:
   - name: brightnessTemperature
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
   where:
   - variable:
       name: GeoVaLs/water_area_fraction
     minvalue: 0.99
   function absolute threshold:
   - name: ObsFunction/ObsErrorBoundMW
-    channels: *mhs_metop-c_channels
+    channels: *mhs_metop-c_available_channels
     options:
       sensor: *Sensor_ID
-      channels: *mhs_metop-c_channels
+      channels: *mhs_metop-c_available_channels
       threshold: 2.0
       obserr_bound_latitude:
         name: ObsFunction/ObsErrorFactorLatRad
@@ -289,20 +304,20 @@ obs filters:
           latitude_parameters: [0.0, 1.0, 0.0, 1.0]
       obserr_bound_transmittop:
         name: ObsFunction/ObsErrorFactorTransmitTopRad
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
       obserr_bound_topo:
         name: ObsFunction/ObsErrorFactorTopoRad
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
           sensor: *Sensor_ID
       obserr_function:
         name: ObsFunction/ObsErrorModelRamp
-        channels: *mhs_metop-c_channels
+        channels: *mhs_metop-c_available_channels
         options:
-          channels: *mhs_metop-c_channels
+          channels: *mhs_metop-c_available_channels
           xvar:
             name: ObsFunction/CLWRetSymmetricMW
             options:
