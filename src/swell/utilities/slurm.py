@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import importlib.resources
-import os
+# import os
 import platform as pltfrm
 import re
 import yaml
@@ -200,17 +200,17 @@ def validate_directives(directive_dict):
         f"The following are invalid SLURM directives: {invalid_directives}"
 
 
-def slurm_global_defaults(
-    logger: Logger,
-    yaml_path: str = "~/.swell/swell-slurm.yaml"
-) -> dict:
-    yaml_path = os.path.expanduser(yaml_path)
-    user_globals = {}
-    if os.path.exists(yaml_path):
-        logger.info(f"Loading SLURM user configuration from {yaml_path}")
-        with open(yaml_path, "r") as yaml_file:
-            user_globals = yaml.safe_load(yaml_file)
-    return user_globals
+# def slurm_global_defaults(
+#     logger: Logger,
+#     yaml_path: str = "~/.swell/swell-slurm.yaml"
+# ) -> dict:
+#     yaml_path = os.path.expanduser(yaml_path)
+#     user_globals = {}
+#     if os.path.exists(yaml_path):
+#         logger.info(f"Loading SLURM user configuration from {yaml_path}")
+#         with open(yaml_path, "r") as yaml_file:
+#             user_globals = yaml.safe_load(yaml_file)
+#     return user_globals
 
 
 man_sbatch = """
