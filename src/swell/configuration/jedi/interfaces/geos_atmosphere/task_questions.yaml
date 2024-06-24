@@ -12,8 +12,8 @@ analysis_variables:
   - ql
   - o3ppmv
   - phis
-  - frocean 
-  - frlake  
+  - frocean
+  - frlake
   - frseaice
 
 background_error_model:
