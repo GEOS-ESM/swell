@@ -50,8 +50,8 @@ class RunGeosExecutable(taskBase):
         # -----------------------
         self.logger.info('Running '+geos_executable_path+' with '+str(np)+' processors.')
 
-        geos_lib_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'source',
-                                     'install-SLES12', 'lib')
+        geos_lib_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build', 'lib')
+
         self.run_executable(self.forecast_dir(), np, geos_executable_path,
                             geos_modules_path, output_log_file, geos_lib_path)
 

@@ -37,7 +37,7 @@ class PrepGeosRunDir(taskBase):
         # TODO: exp. directory location requires better handling
         self.geos_exp_dir = os.path.join(self.swell_static_files, 'geos', 'run_dirs',
                                          self.config.geos_experiment_directory())
-        self.geos_source = self.config.existing_geos_gcm_source_path()
+        self.geos_build = self.config.existing_geos_gcm_build_path()
 
         self.logger.info('Preparing GEOS Forecast directory')
         self.logger.info('Some steps involve modifying input files and replacing')
@@ -107,6 +107,11 @@ class PrepGeosRunDir(taskBase):
         # ------------------------------------------------------
         self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))
 
+        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file from gcm_run.j.
+        # So parse linkbcs file using parse_gcmrun method and update gcm_dict
+        # -----------------------------------------------------------------------
+        self.gcm_dict.update(self.geos.parse_gcmrun(self.forecast_dir('linkbcs')))
+
         # Select proper AMIP GOCART Emission RC Files as done in gcm_run.j
         # If AMIP_EMISSIONS, arrange proper sources (i.e., AMIP vs AMIP.20c)
         # ------------------------------------------------------------------
@@ -125,7 +130,7 @@ class PrepGeosRunDir(taskBase):
         # Generate the complete ExtData.rc
         # TODO: Fix install folders, update task_questions
         # --------------------------------
-        self.geosbin = os.path.join(self.geos_source, 'install-SLES12', 'bin')
+        self.geosbin = os.path.join(self.geos_build, 'bin')
         self.generate_extdata()
 
         # Get boundary conditions
@@ -222,9 +227,10 @@ class PrepGeosRunDir(taskBase):
 
     def get_bcs(self):
 
-        # Uses parsed .rc and .j files to set BCs
-        # ---------------------------------------
-
+        # This methods is highly dependent on the GEOSgcm version, currently
+        # tested with GEOSgcm v11.6.0. It uses parsed .rc and .j files to define
+        # folders for the boundary conditions.
+        # ----------------------------------------------
         AGCM_IM = self.agcm_dict['AGCM_IM']
         AGCM_JM = self.agcm_dict['AGCM_JM']
         OGCM_IM = self.agcm_dict['OGCM.IM_WORLD']
@@ -234,16 +240,27 @@ class PrepGeosRunDir(taskBase):
         geos_bcsdir = self.gcm_dict['BCSDIR']
         geos_chmdir = self.gcm_dict['CHMDIR']
         geos_bcrslv = self.gcm_dict['BCRSLV']
-        geos_abcsdir = self.gcm_dict['ABCSDIR']
+        geos_cpldir = self.gcm_dict['CPLDIR']
 
-        # Obtain tag information from abcsdir
+        # Define the Ocean boundary conditions directory
         # -----------------------------------
-        [ATMOStag, OCEANtag, *_] = os.path.basename(geos_abcsdir).split('_')
+        geos_obcsdir = os.path.join(geos_cpldir, f'{OGCM_IM}x{OGCM_JM}')
+        [ATMOStag, *_] = os.path.basename(geos_bcrslv).split('_')
 
-        geos_obcsdir = self.gcm_dict['OBCSDIR'].format(OGCM_IM=OGCM_IM, OGCM_JM=OGCM_JM)
-        geos_obcsdir = geos_obcsdir.replace('$', '')
+        # Define the path to the geometry directory
+        # -----------------------------------------
+        geos_geomdir = os.path.join(geos_bcsdir, 'geometry', geos_bcrslv)
+
+        # Define the path to the land directory
+        # -------------------------------------
+        geos_landdir = os.path.join(geos_bcsdir, 'land', geos_bcrslv)
+
+        # Define the path to the TOPO directory
+        # -------------------------------------
+        geos_topodir = os.path.join(geos_bcsdir, 'TOPO', 'TOPO_' + ATMOStag, 'smoothed')
 
         pchem_clim_years = self.agcm_dict['pchem_clim_years']
+        pchem_dir = 'Shared' if 'pchem_clim_years' == '3' else 'PCHEM'
 
         pchem = {
             '1': 'pchem.species.Clim_Prod_Loss.z_721x72.nc4',
@@ -262,30 +279,30 @@ class PrepGeosRunDir(taskBase):
                               ' cycle. Change pchem_clim_years in AGCM.rc')
 
         self.bcs_dict = {
-            os.path.join(geos_abcsdir, f"{ATMOStag}_{OCEANtag}-Pfafstetter.til"):
+            os.path.join(geos_geomdir, f"{geos_bcrslv}-Pfafstetter.til"):
                 'tile.data',
-            os.path.join(geos_abcsdir, f"{ATMOStag}_{OCEANtag}-Pfafstetter.TRN"):
+            os.path.join(geos_geomdir, f"{geos_bcrslv}-Pfafstetter.TRN"):
                 'runoff.bin',
             os.path.join(geos_obcsdir, f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"):
                 'SEAWIFS_KPAR_mon_clim.data',
-            os.path.join(geos_obcsdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
+            os.path.join(geos_geomdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
             os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
-            os.path.join(geos_bcsdir, 'Shared', pchem[pchem_clim_years]):
+            os.path.join(geos_bcsdir, pchem_dir, pchem[pchem_clim_years]):
                 'species.data',
-            os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
+            # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
             os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
-            os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
-            os.path.join(geos_abcsdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
-            os.path.join(geos_abcsdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
-            os.path.join(geos_abcsdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
-            os.path.join(geos_abcsdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
-            os.path.join(geos_abcsdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
-            os.path.join(geos_abcsdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
-            os.path.join(geos_abcsdir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"):
+            # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
+            os.path.join(geos_landdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
+            os.path.join(geos_landdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
+            os.path.join(geos_landdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
+            os.path.join(geos_landdir, f"lai_clim_{AGCM_IM}x{AGCM_JM}.data"): 'lai.data',
+            os.path.join(geos_landdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
+            os.path.join(geos_landdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
+            os.path.join(geos_topodir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"):
                 'topo_dynave.data',
-            os.path.join(geos_abcsdir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"):
+            os.path.join(geos_topodir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"):
                 'topo_gwdvar.data',
-            os.path.join(geos_abcsdir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
+            os.path.join(geos_topodir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
                 'topo_trbvar.data',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_grid.nc'): '',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_kmt.nc'): '',
@@ -342,10 +359,7 @@ class PrepGeosRunDir(taskBase):
 
         # Obtain experiment input files created by GEOS gcm_setup
         # --------------------------------------------------
-
-        # TODO: install folder name changes (install vs. install-Releaee)
-        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm',
-                                         'source', 'install-SLES12', 'bin')
+        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build', 'bin')
 
         src_dirs = []
 

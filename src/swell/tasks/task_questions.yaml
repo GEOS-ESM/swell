@@ -198,6 +198,7 @@ existing_geos_gcm_build_path:
   prompt: What is the path to the existing GEOS build directory?
   tasks:
   - BuildGeosByLinking
+  - PrepGeosRunDir
   type: string
 
 existing_geos_gcm_source_path:
@@ -209,7 +210,6 @@ existing_geos_gcm_source_path:
   prompt: What is the path to the existing GEOS source code directory?
   tasks:
   - CloneGeos
-  - PrepGeosRunDir
   type: string
 
 existing_jedi_build_directory:

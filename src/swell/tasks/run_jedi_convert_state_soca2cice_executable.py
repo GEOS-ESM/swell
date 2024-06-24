@@ -96,7 +96,7 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
             # Compute number of processors (only requires a single node and fails
             # for multiple nodes, so we set it to 36 processors for now)
             # ----------------------------------------------------------
-            np = 36
+            np = 24
             # np = eval(str(model_component_meta['total_processors']))
 
             # Jedi executable name
