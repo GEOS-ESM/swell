@@ -81,6 +81,16 @@ observations:
   - adt
   - insitus
   - insitut
+  - adt_3a_egm2008
+  - adt_3b_egm2008
+  - adt_c2_egm2008
+  - adt_j3_egm2008
+  - adt_sa_egm2008
+  - salt_profile_fnmoc
+  - sss_smos_esa
+  - sst_gmi_l3u
+  - sst_ship_fnmoc
+  - temp_profile_fnmoc
 
 total_processors:
   default_value: 24

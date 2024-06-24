@@ -538,6 +538,7 @@ mom6_iau:
   default_value: defer_to_model
   models:
   - geos_marine
+  - geos_ocean
   options:
   - true
   - false
@@ -785,6 +786,7 @@ total_processors:
   default_value: defer_to_model
   models:
   - geos_marine
+  - geos_ocean
   prompt: What is the number of processors for JEDI?
   tasks:
   - GenerateBClimatology

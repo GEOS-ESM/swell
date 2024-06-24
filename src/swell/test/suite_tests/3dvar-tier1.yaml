@@ -1,9 +1,9 @@
 start_cycle_point: '2021-07-01T12:00:00Z'
 final_cycle_point: '2021-07-01T12:00:00Z'
 jedi_build_method: use_existing
-model_components: ['geos_marine']
+model_components: ['geos_ocean']
 models:
-  geos_marine:
+  geos_ocean:
     cycle_times:
     - T12
     window_length: P1D
