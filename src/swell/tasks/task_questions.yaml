@@ -422,6 +422,7 @@ jedi_forecast_model:
   options: defer_to_model
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -619,6 +620,7 @@ observations:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable

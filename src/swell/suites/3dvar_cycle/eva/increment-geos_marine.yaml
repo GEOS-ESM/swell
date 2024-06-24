@@ -1,19 +1,113 @@
 datasets:
-- group: increment
-  type: SocaRestart
-  # filename: {{increment_file_path}}
-  soca_filenames: '{{cycle_dir}}/ice.cice6_01.incr.2021-07-02T06:00:00Z.nc'
-  geometry_file: '{{cycle_dir}}/INPUT/soca_gridspec.nc'
-  name: experiment_increment
-  variables: [aicen, hicen]
-  coordinate variables: [lon, lat]
+
+  - name: ocean_increment
+    type: SocaRestart
+    soca_filenames: {{increment_file_path}}
+    geometry_file: {{cycle_dir}}/INPUT/soca_gridspec.nc
+    variables: [Temp, Salt, ave_ssh]
+    coordinate variables: [lon, lat]
+
+  - name: seaice_increment
+    type: SocaRestart
+    soca_filenames: {{ice_increment_file_path}}
+    geometry_file: {{cycle_dir}}/INPUT/soca_gridspec.nc
+    variables: [aicen]
+    coordinate variables: [lon, lat]
 
 graphics:
 
   plotting_backend: Emcpy
   figure_list:
 
-  #map plot for surface pressure increment
+  - batch figure:
+      variables: [ave_ssh]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'SOCA Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSH Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: ocean_increment::SOCAgrid::lon
+          latitude:
+            variable: ocean_increment::SOCAgrid::lat
+          data:
+            variable: ocean_increment::SOCAVars::ave_ssh
+          label: ave_ssh increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.25
+          vmax: 0.25
+
+  - batch figure:
+      variables: [Temp]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SST Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: ocean_increment::SOCAgrid::lon
+          latitude:
+            variable: ocean_increment::SOCAgrid::lat
+          data:
+            variable: ocean_increment::SOCAVars::Temp
+            slices: '[0,...]'
+          label: SST increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -3
+          vmax: 3
+
+  - batch figure:
+      variables: [Salt]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSS Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: ocean_increment::SOCAgrid::lon
+          latitude:
+            variable: ocean_increment::SOCAgrid::lat
+          data:
+            variable: ocean_increment::SOCAVars::Salt
+            slices: '[0,...]'
+          label: SSS increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
+
   - batch figure:
       variables: [aicen]
     figure:
@@ -27,16 +121,16 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Surface Pressure Increment
+          label: Sea-ice Concentration Increment
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment::SOCAgrid::lon
+            variable: seaice_increment::SOCAgrid::lon
           latitude:
-            variable: experiment_increment::SOCAgrid::lat
+            variable: seaice_increment::SOCAgrid::lat
           data:
-            variable: experiment_increment::SOCAVars::aicen
+            variable: seaice_increment::SOCAVars::aicen
           label: Sea ice concentration increment
           colorbar: true
           cmap: 'bwr'
@@ -55,17 +149,17 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Surface Pressure Increment
+          label: Sea-ice Concentration Increment
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment::SOCAgrid::lon
+            variable: seaice_increment::SOCAgrid::lon
           latitude:
-            variable: experiment_increment::SOCAgrid::lat
+            variable: seaice_increment::SOCAgrid::lat
           data:
-            variable: experiment_increment::SOCAVars::aicen
-          label: Sea ice concentration increment
+            variable: seaice_increment::SOCAVars::aicen
+          label: Sea-ice concentration increment
           colorbar: true
           cmap: 'bwr'
           vmin: -1

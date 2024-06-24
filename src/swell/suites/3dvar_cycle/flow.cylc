@@ -74,18 +74,19 @@
             MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
-            # Data assimilation things
-            GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}
-
             # Run the analysis
             # RunGeosExecutable => StageJediCycle-{{model_component}}
             RunGeosExecutable => LinkGeosOutput-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+
+            # Data assimilation things
+            GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Prepare analysis for next forecast
@@ -201,6 +202,15 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
+    [[GenerateBClimatology-{{model_component}}]]
+        script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
     [[GenerateBClimatologyByLinking-{{model_component}}]]
         script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
@@ -209,15 +219,9 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-            --account = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["account"]}}
-            --qos = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["qos"]}}
-            --job-name = RunJediConvertStateSoca2ciceExecutable
-            --nodes={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["nodes"]}}
-            --ntasks-per-node={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["ntasks_per_node"]}}
-            --constraint={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["constraint"]}}
-            {% if scheduling["RunJediConvertStateSoca2ciceExecutable"]["partition"] %}
-            --partition={{scheduling["RunJediConvertStateSoca2ciceExecutable"]["partition"]}}
-            {% endif %}
+        {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"

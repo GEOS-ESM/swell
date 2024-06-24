@@ -40,10 +40,6 @@ clean_patterns:
 gradient_norm_reduction:
   default_value: 1e-10
 
-gsibec_configuration:
-  default_value:
-  - None
-
 horizontal_resolution:
   default_value: 1440x1080
   options:
