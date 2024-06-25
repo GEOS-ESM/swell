@@ -12,7 +12,7 @@ import logging
 import platform as pltfrm
 import unittest
 
-from unittest.mock import patch
+# from unittest.mock import patch
 
 from swell.utilities.slurm import prepare_scheduling_dict
 
@@ -23,11 +23,11 @@ class SLURMConfigTest(unittest.TestCase):
 
     # Mock the `slurm_global_directives` function to ignore "real"
     # configuration.
-    @patch("swell.utilities.slurm.slurm_global_defaults")
-    def test_slurm_config(self, mock_global_defaults):
+    # @patch("swell.utilities.slurm.slurm_global_defaults")
+    def test_slurm_config(self): # , mock_global_defaults):
 
         # Fake user-specified global values (for consistent unit tests)
-        mock_global_defaults.return_value = {"qos": "dastest"}
+        # mock_global_defaults.return_value = {"qos": "dastest"}
 
         logger = logging.getLogger()
 
@@ -66,7 +66,7 @@ class SLURMConfigTest(unittest.TestCase):
             # Hard-coded global defaults (constraint is platform-specific)
             # assert sd["EvaObservations"]["directives"][mc]["constraint"] == "cas|sky"
             # Global user-specific defaults (NOTE: mocked above!)
-            assert sd["EvaObservations"]["directives"][mc]["qos"] == "dastest"
+            # assert sd["EvaObservations"]["directives"][mc]["qos"] == "dastest"
             # Hard-coded task-specific defaults
             assert sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"] == 3
             assert sd["RunJediVariationalExecutable"]["directives"][mc]["ntasks-per-node"] == 36

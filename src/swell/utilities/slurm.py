@@ -45,7 +45,7 @@ def prepare_scheduling_dict(
     # ----------------------------------------------
     # NOTE: Separate function to allow it to be mocked in unit tests.
     # See https://github.com/GEOS-ESM/swell/issues/351
-    user_globals = slurm_global_defaults(logger)
+    # user_globals = slurm_global_defaults(logger)
 
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
     if 'Linux-5.14.21' in pltfrm.platform():
@@ -107,7 +107,7 @@ def prepare_scheduling_dict(
         directives = {
             "job-name": slurm_task,
             **global_defaults,
-            **user_globals,
+            # **user_globals,
             **experiment_globals
         }
         if slurm_task in task_defaults:
@@ -154,7 +154,7 @@ def prepare_scheduling_dict(
                 )
             model_directives = {
                 **model_directives,
-                **user_globals,
+                # **user_globals,
                 **experiment_globals
             }
             if slurm_task in experiment_task_directives:
