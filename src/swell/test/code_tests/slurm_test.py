@@ -24,7 +24,7 @@ class SLURMConfigTest(unittest.TestCase):
     # Mock the `slurm_global_directives` function to ignore "real"
     # configuration.
     # @patch("swell.utilities.slurm.slurm_global_defaults")
-    def test_slurm_config(self): # , mock_global_defaults):
+    def test_slurm_config(self):
 
         # Fake user-specified global values (for consistent unit tests)
         # mock_global_defaults.return_value = {"qos": "dastest"}
