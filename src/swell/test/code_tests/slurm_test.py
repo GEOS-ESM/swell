@@ -7,12 +7,8 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
 import logging
-import platform as pltfrm
 import unittest
-
-# from unittest.mock import patch
 
 from swell.utilities.slurm import prepare_scheduling_dict
 
@@ -21,13 +17,7 @@ from swell.utilities.slurm import prepare_scheduling_dict
 
 class SLURMConfigTest(unittest.TestCase):
 
-    # Mock the `slurm_global_directives` function to ignore "real"
-    # configuration.
-    # @patch("swell.utilities.slurm.slurm_global_defaults")
     def test_slurm_config(self):
-
-        # Fake user-specified global values (for consistent unit tests)
-        # mock_global_defaults.return_value = {"qos": "dastest"}
 
         logger = logging.getLogger()
 
@@ -51,35 +41,37 @@ class SLURMConfigTest(unittest.TestCase):
             }
         }
 
-        # prepare_scheduling_dict requires consistent platform input
-        # This is a temporary solution until we have a more robust way
-        # ----------------------------------------------------------
-        current_platform = "nccs_discover"
+        # Platform-specific definitions and tests
+        sd_discover = prepare_scheduling_dict(logger, experiment_dict,
+                                              platform="nccs_discover",
+                                              unit_test=True)
+        self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
+                         ["constraint"], "cas|sky")
 
-        # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-        if 'Linux-5.14.21' in pltfrm.platform():
-            current_platform = "nccs_discover_sles15"
+        sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
+                                                     platform="nccs_discover_sles15",
+                                                     unit_test=True)
+        self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
+                         ["all"]["constraint"], "mil")
 
-        sd = prepare_scheduling_dict(logger, experiment_dict, platform=current_platform)
+        # Platform generic tests
+        for sd in [sd_discover, sd_discover_sles15]:
+            for mc in ["all", "geos_atmosphere", "geos_ocean"]:
+                # Hard-coded task-specific defaults
+                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
+                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]
+                                 ["ntasks-per-node"], 36)
+                self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]["ntasks-per-node"], 1)
+                # Global defaults from experiment dict
+                self.assertEqual(sd["BuildJedi"]["directives"][mc]["account"], "x1234")
+                self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]["account"],
+                                 "x1234")
+                # Task-specific, model-generic config
+                self.assertEqual(sd["EvaObservations"]["directives"][mc]["account"], "x5678")
+                self.assertEqual(sd["EvaObservations"]["directives"][mc]["ntasks-per-node"], 4)
 
-        for mc in ["all", "geos_atmosphere", "geos_ocean"]:
-            # Hard-coded global defaults (constraint is platform-specific)
-            # assert sd["EvaObservations"]["directives"][mc]["constraint"] == "cas|sky"
-            # Global user-specific defaults (NOTE: mocked above!)
-            # assert sd["EvaObservations"]["directives"][mc]["qos"] == "dastest"
-            # Hard-coded task-specific defaults
-            assert sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"] == 3
-            assert sd["RunJediVariationalExecutable"]["directives"][mc]["ntasks-per-node"] == 36
-            assert sd["RunJediUfoTestsExecutable"]["directives"][mc]["ntasks-per-node"] == 1
-            # Global defaults from experiment dict
-            assert sd["BuildJedi"]["directives"][mc]["account"] == "x1234"
-            assert sd["RunJediUfoTestsExecutable"]["directives"][mc]["account"] == "x1234"
-            # Task-specific, model-generic config
-            assert sd["EvaObservations"]["directives"][mc]["account"] == "x5678"
-            assert sd["EvaObservations"]["directives"][mc]["ntasks-per-node"] == 4
-
-        # Task-specific, model-specific configs
-        assert sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"] == 2
-        assert sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"] == 4
+            # Task-specific, model-specific configs
+            self.assertEqual(sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"], 2)
+            self.assertEqual(sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"], 4)
 
 # --------------------------------------------------------------------------------------------------

@@ -6,19 +6,20 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import importlib.resources
-# import os
+import importlib
 import platform as pltfrm
 import re
 import yaml
 
 from swell.utilities.logger import Logger
+from importlib import resources
 
 
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
     platform: str,
+    unit_test: bool = False
 ):
 
     # Obtain platform-specific SLURM directives and set them as global defaults
@@ -28,10 +29,15 @@ def prepare_scheduling_dict(
 
     # Import the path dynamically
     # ------------------------------
-    path_import = __import__(platform_path, fromlist=[''])
+    try:
+        path_import = importlib.import_module(platform_path)
+    except ModuleNotFoundError:
+        raise Exception(f"Platform '{platform}' has not been configured in SWELL")
+    except Exception as err:
+        raise err
 
     logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
-    with importlib.resources.open_text(path_import, 'slurm.yaml') as yaml_file:
+    with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
         global_defaults = yaml.safe_load(yaml_file)
 
     # Hard-coded SLURM defaults for certain tasks
@@ -41,17 +47,12 @@ def prepare_scheduling_dict(
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}}
     }
 
-    # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
-    # ----------------------------------------------
-    # NOTE: Separate function to allow it to be mocked in unit tests.
-    # See https://github.com/GEOS-ESM/swell/issues/351
-    # user_globals = slurm_global_defaults(logger)
-
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-5.14.21' in pltfrm.platform():
-        current_platform = "nccs_discover_sles15"
-        assert platform == current_platform, \
-            f"Inconsistent platfrom choice: {platform} vs. {current_platform}"
+    if 'Linux-5.14.21' in pltfrm.platform() and not unit_test:
+        assert platform == "nccs_discover_sles15", (
+            "'Linux-5.14.21' detected, which implies platform 'nccs_discover_sles15. " +
+            f"That is inconsistent with user-specified platform '{platform}'."
+        )
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
@@ -107,7 +108,6 @@ def prepare_scheduling_dict(
         directives = {
             "job-name": slurm_task,
             **global_defaults,
-            # **user_globals,
             **experiment_globals
         }
         if slurm_task in task_defaults:
@@ -154,7 +154,6 @@ def prepare_scheduling_dict(
                 )
             model_directives = {
                 **model_directives,
-                # **user_globals,
                 **experiment_globals
             }
             if slurm_task in experiment_task_directives:
@@ -198,19 +197,6 @@ def validate_directives(directive_dict):
     assert \
         len(invalid_directives) == 0, \
         f"The following are invalid SLURM directives: {invalid_directives}"
-
-
-# def slurm_global_defaults(
-#     logger: Logger,
-#     yaml_path: str = "~/.swell/swell-slurm.yaml"
-# ) -> dict:
-#     yaml_path = os.path.expanduser(yaml_path)
-#     user_globals = {}
-#     if os.path.exists(yaml_path):
-#         logger.info(f"Loading SLURM user configuration from {yaml_path}")
-#         with open(yaml_path, "r") as yaml_file:
-#             user_globals = yaml.safe_load(yaml_file)
-#     return user_globals
 
 
 man_sbatch = """
