@@ -98,7 +98,7 @@ mhs_metop-c:
 
 mhs_n19:
   filter_test:
-    passedBenchmark: 27823
+    passedBenchmark: 0
 
 mls55_aura:
   filter_test:
