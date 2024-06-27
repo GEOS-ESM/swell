@@ -19,7 +19,6 @@ def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
     platform: str,
-    unit_test: bool = False
 ):
 
     # Obtain platform-specific SLURM directives and set them as global defaults
@@ -48,7 +47,7 @@ def prepare_scheduling_dict(
     }
 
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-5.14.21' in pltfrm.platform() and not unit_test:
+    if 'Linux-5.14.21' in pltfrm.platform():
         assert platform == "nccs_discover_sles15", (
             "'Linux-5.14.21' detected, which implies platform 'nccs_discover_sles15. " +
             f"That is inconsistent with user-specified platform '{platform}'."

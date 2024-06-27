@@ -11,13 +11,15 @@ import logging
 import unittest
 
 from swell.utilities.slurm import prepare_scheduling_dict
+from unittest.mock import patch
 
 # --------------------------------------------------------------------------------------------------
 
 
 class SLURMConfigTest(unittest.TestCase):
 
-    def test_slurm_config(self):
+    @patch("platform.platform")
+    def test_slurm_config(self, platform_mocked):
 
         logger = logging.getLogger()
 
@@ -41,18 +43,22 @@ class SLURMConfigTest(unittest.TestCase):
             }
         }
 
+        platform_mocked.return_value = "Linux-4.12.14"
         # Platform-specific definitions and tests
         sd_discover = prepare_scheduling_dict(logger, experiment_dict,
-                                              platform="nccs_discover",
-                                              unit_test=True)
+                                              platform="nccs_discover")
         self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
                          ["constraint"], "cas|sky")
 
+        platform_mocked.return_value = "Linux-5.14.21"
         sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
-                                                     platform="nccs_discover_sles15",
-                                                     unit_test=True)
+                                                     platform="nccs_discover_sles15")
         self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
                          ["all"]["constraint"], "mil")
+
+        with self.assertRaises(AssertionError):
+            prepare_scheduling_dict(logger, experiment_dict,
+                                    platform="nccs_discover")
 
         # Platform generic tests
         for sd in [sd_discover, sd_discover_sles15]:
