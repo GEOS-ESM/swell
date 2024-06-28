@@ -1,4 +1,4 @@
-# Installing swell using Lmod
+# Installing SWELL using Lmod on SCU 16 (SLES 12)
 
 Lmod is a powerful tool for managing multiple versions of software. The process of installing is a little involved but `py_lmod_installer` software is installed on Discover that eases the process.
 
@@ -24,7 +24,7 @@ module load py_lmod_installer
 ```
 
 4. Issue the command to install swell:
- 
+
 
 ```bash
 py_installer GEOS-ESM/swell <local_name>
