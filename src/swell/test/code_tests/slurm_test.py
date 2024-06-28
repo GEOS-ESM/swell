@@ -18,10 +18,16 @@ from unittest.mock import patch
 
 class SLURMConfigTest(unittest.TestCase):
 
+    # Mock the `slurm_global_directives` function to ignore "real"
+    # configuration and platform-specific settings
+    @patch("swell.utilities.slurm.slurm_global_defaults")
     @patch("platform.platform")
-    def test_slurm_config(self, platform_mocked):
+    def test_slurm_config(self, platform_mocked, mock_global_defaults):
 
         logger = logging.getLogger()
+
+        # Fake user-specified global values (for consistent unit tests)
+        mock_global_defaults.return_value = {"qos": "dastest"}
 
         # Nested example
         experiment_dict = {
@@ -55,6 +61,8 @@ class SLURMConfigTest(unittest.TestCase):
                                                      platform="nccs_discover_sles15")
         self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
                          ["all"]["constraint"], "mil")
+        self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
+                         ["all"]["qos"], "dastest")
 
         with self.assertRaises(AssertionError):
             prepare_scheduling_dict(logger, experiment_dict,

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import importlib
+import os
 import platform as pltfrm
 import re
 import yaml
@@ -45,6 +46,12 @@ def prepare_scheduling_dict(
         "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}}
     }
+
+    # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
+    # ----------------------------------------------
+    # NOTE: Separate function to allow it to be mocked in unit tests.
+    # See https://github.com/GEOS-ESM/swell/issues/351
+    user_globals = slurm_global_defaults(logger)
 
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
     if 'Linux-5.14.21' in pltfrm.platform():
@@ -107,6 +114,7 @@ def prepare_scheduling_dict(
         directives = {
             "job-name": slurm_task,
             **global_defaults,
+            **user_globals,
             **experiment_globals
         }
         if slurm_task in task_defaults:
@@ -153,6 +161,7 @@ def prepare_scheduling_dict(
                 )
             model_directives = {
                 **model_directives,
+                **user_globals,
                 **experiment_globals
             }
             if slurm_task in experiment_task_directives:
@@ -196,6 +205,19 @@ def validate_directives(directive_dict):
     assert \
         len(invalid_directives) == 0, \
         f"The following are invalid SLURM directives: {invalid_directives}"
+
+
+def slurm_global_defaults(
+    logger: Logger,
+    yaml_path: str = "~/.swell/swell-slurm.yaml"
+) -> dict:
+    yaml_path = os.path.expanduser(yaml_path)
+    user_globals = {}
+    if os.path.exists(yaml_path):
+        logger.info(f"Loading SLURM user configuration from {yaml_path}")
+        with open(yaml_path, "r") as yaml_file:
+            user_globals = yaml.safe_load(yaml_file)
+    return user_globals
 
 
 man_sbatch = """
