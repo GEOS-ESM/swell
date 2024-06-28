@@ -12,7 +12,8 @@
 
   - [Platforms](platforms/platforms.md)
   - **Discover**
-    - [Installing swell](platforms/discover/installing_swell_discover.md)
+    - [Installing swell on SLES12](platforms/discover/installing_swell_discover_sles12.md)
+    - [Installing swell on SLES15](platforms/discover/installing_swell_discover_sles15.md)
     - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)
 
 - Practical Examples
