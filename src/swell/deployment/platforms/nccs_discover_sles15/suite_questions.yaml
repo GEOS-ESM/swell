@@ -1,0 +1,5 @@
+experiment_root:
+  default_value: /discover/nobackup/${USER}/SwellExperiments
+
+r2d2_local_path:
+  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
