@@ -296,7 +296,6 @@ class GetObservations(taskBase):
         # Get the previous cycle datetime string and replace it in the bias path
         previous_cycle_dto = self.cycle_time_dto() - isodate.parse_duration(window_length)
         previous_cycle_dt_str = previous_cycle_dto.strftime(datetime_formats['directory_format'])
-        dt_obj = dt.strptime(dt_str, datetime_formats['directory_format'])
 
         bias_path = bias_path.replace(dt_str, previous_cycle_dt_str)
 
