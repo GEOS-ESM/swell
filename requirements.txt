@@ -2,6 +2,7 @@ click>=8.0.0
 jinja2>=3.0.3
 pyyaml>=6.0
 pycodestyle>=2.11.0
+numpy<2
 pandas>=1.4.0
 isodate>=0.5.4
 f90nml>=1.4.3
