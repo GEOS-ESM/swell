@@ -60,7 +60,6 @@ obs filters:
   filter variables:
   - name: brightnessTemperature
     channels: *mhs_n19_available_channels
-    test variables:
   minvalue: 50.0
   maxvalue: 550.0
 - filter: Bounds Check
