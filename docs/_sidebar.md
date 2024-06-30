@@ -35,4 +35,5 @@
 
   - [Requirements](requirements.md)
 
+- [Editing the docs](editing_docs.md)
 - [Useful links](useful_links.md)
