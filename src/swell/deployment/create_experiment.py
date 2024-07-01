@@ -27,7 +27,7 @@ from swell.utilities.slurm import prepare_scheduling_dict
 # --------------------------------------------------------------------------------------------------
 
 
-def clone_config(configuration, experiment_id, method, platform, advanced):
+def clone_config(configuration, experiment_id, method, platform):
 
     # Create a logger
     logger = Logger('SwellCloneExperiment')
@@ -53,13 +53,13 @@ def clone_config(configuration, experiment_id, method, platform, advanced):
     override_dict['experiment_id'] = experiment_id
 
     # First create the configuration for the experiment.
-    return prepare_config(suite, method, override_dict['platform'], override_dict, advanced)
+    return prepare_config(suite, method, override_dict['platform'], override_dict)
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(suite, method, platform, override, advanced, slurm):
+def prepare_config(suite, method, platform, override, slurm):
 
     # Create a logger
     # ---------------
@@ -142,7 +142,7 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(suite, method, platform, override, advanced, slurm):
+def create_experiment_directory(suite, method, platform, override, slurm):
 
     # Create a logger
     # ---------------
@@ -150,7 +150,7 @@ def create_experiment_directory(suite, method, platform, override, advanced, slu
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, method, platform, override, advanced, slurm)
+    experiment_dict_str = prepare_config(suite, method, platform, override, slurm)
 
     # Load the string using yaml
     # --------------------------

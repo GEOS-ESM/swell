@@ -58,8 +58,6 @@ platform_help = 'If using defaults for input_method, this option is used to dete
 override_help = 'After generating the config file, parameters inside can be overridden ' + \
                 'using values from the override config file.'
 
-advanced_help = 'Show configuration questions which are otherwise not shown to the user.'
-
 no_detach_help = 'Tells the workflow manager not to detach. That is to say run the entire ' + \
                  'run the entire workflow in the foreground and pass back a return code.'
 
@@ -91,9 +89,8 @@ or for task-model combinations.
 @click.option('-p', '--platform', 'platform', default='nccs_discover',
               type=click.Choice(get_platforms()), help=platform_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
-@click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
-def create(suite, input_method, platform, override, advanced, slurm):
+def create(suite, input_method, platform, override, slurm):
     """
     Create a new experiment
 
@@ -104,7 +101,7 @@ def create(suite, input_method, platform, override, advanced, slurm):
 
     """
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite, input_method, platform, override, slurm)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -116,8 +113,7 @@ def create(suite, input_method, platform, override, advanced, slurm):
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default=None, help=platform_help)
-@click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
-def clone(configuration, experiment_id, input_method, platform, advanced):
+def clone(configuration, experiment_id, input_method, platform):
     """
     Clone an existing experiment
 
@@ -129,8 +125,7 @@ def clone(configuration, experiment_id, input_method, platform, advanced):
 
     """
     # Create experiment configuration by cloning from existing experiment
-    experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform,
-                                       advanced)
+    experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform)
 
     # Create the experiment directory
     create_experiment_directory(experiment_dict_str)
