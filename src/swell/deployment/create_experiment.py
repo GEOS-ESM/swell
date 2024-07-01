@@ -67,10 +67,10 @@ def prepare_config(suite, method, platform, override, slurm):
 
     # Assert valid method
     # -------------------
-    valid_tasks = ['defaults', 'cli']
-    if method not in valid_tasks:
+    valid_methods = ['defaults', 'cli']
+    if method not in valid_methods:
         logger.abort(f'In Suites constructor method \'{method}\' not one of the valid ' +
-                     f'tasks {valid_tasks}')
+                     f'tasks {valid_methods}')
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
