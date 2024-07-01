@@ -201,8 +201,8 @@ class GetObservations(taskBase):
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satellite bias correction files
-            # -------------------------------
+            # Satellite bias correction (coefficient) files
+            # ---------------------------------------------
             target_file = observation_dict['obs bias']['input file']
 
             # We assume fetch is required unless we are cycling VarBC
@@ -232,6 +232,22 @@ class GetObservations(taskBase):
                       type='bc',
                       experiment=obs_experiment,
                       file_type='satbias')
+
+            # Change permission
+            os.chmod(target_file, 0o644)
+
+            # Satellite bias correction (covariance) files
+            # --------------------------------------------
+            target_file = observation_dict['obs bias']['covariance']['prior']['input file']
+            self.logger.info(f'Processing satellite bias_cov file {target_file}')
+
+            fetch(date=background_time,
+                  target_file=target_file,
+                  provider='gsi',
+                  obs_type=observation,
+                  type='bc',
+                  experiment=obs_experiment,
+                  file_type='satbias_cov')
 
             # Change permission
             os.chmod(target_file, 0o644)
