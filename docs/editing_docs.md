@@ -12,6 +12,10 @@ For example, a simple approach is to use the following command (assuming `python
 cd docs && python -m http.server 3000
 ```
 
-You can then preview the documentation by browsing to `http://localhost:3000` in any web browser running on the current machine.
+You can then preview the documentation by browsing to `http://localhost:3000` in any web browser running on _the current machine_.
 
 Any changes you make to any of the files in `/docs` will be applied as soon as you refresh the page.
+
+Note that "current machine" means the machine where the source code is located.
+The recommended place to edit and preview documentation is _your local machine_.
+It is technically possible to do all of this on a remote system, either by running a browser on that machine with X11 forwarding or via SSH port forwarding of the target port (3000), but it's much easier and faster to just clone the repository locally.
