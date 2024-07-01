@@ -221,12 +221,12 @@ class GetObservations(taskBase):
             self.logger.info(f'Processing satellite bias_cov file {target_file}')
 
             fetch(date=background_time,
-                     target_file=target_file,
-                     provider='gsi',
-                     obs_type=observation,
-                     type='bc',
-                     experiment=obs_experiment,
-                     file_type='satbias_cov')
+                  target_file=target_file,
+                  provider='gsi',
+                  obs_type=observation,
+                  type='bc',
+                  experiment=obs_experiment,
+                  file_type='satbias_cov')
 
             # Change permission
             os.chmod(target_file, 0o644)
