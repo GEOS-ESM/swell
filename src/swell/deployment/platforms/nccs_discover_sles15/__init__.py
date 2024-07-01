@@ -4,8 +4,6 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-[pycodestyle]
-max-line-length = 100
-indent-size = 4
-statistics = True
-exclude = ._*, build
+import os
+
+repo_directory = os.path.dirname(__file__)

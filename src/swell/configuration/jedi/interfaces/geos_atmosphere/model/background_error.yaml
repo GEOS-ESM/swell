@@ -13,6 +13,7 @@ saber outer blocks:
   state variables to inverse: &bvars [eastward_wind,northward_wind,air_temperature,surface_pressure,
                                       specific_humidity,cloud_liquid_ice,cloud_liquid_water,
                                       mole_fraction_of_ozone_in_air,
+                                      fraction_of_ocean,fraction_of_lake,fraction_of_ice,
                                       sfc_geopotential_height_times_grav]
   gsi akbk: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/akbk{{vertical_resolution}}.nc4'
   gsi error covariance file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'

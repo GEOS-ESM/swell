@@ -182,7 +182,7 @@ def create_experiment_directory(suite, method, platform, override, advanced, slu
     # resolve the templates and write the suite file to the experiment suite directory.
     # --------------------------------------------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict)
+    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
@@ -357,7 +357,7 @@ def create_modules_csh(logger, exp_suite_path):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict):
+def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform):
 
     # Open suite file from swell
     # --------------------------
@@ -425,7 +425,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                              'there are no model components to gather them from or ' +
                              'they are not provided in the experiment dictionary.')
 
-    render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict)
+    render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
     # Default execution time limit for everthing is PT1H
     for slurm_task in render_dictionary['scheduling'].keys():
