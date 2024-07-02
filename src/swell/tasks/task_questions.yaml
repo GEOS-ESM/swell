@@ -139,6 +139,16 @@ crtm_coeff_dir:
   - SaveObsDiags
   type: string
 
+cycling_varbc:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: Do you want to use cycling VarBC option?
+  tasks:
+  - GetObservations
+  type: boolean
+
 ensemble_hofx_packets:
   ask_question: true
   default_value: defer_to_model

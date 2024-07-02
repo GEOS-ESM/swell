@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import isodate
 import numpy as np
 import os
 import netCDF4 as nc
@@ -98,6 +99,7 @@ class GetObservations(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
         r2d2_local_path = self.config.r2d2_local_path()
+        cycling_varbc = self.config.cycling_varbc(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -199,21 +201,56 @@ class GetObservations(taskBase):
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satellite bias correction files
-            # -------------------------------
-            target_file = observation_dict['obs bias']['input file']
-            self.logger.info(f'Processing satellite bias file {target_file}')
+            # Satellite bias correction (coeff and cov) files
+            # -----------------------------------------------
+            target_sbccoef = observation_dict['obs bias']['input file']
+            target_sbccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
-            fetch(date=background_time,
-                  target_file=target_file,
-                  provider='gsi',
-                  obs_type=observation,
-                  type='bc',
-                  experiment=obs_experiment,
-                  file_type='satbias')
+            # We assume fetch is required unless we are cycling VarBC
+            fetch_required = True
+
+            if cycling_varbc:
+                if self.cycle_time_dto() == self.first_cycle_time_dto():
+                    self.logger.info(f'Process satellite file {target_sbccoef} for the first cycle')
+                    self.logger.info(f'Process satellite file {target_sbccovr} for the first cycle')
+
+                else:
+                    self.logger.info(f'Using satellite bias files from the previous cycle')
+                    previous_bias_coef = self.previous_cycle_bias(target_sbccoef, window_length)
+                    previous_bias_covr = self.previous_cycle_bias(target_sbccovr, window_length)
+
+                    # Link the previous bias file to the current cycle directory
+                    # -----------------------------------------------------------
+                    self.logger.info(f'Linking {previous_bias_coef} to {target_sbccoef}')
+                    self.geos.linker(previous_bias_coef, target_sbccoef, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_covr} to {target_sbccovr}')
+                    self.geos.linker(previous_bias_covr, target_sbccovr, dst_dir=self.cycle_dir())
+
+                    fetch_required = False
+
+            # This will skip the fetch if we are cycling VarBC
+            if fetch_required:
+                self.logger.info(f'Processing satellite bias file {target_sbccoef}')
+                fetch(date=background_time,
+                      target_file=target_sbccoef,
+                      provider='gsi',
+                      obs_type=observation,
+                      type='bc',
+                      experiment=obs_experiment,
+                      file_type='satbias')
+
+                self.logger.info(f'Processing satellite bias file {target_sbccovr}')
+                fetch(date=background_time,
+                      target_file=target_sbccovr,
+                      provider='gsi',
+                      obs_type=observation,
+                      type='bc',
+                      experiment=obs_experiment,
+                      file_type='satbias_cov')
 
             # Change permission
-            os.chmod(target_file, 0o644)
+            os.chmod(target_sbccoef, 0o644)
+            os.chmod(target_sbccovr, 0o644)
 
             # Satellite time lapse
             # --------------------
@@ -256,6 +293,33 @@ class GetObservations(taskBase):
                 yield p['tlapse']
 
         return
+    # ----------------------------------------------------------------------------------------------
+
+    def previous_cycle_bias(self,
+                            target_file: str,
+                            window_length: str
+                            ) -> str:
+
+        # This requires two modifications, one in the directory and one in the filename.
+        # Start with the changing the bias filename
+        # -----------------------------------------------------------------
+        bias_file = os.path.basename(target_file)
+
+        # Get the date bit from the target file
+        bias_path = os.path.dirname(target_file)
+        dt_str = bias_path.split('/')[-2]
+
+        # Get the previous cycle datetime string and replace it in the bias path
+        previous_cycle_dto = self.cycle_time_dto() - isodate.parse_duration(window_length)
+        previous_cycle_dt_str = previous_cycle_dto.strftime(datetime_formats['directory_format'])
+
+        bias_path = bias_path.replace(dt_str, previous_cycle_dt_str)
+
+        # Combine the new bias path and the file name
+        # ---------------------------------------------
+        new_target_file = os.path.join(bias_path, bias_file)
+
+        return new_target_file
 
     # ----------------------------------------------------------------------------------------------
 
