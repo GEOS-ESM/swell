@@ -201,56 +201,56 @@ class GetObservations(taskBase):
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satellite bias correction (coefficient) files
-            # ---------------------------------------------
-            target_file = observation_dict['obs bias']['input file']
+            # Satellite bias correction (coeff and cov) files
+            # -----------------------------------------------
+            target_sbccoef = observation_dict['obs bias']['input file']
+            target_sbccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
             # We assume fetch is required unless we are cycling VarBC
             fetch_required = True
 
             if cycling_varbc:
                 if self.cycle_time_dto() == self.first_cycle_time_dto():
-                    self.logger.info(f'Process satellite file {target_file} for the first cycle')
+                    self.logger.info(f'Process satellite file {target_sbccoef} for the first cycle')
+                    self.logger.info(f'Process satellite file {target_sbccovr} for the first cycle')
 
                 else:
                     self.logger.info(f'Using satellite bias files from the previous cycle')
-                    previous_bias_file = self.previous_cycle_bias(target_file, window_length)
+                    previous_bias_coef = self.previous_cycle_bias(target_sbccoef, window_length)
+                    previous_bias_covr = self.previous_cycle_bias(target_sbccovr, window_length)
 
                     # Link the previous bias file to the current cycle directory
                     # -----------------------------------------------------------
-                    self.logger.info(f'Linking {previous_bias_file} to {target_file}')
-                    self.geos.linker(previous_bias_file, target_file, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_coef} to {target_sbccoef}')
+                    self.geos.linker(previous_bias_coef, target_sbccoef, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_covr} to {target_sbccovr}')
+                    self.geos.linker(previous_bias_covr, target_sbccovr, dst_dir=self.cycle_dir())
+
                     fetch_required = False
 
             # This will skip the fetch if we are cycling VarBC
             if fetch_required:
-                self.logger.info(f'Processing satellite bias file {target_file}')
+                self.logger.info(f'Processing satellite bias file {target_sbccoef}')
                 fetch(date=background_time,
-                      target_file=target_file,
+                      target_file=target_sbccoef,
                       provider='gsi',
                       obs_type=observation,
                       type='bc',
                       experiment=obs_experiment,
                       file_type='satbias')
 
-            # Change permission
-            os.chmod(target_file, 0o644)
-
-            # Satellite bias correction (covariance) files
-            # --------------------------------------------
-            target_file = observation_dict['obs bias']['covariance']['prior']['input file']
-            self.logger.info(f'Processing satellite bias_cov file {target_file}')
-
-            fetch(date=background_time,
-                  target_file=target_file,
-                  provider='gsi',
-                  obs_type=observation,
-                  type='bc',
-                  experiment=obs_experiment,
-                  file_type='satbias_cov')
+                self.logger.info(f'Processing satellite bias file {target_sbccovr}')
+                fetch(date=background_time,
+                      target_file=target_sbccovr,
+                      provider='gsi',
+                      obs_type=observation,
+                      type='bc',
+                      experiment=obs_experiment,
+                      file_type='satbias_cov')
 
             # Change permission
-            os.chmod(target_file, 0o644)
+            os.chmod(target_sbccoef, 0o644)
+            os.chmod(target_sbccovr, 0o644)
 
             # Satellite time lapse
             # --------------------
