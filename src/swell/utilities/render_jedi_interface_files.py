@@ -61,6 +61,7 @@ class JediConfigRendering():
             'background_frequency',
             'background_time',
             'crtm_coeff_dir',
+            'cycling_varbc',
             'ensemble_hofx_packets',
             'ensemble_hofx_strategy',
             'ensemble_num_members',

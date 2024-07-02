@@ -55,4 +55,3 @@ models:
     clean_patterns:
     - '*.txt'
     - '*.csv'
-    - '*satbias.nc4'

@@ -425,6 +425,15 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                              'there are no model components to gather them from or ' +
                              'they are not provided in the experiment dictionary.')
 
+    # Cycling VarBC exception (only for geos_atmosphere)
+    if 'cycling_varbc' in suite_file:
+        if 'geos_atmosphere' in model_components:
+            render_dictionary['cycling_varbc'] = \
+                experiment_dict['models']['geos_atmosphere']['cycling_varbc']
+        else:
+            logger.abort('The suite file required cycling_varbc but ' +
+                         'geos_atmosphere is not in the model components.')
+
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
     # Default execution time limit for everthing is PT1H

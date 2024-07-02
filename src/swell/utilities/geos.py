@@ -174,6 +174,11 @@ class Geos():
         if dst == '':
             dst = os.path.basename(src)
 
+        # Check if src file exists
+        # ------------------------
+        if not os.path.exists(src):
+            self.logger.abort(f'Source file does not exist: {src}')
+
         # Assures existing links will be unlinked
         # -----------------------------------
         if os.path.lexists(os.path.join(dst_dir, dst)):
