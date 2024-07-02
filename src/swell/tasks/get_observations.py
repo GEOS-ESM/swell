@@ -99,7 +99,7 @@ class GetObservations(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
         r2d2_local_path = self.config.r2d2_local_path()
-        cycling_varbc = self.config.cycling_varbc()
+        cycling_varbc = self.config.cycling_varbc(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
