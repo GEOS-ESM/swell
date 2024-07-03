@@ -25,6 +25,7 @@ class GetGeosRestart(taskBase):
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
         self.swell_static_files = self.config.swell_static_files()
+        self.swell_static_files_user = self.config.swell_static_files_user(None)
 
         # Create forecast_dir and INPUT
         # ----------------------------
@@ -41,6 +42,24 @@ class GetGeosRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
+    def _cp_initial_restarts(self, rst_path, static_files):
+        src = os.path.join(static_files, 'geos', 'restarts', rst_path, '*_rst')
+
+        for filepath in list(glob.glob(src)):
+            filename = os.path.basename(filepath)
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(filename))
+
+        src = os.path.join(static_files, 'geos', 'restarts', rst_path, 'tile.bin')
+        copy_to_dst_dir(self.logger, src, self.forecast_dir('tile.bin'))
+
+        # Consider the case of multiple MOM restarts
+        # -------------------------------------------
+        src = os.path.join(static_files, 'geos', 'restarts', rst_path, 'MOM.res*nc')
+
+        for filepath in list(glob.glob(src)):
+            filename = os.path.basename(filepath)
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(['INPUT', filename]))
+
     def initial_restarts(self, rst_path):
 
         # GEOS forecast checkpoint files are created in advance
@@ -48,21 +67,11 @@ class GetGeosRestart(taskBase):
         # -------------------------------------------------------------------
         self.logger.info('GEOS restarts are copied from a previous forecast')
 
-        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, '*_rst')
+        self._cp_initial_restarts(rst_path, self.swell_static_files)
 
-        for filepath in list(glob.glob(src)):
-            filename = os.path.basename(filepath)
-            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(filename))
+        if self.swell_static_files_user is not None:
+            self.logger.info(f'Overwriting some files with files from: {self.swell_static_files_user}')
+            self._cp_initial_restarts(rst_path, self.swell_static_files_user)
 
-        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'tile.bin')
-        copy_to_dst_dir(self.logger, src, self.forecast_dir('tile.bin'))
-
-        # Consider the case of multiple MOM restarts
-        # -------------------------------------------
-        src = os.path.join(self.swell_static_files, 'geos', 'restarts', rst_path, 'MOM.res*nc')
-
-        for filepath in list(glob.glob(src)):
-            filename = os.path.basename(filepath)
-            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(['INPUT', filename]))
 
 # --------------------------------------------------------------------------------------------------

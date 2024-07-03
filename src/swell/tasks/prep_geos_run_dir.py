@@ -34,9 +34,14 @@ class PrepGeosRunDir(taskBase):
         """
 
         self.swell_static_files = self.config.swell_static_files()
+        self.swell_static_files_user = self.config.swell_static_files_user(None)
         # TODO: exp. directory location requires better handling
         self.geos_exp_dir = os.path.join(self.swell_static_files, 'geos', 'run_dirs',
                                          self.config.geos_experiment_directory())
+        self.geos_exp_dir_user = None
+        if self.swell_static_files_user is not None:
+            self.geos_exp_dir_user = os.path.join(self.swell_static_files_user, 'geos', 'run_dirs',
+                                                  self.config.geos_experiment_directory())
         self.geos_source = self.config.existing_geos_gcm_source_path()
 
         self.logger.info('Preparing GEOS Forecast directory')
@@ -359,6 +364,11 @@ class PrepGeosRunDir(taskBase):
         # ---------------------------------
         src_dirs.append(self.geos_exp_dir)
         src_dirs.append(os.path.join(self.geos_exp_dir, 'RC'))
+        # NOTE: Put these after because later copy operations overwrite earlier
+        # ones, meaning that user files get higher priority than main files.
+        if self.geos_exp_dir_user is not None:
+            src_dirs.append(self.geos_exp_dir_user)
+            src_dirs.append(os.path.join(self.geos_exp_dir_user, 'RC'))
         src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:

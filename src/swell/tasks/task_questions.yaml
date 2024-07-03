@@ -771,6 +771,8 @@ swell_static_files_user:
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
   - GenerateBClimatologyByLinking
+  - GetGeosRestart
+  - PrepGeosRunDir
   type: string
 
 total_processors:
