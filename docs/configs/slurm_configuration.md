@@ -20,6 +20,8 @@ This corresponds to the command:
 sbatch ... --account=x1234 --nodes=1 --qos=allqueues
 ```
 
+Since there are a few SLURM directives that are platform specific, they are stored under `deployment/platforms/{platform_name}/slurm.yaml`. For instance, this would set `constraint: cas` for `nccs_discover` or `constraint: mil` for `nccs_discover_sles15`.
+
 All `sbatch` directives are supported (see [`man sbatch`](https://slurm.schedmd.com/sbatch.html)).
 However, note that SWELL will only validate that a given directive exists; we do not validate data types, or do anything fancy with type conversion (e.g., concatenation of arrays).
 If in doubt about types, use double quotes around values to force things to be strings.
