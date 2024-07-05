@@ -24,8 +24,9 @@
 
 - Configuration files in swell
 
-  - [Observation configuration](observation_configuration.md)
-  - [Model configuration](model_configuration.md)
+  - [Observation configuration](configs/observation_configuration.md)
+  - [Model configuration](configs/model_configuration.md)
+  - [SLURM configuration](configs/slurm_configuration.md)
 
 - Tasks
 

@@ -47,6 +47,12 @@ fi
 cylc "$@"
 ```
 
+Afterwards, make sure that the `$HOME/bin/cylc` file has executable permission:
+
+```bash
+chmod +x $HOME/bin/cylc
+```
+
 Create a file called `$HOME/.cylc/flow/global.cylc` and fill it with the following:
 
 ```bash

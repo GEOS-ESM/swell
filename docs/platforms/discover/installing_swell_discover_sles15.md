@@ -25,22 +25,24 @@ module load py_lmod_installer/sles15
 
 4. Issue the command to install swell:
 
-
 ```bash
 py_installer GEOS-ESM/swell <local_name>
 ```
-
-The setting `<local_name>` should be replaced with what you want to refer to the package. After installing you will do module load `swell/<local_name>`
-
-
 <details>
-  <summary> <strong> Advanced Tip:</strong> </summary>
+  <summary> <strong> Click here to show the Advanced Tip:</strong> </summary>
 
 If you would like to install a particular branch, you can use the `-b` option:
 
 ```bash
 py_installer GEOS-ESM/swell -b <branch_name> <local_name>
 ```
-</details>
+</details><br>
 
-After the install is completed you should have directories `src`, `modulefiles` and `core` containing the things needed to use swell. In particular you should have `modulefiles/core/swell/<local_name>.lua`.
+The setting `<local_name>` should be replaced with what you want to refer to the package. It is possible to install another installation
+under the same folder with a different `<local_name>`.
+
+After the install is completed you should have directories `src`, `modulefiles` and `core` containing the things needed to use Swell. In particular you should have `modulefiles/core/swell/<local_name>.lua` which allows loading Swell as a module using:
+
+```bash
+ module load swell/<local_name>
+```
