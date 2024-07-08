@@ -46,3 +46,4 @@ After the install is completed you should have directories `src`, `modulefiles` 
 ```bash
  module load swell/<local_name>
 ```
+**Important:** After logging out of Discover and then logging back in, users should source the JEDI module files again by repeating step 2 above before using `module load swell/<local_name>`.
