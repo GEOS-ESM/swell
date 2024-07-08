@@ -14,6 +14,7 @@ To create a `3dvar` suite run the following command. This will use the default `
 ```bash
 swell create 3dvar
 ```
+
 This will create the experiment directory in the default `experiment_root` with the
 default `experiment_id`, which are currently:
 
@@ -22,24 +23,40 @@ experiment_root: /discover/nobackup/{$USER}/SwellExperiments
 experiment_id: {suite_name}-suite
 ```
 
-<details>
-  <summary> <strong> Advanced Tip:</strong> </summary>
-
-If you would like to create the experiment folder at a different location, you can use the override option (`-o` or `--override`):
+`swell create` also contains argument inputs. For instance, `-p` or `--platform` allows
+user to pick which platform they would like to run on.
 
 ```bash
-swell create 3dvar -o override.yaml
+swell create 3dvar -p nccs_discover_sles15
 ```
 
-The `override.yaml` should contain the following keys to override defaults:
+To see all available arguments use the command `swell create --help`.
 
-```yaml
+### Using Defaults with Overrides:
 
-experiment_root: /discover/nobackup/{your_username}/different_folder
-experiment_id: test001
-```
+ - **SLURM override:**
+It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM directives for different models and each individual task. See [SLURM configuration](../configs/slurm_configuration.md) section for more details.
 
-</details>
+- **Overriding** `experiment.yaml`**:**
+  It is possible to override `experiment.yaml` keys using the override argument (`-o` or `--override`).
+  For instance, to create a new experiment folder at a different location with a different id, use the override argument:
+
+   ```bash
+  swell create 3dvar -o override.yaml
+  ```
+
+  The `override.yaml` should contain the following keys to override defaults:
+
+  ```yaml
+  #override.yaml
+  experiment_root: /discover/nobackup/{your_username}/different_folder
+  experiment_id: test001
+  ```
+
+  This would _only_ override default location (`SwellExperiments`) and id (`3dvar-suite`). The same structure
+  could be used for overriding model level keys (i.e., `observations`, `window_type`). Users are encouraged to
+  create default experiment folders first while switching between different platforms to accidentally override
+  platform specific folders.
 
 ### Using CLI (Questionary):
 
