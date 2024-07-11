@@ -58,7 +58,15 @@
             GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
             # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
+
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% else %}
+
+            # Cycling VarBC is inactive, static bias files will be used
             GetObservations-{{model_component}}
+            {% endif %}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
@@ -153,7 +161,7 @@
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 

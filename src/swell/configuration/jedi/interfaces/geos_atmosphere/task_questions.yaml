@@ -36,6 +36,12 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+cycling_varbc:
+  default_value: false
+  options:
+  - true
+  - false
+
 ensemble_hofx_packets:
   default_value: 2
   options: None
