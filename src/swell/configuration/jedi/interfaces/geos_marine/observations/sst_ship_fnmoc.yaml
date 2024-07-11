@@ -16,6 +16,10 @@ obs error:
   covariance model: diagonal
 obs filters:
 - filter: Domain Check
+  where:
+  - variable: {name: GeoVaLs/sea_area_fraction}
+    minvalue: 0.9
+- filter: Domain Check
   action:
     name: reject
   where:

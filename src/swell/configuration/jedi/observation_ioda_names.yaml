@@ -198,20 +198,26 @@ ioda instrument names:
     inst type: conventional
   # Sea-ice
   - ioda name : icec_amsr2_north
-    full name: AMSR2 (Ice Concentration)
-    inst type: conventional
+    full name: AMSR2 North (Ice Concentration)
+    inst type: radiance
   - ioda name : icec_amsr2_south
-    full name: AMSR2 (Ice Concentration)
-    inst type: conventional
+    full name: AMSR2 South (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_nsidc_nh
+    full name: NSIDC North (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_nsidc_sh
+    full name: NSIDC South (Ice Concentration)
+    inst type: radiance
   - ioda name : icec_ssmis_f17_north
     full name: SSMIS (Ice Concentration)
-    inst type: conventional
+    inst type: radiance
   - ioda name : icec_ssmis_f17_south
     full name: SSMIS (Ice Concentration)
-    inst type: conventional
+    inst type: radiance
   - ioda name : icec_ssmis_f18_north
     full name: SSMIS (Ice Concentration)
-    inst type: conventional
+    inst type: radiance
   - ioda name : icec_ssmis_f18_south
     full name: SSMIS (Ice Concentration)
-    inst type: conventional
+    inst type: radiance

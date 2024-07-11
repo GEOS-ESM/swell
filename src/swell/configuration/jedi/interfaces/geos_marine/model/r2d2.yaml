@@ -1,11 +1,14 @@
-# TODO: This will change with get_background tasks
 fetch:
   an:
     - file_type: MOM.res
       filename: '{{cycle_dir}}/MOM6.res.{{local_background_time}}.nc'
+    - file_type: cice.res
+      filename: '{{cycle_dir}}/cice.res.{{local_background_time}}.nc'
   fc:
     - file_type: MOM.res
       filename: '{{cycle_dir}}/MOM6.res.{{local_background_time}}.nc'
+    - file_type: cice.res
+      filename: '{{cycle_dir}}/cice.res.{{local_background_time}}.nc'
 store:
   fc:
     - file_type: MOM.res
