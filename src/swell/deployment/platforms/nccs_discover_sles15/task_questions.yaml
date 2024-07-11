@@ -24,3 +24,4 @@ r2d2_local_path:
 
 swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+
