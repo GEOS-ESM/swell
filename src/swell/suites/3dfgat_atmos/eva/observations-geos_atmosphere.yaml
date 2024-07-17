@@ -97,7 +97,7 @@ transforms:
   for:
     variable: *variables
 
-# Generate jedi final obserror that passed QC for JEDI
+# Generate jedi final obserror that passed JEDI QC
 - transform: accept where
   new name: experiment::JediFinalObsErrorPassedQc::${variable}
   starting field: experiment::EffectiveError1::${variable}
@@ -106,7 +106,7 @@ transforms:
   for:
     variable: *variables
 
-# Generate jedi final obserror that passed QC for JEDI
+# Generate GSI final obserror that passed JEDI QC
 - transform: accept where
   new name: experiment::GsiFinalObsErrorPassedQc::${variable}
   starting field: experiment::GsiFinalObsError::${variable}
