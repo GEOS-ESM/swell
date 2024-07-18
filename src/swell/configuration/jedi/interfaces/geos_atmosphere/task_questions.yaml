@@ -49,11 +49,11 @@ clean_patterns:
   default_value:
   - '*.nc4'
   - '*.txt'
-  - '*MOM*'
+  - logfile.*.out
   options:
   - '*.nc4'
   - '*.txt'
-  - '*MOM*'
+  - logfile.*.out
 
 cycling_varbc:
   default_value: false
