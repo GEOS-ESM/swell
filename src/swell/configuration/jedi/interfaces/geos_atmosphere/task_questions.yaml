@@ -1,8 +1,23 @@
 analysis_forecast_window_offset:
   default_value: -PT3H
+  options:
+  - -PT3H
 
 analysis_variables:
   default_value:
+  - ua
+  - va
+  - t
+  - q
+  - ps
+  - qi
+  - ql
+  - o3ppmv
+  - phis
+  - frocean
+  - frlake
+  - frseaice
+  options:
   - ua
   - va
   - t
@@ -34,7 +49,11 @@ clean_patterns:
   default_value:
   - '*.nc4'
   - '*.txt'
-  - logfile.*.out
+  - '*MOM*'
+  options:
+  - '*.nc4'
+  - '*.txt'
+  - '*MOM*'
 
 cycling_varbc:
   default_value: false
