@@ -112,7 +112,7 @@
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
+            --{{key}}{% if value %}={{value}}{% endif %}
         {%- endfor %}
 
     [[CleanCycle]]

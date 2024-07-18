@@ -86,7 +86,7 @@
         execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
+            --{{key}}{% if value %}={{value}}{% endif %}
         {%- endfor %}
 
     [[PrepGeosRunDir]]
@@ -110,7 +110,7 @@
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
+            --{{key}}{% if value %}={{value}}{% endif %}
         {%- endfor %}
 
 # --------------------------------------------------------------------------------------------------

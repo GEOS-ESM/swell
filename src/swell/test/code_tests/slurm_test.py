@@ -9,6 +9,7 @@
 
 import logging
 import unittest
+import yaml
 
 from swell.utilities.slurm import prepare_scheduling_dict
 from unittest.mock import patch
@@ -30,24 +31,22 @@ class SLURMConfigTest(unittest.TestCase):
         mock_global_defaults.return_value = {"qos": "dastest"}
 
         # Nested example
-        experiment_dict = {
-            "model_components": ["geos_atmosphere", "geos_ocean"],
-            "slurm_directives_global": {
-                "account": "x1234",
-            },
-            "slurm_directives_tasks": {
-                "EvaObservations": {
-                    "all": {
-                        "account": "x5678",
-                        "nodes": 2,
-                        "ntasks-per-node": 4
-                    },
-                    "geos_atmosphere": {
-                        "nodes": 4
-                    }
-                }
-            }
-        }
+        experiment_yaml = """
+            model_components: [geos_atmosphere, geos_ocean]
+            slurm_directives_global:
+                account: x1234
+            slurm_directives_tasks:
+                EvaObservations:
+                    all:
+                        account: x5678
+                        nodes: 2
+                        ntasks-per-node: 4
+                    geos_atmosphere:
+                        nodes: 4
+                        no-requeue: null
+            """
+
+        experiment_dict = yaml.safe_load(experiment_yaml)
 
         platform_mocked.return_value = "Linux-4.12.14"
         # Platform-specific definitions and tests
@@ -88,5 +87,6 @@ class SLURMConfigTest(unittest.TestCase):
             # Task-specific, model-specific configs
             self.assertEqual(sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"], 2)
             self.assertEqual(sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"], 4)
+            self.assertIsNone(sd["EvaObservations"]["directives"]["geos_atmosphere"]["no-requeue"])
 
 # --------------------------------------------------------------------------------------------------

@@ -12,12 +12,26 @@ The syntax of this file is unnested YAML that directly maps SLURM directives (e.
 account: x1234
 nodes: 1
 qos: allqueues
+no-requeue: null
 ```
 
 This corresponds to the command:
 
 ```sh
-sbatch ... --account=x1234 --nodes=1 --qos=allqueues
+sbatch ... --account=x1234 --nodes=1 --qos=allqueues --no-requeue
+```
+
+Note that the slurm directive `--no-requeue` takes no arguments, so it was set to `null`. The following are all equivalent and will produce the same result.
+
+```yaml
+# null (recommended)
+no-requeue: null
+# blank (note: colon is required!)
+no-requeue:
+# empty string (not recommended because converted to '' (rather than None) in Python)
+no-requeue: ''
+# tilde (not recommended to avoid confusion with home directory)
+no-requeue: ~
 ```
 
 Since there are a few SLURM directives that are platform specific, they are stored under `deployment/platforms/{platform_name}/slurm.yaml`. For instance, this would set `constraint: cas` for `nccs_discover` or `constraint: mil` for `nccs_discover_sles15`.
