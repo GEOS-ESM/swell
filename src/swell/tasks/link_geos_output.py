@@ -114,11 +114,11 @@ class LinkGeosOutput(taskBase):
 
         # populate xarray with aggregated quantities
         # ------------------------------------------
-        aggds = xr.merge([xr.DataArray(
+        aggds = xr.merge(xr.DataArray(
                         name=varname,
                         data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0),
                                         (1, nj, ni)),
-                        dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys()])
+                        dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys())
 
         # remove fill value
         # -----------------

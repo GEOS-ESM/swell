@@ -386,7 +386,6 @@ class PrepGeosRunDir(taskBase):
             # REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
 
         rply_dict = {
-            os.path.join(ANA_LOCATION, 'aod'): '',
             os.path.join(ANA_LOCATION, 'ana'): '',
         }
 

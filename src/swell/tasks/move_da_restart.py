@@ -100,7 +100,7 @@ class MoveDaRestart(taskBase):
                    }
 
         for src, dst in src_dst.items():
-            dst = os.path.join(dst, src.split('/')[-1])
+            dst = os.path.join(dst, os.path.basename(src))
             move_files(self.logger, self.forecast_dir(src), self.at_next_fcst_dir(dst))
 
         # Having multiple restart outputs in MOM6 is hard coded and inevitable for high res

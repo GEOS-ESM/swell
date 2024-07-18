@@ -135,9 +135,9 @@ class EvaObservations(taskBase):
             # -----------------------------------------------------------------------
             if 'icec_' in obs_file:
                 eva_override['map_projection'] = 'npstere'
-                # if file name has 'south" then change to south polar stereographic
+                # if file name has 'south" or "sh" then change to south polar stereographic
                 # ---------------------------------------------------------------
-                if 'south' in obs_file:
+                if 'south' in obs_file or 'sh' in obs_file:
                     eva_override['map_projection'] = 'spstere'
 
             # # Check if the "passivate" condition exists within the "obs filters" list
@@ -147,7 +147,7 @@ class EvaObservations(taskBase):
             )
 
             if passivate_exists:
-                print("Condition 'passivate' exists in 'obs filters'")
+                self.logger.info("Condition 'passivate' exists in 'obs filters'")
                 eva_override['passivated_variables'] = True
 
             if 'channels' in observation_dict['obs space']:
