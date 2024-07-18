@@ -2,6 +2,7 @@ analysis_forecast_window_offset:
   default_value: -PT6H
   options:
   - -PT12H
+  - -PT6H
 
 analysis_variables:
   default_value:
