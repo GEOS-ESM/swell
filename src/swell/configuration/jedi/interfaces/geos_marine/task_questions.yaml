@@ -1,8 +1,15 @@
 analysis_forecast_window_offset:
   default_value: -PT6H
+  options:
+  - -PT6H
 
 analysis_variables:
   default_value:
+  - socn
+  - tocn
+  - ssh
+  - hocn
+  options:
   - socn
   - tocn
   - ssh
@@ -32,6 +39,11 @@ cice6_domains:
 
 clean_patterns:
   default_value:
+  - '*.nc4'
+  - '*.txt'
+  - '*MOM*'
+  - logfile.*.out
+  options:
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
