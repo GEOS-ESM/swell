@@ -3,6 +3,7 @@ analysis_forecast_window_offset:
   default_value: defer_to_model
   models:
   - all
+  options: defer_to_model
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
@@ -17,6 +18,7 @@ analysis_variables:
   default_value: defer_to_model
   models:
   - all
+  options: defer_to_model
   prompt: What are the analysis variables?
   tasks:
   - GenerateBClimatology
@@ -129,6 +131,7 @@ clean_patterns:
   default_value: defer_to_model
   models:
   - all
+  options: defer_to_model
   prompt: Provide a list of patterns that you wish to remove from the cycle directory.
   tasks:
   - CleanCycle
