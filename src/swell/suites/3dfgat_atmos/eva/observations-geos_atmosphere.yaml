@@ -9,7 +9,7 @@ datasets:
     - name: ObsValue
       variables: &variables {{simulated_variables}}
     - name: GsiHofXBc
-    #- name: GsiEffectiveQC
+    - name: GsiEffectiveQC
     - name: hofx0
     - name: hofx1
     - name: ombg
@@ -70,6 +70,24 @@ transforms:
   for:
     variable: *variables
 
+# Generate hofx difference passed GSI QC
+- transform: accept where
+  new name: experiment::Hofx0MinusGsiHofXBcPassedGsiQc::${variable}
+  starting field: experiment::Hofx0MinusGsiHofXBc::${variable}
+  where:
+    - experiment::GsiEffectiveQC::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate GSI OmF passed GSI QC
+- transform: accept where
+  new name: experiment::ObsValueMinusGsiHofXBcPassedGsiQc::${variable}
+  starting field: experiment::ObsValueMinusGsiHofXBc::${variable}
+  where:
+    - experiment::GsiEffectiveQC::${variable} == 0
+  for:
+    variable: *variables
+
 # Generate hofx0 that passed QC for GSI
 - transform: accept where
   new name: experiment::ObsValueMinusGsiHofXBcPassedQc::${variable}
@@ -112,6 +130,24 @@ transforms:
   starting field: experiment::GsiFinalObsError::${variable}
   where:
     - experiment::EffectiveQC1::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate jedi final obserror that passed GSI QC
+- transform: accept where
+  new name: experiment::JediFinalObsErrorPassedGsiQc::${variable}
+  starting field: experiment::EffectiveError1::${variable}
+  where:
+    - experiment::GsiEffectiveQC::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate jedi final obserror that passed GSI QC
+- transform: accept where
+  new name: experiment::GsiFinalObsErrorPassedGsiQc::${variable}
+  starting field: experiment::GsiFinalObsError::${variable}
+  where:
+    - experiment::GsiEffectiveQC::${variable} == 0
   for:
     variable: *variables
 
@@ -266,6 +302,31 @@ graphics:
           color: 'red'
           label: 'GSI hofx0 vs JEDI hofx0 (passed QC in JEDI)'
 
+  # JEDI-GSI hofx0 differences vs GSI Obs-hofx0
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'hofx0 difference vs. GSI Obs-hofx0 | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_diff_{{instrument}}_${variable}${channel}.png'
+    plots:
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI h(x) minus GSI h(x)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::ObsValueMinusGsiHofXBcPassedGsiQc::${variable}
+          y:
+            variable: experiment::Hofx0MinusGsiHofXBcPassedGsiQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: '(JEDI hofx0 - GSI hofx0) vs GSI Obs-hofx0 (passed GSI QC)'
+
   # JEDI oma vs omb
   - batch figure:
       variables: *variables
@@ -333,6 +394,40 @@ graphics:
           markersize: 5
           color: 'red'
           label: 'JediObsError versus GsiObsError (passed Jedi QC)'
+
+  # JediFinalObsError vs GsiObsFinalObsError (all & passed GSI QC)
+  - batch figure:
+      variables: *variables
+      channels: *channels
+    figure:
+      layout: [1,1]
+      title: 'Jedi ObsError vs. GSI ObsError | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/JediObsError_vs_GsiObsError_{{instrument}}_${variable}${channel}_b.png'
+    plots:
+      - add_xlabel: 'GsiFinalObsError'
+        add_ylabel: 'JediFinalObsError'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment::GsiFinalObsError::${variable}
+          y:
+            variable: experiment::EffectiveError1::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'JediObsError versus GsiObsError (all residuals)'
+        - type: Scatter
+          x:
+            variable: experiment::GsiFinalObsErrorPassedGsiQc::${variable}
+          y:
+            variable: experiment::JediFinalObsErrorPassedGsiQc::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'blue'
+          label: 'JediObsError versus GsiObsError (Passed GSI QC)'
 
 # Map plots
 # ---------
