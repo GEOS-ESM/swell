@@ -1,0 +1,56 @@
+covariance model: SABER
+saber central block:
+  saber block name: EXPLICIT_DIFFUSION
+  active variables: [cicen, hicen, hsnon, tocn, socn, ssh]
+  geometry:
+    mom6_input_nml: 'soca/input.nml'
+    fields metadata: 'soca/fields_metadata.yaml'
+    geom_grid_file: 'INPUT/soca_gridspec.nc'
+  group mapping:
+  - name: ocn_3d
+    variables: [tocn, socn, cicen, hicen, hsnon]
+  - name: ocn_2d
+    variables: [ssh]
+  read:
+    groups:
+    - name: ocn_3d
+      horizontal:
+        filename: 'background_error_model/hz_rossby.nc'
+      vertical:
+        filename: 'background_error_model/vt.{{local_background_time}}.nc'
+    - name: ocn_2d
+      horizontal:
+        filename: 'background_error_model/hz_rossby_1p5.nc'
+
+date: '{{local_background_time_iso}}'
+
+linear variable change:
+  input variables: {{analysis_variables}}
+  output variables: {{analysis_variables}}
+  linear variable changes:
+  - linear variable change name: BkgErrFILT
+    ocean_depth_min: 100 # [m]
+    rescale_bkgerr: 1.0
+    efold_z: 2500.0       # [m]
+
+  - linear variable change name: BkgErrGODAS
+    sst_bgerr_file: '{{cycle_dir}}/soca/godas_sst_bgerr.nc'
+    # output:
+    #   filename: '{{cycle_dir}}/bkgerrgodas.nc'
+    t_min: 0.1
+    t_max: 2.0
+    t_dz:  20.0
+    t_efold: 500.0
+    s_min: 0.0
+    s_max: 0.25
+    ssh_min: 0.0   # value at EQ
+    ssh_max: 0.1   # value in Extratropics
+    ssh_phi_ex: 20 # lat of transition from extratropics
+    cicen_min: 0.1
+    cicen_max: 0.5
+    hicen_min: 10.0
+    hicen_max: 100.0
+
+  - linear variable change name: BalanceSOCA
+    ksshts:
+      nlayers: 2

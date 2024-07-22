@@ -2,10 +2,10 @@ crtm_coeff_dir:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
 
 existing_geos_gcm_build_path:
-  default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.5.1-Intel-SLES12/GEOSgcm/install-Release
+  default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/install-SLES12
 
 existing_geos_gcm_source_path:
-  default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.5.1-Intel-SLES12/GEOSgcm
+  default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/
 
 existing_jedi_build_directory:
   default_value: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/

@@ -8,6 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+from netCDF4 import Dataset
+import numpy as np
+import xarray as xr
 
 from swell.tasks.base.task_base import taskBase
 
@@ -29,18 +32,30 @@ class LinkGeosOutput(taskBase):
         """
 
         self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
-        # src, dst = self.link_restart()
-        src, dst = self.link_history()
 
-        if os.path.exists(src):
-            self.geos.linker(src, dst, self.cycle_dir())
-        else:
-            self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
-                              'without a proper background file.')
+        # Create source and destination files for linking model output to SOCA
+        # ----------------------------------
+        src_dst_dict = {}
+
+        # src, dst = self.link_mom6_restart()
+        src, dst = self.link_mom6_history()
+        src_dst_dict[src] = dst
+
+        # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
+        # ---------------------------------------------------------------------
+        src, dst = self.prepare_cice6()
+        src_dst_dict[src] = dst
+
+        for src, dst in src_dst_dict.items():
+            if os.path.exists(src):
+                self.geos.linker(src, dst, self.cycle_dir())
+            else:
+                self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
+                                  'without a proper background file.')
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_history(self):
+    def link_mom6_history(self):
 
         # Create GEOS history to SOCA background link
         # TODO: this will only work for 3Dvar as FGAT requires multiple files
@@ -54,7 +69,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_restart(self):
+    def link_mom6_restart(self):
 
         # Create GEOS restart to SOCA background link
         # ------------------------------------------
@@ -63,7 +78,7 @@ class LinkGeosOutput(taskBase):
         rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
-        # Generic rst file source format for SOCA
+        # Generic MOM6 rst file source format for SOCA
         # ---------------------------------------
         src = self.forecast_dir(['RESTART', 'MOM.res.nc'])
 
@@ -80,5 +95,53 @@ class LinkGeosOutput(taskBase):
 
         return src, dst
 
+    # ----------------------------------------------------------------------------------------------
+
+    def prepare_cice6(self):
+
+        # CICE6 input in SOCA requires aggregation of multiple variables and
+        # time dimension added to the dataset.
+        # --------------------------------------------------------------------
+        soca2cice_vars = {'aicen': 'aicen',
+                          'hicen': 'vicen',
+                          'hsnon': 'vsnon'}
+
+        # read CICE6 restart
+        # -----------------
+        ds = xr.open_dataset(self.forecast_dir(['RESTART', 'iced.nc']))
+        nj = np.shape(ds['aicen'])[1]
+        ni = np.shape(ds['aicen'])[2]
+
+        # populate xarray with aggregated quantities
+        # ------------------------------------------
+        aggds = xr.merge(xr.DataArray(
+                        name=varname,
+                        data=np.reshape(np.sum(ds[soca2cice_vars[varname]].values, axis=0),
+                                        (1, nj, ni)),
+                        dims=['time', 'yaxis_1', 'xaxis_1']) for varname in soca2cice_vars.keys())
+
+        # remove fill value
+        # -----------------
+        encoding = {varname: {'_FillValue': False} for varname in soca2cice_vars.keys()}
+
+        fname_out = os.path.join(self.cycle_dir(), 'cice.res.' + self.current_cycle + '.nc')
+
+        # save datasets
+        # -------------
+        aggds.to_netcdf(fname_out, format='NETCDF4', unlimited_dims='time', encoding=encoding)
+
+        # xarray doesn't allow variables and dim that have the same name, switch to netCDF4
+        # ---------------------------------------------------------------------------------
+        ncf = Dataset(fname_out, 'a')
+        t = ncf.createVariable('time', 'f8', ('time'))
+        t[:] = 1.0
+        ncf.close()
+
+        # Generic CICE6 rst file source format for SOCA
+        # ---------------------------------------
+        src = self.forecast_dir(['RESTART', 'iced.nc'])
+        dst = 'iced.res.' + self.current_cycle + '.nc'
+
+        return src, dst
 
 # --------------------------------------------------------------------------------------------------

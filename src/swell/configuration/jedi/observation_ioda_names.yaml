@@ -140,7 +140,8 @@ ioda instrument names:
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
     inst type: conventional
-# Ocean
+# Marine
+  # Ocean
   - ioda name: adt_3a_egm2008
     full name: ADT 3a (EGM2008)
     inst type: conventional
@@ -195,3 +196,28 @@ ioda instrument names:
   - ioda name: temp_profile_fnmoc
     full name: FNMOC (In-situ Temperature)
     inst type: conventional
+  # Sea-ice
+  - ioda name : icec_amsr2_north
+    full name: AMSR2 North (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_amsr2_south
+    full name: AMSR2 South (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_nsidc_nh
+    full name: NSIDC North (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_nsidc_sh
+    full name: NSIDC South (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_ssmis_f17_north
+    full name: SSMIS (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_ssmis_f17_south
+    full name: SSMIS (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_ssmis_f18_north
+    full name: SSMIS (Ice Concentration)
+    inst type: radiance
+  - ioda name : icec_ssmis_f18_south
+    full name: SSMIS (Ice Concentration)
+    inst type: radiance

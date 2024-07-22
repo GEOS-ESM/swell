@@ -72,7 +72,15 @@ class MoveForecastRestart(taskBase):
             filename = os.path.basename(filepath).split('.')[0]
             move_files(self.logger, filepath, self.at_next_fcst_dir(filename))
 
-        move_files(self.logger, self.forecast_dir('tile.bin'), self.at_next_fcst_dir('tile.bin'))
+        # Create a dictionary of src/dst for the single files
+        # ---------------------------------------------------
+        src_dst = {'tile.bin': '',
+                   'RESTART/iced.nc': 'INPUT',
+                   }
+
+        for src, dst in src_dst.items():
+            dst = os.path.join(dst, os.path.basename(src))
+            move_files(self.logger, self.forecast_dir(src), self.at_next_fcst_dir(dst))
 
         # Consider the case of multiple MOM restarts
         # TODO: this could be forced to be a single file (MOM_input option)

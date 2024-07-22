@@ -46,6 +46,7 @@ class RunJediVariationalExecutable(taskBase):
         npy_proc = self.config.npy_proc(None)
 
         # Compute data assimilation window parameters
+        # --------------------------------------------
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
         local_background_time = self.da_window_params.local_background_time(window_offset,
@@ -68,28 +69,33 @@ class RunJediVariationalExecutable(taskBase):
                                     self.config.gradient_norm_reduction())
 
         # Background
+        # ----------
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 
         # Geometry
+        # --------
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
 
         # Observations
+        # ------------
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Atmosphere background error model
+        # ---------------------------------
         if npx_proc is not None and npy_proc is not None:
             self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
             self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
         # Model
+        # -----
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 

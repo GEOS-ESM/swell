@@ -162,6 +162,7 @@ class GenerateBClimatology(taskBase):
         # This generates the MLD dependent vertical correlation file using the
         # calculated_scales
         # ---------------------------------------------------------------------
+        self.logger.info(' Creating the MLD dependent vertical corr. file')
 
         # Jedi application name
         # ---------------------

@@ -1,0 +1,37 @@
+obs space:
+  name: sst_ship_fnmoc
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/sst_ship_fnmoc.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_ship_fnmoc.{{window_begin}}.nc4'
+  simulated variables: [seaSurfaceTemperature]
+obs operator:
+  name: Identity
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+obs error:
+  covariance model: diagonal
+obs filters:
+- filter: Domain Check
+  where:
+  - variable: {name: GeoVaLs/sea_area_fraction}
+    minvalue: 0.9
+- filter: Domain Check
+  action:
+    name: reject
+  where:
+  - variable: {name: GeoVaLs/sea_area_fraction}
+    minvalue: 0.9
+# Reject obs outside of [-2.0C,36.0C]
+- filter: Bounds Check
+  action:
+    name: reject
+  minvalue: -2.0
+  maxvalue: 36.0
+- filter: Domain Check
+  where:
+  - variable: {name: GeoVaLs/distance_from_coast}
+    minvalue: 100e3

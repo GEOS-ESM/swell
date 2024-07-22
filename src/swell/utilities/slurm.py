@@ -44,7 +44,8 @@ def prepare_scheduling_dict(
     # -------------------------------------------
     task_defaults = {
         "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
-        "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}}
+        "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
+        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
@@ -81,6 +82,7 @@ def prepare_scheduling_dict(
         'BuildGeos',
         'EvaObservations',
         'GenerateBClimatology',
+        'RunJediConvertStateSoca2ciceExecutable',
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',

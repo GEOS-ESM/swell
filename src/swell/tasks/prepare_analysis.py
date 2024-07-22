@@ -133,15 +133,6 @@ class PrepareAnalysis(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
-    def replace_ice(self, f_rst):
-
-        '''
-        placeholder for cice analysis
-        '''
-        pass
-
-    # --------------------------------------------------------------------------------------------------
-
     def replace_ocn(self, f_rst, ana_pth):
 
         # TODO: This will fail for multiple restart files and no IAU

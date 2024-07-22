@@ -56,14 +56,21 @@ class EvaIncrement(taskBase):
         if window_type == '4D':
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 
-        # Soca case
-        if model == 'geos_ocean':
-            ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
-            incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
-        increment_file_path = os.path.join(self.cycle_dir(), incr_file)
-
         # Create dictionary used to override the eva config
         eva_override = {}
+
+        # Soca case
+        if model == 'geos_ocean' or model == 'geos_marine':
+            ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
+            incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+
+            # Keep sea-ice increment inside here as optional
+            ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+            ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+            eva_override['ice_increment_file_path'] = ice_increment_file_path
+
+        increment_file_path = os.path.join(self.cycle_dir(), incr_file)
+
         eva_override['cycle_dir'] = self.cycle_dir()
         eva_override['cycle_time'] = cycle_time_reformat
         eva_override['increment_file_path'] = increment_file_path

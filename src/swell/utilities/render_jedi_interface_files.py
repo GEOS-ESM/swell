@@ -60,6 +60,7 @@ class JediConfigRendering():
             'background_error_model',
             'background_frequency',
             'background_time',
+            'cice6_domain',
             'crtm_coeff_dir',
             'cycling_varbc',
             'ensemble_hofx_packets',

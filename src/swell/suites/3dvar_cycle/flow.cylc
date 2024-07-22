@@ -74,36 +74,39 @@
             MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
-            # Data assimilation things
-            GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}
-
             # Run the analysis
             # RunGeosExecutable => StageJediCycle-{{model_component}}
             RunGeosExecutable => LinkGeosOutput-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+
+            # Data assimilation things
+            GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Prepare analysis for next forecast
-            RunJediVariationalExecutable-{{model_component}} => PrepareAnalysis-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            PrepareAnalysis-{{model_component}} =>  RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} =>  SaveRestart-{{model_component}}
 
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
 
             # Move restart to next cycle
-            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
             # RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
-            # MoveDaRestart-{{model_component}} => SaveRestart
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
             # Remove Run Directory
@@ -112,7 +115,7 @@
 
             # Clean up large files
             # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & RunJediConvertStateSoca2ciceExecutable-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """
@@ -200,8 +203,26 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
+    [[GenerateBClimatology-{{model_component}}]]
+        script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
     [[GenerateBClimatologyByLinking-{{model_component}}]]
         script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
+        script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
@@ -215,6 +236,9 @@
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
 
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
+
     [[EvaObservations-{{model_component}}]]
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
@@ -223,6 +247,9 @@
         {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"

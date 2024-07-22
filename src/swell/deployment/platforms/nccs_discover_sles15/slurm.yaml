@@ -1,5 +1,5 @@
-account: g0613
 qos: allnccs
 nodes: 1
 ntasks-per-node: 64
 constraint: mil
+no-requeue: ''

@@ -60,6 +60,24 @@ transforms:
   for:
     variable: *variables
 
+# Generate passivated ombg that passed QC for JEDI
+- transform: accept where
+  new name: experiment::PassiveombgPassedQc::${variable}
+  starting field: experiment::ombg::${variable}
+  where:
+    - experiment::EffectiveQC1::${variable} == 1
+  for:
+    variable: *variables
+
+# Generate passivated oman that passed QC for JEDI
+- transform: accept where
+  new name: experiment::PassiveomanPassedQc::${variable}
+  starting field: experiment::oman::${variable}
+  where:
+    - experiment::EffectiveQC1::${variable} == 1
+  for:
+    variable: *variables
+
 # Generate obs that passed QC for JEDI
 - transform: accept where
   new name: experiment::ObsValuePassedQc::${variable}
@@ -98,15 +116,15 @@ graphics:
             variable: experiment::hofx0PassedQc::${variable}
           markersize: 5
           color: 'black'
-          label: 'JEDI h(x)_0 versus obs (passed QC in JEDI)'
+          label: 'JEDI h(x) versus obs (all obs)'
         - type: Scatter
           x:
             variable: experiment::ObsValue::${variable}
           y:
-            variable: experiment::hofx1PassedQc::${variable}
+            variable: experiment::hofx1::${variable}
           markersize: 5
           color: 'red'
-          label: 'JEDI h(x)_1 versus obs (passed QC in JEDI)'
+          label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
   # Histogram plots
   # ---------------
@@ -169,6 +187,64 @@ graphics:
           alpha: 0.5
           density: true
 
+  # Passivated OmBg and OmA
+  - batch figure:
+      variables: *variables
+    dynamic options:
+      - type: histogram_bins
+        data variable: experiment::PassiveomanPassedQc::${variable}
+        number of bins rule: 'rice'
+    figure:
+      layout: [1,1]
+      title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/pass_ombg_oman_{{instrument}}_${variable}.png'
+    plots:
+      - add_xlabel: 'Difference'
+        add_ylabel: 'Count'
+        set_xlim: [-3, 3]
+        add_legend:
+          loc: 'upper left'
+        statistics:
+          fields:
+            - field_name: experiment::PassiveomanPassedQc::${variable}
+              xloc: 0.5
+              yloc: -0.10
+              kwargs:
+                color: 'blue'
+                fontsize: 8
+                fontfamily: monospace
+            - field_name: experiment::PassiveombgPassedQc::${variable}
+              xloc: 0.5
+              yloc: -0.13
+              kwargs:
+                color: 'red'
+                fontsize: 8
+                fontfamily: monospace
+          statistics_variables:
+          - n
+          - min
+          - mean
+          - max
+          - std
+
+        layers:
+        - type: Histogram
+          data:
+            variable: experiment::PassiveombgPassedQc::${variable}
+          color: 'red'
+          label: 'observations minus background '
+          bins: ${dynamic_bins}
+          alpha: 0.5
+          density: true
+        - type: Histogram
+          data:
+            variable: experiment::PassiveomanPassedQc::${variable}
+          color: 'blue'
+          label: 'observations minus analysis'
+          bins: ${dynamic_bins}
+          alpha: 0.5
+          density: true
+
   # Map plots
   # ---------
   # Increment
@@ -184,7 +260,7 @@ graphics:
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/ombg_oman_{{instrument}}_${variable}.png'
     plots:
       - mapping:
-          projection: plcarr
+          projection: {{map_projection}}
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
@@ -206,7 +282,7 @@ graphics:
           vmax: ${dynamic_vmax}
 
       - mapping:
-          projection: plcarr
+          projection: {{map_projection}}
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
@@ -239,7 +315,7 @@ graphics:
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/effectiveQC_{{instrument}}_${variable}.png'
     plots:
       - mapping:
-          projection: plcarr
+          projection: {{map_projection}}
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
@@ -272,7 +348,7 @@ graphics:
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/increment_{{instrument}}_${variable}.png'
     plots:
       - mapping:
-          projection: plcarr
+          projection: {{map_projection}}
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
@@ -288,6 +364,62 @@ graphics:
             variable: experiment::increment::${variable}
           markersize: 2
           label: OmAn
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+  # Passivate
+  - batch figure:
+      variables: *variables
+    dynamic options:
+      - type: vminvmaxcmap
+        data variable: experiment::PassiveombgPassedQc::${variable}
+    figure:
+      figure size: [20,10]
+      layout: [2,1]
+      title: '{{instrument_title}} | Passed QC'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/passive_ombg_oman_{{instrument}}_${variable}.png'
+    plots:
+      - mapping:
+          projection: {{map_projection}}
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: ObsValue
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::PassiveombgPassedQc::${variable}
+          markersize: 2
+          label: OmAn
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
+      - mapping:
+          projection: {{map_projection}}
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: ObsValue
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment::MetaData::longitude
+          latitude:
+            variable: experiment::MetaData::latitude
+          data:
+            variable: experiment::PassiveomanPassedQc::${variable}
+          markersize: 2
+          label: OmBg
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}

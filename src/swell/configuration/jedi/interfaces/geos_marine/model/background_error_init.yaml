@@ -1,0 +1,22 @@
+covariance model: 'SocaError'
+analysis variables: {{analysis_variables}}
+date: '{{local_background_time_iso}}'
+bump:
+  io:
+    data directory: '{{cycle_dir}}/background_error_model'
+  drivers:
+    multivariate strategy: 'univariate'
+    compute nicas: true
+    write local nicas: true
+  model:
+    do not cross mask boundaries: true
+  nicas:
+    resolution: 6.0
+correlation:
+- name: 'ocn'
+  base value: 840336.134453782
+  rossby mult: 0.280112045
+  variables: [socn, tocn, ssh, hocn]
+- name: 'ice'
+  base value: 560224.089635854
+  variables: [cicen, hicen, hsnon]

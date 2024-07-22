@@ -1,0 +1,43 @@
+obs space:
+  name: icec_amsr2_south
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/icec_amsr2_south.{{window_begin}}.nc4'
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.icec_amsr2_south.{{window_begin}}.nc4'
+  simulated variables: [seaIceFraction]
+  io pool:
+    max pool size: 1
+obs operator:
+  name: Identity
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+obs error:
+  covariance model: diagonal
+obs filters:
+- filter: Domain Check
+  where:
+  - variable: {name: GeoVaLs/sea_area_fraction}
+    minvalue: 0.9
+- filter: Bounds Check
+  minvalue: 0.0
+  maxvalue: 1.0
+#- filter: Background Check
+#  threshold: 5.0
+- filter: Domain Check
+  where:
+  - variable: { name: GeoVaLs/sea_surface_temperature}
+    maxvalue: 2.0
+- filter: Domain Check
+  where:
+  - variable: { name: GeoVaLs/sea_surface_temperature}
+    maxvalue: 0.0
+  action:
+    name: inflate error
+    inflation factor: 2.0
+- filter: Domain Check
+  where:
+  - variable: {name: GeoVaLs/distance_from_coast}
+    minvalue: 100e3

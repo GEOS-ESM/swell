@@ -37,12 +37,14 @@ class EvaObservations(taskBase):
     def execute(self):
 
         # Compute window beginning time
+        # -----------------------------
         window_begin = self.da_window_params.window_begin(self.config.window_offset())
         background_time = self.da_window_params.background_time(self.config.window_offset(),
                                                                 self.config.background_time_offset()
                                                                 )
 
         # Create JEDI interface config templates dictionary
+        # -------------------------------------------------
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
@@ -67,6 +69,7 @@ class EvaObservations(taskBase):
 
         # Set channels for which plots will be made
         # This should be configurable once we do the eva refactoring.
+        # -------------------------------------------------------------
         channels_to_plot = {
             'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
                           1088, 1329, 1449, 1766, 1800, 1869, 1918],
@@ -80,8 +83,8 @@ class EvaObservations(taskBase):
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
 
-        # Loop over observations
-        # -------------------
+        # Loop over observations and create dictionaries
+        # ----------------------------------------------
         eva_dicts = []  # Empty list of dictionaries
 
         # Set the observing system records path
@@ -103,6 +106,7 @@ class EvaObservations(taskBase):
             cycle_dir, obs_file = os.path.split(obs_path_file)
 
             # Check for need to add 0000 to the file
+            # --------------------------------------
             if not os.path.exists(obs_path_file):
                 obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
@@ -112,10 +116,12 @@ class EvaObservations(taskBase):
                 obs_path_file = obs_path_file_0000
 
             # Get instrument ioda and full name
+            # ---------------------------------
             ioda_name = observation
             full_name = ioda_name_to_long_name(ioda_name, self.logger)
 
             # Create dictionary used to override the eva config
+            # -------------------------------------------------
             eva_override = {}
             eva_override['cycle_dir'] = self.cycle_dir()
             eva_override['obs_path_file'] = obs_path_file
@@ -123,6 +129,26 @@ class EvaObservations(taskBase):
             eva_override['instrument_title'] = full_name
             eva_override['simulated_variables'] = \
                 observation_dict['obs space']['simulated variables']
+            eva_override['map_projection'] = 'plcarr'
+
+            # If filename contains icec_ change map projection to polar stereographic
+            # -----------------------------------------------------------------------
+            if 'icec_' in obs_file:
+                eva_override['map_projection'] = 'npstere'
+                # if file name has 'south" or "sh" then change to south polar stereographic
+                # ---------------------------------------------------------------
+                if 'south' in obs_file or 'sh' in obs_file:
+                    eva_override['map_projection'] = 'spstere'
+
+            # # Check if the "passivate" condition exists within the "obs filters" list
+            passivate_exists = any(
+                filter_item.get('action', {}).get('name') == 'passivate'
+                for filter_item in observation_dict.get('obs filters', [])
+            )
+
+            if passivate_exists:
+                self.logger.info("Condition 'passivate' exists in 'obs filters'")
+                eva_override['passivated_variables'] = True
 
             if 'channels' in observation_dict['obs space']:
                 need_channels = True
@@ -136,10 +162,12 @@ class EvaObservations(taskBase):
                 eva_override['channel'] = ''
 
             # Override the eva dictionary
+            # ---------------------------
             eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
             eva_dict = yaml.safe_load(eva_str)
 
             # Remove channel keys if not needed
+            # ---------------------------------
             if not need_channels:
                 remove_matching_keys(eva_dict, 'channel')
                 remove_matching_keys(eva_dict, 'channels')
