@@ -55,7 +55,7 @@ obs bias:
 
 obs error:
   covariance model: cross variable covariances
-  input file: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/rcov/iasi_metop_141_jedi_rcov.nc4'
+  input file: 'fv3-jedi/rcov/iasi_metop_141_jedi_rcov.nc4'
 
 obs prior filters:
 - filter: Perform Action
