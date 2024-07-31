@@ -76,8 +76,7 @@
                 StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetBackground-{{model_component}}  => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetEnsembleMeanVariance => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetBackground-{{model_component}} => GetEnsembleMeanVariance => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
 
                 # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
                 # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
