@@ -25,6 +25,7 @@ analysis_variables:
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediVariationalExecutable
+  - GetEnsembleMeanVariance
   type: string-check-list
 
 background_error_model:
@@ -66,6 +67,7 @@ background_frequency:
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
   - StoreBackground
+  - GetEnsembleMeanVariance
   type: iso-duration
 
 background_time_offset:
@@ -87,6 +89,7 @@ background_time_offset:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
+  - GetEnsembleMeanVariance
   type: iso-duration
 
 bundles:
@@ -200,6 +203,7 @@ ensemble_num_members:
   tasks:
   - RunJediHofxEnsembleExecutable
   - RunJediLocalEnsembleDaExecutable
+  - GetEnsembleMeanVariance
   type: integer
 
 existing_geos_gcm_build_path:
@@ -409,6 +413,7 @@ horizontal_resolution:
   - RunJediVariationalExecutable
   - StageJedi
   - StoreBackground
+  - GetEnsembleMeanVariance
   type: string-drop-list
 
 jedi_build_method:
@@ -440,6 +445,7 @@ jedi_forecast_model:
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
+  - GetEnsembleMeanVariance
   type: string-drop-list
 
 local_ensemble_inflation_mult:
@@ -535,6 +541,34 @@ local_ensemble_solver:
   - RunJediLocalEnsembleDaExecutable
   type: string-drop-list
 
+ensmean_only:
+  ask_question: false
+  default_value: false
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: Calculate ensemble mean only?
+  tasks:
+  - RunJediLocalEnsembleDaExecutable
+  - GetEnsembleMeanVariance
+  type: boolean
+
+ensmeanvariance_only:
+  ask_question: false
+  default_value: false
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: Calculate ensemble mean and variance only?
+  tasks:
+  - RunJediLocalEnsembleDaExecutable
+  - GetEnsembleMeanVariance
+  type: boolean
+
 minimizer:
   ask_question: false
   default_value: defer_to_model
@@ -573,6 +607,7 @@ npx_proc:
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
+  - GetEnsembleMeanVariance
   type: integer
 
 npy_proc:
@@ -587,6 +622,7 @@ npy_proc:
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
+  - GetEnsembleMeanVariance
   type: integer
 
 number_of_iterations:
@@ -641,6 +677,7 @@ observations:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
+  - GetEnsembleMeanVariance
   type: string-check-list
 
 observing_system_records_mksi_path:
@@ -680,6 +717,7 @@ observing_system_records_path:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
+  - GetEnsembleMeanVariance  
   type: string
 
 path_to_ensemble:
@@ -758,6 +796,8 @@ save_geovals:
   prompt: When running hofx do you want to output the GeoVaLs?
   tasks:
   - RunJediHofxExecutable
+  - RunJediHofxEnsembleExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 single_observations:
@@ -809,6 +849,7 @@ total_processors:
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
+  - GetEnsembleMeanVariance
   type: integer
 
 vertical_localization_apply_log_transform:
@@ -895,6 +936,7 @@ vertical_resolution:
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   - StageJedi
+  - GetEnsembleMeanVariance
   type: string-drop-list
 
 window_length:
@@ -915,6 +957,7 @@ window_length:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
+  - GetEnsembleMeanVariance
   type: iso-duration
 
 window_offset:
@@ -941,6 +984,7 @@ window_offset:
   - RunJediVariationalExecutable
   - SaveObsDiags
   - StoreBackground
+  - GetEnsembleMeanVariance
   type: iso-duration
 
 window_type:
@@ -963,5 +1007,5 @@ window_type:
   - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   - StoreBackground
+  - GetEnsembleMeanVariance
   type: string-drop-list
-

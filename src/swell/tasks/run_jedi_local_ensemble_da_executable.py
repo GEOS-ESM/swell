@@ -27,6 +27,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Jedi application name
         # ---------------------
         jedi_application = 'localensembleda'
+        jedi_ensmeanvariance_application = 'ensmeanvariance'
 
         # Parse configuration
         # -------------------
@@ -37,6 +38,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        ensmean_only = self.config.ensmean_only()
+        ensmeanvariance_only = self.config.ensmeanvariance_only()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -115,6 +118,11 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                     self.config.local_ensemble_save_posterior_mean_increment())
         self.jedi_rendering.add_key('local_ensemble_save_posterior_ensemble_increments',
                                     self.config.local_ensemble_save_posterior_ensemble_increments())
+        self.jedi_rendering.add_key('ensmean_only',
+                                    self.config.ensmean_only())
+        self.jedi_rendering.add_key('ensmeanvariance_only',
+                                    self.config.ensmeanvariance_only())
+
 
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
@@ -180,6 +188,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Jedi executable name
         # --------------------
+
+        jedi_ensmeanvariance_executable = model_component_meta['executables'][f'{jedi_ensmeanvariance_application}']
+        jedi_ensmeanvariance_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
+                                            jedi_ensmeanvariance_executable)
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
@@ -187,9 +199,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
-            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
+            if ensmean_only | ensmeanvariance_only:
+                self.logger.info('Running '+jedi_ensmeanvariance_executable_path+' with '+str(np)+' processors.')
+                self.logger.info('Running ensmean_only')
+                run_executable(self.logger, self.cycle_dir(), np, jedi_ensmeanvariance_executable_path,
+                               jedi_config_file, output_log_file)
+            else:
+                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                            jedi_config_file, output_log_file)
+
         else:
             self.logger.info('YAML generated, now exiting.')
 

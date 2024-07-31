@@ -1,0 +1,12 @@
+members from template:
+  template:
+    datetime: '{{local_background_time_iso}}'
+    filetype: cube sphere history
+    provider: geos
+    datapath: '{{cycle_dir}}'
+    filename: 'geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+    state variables: [ua,va,t,ps,delp,q,qi,ql,qr,qs,o3ppmv,phis,frocean,frlake,frseaice,
+                      sheleg,ts,soilt,soilm,u10m,v10m]
+  pattern: '%mem%'
+  nmembers: {{ensemble_num_members}}
+  zero padding: 3

@@ -84,6 +84,8 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_mean',
             'local_ensemble_save_posterior_mean_increment',
             'local_ensemble_solver',
+            'ensmean_only',
+            'ensmeanvariance_only',
             'minimizer',
             'mom6_iau',
             'npx_proc',

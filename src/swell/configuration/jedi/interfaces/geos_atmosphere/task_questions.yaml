@@ -126,6 +126,18 @@ local_ensemble_solver:
   - LETKF
   - GETKF
 
+ensmean_only:
+  default_value: false
+  options:
+  - true
+  - false
+
+ensmeanvariance_only:
+  default_value: false
+  options:
+  - true
+  - false
+
 minimizer:
   default_value: DRPCG
   options:

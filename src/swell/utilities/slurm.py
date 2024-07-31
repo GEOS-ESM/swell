@@ -82,6 +82,7 @@ def prepare_scheduling_dict(
         'BuildGeos',
         'EvaObservations',
         'GenerateBClimatology',
+        'GetEnsembleMeanVariance',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
