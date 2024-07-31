@@ -41,14 +41,10 @@ class GetEnsembleMeanVariance(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
-        background_time_offset = self.config.background_time_offset()
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
         local_background_time = self.da_window_params.local_background_time(window_offset,
                                                                             window_type)
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
                                                                                     window_type)
-        window_begin = self.da_window_params.window_begin(window_offset)
         window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
         window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
 
@@ -57,7 +53,6 @@ class GetEnsembleMeanVariance(taskBase):
 
         # Ensemble
         # ------------------------
-        ensemble_num_members = self.config.ensemble_num_members()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
