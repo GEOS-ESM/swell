@@ -18,7 +18,8 @@ module load stack-python/3.10.13
 module load jedi-fv3-env
 module load soca-env
 module load gmao-swell-env/1.0.0
-module unload gsibec crtm
+module unload gsibec crtm fms
+module load fms/2023.04
 
 # JEDI Python Path
 # ----------------

@@ -36,9 +36,6 @@
             BuildJediByLinking:fail? => BuildJedi
 
             {% for model_component in model_components %}
-            # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}}
-
             # Clone geos ana for generating observing system records
             CloneGeosMksi-{{model_component}}
             {% endfor %}
@@ -73,7 +70,7 @@
 
             # Run Jedi variational executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -137,9 +134,6 @@
 
     [[GenerateObservingSystemRecords-{{model_component}}]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
-
-    [[StageJedi-{{model_component}}]]
-        script = "swell task StageJedi $config -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
