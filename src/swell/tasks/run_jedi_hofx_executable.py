@@ -175,7 +175,7 @@ class RunJediHofxExecutable(taskBase):
                     # Assert that there are np files
                     self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs' +
                                              f' files does not match number of processors:\n' +
-                                             f' np={np}, len(geovals_files) = {len(geovals_files)}' )
+                                             f' np={np}, len(geovals_files) = {len(geovals_files)}')
 
                     # Write the concatenated dataset to a new file
                     combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs',

@@ -123,7 +123,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('ensmeanvariance_only',
                                     self.config.ensmeanvariance_only())
 
-
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
@@ -189,9 +188,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Jedi executable name
         # --------------------
 
-        jedi_ensmeanvariance_executable = model_component_meta['executables'][f'{jedi_ensmeanvariance_application}']
-        jedi_ensmeanvariance_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_ensmeanvariance_executable)
+        jedi_ensmeanvariance_executable = model_component_meta['executables']
+        [f'{jedi_ensmeanvariance_application}']
+        jedi_ensmeanvariance_executable_path = os.path.join
+        (self.experiment_path(), 'jedi_bundle', 'build', 'bin', jedi_ensmeanvariance_executable)
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
@@ -200,15 +200,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # -----------------------
         if not generate_yaml_and_exit:
             if ensmean_only | ensmeanvariance_only:
-                self.logger.info('Running '+jedi_ensmeanvariance_executable_path+' with '+str(np)+' processors.')
+                self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
+                                 ' with '+str(np)+' processors.')
                 self.logger.info('Running ensmean_only')
-                run_executable(self.logger, self.cycle_dir(), np, jedi_ensmeanvariance_executable_path,
+                run_executable(self.logger, self.cycle_dir(), np,
+                               jedi_ensmeanvariance_executable_path,
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                            jedi_config_file, output_log_file)
-
+                               jedi_config_file, output_log_file)
         else:
             self.logger.info('YAML generated, now exiting.')
 
