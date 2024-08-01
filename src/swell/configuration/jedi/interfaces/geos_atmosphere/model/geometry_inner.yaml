@@ -1,9 +1,9 @@
 fms initialization:
-  namelist filename: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/fmsmpp.nml'
-  field table filename: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/field_table_gmao'
-akbk: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fv3files/akbk{{vertical_resolution}}.nc4'
+  namelist filename: './fv3-jedi/fv3files/fmsmpp.nml'
+  field table filename: './fv3-jedi/fv3files/field_table_gmao'
+akbk: './fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4'
 layout: [{{npx_proc}},{{npy_proc}}]
 npx: {{horizontal_resolution}}
 npy: {{horizontal_resolution}}
 npz: {{vertical_resolution}}
-field metadata override: '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/fieldmetadata/geos.yaml'
+field metadata override: './fv3-jedi/fieldmetadata/geos.yaml'

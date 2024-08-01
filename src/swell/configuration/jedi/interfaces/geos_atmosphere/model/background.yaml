@@ -1,9 +1,9 @@
 datetime: '{{local_background_time_iso}}'
 filetype: cube sphere history
 provider: geos
-datapath: ''
-filenames: ['{{cycle_dir}}/bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
-            '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/geos_atmosphere/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
+datapath: '{{cycle_dir}}'
+filenames: ['bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
+            'fv3-jedi/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
 state variables: [ua,va,t,delp,ps,q,qi,ql,qr,qs,o3ppmv,phis,
                   qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
                   zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
