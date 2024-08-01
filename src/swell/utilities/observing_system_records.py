@@ -3,6 +3,7 @@ import yaml
 import pandas as pd
 import numpy as np
 import datetime as dt
+from swell.utilities.logger import Logger
 from swell.utilities.gsi_record_parser import GSIRecordParser
 
 # --------------------------------------------------------------------------------------------------
@@ -81,13 +82,18 @@ class ObservingSystemRecords:
         yaml files.
     '''
 
-    def __init__(self):
-        self.column_names = ['sat', 'start', 'end',
-                             'instr', 'channel_num',
-                             'channels', 'comments']
+    def __init__(self, record_type):
+        '''
+             Supports either 'channel' or 'level' record type. This only
+             affects naming conventions.
+        '''
+
+        self.column_names = []
         self.active_df = None
         self.available_df = None
         self.obs_registry = []
+        self.record_type = record_type
+        self.logger = Logger('ObservingSystemRecords')
 
     def parse_records(self, path_to_sat_db):
 
@@ -97,11 +103,26 @@ class ObservingSystemRecords:
             are parsed using GSIRecordParser to get the final dataframes.
         '''
 
+        # Make a couple modifications based on what record is parsed
+        if self.record_type == 'channel':
+            self.column_names = ['sat', 'start', 'end',
+                                 'instr', 'channel_num',
+                                 'channels', 'comments']
+            file_ext_name = '_channels.tbl'
+        elif self.record_type == 'level':
+            self.column_names = ['sat', 'start', 'end',
+                                 'instr', 'level_num',
+                                 'level', 'comments']
+            file_ext_name = '.tbl'
+        else:
+            logger.abort(f'Record type {self.record_type} not supported. \
+                           Use channel or level')
+
         parser = GSIRecordParser()
         channel_types = ['active', 'available']
         for channel_type in channel_types:
             df = pd.DataFrame(columns=self.column_names)
-            path_to_records = os.path.join(path_to_sat_db, channel_type + '_channels.tbl')
+            path_to_records = os.path.join(path_to_sat_db, channel_type + file_ext_name)
 
             org_df = read_sat_db(path_to_records, self.column_names)
             sat_list = np.unique(org_df['sat'].values)
@@ -122,8 +143,7 @@ class ObservingSystemRecords:
             elif channel_type == 'available':
                 self.available_df = df
             else:
-                # logger assert abort?
-                print('record parsing unavailable for this type')
+                logger.abort(f'record parsing unavailable for {channel_type}')
 
     def save_yamls(self, output_dir, observation_list=None):
 
@@ -176,5 +196,13 @@ class ObservingSystemRecords:
                     sat_dict['available'] = available_field_list
                     sat_dict['active'] = active_field_list
 
-                    with open(output_dir+'/'+instr+'_'+sat+'_channel_info.yaml', 'w') as file:
+                    if self.record_type == 'channel':
+                        output_ext_name = '_channel_info.yaml'
+                    elif self.record_type == 'level':
+                        output_ext_name = '_level_info.yaml'
+                    else:
+                        logger.abort(f'Record type {self.record_type} not supported. \
+                                     Use channel or level')
+
+                    with open(output_dir + '/' + instr + '_' + sat + output_ext_name, 'w') as file:
                         yaml.dump(sat_dict, file)
