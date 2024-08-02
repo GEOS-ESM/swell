@@ -167,7 +167,9 @@
 	platform = {{platform}}
 	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-
+        {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
     {% endfor %}
     {% endif %}
 
