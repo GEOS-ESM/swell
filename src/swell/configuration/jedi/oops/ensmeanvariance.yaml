@@ -5,13 +5,7 @@ ensemble:
   TASKFILLensemble_block
 
 variance output:
-  filetype: cube sphere history
-  provider: geos
-  datapath: {{cycle_dir}}
-  filename: geos.ensemblevariance.%yyyy%mm%dd_%hh%MM%ssz.nc4
+  TASKFILLensemble_cube_variance_output
 
 mean output:
-  filetype: cube sphere history
-  provider: geos
-  datapath: {{cycle_dir}}
-  filename: geos.ensemblemean.%yyyy%mm%dd_%hh%MM%ssz.nc4
+  TASKFILLensemble_cube_mean_output
