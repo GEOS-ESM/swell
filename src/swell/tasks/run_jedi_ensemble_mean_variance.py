@@ -18,7 +18,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 # --------------------------------------------------------------------------------------------------
 
 
-class GetEnsembleMeanVariance(taskBase):
+class RunJediEnsembleMeanVariance(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -27,7 +27,6 @@ class GetEnsembleMeanVariance(taskBase):
         # Jedi application name
         # ---------------------
         jedi_application = 'ensmeanvariance'
-        oops_file = 'EnsMeanvariance'
 
         # Parse configuration
         # -------------------
@@ -84,7 +83,7 @@ class GetEnsembleMeanVariance(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{oops_file}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
 
         # Perform complete template rendering
         # -----------------------------------
