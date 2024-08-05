@@ -15,7 +15,7 @@ models:
     observations:
     - sondes
     obs_experiment: x0048v1
-    background_experiment: geos
+    background_experiment: x0048
     window_type: 3D
     horizontal_resolution: 13
     clean_patterns:

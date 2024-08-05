@@ -42,14 +42,15 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
+            # Perform staging that is cycle dependent
+            #BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}}
+
             # Get ensemble
             GetEnsemble-{{model_component}}
 
             # Get observations
             GetObservations-{{model_component}}
-
-            # Perform staging that is cycle dependent
-            StageJediCycle-{{model_component}}
 
             # Run hofx for ensemble members according to strategy
             {% if ensemble_hofx_strategy == 'serial' %}
