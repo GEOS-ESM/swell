@@ -234,6 +234,7 @@ existing_jedi_build_directory:
   prompt: What is the path to the existing JEDI build directory?
   tasks:
   - BuildJediByLinking
+  - CloneJedi
   type: string
 
 existing_jedi_source_directory:
