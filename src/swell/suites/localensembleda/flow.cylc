@@ -45,31 +45,25 @@
             # Perform staging that is cycle dependent
             CloneJedi[^] => StageJediCycle-{{model_component}}
 
-            # Get ensemble
-            GetEnsemble-{{model_component}}
-
-            # Get observations
-            GetObservations-{{model_component}}
-
             # Run hofx for ensemble members according to strategy
             {% if ensemble_hofx_strategy == 'serial' %}
                 BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}
                 StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
-                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                 GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                 GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
             {% elif ensemble_hofx_strategy == 'parallel' %}
             {% for packet in range(ensemble_hofx_packets) %}
                 # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
                 BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetBackground-{{model_component}} => GetEnsembleMeanVariance => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
 
                 # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
                 # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
-                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} =>RunJediLocalEnsembleDaExecutable-{{model_component}}
+                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% endfor %}
             {% endif %}
 
@@ -137,12 +131,12 @@
     [[GetEnsemble-{{model_component}}]]
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
-    [[GetEnsembleMeanVariance]]
-        script = "swell task GetEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
+    [[RunJediEnsembleMeanVariance-{{model_component}}]]
+        script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
 	platform = {{platform}}
-	execution time limit = {{scheduling["GetEnsembleMeanVariance"]["execution_time_limit"]}}
+	execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["GetEnsembleMeanVariance"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediEnsembleMeanVariance"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 
@@ -165,6 +159,9 @@
 	platform = {{platform}}
 	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
         [[[directives]]]
+        {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     {% endfor %}
     {% endif %}

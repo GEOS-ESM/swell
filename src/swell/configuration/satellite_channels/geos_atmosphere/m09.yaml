@@ -1,7 +1,0 @@
-seviri:
-- begin date: '2012-02-13T00:00:00'
-  channels:
-  - '5'
-  - '6'
-  comments: no comment
-  end date: '2999-12-31T18:00:00'

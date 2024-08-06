@@ -25,6 +25,7 @@ analysis_variables:
   - GetEnsembleMeanVariance
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediVariationalExecutable
   type: string-check-list
 
@@ -199,7 +200,7 @@ ensemble_num_members:
   options: defer_to_model
   prompt: How many members comprise the ensemble?
   tasks:
-  - GetEnsembleMeanVariance
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediLocalEnsembleDaExecutable
   type: integer
@@ -291,6 +292,7 @@ generate_yaml_and_exit:
   tasks:
   - GetEnsembleMeanVariance
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -432,7 +434,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
-  - GetEnsembleMeanVariance
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -467,6 +469,7 @@ jedi_forecast_model:
   tasks:
   - GetEnsembleMeanVariance
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -600,7 +603,7 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
-  - GetEnsembleMeanVariance
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -615,7 +618,7 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
-  - GetEnsembleMeanVariance
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -669,6 +672,7 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -710,6 +714,7 @@ observing_system_records_path:
   - GetEnsembleMeanVariance
   - GetObservations
   - GsiBcToIoda
+  - RunJediEnsembleMeanVariance
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -925,7 +930,7 @@ vertical_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - GetEnsembleMeanVariance
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -946,6 +951,7 @@ window_length:
   - GetGsiBc
   - GetObservations
   - MoveDaRestart
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -972,6 +978,7 @@ window_offset:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -997,6 +1004,7 @@ window_type:
   - GetBackground
   - GetEnsembleMeanVariance
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
