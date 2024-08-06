@@ -10,6 +10,7 @@ models:
     - T18
     ensemble_hofx_strategy: parallel
     ensemble_hofx_packets: 2
+    ensemble_num_members: 10
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     observations:
@@ -22,4 +23,3 @@ models:
     - 'geos.mem*.nc4'
     - '*log*'
     - '*.txt'
-    window_type: 3D
