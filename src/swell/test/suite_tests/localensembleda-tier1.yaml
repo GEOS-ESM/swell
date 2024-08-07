@@ -8,9 +8,9 @@ models:
     npy_proc: 2
     cycle_times:
     - T00
-#    - T06
-#    - T12
-#    - T18
+    - T06
+    - T12
+    - T18
     ensemble_hofx_strategy: parallel
     ensemble_hofx_packets: 1
     ensemble_num_members: 2
