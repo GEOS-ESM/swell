@@ -61,7 +61,6 @@ class taskBase(ABC):
         # ----------------------------
         self.__model__ = model
 
-        print('config_input=', config_input)
         # Create a configuration object
         # -----------------------------
         self.config = Config(config_input, self.logger, task_name, self.__model__)

@@ -1,6 +1,6 @@
 final_cycle_point: '2021-12-12T00:00:00Z'
 jedi_build_method: use_existing
-save_geovals: false
+save_geovals: true
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
@@ -11,7 +11,7 @@ models:
     - T18
     ensemble_hofx_strategy: parallel
     ensemble_hofx_packets: 2
-    ensemble_num_members: 10
+    ensemble_num_members: 4
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     observations:
