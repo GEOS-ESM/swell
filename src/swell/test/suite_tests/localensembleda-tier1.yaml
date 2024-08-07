@@ -1,5 +1,6 @@
 final_cycle_point: '2021-12-12T00:00:00Z'
 jedi_build_method: use_existing
+save_geovals: false
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:

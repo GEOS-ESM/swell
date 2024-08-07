@@ -20,7 +20,7 @@ from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediHofxEnsembleExecutable(taskBase):
+class RunJediHofxEnsembleExecutable(RunJediHofxExecutable):
 
     # ----------------------------------------------------------------------------------------------
 
