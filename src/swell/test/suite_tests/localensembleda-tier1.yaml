@@ -4,6 +4,8 @@ save_geovals: true
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
+    npx_proc: 2
+    npy_proc: 2
     cycle_times:
     - T00
     - T06
