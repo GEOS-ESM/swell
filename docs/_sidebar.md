@@ -36,6 +36,7 @@
 - Code test before pull request
 
   - [Code Tests](code_tests/code_tests.md)
+  - [Suite Tests](code_tests/suite_tests.md)
 
 
 - Governance
