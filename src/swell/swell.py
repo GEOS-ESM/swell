@@ -15,6 +15,7 @@ from swell.deployment.create_experiment import clone_config, create_experiment_d
 from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
+from swell.test.suite_tests.suite_tests import run_suite
 from swell.utilities.suite_utils import get_suites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
@@ -213,6 +214,21 @@ def test(test):
 
     """
     test_wrapper(test)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+@swell_driver.command()
+@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing")))
+def t1test(suite):
+    """
+    Run a particular swell suite from the tier 1 tests.
+
+    Arguments:
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+    """
+    run_suite(suite)
 
 
 # --------------------------------------------------------------------------------------------------
