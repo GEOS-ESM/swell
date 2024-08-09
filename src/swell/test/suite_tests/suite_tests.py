@@ -15,15 +15,32 @@ def run_suite(suite: str):
     experiment_id = f"t{datetime.now().strftime('%Y%jT%H%M')}r{ii:02d}{suite}"
 
     # Get test directory from `~/.swell/swell-test.yml`
+    # NOTE: Add geos_mksi setting here so that this works locally (and any other related settings)
+    # Use `observing_system_records_mksi_path` config option to point at local copy.
+    test_config = {
+        "test_root": Path(tempfile.TemporaryDirectory().name),
+        "mksi_path": None
+    }
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
     try:
         with open(yamlfile, "r") as f:
-            test_config = yaml.safe_load(f)
+            test_user_config = yaml.safe_load(f)
+        print(f"Updating test defaults with user config from {yamlfile}.")
+        test_config = {**test_config, **test_user_config}
     except FileNotFoundError:
-        print(f"User test config ({yamlfile}) found. Using defaults.")
-        test_config = {"test_root": Path(tempfile.TemporaryDirectory().name)}
+        pass
     except Exception as err:
         raise(err)
+
+    mksi_path = test_config["mksi_path"]
+    if not mksi_path:
+        print(
+            "WARNING: 'mksi_path' test config is unset. " +
+            "By default, Swell will try to clone GEOS_mksi from GitHub, " +
+            "which will fail on compute nodes with no internet access."
+        )
+    else:
+        mksi_path = Path(mksi_path).expanduser()
 
     testdir = Path(test_config["test_root"]).expanduser()
     testdir.mkdir(exist_ok=True, parents=True)
@@ -34,7 +51,10 @@ def run_suite(suite: str):
 
     override = {
         "experiment_id": experiment_id,
-        "experiment_root": str(testdir)
+        "experiment_root": str(testdir),
+        "models": {"geos_atmosphere": {
+            "observing_system_records_mksi_path": str(mksi_path)
+        }}
     }
 
     experiment_dir = testdir / experiment_id
