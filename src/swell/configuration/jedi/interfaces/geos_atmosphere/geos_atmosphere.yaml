@@ -9,3 +9,4 @@ executables:
   variational4D: fv3jedi_var.x
   variational4DEnsVar: fv3jedi_var.x
   localensembleda: fv3jedi_letkf.x
+  ensmeanvariance: fv3jedi_ensmeanvariance.x

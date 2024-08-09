@@ -1,0 +1,4 @@
+  filetype: cube sphere history
+  provider: geos
+  datapath: {{cycle_dir}}
+  filename: geos.ensemblemean.%yyyy%mm%dd_%hh%MM%ssz.nc4

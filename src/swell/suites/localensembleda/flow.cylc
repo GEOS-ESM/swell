@@ -65,21 +65,21 @@
             {% if ensemble_hofx_strategy == 'serial' %}
                 BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}
                 StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
-                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                 GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                 GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
             {% elif ensemble_hofx_strategy == 'parallel' %}
             {% for packet in range(ensemble_hofx_packets) %}
                 # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
                 BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetEnsemble-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                 GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
 
                 # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
                 # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
-                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} =>RunJediLocalEnsembleDaExecutable-{{model_component}}
+                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% endfor %}
             {% endif %}
 
@@ -153,6 +153,15 @@
     [[GetEnsemble-{{model_component}}]]
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
+    [[RunJediEnsembleMeanVariance-{{model_component}}]]
+        script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEnsembleMeanVariance"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
@@ -162,6 +171,9 @@
 	platform = {{platform}}
 	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
         [[[directives]]]
+        {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
     {% elif ensemble_hofx_strategy == 'parallel' %}
     {% for packet in range(ensemble_hofx_packets) %}
     [[RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}]]
@@ -172,6 +184,7 @@
         {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
     {% endfor %}
     {% endif %}
 

@@ -16,6 +16,7 @@ models:
     ensemble_num_members: 4
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
+    ensmean_only: false
     observations:
     - sondes
     obs_experiment: x0048v1
