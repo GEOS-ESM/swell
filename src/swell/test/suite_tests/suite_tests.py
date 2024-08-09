@@ -1,5 +1,6 @@
 import tempfile
 import yaml
+import random
 
 from pathlib import Path
 from datetime import datetime
@@ -8,7 +9,10 @@ from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
 
 def run_suite(suite: str):
-    experiment_id = f"t{datetime.now().strftime('%Y%jT%H%M')}{suite}"
+    # Add a random int to the experiment_id to mitigate errors from workflows
+    # created at (roughly) the same time.
+    ii = random.randint(0, 99)
+    experiment_id = f"t{datetime.now().strftime('%Y%jT%H%M')}r{ii:02d}{suite}"
 
     # Get test directory from `~/.swell/swell-test.yml`
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
