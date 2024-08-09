@@ -4,9 +4,11 @@ import random
 
 from pathlib import Path
 from datetime import datetime
+from importlib import resources
 
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
+from swell.utilities.dictionary import update_dict
 
 def run_suite(suite: str):
     # Add a random int to the experiment_id to mitigate errors from workflows
@@ -15,11 +17,8 @@ def run_suite(suite: str):
     experiment_id = f"t{datetime.now().strftime('%Y%jT%H%M')}r{ii:02d}{suite}"
 
     # Get test directory from `~/.swell/swell-test.yml`
-    # NOTE: Add geos_mksi setting here so that this works locally (and any other related settings)
-    # Use `observing_system_records_mksi_path` config option to point at local copy.
     test_config = {
-        "test_root": Path(tempfile.TemporaryDirectory().name),
-        "mksi_path": None
+        "test_root": Path(tempfile.TemporaryDirectory().name)
     }
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
     try:
@@ -32,16 +31,6 @@ def run_suite(suite: str):
     except Exception as err:
         raise(err)
 
-    mksi_path = test_config["mksi_path"]
-    if not mksi_path:
-        print(
-            "WARNING: 'mksi_path' test config is unset. " +
-            "By default, Swell will try to clone GEOS_mksi from GitHub, " +
-            "which will fail on compute nodes with no internet access."
-        )
-    else:
-        mksi_path = Path(mksi_path).expanduser()
-
     testdir = Path(test_config["test_root"]).expanduser()
     testdir.mkdir(exist_ok=True, parents=True)
 
@@ -49,13 +38,32 @@ def run_suite(suite: str):
     print(f"Test directory: {testdir}")
     print(f"Experiment ID: {experiment_id}")
 
+    suite_overrides_file = (resources.files("swell") /
+                            "test" /
+                            "suite_tests" /
+                            f"{suite}-tier1.yaml")
+    print(f"Reading suite overrides from: {suite_overrides_file}")
+    with suite_overrides_file.open("r") as f:
+        suite_overrides = yaml.safe_load(f)
+
     override = {
         "experiment_id": experiment_id,
         "experiment_root": str(testdir),
-        "models": {"geos_atmosphere": {
-            "observing_system_records_mksi_path": str(mksi_path)
-        }}
+        **suite_overrides
     }
+    if "override" in test_config:
+        override = update_dict(override, test_config["override"])
+
+    try:
+        k = override["models"]["geos_atmosphere"]["observing_system_records_mksi_path"]   # type: ignore
+        if k is None:
+            raise KeyError("observing_system_records_mksi_path is set but is None")
+    except KeyError:
+        print(
+            "WARNING: 'mksi_path' test config is unset. " +
+            "By default, Swell will try to clone GEOS_mksi from GitHub, " +
+            "which will fail on compute nodes with no internet access."
+        )
 
     experiment_dir = testdir / experiment_id
     experiment_dir.mkdir(parents=True, exist_ok=True)
