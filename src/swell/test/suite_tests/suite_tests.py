@@ -10,6 +10,7 @@ from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
 from swell.utilities.dictionary import update_dict
 
+
 def run_suite(suite: str):
     # Add a random int to the experiment_id to mitigate errors from workflows
     # created at (roughly) the same time.
@@ -29,7 +30,7 @@ def run_suite(suite: str):
     except FileNotFoundError:
         pass
     except Exception as err:
-        raise(err)
+        raise err
 
     testdir = Path(test_config["test_root"]).expanduser()
     testdir.mkdir(exist_ok=True, parents=True)
@@ -55,7 +56,9 @@ def run_suite(suite: str):
         override = update_dict(override, test_config["override"])
 
     try:
-        k = override["models"]["geos_atmosphere"]["observing_system_records_mksi_path"]   # type: ignore
+        k = (override["models"]  # type: ignore
+             ["geos_atmosphere"]
+             ["observing_system_records_mksi_path"])
         if k is None:
             raise KeyError("observing_system_records_mksi_path is set but is None")
     except KeyError:
@@ -72,7 +75,10 @@ def run_suite(suite: str):
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
 
-    create_experiment_directory(suite, "defaults", "nccs_discover_sles15", str(override_yml), False, None)
+    create_experiment_directory(
+        suite, "defaults", "nccs_discover_sles15",
+        str(override_yml), False, None
+    )
 
     # TODO: Check some stuff about the experiment directory
 
@@ -83,10 +89,11 @@ def run_suite(suite: str):
 
     # TODO: Check the outputs
 
+
 if __name__ == "__main__":
     from argparse import ArgumentParser
 
-    parser = ArgumentParser(description = "Swell suite tests")
+    parser = ArgumentParser(description="Swell suite tests")
     parser.add_argument("suites", nargs="+",
                         help="Suite(s) to run (or `all` to run all suites)")
 
