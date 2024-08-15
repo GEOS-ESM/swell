@@ -51,8 +51,7 @@
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
             # Perform staging that is cycle dependent
-            #BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}}
-            StageJediCycle-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}}
 
             # Get ensemble
             GetEnsemble-{{model_component}}
