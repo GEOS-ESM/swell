@@ -20,6 +20,7 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
 
     [[graph]]
         R1 = """
@@ -52,10 +53,10 @@
             {% for model_component in model_components %}
 
             # JEDI cannot run without code
-            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{{model_component}}
+            BuildJediByLinking? | BuildJedi => RunJediFgatExecutable-{{model_component}}
 
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            CloneJedi => StageJedi-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             {% endfor %}
         """
@@ -80,20 +81,20 @@
             GetObservations-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
-            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            # StageJedi-{{model_component}}[^] => RunJediFgatExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             # Prepare analysis for next forecast
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
             PrepareAnalysis-{{model_component}} =>  RunJediConvertStateSoca2ciceExecutable-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} =>  SaveRestart-{{model_component}}
 
             # Run analysis diagnostics
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}}
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
 
             # Move restart to next cycle
@@ -101,8 +102,8 @@
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
-            # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            # RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            # RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
@@ -222,12 +223,12 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[RunJediVariationalExecutable-{{model_component}}]]
-        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediFgatExecutable-{{model_component}}]]
+        script = "swell task RunJediFgatExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediFgatExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediFgatExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 
