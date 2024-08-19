@@ -89,7 +89,6 @@ class RunJediFgatExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-
         # Atmosphere background error model
         # ---------------------------------
         if npx_proc is not None and npy_proc is not None:

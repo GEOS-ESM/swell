@@ -7,11 +7,14 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from datetime import datetime as dt
 import os
 from netCDF4 import Dataset
 import numpy as np
+from typing import Dict, Tuple
 import xarray as xr
 
+from swell.utilities.datetime import datetime_formats
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -27,73 +30,86 @@ class LinkGeosOutput(taskBase):
         Linking proper GEOS output files for JEDI to ingest and produce analysis.
         This will depend on the model type (ocean vs. atmosphere), model output
         type (history vs. restart), DA method, and window length.
-
-        TODO: Options could be offered in yamls, for instance history vs. restart.
         """
 
         self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
 
-        # Create source and destination files for linking model output to SOCA
-        # ----------------------------------
-        src_dst_dict = {}
+        # Parse configuration
+        # -------------------
+        self.window_type = self.config.window_type()
+        self.window_length = self.config.window_length()
+        self.window_offset = self.config.window_offset()
+        self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_offset)
 
-        # src, dst = self.link_mom6_restart()
-        src, dst = self.link_mom6_history()
-        src_dst_dict[src] = dst
+        if self.window_type == '4D' or 'fgat' in self.suite_name():
+            self.background_frequency = self.config.background_frequency()
 
-        # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
-        # ---------------------------------------------------------------------
-        src, dst = self.prepare_cice6()
-        src_dst_dict[src] = dst
+        self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time(
+            self.window_offset,
+            self.window_type,
+            dto=True)
 
-        for src, dst in src_dst_dict.items():
-            if os.path.exists(src):
-                self.geos.linker(src, dst, self.cycle_dir())
+        # Create source and destination files for linking model output to cycle directories
+        # -----------------------------------------------------------------------------------
+        self.src_dst_dict: Dict[str, Tuple[str, ...]] = {}
+
+        if self.get_model() == 'geos_ocean' or self.get_model() == 'geos_marine':
+            self.link_mom6_history(self.src_dst_dict)
+
+            # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
+            src, dst = self.prepare_cice6()
+            self.src_dst_dict[src] = dst
+
+        # Loop through the dictionary and create links
+        for src, dst in self.src_dst_dict.items():
+            if isinstance(dst, tuple):
+                for d in dst:
+                    self.geos.linker(src, d, self.cycle_dir())
             else:
-                self.logger.abort(f'Source file {src} does not exist. JEDI will fail ' +
-                                  'without a proper background file.')
+                self.geos.linker(src, dst, self.cycle_dir())
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_history(self):
+    def link_mom6_history(self, src_dst_dict):
 
-        # Create GEOS history to SOCA background link
-        # TODO: this will only work for 3Dvar as FGAT requires multiple files
-        # --------------------------------------------------------------------
-        cc_dto = self.cycle_time_dto()
-        src = self.forecast_dir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        # Create links to GEOS history for SOCA inputs
+        # Depending on the DA type, there could be multiple state files to link
+        # -----------------------------------------------------------------------
+        if self.window_type == '4D' or 'fgat' in self.suite_name():
+            states = self.geos.states_generator(self.background_frequency, self.window_length,
+                                                self.window_begin_iso, self.get_model())
+            # Get date information from the states dictionary, and use ocn_filename to get the
+            # destination file name
+            for state in states:
+                date = dt.strptime(state['date'], datetime_formats['iso_format'])
+                src = self.forecast_dir('his_' + date.strftime('%Y_%m_%d_%H') + '.nc')
+                dst = state['ocn_filename']
+                self.src_dst_dict[src] = (dst,)
 
-        dst = 'MOM6.res.' + self.current_cycle + '.nc'
+            # Add the background (beginning of the window) file
+            src = self.forecast_dir('his_' + self.bkgr_time_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
-        return src, dst
+            dst = 'MOM6.res.' + self.bkgr_time_iso + '.nc'
 
-    # ----------------------------------------------------------------------------------------------
+            # If src key already exists, append to the list of destination files
+            if src in src_dst_dict:
+                src_dst_dict[src] += (dst,)
+            else:
+                self.src_dst_dict[src] = (dst,)
 
-    def link_mom6_restart(self):
+        else:
+            # Using a 3D window and hence the background is a single file, in the
+            # middle of the DA window
+            cc_dto = self.cycle_time_dto()
+            src = self.forecast_dir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
 
-        # Create GEOS restart to SOCA background link
-        # ------------------------------------------
+            dst = 'MOM6.res.' + self.current_cycle + '.nc'
+            # If src key already exists, append to the list of destination files
+            if src in src_dst_dict:
+                src_dst_dict[src] += (dst,)
+            else:
+                self.src_dst_dict[src] = (dst,)
 
-        an_fcst_offset = self.config.analysis_forecast_window_offset()
-        rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
-        seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
-
-        # Generic MOM6 rst file source format for SOCA
-        # ---------------------------------------
-        src = self.forecast_dir(['RESTART', 'MOM.res.nc'])
-
-        # This alternate source format corresponds to optional use of Restart Record
-        # parameters in AGCM.rc
-        # -------------------------------------------------------------------------
-        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
-
-        if 'RECORD_FREQUENCY' in agcm_dict:
-            src = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-                                     + seconds + '.nc'])
-
-        dst = 'MOM6.res.' + self.current_cycle + '.nc'
-
-        return src, dst
 
     # ----------------------------------------------------------------------------------------------
 

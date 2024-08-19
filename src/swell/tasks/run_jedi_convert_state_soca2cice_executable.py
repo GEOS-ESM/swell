@@ -28,6 +28,10 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # ----------------------------------------
         N_PROCESSORS = 36
 
+        if self.get_model() != 'geos_marine':
+            self.logger.info('Skipping Soca2cice for: ' + self.get_model())
+            return
+
         # Jedi application name
         # ---------------------
         jedi_application = 'convert_state_soca2cice'
