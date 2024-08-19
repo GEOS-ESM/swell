@@ -34,6 +34,11 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
+
+            {% for model_component in model_components %}
+            # Clone geos ana for generating observing system records
+            CloneGeosMksi-{{model_component}}
+            {% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
@@ -42,8 +47,18 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
+
             # Perform staging that is cycle dependent
-            CloneJedi[^] => StageJediCycle-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}}
+
+            # Get ensemble
+            GetEnsemble-{{model_component}}
+
+            # Get observations
+            GetObservations-{{model_component}}
+
 
             # Run hofx for ensemble members according to strategy
             {% if ensemble_hofx_strategy == 'serial' %}
@@ -121,6 +136,12 @@
         {%- endfor %}
 
     {% for model_component in model_components %}
+
+    [[CloneGeosMksi-{{model_component}}]]
+        script = "swell task CloneGeosMksi $config -m {{model_component}}"
+
+    [[GenerateObservingSystemRecords-{{model_component}}]]
+        script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
