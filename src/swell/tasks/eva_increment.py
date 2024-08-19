@@ -48,12 +48,13 @@ class EvaIncrement(taskBase):
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path
+        # For 3D-Var and FGAT, the increment file is in the middle of the DA window
         # TODO: Increment iteration number may change according to outer iteration loops
         # which is currenly manually set in varincrement1.yaml
         # For now we are only plotting the first one
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-        if window_type == '4D':
+        if window_type == '4D' and 'fgat' not in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 
         # Create dictionary used to override the eva config
