@@ -83,6 +83,7 @@ def prepare_scheduling_dict(
         'EvaObservations',
         'GenerateBClimatology',
         'RunJediConvertStateSoca2ciceExecutable',
+        'RunJediFgatExecutable',
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',

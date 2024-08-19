@@ -6,6 +6,7 @@ cycle_times:
   - all
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -59,6 +60,7 @@ start_cycle_point:
   prompt: What is the time of the first cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -75,6 +77,7 @@ final_cycle_point:
   prompt: What is the time of the final cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -91,6 +94,7 @@ runahead_limit:
   prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar
   - 3dvar_cycle
@@ -106,6 +110,7 @@ model_components:
   options: defer_to_code
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
