@@ -71,7 +71,9 @@ class taskBase(ABC):
         self.__experiment_id__ = self.config.__experiment_id__
         self.__platform__ = self.config.__platform__
         self.__suite_to_run__ = self.config.__suite_to_run__
-        self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
+
+        if datetime_input is not None:
+            self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
 
         # Save the model components
         # -------------------------

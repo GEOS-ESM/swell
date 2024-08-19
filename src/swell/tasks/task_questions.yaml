@@ -23,6 +23,7 @@ analysis_variables:
   - GenerateBClimatology
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-check-list
@@ -202,9 +203,36 @@ ensemble_num_members:
   options: defer_to_model
   prompt: How many members comprise the ensemble?
   tasks:
+  - RunJediEnsembleMeanVariance
   - RunJediHofxEnsembleExecutable
   - RunJediLocalEnsembleDaExecutable
   type: integer
+
+ensmean_only:
+  ask_question: false
+  default_value: false
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: Calculate ensemble mean only?
+  tasks:
+  - RunJediLocalEnsembleDaExecutable
+  type: boolean
+
+ensmeanvariance_only:
+  ask_question: false
+  default_value: false
+  models:
+  - geos_atmosphere
+  options:
+  - true
+  - false
+  prompt: Calculate ensemble mean and variance only?
+  tasks:
+  - RunJediLocalEnsembleDaExecutable
+  type: boolean
 
 existing_geos_gcm_build_path:
   ask_question: true
@@ -267,6 +295,7 @@ generate_yaml_and_exit:
   tasks:
   - GenerateBClimatology
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -411,6 +440,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -445,6 +475,7 @@ jedi_forecast_model:
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -580,6 +611,7 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -595,6 +627,7 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -649,6 +682,7 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -690,6 +724,7 @@ observing_system_records_path:
   - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -907,6 +942,7 @@ vertical_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -928,6 +964,7 @@ window_length:
   - GetObservations
   - LinkGeosOutput
   - MoveDaRestart
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -955,6 +992,7 @@ window_offset:
   - GsiNcdiagToIoda
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
@@ -981,6 +1019,7 @@ window_type:
   - GetBackground
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable

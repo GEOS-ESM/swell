@@ -1,0 +1,8 @@
+- link_files:
+    directories:
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/GEOS_CRTM_Surface/geos.crtmsrf.{{horizontal_resolution}}.nc4', '{{cycle_dir}}/fv3-jedi/bkg/']
+      - ['{{experiment_root}}/{{experiment_id}}/jedi_bundle/source/fv3-jedi/test/Data/fieldmetadata/*', '{{cycle_dir}}/fv3-jedi/fieldmetadata/']
+      - ['{{experiment_root}}/{{experiment_id}}/jedi_bundle/source/fv3-jedi/test/Data/fv3files/*', '{{cycle_dir}}/fv3-jedi/fv3files/']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4', '{{cycle_dir}}/fv3-jedi/gsibec/']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml', '{{cycle_dir}}/fv3-jedi/gsibec/']
+      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/rcov/1.0.0/*', '{{cycle_dir}}/fv3-jedi/rcov/']

@@ -1,5 +1,0 @@
-ssmis:
-- begin date: '2003-11-04T00:00:00'
-  channels: []
-  comments: '# All observations off for MERRA-2'
-  end date: '2999-12-31T18:00:00'
