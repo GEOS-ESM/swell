@@ -58,6 +58,7 @@ class Config():
         self.__experiment_id__ = experiment_dict.get('experiment_id')
         self.__platform__ = experiment_dict.get('platform')
         self.__start_cycle_point__ = experiment_dict.get('start_cycle_point')
+        self.__suite_to_run__ = experiment_dict.get('suite_to_run')
 
         # If experiment_dict contains models key add the model components to the object
         if 'models' in experiment_dict.keys():
