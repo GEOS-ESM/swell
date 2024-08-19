@@ -2,7 +2,7 @@ jedi_interface: fv3-jedi
 total_processors: 6*{{npx_proc}}*{{npy_proc}}
 executables:
   ensemblehofx4D: fv3jedi_enshofx.x # PARALLEL
-  # ensemblehofx3D: fv3jedi_hofx.x # SERIAL
+  ensemblehofx3D: fv3jedi_enshofx.x
   hofx3D: fv3jedi_hofx_nomodel.x
   hofx4D: fv3jedi_hofx.x
   variational3D: fv3jedi_var.x
