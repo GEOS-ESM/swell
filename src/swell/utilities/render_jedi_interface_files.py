@@ -105,6 +105,11 @@ class JediConfigRendering():
             'window_length',
         ]
 
+        # List of all potential valid dynamic keys that can be used in templates
+        self.valid_dynamic_keys = [
+            'states',
+        ]
+
     # ----------------------------------------------------------------------------------------------
 
     # Function to add key to the template dictionary
@@ -114,6 +119,19 @@ class JediConfigRendering():
         self.logger.assert_abort(key in self.valid_template_keys, f'Trying to add key \'{key}\' ' +
                                  f'to jedi config rendering dictionary. But the key is not part ' +
                                  f'of the valid keys: \'{self.valid_template_keys}\'')
+
+        # Add element to dictionary
+        self.__template_dict__[key] = element
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Function to add key to the template dictionary
+    def add_dynamic_key(self, key, element):
+
+        # First assert that key is allowed
+        self.logger.assert_abort(key in self.valid_dynamic_keys, f'Trying to add key \'{key}\' ' +
+                                 f'to jedi config rendering dictionary. But the key is not part ' +
+                                 f'of the valid dynamic keys: \'{self.valid_dynamic_keys}\'')
 
         # Add element to dictionary
         self.__template_dict__[key] = element
