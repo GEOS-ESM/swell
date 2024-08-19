@@ -7,7 +7,6 @@ analysis_forecast_window_offset:
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
-  - LinkGeosOutput
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
@@ -24,6 +23,7 @@ analysis_variables:
   - GenerateBClimatology
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-check-list
 
@@ -62,6 +62,8 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - LinkGeosOutput
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
@@ -81,6 +83,7 @@ background_time_offset:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -148,6 +151,7 @@ crtm_coeff_dir:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -261,7 +265,9 @@ generate_yaml_and_exit:
   default_value: false
   prompt: Generate JEDI executable YAML and exit?
   tasks:
+  - GenerateBClimatology
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -292,7 +298,7 @@ geos_experiment_directory:
 
 geos_gcm_tag:
   ask_question: true
-  default_value: v11.5.1
+  default_value: v11.6.0
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - CloneGeos
@@ -346,6 +352,7 @@ gradient_norm_reduction:
   - all
   prompt: What value of gradient norm reduction for convergence?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string
 
@@ -356,6 +363,7 @@ gsibec_configuration:
   - geos_atmosphere
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   - StageJedi
   type: string
@@ -403,6 +411,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -436,6 +445,7 @@ jedi_forecast_model:
   prompt: What forecast model should be used within JEDI for 4D window propagation?
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -543,6 +553,7 @@ minimizer:
   options: defer_to_model
   prompt: Which data assimilation minimizer do you wish to use?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
 
@@ -569,6 +580,7 @@ npx_proc:
   prompt: What number of processors do you wish to use in the x-direction?
   tasks:
   - GenerateBClimatology
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -583,6 +595,7 @@ npy_proc:
   prompt: What number of processors do you wish to use in the y-direction?
   tasks:
   - GenerateBClimatology
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -597,6 +610,7 @@ number_of_iterations:
   prompt: What number of iterations do you wish to use for each outer loop? Provide
     a list of integers the same length as the number of outer loops.
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: integer-list
 
@@ -635,6 +649,7 @@ observations:
   - GsiBcToIoda
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -675,6 +690,7 @@ observing_system_records_path:
   - GenerateObservingSystemRecords
   - GetObservations
   - GsiBcToIoda
+  - RunJediFgatExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -805,6 +821,7 @@ total_processors:
   - GenerateBClimatology
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -890,6 +907,7 @@ vertical_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -908,7 +926,9 @@ window_length:
   - GetGeovals
   - GetGsiBc
   - GetObservations
+  - LinkGeosOutput
   - MoveDaRestart
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -933,7 +953,9 @@ window_offset:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -957,7 +979,9 @@ window_type:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
