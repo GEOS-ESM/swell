@@ -29,7 +29,7 @@ class Geos():
 
         '''
         Intention with creating this GEOS class is to not have any model dependent
-        methods. This way, methods would be shared between the forecast-only and 
+        methods. This way, methods would be shared between the forecast-only and
         cycling DA tasks.
         '''
 
@@ -396,7 +396,8 @@ class Geos():
         static_part = {"basename": "./", "read_from_file": 1}
 
         # Calculate the number of states using background frequency and window length
-        number_of_states = int(isodate.parse_duration(window_length) / isodate.parse_duration(background_frequency)) + 1
+        number_of_states = int(isodate.parse_duration(window_length)
+                               / isodate.parse_duration(background_frequency)) + 1
         self.logger.info('Number of states: ', number_of_states)
 
         # Generate the list of states dictionary with date and marine filename entries.
@@ -409,12 +410,13 @@ class Geos():
         for i in range(number_of_states-1):
             i += 1
             hours = int((isodate.parse_duration(background_frequency) * i).total_seconds() / 3600)
-            state_dto = isodate.parse_datetime(window_begin_iso) + isodate.parse_duration(background_frequency) * i
+            state_dto = isodate.parse_datetime(window_begin_iso) \
+                + isodate.parse_duration(background_frequency) * i
             state = {
                 "date": state_dto.strftime(datetime_formats['iso_format']),
                 "ocn_filename": "ocn.fc." + window_begin_iso + "." + f"PT{hours}H" + ".nc"
             }
-            #TODO: add ice key if model is active
+            # TODO: add ice key if model is active
             state.update(static_part)
             states.append(state)
 
