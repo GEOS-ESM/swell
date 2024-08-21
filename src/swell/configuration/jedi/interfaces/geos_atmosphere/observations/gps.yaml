@@ -29,7 +29,7 @@ obs filters:
   where:
   - variable:
       name: MetaData/satelliteIdentifier
-    is_in: 41,265,266,267,268,421,440,724,725,726,727,728,729
+    is_in: 41,265,266,421,440,724,725,726,727,728,729
 #---
 - filter: Perform Action
   filter variables:
@@ -84,7 +84,7 @@ obs filters:
   where:
   - variable:
       name: MetaData/satelliteIdentifier
-    is_in: 269
+    is_in: 267,268,269
   - variable:
       name: MetaData/satelliteConstellationRO
     is_in: 401
@@ -99,7 +99,7 @@ obs filters:
   where:
   - variable:
       name: MetaData/satelliteIdentifier
-    is_in: 269
+    is_in: 267,268,269
   - variable:
       name: MetaData/satelliteConstellationRO
     is_in: 402-999
@@ -154,7 +154,7 @@ obs filters:
     inflation factor: 2.0
   where:
   - variable: MetaData/satelliteIdentifier
-    is_in: 269
+    is_in: 267,268,269
 
 # Gross check -- need to do obserror = min(cerrormax,max(cerrormin,obserr)
 # assign JediAdjustObsError/bendingAngle <--- ObsErrorData before changing its Min and Max
