@@ -68,18 +68,24 @@
                 GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                 GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
             {% elif ensemble_hofx_strategy == 'parallel' %}
-            {% for packet in range(ensemble_hofx_packets) %}
-                # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
-                BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
-                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                {% for packet in range(ensemble_hofx_packets) %}
+                   # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
+                   BuildJediByLinking[^]? | BuildJedi[^] => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                   StageJediCycle-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                   GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                   GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                   GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
 
-                # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
-                # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
-                RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
-            {% endfor %}
+                   # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
+                   # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
+                   RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                {% endfor %}
+            {% elif ensemble_hofx_strategy == 'skip' %}
+                BuildJediByLinking[^]? | BuildJedi[^] => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                StageJediCycle-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                GetObservations-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                GetBackground-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% endif %}
 
         # LETKF solver can be executed only after all the hofx ensemble members have been combined

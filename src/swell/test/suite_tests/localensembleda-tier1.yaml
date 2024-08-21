@@ -10,9 +10,8 @@ models:
 #    - T06
 #    - T12
 #    - T18
-    ensemble_hofx_strategy: parallel
-    ensemble_hofx_packets: 2
-    ensemble_num_members: 4
+    local_ensemble_solver: GETKF
+    ensemble_hofx_strategy: skip
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false

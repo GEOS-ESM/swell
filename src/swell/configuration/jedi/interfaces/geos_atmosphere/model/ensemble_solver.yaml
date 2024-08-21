@@ -1,4 +1,5 @@
 solver: {{local_ensemble_solver}}
+use linear observer: {{use_linear_observer}}
 inflation:
   rtps: {{local_ensemble_inflation_rtps}}
   rtpp: {{local_ensemble_inflation_rtpp}}
