@@ -566,7 +566,7 @@ local_ensemble_solver:
   - RunJediLocalEnsembleDaExecutable
   type: string-drop-list
 
-use_linear_observer:
+local_ensemble_use_linear_observer:
   ask_question: true
   default_value: defer_to_model
   models:

@@ -126,7 +126,7 @@ local_ensemble_solver:
   - LETKF
   - GETKF
 
-use_linear_observer:
+local_ensemble_use_linear_observer:
   default_value: true
   options:
   - true
