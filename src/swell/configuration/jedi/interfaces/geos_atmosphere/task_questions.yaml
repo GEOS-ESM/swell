@@ -132,6 +132,12 @@ local_ensemble_use_linear_observer:
   - true
   - false
 
+skip_ensemble_hofx:
+  default_value: true
+  options:
+  - true
+  - false
+
 minimizer:
   default_value: DRPCG
   options:

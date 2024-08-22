@@ -123,6 +123,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('ensmeanvariance_only',
                                     self.config.ensmeanvariance_only())
         self.jedi_rendering.add_key('local_ensemble_use_linear_observer', self.config.local_ensemble_use_linear_observer())
+        self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
 
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true

@@ -11,7 +11,9 @@ models:
 #    - T12
 #    - T18
     local_ensemble_solver: GETKF
-    ensemble_hofx_strategy: skip
+    skip_ensemble_hofx: true
+    local_ensemble_use_linear_operator: false
+#    ensemble_hofx_strategy: parallel
     ensemble_num_members: 4
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
