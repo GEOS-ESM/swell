@@ -59,8 +59,7 @@
             # Get observations
             GetObservations-{{model_component}}
 
-
-#            {% if skip_ensemble_hofx %}
+            {% if skip_ensemble_hofx %}
                 BuildJediByLinking[^]? | BuildJedi[^] => RunJediLocalEnsembleDaExecutable-{{model_component}}
                 StageJediCycle-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                 GetObservations-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
@@ -88,7 +87,7 @@
                       RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                    {% endfor %}
                {% endif %}
-#            {% endif %}
+            {% endif %}
 
 
         # LETKF solver can be executed only after all the hofx ensemble members have been combined
@@ -173,6 +172,7 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
+    {% if not skip_ensemble_hofx %}
     {% if ensemble_hofx_strategy == 'serial' %}
     [[RunJediHofxEnsembleExecutable-{{model_component}}]]
         script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}}"
@@ -195,6 +195,7 @@
 
     {% endfor %}
     {% endif %}
+    {% endif %}    
 
     [[RunJediLocalEnsembleDaExecutable-{{model_component}}]]
         script = "swell task RunJediLocalEnsembleDaExecutable $config -d $datetime -m {{model_component}}"
