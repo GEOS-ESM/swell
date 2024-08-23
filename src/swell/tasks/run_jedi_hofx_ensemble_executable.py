@@ -11,6 +11,7 @@
 import os
 import yaml
 
+from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
 
 from swell.utilities.run_jedi_executables import run_executable
@@ -19,7 +20,7 @@ from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 # --------------------------------------------------------------------------------------------------
 
 
-class RunJediHofxEnsembleExecutable(RunJediHofxExecutable):
+class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
     # ----------------------------------------------------------------------------------------------
 

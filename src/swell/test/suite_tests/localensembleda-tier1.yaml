@@ -3,18 +3,18 @@ jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    npx_proc: 1
-    npy_proc: 1
+    horizontal_resolution: '4'
+    npx_proc: 2
+    npy_proc: 2
     cycle_times:
     - T00
-#    - T06
-#    - T12
-#    - T18
+    - T06
+    - T12
+    - T18
     local_ensemble_solver: GETKF
     skip_ensemble_hofx: true
     local_ensemble_use_linear_operator: false
-#    ensemble_hofx_strategy: parallel
-    ensemble_num_members: 4
+    ensemble_num_members: 2
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false

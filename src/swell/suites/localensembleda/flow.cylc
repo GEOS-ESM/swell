@@ -89,7 +89,6 @@
                {% endif %}
             {% endif %}
 
-
         # LETKF solver can be executed only after all the hofx ensemble members have been combined
         # RunEnsembleHofxCombiner-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
 
