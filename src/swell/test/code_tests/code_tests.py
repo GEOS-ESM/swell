@@ -25,15 +25,9 @@ def code_tests():
     logger = Logger('TestSuite')
     logger.test('Running Swell Test Suite')
 
-    # Check for environment variable
-    log_env = os.environ.get('LOG_INFO')
-
-    # If found set element to environment variable
-    if log_env is None:
-        # Turn off the regular info testing (default)
-        os.environ["LOG_INFO"] = "0"  # Set this to 1 when errors are being debugged
-    else:
-        os.environ["LOG_INFO"] = log_env
+    # Default log_info testing to false
+    os.environ.setdefault("LOG_INFO", "0")
+    # Set to 1 when errors are being debugged
 
     # Create a test suite
     test_suite = unittest.TestSuite()
