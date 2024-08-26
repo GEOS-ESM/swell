@@ -423,7 +423,7 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
                              'they are not provided in the experiment dictionary.')
             for model_component in model_components:
                 render_dictionary[ensemble_aspect] = \
-                experiment_dict['models'][model_component][ensemble_aspect]
+                    experiment_dict['models'][model_component][ensemble_aspect]
 
     # Cycling VarBC exception (only for geos_atmosphere)
     if 'cycling_varbc' in suite_file:

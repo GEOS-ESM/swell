@@ -132,12 +132,6 @@ local_ensemble_use_linear_observer:
   - true
   - false
 
-skip_ensemble_hofx:
-  default_value: true
-  options:
-  - true
-  - false
-
 minimizer:
   default_value: DRPCG
   options:
@@ -250,6 +244,12 @@ path_to_gsi_nc_diags:
   default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiag/%Y%m%d%H
 
 produce_geovals:
+  default_value: true
+  options:
+  - true
+  - false
+
+skip_ensemble_hofx:
   default_value: true
   options:
   - true

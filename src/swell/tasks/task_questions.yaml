@@ -577,17 +577,6 @@ local_ensemble_use_linear_observer:
   - RunJediLocalEnsembleDaExecutable
   type: boolean
 
-skip_ensemble_hofx:
-  ask_question: true
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  options: defer_to_model
-  prompt: Which local ensemble solver type should be implemented?
-  tasks:
-  - RunJediLocalEnsembleDaExecutable
-  type: boolean
-
 minimizer:
   ask_question: false
   default_value: defer_to_model
@@ -829,6 +818,17 @@ single_observations:
   tasks:
   - GsiNcdiagToIoda
   - RunJediUfoTestsExecutable
+  type: boolean
+
+skip_ensemble_hofx:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  options: defer_to_model
+  prompt: Which local ensemble solver type should be implemented?
+  tasks:
+  - RunJediLocalEnsembleDaExecutable
   type: boolean
 
 swell_static_files:
