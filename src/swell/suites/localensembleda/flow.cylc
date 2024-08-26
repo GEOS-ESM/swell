@@ -65,6 +65,8 @@
                 GetObservations-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                 GetBackground-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
                 GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                GenerateObservingSystemRecords-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
@@ -73,6 +75,7 @@
                    GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                    GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                   GenerateObservingSystemRecords-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
                {% elif ensemble_hofx_strategy == 'parallel' %}
                    {% for packet in range(ensemble_hofx_packets) %}
                       # When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
@@ -81,6 +84,7 @@
                       GetObservations-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                       GetBackground-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
                       GetEnsemble-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                      GenerateObservingSystemRecords-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
 
                       # There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
                       # RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunEnsembleHofxCombiner-{{model_component}}
