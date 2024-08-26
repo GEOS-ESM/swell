@@ -13,7 +13,7 @@ models:
     - T18
     local_ensemble_solver: GETKF
     skip_ensemble_hofx: true
-    local_ensemble_use_linear_operator: false
+    local_ensemble_use_linear_observer: true
     ensemble_num_members: 2
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
