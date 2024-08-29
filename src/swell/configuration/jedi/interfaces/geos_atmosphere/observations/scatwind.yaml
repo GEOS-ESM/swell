@@ -4,7 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/scatwind.{{window_begin}}.nc4'
-      missing file action: warn
+      missing file action: error
   obsdataout:
     engine:
       type: H5File
