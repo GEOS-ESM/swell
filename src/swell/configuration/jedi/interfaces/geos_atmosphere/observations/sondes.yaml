@@ -4,6 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/sondes.{{window_begin}}.nc4'
+      missing file action: warn
     obsgrouping:
       group variables: ["stationIdentification", "releaseTime"]
       sort variable: "pressure"
