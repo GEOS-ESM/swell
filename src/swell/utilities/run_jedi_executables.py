@@ -26,14 +26,14 @@ def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
         # Check if file is not empty (size > 0)
         # -------------------------------------
         if os.path.getsize(filename) < 1:
-           use_observation = False
+            use_observation = False
     else:
         miss_file_action = obs_dict['obs space']['obsdatain']['engine']['missing file action']
-        # Check how to handle missing files 
+        # Check how to handle missing files
         # ---------------------------------
         if miss_file_action == 'error':
-           use_observation = False
-           
+            use_observation = False
+
     return use_observation
 
 
