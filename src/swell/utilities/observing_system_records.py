@@ -69,6 +69,9 @@ def read_sat_db(path_to_sat_db, column_names):
                 # convert channel list to string
                 df.loc[idx, 'channels'] = str(channel_list)
                 idx += 1
+
+    file.close()
+
     return df
 
 # --------------------------------------------------------------------------------------------------
