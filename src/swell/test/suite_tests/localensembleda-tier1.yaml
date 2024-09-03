@@ -3,7 +3,7 @@ jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '4'
+    horizontal_resolution: '91'
     npx_proc: 2
     npy_proc: 2
     cycle_times:
@@ -20,6 +20,7 @@ models:
     ensmean_only: false
     observations:
     - sondes
+    - amsua_metop-b
     obs_experiment: x0048v1
     background_experiment: x0048
     window_type: 3D
