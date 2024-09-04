@@ -22,7 +22,7 @@ models:
     observations:
     - sondes
     - amsua_metop-b
-    obs_experiment: x0048v1
+    obs_experiment: x0048v2
     background_experiment: x0048
     window_type: 3D
     clean_patterns:
