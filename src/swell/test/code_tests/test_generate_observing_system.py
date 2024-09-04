@@ -1,6 +1,6 @@
 import os
-import git
 import unittest
+import subprocess
 from datetime import datetime as dt
 from swell.utilities.logger import Logger
 from swell.utilities.get_channels import get_channels
@@ -8,14 +8,17 @@ from swell.utilities.observing_system_records import ObservingSystemRecords
 
 
 def setup_geos_mksi(branch):
-    repo_url = "https://github.com/GEOS-ESM/GEOS_mksi.git"
+    url = "https://github.com/GEOS-ESM/GEOS_mksi.git"
     # Clone repo if not already cloned
     if not os.path.exists("GEOS_mksi"):
-        repo = git.Repo.clone_from(repo_url, "GEOS_mksi",  branch=branch)
+        git_clone_cmd = ["git", "clone", "-b", branch, url, "GEOS_mksi"]
+        subprocess.run(git_clone_cmd, stderr=subprocess.DEVNULL)
     else:
-        # Update branch if needed
-        repo = git.Repo("GEOS_mksi")
-        repo.git.checkout(branch)
+        cwd = os.getcwd()
+        os.chdir("GEOS_mksi")
+        git_checkout_cmd = ['git', 'checkout', branch]
+        subprocess.run(git_checkout_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        os.chdir(cwd)
 
 
 class GenerateObservingSystemTest(unittest.TestCase):
