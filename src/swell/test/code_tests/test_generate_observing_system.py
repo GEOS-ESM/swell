@@ -26,7 +26,6 @@ class GenerateObservingSystemTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.logger = Logger("GenerateObservingSystemTest")
-        cls.observations = ["cris-fsr_npp"]
         cls.observing_system_records_path = "./output/"
         cls.dt_cycle_time = dt.strptime("20211212T000000Z", "%Y%m%dT%H%M%SZ")
         cls.path_to_gsi_records = os.path.join("GEOS_mksi/", "sidb")
@@ -36,17 +35,18 @@ class GenerateObservingSystemTest(unittest.TestCase):
         """ Testing abort for if on main branch for GEOS_mksi  """
 
         # Clone Geos_mksi (main branch) and parse yamls
+        observations = ["cris-fsr_npp"]
         setup_geos_mksi("main")
         sat_records = ObservingSystemRecords("channel")
         sat_records.parse_records(self.path_to_gsi_records)
-        sat_records.save_yamls(self.observing_system_records_path, self.observations)
+        sat_records.save_yamls(self.observing_system_records_path, observations)
 
         # Check that get_channels aborts for  cris-fsr_npp
         abort_message = "\nHERE IS THE TRACEBACK: \n----------------------\n\n" + \
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
         with self.assertRaises(SystemExit) as abort:
-            get_channels(self.observing_system_records_path, self.observations[0],
+            get_channels(self.observing_system_records_path, observations[0],
                          self.dt_cycle_time, self.logger)
             self.assertEqual(abort.exception, abort_message)
 
@@ -55,11 +55,12 @@ class GenerateObservingSystemTest(unittest.TestCase):
         """ Test to show that GEOS_mksi's develop branch works as expected  """
 
         # Clone Geos_mksi (develop branch) and parse yamls
+        observations = ["cris-fsr_npp"]
         setup_geos_mksi("develop")
         sat_records = ObservingSystemRecords("channel")
         sat_records.parse_records(self.path_to_gsi_records)
-        sat_records.save_yamls(self.observing_system_records_path, self.observations)
-        _, active_chs = get_channels(self.observing_system_records_path, self.observations[0],
+        sat_records.save_yamls(self.observing_system_records_path, observations)
+        _, active_chs = get_channels(self.observing_system_records_path, observations[0],
                                      self.dt_cycle_time, self.logger)
         assert active_chs is not None
 
