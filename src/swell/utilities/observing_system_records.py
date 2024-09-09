@@ -28,8 +28,8 @@ def read_sat_db(path_to_sat_db, column_names):
     filename = path_to_sat_db
     df = pd.DataFrame(columns=column_names)
 
-    file = open(filename, 'r')
-    lines = file.readlines()
+    with open(filename, "r") as file:
+        lines = file.readlines()
 
     # Read blindly into an array, throw line away if it starts with # or newline
     idx = 0
@@ -69,8 +69,6 @@ def read_sat_db(path_to_sat_db, column_names):
                 # convert channel list to string
                 df.loc[idx, 'channels'] = str(channel_list)
                 idx += 1
-
-    file.close()
 
     return df
 

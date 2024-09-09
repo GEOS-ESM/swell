@@ -14,11 +14,9 @@ def setup_geos_mksi(branch):
         git_clone_cmd = ["git", "clone", "-b", branch, url, "GEOS_mksi"]
         subprocess.run(git_clone_cmd, stderr=subprocess.DEVNULL)
     else:
-        cwd = os.getcwd()
-        os.chdir("GEOS_mksi")
-        git_checkout_cmd = ['git', 'checkout', branch]
-        subprocess.run(git_checkout_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        os.chdir(cwd)
+        git_checkout_cmd = ["git", "checkout", branch]
+        subprocess.run(git_checkout_cmd, cwd="./GEOS_mksi", stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
 
 
 class GenerateObservingSystemTest(unittest.TestCase):
