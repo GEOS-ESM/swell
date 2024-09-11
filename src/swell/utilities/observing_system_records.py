@@ -116,7 +116,7 @@ class ObservingSystemRecords:
                                  'level', 'comments']
             file_ext_name = '.tbl'
         else:
-            logger.abort(f'Record type {self.record_type} not supported. \
+            self.logger.abort(f'Record type {self.record_type} not supported. \
                            Use channel or level')
 
         parser = GSIRecordParser()
@@ -144,7 +144,7 @@ class ObservingSystemRecords:
             elif channel_type == 'available':
                 self.available_df = df
             else:
-                logger.abort(f'record parsing unavailable for {channel_type}')
+                self.logger.abort(f'record parsing unavailable for {channel_type}')
 
     def save_yamls(self, output_dir, observation_list=None):
 
@@ -202,7 +202,7 @@ class ObservingSystemRecords:
                     elif self.record_type == 'level':
                         output_ext_name = '_level_info.yaml'
                     else:
-                        logger.abort(f'Record type {self.record_type} not supported. \
+                        self.logger.abort(f'Record type {self.record_type} not supported. \
                                      Use channel or level')
 
                     with open(output_dir + '/' + instr + '_' + sat + output_ext_name, 'w') as file:
