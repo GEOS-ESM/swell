@@ -68,7 +68,7 @@ def get_channel_list(input_dict, dt_cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time, logger):
 
     '''
         Comparing available channels and active channels from the observing
@@ -85,6 +85,14 @@ def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
             data = yaml.safe_load(file)
             available_channels = get_channel_list(data['available'], dt_cycle_time)
             active_channels = get_channel_list(data['active'], dt_cycle_time)
+
+        if available_channels is None:
+            logger.abort(f'Missing available channels for {observation}, '
+                         'Confirm that you are using the right version of GEOSmksi')
+
+        if active_channels is None:
+            logger.abort(f'Missing active channels for {observation}, '
+                         'Confirm that you are using the right version of GEOSmksi')
 
         available_channels_list = process_channel_lists(available_channels)
         available_range_string = create_range_string(available_channels_list)

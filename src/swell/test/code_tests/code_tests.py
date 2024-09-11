@@ -14,6 +14,7 @@ import unittest
 from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
 from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
 from swell.test.code_tests.slurm_test import SLURMConfigTest
+from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
 from swell.utilities.logger import Logger
 
 
@@ -25,8 +26,9 @@ def code_tests():
     logger = Logger('TestSuite')
     logger.test('Running Swell Test Suite')
 
-    # Turn off the regular info testing
-    os.environ["LOG_INFO"] = "0"  # Set this to 1 when errors are being debugged
+    # Default log_info testing to false
+    os.environ.setdefault("LOG_INFO", "0")
+    # Set to 1 when errors are being debugged
 
     # Create a test suite
     test_suite = unittest.TestSuite()
@@ -39,6 +41,9 @@ def code_tests():
 
     # Load SLURM tests
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SLURMConfigTest))
+
+    # Load Observing System Generation tests
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(GenerateObservingSystemTest))
 
     # Create a test runner
     test_runner = unittest.TextTestRunner()

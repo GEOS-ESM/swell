@@ -206,7 +206,8 @@ class JediConfigRendering():
 
                 # Get available and active channels
                 avail_channels, active_channels = get_channels(self.observing_system_records_path,
-                                                               config_name, self.cycle_time)
+                                                               config_name, self.cycle_time,
+                                                               self.logger)
 
                 # Add available and active channels to template dictionary
                 # If config_name contains a hyphen, remove for jinja2 templating
