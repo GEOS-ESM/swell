@@ -12,6 +12,7 @@ import glob
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
+from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -24,7 +25,16 @@ class GetGeosRestart(taskBase):
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
+        swell_static_files_user = self.config.swell_static_files_user(None)
         self.swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None:
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                self.swell_static_files = swell_static_files_user
 
         # Create forecast_dir and INPUT
         # ----------------------------

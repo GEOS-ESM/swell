@@ -13,7 +13,7 @@ import os
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.filehandler import *
 from swell.utilities.exceptions import *
-
+from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -31,7 +31,18 @@ class StageJedi(taskBase):
 
         # Extract potential template variables from config
         horizontal_resolution = self.config.horizontal_resolution()
+
+        swell_static_files_user = self.config.swell_static_files_user(None)
         swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None:
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                swell_static_files = swell_static_files_user
+
         vertical_resolution = self.config.vertical_resolution()
         gsibec_configuration = self.config.gsibec_configuration(None)
 

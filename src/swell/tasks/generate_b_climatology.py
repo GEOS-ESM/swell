@@ -11,6 +11,7 @@ import yaml
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
+from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -239,7 +240,18 @@ class GenerateBClimatology(taskBase):
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
         background_error_model = self.config.background_error_model()
+
+        swell_static_files_user = self.config.swell_static_files_user(None)
         self.swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None:
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                self.swell_static_files = swell_static_files_user
+
         self.horizontal_resolution = self.config.horizontal_resolution()
         self.vertical_resolution = self.config.vertical_resolution()
 
