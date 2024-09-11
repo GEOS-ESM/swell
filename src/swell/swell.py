@@ -89,7 +89,7 @@ or for task-model combinations.
 @click.argument('suite', type=click.Choice(get_suites()))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
-@click.option('-p', '--platform', 'platform', default='nccs_discover',
+@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
               type=click.Choice(get_platforms()), help=platform_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)

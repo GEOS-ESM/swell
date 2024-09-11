@@ -11,3 +11,5 @@ Additionally `cylc` uses a file called `$HOME/.cylc/flow/global.cylc` to control
 **WARNING:**
 The contents of the above two files will be platform specific.
 ---
+
+See `docs/platforms/configuring_cylc_discover.md` for instructions on configuring cylc for Discover.
