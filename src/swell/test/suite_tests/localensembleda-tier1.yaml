@@ -3,7 +3,7 @@ jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '4'
+    horizontal_resolution: 91
     npx_proc: 2
     npy_proc: 2
     cycle_times:
@@ -18,12 +18,13 @@ models:
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false
+    path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
     observations:
     - sondes
-    obs_experiment: x0048v1
+    - amsua_metop-b
+    obs_experiment: x0048v2
     background_experiment: x0048
     window_type: 3D
-    horizontal_resolution: 13
     clean_patterns:
     - 'geos.mem*.nc4'
     - '*log*'

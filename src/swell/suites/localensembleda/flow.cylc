@@ -191,13 +191,15 @@
         {%- endfor %}
 
     [[EvaObservations-{{model_component}}]]
-        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
+        script = true
+#        EnKF not ready to use Eva
+#        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
+#        platform = {{platform}}
+#        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
+#        [[[directives]]]
+#        {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
+#            --{{key}} = {{value}}
+#        {%- endfor %}
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
