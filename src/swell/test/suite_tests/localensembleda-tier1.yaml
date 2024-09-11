@@ -18,7 +18,7 @@ models:
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false
-    path_to_ensemble: /discover/nobackup/rtodling/SwellExperiments/R2D2DataStore/Shared/geos/atmens/c90/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
+    path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
     observations:
     - sondes
     - amsua_metop-b
