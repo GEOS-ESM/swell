@@ -22,7 +22,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 class EvaJediLog(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the model
         # -------------

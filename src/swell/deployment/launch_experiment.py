@@ -19,7 +19,13 @@ from swell.utilities.shell_commands import run_subprocess
 
 class DeployWorkflow():
 
-    def __init__(self, suite_path, experiment_name, no_detach, log_path):
+    def __init__(
+        self,
+        suite_path: str,
+        experiment_name: str,
+        no_detach: bool,
+        log_path: str
+    ) -> None:
 
         self.logger = Logger('DeployWorkflow')
         self.suite_path = suite_path
@@ -29,7 +35,7 @@ class DeployWorkflow():
 
     # ----------------------------------------------------------------------------------------------
 
-    def cylc_run_experiment(self):  # NB: Could be a factory based on workflow_manager
+    def cylc_run_experiment(self) -> None:  # NB: Could be a factory based on workflow_manager
 
         # Move to the suite path
         os.chdir(self.suite_path)
@@ -93,7 +99,11 @@ class DeployWorkflow():
 # --------------------------------------------------------------------------------------------------
 
 
-def launch_experiment(suite_path, no_detach, log_path):
+def launch_experiment(
+    suite_path: str,
+    no_detach: bool,
+    log_path: str
+) -> None:
 
     # Get the path to where the suite files are located
     # -------------------------------------------------

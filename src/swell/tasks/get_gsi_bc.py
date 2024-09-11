@@ -22,7 +22,7 @@ from swell.tasks.base.task_base import taskBase
 
 class GetGsiBc(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the build method
         # --------------------

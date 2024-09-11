@@ -3,13 +3,15 @@ import yaml
 import pandas as pd
 import numpy as np
 import datetime as dt
+from typing import Union
+
 from swell.utilities.logger import Logger
 from swell.utilities.gsi_record_parser import GSIRecordParser
 
 # --------------------------------------------------------------------------------------------------
 
 
-def format_date(old_date):
+def format_date(old_date: str) -> str:
 
     ''' Formatting date into expected template '''
     date = dt.datetime.strptime(old_date, '%Y%m%d%H%M%S')
@@ -18,7 +20,7 @@ def format_date(old_date):
 # --------------------------------------------------------------------------------------------------
 
 
-def read_sat_db(path_to_sat_db, column_names):
+def read_sat_db(path_to_sat_db: str, column_names: list) -> pd.core.frame.DataFrame:
 
     '''
         Reading GSI observing system records row by row into
@@ -83,7 +85,7 @@ class ObservingSystemRecords:
         yaml files.
     '''
 
-    def __init__(self, record_type):
+    def __init__(self, record_type: str) -> None:
         '''
              Supports either 'channel' or 'level' record type. This only
              affects naming conventions.
@@ -96,7 +98,7 @@ class ObservingSystemRecords:
         self.record_type = record_type
         self.logger = Logger('ObservingSystemRecords')
 
-    def parse_records(self, path_to_sat_db):
+    def parse_records(self, path_to_sat_db: str) -> None:
 
         '''
             This method reads in the active.tbl and available.tbl files
@@ -146,7 +148,11 @@ class ObservingSystemRecords:
             else:
                 self.logger.abort(f'record parsing unavailable for {channel_type}')
 
-    def save_yamls(self, output_dir, observation_list=None):
+    def save_yamls(
+        self,
+        output_dir: str,
+        observation_list: Union[list, None] = None
+    ) -> None:
 
         '''
             Fields are taken from the internal dataframes populated

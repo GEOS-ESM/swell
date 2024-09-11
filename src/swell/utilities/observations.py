@@ -16,7 +16,7 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
-def ioda_name_to_long_name(ioda_name, logger):
+def ioda_name_to_long_name(ioda_name: str, logger: 'Logger') -> str:
 
     # Get configuration path
     jedi_configuration_path = os.path.join(get_swell_path(), 'configuration', 'jedi')

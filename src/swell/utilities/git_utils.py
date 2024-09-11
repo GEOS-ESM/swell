@@ -15,7 +15,7 @@ from swell.utilities.shell_commands import run_subprocess_dev_null
 # --------------------------------------------------------------------------------------------------
 
 
-def git_change_branch(logger, git_branch, out_dir):
+def git_change_branch(logger: 'Logger', git_branch: str, out_dir: str) -> None:
 
     # Change to a specific branch
     # ---------------------------
@@ -34,7 +34,13 @@ def git_change_branch(logger, git_branch, out_dir):
 # --------------------------------------------------------------------------------------------------
 
 
-def git_clone(logger, git_url, git_branch, out_dir, change_branch=False):
+def git_clone(
+    logger: 'Logger',
+    git_url: str,
+    git_branch: str,
+    out_dir: str,
+    change_branch: bool = False
+) -> None:
 
     # Clone repo at git_url to out_dir
     # --------------------------------
@@ -55,7 +61,7 @@ def git_clone(logger, git_url, git_branch, out_dir, change_branch=False):
 # --------------------------------------------------------------------------------------------------
 
 
-def git_got(git_url, git_branch, out_dir, logger):
+def git_got(git_url: str, git_branch: str, out_dir: str, logger: 'Logger'):
 
     # Clone repo at git_url to out_dir
     # --------------------------------

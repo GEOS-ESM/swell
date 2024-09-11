@@ -9,6 +9,7 @@
 
 import os
 import yaml
+from typing import Union
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -19,8 +20,15 @@ from swell.utilities.get_channels import get_channels
 
 class JediConfigRendering():
 
-    def __init__(self, logger, experiment_root, experiment_id, cycle_dir, cycle_time,
-                 jedi_interface=None):
+    def __init__(
+        self,
+        logger: 'Logger',
+        experiment_root: str,
+        experiment_id: str,
+        cycle_dir: str,
+        cycle_time: Union[str, None],
+        jedi_interface: Union[str, None] = None
+    ) -> None:
 
         # Keep a copy of the logger
         self.logger = logger
@@ -110,7 +118,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Function to add key to the template dictionary
-    def add_key(self, key, element):
+    def add_key(self, key: str, element: object) -> None:
 
         # First assert that key is allowed
         self.logger.assert_abort(key in self.valid_template_keys, f'Trying to add key \'{key}\' ' +
@@ -123,7 +131,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Open the file at the provided path, use dictionary to complete templates and return dictionary
-    def __open_file_render_to_dict__(self, config_file):
+    def __open_file_render_to_dict__(self, config_file: str) -> object:
 
         # Check that config file exists
         self.logger.assert_abort(os.path.exists(config_file), f'In open_file_and_render failed ' +
@@ -143,7 +151,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to oops file and call rendering
-    def render_oops_file(self, config_name):
+    def render_oops_file(self, config_name: str) -> dict:
 
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'oops', f'{config_name}.yaml')
@@ -154,7 +162,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name):
+    def render_interface_model(self, config_name: str) -> dict:
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -170,7 +178,7 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_obs_records_path(self, path):
+    def set_obs_records_path(self, path: str) -> None:
 
         # Never put a path that is string None in place
         if path == 'None':
@@ -182,7 +190,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface observations file and call rendering
-    def render_interface_observations(self, config_name):
+    def render_interface_observations(self, config_name: str) -> dict:
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
@@ -220,7 +228,7 @@ class JediConfigRendering():
 
     # Prepare path to interface metadata file and call rendering
 
-    def render_interface_meta(self, model_component_in=None):
+    def render_interface_meta(self, model_component_in: Union[str, dict] = None) -> dict:
 
         # Optionally open a different model interface
         model_component = self.jedi_interface

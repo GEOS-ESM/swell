@@ -18,7 +18,7 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 class GenerateBClimatology(taskBase):
 
-    def jedi_dictionary_iterator(self, jedi_config_dict):
+    def jedi_dictionary_iterator(self, jedi_config_dict: dict) -> None:
 
         # Loop over dictionary and replace if value is a dictionary
         # ---------------------------------------------------------
@@ -33,7 +33,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_jedi_config(self):
+    def generate_jedi_config(self) -> dict:
 
         # Render StaticBInit (no templates needed)
         # ----------------------------------------
@@ -47,7 +47,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def initialize_background(self):
+    def initialize_background(self) -> None:
 
         if self.background_error_model == 'bump':
 
@@ -62,7 +62,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_bump(self):
+    def generate_bump(self) -> None:
 
         self.logger.info(' Generating BUMP files.')
 
@@ -105,7 +105,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_explicit_diffusion(self):
+    def generate_explicit_diffusion(self) -> None:
 
         self.logger.info(' Generating files required by EXPLICIT_DIFFUSION.')
         self.obtain_scales()
@@ -113,7 +113,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def obtain_scales(self):
+    def obtain_scales(self) -> None:
 
         # This executes calc_scales.py under SOCA/tools to obtain the vertical scale.
         # The output then will be used to generate the vertical correlation files via
@@ -158,7 +158,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def parameters_diffusion_vt(self):
+    def parameters_diffusion_vt(self) -> None:
 
         # This generates the MLD dependent vertical correlation file using the
         # calculated_scales
@@ -216,7 +216,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
         """ Creates B Matrix files for background error model(s):
 
             - BUMP:

@@ -24,7 +24,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Jedi application name
         # ---------------------

@@ -10,7 +10,7 @@
 
 class GetAnswerDefaults:
 
-    def get_answer(self, key, val):
+    def get_answer(self, key: str, val: dict) -> str:
         return val['default_value']
 
 # --------------------------------------------------------------------------------------------------

@@ -22,7 +22,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Jedi application name
         # ---------------------

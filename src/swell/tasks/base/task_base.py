@@ -15,13 +15,14 @@ import glob
 import importlib
 import os
 import time
+from typing import Union
 
 # swell imports
 from swell.swell_path import get_swell_path
 from swell.utilities.case_switching import camel_case_to_snake_case, snake_case_to_camel_case
 from swell.utilities.config import Config
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
-from swell.utilities.datetime import Datetime
+from swell.utilities.datetime_util import Datetime
 from swell.utilities.logger import Logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 from swell.utilities.geos import Geos
@@ -33,11 +34,19 @@ from swell.utilities.geos import Geos
 class taskBase(ABC):
 
     # Base class constructor
-    def __init__(self, config_input, datetime_input, model, ensemblePacket, task_name):
+    def __init__(
+        self,
+        config_input: str,
+        datetime_input: Union[str, None],
+        model: str,
+        ensemblePacket: Union[str, None],
+        task_name: str
+    ) -> None:
 
         # Create message logger
         # ---------------------
         self.logger = Logger(task_name)
+        self.logger.info('Logger type', type(self.logger))
 
         # Write out the initialization info
         # ---------------------------------
@@ -114,58 +123,58 @@ class taskBase(ABC):
     # Execute is the place where a task does its work. It's defined as abstract in the base class
     # in order to force the sub classes (tasks) to implement it.
     @abstractmethod
-    def execute(self):
+    def execute(self) -> None:
         pass
 
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment root
-    def experiment_root(self):
+    def experiment_root(self) -> str:
         return self.__experiment_root__
 
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment ID
-    def experiment_id(self):
+    def experiment_id(self) -> str:
         return self.__experiment_id__
 
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment directory
-    def experiment_path(self):
+    def experiment_path(self) -> str:
         return os.path.join(self.__experiment_root__, self.__experiment_id__)
 
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment ID
-    def platform(self):
+    def platform(self) -> str:
         return self.__platform__
 
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment configuration directory
-    def experiment_config_path(self):
+    def experiment_config_path(self) -> str:
         swell_exp_path = self.experiment_path()
         return os.path.join(swell_exp_path, 'configuration')
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_ensemble_packet(self):
+    def get_ensemble_packet(self) -> str:
         return self.__ensemble_packet__
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model(self):
+    def get_model(self) -> str:
         return self.__model__
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model_components(self):
+    def get_model_components(self) -> Union[str, list]:
         return self.__model_components__
 
     # ----------------------------------------------------------------------------------------------
 
-    def is_datetime_dependent(self):
+    def is_datetime_dependent(self) -> bool:
         if self.__datetime__ is None:
             return False
         else:
@@ -173,7 +182,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycle_dir(self):
+    def cycle_dir(self) -> str:
 
         # Check that model is set
         self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
@@ -188,7 +197,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self, paths=[]):
+    def forecast_dir(self, paths: list = []) -> str:
 
         # Make sure forecast directory exists
         # -----------------------------------
@@ -212,25 +221,25 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycle_time_dto(self):
+    def cycle_time_dto(self) -> object:
 
         return self.__datetime__.dto()
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycle_time(self):
+    def cycle_time(self) -> str:
 
         return self.__datetime__.string_iso()
 
     # ----------------------------------------------------------------------------------------------
 
-    def first_cycle_time(self):
+    def first_cycle_time(self) -> str:
 
         return self.__start_cycle_point__.string_iso()
 
     # ----------------------------------------------------------------------------------------------
 
-    def first_cycle_time_dto(self):
+    def first_cycle_time_dto(self) -> object:
 
         return self.__start_cycle_point__.dto()
 
@@ -239,7 +248,14 @@ class taskBase(ABC):
 
 class taskFactory():
 
-    def create_task(self, task, config, datetime, model, ensemblePacket):
+    def create_task(
+        self,
+        task: str,
+        config: str,
+        datetime: Union[str, None],
+        model: str,
+        ensemblePacket: Union[str, None]
+    ) -> taskBase:
 
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
@@ -253,7 +269,7 @@ class taskFactory():
 
 # --------------------------------------------------------------------------------------------------
 
-def get_tasks():
+def get_tasks() -> list:
 
     # Path to tasks
     tasks_directory = os.path.join(get_swell_path(), 'tasks', '*.py')
@@ -274,7 +290,13 @@ def get_tasks():
 # --------------------------------------------------------------------------------------------------
 
 
-def task_wrapper(task, config, datetime, model, ensemblePacket):
+def task_wrapper(
+    task: str,
+    config: str,
+    datetime: Union[str, None],
+    model: str,
+    ensemblePacket: Union[str, None]
+) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()

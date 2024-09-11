@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def check_end_time(end_time):
+def check_end_time(end_time: str) -> str:
 
     ''' Checks end times for 24 hour strings and converts them to 18 '''
 
@@ -17,13 +17,13 @@ def check_end_time(end_time):
 
 class GSIRecordParser:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.instr_df = None
         self.return_df = None
         self.sat = None
         self.instr = None
 
-    def get_channel_list(self, start):
+    def get_channel_list(self, start) -> list:
         channel_list = []
         rows = self.instr_df.loc[self.instr_df["start"] == start]
         for row_ch_list in rows["channels"].values:
@@ -34,7 +34,7 @@ class GSIRecordParser:
         channel_list.sort(key=int)
         return channel_list
 
-    def run(self, instr_df):
+    def run(self, instr_df: pd.core.frame.DataFrame) -> None:
 
         # Save instrument dataframe
         self.instr_df = instr_df
@@ -118,7 +118,7 @@ class GSIRecordParser:
                                           channel_list, comment)
                     done.append(inner_start[inner_idx])
 
-    def update_return_df(self, start, end, channel_list, comment):
+    def update_return_df(self, start: str, end: str, channel_list: list, comment: str) -> None:
 
         # Fix end time if on the 24 hour mark
         end = check_end_time(end)
@@ -134,7 +134,7 @@ class GSIRecordParser:
 
         self.return_df = pd.concat([self.return_df, new_row], ignore_index=True)
 
-    def get_instr_df(self):
+    def get_instr_df(self) -> pd.core.frame.DataFrame:
 
         ''' Returns the dataframe that the state machine generated! '''
 

@@ -15,12 +15,13 @@ from swell.utilities.filehandler import *
 from swell.utilities.exceptions import *
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
+
 # --------------------------------------------------------------------------------------------------
 
 
 class StageJedi(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
         """Acquires listed files under the configuration/jedi/interface/model/stage.yaml file.
 
            Parameters

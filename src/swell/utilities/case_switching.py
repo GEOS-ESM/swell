@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-def camel_case_to_snake_case(CamelCaseString):
+def camel_case_to_snake_case(CamelCaseString: str) -> str:
 
     # Convert a string that looks like e.g. ThisIsAString to this_is_a_string
     # -----------------------------------------------------------------------
@@ -24,7 +24,7 @@ def camel_case_to_snake_case(CamelCaseString):
 # --------------------------------------------------------------------------------------------------
 
 
-def snake_case_to_camel_case(snake_case_string):
+def snake_case_to_camel_case(snake_case_string: str) -> str:
 
     # Convert a string that looks like e.g. this_is_a_string to ThisIsAString
     # -----------------------------------------------------------------------

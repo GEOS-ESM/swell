@@ -10,7 +10,7 @@
 import datetime
 import isodate
 
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ from swell.utilities.datetime import datetime_formats
 
 class DataAssimilationWindowParams():
 
-    def __init__(self, logger, cycle_time):
+    def __init__(self, logger: 'Logger', cycle_time: str) -> None:
 
         """
         Defines cycle dependent parameters for the data assimilation window and adds to config
@@ -33,14 +33,14 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_window_begin_dto__(self, window_offset):
+    def __get_window_begin_dto__(self, window_offset: str) -> datetime:
 
         window_offset_dur = isodate.parse_duration(window_offset)
         return self.__current_cycle_dto__ - window_offset_dur
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_local_background_time__(self, window_type, window_offset):
+    def __get_local_background_time__(self, window_type: str, window_offset: str) -> datetime:
 
         # Background time for the window
         if window_type == '4D':
@@ -52,7 +52,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_offset, dto=False):
+    def window_begin(self, window_offset: str, dto: bool = False) -> str:
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
 
@@ -64,7 +64,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin_iso(self, window_offset, dto=False):
+    def window_begin_iso(self, window_offset: str, dto: bool = False):
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
 
@@ -76,7 +76,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_end_iso(self, window_offset, window_length, dto=False):
+    def window_end_iso(self, window_offset: str, window_length: str, dto: bool = False) -> str:
 
         # Compute window length duration
         window_length_dur = isodate.parse_duration(window_length)
@@ -95,7 +95,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def background_time(self, window_offset, background_time_offset):
+    def background_time(self, window_offset: str, background_time_offset: str) -> str:
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
         background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
@@ -103,14 +103,14 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time_iso(self, window_offset, window_type):
+    def local_background_time_iso(self, window_offset: str, window_type: str) -> str:
 
         local_background_time = self.__get_local_background_time__(window_type, window_offset)
         return local_background_time.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time(self, window_offset, window_type):
+    def local_background_time(self, window_offset: str, window_type: str) -> str:
 
         local_background_time = self.__get_local_background_time__(window_type, window_offset)
         return local_background_time.strftime(datetime_formats['directory_format'])

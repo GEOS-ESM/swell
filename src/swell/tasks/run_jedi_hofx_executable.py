@@ -11,6 +11,7 @@
 import glob
 import os
 import yaml
+from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
@@ -24,7 +25,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members=None):
+    def execute(self, ensemble_members: Union[list, None] = None) -> None:
 
         # Jedi application name
         # ---------------------
@@ -243,7 +244,13 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def append_gomsaver(self, observations, jedi_config_dict, window_begin, mem=None):
+    def append_gomsaver(
+        self,
+        observations: list,
+        jedi_config_dict: dict,
+        window_begin: str,
+        mem: Union[str, None] = None
+    ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will
         # prevent code repetition.

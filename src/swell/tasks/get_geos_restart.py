@@ -11,8 +11,7 @@ import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.file_system_operations import copy_to_dst_dir
-from swell.utilities.file_system_operations import check_if_files_exist_in_path
+from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -21,7 +20,7 @@ class GetGeosRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         self.logger.info('Obtaining GEOS restarts for the coupled simulation')
 
@@ -51,7 +50,7 @@ class GetGeosRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def initial_restarts(self, rst_path):
+    def initial_restarts(self, rst_path: str) -> None:
 
         # GEOS forecast checkpoint files are created in advance
         # TODO: check tile of restarts here for compatibility?

@@ -9,6 +9,7 @@
 
 import os
 import glob
+from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
@@ -20,7 +21,7 @@ class MoveForecastRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Moving restart files (i.e., _checkpoint) to the next cycle geosdir.
@@ -45,7 +46,7 @@ class MoveForecastRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_next_fcst_dir(self, paths):
+    def at_next_fcst_dir(self, paths: Union[str, list]) -> str:
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -59,7 +60,7 @@ class MoveForecastRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycling_restarts(self):
+    def cycling_restarts(self) -> None:
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------

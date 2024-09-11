@@ -5,10 +5,16 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
+from typing import Union
+
 
 class SWELLError(Exception):
 
-    def __init__(self, message, logger=None):
+    def __init__(
+        self,
+        message: str,
+        logger: Union['Logger', None] = None
+    ) -> None:
 
         self.message = message
         super().__init__(message)

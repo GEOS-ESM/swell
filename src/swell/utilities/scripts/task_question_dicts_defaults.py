@@ -12,6 +12,7 @@ import os
 import random
 import string
 import yaml
+from typing import Union
 
 # swell imports
 from swell.swell_path import get_swell_path
@@ -21,7 +22,12 @@ from swell.utilities.logger import Logger
 # --------------------------------------------------------------------------------------------------
 
 
-def create_jedi_tq_dicts(logger, jedi_interface_name, tq_dicts, jedi_tq_dicts_str_in):
+def create_jedi_tq_dicts(
+    logger: 'Logger',
+    jedi_interface_name: str,
+    tq_dicts: Union[list, dict],
+    jedi_tq_dicts_str_in: str
+) -> str:
 
     # Convert string read from file to dictionary
     if jedi_tq_dicts_str_in == '':
@@ -78,7 +84,12 @@ def create_jedi_tq_dicts(logger, jedi_interface_name, tq_dicts, jedi_tq_dicts_st
 # --------------------------------------------------------------------------------------------------
 
 
-def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_str_in):
+def create_platform_tq_dicts(
+    logger: 'Logger',
+    platform_name: str,
+    tq_dicts: Union[list, dict],
+    platform_tq_dicts_str_in: str
+) -> str:
 
     # Convert string read from file to dictionary
     if platform_tq_dicts_str_in == '':
@@ -124,7 +135,7 @@ def create_platform_tq_dicts(logger, platform_name, tq_dicts, platform_tq_dicts_
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def main() -> int:
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')

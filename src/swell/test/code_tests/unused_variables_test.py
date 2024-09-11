@@ -18,7 +18,7 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
-def run_flake8(file_path):
+def run_flake8(file_path: str) -> str:
     flake8_cmd = ['flake8', '--select', 'F401,F841', file_path]
     result = subprocess.run(flake8_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             universal_newlines=True)
@@ -30,7 +30,7 @@ def run_flake8(file_path):
 
 class UnusedVariablesTest(unittest.TestCase):
 
-    def test_unused_variables(self):
+    def test_unused_variables(self) -> None:
 
         for root, _, files in os.walk(get_swell_path()):
             for filename in files:

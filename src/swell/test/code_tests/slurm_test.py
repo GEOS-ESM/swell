@@ -22,7 +22,7 @@ class SLURMConfigTest(unittest.TestCase):
     # configuration and platform-specific settings
     @patch("swell.utilities.slurm.slurm_global_defaults")
     @patch("platform.platform")
-    def test_slurm_config(self, platform_mocked, mock_global_defaults):
+    def test_slurm_config(self, platform_mocked: dict, mock_global_defaults: dict) -> None:
 
         logger = logging.getLogger()
 

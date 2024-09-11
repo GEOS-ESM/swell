@@ -15,6 +15,8 @@ import shutil
 import sys
 import yaml
 
+from typing import Union
+
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
@@ -27,8 +29,13 @@ from swell.utilities.slurm import prepare_scheduling_dict
 # --------------------------------------------------------------------------------------------------
 
 
-def clone_config(configuration, experiment_id, method, platform, advanced):
-
+def clone_config(
+    configuration: str,
+    experiment_id: str,
+    method: str,
+    platform: str,
+    advanced: bool
+) -> str:
     # Create a logger
     logger = Logger('SwellCloneExperiment')
 
@@ -59,7 +66,14 @@ def clone_config(configuration, experiment_id, method, platform, advanced):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_config(suite, method, platform, override, advanced, slurm):
+def prepare_config(
+    suite: str,
+    method: str,
+    platform: str,
+    override: Union[dict, str, None],
+    advanced: bool,
+    slurm: str
+) -> str:
 
     # Create a logger
     # ---------------
@@ -136,13 +150,21 @@ def prepare_config(suite, method, platform, override, advanced, slurm):
 
     # Return path to dictionary file
     # ------------------------------
+
     return experiment_dict_string_comments
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def create_experiment_directory(suite, method, platform, override, advanced, slurm):
+def create_experiment_directory(
+    suite: str,
+    method: str,
+    platform: str,
+    override: str,
+    advanced: bool,
+    slurm: str
+) -> None:
 
     # Create a logger
     # ---------------
@@ -217,7 +239,11 @@ def create_experiment_directory(suite, method, platform, override, advanced, slu
 # --------------------------------------------------------------------------------------------------
 
 
-def copy_eva_files(logger, swell_suite_path, exp_suite_path):
+def copy_eva_files(
+    logger: Logger,
+    swell_suite_path: str,
+    exp_suite_path: str
+) -> None:
 
     # Repo eva files
     eva_directory = os.path.join(swell_suite_path, 'eva')
@@ -236,7 +262,11 @@ def copy_eva_files(logger, swell_suite_path, exp_suite_path):
 # --------------------------------------------------------------------------------------------------
 
 
-def copy_platform_files(logger, exp_suite_path, platform=None):
+def copy_platform_files(
+    logger: 'Logger',
+    exp_suite_path: str,
+    platform: Union[str, None] = None
+) -> None:
 
     # Copy platform related files to the suite directory
     # --------------------------------------------------
@@ -256,7 +286,11 @@ def copy_platform_files(logger, exp_suite_path, platform=None):
 # --------------------------------------------------------------------------------------------------
 
 
-def template_modules_file(logger, experiment_dict, exp_suite_path):
+def template_modules_file(
+    logger: Logger,
+    experiment_dict: dict,
+    exp_suite_path: str
+) -> None:
 
     # Modules file
     # ------------
@@ -309,7 +343,10 @@ def template_modules_file(logger, experiment_dict, exp_suite_path):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_modules_csh(logger, exp_suite_path):
+def create_modules_csh(
+    logger: Logger,
+    exp_suite_path: str
+) -> None:
 
     # Modules file
     # ------------
@@ -357,7 +394,13 @@ def create_modules_csh(logger, exp_suite_path):
 # --------------------------------------------------------------------------------------------------
 
 
-def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform):
+def prepare_cylc_suite_jinja2(
+    logger: Logger,
+    swell_suite_path: str,
+    exp_suite_path: str,
+    experiment_dict: dict,
+    platform: str
+) -> None:
 
     # Open suite file from swell
     # --------------------------

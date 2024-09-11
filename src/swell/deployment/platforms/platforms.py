@@ -17,7 +17,7 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
-def platform_path():
+def platform_path() -> str:
 
     return os.path.join(get_swell_path(), 'deployment', 'platforms')
 
@@ -25,7 +25,7 @@ def platform_path():
 # --------------------------------------------------------------------------------------------------
 
 
-def get_platforms():
+def get_platforms() -> list:
 
     # Get list of supported platforms
     platforms = [dir for dir in os.listdir(platform_path())
@@ -41,7 +41,7 @@ def get_platforms():
 # --------------------------------------------------------------------------------------------------
 
 
-def login_or_compute(platform):
+def login_or_compute(platform) -> str:
 
     # Open the properties file
     properties_file = os.path.join(platform_path(), 'properties.yaml')

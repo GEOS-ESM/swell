@@ -11,11 +11,12 @@ import isodate
 import numpy as np
 import os
 import netCDF4 as nc
+from typing import Union
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
 from r2d2 import fetch
 
 
@@ -24,7 +25,7 @@ from r2d2 import fetch
 
 class GetObservations(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Acquires observation files for a given experiment and cycle.
@@ -271,7 +272,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict):
+    def get_tlapse_files(self, observation_dict: dict) -> Union[None, object]:
 
         # Function to locate instances of tlapse in the obs operator config
 
@@ -326,7 +327,12 @@ class GetObservations(taskBase):
     # Read and combine variable data from multiple files
     # --------------------------------------------------
 
-    def create_obs_time_list(self, obs_times, window_begin_dto, window_end_dto):
+    def create_obs_time_list(
+        self,
+        obs_times: list,
+        window_begin_dto: dt,
+        window_end_dto: dt
+    ) -> list:
 
         day_before_dto = window_begin_dto-timedelta(days=1)
         day_after_dto = window_end_dto+timedelta(days=1)
@@ -366,13 +372,13 @@ class GetObservations(taskBase):
 
     # Get the target data from the netcdf file
     # ----------------------------------------
-    def get_data(self, input_file, group, var_name):
+    def get_data(self, input_file: str, group: str, var_name: str) -> object:
         with nc.Dataset(input_file, 'r') as ds:
             return ds[group][var_name][:]
 
     # ----------------------------------------------------------------------------------------------
 
-    def read_and_combine(self, input_filenames, output_filename):
+    def read_and_combine(self, input_filenames: list, output_filename: str) -> None:
         '''
         Combines multiple IODA v3 netcdf input files into a single output.
         Combining multiple files require final (total) location dimension size to be

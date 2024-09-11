@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -17,7 +18,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 class RunGeosExecutable(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Obtain processor information from AGCM.rc
         # Strip is required in case AGCM.rc file was rewritten
@@ -57,8 +58,15 @@ class RunGeosExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def run_executable(self, cycle_dir, np, geos_executable, geos_modules, output_log,
-                       geos_lib_path=None):
+    def run_executable(
+        self,
+        cycle_dir: str,
+        np: int,
+        geos_executable: str,
+        geos_modules: str,
+        output_log: str,
+        geos_lib_path: Union[str, None] = None
+    ) -> None:
 
         # Run the GEOS executable
         # -----------------------

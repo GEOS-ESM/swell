@@ -20,7 +20,7 @@ from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
-def code_tests():
+def code_tests() -> None:
 
     # Create a logger
     logger = Logger('TestSuite')

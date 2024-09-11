@@ -10,13 +10,18 @@
 
 import os
 import xarray as xr
-
+from typing import Hashable, Union
 
 # --------------------------------------------------------------------------------------------------
 
 
-def combine_files_without_groups(logger, list_of_input_files, output_file, concat_dim,
-                                 delete_input=False):
+def combine_files_without_groups(
+    logger: 'Logger',
+    list_of_input_files: list,
+    output_file: str,
+    concat_dim: Union[Hashable, xr.Variable, xr.DataArray],
+    delete_input: bool = False
+) -> None:
 
     # Write some information
     logger.info('Combining the following netCDF files (using no-group combine): ')

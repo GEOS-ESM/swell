@@ -1,4 +1,4 @@
-from swell.utilities.datetime import Datetime
+from swell.utilities.datetime_util import Datetime
 from swell.utilities.run_jedi_executables import check_obs
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 from swell.utilities.logger import Logger
