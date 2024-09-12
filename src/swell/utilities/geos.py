@@ -378,11 +378,12 @@ class Geos():
     # --------------------------------------------------------------------------------------------------
 
     def states_generator(self,
-                         background_frequency,
-                         window_length,
-                         window_begin_iso,
-                         model='geos_marine',
-                         marine_models=[]):
+                         background_frequency: str,
+                         window_length: str,
+                         window_begin_iso: str,
+                         model='geos_marine': str,
+                         marine_models=[]: list
+                         ) -> list:
 
         self.logger.info('Generating states for model: '+model)
         if model == 'geos_ocean' or model == 'geos_marine':
@@ -393,7 +394,12 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def marine_states(self, background_frequency, window_length, window_begin_iso, marine_models):
+    def marine_states(self,
+                      background_frequency: str,
+                      window_length: str,
+                      window_begin_iso: str,
+                      marine_models: list
+                      ) -> list:
 
         static_part = {"basename": "./", "read_from_file": 1}
 

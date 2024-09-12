@@ -21,7 +21,7 @@ class RunJediFgatExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Jedi application name
         # ---------------------
