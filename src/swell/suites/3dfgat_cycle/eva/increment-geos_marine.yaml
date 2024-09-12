@@ -7,12 +7,14 @@ datasets:
     variables: [Temp, Salt, ave_ssh]
     coordinate variables: [lon, lat]
 
+{% if 'cice6' in marine_models %}
   - name: seaice_increment
     type: SocaRestart
     soca_filenames: {{ice_increment_file_path}}
     geometry_file: {{cycle_dir}}/INPUT/soca_gridspec.nc
     variables: [aicen]
     coordinate variables: [lon, lat]
+{% endif %}
 
 graphics:
 
@@ -108,6 +110,7 @@ graphics:
           vmin: -1
           vmax: 1
 
+{% if 'cice6' in marine_models %}
   - batch figure:
       variables: [aicen]
     figure:
@@ -164,3 +167,4 @@ graphics:
           cmap: 'bwr'
           vmin: -1
           vmax: 1
+{% endif %}

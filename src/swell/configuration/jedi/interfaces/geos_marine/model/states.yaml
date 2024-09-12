@@ -2,7 +2,9 @@
     read_from_file: 1
     basename: ./
     ocn_filename: ocn.{{experiment_id}}.an.{{local_background_time_iso}}.nc
+    {% if 'cice6' in marine_models %}
     ice_filename: ice.{{experiment_id}}.an.{{local_background_time_iso}}.nc
+    {% endif %}
     date: '{{local_background_time_iso}}'
     state variables: [tocn, socn, hocn, cicen, hicen, hsnon]
   output:
