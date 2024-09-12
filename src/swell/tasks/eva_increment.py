@@ -27,6 +27,8 @@ class EvaIncrement(taskBase):
         # -----------------------------
         model = self.get_model()
         window_type = self.config.window_type()
+        if model == 'geos_marine':
+            marine_models = self.config.marine_models()
 
         # Read Eva template file into dictionary
         # --------------------------------------
@@ -65,10 +67,13 @@ class EvaIncrement(taskBase):
             ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
             incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
 
-            # Keep sea-ice increment inside here as optional
-            ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
-            ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
-            eva_override['ice_increment_file_path'] = ice_increment_file_path
+            eva_override['marine_models'] = marine_models
+
+            if 'cice6' in marine_models:
+                # sea-ice increment is optional
+                ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+                ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+                eva_override['ice_increment_file_path'] = ice_increment_file_path
 
         increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 

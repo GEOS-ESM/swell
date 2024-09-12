@@ -120,6 +120,9 @@ bundles:
 cice6_domains:
   ask_question: false
   default_value: defer_to_model
+  depends:
+    key: marine_models
+    value: cice6
   models:
   - geos_marine
   options:
@@ -575,6 +578,20 @@ local_ensemble_solver:
   tasks:
   - RunJediLocalEnsembleDaExecutable
   type: string-drop-list
+
+marine_models:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_marine
+  options: defer_to_model
+  prompt: Enter the active SOCA models for this model.
+  tasks:
+  - EvaIncrement
+  - LinkGeosOutput
+  - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
+  type: string-check-list
 
 minimizer:
   ask_question: false

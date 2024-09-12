@@ -29,6 +29,7 @@ class RunJediFgatExecutable(taskBase):
 
         # Parse configuration
         # -------------------
+        marine_models = self.config.marine_models()
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
@@ -60,6 +61,7 @@ class RunJediFgatExecutable(taskBase):
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
+        self.jedi_rendering.add_key('marine_models', marine_models)
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
@@ -103,7 +105,7 @@ class RunJediFgatExecutable(taskBase):
         # Use GEOS utility to generate states
         # -----------------------------------
         states = self.geos.states_generator(background_frequency, window_length,
-                                            window_begin_iso, self.get_model())
+                                            window_begin_iso, self.get_model(), marine_models)
         self.jedi_rendering.add_dynamic_key('states', states)
 
         # Jedi configuration file

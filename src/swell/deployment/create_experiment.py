@@ -434,6 +434,15 @@ def prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experime
             logger.abort('The suite file required cycling_varbc but ' +
                          'geos_atmosphere is not in the model components.')
 
+    # Marine model toggles (only for geos_marine)
+    if 'marine_models' in suite_file:
+        if 'geos_marine' in model_components:
+            render_dictionary['marine_models'] = \
+                experiment_dict['models']['geos_marine']['marine_models']
+        else:
+            logger.abort('The suite file required marine_models but ' +
+                         'geos_marine is not in the model components.')
+
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
     # Default execution time limit for everthing is PT1H

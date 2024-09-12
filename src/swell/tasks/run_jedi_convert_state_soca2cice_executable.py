@@ -28,16 +28,20 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # ----------------------------------------
         N_PROCESSORS = 36
 
-        if self.get_model() != 'geos_marine':
-            self.logger.info('Skipping Soca2cice for: ' + self.get_model())
-            return
-
         # Jedi application name
         # ---------------------
         jedi_application = 'convert_state_soca2cice'
 
         # Parse configuration
         # -------------------
+        marine_models = self.config.marine_models()
+
+        # Fail-safe
+        # ---------
+        if 'cice6' not in marine_models:
+            self.logger.info('Skipping Soca2cice as CICE6 analysis is not being done, .')
+            return
+
         cice6_domains = self.config.cice6_domains()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)

@@ -86,6 +86,7 @@ class JediConfigRendering():
             'local_ensemble_solver',
             'ensmean_only',
             'ensmeanvariance_only',
+            'marine_models',
             'minimizer',
             'mom6_iau',
             'npx_proc',

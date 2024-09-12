@@ -36,6 +36,7 @@ class LinkGeosOutput(taskBase):
 
         # Parse configuration
         # -------------------
+        marine_models = self.config.marine_models()
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_offset = self.config.window_offset()
@@ -56,9 +57,10 @@ class LinkGeosOutput(taskBase):
         if self.get_model() == 'geos_ocean' or self.get_model() == 'geos_marine':
             self.link_mom6_history(self.src_dst_dict)
 
-            # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
-            src, dst = self.prepare_cice6()
-            self.src_dst_dict[src] = dst
+            if 'cice6' in marine_models:
+                # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
+                src, dst = self.prepare_cice6()
+                self.src_dst_dict[src] = dst
 
         # Loop through the dictionary and create links
         for src, dst in self.src_dst_dict.items():
@@ -109,7 +111,6 @@ class LinkGeosOutput(taskBase):
                 src_dst_dict[src] += (dst,)
             else:
                 self.src_dst_dict[src] = (dst,)
-
 
     # ----------------------------------------------------------------------------------------------
 
