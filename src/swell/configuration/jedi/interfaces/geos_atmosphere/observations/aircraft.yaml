@@ -4,6 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/aircraft.{{window_begin}}.nc4'
+      missing file action: error
     obsgrouping:
       group variables: ["stationIdentification", "releaseTime"]
       sort variable: "pressure"
