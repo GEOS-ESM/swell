@@ -7,3 +7,6 @@ ensemble_hofx_strategy:
 
 ensemble_hofx_packets:
   default_value: 1
+
+skip_ensemble_hofx:
+  default_value: true

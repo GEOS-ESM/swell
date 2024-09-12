@@ -27,6 +27,16 @@ ensemble_hofx_strategy:
   prompt: Enter the ensemble hofx strategy.
   type: string
 
+skip_ensemble_hofx:
+  ask_question: False
+  default_value: 'defer_to_model'
+  models:
+  - all
+  suites:
+  - localensembleda
+  prompt: Enter if skip ensemble hofx.
+  type: boolean
+
 ensemble_hofx_packets:
   ask_question: False
   default_value: 'defer_to_model'

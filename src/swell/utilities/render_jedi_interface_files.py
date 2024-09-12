@@ -86,6 +86,8 @@ class JediConfigRendering():
             'local_ensemble_solver',
             'ensmean_only',
             'ensmeanvariance_only',
+            'local_ensemble_use_linear_observer',
+            'skip_ensemble_hofx',
             'minimizer',
             'mom6_iau',
             'npx_proc',
