@@ -13,7 +13,8 @@ import netCDF4 as nc
 from typing import Optional
 
 from swell.utilities.shell_commands import run_track_log_subprocess
-from swell.utilties.logger import Logger
+from swell.utilities.logger import Logger
+from swell.tasks.base.task_base import JediConfigRendering
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,7 +49,7 @@ def check_obs(
 
 def jedi_dictionary_iterator(
     jedi_config_dict: dict,
-    jedi_rendering,
+    jedi_rendering: JediConfigRendering,
     window_type: Optional[str] = None,
     obs: Optional[str] = None,
     cycle_time: Optional[str] = None,

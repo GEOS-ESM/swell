@@ -262,6 +262,7 @@ def copy_eva_files(
 
 
 def copy_platform_files(
+    logger: Logger,
     exp_suite_path: str,
     platform: Optional[str] = None
 ) -> None:

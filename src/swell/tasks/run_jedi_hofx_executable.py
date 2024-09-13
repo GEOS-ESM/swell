@@ -249,7 +249,7 @@ class RunJediHofxExecutable(taskBase):
         observations: list,
         jedi_config_dict: dict,
         window_begin: str,
-        mem: Union[str] = None
+        mem: Optional[str] = None
     ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will
