@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-from typing import Union
+from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -65,7 +65,7 @@ class RunGeosExecutable(taskBase):
         geos_executable: str,
         geos_modules: str,
         output_log: str,
-        geos_lib_path: Union[str, None] = None
+        geos_lib_path: Optional[str] = None
     ) -> None:
 
         # Run the GEOS executable
