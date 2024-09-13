@@ -15,7 +15,7 @@ import glob
 import importlib
 import os
 import time
-from typing import Union
+from typing import Union, Optional
 
 # swell imports
 from swell.swell_path import get_swell_path
@@ -37,9 +37,9 @@ class taskBase(ABC):
     def __init__(
         self,
         config_input: str,
-        datetime_input: Union[str, None],
+        datetime_input: Optional[str],
         model: str,
-        ensemblePacket: Union[str, None],
+        ensemblePacket: Optional[str],
         task_name: str
     ) -> None:
 
@@ -252,9 +252,9 @@ class taskFactory():
         self,
         task: str,
         config: str,
-        datetime: Union[str, None],
+        datetime: Optional[str],
         model: str,
-        ensemblePacket: Union[str, None]
+        ensemblePacket: Optional[str]
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -293,9 +293,9 @@ def get_tasks() -> list:
 def task_wrapper(
     task: str,
     config: str,
-    datetime: Union[str, None],
+    datetime: Optional[str],
     model: str,
-    ensemblePacket: Union[str, None]
+    ensemblePacket: Optional[str]
 ) -> None:
 
     # Create the object

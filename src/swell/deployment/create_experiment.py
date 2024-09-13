@@ -15,7 +15,7 @@ import shutil
 import sys
 import yaml
 
-from typing import Union
+from typing import Union, Optional
 
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
@@ -263,7 +263,7 @@ def copy_eva_files(
 
 def copy_platform_files(
     exp_suite_path: str,
-    platform: Union[str, None] = None
+    platform: Optional[str] = None
 ) -> None:
 
     # Copy platform related files to the suite directory

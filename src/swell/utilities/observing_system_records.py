@@ -3,7 +3,7 @@ import yaml
 import pandas as pd
 import numpy as np
 import datetime as dt
-from typing import Union
+from typing import Optional
 
 from swell.utilities.logger import Logger
 from swell.utilities.gsi_record_parser import GSIRecordParser
@@ -151,7 +151,7 @@ class ObservingSystemRecords:
     def save_yamls(
         self,
         output_dir: str,
-        observation_list: Union[list, None] = None
+        observation_list: Optional[list] = None
     ) -> None:
 
         '''

@@ -9,7 +9,7 @@
 
 
 import click
-from typing import Union
+from typing import Union, Optional
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -187,9 +187,9 @@ def launch(
 def task(
     task: str,
     config: str,
-    datetime: Union[str, None],
-    model: Union[str, None],
-    ensemblePacket: Union[str, None]
+    datetime: Optional[str],
+    model: Optional[str],
+    ensemblePacket: Optional[str]
 ) -> None:
     """
     Run a workflow task

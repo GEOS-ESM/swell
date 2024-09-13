@@ -63,7 +63,7 @@ import glob
 import copy
 import datetime as dt
 from shutil import copyfile
-from typing import Union
+from typing import Union, Optional
 
 from swell.utilities.exceptions import *
 
@@ -116,7 +116,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------------
 
-    def is_ready(self, fc: Union[FileCollection, None] = None) -> bool:
+    def is_ready(self, fc: Optional[FileCollection] = None) -> bool:
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
 
@@ -158,7 +158,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------
 
-    def get(self, fc: Union[FileCollection, None] = None) -> None:
+    def get(self, fc: Optional[FileCollection] = None) -> None:
         """Retrieves the files in the specified file collection.
 
            Parameters

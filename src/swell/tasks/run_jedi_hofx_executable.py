@@ -11,7 +11,7 @@
 import glob
 import os
 import yaml
-from typing import Union
+from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
@@ -25,7 +25,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members: Union[list, None] = None) -> None:
+    def execute(self, ensemble_members: Optional[list] = None) -> None:
 
         # Jedi application name
         # ---------------------
@@ -249,7 +249,7 @@ class RunJediHofxExecutable(taskBase):
         observations: list,
         jedi_config_dict: dict,
         window_begin: str,
-        mem: Union[str, None] = None
+        mem: Union[str] = None
     ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will
