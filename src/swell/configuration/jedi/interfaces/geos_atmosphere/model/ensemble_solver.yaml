@@ -1,4 +1,9 @@
 solver: {{local_ensemble_solver}}
+use linear observer: {{local_ensemble_use_linear_observer}}
+vertical localization:
+  fraction of retained variance: .5
+  lengthscale: 1.5
+  lengthscale units: logp
 inflation:
   rtps: {{local_ensemble_inflation_rtps}}
   rtpp: {{local_ensemble_inflation_rtpp}}

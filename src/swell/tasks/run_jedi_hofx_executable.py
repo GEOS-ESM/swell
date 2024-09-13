@@ -40,7 +40,7 @@ class RunJediHofxExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        save_geovals = self.config.save_geovals()
+        save_geovals = self.config.save_geovals(False)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
