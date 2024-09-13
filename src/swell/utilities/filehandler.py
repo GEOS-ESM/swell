@@ -57,6 +57,7 @@
 #     is omitted, all files in "src" will be copied to "dst".
 # -----------------------------------------------------------------------------
 
+from __future__ import annotations
 import os
 import glob
 import copy
@@ -67,7 +68,7 @@ from typing import Union
 from swell.utilities.exceptions import *
 
 
-def get_file_handler(config: list, **kwargs) -> Union['StageFileHandler', 'GetDataFileHandler']:
+def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
     """Factory for determining the file handler type for retrieving data.
 
        This method uses a heuristic algorithm to determine the staging
@@ -115,7 +116,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------------
 
-    def is_ready(self, fc: Union['FileCollection', None] = None) -> bool:
+    def is_ready(self, fc: Union[FileCollection, None] = None) -> bool:
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
 
@@ -157,7 +158,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------
 
-    def get(self, fc: Union['FileCollection', None] = None) -> None:
+    def get(self, fc: Union[FileCollection, None] = None) -> None:
         """Retrieves the files in the specified file collection.
 
            Parameters
