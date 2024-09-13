@@ -6,8 +6,8 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from __future__ import annotations
 from typing import Union
-
 
 import jinja2 as j2
 
@@ -30,11 +30,11 @@ class SilentUndefined(j2.Undefined):
     See `ask_questions_and_configure_suite` method in `prepare_config_and_suite.py`
     for more details on Jinja2 passes.
     """
-    def __getattr__(self, name: str) -> 'SilentUndefined':
+    def __getattr__(self, name: str) -> SilentUndefined:
         # Return a new SilentUndefined instance but append the attribute access to the name.
         return SilentUndefined(name=f"{self._undefined_name}.{name}")
 
-    def __getitem__(self, key: Union[str, int]) -> 'SilentUndefined':
+    def __getitem__(self, key: Union[str, int]) -> SilentUndefined:
         # Similar to __getattr__, return a new instance with the key access incorporated.
         if isinstance(key, str):
             return SilentUndefined(name=f"{self._undefined_name}['{key}']")
