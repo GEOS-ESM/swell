@@ -18,6 +18,7 @@ from typing import Tuple
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime_util import datetime_formats
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger: 'Logger', forecast_dir: str) -> None:
+    def __init__(self, logger: Logger, forecast_dir: str) -> None:
 
         '''
         Intention with GEOS class is to not have any model dependent methods.

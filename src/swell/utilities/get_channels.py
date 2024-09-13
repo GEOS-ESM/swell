@@ -13,6 +13,8 @@ from datetime import datetime as dt
 from itertools import groupby
 from typing import Tuple
 
+from swell.utilities.logger import Logger
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -73,7 +75,7 @@ def get_channels(
     path_to_observing_sys_yamls: str,
     observation: str,
     dt_cycle_time: dt,
-    logger: 'Logger'
+    logger: Logger
 ) -> Tuple[str, list]:
 
     '''

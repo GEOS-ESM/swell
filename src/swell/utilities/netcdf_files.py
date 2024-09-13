@@ -12,11 +12,13 @@ import os
 import xarray as xr
 from typing import Hashable, Union
 
+from swell.utilities.logger import Logger
+
 # --------------------------------------------------------------------------------------------------
 
 
 def combine_files_without_groups(
-    logger: 'Logger',
+    logger: Logger,
     list_of_input_files: list,
     output_file: str,
     concat_dim: Union[Hashable, xr.Variable, xr.DataArray],

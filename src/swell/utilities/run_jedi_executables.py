@@ -10,8 +10,10 @@
 
 import os
 import netCDF4 as nc
-from swell.utilities.shell_commands import run_track_log_subprocess
 from typing import Union
+
+from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilties.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -103,7 +105,7 @@ def jedi_dictionary_iterator(
 
 
 def run_executable(
-    logger: 'Logger',
+    logger: Logger,
     cycle_dir: str,
     np: int,
     jedi_executable_path: str,

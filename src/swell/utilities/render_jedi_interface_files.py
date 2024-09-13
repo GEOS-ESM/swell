@@ -9,10 +9,11 @@
 
 import os
 import yaml
-from typing import Union
+from typing import Union, Optional
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,12 +23,12 @@ class JediConfigRendering():
 
     def __init__(
         self,
-        logger: 'Logger',
+        logger: Logger,
         experiment_root: str,
         experiment_id: str,
         cycle_dir: str,
-        cycle_time: Union[str, None],
-        jedi_interface: Union[str, None] = None
+        cycle_time: Optional[str],
+        jedi_interface: Optional[str] = None
     ) -> None:
 
         # Keep a copy of the logger
@@ -228,7 +229,7 @@ class JediConfigRendering():
 
     # Prepare path to interface metadata file and call rendering
 
-    def render_interface_meta(self, model_component_in: Union[str, dict] = None) -> dict:
+    def render_interface_meta(self, model_component_in: Union[str, dict, None] = None) -> dict:
 
         # Optionally open a different model interface
         model_component = self.jedi_interface

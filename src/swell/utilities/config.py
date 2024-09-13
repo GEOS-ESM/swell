@@ -12,6 +12,7 @@ import yaml
 from typing import Callable
 
 from swell.swell_path import get_swell_path
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ class Config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, input_file: str, logger: 'Logger', task_name: str, model: str) -> None:
+    def __init__(self, input_file: str, logger: Logger, task_name: str, model: str) -> None:
 
         # Keep copy of owner's logger
         self.__logger__ = logger

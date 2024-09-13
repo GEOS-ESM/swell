@@ -34,7 +34,7 @@ class GSIRecordParser:
         channel_list.sort(key=int)
         return channel_list
 
-    def run(self, instr_df: pd.core.frame.DataFrame) -> None:
+    def run(self, instr_df: pd.DataFrame) -> None:
 
         # Save instrument dataframe
         self.instr_df = instr_df
@@ -134,7 +134,7 @@ class GSIRecordParser:
 
         self.return_df = pd.concat([self.return_df, new_row], ignore_index=True)
 
-    def get_instr_df(self) -> pd.core.frame.DataFrame:
+    def get_instr_df(self) -> pd.DataFrame:
 
         ''' Returns the dataframe that the state machine generated! '''
 

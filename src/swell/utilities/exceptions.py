@@ -5,7 +5,9 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
-from typing import Union
+from typing import Optional
+
+from swell.utilities.logger import Logger
 
 
 class SWELLError(Exception):
@@ -13,7 +15,7 @@ class SWELLError(Exception):
     def __init__(
         self,
         message: str,
-        logger: Union['Logger', None] = None
+        logger: Optional[Logger] = None
     ) -> None:
 
         self.message = message

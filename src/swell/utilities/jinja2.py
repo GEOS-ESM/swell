@@ -8,6 +8,7 @@
 
 from typing import Union
 
+
 import jinja2 as j2
 
 from swell.utilities.logger import Logger

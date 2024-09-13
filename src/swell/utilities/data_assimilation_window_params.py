@@ -11,6 +11,7 @@ import datetime
 import isodate
 
 from swell.utilities.datetime_util import datetime_formats
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -18,7 +19,7 @@ from swell.utilities.datetime_util import datetime_formats
 
 class DataAssimilationWindowParams():
 
-    def __init__(self, logger: 'Logger', cycle_time: str) -> None:
+    def __init__(self, logger: Logger, cycle_time: str) -> None:
 
         """
         Defines cycle dependent parameters for the data assimilation window and adds to config

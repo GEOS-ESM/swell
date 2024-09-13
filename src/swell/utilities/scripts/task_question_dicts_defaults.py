@@ -23,7 +23,7 @@ from swell.utilities.logger import Logger
 
 
 def create_jedi_tq_dicts(
-    logger: 'Logger',
+    logger: Logger,
     jedi_interface_name: str,
     tq_dicts: Union[list, dict],
     jedi_tq_dicts_str_in: str
@@ -85,7 +85,7 @@ def create_jedi_tq_dicts(
 
 
 def create_platform_tq_dicts(
-    logger: 'Logger',
+    logger: Logger,
     platform_name: str,
     tq_dicts: Union[list, dict],
     platform_tq_dicts_str_in: str

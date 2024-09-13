@@ -20,7 +20,7 @@ def format_date(old_date: str) -> str:
 # --------------------------------------------------------------------------------------------------
 
 
-def read_sat_db(path_to_sat_db: str, column_names: list) -> pd.core.frame.DataFrame:
+def read_sat_db(path_to_sat_db: str, column_names: list) -> pd.DataFrame:
 
     '''
         Reading GSI observing system records row by row into

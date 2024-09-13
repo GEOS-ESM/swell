@@ -10,10 +10,12 @@
 import os
 import shutil
 
+from swell.utilities.logger import Logger
+
 # --------------------------------------------------------------------------------------------------
 
 
-def copy_to_dst_dir(logger: 'Logger', src: str, dst_dir: str) -> None:
+def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
 
     """ Source could be a directory or single file which necesitates different handling
     """
@@ -33,7 +35,7 @@ def copy_to_dst_dir(logger: 'Logger', src: str, dst_dir: str) -> None:
 
 
 def link_all_files_from_first_in_hierarchy_of_sources(
-        logger: 'Logger',
+        logger: Logger,
         source_paths: list,
         target_path: str
 ) -> None:
@@ -88,7 +90,7 @@ def link_all_files_from_first_in_hierarchy_of_sources(
 # --------------------------------------------------------------------------------------------------
 
 
-def check_if_files_exist_in_path(logger: 'Logger', path_to_files: str) -> bool:
+def check_if_files_exist_in_path(logger: Logger, path_to_files: str) -> bool:
     """Checks if path to directory exists, and if files are present within it.
 
     Parameters
@@ -109,7 +111,7 @@ def check_if_files_exist_in_path(logger: 'Logger', path_to_files: str) -> bool:
 
 
 def link_file_existing_link_ok(
-    logger: 'Logger',
+    logger: Logger,
     source_path_file: str,
     target_path_file: str
 ) -> None:
@@ -142,7 +144,7 @@ def link_file_existing_link_ok(
     # ----------------------------------------------------------------------------------------------
 
 
-def move_files(logger: 'Logger', src_dir: str, dst_dir: str) -> None:
+def move_files(logger: Logger, src_dir: str, dst_dir: str) -> None:
 
     try:
         logger.info(' Moving file(s) from: '+src_dir)

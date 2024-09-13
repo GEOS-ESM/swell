@@ -9,14 +9,15 @@
 
 import yaml
 from collections.abc import Hashable
-
 from typing import Union
+
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
 
 def dict_get(
-    logger: 'Logger',
+    logger: Logger,
     dictionary: dict,
     key: str,
     default: str = 'NODEFAULT'
@@ -67,7 +68,7 @@ def remove_matching_keys(d: Union[dict, list], key: str) -> None:
 # --------------------------------------------------------------------------------------------------
 
 def add_comments_to_dictionary(
-    logger: 'Logger',
+    logger: Logger,
     dictionary_string: str,
     comment_dictionary: dict
 ) -> str:
@@ -162,7 +163,7 @@ def update_dict(orig_dict: dict, overwrite_dict: dict) -> dict:
 # --------------------------------------------------------------------------------------------------
 
 
-def dictionary_override(logger: 'Logger', orig_dict: dict, override_dict: dict) -> dict:
+def dictionary_override(logger: Logger, orig_dict: dict, override_dict: dict) -> dict:
     for key, value in override_dict.items():
         if value == 'REMOVE':
             orig_dict.pop(key, None)
