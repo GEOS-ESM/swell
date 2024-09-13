@@ -15,6 +15,7 @@ import glob
 import importlib
 import os
 import time
+from datetime import datetime as dt
 from typing import Union, Optional
 
 # swell imports
@@ -252,7 +253,7 @@ class taskFactory():
         self,
         task: str,
         config: str,
-        datetime: Optional[str],
+        datetime: Optional[str, dt],
         model: str,
         ensemblePacket: Optional[str]
     ) -> taskBase:
@@ -293,7 +294,7 @@ def get_tasks() -> list:
 def task_wrapper(
     task: str,
     config: str,
-    datetime: Optional[str],
+    datetime: Optional[str, dt],
     model: str,
     ensemblePacket: Optional[str]
 ) -> None:

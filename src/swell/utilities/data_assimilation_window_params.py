@@ -34,14 +34,18 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_window_begin_dto__(self, window_offset: str) -> datetime:
+    def __get_window_begin_dto__(self, window_offset: str) -> datetime.datetime:
 
         window_offset_dur = isodate.parse_duration(window_offset)
         return self.__current_cycle_dto__ - window_offset_dur
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_local_background_time__(self, window_type: str, window_offset: str) -> datetime:
+    def __get_local_background_time__(
+        self,
+        window_type: str,
+        window_offset: str
+    ) -> datetime.datetime:
 
         # Background time for the window
         if window_type == '4D':

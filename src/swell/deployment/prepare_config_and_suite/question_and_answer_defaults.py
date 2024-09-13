@@ -11,9 +11,10 @@
 from typing import Union
 from datetime import datetime as dt
 
+
 class GetAnswerDefaults:
 
-    def get_answer(self, key: str, val: dict) -> Union[int,float,str,dt]:
+    def get_answer(self, key: str, val: dict) -> Union[int, float, str, dt]:
         return val['default_value']
 
 # --------------------------------------------------------------------------------------------------

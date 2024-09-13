@@ -9,7 +9,7 @@
 
 
 import click
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -245,7 +245,7 @@ def test(test: str) -> None:
 
 @swell_driver.command()
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing")))
-def t1test(suite: str) -> None:
+def t1test(suite: Literal["hofx", "3dvar", "ufo_testing"]) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
