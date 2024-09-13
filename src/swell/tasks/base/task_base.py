@@ -253,7 +253,7 @@ class taskFactory():
         self,
         task: str,
         config: str,
-        datetime: Optional[str, dt],
+        datetime: Union[str, dt, None],
         model: str,
         ensemblePacket: Optional[str]
     ) -> taskBase:
@@ -294,7 +294,7 @@ def get_tasks() -> list:
 def task_wrapper(
     task: str,
     config: str,
-    datetime: Optional[str, dt],
+    datetime: Union[str, dt, None],
     model: str,
     ensemblePacket: Optional[str]
 ) -> None:
