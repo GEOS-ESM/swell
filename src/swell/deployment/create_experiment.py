@@ -209,10 +209,10 @@ def create_experiment_directory(
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    copy_platform_files(logger, exp_suite_path, platform)
+    copy_platform_files(exp_suite_path, platform)
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
-        copy_eva_files(logger, swell_suite_path, exp_suite_path)
+        copy_eva_files(swell_suite_path, exp_suite_path)
 
     # Set the swell paths in the modules file and create csh versions
     # ---------------------------------------------------------------
@@ -240,7 +240,6 @@ def create_experiment_directory(
 
 
 def copy_eva_files(
-    logger: Logger,
     swell_suite_path: str,
     exp_suite_path: str
 ) -> None:
@@ -263,7 +262,6 @@ def copy_eva_files(
 
 
 def copy_platform_files(
-    logger: 'Logger',
     exp_suite_path: str,
     platform: Union[str, None] = None
 ) -> None:
