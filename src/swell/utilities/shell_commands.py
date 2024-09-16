@@ -10,7 +10,7 @@
 import os
 import stat
 import subprocess
-from typing import Any, Optional, IO
+from typing import Any, Optional, IO, Union
 
 from swell.utilities.logger import Logger
 
@@ -65,7 +65,7 @@ def run_track_log_subprocess(
 
 def run_subprocess_dev_null(
     logger: Logger,
-    command: str
+    command: list[str]
 ) -> None:
 
     run_subprocess(logger, command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -76,7 +76,7 @@ def run_subprocess_dev_null(
 
 def run_subprocess(
     logger: Logger,
-    command: str,
+    command: list[str],
     stdout: Union[int, IO[Any], None] = None,
     stderr: Union[int, IO[Any], None] = None
 ) -> None:

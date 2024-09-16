@@ -12,7 +12,7 @@ import platform as pltfrm
 import re
 import yaml
 
-from swell.utilities.logger import Logger
+from logging import Logger
 from importlib import resources
 
 

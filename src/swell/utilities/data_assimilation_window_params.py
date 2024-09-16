@@ -9,6 +9,7 @@
 
 import datetime
 import isodate
+from typing import Union
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
@@ -57,7 +58,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_offset: str, dto: bool = False) -> str:
+    def window_begin(self, window_offset: str, dto: bool = False) -> Union[str, datetime.datetime]:
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
 

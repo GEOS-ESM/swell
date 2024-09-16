@@ -9,7 +9,7 @@
 
 import os
 import yaml
-from typing import Union, Optional, Tuple, Any
+from typing import Union, Optional, Any
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
