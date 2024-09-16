@@ -56,7 +56,7 @@ def create_range_string(avail_list: list) -> str:
 # --------------------------------------------------------------------------------------------------
 
 
-def get_channel_list(input_dict: dict, dt_cycle_time: dt) -> Optional[list]:
+def get_channel_list(input_dict: dict, dt_cycle_time: dt) -> list:
 
     '''
         Function retrieves channel lists from dict loaded from a yaml file

@@ -11,6 +11,7 @@
 import os
 import netCDF4 as nc
 from typing import Optional
+import datetime
 
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.logger import Logger
@@ -52,7 +53,7 @@ def jedi_dictionary_iterator(
     jedi_rendering: JediConfigRendering,
     window_type: Optional[str] = None,
     obs: Optional[list[str]] = None,
-    cycle_time: Optional[str] = None,
+    cycle_time: Optional[datetime.datetime] = None,
     jedi_forecast_model: Optional[str] = None
 ) -> None:
 

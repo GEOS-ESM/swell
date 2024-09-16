@@ -294,7 +294,7 @@ def task_wrapper(
     task: str,
     config: str,
     datetime: Union[str, dt, None],
-    model: str,
+    model: Optional[str],
     ensemblePacket: Optional[str]
 ) -> None:
 

@@ -214,7 +214,7 @@ def validate_directives(directive_dict: dict) -> None:
 
 
 def slurm_global_defaults(
-    logger: Logger,
+    logger: Union[Logger, pyLogger],
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)
