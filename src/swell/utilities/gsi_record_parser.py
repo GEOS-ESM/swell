@@ -23,7 +23,7 @@ class GSIRecordParser:
         self.sat = None
         self.instr = None
 
-    def get_channel_list(self, start) -> list:
+    def get_channel_list(self, start: int) -> list:
         channel_list = []
         rows = self.instr_df.loc[self.instr_df["start"] == start]
         for row_ch_list in rows["channels"].values:

@@ -9,7 +9,7 @@
 
 import os
 import yaml
-from typing import Union, Optional
+from typing import Union, Optional, Tuple, Any
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -121,7 +121,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Function to add key to the template dictionary
-    def add_key(self, key: str, element: object) -> None:
+    def add_key(self, key: str, element: str) -> None:
 
         # First assert that key is allowed
         self.logger.assert_abort(key in self.valid_template_keys, f'Trying to add key \'{key}\' ' +
@@ -134,7 +134,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Open the file at the provided path, use dictionary to complete templates and return dictionary
-    def __open_file_render_to_dict__(self, config_file: str) -> object:
+    def __open_file_render_to_dict__(self, config_file: str) -> dict[Any, Any]:
 
         # Check that config file exists
         self.logger.assert_abort(os.path.exists(config_file), f'In open_file_and_render failed ' +
@@ -165,7 +165,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name: str) -> dict:
+    def render_interface_model(self, config_name: str) -> dict[Any, Any]:
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +

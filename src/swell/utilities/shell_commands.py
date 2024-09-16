@@ -10,7 +10,7 @@
 import os
 import stat
 import subprocess
-from typing import Optional
+from typing import Any, Optional, IO
 
 from swell.utilities.logger import Logger
 
@@ -77,8 +77,8 @@ def run_subprocess_dev_null(
 def run_subprocess(
     logger: Logger,
     command: str,
-    stdout: Optional[str] = None,
-    stderr: Optional[str] = None
+    stdout: Union[int, IO[Any], None] = None,
+    stderr: Union[int, IO[Any], None] = None
 ) -> None:
 
     # Run subprocess
