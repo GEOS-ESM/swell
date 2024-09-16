@@ -9,7 +9,7 @@
 
 import yaml
 from collections.abc import Hashable
-from typing import Union, Optional
+from typing import Union
 
 from swell.utilities.logger import Logger
 
@@ -21,7 +21,7 @@ def dict_get(
     dictionary: dict,
     key: str,
     default: str = 'NODEFAULT'
-) -> Optional[str]:
+) -> str:
 
     if key in dictionary.keys():
 

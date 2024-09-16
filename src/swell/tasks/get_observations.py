@@ -272,7 +272,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict: dict) -> Union[None, object]:
+    def get_tlapse_files(self, observation_dict: dict) -> Union[None, int]:
 
         # Function to locate instances of tlapse in the obs operator config
 

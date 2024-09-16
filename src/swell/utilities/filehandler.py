@@ -63,7 +63,7 @@ import glob
 import copy
 import datetime as dt
 from shutil import copyfile
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 from swell.utilities.exceptions import *
 
@@ -385,7 +385,7 @@ class GetDataFileHandler(FileHandler):
 
 class FileCollection(object):
 
-    def __init__(self, config: list) -> None:
+    def __init__(self, config: dict[Any, Any]) -> None:
 
         self.config = copy.deepcopy(config)
 

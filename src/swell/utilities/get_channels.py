@@ -11,7 +11,7 @@ import yaml
 import os
 from datetime import datetime as dt
 from itertools import groupby
-from typing import Tuple, Union, Optional
+from typing import Tuple, Optional
 
 from swell.utilities.logger import Logger
 
@@ -56,7 +56,7 @@ def create_range_string(avail_list: list) -> str:
 # --------------------------------------------------------------------------------------------------
 
 
-def get_channel_list(input_dict: dict, dt_cycle_time: dt) -> list:
+def get_channel_list(input_dict: dict, dt_cycle_time: dt) -> Optional[list]:
 
     '''
         Function retrieves channel lists from dict loaded from a yaml file
@@ -76,7 +76,7 @@ def get_channels(
     observation: str,
     dt_cycle_time: dt,
     logger: Logger
-) -> Tuple[Union[str, None], Union[list[int], None]]:
+) -> Tuple[Optional[str], Optional[list[int]]]:
 
     '''
         Comparing available channels and active channels from the observing

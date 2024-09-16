@@ -47,7 +47,6 @@ class taskBase(ABC):
         # Create message logger
         # ---------------------
         self.logger = Logger(task_name)
-        self.logger.info('Logger type', type(self.logger))
 
         # Write out the initialization info
         # ---------------------------------
@@ -160,7 +159,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_ensemble_packet(self) -> str:
+    def get_ensemble_packet(self) -> Optional[str]:
         return self.__ensemble_packet__
 
     # ----------------------------------------------------------------------------------------------
@@ -198,7 +197,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self, paths: list = []) -> str:
+    def forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
 
         # Make sure forecast directory exists
         # -----------------------------------
@@ -222,7 +221,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycle_time_dto(self) -> object:
+    def cycle_time_dto(self) -> dt:
 
         return self.__datetime__.dto()
 
@@ -240,7 +239,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def first_cycle_time_dto(self) -> object:
+    def first_cycle_time_dto(self) -> dt:
 
         return self.__start_cycle_point__.dto()
 

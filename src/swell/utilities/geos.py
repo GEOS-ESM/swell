@@ -14,7 +14,7 @@ import isodate
 import netCDF4
 import os
 import re
-from typing import Tuple
+from typing import Tuple, Optional, Union
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime_util import datetime_formats
@@ -27,7 +27,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger: Logger, forecast_dir: str) -> None:
+    def __init__(self, logger: Logger, forecast_dir: Optional[str]) -> None:
 
         '''
         Intention with GEOS class is to not have any model dependent methods.
@@ -40,7 +40,11 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def adjacent_cycle(self, offset: str, return_date: bool = False) -> str:
+    def adjacent_cycle(
+        self,
+        offset: str,
+        return_date: bool = False
+    ) -> Union[str, datetime.datetime]:
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------

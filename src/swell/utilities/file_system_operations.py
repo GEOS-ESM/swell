@@ -51,7 +51,6 @@ def link_all_files_from_first_in_hierarchy_of_sources(
     """
 
     # First sweep to see if directories exist
-    logger.info('Source Paths', source_paths)
 
     found_paths = []
     for source_path in source_paths:
@@ -99,13 +98,17 @@ def check_if_files_exist_in_path(logger: Logger, path_to_files: str) -> bool:
     path_to_files: path to target directory
     """
 
+    files_exist = False
+
     if os.path.exists(path_to_files):
         if os.listdir(path_to_files):
             logger.info(f'Files found within {path_to_files}')
-            return True
+            files_exist = True
         else:
             logger.info(f'No files found within {path_to_files}')
-            return False
+
+    return files_exist
+
 
 # --------------------------------------------------------------------------------------------------
 

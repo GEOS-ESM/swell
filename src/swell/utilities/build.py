@@ -9,6 +9,7 @@
 
 import os
 import shutil
+from typing import Tuple
 
 from jedi_bundle.bin.jedi_bundle import get_default_config
 from jedi_bundle.config.config import check_platform
@@ -17,7 +18,7 @@ from jedi_bundle.config.config import check_platform
 # --------------------------------------------------------------------------------------------------
 
 
-def build_and_source_dirs(package_path: str) -> str:
+def build_and_source_dirs(package_path: str) -> Tuple[str, str]:
 
     # Make package directory
     # ----------------------

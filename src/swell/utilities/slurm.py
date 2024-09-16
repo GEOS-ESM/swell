@@ -11,13 +11,16 @@ import os
 import platform as pltfrm
 import re
 import yaml
+from typing import Union
 
-from logging import Logger
 from importlib import resources
+from logging import Logger as pyLogger
+
+from swell.utilities.logger import Logger
 
 
 def prepare_scheduling_dict(
-    logger: Logger,
+    logger: Union[Logger, pyLogger],
     experiment_dict: dict,
     platform: str,
 ) -> dict:

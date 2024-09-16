@@ -20,10 +20,10 @@ from swell.tasks.base.task_base import JediConfigRendering
 
 
 def check_obs(
-    path_to_observing_sys_yamls: str,
+    path_to_observing_sys_yamls: Optional[str],
     observation: str,
     obs_dict: dict,
-    cycle_time: str
+    cycle_time: Optional[str]
 ) -> bool:
 
     use_observation = False
@@ -51,7 +51,7 @@ def jedi_dictionary_iterator(
     jedi_config_dict: dict,
     jedi_rendering: JediConfigRendering,
     window_type: Optional[str] = None,
-    obs: Optional[str] = None,
+    obs: Optional[list[str]] = None,
     cycle_time: Optional[str] = None,
     jedi_forecast_model: Optional[str] = None
 ) -> None:

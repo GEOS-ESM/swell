@@ -14,7 +14,7 @@ from typing import Union, Optional, Any
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
 from swell.utilities.logger import Logger
-
+from swell.utilities.datetime_util import Datetime
 
 # --------------------------------------------------------------------------------------------------
 
@@ -26,8 +26,8 @@ class JediConfigRendering():
         logger: Logger,
         experiment_root: str,
         experiment_id: str,
-        cycle_dir: str,
-        cycle_time: Optional[str],
+        cycle_dir: Optional[str],
+        cycle_time: Union[str, Datetime, None],
         jedi_interface: Optional[str] = None
     ) -> None:
 
@@ -121,7 +121,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Function to add key to the template dictionary
-    def add_key(self, key: str, element: str) -> None:
+    def add_key(self, key: str, element: Any) -> None:
 
         # First assert that key is allowed
         self.logger.assert_abort(key in self.valid_template_keys, f'Trying to add key \'{key}\' ' +
@@ -165,7 +165,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name: str) -> dict[Any, Any]:
+    def render_interface_model(self, config_name: Optional[str]) -> dict[Any, Any]:
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +

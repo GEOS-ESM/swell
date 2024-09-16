@@ -14,7 +14,6 @@ import os
 import shutil
 import sys
 import yaml
-
 from typing import Union, Optional
 
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
@@ -163,7 +162,7 @@ def create_experiment_directory(
     platform: str,
     override: str,
     advanced: bool,
-    slurm: str
+    slurm: Optional[str]
 ) -> None:
 
     # Create a logger
@@ -209,7 +208,7 @@ def create_experiment_directory(
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    copy_platform_files(exp_suite_path, platform)
+    copy_platform_files(logger, exp_suite_path, platform)
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):
         copy_eva_files(swell_suite_path, exp_suite_path)
