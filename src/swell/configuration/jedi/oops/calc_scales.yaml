@@ -2,8 +2,10 @@ gridspec_filename: 'INPUT/soca_gridspec.nc'
 restart_filename: 'MOM6.res.{{local_background_time}}.nc'
 mld_filename: 'MOM6.res.{{local_background_time}}.nc'
 output_filename: '{{cycle_dir}}/calculated_scales.nc'
-output_variable_vt: 'vt'
-output_variable_hz: 'hz'
+
+# These names should match the model variables for now
+output_variable_vt: 'tocn'
+output_variable_hz: 'ave_ssh'
 
 # Parameters for the vertical scale
 VT_MIN: 1.5
