@@ -11,11 +11,14 @@ import yaml
 import os
 from datetime import datetime as dt
 from itertools import groupby
+from typing import Tuple, Optional
+
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
 
-def process_channel_lists(channel_list):
+def process_channel_lists(channel_list: list) -> list:
 
     '''
         Function processes list of elements in channel list
@@ -37,7 +40,7 @@ def process_channel_lists(channel_list):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_range_string(avail_list):
+def create_range_string(avail_list: list) -> str:
     '''
         Function converts integer list into string of ranges
     '''
@@ -53,7 +56,7 @@ def create_range_string(avail_list):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_channel_list(input_dict, dt_cycle_time):
+def get_channel_list(input_dict: dict, dt_cycle_time: dt) -> list:
 
     '''
         Function retrieves channel lists from dict loaded from a yaml file
@@ -68,7 +71,12 @@ def get_channel_list(input_dict, dt_cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time, logger):
+def get_channels(
+    path_to_observing_sys_yamls: str,
+    observation: str,
+    dt_cycle_time: dt,
+    logger: Logger
+) -> Tuple[Optional[str], Optional[list[int]]]:
 
     '''
         Comparing available channels and active channels from the observing
@@ -107,7 +115,11 @@ def get_channels(path_to_observing_sys_yamls, observation, dt_cycle_time, logger
 # --------------------------------------------------------------------------------------------------
 
 
-def num_active_channels(path_to_observing_sys_yamls, observation, dt_cycle_time):
+def num_active_channels(
+    path_to_observing_sys_yamls: str,
+    observation: str,
+    dt_cycle_time: dt
+) -> Optional[int]:
 
     # Retrieve available and active channels from records yaml
     path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + \

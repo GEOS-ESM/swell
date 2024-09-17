@@ -57,16 +57,18 @@
 #     is omitted, all files in "src" will be copied to "dst".
 # -----------------------------------------------------------------------------
 
+from __future__ import annotations
 import os
 import glob
 import copy
 import datetime as dt
 from shutil import copyfile
+from typing import Union, Optional, Any
 
 from swell.utilities.exceptions import *
 
 
-def get_file_handler(config, **kwargs):
+def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
     """Factory for determining the file handler type for retrieving data.
 
        This method uses a heuristic algorithm to determine the staging
@@ -106,7 +108,7 @@ def get_file_handler(config, **kwargs):
 
 class FileHandler(object):
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config: list, **kwargs) -> None:
 
         self.listing = []
         self.config = copy.deepcopy(config)
@@ -114,7 +116,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------------
 
-    def is_ready(self, fc=None):
+    def is_ready(self, fc: Optional[FileCollection] = None) -> bool:
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
 
@@ -156,7 +158,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------
 
-    def get(self, fc=None):
+    def get(self, fc: Optional[FileCollection] = None) -> None:
         """Retrieves the files in the specified file collection.
 
            Parameters
@@ -187,7 +189,7 @@ class FileHandler(object):
 
 # ---------------------------------------------------------------------------
 
-    def copy(self, src, dst):
+    def copy(self, src: str, dst: str) -> None:
         """File handler - copies a file
 
            Parameters
@@ -209,7 +211,7 @@ class FileHandler(object):
 
 # ---------------------------------------------------------------------------
 
-    def link(self, src, dst):
+    def link(self, src: str, dst: str) -> None:
         """File handler - Symbolically links a file
 
            Parameters
@@ -239,7 +241,7 @@ class FileHandler(object):
 
 class StageFileHandler(FileHandler):
 
-    def list(self, force=False):
+    def list(self, force: bool = False) -> list:
         """Creates a list of file collections defined in configuration
            using the "stage" data structure convention.
 
@@ -299,7 +301,7 @@ class StageFileHandler(FileHandler):
 
 class GetDataFileHandler(FileHandler):
 
-    def list(self, force=False):
+    def list(self, force: bool = False) -> list:
         """Creates a list of file collections defined in configuration
            using the "get_data" data structure convention.
 
@@ -383,7 +385,7 @@ class GetDataFileHandler(FileHandler):
 
 class FileCollection(object):
 
-    def __init__(self, config):
+    def __init__(self, config: dict[Any, Any]) -> None:
 
         self.config = copy.deepcopy(config)
 
@@ -394,13 +396,13 @@ class FileCollection(object):
 
 # ------------------------------------------------------------------------------
 
-    def update(self, srcfile, dstfile):
+    def update(self, srcfile: list, dstfile: list) -> None:
 
         self.listing.append((srcfile, dstfile))
 
 # ------------------------------------------------------------------------------
 
-    def num_files(self): return len(self.listing)
+    def num_files(self) -> int: return len(self.listing)
 
 # ------------------------------------------------------------------------------
 

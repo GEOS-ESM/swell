@@ -19,7 +19,7 @@ from r2d2 import fetch
 
 class GetGeovals(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Parse config
         # ------------

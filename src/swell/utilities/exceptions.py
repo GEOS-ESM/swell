@@ -5,10 +5,17 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
+from typing import Optional
+from logging import Logger as pyLogger
+
 
 class SWELLError(Exception):
 
-    def __init__(self, message, logger=None):
+    def __init__(
+        self,
+        message: str,
+        logger: Optional[pyLogger] = None
+    ) -> None:
 
         self.message = message
         super().__init__(message)

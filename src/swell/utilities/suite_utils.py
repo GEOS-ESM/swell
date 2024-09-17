@@ -17,7 +17,7 @@ from swell.swell_path import get_swell_path
 # --------------------------------------------------------------------------------------------------
 
 
-def get_suites():
+def get_suites() -> list:
 
     # Path to platforms
     suites_directory = os.path.join(get_swell_path(), 'suites')
@@ -36,7 +36,7 @@ def get_suites():
 # --------------------------------------------------------------------------------------------------
 
 
-def get_suite_tests():
+def get_suite_tests() -> list:
 
     # Path to platforms
     suite_tests_directory = os.path.join(get_swell_path(), 'test', 'suite_tests', '*.yaml')

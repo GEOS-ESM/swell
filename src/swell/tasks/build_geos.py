@@ -20,7 +20,7 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 
 class BuildGeos(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the experiment/geos directory
         # ---------------------------------

@@ -10,12 +10,22 @@
 
 import os
 import netCDF4 as nc
+from typing import Optional
+import datetime
+
 from swell.utilities.shell_commands import run_track_log_subprocess
+from swell.utilities.logger import Logger
+from swell.tasks.base.task_base import JediConfigRendering
 
 # --------------------------------------------------------------------------------------------------
 
 
-def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
+def check_obs(
+    path_to_observing_sys_yamls: Optional[str],
+    observation: str,
+    obs_dict: dict,
+    cycle_time: Optional[str]
+) -> bool:
 
     use_observation = False
 
@@ -38,8 +48,14 @@ def check_obs(path_to_observing_sys_yamls, observation, obs_dict, cycle_time):
 # --------------------------------------------------------------------------------------------------
 
 
-def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type=None, obs=None,
-                             cycle_time=None, jedi_forecast_model=None):
+def jedi_dictionary_iterator(
+    jedi_config_dict: dict,
+    jedi_rendering: JediConfigRendering,
+    window_type: Optional[str] = None,
+    obs: Optional[list[str]] = None,
+    cycle_time: Optional[datetime.datetime] = None,
+    jedi_forecast_model: Optional[str] = None
+) -> None:
 
     # Assemble configuration YAML file
     # --------------------------------
@@ -90,7 +106,14 @@ def jedi_dictionary_iterator(jedi_config_dict, jedi_rendering, window_type=None,
 # ----------------------------------------------------------------------------------------------
 
 
-def run_executable(logger, cycle_dir, np, jedi_executable_path, jedi_config_file, output_log):
+def run_executable(
+    logger: Logger,
+    cycle_dir: str,
+    np: int,
+    jedi_executable_path: str,
+    jedi_config_file: str,
+    output_log: str
+) -> None:
 
     # Run the JEDI executable
     # -----------------------

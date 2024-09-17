@@ -21,7 +21,7 @@ from swell.test.code_tests.test_generate_observing_system import GenerateObservi
 
 # --------------------------------------------------------------------------------------------------
 
-def code_tests():
+def code_tests() -> None:
 
     # Create a logger
     logger = Logger('TestSuite')

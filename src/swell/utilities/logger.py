@@ -35,7 +35,7 @@ under = '\033[4m'
 
 class Logger:
 
-    def __init__(self, task_name):
+    def __init__(self, task_name: str) -> None:
 
         self.task_name = task_name
 
@@ -61,7 +61,7 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def send_message(self, level, message, wrap):
+    def send_message(self, level: str, message: str, wrap: bool) -> None:
 
         # Wrap the message if needed
         if wrap:
@@ -97,37 +97,37 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def info(self, message, wrap=True):
+    def info(self, message: str, wrap: bool = True) -> None:
 
         self.send_message('INFO', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def test(self, message, wrap=True):
+    def test(self, message: str, wrap: bool = True) -> None:
 
         self.send_message('TEST', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def trace(self, message, wrap=True):
+    def trace(self, message: str, wrap: bool = True) -> None:
 
         self.send_message('TRACE', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def debug(self, message, wrap=True):
+    def debug(self, message: str, wrap: bool = True) -> None:
 
         self.send_message('DEBUG', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def blank(self, message, wrap=True):
+    def blank(self, message: str, wrap: bool = True) -> None:
 
         self.send_message('BLANK', message, wrap)
 
     # ----------------------------------------------------------------------------------------------
 
-    def abort(self, message, wrap=True):
+    def abort(self, message: str, wrap: bool = True) -> None:
 
         # Make the text red
         message = red + message + end
@@ -147,7 +147,7 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def assert_abort(self, condition, message, wrap=True):
+    def assert_abort(self, condition: bool, message: str, wrap: bool = True) -> None:
 
         if condition:
             return
@@ -156,7 +156,7 @@ class Logger:
 
     # ----------------------------------------------------------------------------------------------
 
-    def input(self, message):
+    def input(self, message: str) -> None:
 
         input(' '+self.task_name+': '+message + ". Press any key to continue...")
 
