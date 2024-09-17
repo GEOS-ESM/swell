@@ -10,10 +10,12 @@
 import os
 import shutil
 
+from swell.utilities.logger import Logger
+
 # --------------------------------------------------------------------------------------------------
 
 
-def copy_to_dst_dir(logger, src, dst_dir):
+def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
 
     """ Source could be a directory or single file which necesitates different handling
     """
@@ -32,7 +34,11 @@ def copy_to_dst_dir(logger, src, dst_dir):
 # --------------------------------------------------------------------------------------------------
 
 
-def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, target_path):
+def link_all_files_from_first_in_hierarchy_of_sources(
+        logger: Logger,
+        source_paths: list,
+        target_path: str
+) -> None:
     """For a list of source paths check for the existence of the source paths and for files
        residing in at least one of the paths. For the first source path in the list that is found
        to contain files link them into the target path (remove first if existing)
@@ -45,6 +51,7 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
     """
 
     # First sweep to see if directories exist
+
     found_paths = []
     for source_path in source_paths:
         if os.path.exists(source_path):
@@ -82,7 +89,35 @@ def link_all_files_from_first_in_hierarchy_of_sources(logger, source_paths, targ
 # --------------------------------------------------------------------------------------------------
 
 
-def link_file_existing_link_ok(logger, source_path_file, target_path_file):
+def check_if_files_exist_in_path(logger: Logger, path_to_files: str) -> bool:
+    """Checks if path to directory exists, and if files are present within it.
+
+    Parameters
+    ----------
+    logger: Logger to output results to
+    path_to_files: path to target directory
+    """
+
+    files_exist = False
+
+    if os.path.exists(path_to_files):
+        if os.listdir(path_to_files):
+            logger.info(f'Files found within {path_to_files}')
+            files_exist = True
+        else:
+            logger.info(f'No files found within {path_to_files}')
+
+    return files_exist
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def link_file_existing_link_ok(
+    logger: Logger,
+    source_path_file: str,
+    target_path_file: str
+) -> None:
 
     """Create a symbolic link from a source location to a target location. If a symbolic link
        already exists it will be deleted. If a file already exists and it is not a link the code
@@ -112,7 +147,7 @@ def link_file_existing_link_ok(logger, source_path_file, target_path_file):
     # ----------------------------------------------------------------------------------------------
 
 
-def move_files(logger, src_dir, dst_dir):
+def move_files(logger: Logger, src_dir: str, dst_dir: str) -> None:
 
     try:
         logger.info(' Moving file(s) from: '+src_dir)

@@ -10,6 +10,7 @@
 
 import re
 import sys
+from typing import Union
 
 import questionary
 from questionary import Choice
@@ -20,7 +21,7 @@ from questionary import Choice
 
 class GetAnswerCli:
 
-    def get_answer(self, key, val):
+    def get_answer(self, key: str, val: dict) -> str:
         # Set questionary variable
         widget_type = val['type']
         quest = val['prompt']
@@ -60,14 +61,14 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_string_widget(self, quest, default, prompt):
+    def make_string_widget(self, quest: str, default: str, prompt: questionary.text) -> str:
         answer = prompt(f"{quest} [{default}]", default=default).ask()
 
         return answer
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_int_widget(self, quest, default, prompt):
+    def make_int_widget(self, quest: str, default: str, prompt: questionary.text) -> str:
         default = str(default)
         answer = prompt(f"{quest} [{default}]",
                         validate=lambda text: True if text.isdigit()
@@ -78,7 +79,12 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_float_widget(self, quest, default, prompt):
+    def make_float_widget(
+        self,
+        quest: str,
+        default: str,
+        prompt: questionary.text
+    ) -> str:
         default = str(default)
         answer = prompt(f"{quest} [{default}]",
                         validate=lambda text: True if text.isdigit()
@@ -89,7 +95,15 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_drop_widget(self, method, quest, options, default, prompt):
+    def make_drop_widget(
+        self,
+        method: str,
+        quest: str,
+        options: list,
+        default: str,
+        prompt: questionary.text
+    ) -> Union[str, list]:
+
         default = str(default)
         choices = [str(x) for x in options]
         answer = prompt(quest, choices=choices, default=default).ask()
@@ -98,14 +112,25 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_boolean(self, quest, default, prompt):
+    def make_boolean(
+        self,
+        quest: str,
+        default: str,
+        prompt: questionary.text
+    ) -> str:
+
         answer = prompt(quest, default=default, auto_enter=False).ask()
 
         return answer
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_datetime(self, quest, default, prompt):
+    def make_datetime(
+        self,
+        quest: str,
+        default: str,
+        prompt: questionary.text
+    ) -> str:
 
         class dtValidator(questionary.Validator):
             def validate(self, document):
@@ -124,7 +149,12 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_duration(self, quest, default, prompt):
+    def make_duration(
+        self,
+        quest: str,
+        default: str,
+        prompt: questionary.text
+    ) -> str:
 
         class durValidator(questionary.Validator):
             def validate(self, document):
@@ -157,7 +187,14 @@ class GetAnswerCli:
 
     # ----------------------------------------------------------------------------------------------
 
-    def make_check_widget(self, quest, options, default, prompt):
+    def make_check_widget(
+        self,
+        quest: str,
+        options: list,
+        default: Union[str, list],
+        prompt: questionary.text
+    ) -> str:
+
         choices = options.copy()
 
         if isinstance(default, list):

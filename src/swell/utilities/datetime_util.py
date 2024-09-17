@@ -11,7 +11,6 @@
 import re
 import datetime as pydatetime
 
-
 # --------------------------------------------------------------------------------------------------
 
 datetime_formats = {
@@ -26,7 +25,7 @@ datetime_formats = {
 
 class Datetime:
 
-    def __init__(self, datetime_input):
+    def __init__(self, datetime_input) -> None:
 
         # Convert input string to standard format yyyymmddHHMMSS
         datetime_str = re.sub('[^0-9]', '', datetime_input+'000000')[0:14]
@@ -42,13 +41,13 @@ class Datetime:
 
     # ----------------------------------------------------------------------------------------------
 
-    def string_iso(self):
+    def string_iso(self) -> str:
 
         return self.__datetime__.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def string_directory(self):
+    def string_directory(self) -> str:
 
         return self.__datetime__.strftime(datetime_formats['directory_format'])
 

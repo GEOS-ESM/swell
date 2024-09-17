@@ -21,7 +21,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 class EvaIncrement(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the model and window type
         # -----------------------------

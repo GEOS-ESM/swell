@@ -14,7 +14,7 @@ import os
 # --------------------------------------------------------------------------------------------------
 
 
-def get_swell_path():
+def get_swell_path() -> str:
     return os.path.split(__file__)[0]
 
 
