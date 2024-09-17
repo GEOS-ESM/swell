@@ -1,11 +1,13 @@
 import os
 import yaml
 import subprocess
+from pathlib import Path
+import importlib.resources
 from swell.utilities.logger import Logger
 
 
-def get_pinned_vers_path() -> str:
-    return os.path.split(__file__)[0]
+def get_pinned_vers_path() -> Path:
+    return importlib.resources.files("swell.utilities.pinned_versions") / "pinned_versions.yaml"
 
 
 def check_hashes(jedi_bundle_loc: str, logger: Logger) -> None:
@@ -13,9 +15,9 @@ def check_hashes(jedi_bundle_loc: str, logger: Logger) -> None:
     # Get list of directories in jedi_bundle_loc
     dirs = os.listdir(jedi_bundle_loc)
 
-    pinned_vers_file = get_pinned_vers_path() + "/pinned_versions.yaml"
+    pinned_vers_path = get_pinned_vers_path()
     # Loaded pinned_versions into dict
-    with open(pinned_vers_file) as stream:
+    with open(pinned_vers_path) as stream:
         pinned_vers = yaml.safe_load(stream)
 
     incorrect_hash = []
@@ -31,7 +33,7 @@ def check_hashes(jedi_bundle_loc: str, logger: Logger) -> None:
                 curr_hash = proc.stdout.read()
                 proc.kill()
 
-            curr_hash = curr_hash.decode("utf-8").replace('\n', '')
+            curr_hash = curr_hash.decode("utf-8").rstrip()
             if expected_hash != curr_hash:
                 incorrect_hash.append(repo_name)
 
