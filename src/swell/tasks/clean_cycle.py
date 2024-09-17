@@ -25,7 +25,7 @@ class CleanCycle(taskBase):
 
     """
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Parse config
         clean_patterns = self.config.clean_patterns(None)

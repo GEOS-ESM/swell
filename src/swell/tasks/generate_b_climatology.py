@@ -11,13 +11,14 @@ import yaml
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
+from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
 
 class GenerateBClimatology(taskBase):
 
-    def jedi_dictionary_iterator(self, jedi_config_dict):
+    def jedi_dictionary_iterator(self, jedi_config_dict: dict) -> None:
 
         # Loop over dictionary and replace if value is a dictionary
         # ---------------------------------------------------------
@@ -32,7 +33,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_jedi_config(self):
+    def generate_jedi_config(self) -> dict:
 
         # Render StaticBInit (no templates needed)
         # ----------------------------------------
@@ -46,7 +47,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def initialize_background(self):
+    def initialize_background(self) -> None:
 
         if self.background_error_model == 'bump':
 
@@ -61,7 +62,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_bump(self):
+    def generate_bump(self) -> None:
 
         self.logger.info(' Generating BUMP files.')
 
@@ -104,7 +105,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_explicit_diffusion(self):
+    def generate_explicit_diffusion(self) -> None:
 
         self.logger.info(' Generating files required by EXPLICIT_DIFFUSION.')
         self.obtain_scales()
@@ -112,7 +113,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def obtain_scales(self):
+    def obtain_scales(self) -> None:
 
         # This executes calc_scales.py under SOCA/tools to obtain the vertical scale.
         # The output then will be used to generate the vertical correlation files via
@@ -157,7 +158,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def parameters_diffusion_vt(self):
+    def parameters_diffusion_vt(self) -> None:
 
         # This generates the MLD dependent vertical correlation file using the
         # calculated_scales
@@ -215,7 +216,7 @@ class GenerateBClimatology(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
         """ Creates B Matrix files for background error model(s):
 
             - BUMP:
@@ -239,7 +240,18 @@ class GenerateBClimatology(taskBase):
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
         background_error_model = self.config.background_error_model()
+
+        swell_static_files_user = self.config.swell_static_files_user(None)
         self.swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None:
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                self.swell_static_files = swell_static_files_user
+
         self.horizontal_resolution = self.config.horizontal_resolution()
         self.vertical_resolution = self.config.vertical_resolution()
 

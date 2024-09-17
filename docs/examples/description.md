@@ -24,7 +24,7 @@ experiment_id: {suite_name}-suite
 ```
 
 `swell create` also contains argument inputs. For instance, `-p` or `--platform` allows
-user to pick which platform they would like to run on.
+user to pick which platform they would like to run on. If unspecified, swell will run on SLES15 by default.
 
 ```bash
 swell create 3dvar -p nccs_discover_sles15

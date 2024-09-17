@@ -19,7 +19,7 @@ from swell.tasks.base.task_base import taskBase
 
 class GetEnsemble(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
         """Acquires ensemble member files for a given experiment and cycle
 
            Parameters

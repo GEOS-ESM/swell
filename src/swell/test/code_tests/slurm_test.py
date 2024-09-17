@@ -11,7 +11,7 @@ import logging
 import unittest
 
 from swell.utilities.slurm import prepare_scheduling_dict
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ class SLURMConfigTest(unittest.TestCase):
     # configuration and platform-specific settings
     @patch("swell.utilities.slurm.slurm_global_defaults")
     @patch("platform.platform")
-    def test_slurm_config(self, platform_mocked, mock_global_defaults):
+    def test_slurm_config(self, platform_mocked: Mock, mock_global_defaults: Mock) -> None:
 
         logger = logging.getLogger()
 

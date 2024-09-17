@@ -29,4 +29,6 @@ cd swell
 pip install --prefix=/path/to/install/swell/ .
 ```
 
-To make the software useable ensure `/path/to/install/swell/bin` is in the `$PATH`. Also ensure that `/path/to/install/swell/lib/python<version>/site-packages` is in the `$PYTHONPATH`, where `<version>` denotes the version of Python used for the install, e.g. `3.9`.
+To make the software usable ensure `/path/to/install/swell/bin` is in the `$PATH`. Also ensure that `/path/to/install/swell/lib/python<version>/site-packages` is in the `$PYTHONPATH`, where `<version>` denotes the version of Python used for the install, e.g. `3.9`.
+
+Swell makes use of additional packages which are located in shared directories on Discover, such as under `/discover/nobackup/projects/gmao`. When installed correctly, many of these libraries should be visible in the `$PYTHONPATH`.

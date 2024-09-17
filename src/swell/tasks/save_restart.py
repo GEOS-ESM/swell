@@ -16,7 +16,7 @@ from swell.tasks.base.task_base import taskBase
 
 class SaveRestart(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         self.logger.info('SaveRestart')
 

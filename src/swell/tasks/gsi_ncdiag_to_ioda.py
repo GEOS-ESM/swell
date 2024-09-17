@@ -19,7 +19,7 @@ import pyiodaconv.gsi_ncdiag as gsid
 from pyiodaconv.combine_obsspace import combine_obsspace
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.shell_commands import run_subprocess, create_executable_file
 
 
@@ -28,7 +28,7 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 
 class GsiNcdiagToIoda(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Parse configuration
         # -------------------

@@ -25,7 +25,7 @@ from swell.utilities.run_jedi_executables import check_obs
 
 
 # Pass through to avoid confusion with optional logger argument inside eva
-def run_eva(eva_dict):
+def run_eva(eva_dict: dict) -> eva:
     eva(eva_dict)
 
 
@@ -34,7 +34,7 @@ def run_eva(eva_dict):
 
 class EvaObservations(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Compute window beginning time
         # -----------------------------

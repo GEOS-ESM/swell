@@ -19,7 +19,7 @@ class RemoveForecastDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         self.logger.info(f"Removing old forecast directory: {self.forecast_dir()}")
         shutil.rmtree(self.forecast_dir())

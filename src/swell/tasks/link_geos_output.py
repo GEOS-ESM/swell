@@ -11,6 +11,7 @@ import os
 from netCDF4 import Dataset
 import numpy as np
 import xarray as xr
+from typing import Tuple
 
 from swell.tasks.base.task_base import taskBase
 
@@ -21,7 +22,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Linking proper GEOS output files for JEDI to ingest and produce analysis.
@@ -55,7 +56,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_history(self):
+    def link_mom6_history(self) -> Tuple[str, str]:
 
         # Create GEOS history to SOCA background link
         # TODO: this will only work for 3Dvar as FGAT requires multiple files
@@ -69,7 +70,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_restart(self):
+    def link_mom6_restart(self) -> Tuple[str, str]:
 
         # Create GEOS restart to SOCA background link
         # ------------------------------------------
@@ -97,7 +98,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_cice6(self):
+    def prepare_cice6(self) -> Tuple[str, str]:
 
         # CICE6 input in SOCA requires aggregation of multiple variables and
         # time dimension added to the dataset.

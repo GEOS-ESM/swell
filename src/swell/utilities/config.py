@@ -9,8 +9,10 @@
 
 import os
 import yaml
+from typing import Callable
 
 from swell.swell_path import get_swell_path
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -44,7 +46,7 @@ class Config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, input_file, logger, task_name, model):
+    def __init__(self, input_file: str, logger: Logger, task_name: str, model: str) -> None:
 
         # Keep copy of owner's logger
         self.__logger__ = logger
@@ -120,7 +122,7 @@ class Config():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get(self, experiment_key):
+    def get(self, experiment_key: str) -> Callable:
         def getter(default='None'):
             return getattr(self, f'__{experiment_key}__')
         return getter
@@ -129,7 +131,7 @@ class Config():
 
     # Implementation of __getattr__ to ensure there is no crash when a task requests a variable that
     # does not exist. This is valid so long as the task provides a default value.
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Callable:
         def variable_not_found(default='LrZRExPGcQ'):
             if default == 'LrZRExPGcQ':
                 self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +

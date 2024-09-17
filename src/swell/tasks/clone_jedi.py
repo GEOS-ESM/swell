@@ -22,7 +22,7 @@ from swell.utilities.build import link_path
 
 class CloneJedi(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
