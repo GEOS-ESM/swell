@@ -27,7 +27,7 @@ class JediConfigRendering():
         experiment_root: str,
         experiment_id: str,
         cycle_dir: Optional[str],
-        cycle_time: Union[Datetime, None],
+        cycle_time: Optional[Datetime],
         jedi_interface: Optional[str] = None
     ) -> None:
 
