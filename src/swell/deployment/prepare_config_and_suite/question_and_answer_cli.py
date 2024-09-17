@@ -117,7 +117,7 @@ class GetAnswerCli:
         quest: str,
         default: str,
         prompt: questionary.text
-    ) -> bool:
+    ) -> str:
 
         answer = prompt(quest, default=default, auto_enter=False).ask()
 

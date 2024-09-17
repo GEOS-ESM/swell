@@ -165,7 +165,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name: Optional[str]) -> dict[Any, Any]:
+    def render_interface_model(self, config_name: str) -> dict[Any, Any]:
 
         # Assert that there is a jedi interface associated with the task
         self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +

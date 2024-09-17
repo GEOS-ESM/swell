@@ -6,8 +6,7 @@
 # -----------------------------------------------------------------------------
 
 from typing import Optional
-
-from swell.utilities.logger import Logger
+from logging import Logger as pyLogger
 
 
 class SWELLError(Exception):
@@ -15,7 +14,7 @@ class SWELLError(Exception):
     def __init__(
         self,
         message: str,
-        logger: Optional[Logger] = None
+        logger: Optional[pyLogger] = None
     ) -> None:
 
         self.message = message

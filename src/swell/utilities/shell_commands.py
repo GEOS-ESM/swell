@@ -20,7 +20,7 @@ from swell.utilities.logger import Logger
 
 def run_track_log_subprocess(
     logger: Logger,
-    command: list[str],
+    command: Union[list[str], str],
     output_log: Optional[str] = None
 ) -> None:
 
@@ -65,7 +65,7 @@ def run_track_log_subprocess(
 
 def run_subprocess_dev_null(
     logger: Logger,
-    command: list[str]
+    command: Union[list[str], str]
 ) -> None:
 
     run_subprocess(logger, command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -76,7 +76,7 @@ def run_subprocess_dev_null(
 
 def run_subprocess(
     logger: Logger,
-    command: list[str],
+    command: Union[list[str], str],
     stdout: Union[int, IO[Any], None] = None,
     stderr: Union[int, IO[Any], None] = None
 ) -> None:
