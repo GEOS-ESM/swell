@@ -45,6 +45,7 @@ setuptools.setup(
                'configuration/*/*/*',
                'configuration/*/*/*/*',
                'configuration/*/*/*/*/*',
+               'utilities/pinned_versions/*.yaml'
              ],
     },
     include_package_data=True,
