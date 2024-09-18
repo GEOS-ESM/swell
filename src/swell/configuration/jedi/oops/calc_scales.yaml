@@ -4,7 +4,7 @@ mld_filename: 'MOM6.res.{{local_background_time}}.nc'
 output_filename: '{{cycle_dir}}/calculated_scales.nc'
 
 # These names should match the model variables for now
-output_variable_vt: 'tocn'
+output_variable_vt: 'Temp'
 output_variable_hz: 'ave_ssh'
 
 # Parameters for the vertical scale

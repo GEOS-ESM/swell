@@ -8,10 +8,12 @@
         iterations: 1000
 
       groups:
-      - name: vt
+      - name: diffusion_vt
         vertical:
-          from file:
-            filename: '{{cycle_dir}}/calculated_scales.nc'
-            variable name: tocn
+          model file:
+            date: '{{local_background_time_iso}}'
+            basename: './'
+            ocn_filename: 'calculated_scales.nc'
+          model variable: tocn
         write:
-          filename: 'background_error_model/vt.{{local_background_time}}.nc'
+          filepath: 'background_error_model/vt.{{local_background_time}}'
