@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime as dt
 from swell.utilities.logger import Logger
 from swell.utilities.get_channels import get_channels
+from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
 
@@ -43,7 +44,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
         abort_message = "\nHERE IS THE TRACEBACK: \n----------------------\n\n" + \
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
-        with self.assertRaises(SystemExit) as abort:
+        with self.assertRaises(SystemExit) as abort, suppress_stdout():
             get_channels(self.observing_system_records_path, observations[0],
                          self.dt_cycle_time, self.logger)
             self.assertEqual(abort.exception, abort_message)
