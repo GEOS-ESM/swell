@@ -264,6 +264,17 @@ existing_jedi_build_directory:
   - BuildJediByLinking
   type: string
 
+existing_jedi_build_directory_pinned:
+  ask_question: true
+  default_value: /discover/nobackup/projects/gmao/advda/pinned_jedi_bundle/build/
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI build directory?
+  tasks:
+  - BuildJediByLinking
+  type: string
+
 existing_jedi_source_directory:
   ask_question: true
   default_value: defer_to_platform
@@ -272,6 +283,18 @@ existing_jedi_source_directory:
     value: use_existing
   prompt: What is the path to the existing JEDI source code directory?
   tasks:
+  - CloneJedi
+  type: string
+
+existing_jedi_source_directory_pinned:
+  ask_question: true
+  default_value: /discover/nobackup/projects/gmao/advda/pinned_jedi_bundle/source/
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI source code directory?
+  tasks:
+  - BuildJediByLinking
   - CloneJedi
   type: string
 

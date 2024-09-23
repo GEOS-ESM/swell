@@ -40,6 +40,11 @@ class CloneJedi(taskBase):
             # Link the source code directory
             link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
 
+        elif self.config.jedi_build_method() == 'use_pinned_existing':
+
+            # Link the pinned source code directory
+            link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
+
         elif self.config.jedi_build_method() == 'create':
 
             # Determine which bundles need to be build
@@ -56,11 +61,17 @@ class CloneJedi(taskBase):
             else:
                 bundles = get_bundles()
 
+            # Determine whether to use pinned versions or not
+            use_pinned = False
+            if self.config.jedi_build_method() == 'pinned_create':
+                use_pinned = True
+
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
                                                       jedi_bundle_build_path,
-                                                      self.platform())
+                                                      self.platform(),
+                                                      use_pinned)
 
             # Perform the clone of JEDI repos
             try:
@@ -72,7 +83,7 @@ class CloneJedi(taskBase):
 
             self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
                               f'jedi_build_method in the experiment dictionary. Must be ' +
-                              f'\'use_existing\' or \'create\'.')
+                              f'\'use_existing\' or \'create\' or \'pinned_create\'.')
 
 
 # --------------------------------------------------------------------------------------------------

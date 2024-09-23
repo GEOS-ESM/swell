@@ -33,7 +33,8 @@ class BuildJedi(taskBase):
 
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
-        if self.config.jedi_build_method() == 'create':
+        if self.config.jedi_build_method() == 'create' or \
+           self.config.jedi_build_method() == 'pinned_create':
 
             # Determine which bundles need to be build
             model_components = self.get_model_components()
@@ -49,10 +50,15 @@ class BuildJedi(taskBase):
             else:
                 bundles = get_bundles()
 
+            use_pinned = False
+            if self.config.jedi_build_method() == 'pinned_create':
+                use_pinned = True
+
             # Generate the build dictionary
             jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                       jedi_bundle_source_path,
-                                                      jedi_bundle_build_path, self.platform(), 24)
+                                                      jedi_bundle_build_path, self.platform(),
+                                                      use_pinned, 24)
 
             # Perform the clone of JEDI repos
             execute_tasks(['configure', 'make'], jedi_bundle_dict)

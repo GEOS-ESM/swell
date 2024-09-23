@@ -12,7 +12,7 @@ import os
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.build import build_and_source_dirs, link_path
-
+from swell.utilities.pinned_versions.check_hashes import check_hashes
 
 # --------------------------------------------------------------------------------------------------
 
@@ -51,6 +51,20 @@ class BuildJediByLinking(taskBase):
 
             # Link the source code directory
             link_path(existing_jedi_build_directory, jedi_bundle_build_path)
+
+        elif self.config.jedi_build_method() == 'use_pinned_existing':
+
+            pinned_source_path = self.config.existing_jedi_source_directory_pinned()
+            pinned_build_directory = self.config.existing_jedi_build_directory_pinned()
+            check_hashes(pinned_source_path, self.logger)
+
+            # Assert that the existing build directory contains a bin directory
+            if not os.path.exists(os.path.join(pinned_build_directory, 'bin')):
+                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
+                                  f'directory is not found in the path ' +
+                                  f'\'{existing_jedi_build_directory}\'')
+            # Link the pinned build code directory
+            link_path(pinned_build_directory, jedi_bundle_build_path)
 
         else:
 
