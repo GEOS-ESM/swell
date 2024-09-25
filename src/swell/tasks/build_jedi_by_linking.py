@@ -19,7 +19,7 @@ from swell.utilities.build import build_and_source_dirs, link_path
 
 class BuildJediByLinking(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------

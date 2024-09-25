@@ -21,7 +21,7 @@ from swell.tasks.base.task_base import taskBase
 
 class GetGeosAdasBackground(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the path and pattern for the background files
         # -------------------------------------------------

@@ -20,7 +20,7 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 class BuildJedi(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------

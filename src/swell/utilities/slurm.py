@@ -11,16 +11,19 @@ import os
 import platform as pltfrm
 import re
 import yaml
+from typing import Union
+
+from importlib import resources
+from logging import Logger as pyLogger
 
 from swell.utilities.logger import Logger
-from importlib import resources
 
 
 def prepare_scheduling_dict(
-    logger: Logger,
+    logger: Union[Logger, pyLogger],
     experiment_dict: dict,
     platform: str,
-):
+) -> dict:
 
     # Obtain platform-specific SLURM directives and set them as global defaults
     # Start by constructing the full platforms path
@@ -184,7 +187,7 @@ def prepare_scheduling_dict(
     return scheduling_dict
 
 
-def add_directives(target_dict, input_dict, key):
+def add_directives(target_dict: dict, input_dict: dict, key: str) -> dict:
     if key in input_dict:
         return {
             **target_dict,
@@ -194,7 +197,7 @@ def add_directives(target_dict, input_dict, key):
         return target_dict
 
 
-def validate_directives(directive_dict):
+def validate_directives(directive_dict: dict) -> None:
     directive_pattern = r'(?<=--)[a-zA-Z-]+'
     # Parse sbatch docs and extract all directives (e.g., `--account`)
     directive_list = {
@@ -211,7 +214,7 @@ def validate_directives(directive_dict):
 
 
 def slurm_global_defaults(
-    logger: Logger,
+    logger: Union[Logger, pyLogger],
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)

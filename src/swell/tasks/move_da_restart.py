@@ -10,6 +10,7 @@
 import glob
 import os
 import re
+from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
@@ -21,7 +22,7 @@ class MoveDaRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Moving restart files (i.e., _checkpoint) to the next cycle directory.
@@ -55,7 +56,7 @@ class MoveDaRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def at_next_fcst_dir(self, paths):
+    def at_next_fcst_dir(self, paths: Union[str, list]) -> str:
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -69,7 +70,7 @@ class MoveDaRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycling_restarts(self):
+    def cycling_restarts(self) -> None:
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------

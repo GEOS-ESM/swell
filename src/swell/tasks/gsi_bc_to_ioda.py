@@ -23,7 +23,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 class GsiBcToIoda(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Parse configuration
         # -------------------

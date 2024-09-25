@@ -19,7 +19,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case, camel_case_
 # --------------------------------------------------------------------------------------------------
 
 
-def get_utilities():
+def get_utilities() -> list:
 
     # Path to util scripts
     util_scripts_dir = os.path.join(get_swell_path(), 'utilities', 'scripts', '*.py')
@@ -44,7 +44,7 @@ def get_utilities():
 # --------------------------------------------------------------------------------------------------
 
 
-def utility_wrapper(utility):
+def utility_wrapper(utility: str) -> None:
 
     # Convert utility to snake case
     utility_snake = camel_case_to_snake_case(utility)

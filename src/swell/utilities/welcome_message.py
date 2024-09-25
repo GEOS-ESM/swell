@@ -14,7 +14,7 @@ from swell.utilities.logger import Logger
 # --------------------------------------------------------------------------------------------------
 
 
-def write_welcome_message():
+def write_welcome_message() -> None:
 
     logger = Logger('')
 

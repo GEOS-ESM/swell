@@ -15,7 +15,7 @@ valid_tests = ['code_tests']
 # --------------------------------------------------------------------------------------------------
 
 
-def test_wrapper(test):
+def test_wrapper(test: str) -> None:
 
     # Test script
     test_script_file = 'swell.test.'+test+'.'+test

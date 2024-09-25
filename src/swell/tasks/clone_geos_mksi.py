@@ -17,7 +17,7 @@ from swell.utilities.build import link_path
 
 class CloneGeosMksi(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Generate the satellite channel record from GEOSmksi files

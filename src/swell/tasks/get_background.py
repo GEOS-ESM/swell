@@ -29,7 +29,7 @@ r2d2_model_dict = {
 
 class GetBackground(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         """Acquires background files for a given experiment and cycle
 

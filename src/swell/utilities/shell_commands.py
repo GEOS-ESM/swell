@@ -10,12 +10,19 @@
 import os
 import stat
 import subprocess
+from typing import Any, Optional, IO, Union
+
+from swell.utilities.logger import Logger
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-def run_track_log_subprocess(logger, command, output_log=None):
+def run_track_log_subprocess(
+    logger: Logger,
+    command: Union[list[str], str],
+    output_log: Optional[str] = None
+) -> None:
 
     # Prepare output file
     # -------------------
@@ -56,7 +63,10 @@ def run_track_log_subprocess(logger, command, output_log=None):
 # --------------------------------------------------------------------------------------------------
 
 
-def run_subprocess_dev_null(logger, command):
+def run_subprocess_dev_null(
+    logger: Logger,
+    command: Union[list[str], str]
+) -> None:
 
     run_subprocess(logger, command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
@@ -64,7 +74,12 @@ def run_subprocess_dev_null(logger, command):
 # --------------------------------------------------------------------------------------------------
 
 
-def run_subprocess(logger, command, stdout=None, stderr=None):
+def run_subprocess(
+    logger: Logger,
+    command: Union[list[str], str],
+    stdout: Union[int, IO[Any], None] = None,
+    stderr: Union[int, IO[Any], None] = None
+) -> None:
 
     # Run subprocess
     try:
@@ -77,7 +92,7 @@ def run_subprocess(logger, command, stdout=None, stderr=None):
 # --------------------------------------------------------------------------------------------------
 
 
-def create_executable_file(logger, file_name, file_contents):
+def create_executable_file(logger: Logger, file_name: str, file_contents: str) -> None:
 
     # Write contents to file
     with open(os.path.join(file_name), "w") as file_name_open:

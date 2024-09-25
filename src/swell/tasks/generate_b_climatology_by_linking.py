@@ -16,7 +16,7 @@ from swell.utilities.file_system_operations import link_all_files_from_first_in_
 
 class GenerateBClimatologyByLinking(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
         """Acquires B Matrix files for background error model(s):
 
             - EXPLICIT_DIFFUSION:
