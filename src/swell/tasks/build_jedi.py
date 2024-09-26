@@ -70,7 +70,7 @@ class BuildJedi(taskBase):
 
             self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
                               f'jedi_build_method in the  experiment dictionary. Must be ' +
-                              f'\'create\'.')
+                              f'\'create\' or \'pinned_create\'.')
 
 
 # --------------------------------------------------------------------------------------------------

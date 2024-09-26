@@ -45,7 +45,7 @@ class CloneJedi(taskBase):
             # Link the pinned source code directory
             link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
 
-        elif self.config.jedi_build_method() == 'create':
+        elif self.config.jedi_build_method() in ('create', 'pinned_create'):
 
             # Determine which bundles need to be build
             model_components = self.get_model_components()
@@ -83,7 +83,8 @@ class CloneJedi(taskBase):
 
             self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
                               f'jedi_build_method in the experiment dictionary. Must be ' +
-                              f'\'use_existing\' or \'create\' or \'pinned_create\'.')
+                              f'\'use_existing\', \'use_pinned_existing\', ' +
+                              f'\'create\' or \'pinned_create\'.')
 
 
 # --------------------------------------------------------------------------------------------------
