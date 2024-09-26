@@ -33,8 +33,7 @@ class BuildJedi(taskBase):
 
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
-        if self.config.jedi_build_method() == 'create' or \
-           self.config.jedi_build_method() == 'pinned_create':
+        if self.config.jedi_build_method() in ('create', 'pinned_create'):
 
             # Determine which bundles need to be build
             model_components = self.get_model_components()
