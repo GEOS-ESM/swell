@@ -14,7 +14,7 @@ import yaml
 from datetime import datetime as dt
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.file_system_operations import copy_to_dst_dir
+from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Parses resource files in "geos_experiment_directory" to obtain required
@@ -33,7 +33,17 @@ class PrepGeosRunDir(taskBase):
         In GEOS speak, it creates the "scratch" directory.
         """
 
+        swell_static_files_user = self.config.swell_static_files_user(None)
         self.swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None:
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                self.swell_static_files = swell_static_files_user
+
         # TODO: exp. directory location requires better handling
         self.geos_exp_dir = os.path.join(self.swell_static_files, 'geos', 'run_dirs',
                                          self.config.geos_experiment_directory())
@@ -151,7 +161,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def generate_extdata(self):
+    def generate_extdata(self) -> None:
 
         # Generate ExtData.rc according to emissions and EXTDATA2G options
         # 'w' option overwrites the contents or creates a new file
@@ -185,7 +195,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_amip_emission(self):
+    def get_amip_emission(self) -> None:
 
         # Select proper AMIP GOCART Emission RC Files
         # -------------------------------------------
@@ -224,7 +234,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_bcs(self):
+    def get_bcs(self) -> None:
 
         # This method is highly dependent on the GEOSgcm version, currently
         # tested with GEOSgcm v11.6.0. It uses parsed .rc and .j files to define
@@ -328,7 +338,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_dynamic(self):
+    def get_dynamic(self) -> None:
 
         # Creating symlinks to BCs dictionary
         # Unlinks existing ones first
@@ -354,7 +364,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_static(self):
+    def get_static(self) -> None:
 
         # Obtain experiment input files created by GEOS gcm_setup
         # --------------------------------------------------
@@ -373,7 +383,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_replay(self):
+    def link_replay(self) -> None:
 
         # Linking REPLAY files according to AGCM.rc as in gcm_run.j
         # TODO: This needs another go over after GEOS Krok update
@@ -401,7 +411,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def restructure_rc(self):
+    def restructure_rc(self) -> None:
 
         # 1MOM and GFDL microphysics do not use WSUB_NATURE
         # -------------------------------------------------
@@ -433,7 +443,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def rewrite_agcm(self, rcdict, rcfile):
+    def rewrite_agcm(self, rcdict: dict, rcfile: str) -> dict:
 
         # This part is relevant for move_da_restart task. Be mindful of your changes
         # and what impacts they might have on others (also a good motto in life).
@@ -466,7 +476,7 @@ class PrepGeosRunDir(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def rewrite_cap(self, rcdict, rcfile):
+    def rewrite_cap(self, rcdict: dict, rcfile: str) -> dict:
 
         # CAP.rc requires modifications before job submission
         # This method returns rcdict with the bool fix

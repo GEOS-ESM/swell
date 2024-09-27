@@ -9,12 +9,19 @@
 
 import yaml
 from collections.abc import Hashable
+from typing import Union
 
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
 
-def dict_get(logger, dictionary, key, default='NODEFAULT'):
+def dict_get(
+    logger: Logger,
+    dictionary: dict,
+    key: str,
+    default: str = 'NODEFAULT'
+) -> str:
 
     if key in dictionary.keys():
 
@@ -32,7 +39,7 @@ def dict_get(logger, dictionary, key, default='NODEFAULT'):
 # --------------------------------------------------------------------------------------------------
 
 
-def remove_matching_keys(d, key):
+def remove_matching_keys(d: Union[dict, list], key: str) -> None:
     """
     Recursively locates and removes all dictionary items matching the supplied key.
     Parameters
@@ -60,7 +67,11 @@ def remove_matching_keys(d, key):
 
 # --------------------------------------------------------------------------------------------------
 
-def add_comments_to_dictionary(logger, dictionary_string, comment_dictionary):
+def add_comments_to_dictionary(
+    logger: Logger,
+    dictionary_string: str,
+    comment_dictionary: dict
+) -> str:
 
     dict_str_items = dictionary_string.split('\n')
 
@@ -107,7 +118,7 @@ def add_comments_to_dictionary(logger, dictionary_string, comment_dictionary):
 # --------------------------------------------------------------------------------------------------
 
 
-def replace_string_in_dictionary(dictionary, string_in, string_out):
+def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: str) -> object:
 
     # Convert dictionary to string
     dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
@@ -122,7 +133,7 @@ def replace_string_in_dictionary(dictionary, string_in, string_out):
 # --------------------------------------------------------------------------------------------------
 
 
-def write_dict_to_yaml(dictionary, file):
+def write_dict_to_yaml(dictionary: dict, file: str) -> None:
 
     # Convert dictionary to YAML string
     dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
@@ -135,7 +146,7 @@ def write_dict_to_yaml(dictionary, file):
 # --------------------------------------------------------------------------------------------------
 
 
-def update_dict(orig_dict, overwrite_dict):
+def update_dict(orig_dict: dict, overwrite_dict: dict) -> dict:
 
     # Create output dictionary from original dictionary
     output_dict = orig_dict.copy()
@@ -152,7 +163,7 @@ def update_dict(orig_dict, overwrite_dict):
 # --------------------------------------------------------------------------------------------------
 
 
-def dictionary_override(logger, orig_dict, override_dict):
+def dictionary_override(logger: Logger, orig_dict: dict, override_dict: dict) -> dict:
     for key, value in override_dict.items():
         if value == 'REMOVE':
             orig_dict.pop(key, None)

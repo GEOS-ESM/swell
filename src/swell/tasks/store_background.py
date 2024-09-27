@@ -15,7 +15,7 @@ from r2d2 import store
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import create_r2d2_config
 
 
@@ -24,7 +24,7 @@ from swell.utilities.r2d2 import create_r2d2_config
 
 class StoreBackground(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         """Store background files for a given experiment and cycle in R2D2
 

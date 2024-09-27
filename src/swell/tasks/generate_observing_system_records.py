@@ -18,7 +18,7 @@ from swell.utilities.observing_system_records import ObservingSystemRecords
 
 class GenerateObservingSystemRecords(taskBase):
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Generate the observing system channel records from GEOS_mksi files

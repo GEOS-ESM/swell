@@ -20,7 +20,7 @@ from swell.utilities.logger import Logger
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def main() -> None:
 
     # Create a logger
     logger = Logger('CheckJediInterfaceTemplates')

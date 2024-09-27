@@ -9,6 +9,7 @@
 
 import os
 import shutil
+from typing import Tuple
 
 from jedi_bundle.bin.jedi_bundle import get_default_config
 from jedi_bundle.config.config import check_platform
@@ -17,7 +18,7 @@ from jedi_bundle.config.config import check_platform
 # --------------------------------------------------------------------------------------------------
 
 
-def build_and_source_dirs(package_path):
+def build_and_source_dirs(package_path: str) -> Tuple[str, str]:
 
     # Make package directory
     # ----------------------
@@ -36,7 +37,7 @@ def build_and_source_dirs(package_path):
 # --------------------------------------------------------------------------------------------------
 
 
-def link_path(source, target):
+def link_path(source: str, target: str) -> None:
 
     # Remove existing source path if present
     if os.path.islink(target):  # Is a link
@@ -51,8 +52,13 @@ def link_path(source, target):
 # --------------------------------------------------------------------------------------------------
 
 
-def set_jedi_bundle_config(bundles, path_to_source, path_to_build, platform,
-                           cores_to_use_for_make=6):
+def set_jedi_bundle_config(
+    bundles: list,
+    path_to_source: str,
+    path_to_build: str,
+    platform: str,
+    cores_to_use_for_make: int = 6
+) -> dict:
 
     # Start from the default jedi_bundle config file
     jedi_bundle_config = get_default_config()

@@ -11,16 +11,17 @@
 import os
 import unittest
 
-from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
-from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
-from swell.test.code_tests.slurm_test import SLURMConfigTest
-from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
 from swell.utilities.logger import Logger
+from swell.test.code_tests.slurm_test import SLURMConfigTest
+from swell.test.code_tests.test_pinned_versions import PinnedVersionsTest
+from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
+from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
+from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
 
 
 # --------------------------------------------------------------------------------------------------
 
-def code_tests():
+def code_tests() -> None:
 
     # Create a logger
     logger = Logger('TestSuite')
@@ -44,6 +45,9 @@ def code_tests():
 
     # Load Observing System Generation tests
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(GenerateObservingSystemTest))
+
+    # Load Pinned Versions Test
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PinnedVersionsTest))
 
     # Create a test runner
     test_runner = unittest.TextTestRunner()

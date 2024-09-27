@@ -881,7 +881,11 @@ swell_static_files_user:
   default_value: None
   prompt: What is the path to the user provided Swell Static Files directory?
   tasks:
+  - GenerateBClimatology
   - GenerateBClimatologyByLinking
+  - GetGeosRestart
+  - PrepGeosRunDir
+  - StageJedi
   type: string
 
 total_processors:

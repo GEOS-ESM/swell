@@ -7,16 +7,18 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime
+import datetime
 import f90nml
 import glob
 import isodate
 import netCDF4
 import os
 import re
+from typing import Tuple, Optional, Union
 
 from swell.utilities.shell_commands import run_subprocess
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -25,7 +27,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger, forecast_dir):
+    def __init__(self, logger: Logger, forecast_dir: Optional[str]) -> None:
 
         '''
         Intention with creating this GEOS class is to not have any model dependent
@@ -38,12 +40,16 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def adjacent_cycle(self, offset, return_date=False):
+    def adjacent_cycle(
+        self,
+        offset: str,
+        return_date: bool = False
+    ) -> Union[str, datetime.datetime]:
 
         # Basename consists of swell datetime and model
         # ---------------------------------------------
         dt_str = os.path.basename(os.path.dirname(self.forecast_dir))
-        dt_obj = datetime.strptime(dt_str, datetime_formats['directory_format'])
+        dt_obj = datetime.datetime.strptime(dt_str, datetime_formats['directory_format'])
 
         # Modify datetime by using date offset
         # ------------------------------------
@@ -64,7 +70,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def chem_rename(self, rcdict):
+    def chem_rename(self, rcdict: dict) -> None:
 
         # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc
         # -------------------------------------------------------------------------
@@ -93,7 +99,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def exec_python(self, script_src, script, input=''):
+    def exec_python(self, script_src: str, script: str, input: str = '') -> None:
 
         # Source g5_modules and execute py scripts in a new shell process then
         # return to the current one
@@ -109,7 +115,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_rst_time(self):
+    def get_rst_time(self) -> datetime.datetime:
 
         # Obtain time information from any of the rst files listed by glob
         # ----------------------------------------------------------------
@@ -132,7 +138,11 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def iso_to_time_str(self, iso_duration, half=False):
+    def iso_to_time_str(
+        self,
+        iso_duration: str,
+        half: bool = False
+    ) -> Tuple[str, int, datetime.timedelta]:
 
         # Parse the ISO duration string and get the total number of seconds
         # It is written to handle fcst_duration less than a day for now
@@ -163,7 +173,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def linker(self, src, dst, dst_dir=None):
+    def linker(self, src: str, dst: str, dst_dir: str = None) -> None:
 
         # Link files from BC directories
         # ------------------------------
@@ -196,7 +206,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_gcmrun(self, jfile):
+    def parse_gcmrun(self, jfile: str) -> dict:
 
         # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup
         # creates gcm_run.j and handles platform dependencies.
@@ -234,7 +244,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_rc(self, rcfile):
+    def parse_rc(self, rcfile: str) -> dict:
 
         # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
         # out lines. Some values involve multiple ":" characters which required
@@ -283,7 +293,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_nml(self, cold_restart=False):
+    def process_nml(self, cold_restart: bool = False) -> None:
 
         # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
         # -------------------------------------------------------------
@@ -310,7 +320,7 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def rc_assign(self, rcdict, key_inquiry):
+    def rc_assign(self, rcdict: dict, key_inquiry: str) -> None:
 
         # Some of the gcm_run.j steps involve setting environment values using
         # .rc files. These files may or may not have some of the key values used
@@ -322,7 +332,7 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def rc_to_bool(self, rcdict):
+    def rc_to_bool(self, rcdict: dict) -> dict:
 
         # .rc files have switch values in .TRUE. or .FALSE. format, some might
         # have T and F.
@@ -361,7 +371,7 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def resub(self, filename, pattern, replacement):
+    def resub(self, filename: str, pattern: str, replacement: str) -> None:
 
         # Replacing string values involving wildcards
         # -------------------------------------------

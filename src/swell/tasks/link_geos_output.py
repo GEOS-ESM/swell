@@ -13,6 +13,7 @@ from netCDF4 import Dataset
 import numpy as np
 from typing import Dict, Tuple
 import xarray as xr
+from typing import Tuple
 
 from swell.utilities.datetime import datetime_formats
 from swell.tasks.base.task_base import taskBase
@@ -24,7 +25,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self):
+    def execute(self) -> None:
 
         """
         Linking proper GEOS output files for JEDI to ingest and produce analysis.
@@ -73,6 +74,7 @@ class LinkGeosOutput(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def link_mom6_history(self, src_dst_dict):
+    # def link_mom6_history(self) -> Tuple[str, str]:
 
         # Create links to GEOS history for SOCA inputs
         # Depending on the DA type, there could be multiple state files to link
@@ -114,7 +116,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_cice6(self):
+    def prepare_cice6(self) -> Tuple[str, str]:
 
         # CICE6 input in SOCA requires aggregation of multiple variables and
         # time dimension added to the dataset.

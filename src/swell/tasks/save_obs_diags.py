@@ -22,7 +22,7 @@ class SaveObsDiags(taskBase):
     Task to use R2D2 to save obs diag files from experiment to database
     """
 
-    def execute(self):
+    def execute(self) -> None:
 
         # Parse config
         # ------------
