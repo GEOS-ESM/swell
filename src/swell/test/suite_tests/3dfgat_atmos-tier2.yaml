@@ -1,9 +1,17 @@
 jedi_build_method: use_existing
-save_geovals: true
-model_components: ['geos_atmosphere', 'geos_ocean']
+model_components: ['geos_atmosphere']
+runahead_limit: 'P3'
 models:
   geos_atmosphere:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
     horizontal_resolution: '91'
+    npx_proc: 4
+    npy_proc: 4
+    window_type: 4D
     observations:
     - aircraft
     - airs_aqua
@@ -38,22 +46,11 @@ models:
     - sfc
     - sondes
     - ssmis_f17
+    gradient_norm_reduction: 1e-3
+    number_of_iterations:
+    - 10
     obs_experiment: x0048v2
     geovals_experiment: x0048v2-geovals
-    clean_patterns: []
-  geos_ocean:
-    obs_experiment: s2s_v1
-    obs_provider: gdas_marine
-    horizontal_resolution: 72x36
-    vertical_resolution: '50'
-    observations:
-    - adt_3a_egm2008
-    - adt_3b_egm2008
-    - adt_c2_egm2008
-    - adt_j3_egm2008
-    - adt_sa_egm2008
-    - salt_profile_fnmoc
-    - sss_smos_esa
-    - sst_gmi_l3u
-    - sst_ship_fnmoc
-    - temp_profile_fnmoc
+    clean_patterns:
+    - '*.txt'
+    - '*.csv'

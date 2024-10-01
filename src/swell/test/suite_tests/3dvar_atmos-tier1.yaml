@@ -13,7 +13,7 @@ models:
     window_length: PT6H
     window_offset: PT3H
     window_type: 3D
-    horizontal_resolution: '91'
+    horizontal_resolution: '13'
     vertical_resolution: '72'
     total_processors: 6
     observations:

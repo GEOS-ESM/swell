@@ -1,9 +1,23 @@
+start_cycle_point: '2021-12-12T00:00:00Z'
+final_cycle_point: '2021-12-12T06:00:00Z'
+runahead_limit: 'P3'
 jedi_build_method: use_existing
-save_geovals: true
-model_components: ['geos_atmosphere', 'geos_ocean']
+model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
+    window_length: PT6H
+    window_offset: PT3H
+    window_type: 3D
     horizontal_resolution: '91'
+    vertical_resolution: '72'
+    total_processors: 6
+    npx_proc: 4
+    npy_proc: 4
     observations:
     - aircraft
     - airs_aqua
@@ -40,20 +54,6 @@ models:
     - ssmis_f17
     obs_experiment: x0048v2
     geovals_experiment: x0048v2-geovals
-    clean_patterns: []
-  geos_ocean:
-    obs_experiment: s2s_v1
-    obs_provider: gdas_marine
-    horizontal_resolution: 72x36
-    vertical_resolution: '50'
-    observations:
-    - adt_3a_egm2008
-    - adt_3b_egm2008
-    - adt_c2_egm2008
-    - adt_j3_egm2008
-    - adt_sa_egm2008
-    - salt_profile_fnmoc
-    - sss_smos_esa
-    - sst_gmi_l3u
-    - sst_ship_fnmoc
-    - temp_profile_fnmoc
+    clean_patterns:
+    - '*.txt'
+    - '*.csv'

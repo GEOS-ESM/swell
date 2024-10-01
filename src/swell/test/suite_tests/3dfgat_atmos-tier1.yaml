@@ -8,7 +8,7 @@ models:
     - T06
     - T12
     - T18
-    horizontal_resolution: '91'
+    horizontal_resolution: '13'
     window_type: 4D
     observations:
     - aircraft

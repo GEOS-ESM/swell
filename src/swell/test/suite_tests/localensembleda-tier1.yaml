@@ -4,8 +4,6 @@ model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
     horizontal_resolution: 91
-    npx_proc: 2
-    npy_proc: 2
     cycle_times:
     - T00
     - T06

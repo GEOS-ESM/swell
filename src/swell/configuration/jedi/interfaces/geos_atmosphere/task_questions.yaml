@@ -138,11 +138,16 @@ minimizer:
   - DRPCG
 
 npx_proc:
-  default_value: 4
+  default_value: 2
+  options:
+  - 2
+  - 4
 
 npy_proc:
-  default_value: 4
-
+  default_value: 2
+  options:
+  - 2
+  - 4
 number_of_iterations:
   default_value:
   - 5
