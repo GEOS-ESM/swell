@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime as dt
 from swell.utilities.logger import Logger
 from swell.utilities.get_channels import get_channels
+from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
 
