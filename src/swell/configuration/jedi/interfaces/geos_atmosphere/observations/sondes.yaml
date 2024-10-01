@@ -261,6 +261,7 @@ obs post filters:
         adjusted_error_name: GsiAdjustObsError
         geovar_sfc_geomz: surface_geometric_height
   defer to post: true
+
 # assign TempObsErrorData/stationPressure <--- ObsErrorData
 - filter: Variable Assignment
   assignments:
@@ -271,6 +272,29 @@ obs post filters:
       options:
         variables:
         - name: ObsErrorData/specificHumidity
+  defer to post: true
+
+# Background  check
+- filter: Background Check
+  filter variables:
+  - name: specificHumidity
+  threshold: 8.0
+  action:
+    name: reject
+  where:
+  - variable: PreQC/specificHumidity
+    is_not_in: [3]
+  defer to post: true
+# threshold * 0.7 if PreQC=3
+- filter: Background Check
+  filter variables:
+  - name: specificHumidity
+  threshold: 5.6
+  action:
+    name: reject
+  where:
+  - variable: PreQC/specificHumidity
+    is_in: [3]
   defer to post: true
 
 # Duplicate factor

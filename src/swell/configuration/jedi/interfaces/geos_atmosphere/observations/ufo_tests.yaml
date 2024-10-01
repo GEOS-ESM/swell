@@ -134,7 +134,7 @@ sfc:
 
 sondes:
   filter_test:
-    passedBenchmark: 116687
+    passedBenchmark: 116684
 
 ssmis_f17:
   filter_test:
