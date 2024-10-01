@@ -8,16 +8,19 @@ from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
 
-def setup_geos_mksi(branch):
+def setup_geos_mksi(reference: str):
+    """
+    Clone GEOS-mksi and checkout a branch or commit specified by `reference`.
+    """
     url = "https://github.com/GEOS-ESM/GEOS_mksi.git"
     # Clone repo if not already cloned
     if not os.path.exists("GEOS_mksi"):
-        git_clone_cmd = ["git", "clone", "-b", branch, url, "GEOS_mksi"]
+        git_clone_cmd = ["git", "clone", url, "GEOS_mksi"]
         subprocess.run(git_clone_cmd, stderr=subprocess.DEVNULL)
-    else:
-        git_checkout_cmd = ["git", "checkout", branch]
-        subprocess.run(git_checkout_cmd, cwd="./GEOS_mksi", stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL)
+
+    git_checkout_cmd = ["git", "checkout", reference]
+    subprocess.run(git_checkout_cmd, cwd="./GEOS_mksi", stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL)
 
 
 class GenerateObservingSystemTest(unittest.TestCase):
@@ -29,13 +32,14 @@ class GenerateObservingSystemTest(unittest.TestCase):
         cls.dt_cycle_time = dt.strptime("20211212T000000Z", "%Y%m%dT%H%M%SZ")
         cls.path_to_gsi_records = os.path.join("GEOS_mksi/", "sidb")
 
-    def test_geos_mksi_main(self):
+    def test_geos_mksi_broken(self):
 
-        """ Testing abort for if on main branch for GEOS_mksi  """
+        """ Testing abort if on a known bad commit of GEOS_mksi  """
+        bad_reference = "bb332daf362891260f87bfa73075615461848325"
 
         # Clone Geos_mksi (main branch) and parse yamls
         observations = ["cris-fsr_npp"]
-        setup_geos_mksi("main")
+        setup_geos_mksi(bad_reference)
         sat_records = ObservingSystemRecords("channel")
         sat_records.parse_records(self.path_to_gsi_records)
         sat_records.save_yamls(self.observing_system_records_path, observations)
