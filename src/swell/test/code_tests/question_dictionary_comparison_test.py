@@ -9,9 +9,11 @@
 
 
 import unittest
+import tempfile
+import shutil
 
-from swell.utilities.scripts.task_question_dicts import main as tq_dicts
-from swell.utilities.scripts.task_question_dicts_defaults import main as tq_dicts_defaults
+from swell.utilities.scripts.task_question_dicts import tq_dicts
+from swell.utilities.scripts.task_question_dicts_defaults import tq_dicts_defaults
 
 
 # --------------------------------------------------------------------------------------------------
@@ -22,12 +24,17 @@ class QuestionDictionaryTest(unittest.TestCase):
     def test_dictionary_comparison(self):
 
         # Run main task question dictionary generation
-        tq_dicts_rc = tq_dicts()
+        tempdir = tempfile.mkdtemp()
+        tq_dicts_rc = tq_dicts(tempdir)
         assert tq_dicts_rc == 0
 
         # Run generation for defaults
-        tq_dicts_defaults_rc = tq_dicts_defaults()
+        tq_dicts_defaults_rc = tq_dicts_defaults(tempdir)
         assert tq_dicts_defaults_rc == 0
+
+        # If we got this far without errors, we can remove the temporary
+        # directory (otherwise, it will persist).
+        shutil.rmtree(tempdir)
 
 
 # --------------------------------------------------------------------------------------------------
