@@ -11,10 +11,10 @@ models:
     - T06
     - T12
     - T18
-    local_ensemble_solver: GETKF
-    skip_ensemble_hofx: true
-    local_ensemble_use_linear_observer: true
     ensemble_num_members: 2
+    skip_ensemble_hofx: true
+    local_ensemble_solver: GETKF
+    local_ensemble_use_linear_observer: true
     local_ensemble_save_posterior_mean: false
     local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false
@@ -22,10 +22,11 @@ models:
     observations:
     - sondes
     - amsua_metop-b
+    - mls55_aura
+    - ompsnm_npp
     obs_experiment: x0048v2
     background_experiment: x0048
     window_type: 3D
     clean_patterns:
-    - 'geos.mem*.nc4'
-    - '*log*'
+#    - 'geos.mem*.nc4'
     - '*.txt'
