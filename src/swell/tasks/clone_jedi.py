@@ -12,9 +12,10 @@ import os
 
 from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
-from swell.tasks.base.task_base import taskBase
-from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 from swell.utilities.build import link_path
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.pinned_versions.check_hashes import check_hashes
+from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 
 # --------------------------------------------------------------------------------------------------
@@ -41,6 +42,9 @@ class CloneJedi(taskBase):
             link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
 
         elif self.config.jedi_build_method() == 'use_pinned_existing':
+
+            # Check hashes before proceeding
+            check_hashes(self.config.existing_jedi_source_directory_pinned(), self.logger)
 
             # Link the pinned source code directory
             link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
