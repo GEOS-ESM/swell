@@ -173,7 +173,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             'configuration/jedi/interfaces/geos_atmosphere/observations/localization')
         if self.config.local_ensemble_use_linear_observer():
             for index, observation in enumerate(observations):
-                # Get pointer to observer
+                # Get pointer to observer (ref to list)
                 observer = jedi_config_dict['observations']['observers'][index]
 
                 print('ob=', observation)
