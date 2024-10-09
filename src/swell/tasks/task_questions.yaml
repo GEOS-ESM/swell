@@ -266,7 +266,7 @@ existing_jedi_build_directory:
 
 existing_jedi_build_directory_pinned:
   ask_question: true
-  default_value: /discover/nobackup/projects/gmao/advda/pinned_jedi_bundle/build/
+  default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles/current_pinned_jedi_bundle/build/
   depends:
     key: jedi_build_method
     value: use_pinned_existing
@@ -288,13 +288,12 @@ existing_jedi_source_directory:
 
 existing_jedi_source_directory_pinned:
   ask_question: true
-  default_value: /discover/nobackup/projects/gmao/advda/pinned_jedi_bundle/source/
+  default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles/current_pinned_jedi_bundle/source/
   depends:
     key: jedi_build_method
     value: use_pinned_existing
   prompt: What is the path to the existing pinned JEDI source code directory?
   tasks:
-  - BuildJediByLinking
   - CloneJedi
   type: string
 
