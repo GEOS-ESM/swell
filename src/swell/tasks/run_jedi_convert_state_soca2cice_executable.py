@@ -39,10 +39,11 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # Fail-safe
         # ---------
         if 'cice6' not in marine_models:
-            self.logger.info('Skipping Soca2cice as CICE6 analysis is not being done, .')
+            self.logger.info('Skipping Soca2cice as CICE6 analysis is not enabled.')
             return
 
-        cice6_domains = self.config.cice6_domains()
+        # cice6_domains = self.config.cice6_domains()
+        cice6_domains = ['arctic', 'antarctic']
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         observations = self.config.observations(None)

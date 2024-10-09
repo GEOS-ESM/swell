@@ -8,14 +8,14 @@
 # --------------------------------------------------------------------------------------------------
 
 from datetime import datetime as dt
+import isodate
 import os
 from netCDF4 import Dataset
 import numpy as np
-from typing import Dict, Tuple
 import xarray as xr
 from typing import Tuple
 
-from swell.utilities.datetime import datetime_formats
+from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
@@ -33,11 +33,9 @@ class LinkGeosOutput(taskBase):
         type (history vs. restart), DA method, and window length.
         """
 
-        self.current_cycle = os.path.basename(os.path.dirname(self.forecast_dir()))
-
         # Parse configuration
         # -------------------
-        marine_models = self.config.marine_models()
+        self.marine_models = self.config.marine_models(None)
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_offset = self.config.window_offset()
@@ -53,73 +51,161 @@ class LinkGeosOutput(taskBase):
 
         # Create source and destination files for linking model output to cycle directories
         # -----------------------------------------------------------------------------------
-        self.src_dst_dict: Dict[str, Tuple[str, ...]] = {}
+        self.src_dst_dict = {}
 
-        if self.get_model() == 'geos_ocean' or self.get_model() == 'geos_marine':
-            self.link_mom6_history(self.src_dst_dict)
+        if self.get_model() in ('geos_ocean', 'geos_marine'):
+            if self.window_type == '4D' or 'fgat' in self.suite_name():
+                self.link_mom6_history_4d()
+            else:
+                self.link_mom6_history_3d()
 
-            if 'cice6' in marine_models:
-                # Link CICE6 restart (iced.nc) and create SOCA input file (cice.res.nc)
-                src, dst = self.prepare_cice6()
+            if 'cice6' in self.marine_models:
+                if self.window_type == '4D' or 'fgat' in self.suite_name():
+                    self.link_cice6_history_4d()
+                else:
+                    self.link_cice6_history_3d()
+
+                # Generic CICE6 rst file format for SOCA, this file will be
+                # used for the SOCA2CICE task
+                # TODO: Could use the proper background time for iced.nc with the
+                # checkpoint dumps
+                # ------------------------------------------------------
+                src = self.forecast_dir(['RESTART', 'iced.nc'])
+                dst = 'iced.res.' + self.bkgr_time_iso + '.nc'
                 self.src_dst_dict[src] = dst
 
         # Loop through the dictionary and create links
         for src, dst in self.src_dst_dict.items():
-            if isinstance(dst, tuple):
-                for d in dst:
-                    self.geos.linker(src, d, self.cycle_dir())
-            else:
-                self.geos.linker(src, dst, self.cycle_dir())
+            self.geos.linker(src, dst, self.cycle_dir())
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_history(self, src_dst_dict):
-    # def link_mom6_history(self) -> Tuple[str, str]:
-
-        # Create links to GEOS history for SOCA inputs
+    def link_mom6_history_4d(self) -> Tuple[str, str]:
+        # Creating links to GEOS history, MOM6, for SOCA inputs
         # Depending on the DA type, there could be multiple state files to link
         # -----------------------------------------------------------------------
-        if self.window_type == '4D' or 'fgat' in self.suite_name():
-            states = self.geos.states_generator(self.background_frequency, self.window_length,
-                                                self.window_begin_iso, self.get_model())
-            # Get date information from the states dictionary, and use ocn_filename to get the
-            # destination file name
-            for state in states:
-                date = dt.strptime(state['date'], datetime_formats['iso_format'])
-                src = self.forecast_dir('his_' + date.strftime('%Y_%m_%d_%H') + '.nc')
-                dst = state['ocn_filename']
-                self.src_dst_dict[src] = (dst,)
+        states = self.geos.states_generator(self.background_frequency, self.window_length,
+                                            self.window_begin_iso, self.get_model(),
+                                            self.marine_models)
 
-            # Add the background (beginning of the window) file
-            src = self.forecast_dir('his_' + self.bkgr_time_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        # Get date information from the states dictionary, and use ocn_filename to get the
+        # destination file name
+        for state in states:
+            date = dt.strptime(state['date'], datetime_formats['iso_format'])
+            src = self.forecast_dir('his_' + date.strftime('%Y_%m_%d_%H') + '.nc')
+            dst = state['ocn_filename']
+            self.src_dst_dict[src] = dst
 
-            dst = 'MOM6.res.' + self.bkgr_time_iso + '.nc'
+        # Add the background (beginning of the window) file
+        src = self.forecast_dir('his_' + self.bkgr_time_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        dst = 'MOM6.res.' + self.bkgr_time_iso + '.nc'
 
-            # If src key already exists, append to the list of destination files
-            if src in src_dst_dict:
-                src_dst_dict[src] += (dst,)
-            else:
-                self.src_dst_dict[src] = (dst,)
-
-        else:
-            # Using a 3D window and hence the background is a single file, in the
-            # middle of the DA window
-            cc_dto = self.cycle_time_dto()
-            src = self.forecast_dir('his_' + cc_dto.strftime('%Y_%m_%d_%H') + '.nc')
-
-            dst = 'MOM6.res.' + self.current_cycle + '.nc'
-            # If src key already exists, append to the list of destination files
-            if src in src_dst_dict:
-                src_dst_dict[src] += (dst,)
-            else:
-                self.src_dst_dict[src] = (dst,)
+        # Append dst to the dictionary
+        self.src_dst_dict[src] = dst
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_cice6(self) -> Tuple[str, str]:
+    def link_mom6_history_3d(self) -> Tuple[str, str]:
+        # Using a 3D window and hence the background is a single file, in the
+        # middle of the DA window
+        src = self.forecast_dir('his_' + self.bkgr_time_dto.strftime('%Y_%m_%d_%H') + '.nc')
+        dst = 'MOM6.res.' + self.bkgr_time_iso + '.nc'
 
+        # Append dst to the dictionary
+        self.src_dst_dict[src] = dst
+
+    # ----------------------------------------------------------------------------------------------
+
+    def cice6_history_formatter(self,
+                                src_date: dt,
+                                hour_prefix: str,
+                                ) -> str:
+
+        # Extract the date part and calculate seconds for the src_history format
+        date_str = src_date.strftime('%Y-%m-%d')
+        seconds = src_date.hour * 3600 + src_date.minute * 60 + src_date.second
+
+        return self.forecast_dir(f'iceh_{hour_prefix}.{date_str}-{seconds}.nc')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def cice6_history_hour_prefix(self,
+                                  background_frequency: str = 'PT3H',
+                                  ) -> str:
+        # There is no background_frequency for 3D window so we set PT3H
+        # as the default. This is defined in CICE6 input file, ice_in
+        # -------------------------------------------------------------------
+        # TODO: A safer alternative would be to get this information from ice_in (nml)
+        # but the format is not consistent and varies according to output frequency
+        # histfreq       = 'h','x','x','x','x'
+        # histfreq_n     =  3 , 1 , 1 , 1 , 1
+
+        # Convert background frequency to 02d format
+        duration = isodate.parse_duration(background_frequency)
+        hist_hours, remainder = divmod(duration.total_seconds(), 60*60)
+
+        return f'{int(hist_hours):02d}h'
+
+    # ----------------------------------------------------------------------------------------------
+
+    def link_cice6_history_4d(self) -> Tuple[str, str]:
+        # Creating links to GEOS history, CICE6, for SOCA inputs
+        # Depending on the DA type, there could be multiple state files to link
+        # -----------------------------------------------------------------------
+        states = self.geos.states_generator(self.background_frequency, self.window_length,
+                                            self.window_begin_iso, self.get_model(),
+                                            self.marine_models)
+
+        hour_prefix = self.cice6_history_hour_prefix(self.background_frequency)
+
+        # Get date information from the states dictionary, and use ocn_filename to get the
+        # destination file name
+        for state in states:
+            src_date = dt.strptime(state['date'], datetime_formats['iso_format'])
+            src_history = self.cice6_history_formatter(src_date, hour_prefix)
+            dst_history = os.path.join(self.cycle_dir(), state['ice_filename'])
+            self.prepare_cice6_history(src_history, dst_history)
+
+        # Using a 4D window; CICE6 background is at the beginning of the window
+        src_history = self.cice6_history_formatter(self.bkgr_time_dto, hour_prefix)
+        dst_history = os.path.join(self.cycle_dir(), 'cice.res.' + self.bkgr_time_iso + '.nc')
+
+        self.prepare_cice6_history(src_history, dst_history)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def link_cice6_history_3d(self) -> Tuple[str, str]:
+        # Using a 3D window; CICE6 background is in the middle of the window
+        hour_prefix = self.cice6_history_hour_prefix()
+        src_history = self.cice6_history_formatter(self.bkgr_time_dto, hour_prefix)
+        dst_history = os.path.join(self.cycle_dir(), 'cice.res.' + self.bkgr_time_iso + '.nc')
+
+        self.prepare_cice6_history(src_history, dst_history)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def prepare_cice6_history(self,
+                              src_history: str,
+                              dst_history: str,
+                              ) -> Tuple[str, str]:
+
+        # Since history already has the aggregated variables, we just need to rename
+        # the dimensions and variables to match SOCA requirements
+        ds = xr.open_dataset(src_history)
+
+        # rename the dimensions to xaxis_1 and yaxis_1 and rename the variables
+        ds = ds.rename({'ni': 'xaxis_1', 'nj': 'yaxis_1'})
+        ds = ds.rename({'aice': 'aicen', 'hi': 'hicen', 'hs': 'hsnon'})
+
+        # Save as a new file
+        ds.to_netcdf(dst_history, mode='w')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def prepare_cice6_restart(self) -> Tuple[str, str]:
         # CICE6 input in SOCA requires aggregation of multiple variables and
         # time dimension added to the dataset.
+        # SOCA needs icea area (aicen), ice volume (vicen), and snow area (vsnon)
         # --------------------------------------------------------------------
         soca2cice_vars = {'aicen': 'aicen',
                           'hicen': 'vicen',
@@ -143,7 +229,7 @@ class LinkGeosOutput(taskBase):
         # -----------------
         encoding = {varname: {'_FillValue': False} for varname in soca2cice_vars.keys()}
 
-        fname_out = os.path.join(self.cycle_dir(), 'cice.res.' + self.current_cycle + '.nc')
+        fname_out = os.path.join(self.cycle_dir(), 'cice.res.' + self.bkgr_time_iso + '.nc')
 
         # save datasets
         # -------------
@@ -159,7 +245,7 @@ class LinkGeosOutput(taskBase):
         # Generic CICE6 rst file source format for SOCA
         # ---------------------------------------
         src = self.forecast_dir(['RESTART', 'iced.nc'])
-        dst = 'iced.res.' + self.current_cycle + '.nc'
+        dst = 'iced.res.' + self.bkgr_time_iso + '.nc'
 
         return src, dst
 

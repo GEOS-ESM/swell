@@ -118,16 +118,11 @@ bundles:
   type: string-check-list
 
 cice6_domains:
-  ask_question: false
+  ask_question: true
   default_value: defer_to_model
-  depends:
-    key: marine_models
-    value: cice6
   models:
-  - geos_marine
-  options:
-  - arctic
-  - antarctic
+  - all
+  options: defer_to_model
   prompt: Which CICE6 domains do you wish to run DA for?
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
@@ -599,6 +594,7 @@ marine_models:
   prompt: Enter the active SOCA models for this model.
   tasks:
   - EvaIncrement
+  - GenerateBClimatology
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
