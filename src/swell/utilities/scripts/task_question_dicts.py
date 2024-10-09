@@ -23,7 +23,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 # --------------------------------------------------------------------------------------------------
 
 
-def main():
+def tq_dicts(tempdir: str):
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -141,7 +141,7 @@ def main():
 
         # Write the new dictionary to a temporary file
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        destination_yaml_temp = os.path.join('/tmp', f'task_questions_{random_string}.yaml')
+        destination_yaml_temp = os.path.join(tempdir, f'task_questions_{random_string}.yaml')
 
         with open(destination_yaml_temp, 'w') as file:
             file.write(dict_to_write_str)
