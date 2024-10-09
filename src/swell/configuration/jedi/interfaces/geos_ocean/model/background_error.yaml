@@ -6,7 +6,7 @@ saber central block:
     groups:
     - variables: [tocn, socn]
       horizontal:
-        filepath: 'background_error_model/hz_rossby_1p5'
+        filepath: 'background_error_model/hz_rossby'
       vertical:
         levels: {{vertical_resolution}}
         filepath: 'background_error_model/vt.{{local_background_time}}'
@@ -42,10 +42,5 @@ linear variable change:
     hicen_min: 10.0
     hicen_max: 100.0
   - linear variable change name: BalanceSOCA
-    # kst:
-    #   dsdtmax: 0.1
-    #   dsdzmin: 3.0e-6
-    #   dtdzmin: 1.0e-6
-    #   nlayers: 2
     ksshts:
       nlayers: 2
