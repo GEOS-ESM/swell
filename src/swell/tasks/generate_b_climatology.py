@@ -156,7 +156,7 @@ class GenerateBClimatology(taskBase):
 
         # Containerized run of the script
         # -------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command])
+        run_subprocess(self.logger, ['/bin/bash', '-c', command], cwd=self.cycle_dir())
 
     # ----------------------------------------------------------------------------------------------
 
@@ -208,13 +208,13 @@ class GenerateBClimatology(taskBase):
 
             # Move to the cycle directory
             # ---------------------------
-            os.chdir(self.cycle_dir())
-            if not os.path.exists('background_error_model'):
-                os.mkdir('background_error_model')
+            background_error_model_dir = os.path.join(self.cycle_dir(), 'background_error_model')
+            if not os.path.exists(background_error_model_dir):
+                os.mkdir(background_error_model_dir)
 
             # Execute
             # -------
-            run_track_log_subprocess(self.logger, command, output_log_file)
+            run_track_log_subprocess(self.logger, command, output_log_file, cwd=self.cycle_dir())
 
         else:
             self.logger.info('YAML generated, now exiting.')
@@ -268,6 +268,7 @@ class GenerateBClimatology(taskBase):
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
         self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         # Compute data assimilation window parameters
         # -------------------------------------------
         local_background_time = self.da_window_params.local_background_time(window_offset,

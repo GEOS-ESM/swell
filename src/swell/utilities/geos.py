@@ -106,12 +106,11 @@ class Geos():
         # Define the command to source the Bash script and run the Python command
         # -----------------------------------------------------------------------
         command = f'source {script_src}/g5_modules.sh \n' + \
-            f'cd {self.forecast_dir} \n' + \
             f'{script_src}/{script} {input}'
 
         # Containerized run of the GEOS build steps
         # -----------------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command])
+        run_subprocess(self.logger, ['/bin/bash', '-c', command], cwd=self.forecast_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -397,7 +396,7 @@ class Geos():
 
         states = []
         self.logger.info('Generating states for model: '+model)
-        if model == 'geos_ocean' or model == 'geos_marine':
+        if model in ("geos_ocean", "geos_marine"):
             states = self.marine_states(background_frequency, window_length, window_begin_iso,
                                         marine_models)
 
@@ -417,7 +416,7 @@ class Geos():
         # Calculate the number of states using background frequency and window length
         number_of_states = int(isodate.parse_duration(window_length)
                                / isodate.parse_duration(background_frequency)) + 1
-        self.logger.info('Number of states: ', number_of_states)
+        self.logger.info('Number of states: ', str(number_of_states-1))
 
         # Generate the list of states dictionary with date and marine filename entries.
         # The date is calculated by adding the background frequency to the window begin date.
@@ -426,8 +425,7 @@ class Geos():
 
         # For FGAT and 4D-Var, the first state is the background state, hence we need to
         # skip the first state in the loop by adding "-1" to the range function.
-        for i in range(number_of_states-1):
-            i += 1
+        for i in range(1, number_of_states):
             hours = int((isodate.parse_duration(background_frequency) * i).total_seconds() / 3600)
             state_dto = isodate.parse_datetime(window_begin_iso) \
                 + isodate.parse_duration(background_frequency) * i

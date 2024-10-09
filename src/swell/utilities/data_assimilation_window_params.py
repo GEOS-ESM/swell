@@ -116,11 +116,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
-    def local_background_time(self, window_offset, window_type, dto=False):
-=======
-    def local_background_time(self, window_offset: str, window_type: str) -> str:
->>>>>>> develop
+    def local_background_time(self, window_offset, window_type, dto=False) -> str:
 
         local_background_time = self.__get_local_background_time__(window_type, window_offset)
 
