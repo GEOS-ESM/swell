@@ -9,4 +9,4 @@ defaults:
 
 jobs:
   run-test-apps-discover:
-    uses: GEOS-ESM/CI-workflow/.github/workflows/swell-tier1_application_discover.yml@feature/check_hashes
+    uses: GEOS-ESM/CI-workflows/.github/workflows/swell-tier1_application_discover.yml@feature/check_hashes
