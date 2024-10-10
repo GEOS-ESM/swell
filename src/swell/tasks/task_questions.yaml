@@ -121,7 +121,7 @@ cice6_domains:
   ask_question: true
   default_value: defer_to_model
   models:
-  - all
+  - geos_marine
   options: defer_to_model
   prompt: Which CICE6 domains do you wish to run DA for?
   tasks:

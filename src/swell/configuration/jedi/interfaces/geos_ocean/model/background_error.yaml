@@ -6,7 +6,7 @@ saber central block:
     groups:
     - variables: [tocn, socn]
       horizontal:
-        filepath: 'background_error_model/hz_rossby'
+        filepath: 'background_error_model/hz_rossby_1p5'
       vertical:
         levels: {{vertical_resolution}}
         filepath: 'background_error_model/vt.{{local_background_time}}'

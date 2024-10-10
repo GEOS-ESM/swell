@@ -3,9 +3,9 @@ final_cycle_point: '2021-06-02T00:00:00Z'
 runahead_limit: P2
 jedi_build_method: use_existing
 geos_build_method: use_existing
-model_components: ['geos_ocean']
+model_components: ['geos_marine']
 models:
-  geos_ocean:
+  geos_marine:
     cycle_times:
     - T00
     - T06
@@ -24,13 +24,8 @@ models:
     - adt_j3_egm2008
     - adt_sa_egm2008
     - sst_ostia
-    - salt_profile_fnmoc
     - sss_smos_esa
-    - sss_trak_fnmoc
     - sst_gmi_l3u
-    - sst_ship_fnmoc
-    - sst_trak_fnmoc
-    - temp_profile_fnmoc
     number_of_iterations:
     - 10
     obs_provider: gdas_marine

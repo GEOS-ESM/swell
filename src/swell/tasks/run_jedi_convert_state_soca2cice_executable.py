@@ -35,6 +35,7 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # Parse configuration
         # -------------------
         marine_models = self.config.marine_models()
+        self.jedi_rendering.add_key('marine_models', marine_models)
 
         # Fail-safe
         # ---------
