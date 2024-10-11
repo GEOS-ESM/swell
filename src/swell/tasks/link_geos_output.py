@@ -80,7 +80,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_history_4d(self) -> Tuple[str, str]:
+    def link_mom6_history_4d(self) -> None:
         # Creating links to GEOS history, MOM6, for SOCA inputs
         # Depending on the DA type, there could be multiple state files to link
         # -----------------------------------------------------------------------
@@ -105,7 +105,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_mom6_history_3d(self) -> Tuple[str, str]:
+    def link_mom6_history_3d(self) -> None:
         # Using a 3D window and hence the background is a single file, in the
         # middle of the DA window
         src = self.forecast_dir('his_' + self.bkgr_time_dto.strftime('%Y_%m_%d_%H') + '.nc')
@@ -148,7 +148,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_cice6_history_4d(self) -> Tuple[str, str]:
+    def link_cice6_history_4d(self) -> None:
         # Creating links to GEOS history, CICE6, for SOCA inputs
         # Depending on the DA type, there could be multiple state files to link
         # -----------------------------------------------------------------------
@@ -174,7 +174,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def link_cice6_history_3d(self) -> Tuple[str, str]:
+    def link_cice6_history_3d(self) -> None:
         # Using a 3D window; CICE6 background is in the middle of the window
         hour_prefix = self.cice6_history_hour_prefix()
         src_history = self.cice6_history_formatter(self.bkgr_time_dto, hour_prefix)
@@ -187,7 +187,7 @@ class LinkGeosOutput(taskBase):
     def prepare_cice6_history(self,
                               src_history: str,
                               dst_history: str,
-                              ) -> Tuple[str, str]:
+                              ) -> None:
 
         # Since history already has the aggregated variables, we just need to rename
         # the dimensions and variables to match SOCA requirements
