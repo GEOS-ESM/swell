@@ -106,6 +106,8 @@ class GenerateBClimatology(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def generate_explicit_diffusion(self) -> None:
+        # This will use static horizontal correlation files and generate the vertical correlation
+        # file based on the MLD.
 
         self.logger.info(' Generating files required by EXPLICIT_DIFFUSION.')
         self.obtain_scales()
@@ -154,7 +156,7 @@ class GenerateBClimatology(taskBase):
 
         # Containerized run of the script
         # -------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command])
+        run_subprocess(self.logger, ['/bin/bash', '-c', command], cwd=self.cycle_dir())
 
     # ----------------------------------------------------------------------------------------------
 
@@ -200,19 +202,22 @@ class GenerateBClimatology(taskBase):
 
         # Run the JEDI executable
         # -----------------------
-        self.logger.info('Running '+jedi_executable_path+' with '+str(self.np)+' processors.')
+        if not self.generate_yaml_and_exit:
+            self.logger.info('Running '+jedi_executable_path+' with '+str(self.np)+' processors.')
+            command = ['mpirun', '-np', str(self.np), jedi_executable_path, jedi_config_file]
 
-        command = ['mpirun', '-np', str(self.np), jedi_executable_path, jedi_config_file]
+            # Move to the cycle directory
+            # ---------------------------
+            background_error_model_dir = os.path.join(self.cycle_dir(), 'background_error_model')
+            if not os.path.exists(background_error_model_dir):
+                os.mkdir(background_error_model_dir)
 
-        # Move to the cycle directory
-        # ---------------------------
-        os.chdir(self.cycle_dir())
-        if not os.path.exists('background_error_model'):
-            os.mkdir('background_error_model')
+            # Execute
+            # -------
+            run_track_log_subprocess(self.logger, command, output_log_file, cwd=self.cycle_dir())
 
-        # Execute
-        # -------
-        run_track_log_subprocess(self.logger, command, output_log_file)
+        else:
+            self.logger.info('YAML generated, now exiting.')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -254,6 +259,7 @@ class GenerateBClimatology(taskBase):
 
         self.horizontal_resolution = self.config.horizontal_resolution()
         self.vertical_resolution = self.config.vertical_resolution()
+        self.generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
         # Get the JEDI interface for this model component
         # -----------------------------------------------
@@ -262,7 +268,7 @@ class GenerateBClimatology(taskBase):
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
         self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
-
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         # Compute data assimilation window parameters
         # -------------------------------------------
         local_background_time = self.da_window_params.local_background_time(window_offset,

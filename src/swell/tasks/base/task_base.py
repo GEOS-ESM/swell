@@ -79,6 +79,8 @@ class taskBase(ABC):
         self.__experiment_root__ = self.config.__experiment_root__
         self.__experiment_id__ = self.config.__experiment_id__
         self.__platform__ = self.config.__platform__
+        self.__suite_to_run__ = self.config.__suite_to_run__
+
         if datetime_input is not None:
             self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
 
@@ -242,6 +244,12 @@ class taskBase(ABC):
     def first_cycle_time_dto(self) -> dt:
 
         return self.__start_cycle_point__.dto()
+
+# --------------------------------------------------------------------------------------------------
+
+    def suite_name(self):
+
+        return self.__suite_to_run__
 
 # --------------------------------------------------------------------------------------------------
 

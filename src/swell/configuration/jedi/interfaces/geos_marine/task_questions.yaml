@@ -24,7 +24,7 @@ background_experiment:
   default_value: s2s
 
 background_frequency:
-  default_value: PT1H
+  default_value: PT3H
 
 background_time_offset:
   default_value: PT9H
@@ -62,6 +62,16 @@ jedi_forecast_model:
   default_value: NA
   options:
   - NA
+
+marine_models:
+  default_value:
+  - mom6
+  - cice6
+  options:
+  - mom6
+  - cice6
+  - bgc
+  - ww3
 
 minimizer:
   default_value: RPCG
