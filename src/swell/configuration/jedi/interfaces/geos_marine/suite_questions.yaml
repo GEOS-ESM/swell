@@ -1,3 +1,12 @@
 cycle_times:
   default_value: ['T00', 'T12']
   options: ['T00', 'T12']
+
+ensemble_hofx_strategy:
+  default_value: 'serial'
+
+ensemble_hofx_packets:
+  default_value: 1
+
+skip_ensemble_hofx:
+  default_value: true
