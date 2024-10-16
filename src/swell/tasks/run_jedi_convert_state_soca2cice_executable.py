@@ -34,7 +34,17 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        cice6_domains = self.config.cice6_domains()
+        marine_models = self.config.marine_models()
+        self.jedi_rendering.add_key('marine_models', marine_models)
+
+        # Fail-safe
+        # ---------
+        if 'cice6' not in marine_models:
+            self.logger.info('Skipping Soca2cice as CICE6 analysis is not enabled.')
+            return
+
+        # cice6_domains = self.config.cice6_domains()
+        cice6_domains = ['arctic', 'antarctic']
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         observations = self.config.observations(None)
@@ -43,6 +53,8 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
         # Compute data assimilation window parameters
         # --------------------------------------------
+        analysis_time = self.da_window_params.analysis_time(window_type, self.suite_name())
+        analysis_time_iso = self.da_window_params.analysis_time_iso(window_type, self.suite_name())
         local_background_time = self.da_window_params.local_background_time(window_offset,
                                                                             window_type)
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
@@ -52,10 +64,12 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # --------------------------------------------
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
 
-        # Background
-        # ----------
+        # Background and analysis times
+        # -----------------------------
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+        self.jedi_rendering.add_key('analysis_time', analysis_time)
+        self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
         # Geometry
         # --------

@@ -49,7 +49,6 @@ class BuildGeos(taskBase):
         geos_gcm_install_path = os.path.join(geos_gcm_path, 'install')
 
         make_file = f'#!/bin/bash \n' + \
-                    f'cd {geos_gcm_build_path} \n' + \
                     f'source {modules_file} \n' + \
                     f'module list \n' + \
                     f'cmake -DBASEDIR=$BASEDIR/Linux -DCMAKE_Fortran_COMPILER=ifort ' + \
@@ -61,7 +60,7 @@ class BuildGeos(taskBase):
         # Containerized run of the GEOS build steps
         # -----------------------------------------
         self.logger.info(f'Running GEOS build by executing {make_file_name}')
-        run_subprocess(self.logger, make_file_name)
+        run_subprocess(self.logger, make_file_name, cwd=geos_gcm_build_path)
 
 
 # --------------------------------------------------------------------------------------------------
