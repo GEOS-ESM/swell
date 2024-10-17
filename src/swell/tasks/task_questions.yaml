@@ -266,6 +266,17 @@ existing_jedi_build_directory:
   - BuildJediByLinking
   type: string
 
+existing_jedi_build_directory_pinned:
+  ask_question: true
+  default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI build directory?
+  tasks:
+  - BuildJediByLinking
+  type: string
+
 existing_jedi_source_directory:
   ask_question: true
   default_value: defer_to_platform
@@ -273,6 +284,17 @@ existing_jedi_source_directory:
     key: jedi_build_method
     value: use_existing
   prompt: What is the path to the existing JEDI source code directory?
+  tasks:
+  - CloneJedi
+  type: string
+
+existing_jedi_source_directory_pinned:
+  ask_question: true
+  default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI source code directory?
   tasks:
   - CloneJedi
   type: string
@@ -453,13 +475,15 @@ jedi_build_method:
   default_value: create
   options:
   - use_existing
+  - use_pinned_existing
   - create
+  - pinned_create
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
   - BuildJedi
   - BuildJediByLinking
   - CloneJedi
-  type: string
+  type: string-drop-list
 
 jedi_forecast_model:
   ask_question: true
