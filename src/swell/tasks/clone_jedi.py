@@ -40,13 +40,13 @@ class CloneJedi(taskBase):
             # Link the source code directory
             link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
 
-        if self.config.jedi_build_method() == 'use_pinned_existing':
+        elif self.config.jedi_build_method() == 'use_pinned_existing':
             # Check hashes before proceeding
             check_hashes(self.config.existing_jedi_source_directory_pinned(), self.logger)
             # Link the pinned source code directory
             link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
 
-        if self.config.jedi_build_method() in ('create', 'pinned_create'):
+        elif self.config.jedi_build_method() in ('create', 'pinned_create'):
             # Determine which bundles need to be build
             model_components = self.get_model_components()
             if model_components is not None:
