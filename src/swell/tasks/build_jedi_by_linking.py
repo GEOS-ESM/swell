@@ -20,54 +20,38 @@ class BuildJediByLinking(taskBase):
 
     def execute(self) -> None:
 
+        # Abort if jedi build method isn't use_existing or use_pinned_existing
+        if self.config.jedi_build_method() not in ('use_existing', 'use_pinned_existing'):
+            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
+                              f'jedi_build_method in the experiment dictionary. Must be ' +
+                              f'\'use_existing\' or \'use_pinned_existing\'.')
+
         # Get the experiment/jedi_bundle directory
-        # ----------------------------------------
         swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
 
         # Get paths to build and source
-        # -----------------------------
         jedi_bundle_build_path, jedi_bundle_source_path = build_and_source_dirs(jedi_bundle_path)
 
-        # Choice to link to existing build or build JEDI using jedi_bundle
-        # ----------------------------------------------------------------
+        # Set existing jedi build directory based on jedi build method
         if self.config.jedi_build_method() == 'use_existing':
-
-            # Get the existing build directory from the dictionary
             existing_jedi_build_directory = self.config.existing_jedi_build_directory()
-
-            # Assert that the existing build directory contains a bin directory
-            if not os.path.exists(os.path.join(existing_jedi_build_directory, 'bin')):
-                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
-                                  f'directory is not found in the path ' +
-                                  f'\'{existing_jedi_build_directory}\'')
-
-            # Write warning to user
-            self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
-                             'problems will follow if the loaded modules are not consistent ' +
-                             'with those used to build this version of JEDI. Also note that ' +
-                             'this experiment may not be reproducible if the build changes.')
-
-            # Link the source code directory
-            link_path(existing_jedi_build_directory, jedi_bundle_build_path)
-
-        elif self.config.jedi_build_method() == 'use_pinned_existing':
-
-            pinned_build_directory = self.config.existing_jedi_build_directory_pinned()
-
-            # Assert that the existing build directory contains a bin directory
-            if not os.path.exists(os.path.join(pinned_build_directory, 'bin')):
-                self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
-                                  f'directory is not found in the path ' +
-                                  f'\'{existing_jedi_build_directory}\'')
-            # Link the pinned build code directory
-            link_path(pinned_build_directory, jedi_bundle_build_path)
-
         else:
+            existing_jedi_build_directory = self.config.existing_jedi_build_directory_pinned()
 
-            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
-                              f'jedi_build_method in the experiment dictionary. Must be ' +
-                              f'\'use_existing\'.')
+        # Assert that the existing build directory contains a bin directory
+        if not os.path.exists(os.path.join(existing_jedi_build_directory, 'bin')):
+            self.logger.abort(f'Existing JEDI build directory is provided but a bin ' +
+                              f'directory is not found in the path ' +
+                              f'\'{existing_jedi_build_directory}\'')
 
+        # Write warning to user
+        self.logger.info('Suitable JEDI build found, linking build directory. Warning: ' +
+                         'problems will follow if the loaded modules are not consistent ' +
+                         'with those used to build this version of JEDI. Also note that ' +
+                         'this experiment may not be reproducible if the build changes.')
+
+        # Link the source code directory
+        link_path(existing_jedi_build_directory, jedi_bundle_build_path)
 
 # --------------------------------------------------------------------------------------------------
