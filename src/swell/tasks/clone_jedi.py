@@ -37,20 +37,16 @@ class CloneJedi(taskBase):
         # Choice to link to existing build or build JEDI using jedi_bundle
         # ----------------------------------------------------------------
         if self.config.jedi_build_method() == 'use_existing':
-
             # Link the source code directory
             link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
 
-        elif self.config.jedi_build_method() == 'use_pinned_existing':
-
+        if self.config.jedi_build_method() == 'use_pinned_existing':
             # Check hashes before proceeding
             check_hashes(self.config.existing_jedi_source_directory_pinned(), self.logger)
-
             # Link the pinned source code directory
             link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
 
-        elif self.config.jedi_build_method() in ('create', 'pinned_create'):
-
+        if self.config.jedi_build_method() in ('create', 'pinned_create'):
             # Determine which bundles need to be build
             model_components = self.get_model_components()
             if model_components is not None:
@@ -82,13 +78,6 @@ class CloneJedi(taskBase):
                 execute_tasks(['clone'], jedi_bundle_dict)
             except Exception:
                 self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
-
-        else:
-
-            self.logger.abort(f'Found \'{self.config.jedi_build_method()}\' for ' +
-                              f'jedi_build_method in the experiment dictionary. Must be ' +
-                              f'\'use_existing\', \'use_pinned_existing\', ' +
-                              f'\'create\' or \'pinned_create\'.')
 
 
 # --------------------------------------------------------------------------------------------------

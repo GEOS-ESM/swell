@@ -475,13 +475,15 @@ jedi_build_method:
   default_value: create
   options:
   - use_existing
+  - use_pinned_existing
   - create
+  - pinned_create
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
   - BuildJedi
   - BuildJediByLinking
   - CloneJedi
-  type: string
+  type: string-drop-list
 
 jedi_forecast_model:
   ask_question: true
