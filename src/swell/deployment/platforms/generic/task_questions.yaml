@@ -10,7 +10,13 @@ existing_geos_gcm_source_path:
 existing_jedi_build_directory:
   default_value: This would need to be provided by user
 
+existing_jedi_build_directory_pinned:
+  default_value: This would need to be provided by user
+
 existing_jedi_source_directory:
+  default_value: This would need to be provided by user
+
+existing_jedi_source_directory_pinned:
   default_value: This would need to be provided by user
 
 geos_experiment_directory:

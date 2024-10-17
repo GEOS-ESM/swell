@@ -11,9 +11,12 @@ import os
 import shutil
 from typing import Tuple
 
-from jedi_bundle.bin.jedi_bundle import get_default_config
+from swell.utilities.logger import Logger
+from jedi_bundle.utils.yaml import load_yaml
 from jedi_bundle.config.config import check_platform
+from jedi_bundle.bin.jedi_bundle import get_default_config
 
+from swell.utilities.pinned_versions.check_hashes import get_pinned_vers_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -57,6 +60,7 @@ def set_jedi_bundle_config(
     path_to_source: str,
     path_to_build: str,
     platform: str,
+    use_pinned: bool,
     cores_to_use_for_make: int = 6
 ) -> dict:
 
@@ -86,6 +90,13 @@ def set_jedi_bundle_config(
 
     # Always use the swell defined modules to build
     jedi_bundle_config['configure_options']['external_modules'] = True
+
+    # Add pinned_versions to jedi_bundle_config if applicable
+    if use_pinned:
+        logger = Logger("LoadPinnedVersions")
+        pinned_config_file = get_pinned_vers_path()
+        pinned_versions_dict = load_yaml(logger, pinned_config_file)
+        jedi_bundle_config['pinned_versions'] = pinned_versions_dict
 
     # Return the dictionary object
     return jedi_bundle_config
