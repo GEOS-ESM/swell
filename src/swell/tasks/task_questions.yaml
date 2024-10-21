@@ -7,7 +7,6 @@ analysis_forecast_window_offset:
   prompt: What is the duration from the middle of the window when forecasts start?
   tasks:
   - GetBackground
-  - LinkGeosOutput
   - MoveDaRestart
   - PrepareAnalysis
   - StoreBackground
@@ -25,6 +24,7 @@ analysis_variables:
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-check-list
 
@@ -63,6 +63,8 @@ background_frequency:
   prompt: What is the frequency of the background files?
   tasks:
   - GetBackground
+  - LinkGeosOutput
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediVariationalExecutable
@@ -82,6 +84,7 @@ background_time_offset:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -115,13 +118,11 @@ bundles:
   type: string-check-list
 
 cice6_domains:
-  ask_question: false
+  ask_question: true
   default_value: defer_to_model
   models:
   - geos_marine
-  options:
-  - arctic
-  - antarctic
+  options: defer_to_model
   prompt: Which CICE6 domains do you wish to run DA for?
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
@@ -149,6 +150,7 @@ crtm_coeff_dir:
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -264,6 +266,17 @@ existing_jedi_build_directory:
   - BuildJediByLinking
   type: string
 
+existing_jedi_build_directory_pinned:
+  ask_question: true
+  default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI build directory?
+  tasks:
+  - BuildJediByLinking
+  type: string
+
 existing_jedi_source_directory:
   ask_question: true
   default_value: defer_to_platform
@@ -271,6 +284,17 @@ existing_jedi_source_directory:
     key: jedi_build_method
     value: use_existing
   prompt: What is the path to the existing JEDI source code directory?
+  tasks:
+  - CloneJedi
+  type: string
+
+existing_jedi_source_directory_pinned:
+  ask_question: true
+  default_value: defer_to_platform
+  depends:
+    key: jedi_build_method
+    value: use_pinned_existing
+  prompt: What is the path to the existing pinned JEDI source code directory?
   tasks:
   - CloneJedi
   type: string
@@ -289,8 +313,10 @@ generate_yaml_and_exit:
   default_value: false
   prompt: Generate JEDI executable YAML and exit?
   tasks:
+  - GenerateBClimatology
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -321,7 +347,7 @@ geos_experiment_directory:
 
 geos_gcm_tag:
   ask_question: true
-  default_value: v11.5.1
+  default_value: v11.6.0
   prompt: Which GEOS tag do you wish to clone?
   tasks:
   - CloneGeos
@@ -375,6 +401,7 @@ gradient_norm_reduction:
   - all
   prompt: What value of gradient norm reduction for convergence?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string
 
@@ -385,6 +412,7 @@ gsibec_configuration:
   - geos_atmosphere
   prompt: Which GSIBEC climatological or hybrid?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   - StageJedi
   type: string
@@ -433,6 +461,7 @@ horizontal_resolution:
   - GenerateBClimatologyByLinking
   - GetBackground
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -446,13 +475,15 @@ jedi_build_method:
   default_value: create
   options:
   - use_existing
+  - use_pinned_existing
   - create
+  - pinned_create
   prompt: Do you want to use an existing JEDI build or create a new build?
   tasks:
   - BuildJedi
   - BuildJediByLinking
   - CloneJedi
-  type: string
+  type: string-drop-list
 
 jedi_forecast_model:
   ask_question: true
@@ -467,6 +498,7 @@ jedi_forecast_model:
   tasks:
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -577,6 +609,21 @@ local_ensemble_use_linear_observer:
   - RunJediLocalEnsembleDaExecutable
   type: boolean
 
+marine_models:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_marine
+  options: defer_to_model
+  prompt: Enter the active SOCA models for this model.
+  tasks:
+  - EvaIncrement
+  - GenerateBClimatology
+  - LinkGeosOutput
+  - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
+  type: string-check-list
+
 minimizer:
   ask_question: false
   default_value: defer_to_model
@@ -585,6 +632,7 @@ minimizer:
   options: defer_to_model
   prompt: Which data assimilation minimizer do you wish to use?
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
 
@@ -612,6 +660,7 @@ npx_proc:
   tasks:
   - GenerateBClimatology
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -627,6 +676,7 @@ npy_proc:
   tasks:
   - GenerateBClimatology
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -641,6 +691,7 @@ number_of_iterations:
   prompt: What number of iterations do you wish to use for each outer loop? Provide
     a list of integers the same length as the number of outer loops.
   tasks:
+  - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: integer-list
 
@@ -680,6 +731,7 @@ observations:
   - GsiNcdiagToIoda
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -721,6 +773,7 @@ observing_system_records_path:
   - GetObservations
   - GsiBcToIoda
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
   - RunJediUfoTestsExecutable
@@ -866,6 +919,7 @@ total_processors:
   - GenerateBClimatology
   - PrepareAnalysis
   - RunJediConvertStateSoca2ciceExecutable
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -952,6 +1006,7 @@ vertical_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -970,8 +1025,10 @@ window_length:
   - GetGeovals
   - GetGsiBc
   - GetObservations
+  - LinkGeosOutput
   - MoveDaRestart
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -996,8 +1053,10 @@ window_offset:
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
+  - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
@@ -1021,8 +1080,10 @@ window_type:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediEnsembleMeanVariance
+  - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable

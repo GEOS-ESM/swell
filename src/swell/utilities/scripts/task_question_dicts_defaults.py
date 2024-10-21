@@ -135,7 +135,7 @@ def create_platform_tq_dicts(
 # --------------------------------------------------------------------------------------------------
 
 
-def main() -> int:
+def tq_dicts_defaults(tempdir: str) -> int:
 
     # Create a logger
     logger = Logger('ListOfTaskQuestions')
@@ -213,7 +213,7 @@ def main() -> int:
             # Write the new dictionary to a temporary file
             random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
             temp_tq_file_name = f'{tq_dicts_name}_task_questions_{random_string}.yaml'
-            destination_yaml_temp = os.path.join('/tmp', temp_tq_file_name)
+            destination_yaml_temp = os.path.join(tempdir, temp_tq_file_name)
 
             with open(destination_yaml_temp, 'w') as file:
                 file.write(tq_dicts_str)
