@@ -151,23 +151,32 @@ class GetObservations(taskBase):
                 fetch(date=obs_window_begin,
                       target_file=target_file,
                       provider=obs_provider,
+                      ignore_missing=True,
                       obs_type=observation,
                       time_window=obs_window_length,
                       type='ob',
                       experiment=obs_experiment)
-            target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-            self.logger.info(f'Processing observation file {target_file}')
 
-            # If obs_list_dto has one member, then just rename the file
-            # ---------------------------------------------------------
-            if len(obs_list_dto) == 1:
-                os.rename(combine_input_files[0], target_file)
+            # Check if target file exists, if not skip the loop, else rename the files
+            # Bias correction files still need to be propagated to the next cycle for cycling VarBC
+            if not os.path.exists(target_file):
+                self.logger.info(f'No {observation} files exist for this cycle!')
+                continue
             else:
-                self.read_and_combine(combine_input_files, target_file)
+                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                self.logger.info(f'Processing observation file {jedi_obs_file}')
 
-            # Change permission
-            os.chmod(target_file, 0o644)
+                # If obs_list_dto has one member, then just rename the file
+                # ---------------------------------------------------------
+                if len(obs_list_dto) == 1:
+                    os.rename(combine_input_files[0], jedi_obs_file)
+                else:
+                    self.read_and_combine(combine_input_files, jedi_obs_file)
 
+                # Change permission
+                os.chmod(jedi_obs_file, 0o644)
+
+            # TODO: This part is not tested yet for cycling VarBC
             # Aircraft bias correction files
             # ------------------------------
             if observation == 'aircraft':
