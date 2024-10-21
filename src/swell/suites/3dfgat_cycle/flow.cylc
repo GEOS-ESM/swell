@@ -1,0 +1,271 @@
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing Geos forecast
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            # Need first set of restarts to run model
+            GetGeosRestart => PrepGeosRunDir
+
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+
+            {% for model_component in model_components %}
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediFgatExecutable-{{model_component}}
+
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+
+            {% endfor %}
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+
+            # Model preperation
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            # MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
+            MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            PrepGeosRunDir => RunGeosExecutable
+
+            # Run the analysis
+            # RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable => LinkGeosOutput-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+
+            # Data assimilation preperation
+            GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
+
+            LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            # StageJedi-{{model_component}}[^] => RunJediFgatExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+
+            # Run analysis diagnostics
+            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+
+            # Prepare analysis for next forecast
+            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            {% if 'cice6' in marine_models %}
+            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
+            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            {% endif %}
+
+            # Move restart to next cycle
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+
+            # Save analysis output
+            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            # RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Save model output
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+
+            # Remove Run Directory
+            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
+            MoveDaRestart-{{model_component}} => RemoveForecastDir
+
+            # Clean up large files
+            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
+            CleanCycle-{{model_component}}
+        {% endfor %}
+        """
+        {% endfor %}
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneGeos]]
+        script = "swell task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[CloneJedi]]
+        script = "swell task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunGeosExecutable]]
+        script = "swell task RunGeosExecutable $config -d $datetime"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[PrepGeosRunDir]]
+        script = "swell task PrepGeosRunDir $config -d $datetime"
+
+    [[RemoveForecastDir]]
+        script = "swell task RemoveForecastDir $config -d $datetime"
+
+    [[GetGeosRestart]]
+        script = "swell task GetGeosRestart $config -d $datetime"
+
+    {% for model_component in model_components %}
+
+    [[LinkGeosOutput-{{model_component}}]]
+        script = "swell task LinkGeosOutput $config -d $datetime -m {{model_component}}"
+
+    [[MoveDaRestart-{{model_component}}]]
+        script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+
+    [[StageJedi-{{model_component}}]]
+        script = "swell task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
+
+    [[GetObservations-{{model_component}}]]
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+
+    [[GenerateBClimatology-{{model_component}}]]
+        script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[GenerateBClimatologyByLinking-{{model_component}}]]
+        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
+
+    {% if 'cice6' in marine_models %}
+
+    [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
+        script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    {% endif %}
+
+    [[RunJediFgatExecutable-{{model_component}}]]
+        script = "swell task RunJediFgatExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediFgatExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediFgatExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
+
+    [[EvaObservations-{{model_component}}]]
+        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+
+    [[SaveObsDiags-{{model_component}}]]
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    [[PrepareAnalysis-{{model_component}}]]
+        script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-{{model_component}}]]
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+    {% endfor %}
+
+# --------------------------------------------------------------------------------------------------

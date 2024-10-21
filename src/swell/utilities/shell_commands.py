@@ -21,7 +21,8 @@ from swell.utilities.logger import Logger
 def run_track_log_subprocess(
     logger: Logger,
     command: Union[list[str], str],
-    output_log: Optional[str] = None
+    output_log: Optional[str] = None,
+    **kwargs
 ) -> None:
 
     # Prepare output file
@@ -34,7 +35,7 @@ def run_track_log_subprocess(
 
     # Run commands and print output to screen
     # ---------------------------------------
-    process = subprocess.Popen(command, stdout=subprocess.PIPE)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, **kwargs)
     while True:
         output = process.stdout.readline().decode()
         if output == '' and process.poll() is not None:
@@ -65,10 +66,11 @@ def run_track_log_subprocess(
 
 def run_subprocess_dev_null(
     logger: Logger,
-    command: Union[list[str], str]
+    command: Union[list[str], str],
+    **kwargs
 ) -> None:
 
-    run_subprocess(logger, command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    run_subprocess(logger, command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **kwargs)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -78,12 +80,13 @@ def run_subprocess(
     logger: Logger,
     command: Union[list[str], str],
     stdout: Union[int, IO[Any], None] = None,
-    stderr: Union[int, IO[Any], None] = None
+    stderr: Union[int, IO[Any], None] = None,
+    **kwargs
 ) -> None:
 
     # Run subprocess
     try:
-        subprocess.run(command, check=True, stdout=stdout, stderr=stderr)
+        subprocess.run(command, check=True, stdout=stdout, stderr=stderr, **kwargs)
     except subprocess.CalledProcessError as e:
         print(e)
         logger.abort(f'Subprocess with command {command} failed, throwing error {e}')

@@ -9,7 +9,7 @@
 
 import datetime
 import isodate
-from typing import Union
+from typing import Union, Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
@@ -58,6 +58,66 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
+    def __get_analysis_time__(
+        self,
+        window_type: str,
+        suite_name: str
+    ) -> datetime.datetime:
+
+        # Default, 3D or 3D-FGAT
+        analysis_time_dto = self.__current_cycle_dto__
+
+        # Background time for the window
+        # if window_type == '4D' and 'fgat' not in suite_name:
+        # TODO: 4D analyses, not sure how to organize these yet
+
+        return analysis_time_dto
+
+    # ----------------------------------------------------------------------------------------------
+
+    def analysis_time(self, window_type: str, suite_name: str) -> str:
+
+        analysis_time_dto = self.__get_analysis_time__(window_type, suite_name)
+        return analysis_time_dto.strftime(datetime_formats['directory_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def analysis_time_iso(self, window_type: str, suite_name: str) -> str:
+
+        analysis_time_dto = self.__get_analysis_time__(window_type, suite_name)
+        return analysis_time_dto.strftime(datetime_formats['iso_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def background_time(self, window_offset: str, background_time_offset: str) -> str:
+
+        background_time_offset_dur = isodate.parse_duration(background_time_offset)
+        background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
+        return background_time_dto.strftime(datetime_formats['directory_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def local_background_time_iso(self, window_offset: str, window_type: str) -> str:
+
+        local_background_time = self.__get_local_background_time__(window_type, window_offset)
+        return local_background_time.strftime(datetime_formats['iso_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def local_background_time(self, window_offset, window_type, dto=False
+                              ) -> Union[str, Tuple[str, datetime.datetime]]:
+
+        local_background_time = self.__get_local_background_time__(window_type, window_offset)
+
+        # Return datetime object if asked
+        if dto:
+            return local_background_time.strftime(datetime_formats['directory_format']), \
+                local_background_time
+
+        return local_background_time.strftime(datetime_formats['directory_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
     def window_begin(self, window_offset: str, dto: bool = False) -> Union[str, datetime.datetime]:
 
         window_begin_dto = self.__get_window_begin_dto__(window_offset)
@@ -98,27 +158,5 @@ class DataAssimilationWindowParams():
             return window_end_dto
 
         return window_end_dto.strftime(datetime_formats['iso_format'])
-
-    # ----------------------------------------------------------------------------------------------
-
-    def background_time(self, window_offset: str, background_time_offset: str) -> str:
-
-        background_time_offset_dur = isodate.parse_duration(background_time_offset)
-        background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
-        return background_time_dto.strftime(datetime_formats['directory_format'])
-
-    # ----------------------------------------------------------------------------------------------
-
-    def local_background_time_iso(self, window_offset: str, window_type: str) -> str:
-
-        local_background_time = self.__get_local_background_time__(window_type, window_offset)
-        return local_background_time.strftime(datetime_formats['iso_format'])
-
-    # ----------------------------------------------------------------------------------------------
-
-    def local_background_time(self, window_offset: str, window_type: str) -> str:
-
-        local_background_time = self.__get_local_background_time__(window_type, window_offset)
-        return local_background_time.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------

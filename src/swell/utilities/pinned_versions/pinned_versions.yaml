@@ -1,51 +1,51 @@
-# Pinned versions for 2024-07-30
+# Pinned versions for 2024-08-31
 - jedicmake:
     branch: 40d521f9a2d796fcbc6234d77abceeffefb8eb7f
     commit: true
 - oops:
-    branch: e6485c0a659103f0daa2b7e2cece39a15bfb0d60
+    branch: d77217323bbbd02ea41049fe1bd339f24a64f177
     commit: true
 - saber:
-    branch: e93b14ff97acc70cdbb6bdd57620da2cc81c5eb0
+    branch: 524b6e5fcd7a490a82120c81e5d504b9d95d1575
     commit: true
 - ioda:
-    branch: c7b8760fc187a9eafb72a466d16fdee284912377
+    branch: ad84060522f6fa7ab9c75d227f1d9e72c8bf7a28
     commit: true
 - ufo:
-    branch: cd66505007b1559d79cb158bd6dc018a3943c1e7
+    branch: 58e7da419c80f8613e0af5105ecd7d09b75bdd3d
     commit: true
 - vader:
-    branch: 36dac46ac170ef8f80c2f147d0a8db7bfd9aba3c
+    branch: 6d56a1eb5b6b315c7b9befbda26896e783c07f78
     commit: true
 - fv3:
     branch: ab25dc09d955271f34ca6a3fa83af1093c85d9f7
     commit: true
 - fv3-jedi-lm:
-    branch: a6e97d76ed7c0b2a27cf97512893a93d7e2b44bc
+    branch: 30ef7a39009bed5b363ff887e7acf40ea1b2b3f2
     commit: true
 - femps:
     branch: 4f12677d345e683bf910b5f76f0df120ad27482d
     commit: true
 - fv3-jedi:
-    branch: d3c800b82eef8d1eaadcbc07c3cf7a96d8425233
+    branch: a94bb3f9ec0d7c8d59dce64ea638753231f2e344
     commit: true
 - ioda-data:
-    branch: a8c2bb3265ee2ab222706d606d22282630810750
+    branch: bcb0754f957f857c0ccc893f8402c384bc2e8ba8
     commit: true
 - fv3-jedi-data:
-    branch: dd0524e339250c0b80858812f2d85cceedbf07ee
+    branch: 568088d9ec13f6ebb405008961d9c1f2913bbd95
     commit: true
 - soca:
-    branch: 92519ab72b89a4c3b802501e71b7b66349fc8cc8
+    branch: d260316b9c4e03b1f040fe6ede2fde152408f4a4
     commit: true
 - iodaconv:
-    branch: e8235068c663029b1f2cb4abf4e86f476c2e6af0
+    branch: a7f5909c5753cdcec2dbcf5a4f836e9be7ce6160
     commit: true
 - gsw:
     branch: 697cbeb7605d70ed3857664c5f54a5c05346e31f
     commit: true
 - ufo-data:
-    branch: 70464f6da0c306828d820004375d151c33c7c53d
+    branch: dc81b3991bb23f2e63067b7e2851711a23a1839b
     commit: true
 - icepack:
     branch: 73136ee8dcdbe378821e540488a5980a03d8abe6

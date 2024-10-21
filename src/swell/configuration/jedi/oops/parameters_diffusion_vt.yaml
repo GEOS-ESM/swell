@@ -2,7 +2,7 @@ geometry:
   TASKFILLgeometry
 
 background:
-  TASKFILLbackground
+  TASKFILLbackground_diffusion_vt
 
 background error:
   TASKFILLbackground_error_diffusion_vt

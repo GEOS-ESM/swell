@@ -28,6 +28,13 @@ class EvaIncrement(taskBase):
         model = self.get_model()
         window_type = self.config.window_type()
 
+        # TODO: This is temporary until we get rid of the geos_ocean config
+        if model == 'geos_ocean':
+            marine_models = ['mom6']
+
+        if model == 'geos_marine':
+            marine_models = self.config.marine_models()
+
         # Read Eva template file into dictionary
         # --------------------------------------
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
@@ -48,12 +55,18 @@ class EvaIncrement(taskBase):
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path
+        # For 3D-Var and 3D-FGAT, the increment file is in the middle of the DA window
+        # For 3D-FGAT atmos, the increment is at the beginning of the DA window. This
+        # is just a limited implementation of 4DVAR in SWELL by turning the linear operator off,
+        # where the cost-type is 4D-VAR in OOPS folder.
+        # TODO: This really complicates the increment file naming and path for now, this
+        # is a temporary solution (I'm refering to window type and atmos if statement)
         # TODO: Increment iteration number may change according to outer iteration loops
         # which is currenly manually set in varincrement1.yaml
         # For now we are only plotting the first one
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-        if window_type == '4D':
+        if window_type == '4D' and 'atmos' in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 
         # Create dictionary used to override the eva config
@@ -64,10 +77,13 @@ class EvaIncrement(taskBase):
             ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
             incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
 
-            # Keep sea-ice increment inside here as optional
-            ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
-            ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
-            eva_override['ice_increment_file_path'] = ice_increment_file_path
+            eva_override['marine_models'] = marine_models
+
+            if 'cice6' in marine_models:
+                # sea-ice increment is optional
+                ice_incr_file = f'ice.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
+                ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+                eva_override['ice_increment_file_path'] = ice_increment_file_path
 
         increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 
