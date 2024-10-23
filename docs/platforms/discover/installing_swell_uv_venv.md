@@ -23,7 +23,7 @@ mod_swell() {
   elif [[ $KERNEL_VERSION =~ "5.14" ]]; then
     source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/modules-intel-sles15
   else
-    echo "Unkonwn platform: $PLATFORM"
+    echo "No matching platform for kernel version: $KERNEL_VERSION"
   fi
 }
 ```
@@ -50,7 +50,7 @@ git clone git@github.com:geos-esm/swell swell-develop
 9) Now, work on SWELL. Any changes you make to the SWELL source code will be automatically applied to the install (because it's an editable install); no need to manually reinstall.
 
 #### Resuming work from a previous SWELL installation:
-1) Switch to your folder where SWELL is isntalled: `cd $NOBACKUP/swell-project/mybranch`.
+1) Switch to your folder where SWELL is installed: `cd $NOBACKUP/swell-project/mybranch`.
 2) Load all the modules that SWELL needs: `mod_swell`
-3) `source .venv/bin/activate`
+3) Activate the virtual environment: `source .venv/bin/activate`. You may also use the full path: `source $NOBACKUP/swell-project/mybranch/.venv/bin/activate`
 4) SWELL is ready! See [examples here](../../examples/description.md) on how to run SWELL.
