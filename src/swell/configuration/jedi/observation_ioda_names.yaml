@@ -145,6 +145,9 @@ ioda instrument names:
   - ioda name: adt_3a_egm2008
     full name: ADT 3a (EGM2008)
     inst type: conventional
+  - ioda name: adt_sentinel3a
+    full name: ADT Sentinel-3A
+    inst type: conventional
   - ioda name: adt_3b_egm2008
     full name: ADT 3b (EGM2008)
     inst type: conventional
@@ -157,11 +160,32 @@ ioda instrument names:
   - ioda name: adt_j3_egm2008
     full name: ADT j3 (EGM2008)
     inst type: conventional
+  - ioda name: adt_jason3
+    full name: ADT Jason-3
+    inst type: conventional
   - ioda name: adt_sa_egm2008
     full name: ADT sa (EGM2008)
     inst type: conventional
+  - ioda name: adt_saral
+    full name: ADT SARAL
+    inst type: conventional
   - ioda name: adt
     full name: ADT
+    inst type: conventional
+  - ioda name: insitu_profile_argo
+    full name: ARGO (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_ctd
+    full name: CTD (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_pirata
+    full name: PIRATA (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_rama
+    full name: RAMA (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_tao
+    full name: TAO (In-situ)
     inst type: conventional
   - ioda name: insitus
     full name: Insitu Salinity
@@ -171,6 +195,12 @@ ioda instrument names:
     inst type: conventional
   - ioda name: salt_profile_fnmoc
     full name: FNMOC (In-situ Salinity)
+    inst type: conventional
+  - ioda name: sss_smapv5
+    full name: SMAP V5 (SSS)
+    inst type: conventional
+  - ioda name: sss_smos
+    full name: SMOS (SSS)
     inst type: conventional
   - ioda name: sss_smos_esa
     full name: ESA SMOS (SSS)
@@ -195,6 +225,9 @@ ioda instrument names:
     inst type: conventional
   - ioda name: temp_profile_fnmoc
     full name: FNMOC (In-situ Temperature)
+    inst type: conventional
+  - ioda name: temp_profile_xbt
+    full name: XBT (In-situ Temperature)
     inst type: conventional
   # Sea-ice
   - ioda name : icec_amsr2_north
