@@ -2,7 +2,7 @@
 
 This is an alternative approach to using `LMOD` and `py_lmod_installer` tool. This is more geared towards Swell Developers but users might find this approach easier to work with.
 
-#### Preliminary steps:
+#### Preliminary steps (needs to be done only once):
 1) Install `uv` using instructions [here](https://github.com/astral-sh/uv?tab=readme-ov-file#installation). This will install a single executable to `$HOME` directory and needs to be done once; no modules required. Note that `uv` aggressively performs caching of packages it installs to `~/.cache/uv`. To avoid quickly exhausting your home directory, move your `.cache` to your `$NOBACKUP` via:
 
 ```bash
@@ -27,18 +27,15 @@ mod_swell() {
   fi
 }
 ```
-
 This can be put in `~/.bashrc` to ensure it is always active every time the user logins to Discover or in an alternate location, such as `~/.bash_functions` but the user needs to activate these functions via `source ~/.bash_functions`.
 
-3) Now clone Swell to wherever you want to live, for example:
-
+####  First time installing SWELL:
+Clone Swell to wherever you want to live, for example:
 ```bash
 cd $NOBACKUP
 mkdir swell-project
 git clone git@github.com:geos-esm/swell swell-develop
 ```
-
-####  First time installing SWELL:
 1) Switch to your folder where SWELL is cloned: `cd $NOBACKUP/swell-project/swell-develop`.
 2) (Optional) Checkout a new branch in a new git worktree: e.g., `git worktree add ../mybranch -b mybranch` will create a folder specifically for the `mybranch` branch.
 3) (Optional) `cd ../mybranch`
