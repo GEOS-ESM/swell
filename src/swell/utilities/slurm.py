@@ -87,6 +87,7 @@ def prepare_scheduling_dict(
         'GenerateBClimatology',
         'RunJediEnsembleMeanVariance',
         'RunJediConvertStateSoca2ciceExecutable',
+        'RunJediFgatExecutable',
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
