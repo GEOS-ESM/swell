@@ -175,6 +175,18 @@ ioda instrument names:
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
     inst type: conventional
+  - ioda name: insitu_profile_ctd
+    full name: CTD (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_pirata
+    full name: PIRATA (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_rama
+    full name: RAMA (In-situ)
+    inst type: conventional
+  - ioda name: insitu_profile_tao
+    full name: TAO (In-situ)
+    inst type: conventional
   - ioda name: insitus
     full name: Insitu Salinity
     inst type: conventional

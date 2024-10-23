@@ -161,7 +161,7 @@ class GetObservations(taskBase):
             # Bias correction files still need to be propagated to the next cycle for cycling VarBC
             if not os.path.exists(target_file):
                 self.logger.info(f'No {observation} files exist for this cycle!')
-                continue
+                # continue
             else:
                 jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
                 self.logger.info(f'Processing observation file {jedi_obs_file}')
