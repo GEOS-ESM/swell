@@ -94,7 +94,7 @@
 
             # Prepare analysis for next forecast
             RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
-            {% if 'cice6' in marine_models %}
+            {% if 'cice6' in models["geos_marine"]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
@@ -218,7 +218,7 @@
     [[GenerateBClimatologyByLinking-{{model_component}}]]
         script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
-    {% if 'cice6' in marine_models %}
+    {% if 'cice6' in models["geos_marine"]["marine_models"] %}
 
     [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
         script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
