@@ -12,6 +12,9 @@ background:
   TASKFILLbackground_ensemble
 
 observations:
+  get values:
+    TASKFILLgetvalues
+
   observers:
     SPECIALobservations
 
