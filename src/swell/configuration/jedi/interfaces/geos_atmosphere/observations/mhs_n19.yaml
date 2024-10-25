@@ -22,8 +22,8 @@ obs operator:
     CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
     Absorbers: [H2O,O3]
-    Clouds: [Water]
-    Surfaces: [Water_Temperature]
+    Clouds: [Water, Ice, Rain, Snow]
+    Surfaces: [Water_Temperature,Land_Temperature,Ice_Temperature,Snow_Temperature]
 
 obs bias:
   input file: '{{cycle_dir}}/mhs_n19.{{background_time}}.satbias.nc4'
