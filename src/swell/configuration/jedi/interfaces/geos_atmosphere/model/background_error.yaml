@@ -12,6 +12,7 @@ saber outer blocks:
 - saber block name: gsi interpolation to model grid
   state variables to inverse: &bvars [eastward_wind,northward_wind,air_temperature,surface_pressure,
                                       specific_humidity,cloud_liquid_ice,cloud_liquid_water,
+                                      rain_water,snow_water,
                                       mole_fraction_of_ozone_in_air,
                                       fraction_of_ocean,fraction_of_lake,fraction_of_ice,
                                       sfc_geopotential_height_times_grav]
