@@ -167,6 +167,7 @@ class Logger(logging.Logger):
 
 
 class LoggingManager(logging.Manager):
+    # Override manager from logging so it uses custom swell Logger class
     def __init__(self, rootnode):
         super().__init__(rootnode)
         self.loggerClass = Logger
@@ -175,13 +176,14 @@ class LoggingManager(logging.Manager):
 # --------------------------------------------------------------------------------------------------
 
 def get_logger(name: Optional[str] = None):
+    # Construct logger object in the same way as base logging instance
     WARNING = 30
     root = logging.RootLogger(WARNING)
-    swellManager = LoggingManager(root)
+    manager = LoggingManager(root)
 
     if name is None:
         name = ''
 
     if isinstance(name, str) and name == root.name:
         return root
-    return swellManager.getLogger(name)
+    return manager.getLogger(name)
