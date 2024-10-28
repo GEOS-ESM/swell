@@ -2,7 +2,7 @@ import os
 import unittest
 import subprocess
 from datetime import datetime as dt
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.get_channels import get_channels
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
@@ -27,7 +27,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.logger = Logger("GenerateObservingSystemTest")
+        cls.logger = get_logger("GenerateObservingSystemTest")
         cls.observing_system_records_path = "./output/"
         cls.dt_cycle_time = dt.strptime("20211212T000000Z", "%Y%m%dT%H%M%SZ")
         cls.path_to_gsi_records = os.path.join("GEOS_mksi/", "sidb")

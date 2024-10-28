@@ -11,6 +11,8 @@ import os
 import sys
 import textwrap
 import traceback
+import logging
+from typing import Optional
 
 
 # --------------------------------------------------------------------------------------------------
@@ -33,11 +35,12 @@ under = '\033[4m'
 # --------------------------------------------------------------------------------------------------
 
 
-class Logger:
+class Logger(logging.Logger):
 
     def __init__(self, task_name: str) -> None:
+        super().__init__(task_name)
 
-        self.task_name = task_name
+        self.name = task_name
 
         # Maximum length of lines
         self.__maxlen__ = 100
@@ -75,11 +78,11 @@ class Logger:
         # Include level in the message
         level_show = ''
         if level != 'BLANK':
-            level_show = level_show+' '+self.task_name+': '
+            level_show = level_show+' '+self.name+': '
 
         if level == 'ABORT':
-            task_name = under + self.task_name + end
-            level_show = red + 'ABORT IN ' + end + task_name+': '
+            name = under + self.name + end
+            level_show = red + 'ABORT IN ' + end + name+': '
 
         color = end
         if level == 'ABORT':
@@ -158,6 +161,27 @@ class Logger:
 
     def input(self, message: str) -> None:
 
-        input(' '+self.task_name+': '+message + ". Press any key to continue...")
+        input(' '+self.name+': '+message + ". Press any key to continue...")
 
-    # ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
+
+
+class LoggingManager(logging.Manager):
+    def __init__(self, rootnode):
+        super().__init__(rootnode)
+        self.loggerClass = Logger
+
+
+# --------------------------------------------------------------------------------------------------
+
+def get_logger(name: Optional[str] = None):
+    WARNING = 30
+    root = logging.RootLogger(WARNING)
+    swellManager = LoggingManager(root)
+
+    if name is None:
+        name = ''
+
+    if isinstance(name, str) and name == root.name:
+        return root
+    return swellManager.getLogger(name)

@@ -1,7 +1,7 @@
 import os
 import unittest
 import subprocess
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.pinned_versions.check_hashes import check_hashes
 
@@ -9,7 +9,7 @@ from swell.utilities.pinned_versions.check_hashes import check_hashes
 class PinnedVersionsTest(unittest.TestCase):
 
     def test_wrong_hash(self) -> None:
-        logger = Logger("PinnedVersionsTest")
+        logger = get_logger("PinnedVersionsTest")
         jedi_bundle_dir = "jedi_bundle/"
         if not os.path.exists(jedi_bundle_dir):
             os.makedirs(jedi_bundle_dir)

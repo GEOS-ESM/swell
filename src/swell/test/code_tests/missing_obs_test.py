@@ -1,7 +1,7 @@
 from swell.utilities.datetime_util import Datetime
 from swell.utilities.run_jedi_executables import check_obs
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from datetime import datetime as dt
 
 '''
@@ -14,7 +14,7 @@ from datetime import datetime as dt
 # Set fields
 path_to_observing_sys_yamls = 'missing_obs_test/experiment/run/20211212T000000Z/' + \
                               'geos_atmosphere/observing_system_records'
-logger = Logger('Missing Obs Test')
+logger = get_logger('Missing Obs Test')
 cycle_time_str = '20211212T000000Z'
 cycle_time = dt.strptime(cycle_time_str, '%Y%m%dT%H%M%SZ')
 experiment_root = 'missing_obs_test'

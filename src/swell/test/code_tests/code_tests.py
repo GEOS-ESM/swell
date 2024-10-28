@@ -11,7 +11,7 @@
 import os
 import unittest
 
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.test.code_tests.slurm_test import SLURMConfigTest
 from swell.test.code_tests.test_pinned_versions import PinnedVersionsTest
 from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
@@ -24,7 +24,7 @@ from swell.test.code_tests.test_generate_observing_system import GenerateObservi
 def code_tests() -> None:
 
     # Create a logger
-    logger = Logger('TestSuite')
+    logger = get_logger('TestSuite')
     logger.test('Running Swell Test Suite')
 
     # Default log_info testing to false

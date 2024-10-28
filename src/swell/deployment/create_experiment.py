@@ -21,7 +21,7 @@ from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.logger import Logger
+from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_scheduling_dict
 
 
@@ -36,7 +36,7 @@ def clone_config(
     advanced: bool
 ) -> str:
     # Create a logger
-    logger = Logger('SwellCloneExperiment')
+    logger = get_logger('SwellCloneExperiment')
 
     # Check that configuration exists and is a YAML file
     if not os.path.isfile(configuration):
@@ -76,7 +76,7 @@ def prepare_config(
 
     # Create a logger
     # ---------------
-    logger = Logger('SwellPrepSuiteConfig')
+    logger = get_logger('SwellPrepSuiteConfig')
 
     # Assert valid method
     # -------------------
@@ -167,7 +167,7 @@ def create_experiment_directory(
 
     # Create a logger
     # ---------------
-    logger = Logger('SwellCreateExperiment')
+    logger = get_logger('SwellCreateExperiment')
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
