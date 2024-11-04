@@ -25,7 +25,7 @@ def code_tests() -> None:
 
     # Create a logger
     logger = get_logger('TestSuite')
-    logger.test('Running Swell Test Suite')
+    logger.info('Running Swell Test Suite')
 
     # Default log_info testing to false
     os.environ.setdefault("LOG_INFO", "0")

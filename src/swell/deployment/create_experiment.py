@@ -277,7 +277,7 @@ def copy_platform_files(
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
             if os.path.exists(src_path_file):
-                logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+                logger.debug('Copying {} to {}'.format(src_path_file, dst_path_file))
                 shutil.copy(src_path_file, dst_path_file)
 
 

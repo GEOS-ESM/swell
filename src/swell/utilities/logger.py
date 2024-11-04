@@ -37,105 +37,69 @@ under = '\033[4m'
 
 class Logger(logging.Logger):
 
-    def __init__(self, task_name: str) -> None:
-        super().__init__(task_name)
-
-        self.name = task_name
-
-        # Maximum length of lines
+    def __init__(self, name: Optional[str] = None, **kwargs) -> None:
         self.__maxlen__ = 100
-
-        # Set default logging levels
-        self.loggerdict = {'BLANK': True,
-                           'INFO': True,
-                           'TEST': True,
-                           'TRACE': False,
-                           'DEBUG': False, }
-
-        # Loop over logging levels
-        for loglevel in self.loggerdict:
-
-            # Check for environment variable e.g. LOG_TRACE=1 will activiate trace logging
-            log_env = os.environ.get('LOG_'+loglevel)
-
-            # If found set element to environment variable
-            if log_env is not None:
-                self.loggerdict[loglevel] = int(log_env) == 1
+        super().__init__(name, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
 
-    def send_message(self, level: str, message: str, wrap: bool) -> None:
-
-        # Wrap the message if needed
+    def format_message(self, msg: str, wrap: bool = True, lead_with_name: bool = True) -> str:
         if wrap:
-            message_items = textwrap.wrap(message, self.__maxlen__, break_long_words=True)
-            for i in range(0, len(message_items)-1):
-                message_items[i] = message_items[i] + ' ...'
-        else:
-            message_items = []
-            message_items.append(message)
+            msg_items = textwrap.wrap(msg, self.__maxlen__, break_long_words=True)
+            if len(msg_items) == 0:
+                msg_items = [' ']
+            for i in range(0, len(msg_items)-1):
+                msg_items[i] = msg_items[i] + '...\n'
+            if lead_with_name:
+                for i in range(0, len(msg_items)):
+                    msg_items[i] = self.name + ': ' + msg_items[i]
 
-        # Include level in the message
-        level_show = ''
-        if level != 'BLANK':
-            level_show = level_show+' '+self.name+': '
+            msg = ''
+            for msg_item in msg_items:
+                msg = msg + ' ' + msg_item
 
-        if level == 'ABORT':
-            name = under + self.name + end
-            level_show = red + 'ABORT IN ' + end + name+': '
-
-        color = end
-        if level == 'ABORT':
-            color = red
-
-        if level == 'ABORT' or self.loggerdict[level]:
-            if level == 'ABORT':
-                print('\n')
-            first_line = True
-            for message_item in message_items:
-                if not first_line:
-                    message_item = ' ' + color + message_item + end
-                print(level_show+message_item)
-                first_line = False
+        elif lead_with_name:
+            msg = ' ' + self.name + ': ' + msg
+        return msg
 
     # ----------------------------------------------------------------------------------------------
 
-    def info(self, message: str, wrap: bool = True) -> None:
-
-        self.send_message('INFO', message, wrap)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def test(self, message: str, wrap: bool = True) -> None:
-
-        self.send_message('TEST', message, wrap)
+    def critical(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        msg = self.format_message(msg, wrap)
+        super().critical(msg, *args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
 
-    def trace(self, message: str, wrap: bool = True) -> None:
-
-        self.send_message('TRACE', message, wrap)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def debug(self, message: str, wrap: bool = True) -> None:
-
-        self.send_message('DEBUG', message, wrap)
+    def error(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        msg = self.format_message(msg, wrap)
+        super().error(msg, **args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
 
-    def blank(self, message: str, wrap: bool = True) -> None:
-
-        self.send_message('BLANK', message, wrap)
+    def info(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        msg = self.format_message(msg, wrap)
+        super().info(msg, *args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
 
-    def abort(self, message: str, wrap: bool = True) -> None:
+    def blank(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        # blank has severity of INFO, does not output task name
+        msg = self.format_message(msg, wrap, False)
+        super().info(msg, *args, **kwargs)
 
-        # Make the text red
-        message = red + message + end
+    # ----------------------------------------------------------------------------------------------
 
-        self.send_message('ABORT', message, wrap)
+    def debug(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        msg = self.format_message(msg, wrap)
+        super().debug(msg, *args, **kwargs)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def abort(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
+        msg = self.format_message(msg, wrap, False)
+        msg = red + msg + end
+        msg = red + 'ABORT IN ' + end + under + self.name + end + ': ' + msg
+        super().critical(msg)
 
         # Get traceback stack (without logger.py lines)
         filtered_stack = [line for line in traceback.format_stack() if 'logger.py' not in line]
@@ -145,45 +109,57 @@ class Logger(logging.Logger):
 
         traceback_str = '\n'.join(filtered_stack)
 
-        # Exit with traceback
-        sys.exit('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
+        # Log traceback and exit
+        super().error('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
+        sys.exit()
 
     # ----------------------------------------------------------------------------------------------
 
-    def assert_abort(self, condition: bool, message: str, wrap: bool = True) -> None:
-
+    def assert_abort(self, condition: bool, msg: str) -> None:
         if condition:
             return
         else:
-            self.abort(message, wrap)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def input(self, message: str) -> None:
-
-        input(' '+self.name+': '+message + ". Press any key to continue...")
-
-# ----------------------------------------------------------------------------------------------
-
-
-class LoggingManager(logging.Manager):
-    # Override manager from logging so it uses custom swell Logger class
-    def __init__(self, rootnode):
-        super().__init__(rootnode)
-        self.loggerClass = Logger
-
+            self.abort(msg)
 
 # --------------------------------------------------------------------------------------------------
 
-def get_logger(name: Optional[str] = None):
-    # Construct logger object in the same way as base logging instance
-    WARNING = 30
-    root = logging.RootLogger(WARNING)
-    manager = LoggingManager(root)
 
+def get_logger(name: Optional[str] = None) -> Logger:
+    '''
+    Get a logger with custom message formatting for swell-related tasks.
+
+    Set environment variable LOGLEVEL to specify level of detail,
+    per logging:
+
+    CRITICAL = 50
+    FATAL =    50
+    ERROR =    40
+    WARNING =  30
+    INFO =     20
+    DEBUG =    10
+    NOTSET =    0
+
+    Any message with a level below the specified logger level will
+    be ignored. By default the logger level is set to INFO.
+    LOGLEVEL can be expressed as an integer value or the name
+    associated with it.
+
+    e.g. LOGLEVEL=10, or LOGLEVEL=DEBUG will activate debug messages
+
+    Set LOGLEVEL=NOTSET to enable all messages
+    '''
     if name is None:
         name = ''
 
-    if isinstance(name, str) and name == root.name:
-        return root
-    return manager.getLogger(name)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.setLoggerClass(Logger)
+
+    logger = logging.Logger.manager.getLogger(name)
+
+    log_level = os.environ.get('LOGLEVEL')
+    if log_level is not None:
+        logging.setLevel(log_level)
+
+    return logger
+
+# ----------------------------------------------------------------------------------------------

@@ -88,7 +88,8 @@ class DeployWorkflow():
             self.logger.info(' ', False)
 
             # Launch the job monitor
-            self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
+            self.logger.critical('Launching the TUI, press \'q\' at any time to exit the TUI')
+            input()
             self.logger.info(' ', False)
             self.logger.info('TUI can be relaunched with:')
             self.logger.info(' ', False)
