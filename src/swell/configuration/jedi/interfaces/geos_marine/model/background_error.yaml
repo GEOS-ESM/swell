@@ -28,8 +28,8 @@ linear variable change:
   linear variable changes:
   - linear variable change name: BkgErrGODAS
     sst_bgerr_file: '{{cycle_dir}}/soca/godas_sst_bgerr.nc'
-    # output:
-    #   filename: '{{cycle_dir}}/bkgerrgodas.nc'
+    output:
+      filename: '{{cycle_dir}}/bkgerrgodas.nc'
     t_min: 0.1
     t_max: 2.0
     t_dz:  20.0
