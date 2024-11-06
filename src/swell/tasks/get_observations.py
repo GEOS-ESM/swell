@@ -153,13 +153,13 @@ class GetObservations(taskBase):
                     target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
                     combine_input_files.append(target_file)
                     fetch(date=obs_window_begin,
-                        target_file=target_file,
-                        provider=obs_provider,
-                        ignore_missing=True,
-                        obs_type=observation,
-                        time_window=obs_window_length,
-                        type='ob',
-                        experiment=obs_experiment)
+                          target_file=target_file,
+                          provider=obs_provider,
+                          ignore_missing=True,
+                          obs_type=observation,
+                          time_window=obs_window_length,
+                          type='ob',
+                          experiment=obs_experiment)
 
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input

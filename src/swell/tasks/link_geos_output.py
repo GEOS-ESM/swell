@@ -125,7 +125,7 @@ class LinkGeosOutput(taskBase):
         date_str = src_date.strftime('%Y-%m-%d')
         seconds = src_date.hour * 3600 + src_date.minute * 60 + src_date.second
 
-        return self.forecast_dir(f'iceh_{hour_prefix}.{date_str}-{seconds}.nc')
+        return self.forecast_dir(f'iceh_{hour_prefix}.{date_str}-{seconds:05d}.nc')
 
     # ----------------------------------------------------------------------------------------------
 
