@@ -220,6 +220,9 @@ ioda instrument names:
   - ioda name: sst_gmi_l3u
     full name: GMI (SST)
     inst type: conventional
+  - ioda name: sst_merra2
+    full name: MERRA2 (SST)
+    inst type: conventional
   - ioda name: sst_ostia
     full name: OSTIA (SST)
     inst type: conventional
