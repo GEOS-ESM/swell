@@ -25,5 +25,9 @@ class PinnedVersionsTest(unittest.TestCase):
         abort_message = "Wrong commit hashes found for these repositories in jedi_bundle: [oops]"
         # Run check hash (expect abort)
         with self.assertRaises(SystemExit) as abort, suppress_stdout():
+            # Suppress logging output for test
+            log_level = logger.level
+            logger.setLevel(60)
             check_hashes(jedi_bundle_dir, logger)
             self.assertEqual(abort.exception, abort_message)
+            logger.setLevel(log_level)

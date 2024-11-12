@@ -43,23 +43,39 @@ class Logger(logging.Logger):
 
     # ----------------------------------------------------------------------------------------------
 
-    def format_message(self, msg: str, wrap: bool = True, lead_with_name: bool = True) -> str:
+    def format_message(self, msg: str, wrap: bool, level: Optional[str] = None) -> str:
+        # Wrap the message if needed
         if wrap:
-            msg_items = textwrap.wrap(msg, self.__maxlen__, break_long_words=True)
-            if len(msg_items) == 0:
-                msg_items = [' ']
-            for i in range(0, len(msg_items)-1):
-                msg_items[i] = msg_items[i] + '...\n'
-            if lead_with_name:
-                for i in range(0, len(msg_items)):
-                    msg_items[i] = self.name + ': ' + msg_items[i]
+            message_items = textwrap.wrap(msg, self.__maxlen__, break_long_words=True)
+            for i in range(0, len(message_items)-1):
+                message_items[i] = message_items[i] + ' ...\n'
+        else:
+            message_items = []
+            message_items.append(msg)
 
-            msg = ''
-            for msg_item in msg_items:
-                msg = msg + ' ' + msg_item
+        # Include level in the message
+        level_show = ''
+        if level != 'BLANK':
+            level_show = level_show+' '+self.name+': '
 
-        elif lead_with_name:
-            msg = ' ' + self.name + ': ' + msg
+        if level == 'ABORT':
+            task_name = under + self.name + end
+            level_show = red + 'ABORT IN ' + end + task_name + ': '
+
+        color = end
+        if level == 'ABORT':
+            color = red
+
+        msg = ''
+        if level == 'ABORT':
+            msg = '\n' + msg
+        first_line = True
+        for message_item in message_items:
+            if not first_line:
+                message_item = ' ' + color + message_item + end
+            msg = msg + level_show + message_item
+            first_line = False
+
         return msg
 
     # ----------------------------------------------------------------------------------------------
@@ -84,7 +100,7 @@ class Logger(logging.Logger):
 
     def blank(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
         # blank has severity of INFO, does not output task name
-        msg = self.format_message(msg, wrap, False)
+        msg = self.format_message(msg, wrap, 'BLANK')
         super().info(msg, *args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
@@ -96,9 +112,8 @@ class Logger(logging.Logger):
     # ----------------------------------------------------------------------------------------------
 
     def abort(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
-        msg = self.format_message(msg, wrap, False)
         msg = red + msg + end
-        msg = red + 'ABORT IN ' + end + under + self.name + end + ': ' + msg
+        msg = self.format_message(msg, wrap, 'ABORT')
         super().critical(msg)
 
         # Get traceback stack (without logger.py lines)
@@ -109,9 +124,7 @@ class Logger(logging.Logger):
 
         traceback_str = '\n'.join(filtered_stack)
 
-        # Log traceback and exit
-        super().error('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
-        sys.exit()
+        sys.exit('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -158,7 +171,7 @@ def get_logger(name: Optional[str] = None) -> Logger:
 
     log_level = os.environ.get('LOGLEVEL')
     if log_level is not None:
-        logging.setLevel(log_level)
+        logger.setLevel(log_level)
 
     return logger
 

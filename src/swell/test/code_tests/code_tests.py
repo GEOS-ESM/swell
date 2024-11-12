@@ -27,9 +27,9 @@ def code_tests() -> None:
     logger = get_logger('TestSuite')
     logger.info('Running Swell Test Suite')
 
-    # Default log_info testing to false
-    os.environ.setdefault("LOG_INFO", "0")
-    # Set to 1 when errors are being debugged
+    # Default log_level minimum to warning
+    os.environ.setdefault("LOGLEVEL", "WARNING")
+    # Set to INFO or DEBUG when errors are being debugged
 
     # Create a test suite
     test_suite = unittest.TestSuite()

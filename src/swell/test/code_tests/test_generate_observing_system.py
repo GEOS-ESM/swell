@@ -48,10 +48,15 @@ class GenerateObservingSystemTest(unittest.TestCase):
         abort_message = "\nHERE IS THE TRACEBACK: \n----------------------\n\n" + \
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
+
         with self.assertRaises(SystemExit) as abort, suppress_stdout():
+            # Suppress logging output for test
+            log_level = self.logger.level
+            self.logger.setLevel(60)
             get_channels(self.observing_system_records_path, observations[0],
                          self.dt_cycle_time, self.logger)
             self.assertEqual(abort.exception, abort_message)
+            self.logger.setLevel(log_level)
 
     def test_geos_mksi_develop(self):
 
