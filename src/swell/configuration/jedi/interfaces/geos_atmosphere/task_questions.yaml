@@ -19,6 +19,7 @@ analysis_variables:
   - frocean
   - frlake
   - frseaice
+  - ts
   options:
   - ua
   - va
@@ -34,6 +35,7 @@ analysis_variables:
   - frocean
   - frlake
   - frseaice
+  - ts
 
 background_error_model:
   default_value: GSIbec
