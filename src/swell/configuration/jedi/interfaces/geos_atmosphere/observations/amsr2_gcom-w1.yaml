@@ -77,10 +77,10 @@ obs filters:
       name: GeoVaLs/water_area_fraction
     minvalue: 0.999
   - variable:
-      name: GeoVaLs/surface_temperature_where_sea
+      name: GeoVaLs/skin_temperature_at_surface_where_sea
     minvalue: 275
   - variable:
-      name: GeoVaLs/surface_wind_speed
+      name: GeoVaLs/wind_speed_at_surface
     maxvalue: 12
   - variable:
       name: MetaData/latitude
