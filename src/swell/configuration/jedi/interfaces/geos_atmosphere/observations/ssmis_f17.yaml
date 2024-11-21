@@ -26,15 +26,16 @@
     variational bc:
       predictors:
       - name: constant
-      - name: cloudWaterContent
-        sensor: SSMIS
-        ch19h: 12
-        ch19v: 13
-        ch22v: 14
-        ch37h: 15
-        ch37v: 16
-        ch91v: 17
-        ch91h: 18
+# Todling: the following does not work (produced negative Jo)
+#     - name: cloudWaterContent
+#       sensor: SSMIS
+#       ch19h: 12
+#       ch19v: 13
+#       ch22v: 14
+#       ch37h: 15
+#       ch37v: 16
+#       ch91v: 17
+#       ch91h: 18
       - name: lapseRate
         order: 2
         tlapse: &ssmis_f17_tlapse '{{cycle_dir}}/ssmis_f17.{{background_time}}.tlapse.txt'
