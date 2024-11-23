@@ -59,6 +59,8 @@
 
             GetEnsemble-{{model_component}} => sync_point
                 
+            ThinObs=> sync_point
+
             {% if skip_ensemble_hofx %}
                sync_point => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
@@ -143,6 +145,9 @@
 
     [[GetEnsemble-{{model_component}}]]
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
+
+    [[ThinObs]]
+        script = "swell task RunJediObsfiltersExecutable $config -d $datetime"
 
     [[RunJediEnsembleMeanVariance-{{model_component}}]]
         script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
