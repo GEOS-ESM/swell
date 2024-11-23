@@ -46,7 +46,7 @@ def prepare_scheduling_dict(
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
     task_defaults = {
-        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
+        "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
     }
