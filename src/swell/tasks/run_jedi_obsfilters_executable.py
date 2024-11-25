@@ -59,16 +59,16 @@ class RunJediObsfiltersExecutable(taskBase):
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
 
         # Background
-        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
-        self.jedi_rendering.add_key('local_background_time', local_background_time)
-        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+#        self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
+#        self.jedi_rendering.add_key('local_background_time', local_background_time)
+#        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
 #        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
 
-        # Geometry
-        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
+#        # Geometry
+#        self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
         self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
         self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+#        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
 
         # Observations
         self.jedi_rendering.add_key('background_time', background_time)
@@ -147,6 +147,7 @@ class RunJediObsfiltersExecutable(taskBase):
         # -----------------------------------
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  self.cycle_time_dto(), jedi_forecast_model)
+
 #
 #        # Assemble localizations
 #        # ----------------------
@@ -192,17 +193,15 @@ class RunJediObsfiltersExecutable(taskBase):
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
+        print('model_component_meta', model_component_meta)
+
         # Compute number of processors
         # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
+#??        np = eval(str(model_component_meta['total_processors']))
+        np = 1
 
         # Jedi executable name
         # --------------------
-
-        jedi_ensmeanvariance_executable = model_component_meta['executables']
-        [f'{jedi_ensmeanvariance_application}']
-        jedi_ensmeanvariance_executable_path = os.path.join
-        (self.experiment_path(), 'jedi_bundle', 'build', 'bin', jedi_ensmeanvariance_executable)
         jedi_executable = model_component_meta['executables'][f'{jedi_application}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
