@@ -245,6 +245,7 @@ class JediConfigRendering():
                 self.__template_dict__[f'{new_config_name}_avail_channels'] = avail_channels
                 self.__template_dict__[f'{new_config_name}_active_channels'] = active_channels
 
+        print('config_file =', config_file)
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)
 

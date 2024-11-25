@@ -91,6 +91,7 @@ def prepare_scheduling_dict(
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
+        'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
         'RunGeosExecutable'

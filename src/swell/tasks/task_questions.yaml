@@ -88,6 +88,7 @@ background_time_offset:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -154,6 +155,7 @@ crtm_coeff_dir:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -320,6 +322,7 @@ generate_yaml_and_exit:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   type: boolean
@@ -465,6 +468,7 @@ horizontal_resolution:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   - StageJedi
   - StoreBackground
@@ -502,6 +506,7 @@ jedi_forecast_model:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   type: string-drop-list
 
@@ -735,6 +740,7 @@ observations:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -776,6 +782,7 @@ observing_system_records_path:
   - RunJediFgatExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -923,6 +930,7 @@ total_processors:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -1010,6 +1018,7 @@ vertical_resolution:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   - StageJedi
   type: string-drop-list
@@ -1032,6 +1041,7 @@ window_length:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - StoreBackground
@@ -1060,6 +1070,7 @@ window_offset:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
@@ -1087,6 +1098,7 @@ window_type:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: string-drop-list
