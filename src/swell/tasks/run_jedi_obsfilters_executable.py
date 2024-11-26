@@ -10,6 +10,7 @@
 
 import os
 import yaml
+import shutil
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -148,41 +149,35 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  self.cycle_time_dto(), jedi_forecast_model)
 
-#
-#        # Assemble localizations
-#        # ----------------------
-#        # # Vertical localizations have bug(s) - Commented out for now...
-#        # vertLoc = {'localization method': self.config.vertical_localization_method(),
-#        #            'apply log transformation':
-#        #            self.config.vertical_localization_apply_log_transform(),
-#        #            'vertical lengthscale': self.config.vertical_localization_lengthscale(),
-#        #            'ioda vertical coordinate':
-#        #            self.config.vertical_localization_ioda_vertical_coord(),
-#        #            'ioda vertical coordinate group':
-#        #            self.config.vertical_localization_ioda_vertical_coord_group(),
-#        #            'localization function': self.config.vertical_localization_function()}
-#        # localizations = [horizLoc, vertLoc] if len(vertLoc) != 0 else [horizLoc]
-#
-#        # Include ensemble localizations and halo types with each observation
-#        # -------------------------------------------------------------------
-#
-#        swell_path = get_swell_path()
-#        localization_path = os.path.join(swell_path,
-#                                         f'configuration/jedi/interfaces/geos_atmosphere'
-#                                         f'/observations/localization')
-#        if self.config.local_ensemble_use_linear_observer():
-#            for index, observation in enumerate(observations):
-#                # Get pointer to observer (ref to list)
-#                observer = jedi_config_dict['observations']['observers'][index]
-#                print('ob=', observation)
-#                config_file = os.path.join(localization_path, f'{observation}.yaml')
-#                with open(config_file, 'r') as f:
-#                    loc_list = yaml.safe_load(f)
-#                    horizLoc = loc_list['obs localizations']
-#                localization = [horizLoc]
-#                observer.update({'obs localizations': localization})
-#                observer['obs space'].update(
-#                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+        # Filter Thinning
+        # ----------------------
+        filter_thinning={'filter': 'Thinning','amount': 0.75,
+                         'random seed': 0, 'member': 1,
+                         'action': {'name': 'reduce obs space'}}
+
+        # Include filter_thinning into {observations: obs sapce : obs filters:}
+        # -------------------------------------------------------------------
+
+        for index, observation in enumerate(observations):
+            # Get pointer to observer (ref to list)
+            observer = jedi_config_dict['observations']['observers'][index]
+            observer['obs filters'] = [filter_thinning]
+            obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
+            elements=obsfile.split('/')
+            filename=elements[-1]
+            name, extension = os.path.splitext(filename)
+            new_filename = f"{name}_orig{extension}"
+            new_obsfile='/'.join(elements[:-1])+'/'+new_filename
+#            shutil.copy(obsfile, new_obsfile)
+            os.rename(obsfile, new_obsfile)
+            observer['obs space']['obsdatain']['engine']['obsfile']=new_obsfile
+            print('ob=', observation)
+            print('observer2=', observer)
+            print('obsfile=', obsfile)
+            print (elements)
+            print (filename)
+            print (new_obsfile)
+
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
@@ -209,17 +204,9 @@ class RunJediObsfiltersExecutable(taskBase):
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
-            if ensmean_only | ensmeanvariance_only:
-                self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
-                                 ' with '+str(np)+' processors.')
-                self.logger.info('Running ensmean_only')
-                run_executable(self.logger, self.cycle_dir(), np,
-                               jedi_ensmeanvariance_executable_path,
-                               jedi_config_file, output_log_file)
-            else:
-                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file)
+            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                           jedi_config_file, output_log_file)
         else:
             self.logger.info('YAML generated, now exiting.')
 
