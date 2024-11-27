@@ -244,15 +244,40 @@ def test(test: str) -> None:
 
 
 @swell_driver.command()
+@click.option('-p', '--platform', 'platform', default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing")))
-def t1test(suite: Literal["hofx", "3dvar", "ufo_testing"]) -> None:
+def t1test(
+    suite: Literal["hofx", "3dvar", "ufo_testing"],
+    platform: Optional[str] = "nccs_discover_sles15"
+) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
     Arguments:
         suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
     """
-    run_suite(suite)
+    run_suite(suite, platform, 1)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+@swell_driver.command()
+@click.option('-p', '--platform', 'platform', default="nccs_discover_sles15", help=platform_help)
+@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
+                                            "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
+def t2test(
+    suite: Literal["hofx", "3dvar", "ufo_testing",
+                   "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
+        platform: Optional[str] = "nccs_discover_sles15"
+) -> None:
+    """
+    Run a particular swell suite from the tier 2 tests.
+
+    Arguments:
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+    """
+    run_suite(suite, platform, 2)
 
 
 # --------------------------------------------------------------------------------------------------
