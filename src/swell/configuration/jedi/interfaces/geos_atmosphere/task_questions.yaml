@@ -154,7 +154,7 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: x0048v2
+  default_value: x0048v3
 
 obs_provider:
   default_value: ncdiag

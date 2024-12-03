@@ -47,7 +47,7 @@ models:
     gradient_norm_reduction: 1e-3
     number_of_iterations:
     - 10
-    obs_experiment: x0048v2
+    obs_experiment: x0048v3
     geovals_experiment: x0048v3-geovals
     clean_patterns:
     - '*.txt'
