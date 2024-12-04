@@ -20,7 +20,6 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 
 # --------------------------------------------------------------------------------------------------
 
-
 class RunJediObsfiltersExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
@@ -29,7 +28,8 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'hofx'
+        jedi_application = 'obsfilters'
+
 
         # Parse configuration
         # -------------------
@@ -94,8 +94,7 @@ class RunJediObsfiltersExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
 #        np = eval(str(model_component_meta['total_processors']))
-        np = 1
-
+        np  = 1
         # Run the JEDI executable - or render hofx templates for each ensemble member
         # ---------------------------------------------------------------------------
         if ensemble_members is None:
@@ -112,12 +111,52 @@ class RunJediObsfiltersExecutable(taskBase):
             # Open the JEDI config file and fill initial templates
             # ----------------------------------------------------
             jedi_config_dict = \
-                self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+                self.jedi_rendering.render_oops_file('qc_thinning')
 
             # Perform complete template rendering
             # -----------------------------------
             jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
                                      observations, self.cycle_time_dto(), jedi_forecast_model)
+
+            # Filter Thinning
+            # ----------------------
+            filter_thinning={'filter': 'Thinning','amount': 0.75,
+                             'random seed': 0, 'member': 1,
+                             'action': {'name': 'reduce obs space'}}
+            
+            # Include filter_thinning into {observations: obs sapce : obs filters:}
+            # -------------------------------------------------------------------
+
+            for observer in jedi_config_dict['observations']['observers']:
+                print('observer=', observer)
+                obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
+                elements=obsfile.split('/')
+                filename=elements[-1]
+                name, extension = os.path.splitext(filename)
+                new_filename = f"{name}_orig{extension}"
+                new_obsfile='/'.join(elements[:-1])+'/'+new_filename
+                #            shutil.copy(obsfile, new_obsfile)
+                os.rename(obsfile, new_obsfile)
+                observer['obs space']['obsdatain']['engine']['obsfile']=new_obsfile
+
+                print('observer2=', observer)
+                print('obsfile=', obsfile)
+                print (elements)
+                print (filename)
+                print (new_obsfile)
+
+
+            print('nail 1')
+            exit()
+
+            for index, observation in enumerate(observations):
+                # Get pointer to observer (ref to list)
+                observer = jedi_config_dict['observations']['observers'][index]
+                observer['obs filters'] = [filter_thinning]
+
+
+            
+
 
             # If window type is 4D add time interpolation to each observer
             # ------------------------------------------------------------
@@ -128,8 +167,8 @@ class RunJediObsfiltersExecutable(taskBase):
                     }
 
             # Update config filters to save the GeoVaLs from the model interface.
-            # Add GOMsaver to either obs filters OR obs post filters, if neither
-            # exists then create obs post filters and add GOMsaver
+            # Add GOMsaver to either obs filters OR obs prior filters, if neither
+            # exists then create obs prior filters and add GOMsaver
             # ------------------------------------------------------------------
             if save_geovals:
                 self.append_gomsaver(observations, jedi_config_dict, window_begin)
@@ -142,7 +181,7 @@ class RunJediObsfiltersExecutable(taskBase):
             # Jedi executable name
             # --------------------
             jedi_executable = \
-                model_component_meta['executables'][f'{jedi_application}{window_type}']
+                model_component_meta['executables'][f'{jedi_application}']
             jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
 
@@ -154,11 +193,7 @@ class RunJediObsfiltersExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')
-            print('nail')
 
-            exit()
-
-            
             # If saving the geovals they need to be combined
             # ----------------------------------------------
             if save_geovals:
@@ -180,72 +215,14 @@ class RunJediObsfiltersExecutable(taskBase):
 
                     # Assert that there are np files
                     self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs' +
-                                             f' files does not match number of processors:\n' +
+                                             f' for observtion type {observation}:\n' +
+                                             f' does not match number of processors:\n' +
                                              f' np={np}, len(geovals_files) = {len(geovals_files)}')
 
                     # Write the concatenated dataset to a new file
                     combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs',
                                                  True)
 
-        else:
-            for mem in ensemble_members:
-                # Jedi configuration file
-                # -----------------------
-                jedi_config_file = os.path.join(self.cycle_dir(),
-                                                f'jedi_{jedi_application}_mem{mem}_config.yaml')
-
-                # Output log file
-                # ---------------
-                output_log_file = os.path.join(self.cycle_dir(),
-                                               f'jedi_{jedi_application}_mem{mem}_log.log')
-
-                # Open the JEDI config file and fill initial templates
-                # ----------------------------------------------------
-                jedi_config_dict = \
-                    self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
-
-                # Perform complete template rendering
-                # -----------------------------------
-                jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                         observations, self.cycle_time_dto(), jedi_forecast_model)
-
-                # Continue with the yaml edits below some of which need to be
-                # done for each observation and ensemble member
-
-                # If window type is 4D add time interpolation to each observer
-                # ------------------------------------------------------------
-                if window_type == '4D':
-                    for observer in jedi_config_dict['observations']['observers']:
-                        observer['get values'] = {
-                            'time interpolation': 'linear'
-                        }
-
-                # For each observation, add the ensemble member to the output
-                # filename to create seperate files for each ensemble member
-                # ------------------------------------------------------------
-                for index, observation in enumerate(observations):
-
-                    # Get pointer to observer
-                    observer = jedi_config_dict['observations']['observers'][index]
-
-                    # Get the output file string
-                    outfile = observer['obs space']['obsdataout']['engine']['obsfile']
-
-                    # Replace '.nc4' with '_mem.nc4' and update the 'obsfile' string in the observer
-                    observer['obs space']['obsdataout']['engine']['obsfile'] = \
-                        outfile.replace('.nc4', f'_{mem:02}.nc4')
-
-                # Update config filters to save the GeoVaLs from the model interface.
-                # Add GOMsaver to either obs filters OR obs post filters, if neither
-                # exists then create obs post filters and add GOMsaver
-                # ------------------------------------------------------------------
-                if save_geovals:
-                    self.append_gomsaver(observations, jedi_config_dict, window_begin, mem=mem)
-
-                # Write the expanded dictionary to YAML file
-                # ------------------------------------------
-                with open(jedi_config_file, 'w') as jedi_config_file_open:
-                    yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -279,12 +256,12 @@ class RunJediObsfiltersExecutable(taskBase):
             # Check if observer has obs filters and if so add them to the jedi_config_dict
             if 'obs filters' in observer:
                 filter_dict = 'obs filters'
-            elif 'obs post filters' in observer:
-                filter_dict = 'obs post filters'
+            elif 'obs prior filters' in observer:
+                filter_dict = 'obs prior filters'
             else:
-                # Create some post filters
-                observer['obs post filters'] = []
-                filter_dict = 'obs post filters'
+                # Create some prior filters
+                observer['obs prior filters'] = []
+                filter_dict = 'obs prior filters'
 
             # Append the GOMsaver dictionary to the observer filters
             observer[filter_dict].append(gom_saver_dict)
