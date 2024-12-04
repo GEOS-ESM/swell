@@ -114,7 +114,7 @@ obs post filters:
         variable: windEastward
         inflation factor: 4.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 #
 - filter: BlackList
   filter variables:
@@ -131,7 +131,7 @@ obs post filters:
         variable: windNorthward
         inflation factor: 4.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 #
 - filter: Bounds Check
   filter variables:

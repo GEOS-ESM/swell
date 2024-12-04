@@ -99,7 +99,7 @@
       channels: *ssmis_f17_channels
     where:
     - variable:
-        name: GeoVaLs/surface_geopotential_height
+        name: GeoVaLs/geopotential_height_at_surface
       minvalue: 2000.0
       min_exclusive: true
     - variable:
