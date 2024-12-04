@@ -11,7 +11,7 @@ datasets:
     type: SocaRestart
     soca_filenames: {{ice_increment_file_path}}
     geometry_file: {{cycle_dir}}/INPUT/soca_gridspec.nc
-    variables: [aicen]
+    variables: [aice_h]
     coordinate variables: [lon, lat]
 
 graphics:
@@ -109,7 +109,7 @@ graphics:
           vmax: 1
 
   - batch figure:
-      variables: [aicen]
+      variables: [aice_h]
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -130,14 +130,14 @@ graphics:
           latitude:
             variable: seaice_increment::SOCAgrid::lat
           data:
-            variable: seaice_increment::SOCAVars::aicen
+            variable: seaice_increment::SOCAVars::aice_h
           label: Sea ice concentration increment
           colorbar: true
           cmap: 'bwr'
           vmin: -1
           vmax: 1
   - batch figure:
-      variables: [aicen]
+      variables: [aice_h]
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -158,7 +158,7 @@ graphics:
           latitude:
             variable: seaice_increment::SOCAgrid::lat
           data:
-            variable: seaice_increment::SOCAVars::aicen
+            variable: seaice_increment::SOCAVars::aice_h
           label: Sea-ice concentration increment
           colorbar: true
           cmap: 'bwr'
