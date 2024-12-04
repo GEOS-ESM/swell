@@ -127,8 +127,8 @@ class RunJediHofxExecutable(taskBase):
                     }
 
             # Update config filters to save the GeoVaLs from the model interface.
-            # Add GOMsaver to either obs filters OR obs post filters, if neither
-            # exists then create obs post filters and add GOMsaver
+            # Add GOMsaver to either obs filters OR obs prior filters, if neither
+            # exists then create obs prior filters and add GOMsaver
             # ------------------------------------------------------------------
             if save_geovals:
                 self.append_gomsaver(observations, jedi_config_dict, window_begin)
@@ -175,7 +175,8 @@ class RunJediHofxExecutable(taskBase):
 
                     # Assert that there are np files
                     self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs' +
-                                             f' files does not match number of processors:\n' +
+                                             f' for observtion type {observation}:\n' +
+                                             f' does not match number of processors:\n' +
                                              f' np={np}, len(geovals_files) = {len(geovals_files)}')
 
                     # Write the concatenated dataset to a new file
@@ -231,8 +232,8 @@ class RunJediHofxExecutable(taskBase):
                         outfile.replace('.nc4', f'_{mem:02}.nc4')
 
                 # Update config filters to save the GeoVaLs from the model interface.
-                # Add GOMsaver to either obs filters OR obs post filters, if neither
-                # exists then create obs post filters and add GOMsaver
+                # Add GOMsaver to either obs filters OR obs prior filters, if neither
+                # exists then create obs prior filters and add GOMsaver
                 # ------------------------------------------------------------------
                 if save_geovals:
                     self.append_gomsaver(observations, jedi_config_dict, window_begin, mem=mem)
@@ -274,12 +275,12 @@ class RunJediHofxExecutable(taskBase):
             # Check if observer has obs filters and if so add them to the jedi_config_dict
             if 'obs filters' in observer:
                 filter_dict = 'obs filters'
-            elif 'obs post filters' in observer:
-                filter_dict = 'obs post filters'
+            elif 'obs prior filters' in observer:
+                filter_dict = 'obs prior filters'
             else:
-                # Create some post filters
-                observer['obs post filters'] = []
-                filter_dict = 'obs post filters'
+                # Create some prior filters
+                observer['obs prior filters'] = []
+                filter_dict = 'obs prior filters'
 
             # Append the GOMsaver dictionary to the observer filters
             observer[filter_dict].append(gom_saver_dict)
