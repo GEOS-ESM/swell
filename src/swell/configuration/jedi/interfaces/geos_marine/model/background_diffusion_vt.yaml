@@ -5,4 +5,4 @@ ocn_filename: 'MOM6.res.{{local_background_time}}.nc'
 {% if 'cice6' in marine_models %}
 ice_filename: 'cice.res.{{local_background_time}}.nc'
 {% endif %}
-state variables: [tocn]
+state variables: [sea_water_potential_temperature]
