@@ -3,7 +3,7 @@
     Absorbers: [H2O,O3,CO2]
     linear obs operator:
       Absorbers: [H2O,O3]
-      Surfaces: [Water_Temperature]
+      Surfaces: [Water_Temperature,Land_Temperature,Ice_Temperature,Snow_Temperature]
     obs options:
       Sensor_ID: &Sensor_ID ssmis_f17
       EndianType: little_endian
