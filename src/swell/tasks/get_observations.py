@@ -144,7 +144,7 @@ class GetObservations(taskBase):
             # observation providers for a given observation type.
             # We have to ensure obs_providers is a list for this loop to work
             for obs_provider in (obs_providers if isinstance(obs_providers, list)
-                                                    else [obs_providers]):
+                                 else [obs_providers]):
                 # Fetch observation files
                 # -----------------------
                 combine_input_files = []
