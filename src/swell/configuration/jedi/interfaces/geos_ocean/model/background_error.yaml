@@ -1,4 +1,4 @@
- dcovariance model: SABER
+covariance model: SABER
 saber central block:
   saber block name: diffusion
   active variables:
