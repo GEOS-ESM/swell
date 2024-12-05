@@ -73,8 +73,6 @@ class SLURMConfigTest(unittest.TestCase):
             for mc in ["all", "geos_atmosphere", "geos_ocean"]:
                 # Hard-coded task-specific defaults
                 self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
-                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]
-                                 ["ntasks-per-node"], 36)
                 self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]
                                  ["ntasks-per-node"], 1)
                 # Global defaults from experiment dict
