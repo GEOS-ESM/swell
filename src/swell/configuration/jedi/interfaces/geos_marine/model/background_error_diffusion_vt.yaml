@@ -14,6 +14,6 @@
             date: '{{local_background_time_iso}}'
             basename: './'
             ocn_filename: 'calculated_scales.nc'
-          model variable: tocn
+          model variable: sea_water_potential_temperature
         write:
           filepath: 'background_error_model/vt.{{local_background_time}}'

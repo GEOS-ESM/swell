@@ -249,9 +249,9 @@ obs post filters:
   - variable:
       name: GeoVaLs/water_area_fraction
     maxvalue: 0.99
-  test variables:
-  - name: ObsDiag/brightness_temperature_jacobian_surface_temperature
-    channels: *cris-fsr_npp_channels
+# test variables:
+# - name: ObsDiag/brightness_temperature_jacobian_surface_temperature
+#   channels: *cris-fsr_npp_channels
   maxvalue: 0.2
 #  NSST Retrieval Check
 - filter: Bounds Check

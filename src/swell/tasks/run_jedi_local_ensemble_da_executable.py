@@ -11,9 +11,9 @@
 import os
 import yaml
 
+from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -153,10 +153,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Assemble localizations
         # ----------------------
-        horizLoc = {'localization method': self.config.horizontal_localization_method(),
-                    'lengthscale': self.config.horizontal_localization_lengthscale(),
-                    'max nobs': self.config.horizontal_localization_max_nobs()}
-        localizations = [horizLoc]
         # # Vertical localizations have bug(s) - Commented out for now...
         # vertLoc = {'localization method': self.config.vertical_localization_method(),
         #            'apply log transformation':
@@ -171,9 +167,24 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Include ensemble localizations and halo types with each observation
         # -------------------------------------------------------------------
-        for observer in jedi_config_dict['observations']['observers']:
-            observer.update({'obs localizations': localizations})
-            observer['obs space'].update({'distribution': {'name': 'Halo', 'halo size': 5000e3}})
+
+        swell_path = get_swell_path()
+        localization_path = os.path.join(swell_path,
+                                         f'configuration/jedi/interfaces/geos_atmosphere'
+                                         f'/observations/localization')
+        if self.config.local_ensemble_use_linear_observer():
+            for index, observation in enumerate(observations):
+                # Get pointer to observer (ref to list)
+                observer = jedi_config_dict['observations']['observers'][index]
+                print('ob=', observation)
+                config_file = os.path.join(localization_path, f'{observation}.yaml')
+                with open(config_file, 'r') as f:
+                    loc_list = yaml.safe_load(f)
+                    horizLoc = loc_list['obs localizations']
+                localization = [horizLoc]
+                observer.update({'obs localizations': localization})
+                observer['obs space'].update(
+                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

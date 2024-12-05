@@ -39,7 +39,7 @@ obs operator:
     - name: stationPressure
     da_psfc_scheme: GSI
     geovar_geomz: geopotential_height
-    geovar_sfc_geomz: surface_geometric_height
+    geovar_sfc_geomz: height_above_mean_sea_level_at_surface
     station_altitude: height
 
 linear obs operator:
@@ -127,7 +127,7 @@ obs post filters:
       name: ObsFunction/ObsErrorFactorSfcPressure
       options:
         geovar_geomz: geopotential_height
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
         station_altitude: height
 
 # Note: Obs Erorr should between [min ~ max] for gross error checks.
@@ -259,7 +259,7 @@ obs post filters:
         variable: specificHumidity
         inflation factor: 8.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   defer to post: true
 # assign TempObsErrorData/stationPressure <--- ObsErrorData
 - filter: Variable Assignment
@@ -366,7 +366,7 @@ obs post filters:
       options:
         variable: airTemperature
         inflation factor: 8.0
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   defer to post: true
 # assign TempObsErrorData/airTemperature  <--- ObsErrorData before changing its Min and Max
 - filter: Variable Assignment
@@ -548,7 +548,7 @@ obs post filters:
       options:
         variable: virtualTemperature
         inflation factor: 8.0
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   defer to post: true
 
 # assign TempObsErrorData/virtualTemperature  <--- ObsErrorData before changing its Min and Max
@@ -731,7 +731,7 @@ obs post filters:
         variable: windEastward
         inflation factor: 4.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 
 - filter: Perform Action
   filter variables:
@@ -748,7 +748,7 @@ obs post filters:
         variable: windNorthward
         inflation factor: 4.0
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 
 # Gross Check
 - filter: Background Check
