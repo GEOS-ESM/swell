@@ -4,8 +4,5 @@ time window:
   bound to include: begin
 
 observations:
-  get values:
-    TASKFILLgetvalues
-
   observers:
     SPECIALobservations

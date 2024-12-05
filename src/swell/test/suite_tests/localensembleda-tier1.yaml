@@ -21,8 +21,8 @@ models:
     path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4    # c90
     observations:
     - mls55_aura
-    - ompsnm_npp
-#     - iasi_metop-b
+#    - ompsnm_npp
+#    - iasi_metop-b
 #    - sondes
 #    - amsua_aqua
 #    - amsua_metop-b

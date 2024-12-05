@@ -10,6 +10,7 @@
 
 import glob
 import os
+from shutil import copy
 import yaml
 from typing import Optional
 
@@ -110,8 +111,7 @@ class RunJediObsfiltersExecutable(taskBase):
 
             # Open the JEDI config file and fill initial templates
             # ----------------------------------------------------
-            jedi_config_dict = \
-                self.jedi_rendering.render_oops_file('qc_thinning')
+            jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning')
 
             # Perform complete template rendering
             # -----------------------------------
@@ -123,39 +123,35 @@ class RunJediObsfiltersExecutable(taskBase):
             filter_thinning={'filter': 'Thinning','amount': 0.75,
                              'random seed': 0, 'member': 1,
                              'action': {'name': 'reduce obs space'}}
-            
+
             # Include filter_thinning into {observations: obs sapce : obs filters:}
             # -------------------------------------------------------------------
 
             for observer in jedi_config_dict['observations']['observers']:
                 print('observer=', observer)
+                obs_name=observer['obs space']['name']
                 obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
+                sim_vars=observer['obs space']['simulated variables']
+
                 elements=obsfile.split('/')
                 filename=elements[-1]
                 name, extension = os.path.splitext(filename)
                 new_filename = f"{name}_orig{extension}"
-                new_obsfile='/'.join(elements[:-1])+'/'+new_filename
-                #            shutil.copy(obsfile, new_obsfile)
-                os.rename(obsfile, new_obsfile)
-                observer['obs space']['obsdatain']['engine']['obsfile']=new_obsfile
+                new_obsfile_in='/'.join(elements[:-1])+'/'+new_filename
+                copy(obsfile, new_obsfile_in)
+
+                obs_space={'name': obs_name,
+                           'obsdatain':
+                           {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
+                           'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
+                           'simulated variables': sim_vars}
+
+                observer.clear()
+                new_observer={'obs space': obs_space, 'obs filters': filter_thinning}
+                observer.update(new_observer)
 
                 print('observer2=', observer)
                 print('obsfile=', obsfile)
-                print (elements)
-                print (filename)
-                print (new_obsfile)
-
-
-            print('nail 1')
-            exit()
-
-            for index, observation in enumerate(observations):
-                # Get pointer to observer (ref to list)
-                observer = jedi_config_dict['observations']['observers'][index]
-                observer['obs filters'] = [filter_thinning]
-
-
-            
 
 
             # If window type is 4D add time interpolation to each observer
