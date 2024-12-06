@@ -5,15 +5,15 @@ analysis_forecast_window_offset:
 
 analysis_variables:
   default_value:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
   options:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
 
 background_error_model:
   default_value: explicit_diffusion

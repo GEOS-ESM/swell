@@ -12,11 +12,14 @@ analysis_variables:
   - ps
   - qi
   - ql
+  - qr
+  - qs
   - o3ppmv
   - phis
   - frocean
   - frlake
   - frseaice
+  - ts
   options:
   - ua
   - va
@@ -25,11 +28,14 @@ analysis_variables:
   - ps
   - qi
   - ql
+  - qr
+  - qs
   - o3ppmv
   - phis
   - frocean
   - frlake
   - frseaice
+  - ts
 
 background_error_model:
   default_value: GSIbec
@@ -76,7 +82,7 @@ ensemble_num_members:
   options: None
 
 geovals_experiment:
-  default_value: x0048-geovals
+  default_value: x0048v3-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -148,7 +154,7 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: x0048
+  default_value: x0048v3
 
 obs_provider:
   default_value: ncdiag
