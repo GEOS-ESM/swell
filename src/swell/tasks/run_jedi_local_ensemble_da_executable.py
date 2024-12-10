@@ -186,6 +186,14 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 observer['obs space'].update(
                     {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
+        # bypass the writing of HofXs
+        # -------------------------------------------------------------------
+
+        bypass_HofXs = True
+        if bypass_HofXs:
+            for observer in jedi_config_dict['observations']['observers']:
+                del observer['obs space']['obsdataout']
+
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
