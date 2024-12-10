@@ -129,10 +129,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
-        if not self.config.local_ensemble_save_posterior_mean() ^ \
+        if self.config.local_ensemble_save_posterior_mean() or \
            self.config.local_ensemble_save_posterior_ensemble():
-            raise ValueError("Only one of 'local_ensemble_save_posterior_mean' and\
-            'local_ensemble_save_posterior_ensemble' may be true at once!")
+            raise ValueError("'local_ensemble_save_posterior_mean' and\
+            'local_ensemble_save_posterior_ensemble' cannot be both true!")
 
         # Jedi configuration file
         # -----------------------
