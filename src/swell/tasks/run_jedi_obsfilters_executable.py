@@ -7,7 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
 import glob
 import os
 from shutil import copy
@@ -17,7 +16,6 @@ from typing import Optional
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -30,7 +28,6 @@ class RunJediObsfiltersExecutable(taskBase):
         # Jedi application name
         # ---------------------
         jedi_application = 'obsfilters'
-
 
         # Parse configuration
         # -------------------
@@ -126,33 +123,27 @@ class RunJediObsfiltersExecutable(taskBase):
 
             # Include filter_thinning into {observations: obs sapce : obs filters:}
             # -------------------------------------------------------------------
-
+            new_dict={'observations': []}
             for observer in jedi_config_dict['observations']['observers']:
                 print('observer=', observer)
                 obs_name=observer['obs space']['name']
                 obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
                 sim_vars=observer['obs space']['simulated variables']
-
                 elements=obsfile.split('/')
                 filename=elements[-1]
                 name, extension = os.path.splitext(filename)
                 new_filename = f"{name}_orig{extension}"
                 new_obsfile_in='/'.join(elements[:-1])+'/'+new_filename
                 copy(obsfile, new_obsfile_in)
-
                 obs_space={'name': obs_name,
                            'obsdatain':
                            {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
                            'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
                            'simulated variables': sim_vars}
-
-                observer.clear()
                 new_observer={'obs space': obs_space, 'obs filters': filter_thinning}
-                observer.update(new_observer)
-
-                print('observer2=', observer)
-                print('obsfile=', obsfile)
-
+                new_dict['observations'].append(new_observer)
+            del jedi_config_dict['observations']
+            jedi_config_dict.update(new_dict)
 
             # If window type is 4D add time interpolation to each observer
             # ------------------------------------------------------------
