@@ -147,7 +147,7 @@
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
     [[ThinObs]]
-        script = "swell task RunJediObsfiltersExecutable $config -d $datetime"
+        script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
 
     [[RunJediEnsembleMeanVariance-{{model_component}}]]
         script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"

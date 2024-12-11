@@ -117,11 +117,11 @@ class RunJediObsfiltersExecutable(taskBase):
 
             # Filter Thinning
             # ----------------------
-            filter_thinning={'filter': 'Thinning','amount': 0.75,
-                             'random seed': 0, 'member': 1,
-                             'action': {'name': 'reduce obs space'}}
+            filter_thinning = [ { 'filter': 'Thinning', 'amount': 0.75,
+                                  'random seed': 0, 'member': 1,
+                                  'action': {'name': 'reduce obs space' } } ]
 
-            # Include filter_thinning into {observations: obs sapce : obs filters:}
+            # Include filter_thinning into {observations: obs sapce: obs filters:}
             # -------------------------------------------------------------------
             new_dict={'observations': []}
             for observer in jedi_config_dict['observations']['observers']:
@@ -145,20 +145,6 @@ class RunJediObsfiltersExecutable(taskBase):
             del jedi_config_dict['observations']
             jedi_config_dict.update(new_dict)
 
-            # If window type is 4D add time interpolation to each observer
-            # ------------------------------------------------------------
-            if window_type == '4D':
-                for observer in jedi_config_dict['observations']['observers']:
-                    observer['get values'] = {
-                        'time interpolation': 'linear'
-                    }
-
-            # Update config filters to save the GeoVaLs from the model interface.
-            # Add GOMsaver to either obs filters OR obs prior filters, if neither
-            # exists then create obs prior filters and add GOMsaver
-            # ------------------------------------------------------------------
-            if save_geovals:
-                self.append_gomsaver(observations, jedi_config_dict, window_begin)
 
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
@@ -180,76 +166,4 @@ class RunJediObsfiltersExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('YAML generated, now exiting.')
-
-            # If saving the geovals they need to be combined
-            # ----------------------------------------------
-            if save_geovals:
-
-                # Combine the GeoVaLs
-                # -------------------
-                for observation in observations:
-
-                    self.logger.info(f'Combining GeoVaLs files for {observation}')
-
-                    # List of GeoVaLs input files
-                    input_files = f'{observation}-geovals.{window_begin}_*.nc4'
-                    output_file = \
-                        f'{self.experiment_id()}.{observation}-geovals.{window_begin}.nc4'
-                    output_file = os.path.join(self.cycle_dir(), output_file)
-
-                    # Build list of input files
-                    geovals_files = sorted(glob.glob(os.path.join(self.cycle_dir(), input_files)))
-
-                    # Assert that there are np files
-                    self.logger.assert_abort(len(geovals_files) == np, f'Number of GeoVaLs' +
-                                             f' for observtion type {observation}:\n' +
-                                             f' does not match number of processors:\n' +
-                                             f' np={np}, len(geovals_files) = {len(geovals_files)}')
-
-                    # Write the concatenated dataset to a new file
-                    combine_files_without_groups(self.logger, geovals_files, output_file, 'nlocs',
-                                                 True)
-
-
-    # ----------------------------------------------------------------------------------------------
-
-    def append_gomsaver(
-        self,
-        observations: list,
-        jedi_config_dict: dict,
-        window_begin: str,
-        mem: Optional[str] = None
-    ) -> None:
-
-        # We may need to save the GeoVaLs for ensemble members. This will
-        # prevent code repetition.
-        # ----------------------------------------------------------------------
-
-        # Add mem to the filename if it is not None
-        mem_str = f'_mem{mem}' if mem is not None else ''
-
-        for index, observation in enumerate(observations):
-
-            # Define the GeoVaLs saver dictionary
-            gom_saver_dict = {
-                'filter': 'GOMsaver',
-                'filename': os.path.join(self.cycle_dir(),
-                                         f'{observation}-geovals.{window_begin}{mem_str}.nc4')
-            }
-
-            # Get pointer to observer
-            observer = jedi_config_dict['observations']['observers'][index]
-
-            # Check if observer has obs filters and if so add them to the jedi_config_dict
-            if 'obs filters' in observer:
-                filter_dict = 'obs filters'
-            elif 'obs prior filters' in observer:
-                filter_dict = 'obs prior filters'
-            else:
-                # Create some prior filters
-                observer['obs prior filters'] = []
-                filter_dict = 'obs prior filters'
-
-            # Append the GOMsaver dictionary to the observer filters
-            observer[filter_dict].append(gom_saver_dict)
 # --------------------------------------------------------------------------------------------------
