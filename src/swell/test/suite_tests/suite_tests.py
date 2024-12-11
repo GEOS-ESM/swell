@@ -16,7 +16,7 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
     suite_overrides_file = (resources.files("swell") /
                             "test" /
                             "suite_tests" /
-                            "build_jedi.yaml")
+                            "build_jedi-tier1.yaml")
 
     with suite_overrides_file.open("r") as f:
         suite_overrides = yaml.safe_load(f)
@@ -118,9 +118,9 @@ def run_suite(suite: str, platform: str, test_tier: int = 1):
     build_jedi_for_test = False
     if test_tier == 2:
         if ("jedi_build_method" in test_config
+           and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
-           and 'existing_jedi_build_directory' in test_config
-           and test_config["jedi_build_method"] == "use_existing"):
+           and 'existing_jedi_build_directory' in test_config):
             build_jedi_for_test = False
         else:
             build_jedi_for_test = True
