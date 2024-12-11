@@ -45,6 +45,7 @@ One recommended override, per the example below, is to request a local copy of `
     ```
 This works because, unless otherwise specified, `sbatch` automatically inherits all current environment variables, which you have already configured in step 2 above.
 If you prefer, you can create a dedicated `sbatch` script to wrap the `swell t1test ...` command, to be extra sure that the environment is exactly as it should be.
+By default, tier tests will be run on the `nccs_discover_sles15` platform, alternative platforms can be specified with the `-p` flag, similar to other swell commands.
 
 4. Repeat (2) for other tests you would like to run. Currently, we recommend running the following tests:
     - `3dvar`
@@ -68,7 +69,7 @@ Like tier 1 tests, setting the root directory controls where test outputs will b
     ```
 (If unset, the test function will create a temporary directory that is deleted by the operating system when the `sbatch` job concludes. 
 You can still run the tests without this, but you won't be able to study the outputs.) Other overrides will be passed to the test.
-By default, tier 2 tests will build JEDI at the beginning of the job, unless a path to an existing JEDI build is specified in the user's overrides, using the lines
+By default, tier 2 tests will build JEDI at the beginning of the job, unless a path to an existing JEDI build is specified in the user's `~/.swell/swell-test.yaml`, using the lines
     ```yaml
     jedi_build_method: use_existing
     existing_jedi_build_directory: /path/to/jedi/build/directory
