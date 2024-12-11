@@ -88,7 +88,6 @@ def jedi_dictionary_iterator(
                     observations = []
                     obs_list = obs.copy()
                     for ob in obs_list:
-                        print("ob=", ob)
                         obs_dict = jedi_rendering.render_interface_observations(ob)
                         use_observation = check_obs(jedi_rendering.observing_system_records_path,
                                                     ob, obs_dict, cycle_time)
