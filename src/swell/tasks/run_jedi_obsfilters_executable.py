@@ -19,6 +19,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 
 # --------------------------------------------------------------------------------------------------
 
+
 class RunJediObsfiltersExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
@@ -91,8 +92,8 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
-#        np = eval(str(model_component_meta['total_processors']))
-        np  = 1
+        # np = eval(str(model_component_meta['total_processors']))
+        np = 1
         # Run the JEDI executable - or render hofx templates for each ensemble member
         # ---------------------------------------------------------------------------
         if ensemble_members is None:
@@ -144,7 +145,6 @@ class RunJediObsfiltersExecutable(taskBase):
                 new_dict['observations'].append(new_observer)
             del jedi_config_dict['observations']
             jedi_config_dict.update(new_dict)
-
 
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
