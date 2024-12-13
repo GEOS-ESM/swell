@@ -93,7 +93,7 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         obs_experiment = self.config.obs_experiment()
-        obs_provider = self.config.obs_provider()
+        obs_providers = self.config.obs_provider()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
@@ -140,34 +140,55 @@ class GetObservations(taskBase):
             # ----------------------------------------
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Fetch observation files
-            # -----------------------
-            combine_input_files = []
-            # Here, we are fetching
-            for obs_num, obs_time in enumerate(obs_list_dto):
-                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
-                combine_input_files.append(target_file)
-                fetch(date=obs_window_begin,
-                      target_file=target_file,
-                      provider=obs_provider,
-                      obs_type=observation,
-                      time_window=obs_window_length,
-                      type='ob',
-                      experiment=obs_experiment)
-            target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-            self.logger.info(f'Processing observation file {target_file}')
+            # Until R2D2v3 is fully implemented we will assume there could be multiple
+            # observation providers for a given observation type.
+            # We have to ensure obs_providers is a list for this loop to work
+            for obs_provider in (obs_providers if isinstance(obs_providers, list)
+                                 else [obs_providers]):
+                # Fetch observation files
+                # -----------------------
+                combine_input_files = []
+                # Here, we are fetching
+                for obs_num, obs_time in enumerate(obs_list_dto):
+                    obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+                    target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                    combine_input_files.append(target_file)
+                    fetch(date=obs_window_begin,
+                          target_file=target_file,
+                          provider=obs_provider,
+                          ignore_missing=True,
+                          obs_type=observation,
+                          time_window=obs_window_length,
+                          type='ob',
+                          experiment=obs_experiment)
 
-            # If obs_list_dto has one member, then just rename the file
-            # ---------------------------------------------------------
-            if len(obs_list_dto) == 1:
-                os.rename(combine_input_files[0], target_file)
-            else:
-                self.read_and_combine(combine_input_files, target_file)
+                # Check how many of the combine_input_files exist in the cycle directory.
+                # If all of them are missing proceed without creating an observation input
+                # file since bias correction files still need to be propagated to the next cycle
+                # for cycling VarBC.
+                # -----------------------------------------------------------------------
+                if not any([os.path.exists(f) for f in combine_input_files]):
+                    self.logger.info(f'None of the {observation} files exist for this cycle!')
+                    # continue
+                else:
+                    jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                    self.logger.info(f'Processing observation file {jedi_obs_file}')
 
-            # Change permission
-            os.chmod(target_file, 0o644)
+                    # If obs_list_dto has one member, then just rename the file
+                    # ---------------------------------------------------------
+                    if len(obs_list_dto) == 1:
+                        os.rename(combine_input_files[0], jedi_obs_file)
+                    else:
+                        self.read_and_combine(combine_input_files, jedi_obs_file)
 
+                    # Change permission
+                    os.chmod(jedi_obs_file, 0o644)
+
+                    # Observations were found for this provider, so we can break
+                    # the provider loop
+                    break
+
+            # TODO: This part is not tested yet for cycling VarBC
             # Aircraft bias correction files
             # ------------------------------
             if observation == 'aircraft':
@@ -397,6 +418,11 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
+
+        # Reduce the list of input files to only those that exist
+        # -------------------------------------------------------------
+        existing_files = [f for f in input_filenames if os.path.exists(f)]
+        input_filenames = existing_files
 
         # Loop through the input files and get the total dimension size for each dimension
         # Location requires special handling to get the cumulative sum of the dimension size
