@@ -92,8 +92,10 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
-        # np = eval(str(model_component_meta['total_processors']))
+        np = eval(str(model_component_meta['total_processors']))
+        print('np gcm', np)
         np = 1
+
         # Run the JEDI executable - or render hofx templates for each ensemble member
         # ---------------------------------------------------------------------------
         if ensemble_members is None:
@@ -126,7 +128,6 @@ class RunJediObsfiltersExecutable(taskBase):
             # -------------------------------------------------------------------
             new_dict={'observations': []}
             for observer in jedi_config_dict['observations']['observers']:
-                print('observer=', observer)
                 obs_name=observer['obs space']['name']
                 obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
                 sim_vars=observer['obs space']['simulated variables']
@@ -141,7 +142,9 @@ class RunJediObsfiltersExecutable(taskBase):
                            {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
                            'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
                            'simulated variables': sim_vars}
-                new_observer={'obs space': obs_space, 'obs filters': filter_thinning}
+                new_observer={'obs space': obs_space,
+                              'obs filters': filter_thinning,
+                              'expectVariablesNotToExist': ['VariablesNotToExist']}
                 new_dict['observations'].append(new_observer)
             del jedi_config_dict['observations']
             jedi_config_dict.update(new_dict)
@@ -157,6 +160,9 @@ class RunJediObsfiltersExecutable(taskBase):
                 model_component_meta['executables'][f'{jedi_application}']
             jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
+
+            print('np, jedi_executable_path, jedi_config_file, output_log_file')
+            print(np, jedi_executable_path, jedi_config_file, output_log_file)
 
             # Run the JEDI executable
             # -----------------------
