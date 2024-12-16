@@ -12,6 +12,7 @@ import os
 from shutil import copy
 import yaml
 from typing import Optional
+import subprocess
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
@@ -92,8 +93,8 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
-        print('np gcm', np)
+        #np = eval(str(model_component_meta['total_processors']))
+        #print('np gcm', np)
         np = 1
 
         # Run the JEDI executable - or render hofx templates for each ensemble member
@@ -168,8 +169,12 @@ class RunJediObsfiltersExecutable(taskBase):
             # -----------------------
             if not generate_yaml_and_exit:
                 self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file)
+                command = ["mpirun", "-np", "1", jedi_executable_path, jedi_config_file, output_log_file]
+                result = subprocess.run(command, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+#                               jedi_config_file, output_log_file)
+##                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, None)
+
             else:
                 self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------
