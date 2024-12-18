@@ -14,7 +14,6 @@
 
 import os.path
 import subprocess
-from git import Repo
 from setuptools import setup
 from setuptools.command.install import install
 from setuptools.command.develop import develop
@@ -63,8 +62,8 @@ def install_gmao_perl_lib():
     perllib_dir = f'{root_dir}/src/GMAO_perllib'
 
     if not os.path.isdir(perllib_dir):
-        Repo.clone_from('https://github.com/GEOS-ESM/GMAO_perllib.git',
-                        perllib_dir, depth=1, branch='g1.0.1')
+        subprocess.run(f'git clone https://github.com/GEOS-ESM/GMAO_perllib.git' +
+                       ' {perllib_dir} --depth=1 --branch=g1.0.1', shell=True)
 
         # ignore (seemingly) unused call to esma_set_this()
         with open(f'{perllib_dir}/CMakeLists.txt', 'r') as f:
