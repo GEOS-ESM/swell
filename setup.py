@@ -13,9 +13,78 @@
 # --------------------------------------------------------------------------------------------------
 
 import os.path
-import setuptools
+import subprocess
+from git import Repo
+from setuptools import setup
+from setuptools.command.install import install
+from setuptools.command.develop import develop
+from setuptools.command.egg_info import egg_info
 
-setuptools.setup(
+# --------------------------------------------------------------------------------------------------
+
+
+class InstallCommand(install):
+    def run(self):
+        install.run(self)
+
+        install_gmao_perl_lib()
+
+# --------------------------------------------------------------------------------------------------
+
+
+class DevelopCommand(develop):
+    def run(self):
+        develop.run(self)
+
+        install_gmao_perl_lib()
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+class EggInfoCommand(egg_info):
+    def run(self):
+        egg_info.run(self)
+
+        install_gmao_perl_lib()
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def install_gmao_perl_lib():
+    # Clone (if not already present) and install GMAO_perllib
+    # at the g1.0.1 tag
+    # Source files are put under src/GMAO_perllib
+    # Binaries are put under ~/.swell/bin, make sure this is in your path
+
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+
+    perllib_dir = f'{root_dir}/src/GMAO_perllib'
+
+    if not os.path.isdir(perllib_dir):
+        Repo.clone_from('https://github.com/GEOS-ESM/GMAO_perllib.git',
+                        perllib_dir, depth=1, branch='g1.0.1')
+
+        # ignore (seemingly) unused call to esma_set_this()
+        with open(f'{perllib_dir}/CMakeLists.txt', 'r') as f:
+            lines = f.readlines()
+        first_line = lines[0]
+        if first_line.strip() == 'esma_set_this()':
+            with open(f'{perllib_dir}/CMakeLists.txt', 'w') as f:
+                f.write('#' + first_line)
+                for line in lines[1:]:
+                    f.write(line)
+
+    os.chdir(perllib_dir)
+    subprocess.run(f'cmake -DCMAKE_INSTALL_PREFIX=~/.local {perllib_dir} && make all install',
+                   shell=True)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+setup(
     name='swell',
     author='NASA Global Modeling and Assimilation Office',
     description='Workflow suites, tasks and configuration for coupled data assimilation',
@@ -53,6 +122,11 @@ setuptools.setup(
         'console_scripts': [
             'swell = swell.swell:main'
         ],
+    },
+    cmdclass={
+        'install': InstallCommand,
+        'develop': DevelopCommand,
+        'egg_info': EggInfoCommand,
     },
     )
 

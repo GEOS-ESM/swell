@@ -137,3 +137,5 @@ dmypy.json
 .pyre/
 *.egg-info
 
+# GMAO_perllib files
+src/GMAO_perllib
