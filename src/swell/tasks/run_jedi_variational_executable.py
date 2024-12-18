@@ -124,8 +124,8 @@ class RunJediVariationalExecutable(taskBase):
             # Construct an OrderedDict from a YAML mapping
             return OrderedDict(loader.construct_pairs(node))
 
-        def dict_to_ordereddict(d):
         # Recursive conversion, dictionary to an OrderedDict
+        def dict_to_ordereddict(d):
             if isinstance(d, dict):
                 return OrderedDict((k, dict_to_ordereddict(v)) for k, v in d.items())
             elif isinstance(d, list):
