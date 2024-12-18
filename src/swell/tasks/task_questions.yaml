@@ -710,10 +710,10 @@ obs_provider:
   default_value: defer_to_model
   models:
   - all
-  prompt: What is the group providing the observations?
+  prompt: Which group(s) provide the observations?
   tasks:
   - GetObservations
-  type: string
+  type: string-check-list
 
 observations:
   ask_question: true
