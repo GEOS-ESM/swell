@@ -214,8 +214,23 @@ ioda instrument names:
   - ioda name: sss_trak_fnmoc
     full name: FNMOC (SSS)
     inst type: conventional
+  - ioda name: sst_abi_g16_l3c
+    full name: ABI GOES-16 (SST)
+    inst type: conventional
+  - ioda name: sst_abi_g17_l3c
+    full name: ABI GOES-17 (SST)
+    inst type: conventional
+  - ioda name: sst_ahi_h08_l3c
+    full name: AHI Himawari-08 (SST)
+    inst type: conventional
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
+    inst type: conventional
+  - ioda name: sst_avhrr_ma_l3u
+    full name: AVHRR MA (SST)
+    inst type: conventional
+  - ioda name: sst_avhrr_mb_l3u
+    full name: AVHRR MB (SST)
     inst type: conventional
   - ioda name: sst_gmi_l3u
     full name: GMI (SST)
@@ -232,6 +247,12 @@ ioda instrument names:
   - ioda name: sst_trak_fnmoc
     full name: FNMOC (SST)
     inst type: conventional
+  - ioda name: sst_viirs_n20_l3u
+    full name: VIIRS NOAA-20 (SST)
+    inst type: radiance
+  - ioda name: sst_viirs_npp_l3u
+    full name: VIIRS Suomi-NPP (SST)
+    inst type: radiance
   - ioda name: temp_profile_fnmoc
     full name: FNMOC (In-situ Temperature)
     inst type: conventional
