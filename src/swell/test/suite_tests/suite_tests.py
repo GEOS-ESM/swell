@@ -104,7 +104,7 @@ def run_suite(suite: str, platform: str, test_tier: int = 1):
             suite_overrides = update_dict(suite_overrides, tier2_suite_overrides)
         else:
             print(f"Could not find tier 2 override file for {suite}," +
-                  "defaulting to tier 1 overrides")
+                  " defaulting to tier 1 overrides")
 
     override = {
         "experiment_id": experiment_id,
