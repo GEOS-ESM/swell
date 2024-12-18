@@ -75,7 +75,7 @@ def install_gmao_perl_lib():
                 for line in lines[1:]:
                     f.write(line)
 
-    cwd=os.getcwd()
+    cwd = os.getcwd()
     os.chdir(perllib_dir)
     subprocess.run(f'cmake -DCMAKE_INSTALL_PREFIX=~/.local {perllib_dir} && make all install',
                    shell=True)
