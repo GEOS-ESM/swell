@@ -67,6 +67,7 @@ background_frequency:
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   - StoreBackground
   type: iso-duration
@@ -669,6 +670,7 @@ npx_proc:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -685,6 +687,7 @@ npy_proc:
   - RunJediHofxEnsembleExecutable
   - RunJediHofxExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   type: integer
 
@@ -864,6 +867,7 @@ save_geovals:
   prompt: When running hofx do you want to output the GeoVaLs?
   tasks:
   - RunJediHofxExecutable
+  - RunJediObsfiltersExecutable
   type: boolean
 
 single_observations:

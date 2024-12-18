@@ -93,8 +93,6 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Compute number of processors
         # ----------------------------
-        #np = eval(str(model_component_meta['total_processors']))
-        #print('np gcm', np)
         np = 1
 
         # Run the JEDI executable - or render hofx templates for each ensemble member
@@ -121,31 +119,31 @@ class RunJediObsfiltersExecutable(taskBase):
 
             # Filter Thinning
             # ----------------------
-            filter_thinning = [ { 'filter': 'Thinning', 'amount': 0.75,
-                                  'random seed': 0, 'member': 1,
-                                  'action': {'name': 'reduce obs space' } } ]
+            filter_thinning = [{'filter': 'Thinning', 'amount': 0.75,
+                                'random seed': 0, 'member': 1,
+                                'action': {'name': 'reduce obs space'}}]
 
             # Include filter_thinning into {observations: obs sapce: obs filters:}
             # -------------------------------------------------------------------
-            new_dict={'observations': []}
+            new_dict = {'observations': []}
             for observer in jedi_config_dict['observations']['observers']:
-                obs_name=observer['obs space']['name']
-                obsfile=observer['obs space']['obsdatain']['engine']['obsfile']
-                sim_vars=observer['obs space']['simulated variables']
-                elements=obsfile.split('/')
-                filename=elements[-1]
+                obs_name = observer['obs space']['name']
+                obsfile = observer['obs space']['obsdatain']['engine']['obsfile']
+                sim_vars = observer['obs space']['simulated variables']
+                elements = obsfile.split('/')
+                filename = elements[-1]
                 name, extension = os.path.splitext(filename)
                 new_filename = f"{name}_orig{extension}"
-                new_obsfile_in='/'.join(elements[:-1])+'/'+new_filename
+                new_obsfile_in = '/'.join(elements[:-1])+'/'+new_filename
                 copy(obsfile, new_obsfile_in)
-                obs_space={'name': obs_name,
-                           'obsdatain':
-                           {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
-                           'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
-                           'simulated variables': sim_vars}
-                new_observer={'obs space': obs_space,
-                              'obs filters': filter_thinning,
-                              'expectVariablesNotToExist': ['VariablesNotToExist']}
+                obs_space = {'name': obs_name,
+                             'obsdatain':
+                             {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
+                             'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
+                             'simulated variables': sim_vars}
+                new_observer = {'obs space': obs_space,
+                                'obs filters': filter_thinning,
+                                'expectVariablesNotToExist': ['VariablesNotToExist']}
                 new_dict['observations'].append(new_observer)
             del jedi_config_dict['observations']
             jedi_config_dict.update(new_dict)
@@ -162,19 +160,16 @@ class RunJediObsfiltersExecutable(taskBase):
             jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
 
-            print('np, jedi_executable_path, jedi_config_file, output_log_file')
-            print(np, jedi_executable_path, jedi_config_file, output_log_file)
-
             # Run the JEDI executable
             # -----------------------
             if not generate_yaml_and_exit:
                 self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                command = ["mpirun", "-np", "1", jedi_executable_path, jedi_config_file, output_log_file]
-                result = subprocess.run(command, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-#                               jedi_config_file, output_log_file)
-##                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path, None)
-
+                command = f'mpirun -np 1 {jedi_executable_path}' +
+                f'{jedi_config_file} {output_log_file}'
+                # print('cmd=', command)
+                result = subprocess.run(command, shell=True, capture_output=True, text=True)
+                print("Output:", result.stdout)
+                print("Return code:", result.returncode)
             else:
                 self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------
