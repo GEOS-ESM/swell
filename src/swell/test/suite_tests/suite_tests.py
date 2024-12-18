@@ -90,6 +90,22 @@ def run_suite(suite: str, platform: str, test_tier: int = 1):
     with suite_overrides_file.open("r") as f:
         suite_overrides = yaml.safe_load(f)
 
+    # If it exists, update suite overrides from (suite)-tier2.yaml
+    if test_tier == 2:
+        tier2_suite_overrides_file = (resources.files("swell") /
+                                      "test" /
+                                      "suite_tests" /
+                                      f"{suite}-tier2.yaml")
+        if Path(tier2_suite_overrides_file).exists():
+            with open(tier2_suite_overrides_file, 'r') as f:
+                tier2_suite_overrides = yaml.safe_load(f)
+            print("Updating suite with tier 2 overrides" +
+                  f"from: {tier2_suite_overrides_file}")
+            suite_overrides = update_dict(suite_overrides, tier2_suite_overrides)
+        else:
+            print(f"Could not find tier 2 override file for {suite}," +
+                  "defaulting to tier 1 overrides")
+
     override = {
         "experiment_id": experiment_id,
         "experiment_root": str(testdir),
