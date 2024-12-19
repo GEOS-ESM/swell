@@ -164,10 +164,8 @@ class RunJediObsfiltersExecutable(taskBase):
             # -----------------------
             if not generate_yaml_and_exit:
                 self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                fmod = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'modules')
-                ## command = ( f'source {fmod}; ' +
-                command = ( f'mpirun -np 1 {jedi_executable_path} ' +
-                            f'{jedi_config_file} {output_log_file}' )
+                command = (f'mpirun -np 1 {jedi_executable_path} ' +
+                           f'{jedi_config_file} {output_log_file}')
                 print('cmd=', command)
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
                 print("Output:", result.stdout)
