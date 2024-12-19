@@ -7,16 +7,12 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import glob
 import os
 from shutil import copy
 import yaml
 from typing import Optional
 import subprocess
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.netcdf_files import combine_files_without_groups
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,7 +36,6 @@ class RunJediObsfiltersExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        save_geovals = self.config.save_geovals(False)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -95,81 +90,80 @@ class RunJediObsfiltersExecutable(taskBase):
         # ----------------------------
         np = 1
 
-        # Run the JEDI executable - or render hofx templates for each ensemble member
+        # Run the JEDI executable
         # ---------------------------------------------------------------------------
-        if ensemble_members is None:
 
-            # Jedi configuration file
-            # -----------------------
-            jedi_config_file = os.path.join(self.cycle_dir(),
-                                            f'jedi_{jedi_application}_config.yaml')
+        # Jedi configuration file
+        # -----------------------
+        jedi_config_file = os.path.join(self.cycle_dir(),
+                                        f'jedi_{jedi_application}_config.yaml')
 
-            # Output log file
-            # ---------------
-            output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
-            # Open the JEDI config file and fill initial templates
-            # ----------------------------------------------------
-            jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning')
+        # Open the JEDI config file and fill initial templates
+        # ----------------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning')
 
-            # Perform complete template rendering
-            # -----------------------------------
-            jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                     observations, self.cycle_time_dto(), jedi_forecast_model)
+        # Perform complete template rendering
+        # -----------------------------------
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
+                                 observations, self.cycle_time_dto(), jedi_forecast_model)
 
-            # Filter Thinning
-            # ----------------------
-            filter_thinning = [{'filter': 'Thinning', 'amount': 0.75,
-                                'random seed': 0, 'member': 1,
-                                'action': {'name': 'reduce obs space'}}]
+        # Filter Thinning
+        # ----------------------
+        filter_thinning = [{'filter': 'Thinning', 'amount': 0.75,
+                            'random seed': 0, 'member': 1,
+                            'action': {'name': 'reduce obs space'}}]
 
-            # Include filter_thinning into {observations: obs sapce: obs filters:}
-            # -------------------------------------------------------------------
-            new_dict = {'observations': []}
-            for observer in jedi_config_dict['observations']['observers']:
-                obs_name = observer['obs space']['name']
-                obsfile = observer['obs space']['obsdatain']['engine']['obsfile']
-                sim_vars = observer['obs space']['simulated variables']
-                elements = obsfile.split('/')
-                filename = elements[-1]
-                name, extension = os.path.splitext(filename)
-                new_filename = f"{name}_orig{extension}"
-                new_obsfile_in = '/'.join(elements[:-1])+'/'+new_filename
-                copy(obsfile, new_obsfile_in)
-                obs_space = {'name': obs_name,
-                             'obsdatain':
-                             {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
-                             'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
-                             'simulated variables': sim_vars}
-                new_observer = {'obs space': obs_space,
-                                'obs filters': filter_thinning,
-                                'expectVariablesNotToExist': ['VariablesNotToExist']}
-                new_dict['observations'].append(new_observer)
-            del jedi_config_dict['observations']
-            jedi_config_dict.update(new_dict)
+        # Include filter_thinning into {observations: obs sapce: obs filters:}
+        # -------------------------------------------------------------------
+        new_dict = {'observations': []}
+        for observer in jedi_config_dict['observations']['observers']:
+            obs_name = observer['obs space']['name']
+            obsfile = observer['obs space']['obsdatain']['engine']['obsfile']
+            sim_vars = observer['obs space']['simulated variables']
+            elements = obsfile.split('/')
+            filename = elements[-1]
+            name, extension = os.path.splitext(filename)
+            new_filename = f"{name}_orig{extension}"
+            new_obsfile_in = '/'.join(elements[:-1])+'/'+new_filename
+            copy(obsfile, new_obsfile_in)
+            obs_space = {'name': obs_name,
+                         'obsdatain':
+                         {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
+                         'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
+                         'simulated variables': sim_vars}
+            new_observer = {'obs space': obs_space,
+                            'obs filters': filter_thinning,
+                            'expectVariablesNotToExist': ['VariablesNotToExist']}
+            new_dict['observations'].append(new_observer)
+        del jedi_config_dict['observations']
+        jedi_config_dict.update(new_dict)
 
-            # Write the expanded dictionary to YAML file
-            # ------------------------------------------
-            with open(jedi_config_file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+        # Write the expanded dictionary to YAML file
+        # ------------------------------------------
+        with open(jedi_config_file, 'w') as jedi_config_file_open:
+            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-            # Jedi executable name
-            # --------------------
-            jedi_executable = \
-                model_component_meta['executables'][f'{jedi_application}']
-            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
-                                                'build', 'bin', jedi_executable)
+        # Jedi executable name
+        # --------------------
+        jedi_executable = \
+            model_component_meta['executables'][f'{jedi_application}']
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                            'build', 'bin', jedi_executable)
 
-            # Run the JEDI executable
-            # -----------------------
-            if not generate_yaml_and_exit:
-                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                command = (f'mpirun -np 1 {jedi_executable_path} ' +
-                           f'{jedi_config_file} {output_log_file}')
-                print('cmd=', command)
-                result = subprocess.run(command, shell=True, capture_output=True, text=True)
-                print("Output:", result.stdout)
-                print("Return code:", result.returncode)
-            else:
-                self.logger.info('YAML generated, now exiting.')
+        # Run the JEDI executable
+        # -----------------------
+        if not generate_yaml_and_exit:
+            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            command = (f'mpirun -np 1 {jedi_executable_path} ' +
+                       f'{jedi_config_file} {output_log_file}')
+            print('cmd=', command)
+            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            print("Output:", result.stdout)
+            print("Return code:", result.returncode)
+        else:
+            self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------
