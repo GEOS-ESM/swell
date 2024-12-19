@@ -1,0 +1,6 @@
+qos: allnccs
+nodes: 1
+ntasks-per-node: 24
+reservation: sles15_cas
+constraint: cas
+no-requeue: ''

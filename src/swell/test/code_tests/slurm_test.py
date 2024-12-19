@@ -56,6 +56,10 @@ class SLURMConfigTest(unittest.TestCase):
         self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
                          ["constraint"], "cas|sky")
 
+        with self.assertRaises(AssertionError):
+            prepare_scheduling_dict(logger, experiment_dict,
+                                    platform="nccs_discover_sles15")
+
         platform_mocked.return_value = "Linux-5.14.21"
         sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
                                                      platform="nccs_discover_sles15")
@@ -63,10 +67,6 @@ class SLURMConfigTest(unittest.TestCase):
                          ["all"]["constraint"], "mil")
         self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
                          ["all"]["qos"], "dastest")
-
-        with self.assertRaises(AssertionError):
-            prepare_scheduling_dict(logger, experiment_dict,
-                                    platform="nccs_discover")
 
         # Platform generic tests
         for sd in [sd_discover, sd_discover_sles15]:
