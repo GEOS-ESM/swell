@@ -25,7 +25,29 @@ models:
     - aircraft
     - sondes
     - gps
+    - amsua_aqua
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - amsr2_gcom-w1
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - scatwind
+    - sfcship
+    - sfc
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
+    - pibal
+    - ssmis_f17
     - amsua_metop-b
+    - amsua_metop-c
     background_experiment: x0048
     window_type: 3D
     clean_patterns:

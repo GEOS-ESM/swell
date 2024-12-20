@@ -79,6 +79,9 @@ obs_experiment:
 
 obs_provider:
   default_value: odas
+  options:
+  - gdas_marine
+  - odas
 
 observations:
   default_value:

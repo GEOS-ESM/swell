@@ -1,0 +1,22 @@
+databases:
+
+  ${USER}:
+    class: LocalDB
+    root: {{r2d2_local_path}}
+    cache_fetch: false
+
+  gmao-shared:
+    class: LocalDB
+    root: /discover/nobackup/projects/gmao/advda/R2D2DataStore/Shared
+    cache_fetch: false
+
+# when fetching data, in which order should the databases accessed?
+fetch_order:
+  - ${USER}
+  - gmao-shared
+
+# when storing data, in which order should the databases accessed?
+store_order:
+  - ${USER}
+
+cache_name: ${USER}
