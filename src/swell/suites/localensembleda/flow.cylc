@@ -59,8 +59,10 @@
 
             GetEnsemble-{{model_component}} => sync_point
                 
+            sync_point => ThinObs
+
             {% if skip_ensemble_hofx %}
-               sync_point => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               sync_point => ThinObs => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
@@ -143,6 +145,15 @@
 
     [[GetEnsemble-{{model_component}}]]
         script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
+
+    [[ThinObs]]
+        script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediObsfiltersExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[RunJediEnsembleMeanVariance-{{model_component}}]]
         script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
