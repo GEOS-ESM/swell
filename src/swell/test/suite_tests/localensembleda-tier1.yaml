@@ -15,12 +15,16 @@ models:
     skip_ensemble_hofx: true
     local_ensemble_solver: GETKF
     local_ensemble_use_linear_observer: true
-    local_ensemble_save_posterior_mean: false
-    local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false
+    local_ensemble_save_posterior_mean: false                 # default: false
+    local_ensemble_save_posterior_mean_increment: true        # default: true
+    local_ensemble_save_posterior_ensemble: false             # default: false
+    local_ensemble_save_posterior_ensemble_increments: false  # default: false
     path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
     observations:
+    - aircraft
     - sondes
+    - gps
     - amsua_aqua
     - amsua_n15
     - amsua_n18

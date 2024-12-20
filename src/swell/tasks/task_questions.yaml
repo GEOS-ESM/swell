@@ -543,7 +543,7 @@ local_ensemble_inflation_rtps:
 
 local_ensemble_save_posterior_ensemble:
   ask_question: false
-  default_value: true
+  default_value: false
   models:
   - geos_atmosphere
   options:
