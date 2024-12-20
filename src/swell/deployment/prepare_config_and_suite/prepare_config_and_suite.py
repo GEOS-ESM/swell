@@ -18,6 +18,7 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_cli import Ge
 from swell.deployment.prepare_config_and_suite.question_and_answer_defaults import GetAnswerDefaults
 from swell.utilities.logger import Logger
 from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.dictionary import update_dict
 
 
 # --------------------------------------------------------------------------------------------------
@@ -297,6 +298,14 @@ class PrepareExperimentConfigAndSuite:
         if os.path.exists(test_file):
             with open(test_file, 'r') as ymlfile:
                 override_dict = yaml.safe_load(ymlfile)
+
+        # Update overrides with tier2 suite test file if available
+        tier2_test_file = os.path.join(get_swell_path(), 'test', 'suite_tests',
+                                       self.suite + '-tier2.yaml')
+        if os.path.exists(tier2_test_file):
+            with open(tier2_test_file, 'r') as ymlfile:
+                tier2_override_dict = yaml.safe_load(ymlfile)
+            override_dict = update_dict(override_dict, tier2_override_dict)
 
         # Now append with any user provided override
         if self.override is not None:
