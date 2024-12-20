@@ -58,9 +58,9 @@ def prepare_scheduling_dict(
     user_globals = slurm_global_defaults(logger)
 
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-5.14.21' in pltfrm.platform():
-        assert platform == "nccs_discover_sles15", (
-            "'Linux-5.14.21' detected, which implies platform 'nccs_discover_sles15. " +
+    if 'Linux-4.12.14' in pltfrm.platform():
+        assert platform == "nccs_discover", (
+            "'Linux-4.12.14' detected, which implies platform 'nccs_discover. " +
             f"That is inconsistent with user-specified platform '{platform}'."
         )
 
