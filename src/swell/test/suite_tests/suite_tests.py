@@ -96,7 +96,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
         suite_overrides = yaml.safe_load(f)
 
     # If it exists, update suite overrides from (suite)-tier2.yaml
-    if test_tier == 2:
+    if test_tier == TestSuite.TIER2:
         tier2_suite_overrides_file = (resources.files("swell") /
                                       "test" /
                                       "suite_tests" /
@@ -136,7 +136,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     experiment_dir.mkdir(parents=True, exist_ok=True)
 
     # Build JEDI for tier 2 tests if existing build is not specified in user yaml
-    if test_tier == 2:
+    if test_tier == TestSuite.TIER2:
         if ~("jedi_build_method" in test_config
            and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
