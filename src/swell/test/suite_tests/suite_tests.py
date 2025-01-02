@@ -1,15 +1,20 @@
 import tempfile
 import yaml
 import random
-import sys
 
 from pathlib import Path
 from datetime import datetime
 from importlib import resources
+from enum import Enum, auto
 
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
 from swell.utilities.dictionary import update_dict
+
+
+class TestSuite(Enum):
+    TIER1 = auto()
+    TIER2 = auto()
 
 
 def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, test_config: dict):
@@ -38,7 +43,7 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
 
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
-    print(platform)
+
     create_experiment_directory(
         "build_jedi", "defaults", platform,
         str(override_yml), False, None
@@ -52,7 +57,7 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
     return experiment_dir
 
 
-def run_suite(suite: str, platform: str, test_tier: int = 1):
+def run_suite(suite: str, platform: str, test_tier: TestSuite):
     # Add a random int to the experiment_id to mitigate errors from workflows
     # created at (roughly) the same time.
     ii = random.randint(0, 99)
@@ -131,27 +136,21 @@ def run_suite(suite: str, platform: str, test_tier: int = 1):
     experiment_dir.mkdir(parents=True, exist_ok=True)
 
     # Build JEDI for tier 2 tests if existing build is not specified in user yaml
-    build_jedi_for_test = False
     if test_tier == 2:
-        if ("jedi_build_method" in test_config
+        if ~("jedi_build_method" in test_config
            and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
            and 'existing_jedi_build_directory' in test_config):
-            build_jedi_for_test = False
-        else:
-            build_jedi_for_test = True
+            jedi_dir = build_jedi_for_tier2(testdir, experiment_id_root, platform, test_config)
 
-    if build_jedi_for_test:
-        jedi_dir = build_jedi_for_tier2(testdir, experiment_id_root, platform, test_config)
+            tier2_override = {"jedi_build_method": "use_existing",
+                              "existing_jedi_source_directory": f"{jedi_dir}/jedi_bundle/source",
+                              "existing_jedi_build_directory": f"{jedi_dir}/jedi_bundle/build"}
 
-        tier2_override = {"jedi_build_method": "use_existing",
-                          "existing_jedi_source_directory": f"{jedi_dir}/jedi_bundle/source",
-                          "existing_jedi_build_directory": f"{jedi_dir}/jedi_bundle/build"}
+            override = update_dict(override, tier2_override)
 
-        override = update_dict(override, tier2_override)
-
-        if suite == "build_jedi":
-            sys.exit()
+            if suite == "build_jedi":
+                return None
 
     override_yml = experiment_dir / "override.yaml"
     with open(override_yml, "w") as f:

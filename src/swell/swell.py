@@ -16,7 +16,7 @@ from swell.deployment.create_experiment import clone_config, create_experiment_d
 from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
-from swell.test.suite_tests.suite_tests import run_suite
+from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.utilities.suite_utils import get_suites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
@@ -244,7 +244,8 @@ def test(test: str) -> None:
 
 
 @swell_driver.command()
-@click.option('-p', '--platform', 'platform', default="nccs_discover_sles15", help=platform_help)
+@click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
+              default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing")))
 def t1test(
     suite: Literal["hofx", "3dvar", "ufo_testing"],
@@ -256,14 +257,15 @@ def t1test(
     Arguments:
         suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
     """
-    run_suite(suite, platform, 1)
+    run_suite(suite, platform, TestSuite.TIER1)
 
 
 # --------------------------------------------------------------------------------------------------
 
 
 @swell_driver.command()
-@click.option('-p', '--platform', 'platform', default="nccs_discover_sles15", help=platform_help)
+@click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
+              default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
                                             "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
 def t2test(
@@ -277,7 +279,7 @@ def t2test(
     Arguments:
         suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
     """
-    run_suite(suite, platform, 2)
+    run_suite(suite, platform, TestSuite.TIER2)
 
 
 # --------------------------------------------------------------------------------------------------
