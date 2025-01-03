@@ -13,8 +13,8 @@ from swell.utilities.dictionary import update_dict
 
 
 class TestSuite(Enum):
-    TIER1 = auto()
-    TIER2 = auto()
+    TIER1 = "tier1"
+    TIER2 = "tier2"
 
 
 def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, test_config: dict):
@@ -137,7 +137,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
 
     # Build JEDI for tier 2 tests if existing build is not specified in user yaml
     if test_tier == TestSuite.TIER2:
-        if ~("jedi_build_method" in test_config
+        if not ("jedi_build_method" in test_config
            and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
            and 'existing_jedi_build_directory' in test_config):
