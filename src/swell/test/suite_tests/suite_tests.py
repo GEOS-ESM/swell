@@ -5,7 +5,7 @@ import random
 from pathlib import Path
 from datetime import datetime
 from importlib import resources
-from enum import Enum, auto
+from enum import Enum
 
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
