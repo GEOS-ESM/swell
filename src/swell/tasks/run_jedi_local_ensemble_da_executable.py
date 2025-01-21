@@ -129,10 +129,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
-        if not self.config.local_ensemble_save_posterior_mean() ^ \
+        if self.config.local_ensemble_save_posterior_mean() or \
            self.config.local_ensemble_save_posterior_ensemble():
-            raise ValueError("Only one of 'local_ensemble_save_posterior_mean' and\
-            'local_ensemble_save_posterior_ensemble' may be true at once!")
+            raise ValueError("'local_ensemble_save_posterior_mean' and\
+            'local_ensemble_save_posterior_ensemble' cannot be both true!")
 
         # Jedi configuration file
         # -----------------------
@@ -185,6 +185,14 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 observer.update({'obs localizations': localization})
                 observer['obs space'].update(
                     {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+
+        # bypass the writing of HofXs
+        # -------------------------------------------------------------------
+
+        bypass_HofXs = True
+        if bypass_HofXs:
+            for observer in jedi_config_dict['observations']['observers']:
+                del observer['obs space']['obsdataout']
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

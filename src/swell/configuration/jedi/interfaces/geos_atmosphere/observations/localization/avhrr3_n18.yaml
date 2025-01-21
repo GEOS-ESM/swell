@@ -1,4 +1,4 @@
 obs localizations:
   localization method: Horizontal Gaspari-Cohn
-  lengthscale: 1000.e3
+  lengthscale: 500.e3
   max nobs: 100

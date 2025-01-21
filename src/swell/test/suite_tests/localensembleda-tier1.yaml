@@ -11,39 +11,43 @@ models:
 #    - T06
 #    - T12
 #    - T18
-    ensemble_num_members:  32
+    ensemble_num_members:  5
     skip_ensemble_hofx: true
     local_ensemble_solver: GETKF
     local_ensemble_use_linear_observer: true
-    local_ensemble_save_posterior_mean: false
-    local_ensemble_save_posterior_ensemble_increments: true
     ensmean_only: false
+    local_ensemble_save_posterior_mean: false                 # default: false
+    local_ensemble_save_posterior_mean_increment: true        # default: true
+    local_ensemble_save_posterior_ensemble: false             # default: false
+    local_ensemble_save_posterior_ensemble_increments: false  # default: false
     path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
     observations:
+    - aircraft
     - sondes
+    - gps
     - amsua_aqua
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - amsr2_gcom-w1
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - scatwind
+    - sfcship
+    - sfc
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - mls55_aura
+    - omi_aura
+    - ompsnm_npp
+    - pibal
+    - ssmis_f17
     - amsua_metop-b
-#    - amsua_metop-c
-#    - amsua_n15
-#    - amsua_n18
-#    - amsua_n19
-#    - amsr2_gcom-w1
-#    - atms_n20
-#    - atms_npp
-#    - avhrr3_metop-b
-#    - avhrr3_n18
-#    - avhrr3_n19
-#    - scatwind
-#    - sfcship
-#    - sfc
-#    - mhs_metop-b
-#    - mhs_metop-c
-#    - mhs_n19
-#    - mls55_aura
-#    - omi_aura
-#    - ompsnm_npp
-#    - pibal
-#    - ssmis_f17
+    - amsua_metop-c
     background_experiment: x0048
     window_type: 3D
     clean_patterns:
