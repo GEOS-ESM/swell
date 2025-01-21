@@ -215,13 +215,13 @@ ioda instrument names:
     full name: FNMOC (SSS)
     inst type: conventional
   - ioda name: sst_abi_g16_l3c
-    full name: ABI GOES-16 (SST)
+    full name: GOES-16 EAST (SST)
     inst type: conventional
   - ioda name: sst_abi_g17_l3c
-    full name: ABI GOES-17 (SST)
+    full name: GOES-17 WEST (SST)
     inst type: conventional
   - ioda name: sst_ahi_h08_l3c
-    full name: AHI Himawari-08 (SST)
+    full name: Himawari-08 (SST)
     inst type: conventional
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
