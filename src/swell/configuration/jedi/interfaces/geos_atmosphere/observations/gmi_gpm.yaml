@@ -4,6 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/gmi_gpm.{{window_begin}}.nc4'
+      missing file action: warn
   obsdataout:
     engine:
       type: H5File
