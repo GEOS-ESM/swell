@@ -53,7 +53,6 @@ class GetGeosRestart(taskBase):
     def initial_restarts(self, rst_path: str) -> None:
 
         # GEOS forecast checkpoint files are created in advance
-        # TODO: check tile of restarts here for compatibility?
         # -------------------------------------------------------------------
         self.logger.info('GEOS restarts are copied from a previous forecast')
 

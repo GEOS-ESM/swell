@@ -6,6 +6,7 @@ cycle_times:
   - all
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -69,6 +70,7 @@ start_cycle_point:
   prompt: What is the time of the first cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -85,6 +87,7 @@ final_cycle_point:
   prompt: What is the time of the final cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -95,20 +98,20 @@ final_cycle_point:
   - ufo_testing
   type: iso-datetime
 
-runahead_limit:
+marine_models:
   ask_question: True
-  default_value: 'P4'
-  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  default_value: defer_to_model
+  models:
+  - geos_marine
+  options: defer_to_model
   suites:
-  - 3dfgat_atmos
-  - 3dvar_atmos
-  - 3dvar
+  - 3dfgat_cycle
   - 3dvar_cycle
-  - convert_ncdiags
+  - 3dvar
   - hofx
   - localensembleda
-  - ufo_testing
-  type: string
+  prompt: Select the active SOCA models for this model.
+  type: string-check-list
 
 model_components:
   ask_question: True
@@ -116,6 +119,7 @@ model_components:
   options: defer_to_code
   suites:
   - 3dfgat_atmos
+  - 3dfgat_cycle
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
@@ -125,6 +129,22 @@ model_components:
   - ufo_testing
   prompt: Enter the model components for this model.
   type: string-check-list
+
+runahead_limit:
+  ask_question: True
+  default_value: 'P4'
+  prompt: Since this suite is non-cycling choose how many hours the workflow can run ahead?
+  suites:
+  - 3dfgat_atmos
+  - 3dfgat_cycle
+  - 3dvar_atmos
+  - 3dvar
+  - 3dvar_cycle
+  - convert_ncdiags
+  - hofx
+  - localensembleda
+  - ufo_testing
+  type: string
 
 window_type:
   ask_question: False

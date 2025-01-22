@@ -66,6 +66,8 @@ class JediConfigRendering():
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
             'analysis_variables',
+            'analysis_time',
+            'analysis_time_iso',
             'background_error_model',
             'background_frequency',
             'background_time',
@@ -75,6 +77,8 @@ class JediConfigRendering():
             'ensemble_hofx_packets',
             'ensemble_hofx_strategy',
             'ensemble_num_members',
+            'ensmean_only',
+            'ensmeanvariance_only',
             'gradient_norm_reduction',
             'gsibec_configuration',
             'gsibec_npx_proc',
@@ -93,16 +97,15 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_mean',
             'local_ensemble_save_posterior_mean_increment',
             'local_ensemble_solver',
-            'ensmean_only',
-            'ensmeanvariance_only',
             'local_ensemble_use_linear_observer',
-            'skip_ensemble_hofx',
+            'marine_models',
             'minimizer',
             'mom6_iau',
             'npx_proc',
             'npy_proc',
             'number_of_iterations',
             'packet_ensemble_members',
+            'skip_ensemble_hofx',
             'swell_static_files',
             'total_processors',
             'vertical_localization_apply_log_transform',
@@ -118,6 +121,11 @@ class JediConfigRendering():
             'window_length',
         ]
 
+        # List of all potential valid dynamic keys that can be used in templates
+        self.valid_dynamic_keys = [
+            'states',
+        ]
+
     # ----------------------------------------------------------------------------------------------
 
     # Function to add key to the template dictionary
@@ -127,6 +135,19 @@ class JediConfigRendering():
         self.logger.assert_abort(key in self.valid_template_keys, f'Trying to add key \'{key}\' ' +
                                  f'to jedi config rendering dictionary. But the key is not part ' +
                                  f'of the valid keys: \'{self.valid_template_keys}\'')
+
+        # Add element to dictionary
+        self.__template_dict__[key] = element
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Function to add key to the template dictionary
+    def add_dynamic_key(self, key, element):
+
+        # First assert that key is allowed
+        self.logger.assert_abort(key in self.valid_dynamic_keys, f'Trying to add key \'{key}\' ' +
+                                 f'to jedi config rendering dictionary. But the key is not part ' +
+                                 f'of the valid dynamic keys: \'{self.valid_dynamic_keys}\'')
 
         # Add element to dictionary
         self.__template_dict__[key] = element

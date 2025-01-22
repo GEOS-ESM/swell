@@ -1,6 +1,7 @@
 jedi_interface: soca
 total_processors: {{total_processors}}
 executables:
+  fgat: soca_var.x
   hofx3D: soca_hofx3d.x
   hofx4D: soca_hofx.x
   variational3D: soca_var.x

@@ -5,15 +5,15 @@ analysis_forecast_window_offset:
 
 analysis_variables:
   default_value:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
   options:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
 
 background_error_model:
   default_value: explicit_diffusion
@@ -24,7 +24,7 @@ background_experiment:
   default_value: s2s
 
 background_frequency:
-  default_value: PT1H
+  default_value: PT3H
 
 background_time_offset:
   default_value: PT9H
@@ -63,6 +63,16 @@ jedi_forecast_model:
   options:
   - NA
 
+marine_models:
+  default_value:
+  - mom6
+  - cice6
+  options:
+  - mom6
+  - cice6
+  - bgc
+  - ww3
+
 minimizer:
   default_value: RPCG
   options:
@@ -83,6 +93,9 @@ obs_experiment:
 
 obs_provider:
   default_value: odas
+  options:
+  - gdas_marine
+  - odas
 
 observations:
   default_value:

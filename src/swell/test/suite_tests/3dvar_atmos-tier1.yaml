@@ -50,8 +50,6 @@ models:
     - sfc
     - sondes
     - ssmis_f17
-    obs_experiment: x0048v2
-    geovals_experiment: x0048v2-geovals
     clean_patterns:
     - '*.txt'
     - '*.csv'

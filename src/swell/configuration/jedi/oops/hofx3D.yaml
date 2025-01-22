@@ -10,5 +10,7 @@ state:
   TASKFILLbackground
 
 observations:
+  get values:
+    TASKFILLgetvalues
   observers:
     SPECIALobservations

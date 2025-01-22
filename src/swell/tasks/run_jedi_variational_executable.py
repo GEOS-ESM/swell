@@ -7,7 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
+from collections import OrderedDict
 import os
 import yaml
 
@@ -116,10 +116,32 @@ class RunJediVariationalExecutable(taskBase):
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  self.cycle_time_dto(), jedi_forecast_model)
 
-        # Write the expanded dictionary to YAML file
-        # ------------------------------------------
+        def represent_ordereddict(dumper, data):
+            # Serialize an OrderedDict as a YAML mapping
+            return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
+
+        def construct_ordereddict(loader, node):
+            # Construct an OrderedDict from a YAML mapping
+            return OrderedDict(loader.construct_pairs(node))
+
+        # Recursive conversion, dictionary to an OrderedDict
+        def dict_to_ordereddict(d):
+            if isinstance(d, dict):
+                return OrderedDict((k, dict_to_ordereddict(v)) for k, v in d.items())
+            elif isinstance(d, list):
+                return [dict_to_ordereddict(v) for v in d]
+            else:
+                return d
+
+        yaml.add_representer(OrderedDict, represent_ordereddict)
+        yaml.add_constructor('tag:yaml.org,2002:map', construct_ordereddict)
+
+        # Assuming jedi_config_dict is your original dictionary
+        ordered_dict = dict_to_ordereddict(jedi_config_dict)
+
+        # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(ordered_dict, jedi_config_file_open, default_flow_style=False)
 
         # Get the JEDI interface metadata
         # -------------------------------

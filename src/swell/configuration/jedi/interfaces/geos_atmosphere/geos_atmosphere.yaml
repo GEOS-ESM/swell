@@ -10,3 +10,4 @@ executables:
   variational4DEnsVar: fv3jedi_var.x
   localensembleda: fv3jedi_letkf.x
   ensmeanvariance: fv3jedi_ensmeanvariance.x
+  obsfilters: test_ObsFilters.x

@@ -138,7 +138,6 @@ class PrepGeosRunDir(taskBase):
         self.restructure_rc()
 
         # Generate the complete ExtData.rc
-        # TODO: Fix install folders, update task_questions
         # --------------------------------
         self.geosbin = os.path.join(self.geos_build, 'bin')
         self.generate_extdata()
@@ -237,7 +236,7 @@ class PrepGeosRunDir(taskBase):
 
     def get_bcs(self) -> None:
 
-        # This methods is highly dependent on the GEOSgcm version, currently
+        # This method is highly dependent on the GEOSgcm version, currently
         # tested with GEOSgcm v11.6.0. It uses parsed .rc and .j files to define
         # folders for the boundary conditions.
         # ----------------------------------------------

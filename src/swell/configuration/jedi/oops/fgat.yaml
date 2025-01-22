@@ -1,0 +1,37 @@
+cost function:
+  cost type: 3D-FGAT
+  jb evaluation: false
+  time window:
+    begin: '{{window_begin_iso}}'
+    end: '{{window_end_iso}}'
+    bound to include: begin
+  geometry:
+    TASKFILLgeometry
+  analysis variables: {{analysis_variables}}
+  model:
+    TASKFILLpseudo-model
+  background:
+    TASKFILLbackground
+  background error:
+    TASKFILLbackground_error
+  observations:
+    observers:
+      SPECIALobservations
+variational:
+  minimizer:
+    algorithm: {{minimizer}}
+  iterations:
+  - geometry: TASKFILLgeometry_inner
+    gradient norm reduction: '{{gradient_norm_reduction}}'
+    ninner: '{{number_of_iterations}}'
+    diagnostics:
+      departures: ombg
+    online diagnostics:
+      TASKFILLvarincrement1
+final:
+  diagnostics:
+    departures: oman
+  prints:
+    frequency: PT3H
+output:
+  TASKFILLanalysis

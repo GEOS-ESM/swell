@@ -57,9 +57,6 @@
             # Stage JEDI static files
             CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            # First cycle dependencies for JEDI
-            # CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            # GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             {% endfor %}
         """
 
@@ -100,7 +97,8 @@
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
 
             # Move restart to next cycle
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
