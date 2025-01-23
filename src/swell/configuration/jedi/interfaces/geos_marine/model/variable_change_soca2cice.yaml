@@ -10,9 +10,15 @@ domain: {{cice6_domain}}
 cice background state:
   restart: 'iced.res.{{local_background_time}}.nc'
   ncat: 5
-  ice_lev: 4
+  ice_lev: 7
   sno_lev: 1
   tstep: PT1H
 cice output:
   restart: 'iced.res.{{local_background_time}}.nc'
-output variables: [tocn, socn, hocn, cicen, hicen, hsnon]
+output variables:
+  - sea_water_potential_temperature
+  - sea_water_salinity
+  - sea_water_cell_thickness
+  - sea_ice_area_fraction
+  - sea_ice_thickness
+  - sea_ice_snow_thickness

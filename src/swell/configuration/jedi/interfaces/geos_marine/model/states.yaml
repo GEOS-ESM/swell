@@ -6,7 +6,13 @@
     ice_filename: ice.{{experiment_id}}.an.{{analysis_time_iso}}.nc
     {% endif %}
     date: '{{analysis_time_iso}}'
-    state variables: [tocn, socn, hocn, cicen, hicen, hsnon]
+    state variables:
+      - sea_water_potential_temperature
+      - sea_water_salinity
+      - sea_water_cell_thickness
+      - sea_ice_area_fraction
+      - sea_ice_thickness
+      - sea_ice_snow_thickness
   output:
     datadir: ./
     exp: {{experiment_id}}

@@ -1,0 +1,8 @@
+time window:
+  begin: '{{window_begin_iso}}'
+  end: '{{window_end_iso}}'
+  bound to include: begin
+
+observations:
+  observers:
+    SPECIALobservations
