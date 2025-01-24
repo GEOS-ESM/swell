@@ -160,9 +160,6 @@ ioda instrument names:
   - ioda name: adt_saral
     full name: ADT SARAL
     inst type: altimeter
-  - ioda name: adt
-    full name: ADT
-    inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
     inst type: conventional
@@ -177,12 +174,6 @@ ioda instrument names:
     inst type: conventional
   - ioda name: insitu_profile_tao
     full name: TAO (In-situ)
-    inst type: conventional
-  - ioda name: insitus
-    full name: Insitu Salinity
-    inst type: conventional
-  - ioda name: insitut
-    full name: Insitu Temperature
     inst type: conventional
   - ioda name: sss_smapv5
     full name: SMAP V5 (SSS)
