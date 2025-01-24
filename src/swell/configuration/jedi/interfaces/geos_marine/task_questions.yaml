@@ -89,7 +89,7 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: s2s
+  default_value: s2s_v1
 
 obs_provider:
   default_value: odas
@@ -99,13 +99,11 @@ obs_provider:
 
 observations:
   default_value:
-  - adt
-  - insitus
-  - insitut
+  - adt_sentinel3a
+  - insitu_profile_argo
+  - sss_smos
+  - sst_ostia
   options:
-  - adt
-  - insitus
-  - insitut
   - adt_cryosat2n
   - adt_jason3
   - adt_saral
