@@ -43,7 +43,7 @@ models:
     clean_patterns: []
   geos_ocean:
     obs_experiment: s2s_v1
-    obs_provider: gdas_marine
+    obs_provider: ['odas', 'gdas_marine']
     horizontal_resolution: 72x36
     vertical_resolution: '50'
     observations:
