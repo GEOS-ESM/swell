@@ -142,20 +142,11 @@ ioda instrument names:
     inst type: conventional
 # Marine
   # Ocean
-  - ioda name: adt_3a_egm2008
-    full name: ADT 3a (EGM2008)
-    inst type: altimeter
   - ioda name: adt_sentinel3a
     full name: ADT Sentinel-3A
     inst type: altimeter
   - ioda name: adt_sentinel3b
     full name: ADT Sentinel-3B
-    inst type: altimeter
-  - ioda name: adt_3b_egm2008
-    full name: ADT 3b (EGM2008)
-    inst type: altimeter
-  - ioda name: adt_c2_egm2008
-    full name: ADT c2 (EGM2008)
     inst type: altimeter
   - ioda name: adt_coperl4
     full name: ADT Copernicus Level-4
@@ -163,20 +154,11 @@ ioda instrument names:
   - ioda name: adt_cryosat2n
     full name: ADT Cryosat-2N
     inst type: altimeter
-  - ioda name: adt_j3_egm2008
-    full name: ADT j3 (EGM2008)
-    inst type: altimeter
   - ioda name: adt_jason3
     full name: ADT Jason-3
     inst type: altimeter
-  - ioda name: adt_sa_egm2008
-    full name: ADT sa (EGM2008)
-    inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
-    inst type: altimeter
-  - ioda name: adt
-    full name: ADT
     inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
@@ -193,48 +175,45 @@ ioda instrument names:
   - ioda name: insitu_profile_tao
     full name: TAO (In-situ)
     inst type: conventional
-  - ioda name: insitus
-    full name: Insitu Salinity
-    inst type: conventional
-  - ioda name: insitut
-    full name: Insitu Temperature
-    inst type: conventional
-  - ioda name: salt_profile_fnmoc
-    full name: FNMOC (In-situ Salinity)
-    inst type: conventional
   - ioda name: sss_smapv5
     full name: SMAP V5 (SSS)
     inst type: conventional
   - ioda name: sss_smos
     full name: SMOS (SSS)
     inst type: conventional
-  - ioda name: sss_smos_esa
-    full name: ESA SMOS (SSS)
-    inst type: conventional
-  - ioda name: sss_trak_fnmoc
-    full name: FNMOC (SSS)
-    inst type: conventional
+  - ioda name: sst_abi_g16_l3c
+    full name: GOES-16 EAST (SST)
+    inst type: abi (IR)
+  - ioda name: sst_abi_g17_l3c
+    full name: GOES-17 WEST (SST)
+    inst type: abi (IR)
+  - ioda name: sst_ahi_h08_l3c
+    full name: Himawari-08 (SST)
+    inst type: ahi (IR)
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
     inst type: conventional
+  - ioda name: sst_avhrr_ma_l3u
+    full name: Metop-A (SST)
+    inst type: avhrr (IR)
+  - ioda name: sst_avhrr_mb_l3u
+    full name: Metop-B (SST)
+    inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
-    full name: GMI (SST)
-    inst type: conventional
+    full name: GPM (GMI) (SST)
+    inst type: gmi (MW)
   - ioda name: sst_merra2
     full name: MERRA2 (SST)
     inst type: conventional
   - ioda name: sst_ostia
     full name: OSTIA (SST)
     inst type: conventional
-  - ioda name: sst_ship_fnmoc
-    full name: FNMOC Ship (SST)
-    inst type: conventional
-  - ioda name: sst_trak_fnmoc
-    full name: FNMOC (SST)
-    inst type: conventional
-  - ioda name: temp_profile_fnmoc
-    full name: FNMOC (In-situ Temperature)
-    inst type: conventional
+  - ioda name: sst_viirs_n20_l3u
+    full name: NOAA-20 (SST)
+    inst type: viirs (IR)
+  - ioda name: sst_viirs_npp_l3u
+    full name: Suomi-NPP (SST)
+    inst type: viirs (IR)
   - ioda name: temp_profile_xbt
     full name: XBT (In-situ Temperature)
     inst type: conventional
