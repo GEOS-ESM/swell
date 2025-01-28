@@ -89,7 +89,7 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: s2s
+  default_value: s2s_v1
 
 obs_provider:
   default_value: odas
@@ -99,23 +99,24 @@ obs_provider:
 
 observations:
   default_value:
-  - adt
-  - insitus
-  - insitut
+  - adt_sentinel3a
+  - insitu_profile_argo
+  - sss_smos
+  - sst_ostia
   options:
-  - adt
-  - insitus
-  - insitut
-  - adt_3a_egm2008
-  - adt_3b_egm2008
-  - adt_c2_egm2008
-  - adt_j3_egm2008
-  - adt_sa_egm2008
-  - salt_profile_fnmoc
-  - sss_smos_esa
+  - adt_cryosat2n
+  - adt_jason3
+  - adt_saral
+  - adt_sentinel3a
+  - adt_sentinel3b
+  - insitu_profile_argo
+  - sst_ostia
+  - sss_smos
+  - sss_smapv5
+  - sst_abi_g16_l3c
   - sst_gmi_l3u
-  - sst_ship_fnmoc
-  - temp_profile_fnmoc
+  - sst_viirs_n20_l3u
+  - temp_profile_xbt
 
 total_processors:
   default_value: 24
