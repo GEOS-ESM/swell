@@ -1091,3 +1091,14 @@ window_type:
   - StoreBackground
   type: string-drop-list
 
+
+path_to_bufr:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the path to where the Bufr files are stored?
+  tasks:
+  - GetBufr
+  type: string
+

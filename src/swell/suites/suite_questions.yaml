@@ -15,6 +15,7 @@ cycle_times:
   - hofx
   - localensembleda
   - ufo_testing
+  - convert_bufr
   prompt: Enter the cycle times for this model.
   type: string-check-list
 
@@ -79,6 +80,7 @@ start_cycle_point:
   - hofx
   - localensembleda
   - ufo_testing
+  - convert_bufr
   type: iso-datetime
 
 final_cycle_point:
@@ -96,6 +98,7 @@ final_cycle_point:
   - hofx
   - localensembleda
   - ufo_testing
+  - convert_bufr
   type: iso-datetime
 
 marine_models:
@@ -127,6 +130,7 @@ model_components:
   - hofx
   - localensembleda
   - ufo_testing
+  - convert_bufr
   prompt: Enter the model components for this model.
   type: string-check-list
 
@@ -144,6 +148,7 @@ runahead_limit:
   - hofx
   - localensembleda
   - ufo_testing
+  - convert_bufr
   type: string
 
 window_type:
