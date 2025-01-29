@@ -1,13 +1,13 @@
 obs space:
-  name: sst_amsr2_l3u
+  name: sst_avhrr_ma_l3u
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/sst_amsr2_l3u.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/sst_avhrr_ma_l3u.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_amsr2_l3u.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_avhrr_ma_l3u.{{window_begin}}.nc4'
   simulated variables: [seaSurfaceTemperature]
 get values:
   time interpolation: linear
@@ -44,3 +44,9 @@ obs filters:
         - ObsError/seaSurfaceTemperature
         coefs:
         - 1.0
+{% if 'cice6' in marine_models %}
+- filter: Domain Check
+  where:
+  - variable: { name: GeoVaLs/sea_ice_area_fraction}
+    maxvalue: 0.00001
+{% endif %}
