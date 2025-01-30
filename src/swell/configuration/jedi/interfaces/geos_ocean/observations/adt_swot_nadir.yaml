@@ -28,10 +28,6 @@ obs filters:
   where:
   - variable: {name: GeoVaLs/sea_floor_depth_below_sea_surface}
     minvalue: 500
-# - filter: Domain Check
-#   where:
-#   - variable: { name: GeoVaLs/sea_ice_area_fraction}
-#     maxvalue: 0.00001
 - filter: Domain Check
   where:
   - variable: { name: GeoVaLs/distance_from_coast}
