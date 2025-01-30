@@ -625,9 +625,11 @@ marine_models:
   tasks:
   - EvaIncrement
   - GenerateBClimatology
+  - GetObservations
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
+  - RunJediVariationalExecutable
   type: string-check-list
 
 minimizer:

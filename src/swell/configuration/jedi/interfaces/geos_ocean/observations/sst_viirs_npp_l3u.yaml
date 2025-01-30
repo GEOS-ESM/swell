@@ -1,13 +1,13 @@
 obs space:
-  name: sst_amsr2_l3u
+  name: sst_viirs_npp_l3u
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/sst_amsr2_l3u.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/sst_viirs_npp_l3u.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_amsr2_l3u.{{window_begin}}.nc4'
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_viirs_npp_l3u.{{window_begin}}.nc4'
   simulated variables: [seaSurfaceTemperature]
 get values:
   time interpolation: linear

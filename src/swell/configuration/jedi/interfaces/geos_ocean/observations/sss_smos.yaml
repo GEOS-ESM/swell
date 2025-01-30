@@ -23,7 +23,7 @@ obs filters:
   minvalue: 0.1
   maxvalue: 40.0
 - filter: Background Check
-  threshold: 5.0
+  absolute threshold: 2.5
 - filter: Domain Check
   action:
     name: passivate

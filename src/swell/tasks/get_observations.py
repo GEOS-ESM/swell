@@ -127,6 +127,7 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Set R2D2 config file
         # --------------------
