@@ -28,18 +28,6 @@ obs filters:
   where:
   - variable: {name: GeoVaLs/sea_floor_depth_below_sea_surface}
     minvalue: 500
-# - filter: Perform Action
-#   action:
-#     name: assign error
-#     error function:
-#       name: ObsFunction/LinearCombination
-#       options:
-#         variables: [{name: GeoVaLs/mesoscale_representation_error},
-#                     {name: ObsError/absolute_dynamic_topography}]
-#         # variables: [mesoscale_representation_error@GeoVaLs,
-#         #             absolute_dynamic_topography@ObsError]
-#         coefs: [0.1,
-#                 0.5]
 # - filter: BlackList
 #   where:
 #   - variable:
