@@ -28,26 +28,6 @@ obs filters:
   where:
   - variable: {name: GeoVaLs/sea_floor_depth_below_sea_surface}
     minvalue: 500
-# - filter: BlackList
-#   where:
-#   - variable:
-#       name: MetaData/latitude
-#     minvalue: -65
-#     maxvalue: -30
-#   - variable:
-#       name: MetaData/longitude
-#     minvalue: -125
-#     maxvalue: -90
-# - filter: BlackList
-#   where:
-#   - variable:
-#       name: MetaData/latitude
-#     minvalue: -65
-#     maxvalue: -30
-#   - variable:
-#       name: MetaData/longitude
-#     minvalue: 60
-#     maxvalue: 110
 # - filter: Domain Check
 #   where:
 #   - variable: { name: GeoVaLs/sea_ice_area_fraction}
