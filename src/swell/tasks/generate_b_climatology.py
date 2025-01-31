@@ -9,7 +9,7 @@ import os
 import yaml
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.shell_commands import run_subprocess, run_track_log_subprocess
+from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
@@ -121,7 +121,7 @@ class GenerateBClimatology(taskBase):
         # The output then will be used to generate the vertical correlation files via
         # parameters_diffusion_vt
         # ----------------------------------------------------------------------------
-        self.logger.info(' Creating the horizontal and vertical scales.')
+        self.logger.info(' Creating the horizontal and vertical correlation scales.')
 
         # Jedi application name
         # ---------------------
@@ -140,23 +140,16 @@ class GenerateBClimatology(taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Source JEDI modules (scipy and numpy dependent) and execute calc_scales.py
-        # Could be a generalized function depending on the repeated use of this
-        # -----------------------------------------------------------------------
-        mod_file = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'modules')
-        exec_file = os.path.join(self.cycle_dir(), 'soca', 'calc_scales.py')
-
+        # Execute calc_scales.py, which is a Python script in SOCA/tools
         # Make sure the file is executable
-        # --------------------------------
+        # -----------------------------------------------------------------------
+        exec_file = os.path.join(self.cycle_dir(), 'soca', 'calc_scales.py')
         os.chmod(exec_file, 0o755)
 
-        command = f'source {mod_file} \n' + \
-            f'cd {self.cycle_dir()} \n' + \
-            f'{exec_file} {self.cycle_dir()}/calc_scales.yaml'
-
-        # Containerized run of the script
-        # -------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command], cwd=self.cycle_dir())
+        # Create and execute the command
+        # ------------------------------
+        command = [exec_file, 'calc_scales.yaml']
+        run_track_log_subprocess(self.logger, command, cwd=self.cycle_dir())
 
     # ----------------------------------------------------------------------------------------------
 

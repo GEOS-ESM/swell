@@ -10,12 +10,20 @@ saber central block:
     debugging mode: false
 saber outer blocks:
 - saber block name: gsi interpolation to model grid
-  state variables to inverse: &bvars [eastward_wind,northward_wind,air_temperature,surface_pressure,
-                                      specific_humidity,cloud_liquid_ice,cloud_liquid_water,
-                                      rain_water,snow_water,
+  state variables to inverse: &bvars [eastward_wind,
+                                      northward_wind,air_temperature,
+                                      air_pressure_at_surface,
+                                      water_vapor_mixing_ratio_wrt_moist_air,
+                                      cloud_liquid_ice,
+                                      cloud_liquid_water,
+                                      rain_water,
+                                      snow_water,
                                       mole_fraction_of_ozone_in_air,
-                                      fraction_of_ocean,fraction_of_lake,fraction_of_ice,
-                                      sfc_geopotential_height_times_grav]
+                                      fraction_of_ocean,
+                                      fraction_of_lake,
+                                      fraction_of_ice,
+                                      geopotential_height_times_gravity_at_surface,
+                                      skin_temperature_at_surface]
   gsi akbk: './fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4'
   gsi error covariance file: './fv3-jedi/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
   gsi berror namelist file: './fv3-jedi/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml'

@@ -1,0 +1,6 @@
+jedi_build_method: create
+bundles:
+- fv3-jedi
+- soca
+- iodaconv
+- ufo

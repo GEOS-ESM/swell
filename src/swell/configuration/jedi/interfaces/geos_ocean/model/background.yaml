@@ -2,4 +2,10 @@ date: '{{local_background_time_iso}}'
 read_from_file: 1
 basename: './'
 ocn_filename: 'MOM6.res.{{local_background_time}}.nc'
-state variables: [socn, tocn, ssh, hocn, mld, layer_depth]
+state variables:
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
+  - ocean_mixed_layer_thickness
+  - sea_water_depth

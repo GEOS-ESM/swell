@@ -16,7 +16,14 @@ correlation:
 - name: 'ocn'
   base value: 840336.134453782
   rossby mult: 0.280112045
-  variables: [socn, tocn, ssh, hocn]
+  variables:
+    - sea_water_salinity
+    - sea_water_potential_temperature
+    - sea_surface_height_above_geoid
+    - sea_water_cell_thickness
 - name: 'ice'
   base value: 560224.089635854
-  variables: [cicen, hicen, hsnon]
+  variables:
+    - sea_ice_area_fraction
+    - sea_ice_thickness
+    - sea_ice_snow_thickness
