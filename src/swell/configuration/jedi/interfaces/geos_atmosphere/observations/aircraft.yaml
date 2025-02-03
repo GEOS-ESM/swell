@@ -15,7 +15,7 @@ obs space:
   simulated variables: [airTemperature, windEastward, windNorthward]
 
 obs bias:
-  input file: '{{cycle_dir}}/aircraft_abias_air.{{window_begin}}.nc4'
+  input file: '{{cycle_dir}}/aircraft_abias_air.{{window_begin}}.acftbias'
   bc by record: true
   variational bc:
     predictors:
