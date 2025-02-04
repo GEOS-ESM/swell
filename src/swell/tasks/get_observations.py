@@ -185,89 +185,80 @@ class GetObservations(taskBase):
                     # Change permission
                     os.chmod(jedi_obs_file, 0o644)
 
-                    # Observations were found for this provider, so we can break
-                    # the provider loop
+                    # Observations were found for this provider, so we can break the provider loop
                     break
-
-            # TODO: This part is not tested yet for cycling VarBC
-            # Aircraft bias correction files
-            # ------------------------------
-            if observation == 'aircraft':
-                target_abccoef = observation_dict['obs bias']['input file']
-
-                # We assume fetch is required unless we are cycling VarBC
-                fetch_required = True
-
-                self.logger.info(f'Processing aircraft bias file {target_abccoef}')
-                fetch(date=background_time,
-                      target_file=target_abccoef,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type='acftbias')
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satellite bias correction (coeff and cov) files
+            # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
-            target_sbccoef = observation_dict['obs bias']['input file']
-            target_sbccovr = observation_dict['obs bias']['covariance']['prior']['input file']
+            target_bccoef = observation_dict['obs bias']['input file']
+            target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
             # We assume fetch is required unless we are cycling VarBC
             fetch_required = True
 
             if cycling_varbc:
                 if self.cycle_time_dto() == self.first_cycle_time_dto():
-                    self.logger.info(f'Process satellite file {target_sbccoef} for the first cycle')
-                    self.logger.info(f'Process satellite file {target_sbccovr} for the first cycle')
+                    self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
+                    self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
 
                 else:
-                    self.logger.info(f'Using satellite bias files from the previous cycle')
-                    previous_bias_coef = self.previous_cycle_bias(target_sbccoef, window_length)
-                    previous_bias_covr = self.previous_cycle_bias(target_sbccovr, window_length)
+                    self.logger.info(f'Using bias files from the previous cycle')
+                    previous_bias_coef = self.previous_cycle_bias(target_bccoef, window_length)
+                    previous_bias_covr = self.previous_cycle_bias(target_bccovr, window_length)
 
                     # Link the previous bias file to the current cycle directory
-                    # -----------------------------------------------------------
-                    self.logger.info(f'Linking {previous_bias_coef} to {target_sbccoef}')
-                    self.geos.linker(previous_bias_coef, target_sbccoef, dst_dir=self.cycle_dir())
-                    self.logger.info(f'Linking {previous_bias_covr} to {target_sbccovr}')
-                    self.geos.linker(previous_bias_covr, target_sbccovr, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_coef} to {target_bccoef}')
+                    self.geos.linker(previous_bias_coef, target_bccoef, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_covr} to {target_bccovr}')
+                    self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
 
                     fetch_required = False
 
+            # Determine the bias file type
+            if observation == 'aircraft':
+                bias_file_type = 'acftbias'
+            else:
+                bias_file_type = 'satbias'
+
             # This will skip the fetch if we are cycling VarBC
             if fetch_required:
-                self.logger.info(f'Processing satellite bias file {target_sbccoef}')
+                self.logger.info(f'Processing bias file {target_bccoef}')
                 fetch(date=background_time,
-                      target_file=target_sbccoef,
+                      target_file=target_bccoef,
                       provider='gsi',
                       obs_type=observation,
                       type='bc',
                       experiment=obs_experiment,
-                      file_type='satbias')
+                      file_type=bias_file_type)
 
-                self.logger.info(f'Processing satellite bias file {target_sbccovr}')
+                self.logger.info(f'Processing bias file {target_bccovr}')
                 fetch(date=background_time,
-                      target_file=target_sbccovr,
+                      target_file=target_bccovr,
                       provider='gsi',
                       obs_type=observation,
                       type='bc',
                       experiment=obs_experiment,
-                      file_type='satbias_cov')
+                      file_type=bias_file_type+'_cov')
 
             # Change permission
-            os.chmod(target_sbccoef, 0o644)
-            os.chmod(target_sbccovr, 0o644)
+            os.chmod(target_bccoef, 0o644)
+            os.chmod(target_bccovr, 0o644)
+
+            # Skip time lapse part for aircraft observations
+            # ----------------------------------------------
+            if observation == 'aircraft':
+                continue
 
             # Satellite time lapse
             # --------------------
             for target_file in self.get_tlapse_files(observation_dict):
 
-                self.logger.info(f'Processing time lapse file {target_file}')
+                self.logger.info(f'Processing satellite time lapse file {target_file}')
 
                 fetch(date=background_time,
                       target_file=target_file,
