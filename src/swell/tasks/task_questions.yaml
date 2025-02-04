@@ -372,7 +372,7 @@ geos_x_background_directory:
   - geos_atmosphere
   options:
   - /dev/null/
-  - /gpfsm/dnb05/projects/p139/dao_it/archive/
+  - /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
   prompt: What is the path to the GEOS X-backgrounds directory?
   tasks:
   - GetBackgroundGeosExperiment
