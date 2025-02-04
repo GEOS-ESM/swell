@@ -15,7 +15,7 @@ obs space:
   simulated variables: [airTemperature, windEastward, windNorthward]
 
 obs bias:
-  input file: '{{cycle_dir}}/aircraft_abias_air.{{window_begin}}.nc4'
+  input file: '{{cycle_dir}}/aircraft.{{window_begin}}.acftbias'
   bc by record: true
   variational bc:
     predictors:
@@ -32,7 +32,7 @@ obs bias:
     step size: 1.0e-4
     largest analysis variance: 10000.0
     prior:
-      input file: '{{cycle_dir}}/aircraft_abias_air.{{window_begin}}.nc4'
+      input file: '{{cycle_dir}}/aircraft.{{window_begin}}.acftbias_cov'
       inflation:
         ratio: 1.005
         ratio for small dataset: 2.0
