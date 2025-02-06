@@ -220,38 +220,41 @@ class GetObservations(taskBase):
                     fetch_required = False
 
             # Determine the bias file type
-            if observation == 'aircraft':
+            if observation == 'aircraft_temperature':
                 bias_file_type = 'acftbias'
+            elif observation == 'aircraft_wind':
+                bias_file_type = 'null'
             else:
                 bias_file_type = 'satbias'
 
             # This will skip the fetch if we are cycling VarBC
-            if fetch_required:
-                self.logger.info(f'Processing bias file {target_bccoef}')
-                fetch(date=background_time,
-                      target_file=target_bccoef,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type=bias_file_type)
+            if bias_file_type != 'null':
+               if bias_file_type != 'null' and fetch_required:
+                   self.logger.info(f'Processing bias file {target_bccoef}')
+                   fetch(date=background_time,
+                         target_file=target_bccoef,
+                         provider='gsi',
+                         obs_type=observation,
+                         type='bc',
+                         experiment=obs_experiment,
+                         file_type=bias_file_type)
 
-                self.logger.info(f'Processing bias file {target_bccovr}')
-                fetch(date=background_time,
-                      target_file=target_bccovr,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type=bias_file_type+'_cov')
+                   self.logger.info(f'Processing bias file {target_bccovr}')
+                   fetch(date=background_time,
+                         target_file=target_bccovr,
+                         provider='gsi',
+                         obs_type=observation,
+                         type='bc',
+                         experiment=obs_experiment,
+                         file_type=bias_file_type+'_cov')
 
-            # Change permission
-            os.chmod(target_bccoef, 0o644)
-            os.chmod(target_bccovr, 0o644)
+               # Change permission
+               os.chmod(target_bccoef, 0o644)
+               os.chmod(target_bccovr, 0o644)
 
             # Skip time lapse part for aircraft observations
             # ----------------------------------------------
-            if observation == 'aircraft':
+            if observation == 'aircraft_temperature' or observation == 'aircraft_wind':
                 continue
 
             # Satellite time lapse

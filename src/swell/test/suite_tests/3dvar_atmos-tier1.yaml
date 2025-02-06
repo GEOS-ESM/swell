@@ -17,7 +17,8 @@ models:
     vertical_resolution: '72'
     total_processors: 6
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua

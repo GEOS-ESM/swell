@@ -163,7 +163,8 @@ obs_provider:
 
 observations:
   default_value:
-  - aircraft
+  - aircraft_temperature
+  - aircraft_wind
   - gps
   - pibal
   - satwind

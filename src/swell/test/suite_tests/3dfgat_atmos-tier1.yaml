@@ -11,7 +11,8 @@ models:
     horizontal_resolution: '91'
     window_type: 4D
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua
