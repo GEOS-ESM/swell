@@ -8,9 +8,13 @@ default:
 # Values for individual observation types
 # ---------------------------------------
 
-aircraft:
+aircraft_temperature:
   filter_test:
-    passedBenchmark: 341973
+    passedBenchmark: 160674
+
+aircraft_wind:
+  filter_test:
+    passedBenchmark: 319182
 
 airs_aqua:
   filter_test:
