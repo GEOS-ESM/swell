@@ -13,7 +13,7 @@ import yaml
 from typing import Optional
 import subprocess
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
+from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable 
 
 # --------------------------------------------------------------------------------------------------
 
@@ -162,9 +162,21 @@ class RunJediObsfiltersExecutable(taskBase):
             command = (f'mpirun -np 1 {jedi_executable_path} ' +
                        f'{jedi_config_file} {output_log_file}')
             print('cmd=', command)
+
+# 1st method: wrapping         
+#            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+#                           jedi_config_file, output_log_file)
+
+# 2nd method: clear
+#            print("Parent environment:")
+#            print(os.environ)
+#            subprocess.run(["env"])
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
+#            result = subprocess.run(command, shell=True, env=os.environ.copy(), capture_output=True, text=True)
             print("Output:", result.stdout)
             print("Return code:", result.returncode)
+# note: both did not solve the Mac problem
+#
         else:
             self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------

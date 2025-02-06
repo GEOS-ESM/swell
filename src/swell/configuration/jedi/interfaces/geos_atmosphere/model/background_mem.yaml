@@ -1,0 +1,10 @@
+datetime: '{{local_background_time_iso}}'
+filetype: cube sphere history
+provider: geos
+datapath: '{{cycle_dir}}'
+filenames: ['geos.mem{{ '%03d' | format(mem+1) }}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            'fv3-jedi/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
+state variables: [ua,va,t,delp,ps,q,qi,ql,qr,qs,o3ppmv,phis,
+                  qls,qcn,cfcn,frocean,frland,varflt,ustar,bstar,
+                  zpbl,cm,ct,cq,kcbl,tsm,khl,khu,frlake,frseaice,vtype,
+                  stype,vfrac,sheleg,ts,soilt,soilm,u10m,v10m]

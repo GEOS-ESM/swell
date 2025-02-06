@@ -1,0 +1,4 @@
+files:
+  {% for member in packet_ensemble_members %}
+  - jedi_hofx_mem{{member}}_config.yaml
+  {% endfor %}

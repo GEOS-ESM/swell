@@ -6,8 +6,13 @@ time window:
 geometry:
   TASKFILLgeometry
 
+
 initial condition:
+{% if ensemble_members is none %}
   TASKFILLbackground
+{% else %}
+  TASKFILLbackground_mem
+{% endif %}
 
 observations:
   get values:
