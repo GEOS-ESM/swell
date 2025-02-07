@@ -1,5 +1,5 @@
 obs space:
-  name: Aircraft_Wind
+  name: Aircraft Wind
   obsdatain:
     engine:
       type: H5File

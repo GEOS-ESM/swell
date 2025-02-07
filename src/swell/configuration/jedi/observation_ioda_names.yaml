@@ -9,10 +9,10 @@ ioda instrument names:
     full name: Aircraft
     inst type: conventional
   - ioda name: aircraft_temperature
-    full name: Aircraft_temperature
+    full name: Aircraft Temperature
     inst type: conventional
   - ioda name: aircraft_wind
-    full name: Aircraft_wind
+    full name: Aircraft Wind
     inst type: conventional
   - ioda name: airs_aqua
     full name: AIRS (AQUA)
