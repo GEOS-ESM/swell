@@ -11,8 +11,6 @@ models:
     - T12
     - T18
     horizontal_resolution: '181'
-    background_experiment: x0050
-    obs_experiment: x0050
     geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
     window_type: 4D
     observations:

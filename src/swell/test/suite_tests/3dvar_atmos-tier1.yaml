@@ -18,7 +18,6 @@ models:
     window_type: 3D
     horizontal_resolution: '181'
     vertical_resolution: '72'
-    # total_processors: 6
     observations:
     - aircraft_temperature
     - aircraft_wind

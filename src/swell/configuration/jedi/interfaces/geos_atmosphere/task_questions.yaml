@@ -43,7 +43,10 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0048
+  default_value: x0050
+  options:
+  - x0048
+  - x0050
 
 background_frequency:
   default_value: PT1H
@@ -110,6 +113,7 @@ horizontal_resolution:
   default_value: '361'
   options:
   - '91'
+  - '181'
   - '361'
 
 jedi_forecast_model:
@@ -154,7 +158,10 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: x0048v3
+  default_value: x0050
+  options:
+  - x0048v3
+  - x0050
 
 obs_provider:
   default_value: ncdiag
