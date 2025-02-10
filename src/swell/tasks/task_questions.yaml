@@ -369,7 +369,7 @@ geos_x_background_directory:
   ask_question: true
   default_value: /dev/null/
   models:
-  - geos_atmosphere
+  - all
   options:
   - /dev/null/
   - /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
@@ -463,8 +463,8 @@ horizontal_resolution:
   tasks:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
-  - GetBackgroundGeosExperiment
   - GetBackground
+  - GetBackgroundGeosExperiment
   - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable

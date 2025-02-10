@@ -5,6 +5,9 @@ model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
     horizontal_resolution: '91'
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
+    npx_proc: 2
+    npy_proc: 2
     observations:
     - aircraft_temperature
     - aircraft_wind
