@@ -10,8 +10,6 @@ models:
     - T06
     - T12
     - T18
-    background_experiment: x0050
-    obs_experiment: x0050
     geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
     window_length: PT6H
     window_offset: PT3H

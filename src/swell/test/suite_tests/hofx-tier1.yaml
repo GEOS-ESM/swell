@@ -1,15 +1,10 @@
-start_cycle_point: '2021-12-12T00:00:00Z'
-final_cycle_point: '2021-12-12T06:00:00Z'
 jedi_build_method: use_existing
 save_geovals: true
-model_components: ['geos_atmosphere', 'geos_ocean']
+# model_components: ['geos_atmosphere', 'geos_ocean']
+model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '91'
-    npx_proc: 2
-    npy_proc: 2
-    background_experiment: x0048
-    obs_experiment: x0048v3
+    horizontal_resolution: '181'
     observations:
     - aircraft_temperature
     - aircraft_wind
@@ -46,19 +41,19 @@ models:
     - sondes
     - ssmis_f17
     clean_patterns: []
-  geos_ocean:
-    obs_experiment: s2s_v1
-    obs_provider: ['odas', 'gdas_marine']
-    horizontal_resolution: 72x36
-    vertical_resolution: '50'
-    observations:
-    - adt_cryosat2n
-    - adt_jason3
-    - adt_saral
-    - adt_sentinel3a
-    - adt_sentinel3b
-    - insitu_profile_argo
-    - sst_ostia
-    - sss_smos
-    - sss_smapv5
-    - temp_profile_xbt
+  # geos_ocean:
+  #   obs_experiment: s2s_v1
+  #   obs_provider: ['odas', 'gdas_marine']
+  #   horizontal_resolution: 72x36
+  #   vertical_resolution: '50'
+  #   observations:
+  #   - adt_cryosat2n
+  #   - adt_jason3
+  #   - adt_saral
+  #   - adt_sentinel3a
+  #   - adt_sentinel3b
+  #   - insitu_profile_argo
+  #   - sst_ostia
+  #   - sss_smos
+  #   - sss_smapv5
+  #   - temp_profile_xbt
