@@ -4,7 +4,7 @@ save_geovals: true
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '181'
+    horizontal_resolution: '91'
     observations:
     - aircraft_temperature
     - aircraft_wind

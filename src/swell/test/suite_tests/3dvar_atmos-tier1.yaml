@@ -10,11 +10,11 @@ models:
     - T06
     - T12
     - T18
-    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
     window_length: PT6H
     window_offset: PT3H
     window_type: 3D
-    horizontal_resolution: '181'
+    horizontal_resolution: '91'
     vertical_resolution: '72'
     observations:
     - aircraft_temperature
