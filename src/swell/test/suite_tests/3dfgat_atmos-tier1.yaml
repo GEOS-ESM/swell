@@ -1,6 +1,8 @@
+start_cycle_point: '2023-10-10T00:00:00Z'
+final_cycle_point: '2023-10-10T06:00:00Z'
 jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
-runahead_limit: 'P3'
+runahead_limit: 'P2'
 models:
   geos_atmosphere:
     cycle_times:
@@ -8,7 +10,10 @@ models:
     - T06
     - T12
     - T18
-    horizontal_resolution: '91'
+    horizontal_resolution: '181'
+    background_experiment: x0050
+    obs_experiment: x0050
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
     window_type: 4D
     observations:
     - aircraft_temperature
