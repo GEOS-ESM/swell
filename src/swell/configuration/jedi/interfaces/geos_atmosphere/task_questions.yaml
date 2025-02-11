@@ -85,7 +85,10 @@ ensemble_num_members:
   options: None
 
 geovals_experiment:
-  default_value: x0048v3-geovals
+  default_value: x0050-geovals
+  options:
+  - x0048v3-geovals
+  - x0050-geovals
 
 geovals_provider:
   default_value: ncdiag
