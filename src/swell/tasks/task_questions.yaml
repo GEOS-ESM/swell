@@ -369,10 +369,10 @@ geos_x_background_directory:
   ask_question: true
   default_value: /dev/null/
   models:
-  - geos_atmosphere
+  - all
   options:
   - /dev/null/
-  - /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
+  - /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
   prompt: What is the path to the GEOS X-backgrounds directory?
   tasks:
   - GetBackgroundGeosExperiment
@@ -464,6 +464,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - GetBackgroundGeosExperiment
   - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable

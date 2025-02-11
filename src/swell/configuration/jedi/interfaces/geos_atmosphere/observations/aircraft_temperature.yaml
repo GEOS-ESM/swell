@@ -15,8 +15,8 @@ obs space:
   simulated variables: [airTemperature]
 
 obs bias:
-  input file: '{{cycle_dir}}/aircraft.{{background_time}}.acftbias'
-  output file: '{{cycle_dir}}/aircraft.{{window_begin}}.acftbias'
+  input file: '{{cycle_dir}}/aircraft_temperature.{{background_time}}.acftbias'
+  output file: '{{cycle_dir}}/aircraft_temperature.{{window_begin}}.acftbias'
   bc by record: true
   variational bc:
     predictors:
@@ -33,12 +33,12 @@ obs bias:
     step size: 1.0e-4
     largest analysis variance: 10000.0
     prior:
-      input file: '{{cycle_dir}}/aircraft.{{background_time}}.acftbias_cov'
+      input file: '{{cycle_dir}}/aircraft_temperature.{{background_time}}.acftbias_cov'
       inflation:
         ratio: 1.005
         ratio for small dataset: 2.0
 # RTODLING: this needs attention: we must implement writer for cov parameters
-#   output file: '{{cycle_dir}}/aircraft.{{window_begin}}.acftbias_cov'
+#   output file: '{{cycle_dir}}/aircraft_temperature.{{window_begin}}.acftbias_cov'
 
 obs operator:
   name: Composite
