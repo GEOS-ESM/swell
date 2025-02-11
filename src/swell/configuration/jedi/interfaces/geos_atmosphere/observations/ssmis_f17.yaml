@@ -3,7 +3,7 @@
     Absorbers: [H2O,O3,CO2]
     linear obs operator:
       Absorbers: [H2O,O3]
-      Surfaces: [Water_Temperature]
+      Surfaces: [Water_Temperature,Land_Temperature,Ice_Temperature,Snow_Temperature]
     obs options:
       Sensor_ID: &Sensor_ID ssmis_f17
       EndianType: little_endian
@@ -26,15 +26,16 @@
     variational bc:
       predictors:
       - name: constant
-      - name: cloudWaterContent
-        sensor: SSMIS
-        ch19h: 12
-        ch19v: 13
-        ch22v: 14
-        ch37h: 15
-        ch37v: 16
-        ch91v: 17
-        ch91h: 18
+# Todling: the following does not work (produced negative Jo)
+#     - name: cloudWaterContent
+#       sensor: SSMIS
+#       ch19h: 12
+#       ch19v: 13
+#       ch22v: 14
+#       ch37h: 15
+#       ch37v: 16
+#       ch91v: 17
+#       ch91h: 18
       - name: lapseRate
         order: 2
         tlapse: &ssmis_f17_tlapse '{{cycle_dir}}/ssmis_f17.{{background_time}}.tlapse.txt'
@@ -99,7 +100,7 @@
       channels: *ssmis_f17_channels
     where:
     - variable:
-        name: GeoVaLs/surface_geopotential_height
+        name: GeoVaLs/geopotential_height_at_surface
       minvalue: 2000.0
       min_exclusive: true
     - variable:

@@ -139,7 +139,7 @@ class Config():
                                       f'this variable was not created. Ensure that the variable ' +
                                       f'is in the experiment configuration and that the task can ' +
                                       f'access that key based on the rules in '
-                                      f'tasks/questions.yaml.')
+                                      f'tasks/task_questions.yaml.')
             else:
                 return default
         return variable_not_found

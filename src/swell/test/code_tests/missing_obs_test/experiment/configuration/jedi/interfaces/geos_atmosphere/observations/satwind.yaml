@@ -238,7 +238,7 @@ obs post filters:
   filter variables:
   - name: windEastward
   - name: windNorthward
-  reference: GeoVaLs/surface_pressure
+  reference: GeoVaLs/air_pressure_at_surface
   value: MetaData/pressure
   maxvalue: -11000
   where:
@@ -253,7 +253,7 @@ obs post filters:
   filter variables:
   - name: windEastward
   - name: windNorthward
-  reference: GeoVaLs/surface_pressure
+  reference: GeoVaLs/air_pressure_at_surface
   value: MetaData/pressure
   maxvalue: -20000
   where:

@@ -16,24 +16,23 @@ models:
     horizontal_resolution: 72x36
     vertical_resolution: '50'
     total_processors: 6
-    obs_experiment: s2s_v1
     observations:
-    - adt_3a_egm2008
-    - adt_3b_egm2008
-    - adt_c2_egm2008
-    - adt_j3_egm2008
-    - adt_sa_egm2008
-    - sst_ostia
-    - salt_profile_fnmoc
-    - sss_smos_esa
-    - sss_trak_fnmoc
-    - sst_gmi_l3u
-    - sst_ship_fnmoc
-    - sst_trak_fnmoc
-    - temp_profile_fnmoc
+     - adt_cryosat2n
+     - adt_jason3
+     - adt_saral
+     - adt_sentinel3a
+     - adt_sentinel3b
+     - insitu_profile_argo
+     - sst_ostia
+     - sss_smos
+     - sss_smapv5
+     - sst_abi_g16_l3c
+     - sst_gmi_l3u
+     - sst_viirs_n20_l3u
+     - temp_profile_xbt
     number_of_iterations:
     - 10
-    obs_provider: gdas_marine
+    obs_provider: ['odas', 'gdas_marine']
     mom6_iau: True
     analysis_forecast_window_offset: -PT3H
     background_time_offset: PT9H
