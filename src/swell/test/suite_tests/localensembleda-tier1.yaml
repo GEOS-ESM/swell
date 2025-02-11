@@ -27,9 +27,31 @@ models:
 
 
     observations:
-    - omi_aura
-#    - gps
+    - aircraft_temperature
+    - aircraft_wind
+    - sondes
+    - gps
+#    - amsua_aqua
+#    - amsua_n15
+#    - amsua_n18
+#    - amsua_n19
+#    - amsr2_gcom-w1
+#    - atms_n20
+#    - atms_npp
+#    - avhrr3_metop-b
+#    - avhrr3_n18
+#    - avhrr3_n19
+#    - scatwind
+#    - sfcship
+#    - sfc
+#    - mhs_metop-b
+#    - mhs_metop-c
+#    - mhs_n19
+#    - mls55_aura
+#    - omi_aura
 
+
+#  order for filter purpose
 #    - aircraft
 #    - sondes
 #    - gps
