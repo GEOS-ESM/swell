@@ -29,7 +29,7 @@ elif [ $OS_VERSION -eq 15 ]; then
     # Load python dependencies
     echo "Using SLES15 modules"
     module use /discover/swdev/jcsda/spack-stack/scu17/modulefiles
-    module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-1.8.0/envs/ue-intel-2021.10.0/install/modulefiles/Core
+    module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-1.9.0/envs/ue-intel-2021.10.0/install/modulefiles/Core
     module load stack-intel/2021.10.0
     module load stack-intel-oneapi-mpi/2021.10.0
     module load stack-python/3.11.7
@@ -37,7 +37,7 @@ elif [ $OS_VERSION -eq 15 ]; then
 
     # Load the cylc module
     module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core/
-    module load cylc/sles15_8.2.4
+    module load cylc/sles15_8.4.0
 else
     echo "OS version not supported"
     exit 1
