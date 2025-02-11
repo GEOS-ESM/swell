@@ -160,6 +160,9 @@ ioda instrument names:
   - ioda name: adt_saral
     full name: ADT SARAL
     inst type: altimeter
+  - ioda name: adt_swot_nadir
+    full name: ADT SWOT Nadir
+    inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
     inst type: conventional
