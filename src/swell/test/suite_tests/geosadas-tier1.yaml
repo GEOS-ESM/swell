@@ -5,7 +5,8 @@ models:
   geos_atmosphere:
     horizontal_resolution: '13'
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua
