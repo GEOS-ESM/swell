@@ -1,52 +1,49 @@
-# Pinned versions for 2024-08-31
+# Pinned versions for 2025-02-06
 - jedicmake:
     branch: 40d521f9a2d796fcbc6234d77abceeffefb8eb7f
     commit: true
 - oops:
-    branch: d77217323bbbd02ea41049fe1bd339f24a64f177
+    branch: 765aeb1204a6999f78cf4fd589074af42cd4700c
     commit: true
 - saber:
-    branch: 524b6e5fcd7a490a82120c81e5d504b9d95d1575
+    branch: b85ece54b9928c9aed0a11b46f7a3a963f78e635
     commit: true
 - ioda:
-    branch: ad84060522f6fa7ab9c75d227f1d9e72c8bf7a28
+    branch: cae6614602b415262b10f1f648757c76a657b5af
     commit: true
 - ufo:
-    branch: 58e7da419c80f8613e0af5105ecd7d09b75bdd3d
+    branch: f761f4727b22b58d9a39accd6d7e626c1dd00ad9
     commit: true
 - vader:
-    branch: 6d56a1eb5b6b315c7b9befbda26896e783c07f78
+    branch: 0792f693148c3d09a166021e6b8c2758cb8a1251
     commit: true
 - fv3:
     branch: ab25dc09d955271f34ca6a3fa83af1093c85d9f7
     commit: true
 - fv3-jedi-lm:
-    branch: 30ef7a39009bed5b363ff887e7acf40ea1b2b3f2
+    branch: 5994c385a01236bb9def57dd37b73bec8b5df487
     commit: true
 - femps:
     branch: 4f12677d345e683bf910b5f76f0df120ad27482d
     commit: true
 - fv3-jedi:
-    branch: a94bb3f9ec0d7c8d59dce64ea638753231f2e344
+    branch: a391d2fd2263056c1ace87b8507960d7b936380a
     commit: true
 - ioda-data:
-    branch: bcb0754f957f857c0ccc893f8402c384bc2e8ba8
+    branch: 9d414d76d9859701ed5eb126dddf08e704a1e159
     commit: true
 - fv3-jedi-data:
-    branch: 568088d9ec13f6ebb405008961d9c1f2913bbd95
+    branch: effbda720365a4b095114bd97adcd9367b0b34e3
     commit: true
 - soca:
-    branch: d260316b9c4e03b1f040fe6ede2fde152408f4a4
+    branch: b4378059d8306aef6fbb80cac536ee3849f6353b
     commit: true
 - iodaconv:
-    branch: a7f5909c5753cdcec2dbcf5a4f836e9be7ce6160
+    branch: ab99fd23178155458d24ab5cc9ef4d04406cd17c
     commit: true
 - gsw:
     branch: 697cbeb7605d70ed3857664c5f54a5c05346e31f
     commit: true
 - ufo-data:
-    branch: dc81b3991bb23f2e63067b7e2851711a23a1839b
-    commit: true
-- icepack:
-    branch: 73136ee8dcdbe378821e540488a5980a03d8abe6
+    branch: ca4e6f544b1330e9977552aff153f33ed178fb72
     commit: true
