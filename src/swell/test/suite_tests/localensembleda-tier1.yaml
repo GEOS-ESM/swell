@@ -25,10 +25,9 @@ models:
     ensemble_hofx_strategy:   serial     # parallel
     ensemble_hofx_packets:  1     # 2
 
-
     observations:
-    - aircraft_temperature
-    - aircraft_wind
+#    - aircraft_temperature
+#    - aircraft_wind
     - sondes
     - gps
 #    - amsua_aqua
