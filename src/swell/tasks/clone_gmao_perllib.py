@@ -31,8 +31,9 @@ class CloneGmaoPerllib(taskBase):
         # Set the default tag to g1.0.1 if not specified
         if gmao_perllib_tag is None:
             gmao_perllib_tag = 'g1.0.1'
-            self.logger.info("The target branch for gmao_perllib, 'gmao_perllib_branch', is unspecified in the experiment config file, " +
-                            f"defaulting to {gmao_perllib_tag}")
+            self.logger.info("The target branch for gmao_perllib, 'gmao_perllib_branch', "
+                             + "is unspecified in the experiment config file, "
+                             + f"defaulting to {gmao_perllib_tag}")
 
         # Don't clone or link if GMAO_perllib already exists in experiment directory
         if os.path.exists(experiment_perllib_path):
@@ -40,10 +41,13 @@ class CloneGmaoPerllib(taskBase):
 
         # Clone from github if existing perllib is unspecified
         elif existing_perllib_path is None:
-            self.logger.info("The path to GMAO_perllib, 'gmao_perllib_path'" +
-                                "has not been specified in experiment.yaml. CloneGMAOPerllib will now attempt to clone" +
-                             " it from Github, which will fail on compute nodes with no internet access.")
-            subprocess.run(f"git clone -b {gmao_perllib_tag} https://github.com/GEOS-ESM/GMAO_perllib.git "
+            self.logger.info("The path to GMAO_perllib, 'gmao_perllib_path'"
+                             + "has not been specified in experiment.yaml. "
+                             + "CloneGMAOPerllib will now attempt to clone "
+                             + "it from Github, which will fail on compute "
+                             + "nodes with no internet access.")
+            subprocess.run(f"git clone -b {gmao_perllib_tag} "
+                           + "https://github.com/GEOS-ESM/GMAO_perllib.git "
                            + os.path.join(experiment_path()))
 
         # Link to existing GMAO_perllib
@@ -52,15 +56,19 @@ class CloneGmaoPerllib(taskBase):
             # Check that the tag of the existing repository matches the intended tag
             existing_tag = self.get_tag(existing_perllib_path)
             if not existing_tag or existing_tag != gmao_perllib_tag:
-                self.logger.debug("The git tag of the existing GMAO_perllib repository, {existing_perllib_path}, does not match " +
-                               "the specified tag {gmao_perllib_tag}. Please check the directory and make sure the installation is correct.")
+                self.logger.debug("The git tag of the existing GMAO_perllib repository, "
+                                  + f"{existing_perllib_path}, does not match the specified tag "
+                                  + f"{gmao_perllib_tag}. Please check the directory and make "
+                                  + "sure the installation is correct.")
 
             # Link the existing directory to the experiment directory
             os.symlink(existing_perllib_path, experiment_perllib_path)
 
         # Check to make sure the path contains acquire and acquire_obsys
-        if len(list(set(['acquire', 'acquire_obsys']) & set(os.listdir(experiment_perllib_path)))) < 2:
-            self.logger.abort(f"{experiment_perllib_path} does not contain acquire and acquire_obsys")
+        if len(list(set(['acquire', 'acquire_obsys'])
+                    & set(os.listdir(experiment_perllib_path)))) < 2:
+            self.logger.abort(f"{experiment_perllib_path} does not contain "
+                              + "acquire and acquire_obsys")
 
     # --------------------------------------------------------------------------------------------------
 
@@ -70,7 +78,5 @@ class CloneGmaoPerllib(taskBase):
             return prc.stdout.strip()
         except subprocess.CalledProcessError:
             return None
-
-
 
 # --------------------------------------------------------------------------------------------------
