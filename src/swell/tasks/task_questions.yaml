@@ -813,7 +813,7 @@ observing_system_records_path:
 
 path_to_bufr:
   ask_question: true
-  default_value: None
+  default_value: defer_to_platform
   prompt: What is the path to the BUFR files to convert?
   tasks:
   - GetBufr

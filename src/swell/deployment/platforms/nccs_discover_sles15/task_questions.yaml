@@ -28,6 +28,9 @@ geos_restarts_directory:
 gmao_perllib_path:
   default_value: /discover/nobackup/projects/gmao/advda/perllib_opt/GMAO_perllib/g1.0.1/
 
+path_to_bufr:
+  default_value: None
+
 r2d2_local_path:
   default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
 
