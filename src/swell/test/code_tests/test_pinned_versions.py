@@ -25,9 +25,13 @@ class PinnedVersionsTest(unittest.TestCase):
         abort_message = "Wrong commit hashes found for these repositories in jedi_bundle: [oops]"
         # Run check hash (expect abort)
         with self.assertRaises(SystemExit) as abort, suppress_stdout():
-            # Suppress logging output for test
             log_level = logger.level
+            # Set logger priority to 60. This number sets the minimum level of message
+            # that the logger can register (Where message criticality ascends from 0 to 50).
+            # By setting a level of 60, we suppress all messages for the purpose of not polluting
+            # the stream with confusing warnings, which are generated as part of the test process.
             logger.setLevel(60)
             check_hashes(jedi_bundle_dir, logger)
             self.assertEqual(abort.exception, abort_message)
+            # Reset loglevel to its original value
             logger.setLevel(log_level)
