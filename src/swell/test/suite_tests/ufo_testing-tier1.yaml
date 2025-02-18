@@ -1,4 +1,4 @@
-final_cycle_point: '2021-12-12T00:00:00Z'
+final_cycle_point: '2023-10-10T00:00:00Z'
 jedi_build_method: use_existing
 bundles: REMOVE
 model_components: ['geos_atmosphere']
@@ -7,19 +7,20 @@ models:
     cycle_times:
     - T00
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua
     - amsua_metop-b
     - amsua_metop-c
     - amsua_n15
-    - amsua_n18
+    # - amsua_n18
     - amsua_n19
     - atms_n20
     - atms_npp
     - avhrr3_metop-b
-    - avhrr3_n18
+    # - avhrr3_n18
     - avhrr3_n19
     - cris-fsr_n20
     - cris-fsr_npp
@@ -54,6 +55,6 @@ models:
     - gsi_ncdiags/aircraft/*.nc4
     - gsi_ncdiags/aircraft
     - gsi_ncdiags
-    path_to_gsi_nc_diags: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
-    obs_experiment: x0048v2
-    geovals_experiment: x0048v2-geovals
+    # path_to_gsi_nc_diags: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
+    path_to_gsi_bc_coefficients: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan/x0050/ana/Y%Y/M%m/*bias*%Y%m%d_%Hz.txt
+    path_to_gsi_nc_diags: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan/x0050/obs/Y%Y/M%m/D%d/H%H/

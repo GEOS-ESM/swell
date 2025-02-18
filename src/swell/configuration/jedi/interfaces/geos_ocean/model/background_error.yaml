@@ -1,16 +1,19 @@
 covariance model: SABER
 saber central block:
   saber block name: diffusion
-  active variables: [tocn, socn, ssh]
+  active variables:
+    - sea_water_potential_temperature
+    - sea_water_salinity
+    - sea_surface_height_above_geoid
   read:
     groups:
-    - variables: [tocn, socn]
+    - variables: [sea_water_potential_temperature, sea_water_salinity]
       horizontal:
         filepath: 'background_error_model/hz_rossby_1p5'
       vertical:
         levels: {{vertical_resolution}}
         filepath: 'background_error_model/vt.{{local_background_time}}'
-    - variables: [ssh]
+    - variables: [sea_surface_height_above_geoid]
       horizontal:
         filepath: 'background_error_model/hz_rossby_1p5'
 
@@ -22,25 +25,18 @@ saber outer blocks:
     rescale_bkgerr: 1.0
     efold_z: 2500.0       # [m]
 
+  - saber block name: SOCAParametricOceanStdDev
+    temperature:  # use defaults other than SST input file
+      sst:
+        filepath: '{{cycle_dir}}/soca/godas_sst_bgerr.nc'
+        variable: sst_bgerr
+    unbalanced salinity: {} # use default values
+    unbalanced ssh: {} # use default values
+
 linear variable change:
   input variables: {{analysis_variables}}
   output variables: {{analysis_variables}}
   linear variable changes:
-  - linear variable change name: BkgErrGODAS
-    sst_bgerr_file: '{{cycle_dir}}/soca/godas_sst_bgerr.nc'
-    t_min: 0.1
-    t_max: 2.0
-    t_dz:  20.0
-    t_efold: 500.0
-    s_min: 0.0
-    s_max: 0.25
-    ssh_min: 0.0   # value at EQ
-    ssh_max: 0.1   # value in Extratropics
-    ssh_phi_ex: 20 # lat of transition from extratropics
-    cicen_min: 0.1
-    cicen_max: 0.5
-    hicen_min: 10.0
-    hicen_max: 100.0
   - linear variable change name: BalanceSOCA
     ksshts:
       nlayers: 2

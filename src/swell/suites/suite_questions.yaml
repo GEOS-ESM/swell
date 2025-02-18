@@ -66,7 +66,7 @@ experiment_root:
 
 start_cycle_point:
   ask_question: True
-  default_value: '2021-12-12T00:00:00Z'
+  default_value: '2023-10-10T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
@@ -83,7 +83,7 @@ start_cycle_point:
 
 final_cycle_point:
   ask_question: True
-  default_value: '2021-12-12T06:00:00Z'
+  default_value: '2023-10-10T06:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
