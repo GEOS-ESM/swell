@@ -70,7 +70,8 @@ class RunJediUfoTestsExecutable(taskBase):
         # Make modifications needed for testing
         # -------------------------------------
         conventional_types = [
-            'aircraft',
+            'aircraft_temperature',
+            'aircraft_wind',
             'pibal',
             'satwind',
             'scatwind',

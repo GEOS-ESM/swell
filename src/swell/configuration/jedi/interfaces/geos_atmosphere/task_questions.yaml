@@ -43,7 +43,10 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0048
+  default_value: x0050
+  options:
+  - x0048
+  - x0050
 
 background_frequency:
   default_value: PT1H
@@ -82,7 +85,10 @@ ensemble_num_members:
   options: None
 
 geovals_experiment:
-  default_value: x0048v3-geovals
+  default_value: x0050-geovals
+  options:
+  - x0048v3-geovals
+  - x0050-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -110,6 +116,7 @@ horizontal_resolution:
   default_value: '361'
   options:
   - '91'
+  - '181'
   - '361'
 
 jedi_forecast_model:
@@ -154,7 +161,10 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: x0048v3
+  default_value: x0050
+  options:
+  - x0048v3
+  - x0050
 
 obs_provider:
   default_value: ncdiag
@@ -163,7 +173,8 @@ obs_provider:
 
 observations:
   default_value:
-  - aircraft
+  - aircraft_temperature
+  - aircraft_wind
   - gps
   - pibal
   - satwind
@@ -197,7 +208,8 @@ observations:
   - omi_aura
   - ompsnm_npp
   options:
-  - aircraft
+  - aircraft_temperature
+  - aircraft_wind
   - gps
   - satwind
   - scatwind
@@ -234,7 +246,7 @@ observing_system_records_mksi_path:
   default_value: None
 
 observing_system_records_mksi_path_tag:
-  default_value: None
+  default_value: g5.41.3
 
 observing_system_records_path:
   default_value: None
