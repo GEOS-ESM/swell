@@ -54,12 +54,12 @@ class GenerateObservingSystemTest(unittest.TestCase):
             # Set logger priority to 60. This number sets the minimum level of message
             # that the logger can register (Where message criticality ascends from 0 to 50).
             # By setting a level of 60, we suppress all messages for the purpose of not polluting
-            # the stream with confusing warnings which are intentionally generated as a part of testing.
+            # the stream with confusing warnings, which are generated as part of the test process.
             self.logger.setLevel(60)
             get_channels(self.observing_system_records_path, observations[0],
                          self.dt_cycle_time, self.logger)
             self.assertEqual(abort.exception, abort_message)
-            # Reset loglevel to its original value
+            # Reset level of logger to its original value
             self.logger.setLevel(log_level)
 
     def test_geos_mksi_develop(self):

@@ -33,5 +33,5 @@ class PinnedVersionsTest(unittest.TestCase):
             logger.setLevel(60)
             check_hashes(jedi_bundle_dir, logger)
             self.assertEqual(abort.exception, abort_message)
-            # Reset loglevel to its original value
+            # Reset level of logger to its original value
             logger.setLevel(log_level)
