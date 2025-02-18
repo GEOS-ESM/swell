@@ -37,7 +37,9 @@ class GenerateObservingSystemRecords(taskBase):
             cycle_dir = self.cycle_dir()
             observing_system_records_path = os.path.join(cycle_dir, 'observing_system_records')
 
-        path_to_geos_mksi = self.config.observing_system_records_mksi_path()
+        observing_system_records_path = os.path.expanduser(observing_system_records_path)
+
+        path_to_geos_mksi = os.path.expanduser(self.config.observing_system_records_mksi_path())
         if path_to_geos_mksi == 'None':
             path_to_geos_mksi = os.path.join(self.experiment_path(), 'GEOS_mksi')
 
