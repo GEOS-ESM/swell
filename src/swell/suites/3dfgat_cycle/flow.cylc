@@ -82,7 +82,6 @@
             GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            # StageJedi-{{model_component}}[^] => RunJediFgatExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
