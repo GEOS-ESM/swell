@@ -25,17 +25,11 @@ background_experiment:
 
 background_frequency:
   default_value: PT3H
+  options:
+  - PT3H
 
 background_time_offset:
   default_value: PT9H
-
-cice6_domains:
-  default_value:
-  - arctic
-  - antarctic
-  options:
-  - arctic
-  - antarctic
 
 clean_patterns:
   default_value:
@@ -134,4 +128,6 @@ window_offset:
 
 window_type:
   default_value: 3D
-
+  options:
+  - 3D
+  - 4D
