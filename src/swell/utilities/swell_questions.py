@@ -29,20 +29,20 @@ class SwellQuestion:
 
 # --------------------------------------------------------------------------------------------------
 
+
 class QuestionContainer:
     """ Class to extend question lists for suites and tasks, use with Enum """
-    
+
     def __init__(self, *args):
         arg_dict = asdict(args[0])
-        
         setattr(self, arg_dict['list_name'], args[0])
-        
-    
+
     @classmethod
     def get_all(self):
         return self._member_names_
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class QuestionList:
@@ -50,11 +50,10 @@ class QuestionList:
     list_name: str
     questions: list
     list_type: str = None
-    
+
     def expand_question_list(self):
-        question_list=[]
+        question_list = []
         for question_obj in self.questions:
-            #print(question_obj)
             question = asdict(question_obj)
 
             if 'list_type' in question.keys():
@@ -62,20 +61,22 @@ class QuestionList:
                 question_list.extend(question_obj.expand_question_list())
             else:
                 question_list.append(question)
-                
+
         return question_list
-    
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class SuiteQuestion(SwellQuestion):
     question_type: str = "suite"
+
 
 # --------------------------------------------------------------------------------------------------
 
 @dataclass
 class TaskQuestion(SwellQuestion):
     question_type: str = "task"
+
 
 # --------------------------------------------------------------------------------------------------

@@ -18,9 +18,9 @@ from swell.tasks.task_question_defaults import TaskQuestionDefaults as tq
 # --------------------------------------------------------------------------------------------------
 
 class TaskQuestions(QuestionContainer, Enum):
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     window_questions = QuestionList(
         list_name="window_questions",
         questions=[
@@ -29,9 +29,9 @@ class TaskQuestions(QuestionContainer, Enum):
             tq.window_type()
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     np_proc_resolution = QuestionList(
         list_name="np_resolution",
         questions=[
@@ -41,9 +41,9 @@ class TaskQuestions(QuestionContainer, Enum):
             tq.vertical_resolution()
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     swell_static_file_questions = QuestionList(
         list_name="swell_static_file_questions",
         questions=[
@@ -53,7 +53,7 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-    
+
     background_crtm_obs = QuestionList(
         list_name="background_crtm_obs",
         questions=[
@@ -62,9 +62,9 @@ class TaskQuestions(QuestionContainer, Enum):
             tq.observations()
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     run_jedi_executable = QuestionList(
         list_name="run_jedi_executable",
         questions=[
@@ -83,7 +83,7 @@ class TaskQuestions(QuestionContainer, Enum):
             tq.total_processors(),
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
 
     GetBackground = QuestionList(
@@ -195,7 +195,7 @@ class TaskQuestions(QuestionContainer, Enum):
         ]
     )
 
-    # --------------------------------------------------------------------------------------------------    
+    # --------------------------------------------------------------------------------------------------
 
     RunJediVariationalExecutable = QuestionList(
         list_name="RunJediVariationalExecutable",
@@ -604,10 +604,5 @@ class TaskQuestions(QuestionContainer, Enum):
             tq.path_to_gsi_nc_diags()
         ]
     )
-    
-    # --------------------------------------------------------------------------------------------------
-    
-    
-
 
 # --------------------------------------------------------------------------------------------------

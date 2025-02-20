@@ -13,27 +13,28 @@ from dataclasses import asdict
 
 from swell.utilities.swell_questions import QuestionList, QuestionContainer
 from swell.suites.suite_question_defaults import SuiteQuestionDefaults as sq
+from swell.tasks.task_question_defaults import TaskQuestionDefaults as tq
 
 
 # --------------------------------------------------------------------------------------------------
 
 class SuiteQuestions(QuestionContainer, Enum):
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     all_suites = QuestionList(
-        list_name = "all_suites",
-        questions = [
+        list_name="all_suites",
+        questions=[
             sq.experiment_id(),
             sq.experiment_root()
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     common = QuestionList(
-        list_name = "common",
-        questions = [
+        list_name="common",
+        questions=[
             all_suites,
             sq.cycle_times(),
             sq.start_cycle_point(),
@@ -42,22 +43,22 @@ class SuiteQuestions(QuestionContainer, Enum):
             sq.runahead_limit()
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
 
     marine = QuestionList(
-        list_name = "marine",
-        questions = [
+        list_name="marine",
+        questions=[
             common,
             sq.marine_models()
         ]
-    )    
+    )
 
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_atmos = QuestionList(
         list_name="3dfgat_atmos",
-        questions = [
+        questions=[
             common
         ]
     )
@@ -66,8 +67,95 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     _3dfgat_cycle = QuestionList(
         list_name="3dfgat_cycle",
-        questions = [
+        questions=[
             marine
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    _3dvar_tier1 = QuestionList(
+        list_name="3dvar_tier1",
+        questions=[
+            marine,
+            sq.start_cycle_point(default_value='2021-07-01T12:00:00Z'),
+            sq.final_cycle_point(default_value='2021-07-01T12:00:00Z'),
+            tq.jedi_build_method(default_value='use_existing'),
+            sq.model_components(default_value=['geos_ocean']),
+            sq.cycle_times(default_value={
+                'depends_on_model': {
+                    'geos_ocean': ['T12']
+                }
+            }),
+            tq.window_length(default_value={
+                'depends_on_model': {
+                    'geos_ocean': 'P1D'
+                }
+            }),
+            tq.window_offset(default_value={
+                'depends_on_model': {
+                    'geos_ocean': 'P12H'
+                }
+            }),
+            tq.horizontal_resolution(default_value={
+                'depends_on_model': {
+                    'geos_ocean': '72x36'
+                }
+            }),
+            tq.vertical_resolution(default_value={
+                'depends_on_model': {
+                    'geos_ocean': '50'
+                }
+            }),
+            tq.total_processors(default_value={
+                'depends_on_model': {
+                    'geos_ocean': 6
+                }
+            }),
+            tq.obs_experiment(default_value={
+                'depends_on_model': {
+                    'geos_ocean': 's2s_v1'
+                }
+            }),
+            tq.observations(default_value={
+                'depends_on_model': {
+                    'geos_ocean': [
+                        'adt_cryosat2n',
+                        'adt_jason3',
+                        'adt_saral',
+                        'adt_sentinel3a',
+                        'adt_sentinel3b',
+                        'insitu_profile_argo',
+                        'sst_ostia',
+                        'sss_smos',
+                        'sss_smapv5',
+                        'sst_abi_g16_l3c',
+                        'sst_gmi_l3u',
+                        'sst_viirs_n20_l3u',
+                        'temp_profile_xbt',
+                    ]
+                }
+            }),
+            tq.obs_provider(default_value={
+                'depends_on_model': {
+                    'geos_ocean': ['odas', 'gdas_marine']
+                }
+            }),
+            tq.analysis_forecast_window_offset(default_value={
+                'depends_on_model': {
+                    'geos_ocean': '-PT12H'
+                }
+            }),
+            tq.background_time_offset(default_value={
+                'depends_on_model': {
+                    'geos_ocean': 'PT18H'
+                }
+            }),
+            tq.clean_patterns(default_value={
+                'depends_on_model': {
+                    'geos_ocean': ['*.nc4', '*.txt']
+                }
+            })
         ]
     )
 
@@ -75,8 +163,8 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     _3dvar = QuestionList(
         list_name="3dvar",
-        questions = [
-            marine
+        questions=[
+            _3dvar_tier1
         ]
     )
 
@@ -84,7 +172,7 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     _3dvar_atmos = QuestionList(
         list_name="3dvar_atmos",
-        questions = [
+        questions=[
             common
         ]
     )
@@ -93,7 +181,7 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     _3dvar_cycle = QuestionList(
         list_name="3dvar_cycle",
-        questions = [
+        questions=[
             marine
         ]
     )
@@ -102,7 +190,7 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     convert_ncdiags = QuestionList(
         list_name="convert_ncdiags",
-        questions = [
+        questions=[
             common
         ]
     )
@@ -144,7 +232,7 @@ class SuiteQuestions(QuestionContainer, Enum):
 
     ufo_testing = QuestionList(
         list_name="ufo_testing",
-        questions = [
+        questions=[
             common,
         ]
     )

@@ -96,7 +96,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = ("How long before the middle of the analysis window did"
-                      " the background providing forecast begin?")
+                       " the background providing forecast begin?")
         dtype: str = "iso-duration"
 
     # --------------------------------------------------------------------------------------------------
@@ -856,7 +856,8 @@ class TaskQuestionDefaults():
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
-        prompt: str = "What is the path to where the cubed sphere backgrounds are in the GEOSadas run?"
+        prompt: str = ("What is the path to where the cubed sphere "
+                       "backgrounds are in the GEOSadas run?")
         dtype: str = "string"
 
     # --------------------------------------------------------------------------------------------------
@@ -899,7 +900,8 @@ class TaskQuestionDefaults():
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
-        prompt: str = "When running the ncdiag to ioda converted do you want to produce GeoVaLs files?"
+        prompt: str = ("When running the ncdiag to ioda converted do you "
+                       "want to produce GeoVaLs files?")
         dtype: str = "boolean"
 
     # --------------------------------------------------------------------------------------------------
@@ -999,8 +1001,9 @@ class TaskQuestionDefaults():
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
-        prompt: str = ("Should a log (base 10) transformation be applied to vertical coordinate when"
-                       " constructing vertical localization?")
+        prompt: str = ("Should a log (base 10) transformation be applied "
+                       "to vertical coordinate when "
+                       "constructing vertical localization?")
         dtype: str = "boolean"
 
     # --------------------------------------------------------------------------------------------------
@@ -1039,8 +1042,8 @@ class TaskQuestionDefaults():
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
-        prompt: str = ("Which vertical coordinate group should be used"
-                " in constructing vertical localization?")
+        prompt: str = ("Which vertical coordinate group should be used "
+                       "in constructing vertical localization?")
         dtype: str = "string"
 
     # --------------------------------------------------------------------------------------------------
@@ -1065,8 +1068,8 @@ class TaskQuestionDefaults():
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
-        prompt: str = ("What localization scheme should be applied in"
-                "constructing a vertical localization?")
+        prompt: str = ("What localization scheme should be applied in "
+                       "constructing a vertical localization?")
         dtype: str = "string"
 
     # --------------------------------------------------------------------------------------------------

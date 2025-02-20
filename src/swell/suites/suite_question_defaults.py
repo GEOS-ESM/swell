@@ -74,7 +74,8 @@ class SuiteQuestionDefaults():
         question_name: str = "experiment_root"
         default_value: str = "defer_to_platform"
         ask_question: bool = True
-        prompt: str = "What is the experiment root (the directory where the experiment will be stored)?"
+        prompt: str = ("What is the experiment root (the directory where the "
+                       "experiment will be stored)?")
         dtype: str = "string"
 
     # --------------------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ class SuiteQuestionDefaults():
         dtype: str = "iso-datetime"
 
     # --------------------------------------------------------------------------------------------------
-    
+
     @dataclass
     class marine_models(SuiteQuestion):
         question_name: str = "marine_models"
@@ -119,7 +120,8 @@ class SuiteQuestionDefaults():
         question_name: str = "runahead_limit"
         default_value: str = "P4"
         ask_question: bool = True
-        prompt: str = "Since this suite is non-cycling choose how many hours the workflow can run ahead?"
+        prompt: str = ("Since this suite is non-cycling choose how "
+                       "many hours the workflow can run ahead?")
         dtype: str = "string"
 
     # --------------------------------------------------------------------------------------------------
