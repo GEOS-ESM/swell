@@ -87,7 +87,7 @@
 
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
             # Prepare analysis for next forecast

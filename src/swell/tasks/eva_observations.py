@@ -52,6 +52,7 @@ class EvaObservations(taskBase):
         # Get the model
         # -------------
         model = self.get_model()
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models())
 
         # Determine if running on login or compute node and set workers
         # -------------------------------------------------------------
