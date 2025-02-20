@@ -11,7 +11,7 @@ models:
     observations:
 #    - aircraft_temperature
 #    - aircraft_wind
-    - airs_aqua
+#    - airs_aqua
 #    - amsr2_gcom-w1
 #    - amsua_aqua
 #    - amsua_metop-b
@@ -41,7 +41,7 @@ models:
 #    - scatwind
 #    - sfcship
 #    - sfc
-#    - sondes
+    - sondes
 #    - ssmis_f17
     clean_patterns: []
 
