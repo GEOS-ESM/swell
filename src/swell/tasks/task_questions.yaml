@@ -614,10 +614,10 @@ marine_models:
   prompt: Enter the active SOCA models for this model.
   tasks:
   - EvaIncrement
+  - EvaObservations
   - GenerateBClimatology
   - GetObservations
   - LinkGeosOutput
-  - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-check-list

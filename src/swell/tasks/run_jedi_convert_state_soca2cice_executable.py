@@ -24,23 +24,9 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
     def execute(self) -> None:
 
-        # Number of processors for JEDI executable
-        # ----------------------------------------
-        N_PROCESSORS = 36
-
         # Jedi application name
         # ---------------------
         jedi_application = 'convert_state_soca2cice'
-
-        # Parse configuration
-        # -------------------
-        marine_models = self.config.marine_models(None) or []
-
-        # Fail-safe
-        # ---------
-        if 'cice6' not in marine_models:
-            self.logger.info('Skipping Soca2cice as CICE6 analysis is not enabled.')
-            return
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
@@ -75,12 +61,12 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(),
-                                        f'jedi_{jedi_application}_{cice6_domain}_config.yaml')
+                                        f'jedi_{jedi_application}_config.yaml')
 
         # Output log file
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(),
-                                       f'jedi_{jedi_application}_{cice6_domain}_log.log')
+                                       f'jedi_{jedi_application}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
