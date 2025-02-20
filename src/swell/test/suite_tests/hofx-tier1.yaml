@@ -44,8 +44,6 @@ models:
     - sondes
 #    - ssmis_f17
     clean_patterns: []
-
-
   # geos_ocean:
   #   obs_experiment: s2s_v1
   #   obs_provider: ['odas', 'gdas_marine']

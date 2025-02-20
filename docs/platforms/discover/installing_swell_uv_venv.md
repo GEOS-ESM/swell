@@ -21,7 +21,7 @@ mod_swell() {
   if [[ $KERNEL_VERSION =~ "4.12" ]]; then
     source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/modules-intel
   elif [[ $KERNEL_VERSION =~ "5.14" ]]; then
-    source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/modules-intel-sles15
+    source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_intel
   else
     echo "No matching platform for kernel version: $KERNEL_VERSION"
   fi
