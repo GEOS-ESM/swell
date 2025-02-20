@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import importlib
+import os
 
 # --------------------------------------------------------------------------------------------------
 
@@ -19,6 +20,9 @@ def test_wrapper(test: str) -> None:
 
     # Test script
     test_script_file = 'swell.test.'+test+'.'+test
+
+    # Suppress warning from NUMEXPR
+    os.environ['NUMEXPR_MAX_THREADS'] = str(8)
 
     # Import the correct method
     test_method = getattr(importlib.import_module(test_script_file), test)
