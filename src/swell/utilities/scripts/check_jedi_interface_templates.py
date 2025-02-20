@@ -14,7 +14,7 @@ import glob
 
 # swell imports
 from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ from swell.utilities.logger import Logger
 def main() -> None:
 
     # Create a logger
-    logger = Logger('CheckJediInterfaceTemplates')
+    logger = get_logger('CheckJediInterfaceTemplates')
 
     config_types = ['oops/*yaml',
                     'interfaces/*/model/*yaml',

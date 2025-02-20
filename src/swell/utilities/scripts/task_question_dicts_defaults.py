@@ -16,7 +16,7 @@ from typing import Union
 
 # swell imports
 from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
+from swell.utilities.logger import Logger, get_logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ def create_platform_tq_dicts(
 def tq_dicts_defaults(tempdir: str) -> int:
 
     # Create a logger
-    logger = Logger('ListOfTaskQuestions')
+    logger = get_logger('ListOfTaskQuestions')
 
     # Output file
     task_questions_config = os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml')
