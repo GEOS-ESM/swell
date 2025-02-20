@@ -618,6 +618,7 @@ marine_models:
   - GenerateBClimatology
   - GetObservations
   - LinkGeosOutput
+  - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
   - RunJediVariationalExecutable
   type: string-check-list

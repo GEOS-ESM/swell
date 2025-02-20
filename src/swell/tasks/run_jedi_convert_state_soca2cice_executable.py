@@ -46,6 +46,7 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Background and analysis times
         # -----------------------------
