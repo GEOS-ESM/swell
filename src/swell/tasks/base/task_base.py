@@ -24,7 +24,7 @@ from swell.utilities.case_switching import camel_case_to_snake_case, snake_case_
 from swell.utilities.config import Config
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.datetime_util import Datetime
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 from swell.utilities.geos import Geos
 
@@ -46,7 +46,7 @@ class taskBase(ABC):
 
         # Create message logger
         # ---------------------
-        self.logger = Logger(task_name)
+        self.logger = get_logger(task_name)
 
         # Write out the initialization info
         # ---------------------------------

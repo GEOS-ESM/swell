@@ -8,7 +8,7 @@
 
 
 from swell import __version__
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ from swell.utilities.logger import Logger
 
 def write_welcome_message() -> None:
 
-    logger = Logger('')
+    logger = get_logger('')
 
     logger.blank(f"                  _ _ ", False)  # noqa
     logger.blank(f" _____      _____| | |  Swell workflow deployment manager", False)  # noqa

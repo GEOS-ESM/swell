@@ -16,7 +16,7 @@ import yaml
 
 # swell imports
 from swell.swell_path import get_swell_path
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.case_switching import snake_case_to_camel_case
 
 
@@ -26,7 +26,7 @@ from swell.utilities.case_switching import snake_case_to_camel_case
 def tq_dicts(tempdir: str):
 
     # Create a logger
-    logger = Logger('ListOfTaskQuestions')
+    logger = get_logger('ListOfTaskQuestions')
 
     # All python files
     task_codes = glob.glob(os.path.join(get_swell_path(), 'tasks', '*.py'))
