@@ -97,7 +97,7 @@ class PrepareExperimentConfigAndSuite:
 
         self.prepare_question_dictionaries()
         self.override_with_defaults()
-        self.override_with_external()
+        # self.override_with_external()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -112,6 +112,10 @@ class PrepareExperimentConfigAndSuite:
         # Create a dictionary associating each task with its list of questions
         self.questions_per_task = {}
 
+        # Create an override dictionary for model-dependent questions
+        # This will later be used to set defaults
+        model_dep_questions_override = {}
+
         # Loop through all tasks and get their associated tasks
         for task in self.model_ind_tasks + self.all_model_dep_tasks:
             if task in task_questions.get_all():
@@ -120,21 +124,29 @@ class PrepareExperimentConfigAndSuite:
                 for question in question_list:
                     question_dictionary_tasks[question['question_name']] = question
 
+                for model in self.possible_model_components:
+                    for question in task_questions[task].value.expand_question_list_model(model):
+                        model_dep_questions_override[model][question['question_name']] = question
+
                 self.questions_per_task[task] = [question['question_name']
                                                  for question in question_list]
             else:
                 self.questions_per_task[task] = []
 
-        # Get a list of all suite-associated questions
-        suite_question_list = suite_questions['all_suites'] \
-            .value.expand_question_list()
-        if self.suite_ind in suite_questions.get_all():
-            suite_question_list = (
-                    suite_questions[self.suite_ind].value.expand_question_list())
+        # Get a list of all questions associated with the suite, except for those specified
+        # seperately for models
+        suite_question_list = (
+                suite_questions[self.suite_ind].value.expand_question_list())
 
         # Convert the list of questions into a dictionary indexed by the question name
         for question in suite_question_list:
             question_dictionary[question['question_name']] = question
+
+        # Update model dependent overrides with suite questions
+        for model in self.possible_model_components:
+            model_dep_questions_override[model] = {}
+            for question in suite_questions[self.suite_ind].value.expand_question_list_model(model):
+                model_dep_questions_override[model][question['question_name']] = question
 
         # Merge the dictionaries for task questions into the suite question
         # list, but keep suite questions at the top of the order
@@ -233,7 +245,9 @@ class PrepareExperimentConfigAndSuite:
         # Create new questions dictionary for each model component
         self.question_dictionary_model_dep = {}
         for model in self.possible_model_components:
-            self.question_dictionary_model_dep[model] = copy.deepcopy(question_dictionary_model_dep)
+            self.question_dictionary_model_dep[model] = update_dict(
+                    copy.deepcopy(question_dictionary_model_dep),
+                    model_dep_questions_override[model])
 
         # Remove any questions that are not associated with the model component
         for model in self.possible_model_components:
@@ -291,7 +305,8 @@ class PrepareExperimentConfigAndSuite:
                                     sub_val['depends_on_model'][model] != 'defer_to_model':
 
                                 model_dict[key][sub_key] = sub_val['depends_on_model'][model]
-                            elif sub_key in model_defaults[key].keys():
+                            elif sub_key in model_defaults[key].keys() and \
+                                    model_dict[key][sub_key] == 'defer_to_model':
                                 model_dict[key][sub_key] = model_defaults[key][sub_key]
 
                     if key in platform_defaults.keys():

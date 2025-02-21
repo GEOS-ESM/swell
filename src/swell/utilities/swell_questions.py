@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import List, Union, Optional
 
 
@@ -49,20 +49,51 @@ class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
     list_name: str
     questions: list
-    list_type: str = None
+
+    geos_ocean: list = field(default_factory=lambda: [])
+    geos_atmosphere: list = field(default_factory=lambda: [])
+    geos_marine: list = field(default_factory=lambda: [])
+
+    # --------------------------------------------------------------------------------------------------
 
     def expand_question_list(self):
         question_list = []
+
         for question_obj in self.questions:
             question = asdict(question_obj)
 
-            if 'list_type' in question.keys():
-                # This is a sub-list, expand its contents
+            if 'list_name' in question.keys():
                 question_list.extend(question_obj.expand_question_list())
             else:
                 question_list.append(question)
 
         return question_list
+
+    # --------------------------------------------------------------------------------------------------
+
+    def expand_question_list_model(self, model):
+        question_list = []
+
+        # Check the default question list to see if any groups have
+        # Model specific questions specified
+        for question_obj in self.questions:
+            question = asdict(question_obj)
+
+            if 'list_name' in question.keys():
+                question_list.extend(question_obj.expand_question_list_model(model))
+
+        # Add the model-specific questions
+        if hasattr(self, model):
+            for question_obj in getattr(self, model):
+                question = asdict(question_obj)
+
+                if 'list_name' in question.keys():
+                    question_list.extend(question_obj.expand_question_list_model(model))
+                else:
+                    question_list.append(question)
+
+        return question_list
+
 
 # --------------------------------------------------------------------------------------------------
 

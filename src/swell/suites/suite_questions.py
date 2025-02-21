@@ -81,81 +81,35 @@ class SuiteQuestions(QuestionContainer, Enum):
             sq.start_cycle_point(default_value='2021-07-01T12:00:00Z'),
             sq.final_cycle_point(default_value='2021-07-01T12:00:00Z'),
             tq.jedi_build_method(default_value='use_existing'),
-            sq.model_components(default_value=['geos_ocean']),
-            sq.cycle_times(default_value={
-                'depends_on_model': {
-                    'geos_ocean': ['T12']
-                }
-            }),
-            tq.window_length(default_value={
-                'depends_on_model': {
-                    'geos_ocean': 'P1D'
-                }
-            }),
-            tq.window_offset(default_value={
-                'depends_on_model': {
-                    'geos_ocean': 'P12H'
-                }
-            }),
-            tq.horizontal_resolution(default_value={
-                'depends_on_model': {
-                    'geos_ocean': '72x36'
-                }
-            }),
-            tq.vertical_resolution(default_value={
-                'depends_on_model': {
-                    'geos_ocean': '50'
-                }
-            }),
-            tq.total_processors(default_value={
-                'depends_on_model': {
-                    'geos_ocean': 6
-                }
-            }),
-            tq.obs_experiment(default_value={
-                'depends_on_model': {
-                    'geos_ocean': 's2s_v1'
-                }
-            }),
-            tq.observations(default_value={
-                'depends_on_model': {
-                    'geos_ocean': [
-                        'adt_cryosat2n',
-                        'adt_jason3',
-                        'adt_saral',
-                        'adt_sentinel3a',
-                        'adt_sentinel3b',
-                        'insitu_profile_argo',
-                        'sst_ostia',
-                        'sss_smos',
-                        'sss_smapv5',
-                        'sst_abi_g16_l3c',
-                        'sst_gmi_l3u',
-                        'sst_viirs_n20_l3u',
-                        'temp_profile_xbt',
-                    ]
-                }
-            }),
-            tq.obs_provider(default_value={
-                'depends_on_model': {
-                    'geos_ocean': ['odas', 'gdas_marine']
-                }
-            }),
-            tq.analysis_forecast_window_offset(default_value={
-                'depends_on_model': {
-                    'geos_ocean': '-PT12H'
-                }
-            }),
-            tq.background_time_offset(default_value={
-                'depends_on_model': {
-                    'geos_ocean': 'PT18H'
-                }
-            }),
-            tq.clean_patterns(default_value={
-                'depends_on_model': {
-                    'geos_ocean': ['*.nc4', '*.txt']
-                }
-            })
+            sq.model_components(default_value=['geos_ocean'])
+        ],
+        geos_ocean=[
+            sq.cycle_times(default_value=['T12']),
+            tq.window_length(default_value='P1D'),
+            tq.window_offset(default_value='P12H'),
+            tq.horizontal_resolution(default_value='72x36'),
+            tq.vertical_resolution(default_value=50),
+            tq.total_processors(default_value=6),
+            tq.obs_experiment(default_value='s2s_v1'),
+            tq.observations(default_value=[
+                'adt_cryosat2n',
+                'adt_jason3',
+                'adt_saral',
+                'adt_sentinel3a',
+                'adt_sentinel3b',
+                'insitu_profile_argo',
+                'sst_ostia',
+                'sss_smos',
+                'sss_smapv5',
+                'sst_abi_g16_l3c',
+                'sst_gmi_l3u',
+                'sst_viirs_n20_l3u',
+                'temp_profile_xbt'
+            ]),
+            tq.obs_provider(default_value=['odas', 'gdas_marine']),
+            tq.analysis_forecast_window_offset(default_value='-PT12H'),
+            tq.background_time_offset(default_value='PT18H'),
+            tq.clean_patterns(default_value=['*.nc4', '*.txt'])
         ]
     )
 
