@@ -369,10 +369,10 @@ geos_x_background_directory:
   ask_question: true
   default_value: /dev/null/
   models:
-  - geos_atmosphere
+  - all
   options:
   - /dev/null/
-  - /gpfsm/dnb05/projects/p139/dao_it/archive/
+  - /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
   prompt: What is the path to the GEOS X-backgrounds directory?
   tasks:
   - GetBackgroundGeosExperiment
@@ -464,6 +464,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - GetBackgroundGeosExperiment
   - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
@@ -625,9 +626,11 @@ marine_models:
   tasks:
   - EvaIncrement
   - GenerateBClimatology
+  - GetObservations
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
+  - RunJediVariationalExecutable
   type: string-check-list
 
 minimizer:

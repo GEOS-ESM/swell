@@ -1,3 +1,5 @@
+# History outputs
+
 History outputs, as opposed to model restarts containing full diagnostic fields, provides a subset of variables in preset frequencies. They are typically used for providing more frequent outputs of reduced dimension variables for plotting or analysis (i.e., vertically averaged or surface-only, such as SST).
 
 GEOSgcm provides a mechanism for dumping restarts (aka `_checkpoint`) more frequently via `Restart Record Parameters` section in `AGCM.rc`. However, this causes model to stop and create these large files with full model fields which is undesirable for long simulation times.

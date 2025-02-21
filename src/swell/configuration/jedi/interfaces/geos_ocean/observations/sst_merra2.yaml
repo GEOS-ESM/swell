@@ -9,6 +9,8 @@ obs space:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.sst_merra2.{{window_begin}}.nc4'
   simulated variables: [seaSurfaceTemperature]
+get values:
+  time interpolation: linear
 obs operator:
   name: Identity
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
@@ -20,25 +22,26 @@ obs filters:
   - variable: {name: GeoVaLs/sea_area_fraction}
     minvalue: 0.9
 - filter: Bounds Check
-  minvalue: -2.0
-  maxvalue: 36.0
+  minvalue: -1.0
+  maxvalue: 40.0
 - filter: Background Check
-  threshold: 5.0
+  absolute threshold: 5.0
 - filter: Domain Check
   where:
   - variable: {name: ObsError/seaSurfaceTemperature}
-    minvalue: 0.001
-- filter: Domain Check
-  where:
-  - variable: { name: GeoVaLs/sea_ice_area_fraction}
-    maxvalue: 0.00001
+    minvalue: 1.0e-8
 - filter: Domain Check
   where:
   - variable: {name: GeoVaLs/distance_from_coast}
     minvalue: 100e3
-- filter: Domain Check
+- filter: Perform Action
   action:
-    name: passivate
-  where:
-  - variable: {name: GeoVaLs/sea_area_fraction}
-    maxvalue: 0.9
+    name: assign error
+    error function:
+      name: ObsFunction/LinearCombination
+      options:
+        variables:
+        - ObsError/seaSurfaceTemperature
+        coefs:
+        - 1.0
+

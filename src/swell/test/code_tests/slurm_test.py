@@ -7,10 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import logging
 import unittest
 
 from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.logger import get_logger
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ class SLURMConfigTest(unittest.TestCase):
     @patch("platform.platform")
     def test_slurm_config(self, platform_mocked: Mock, mock_global_defaults: Mock) -> None:
 
-        logger = logging.getLogger()
+        logger = get_logger()
 
         # Fake user-specified global values (for consistent unit tests)
         mock_global_defaults.return_value = {"qos": "dastest"}

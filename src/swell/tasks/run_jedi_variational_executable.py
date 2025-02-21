@@ -67,6 +67,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Background
         # ----------
