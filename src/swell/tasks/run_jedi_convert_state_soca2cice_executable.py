@@ -24,27 +24,10 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
     def execute(self) -> None:
 
-        # Number of processors for JEDI executable
-        # ----------------------------------------
-        N_PROCESSORS = 36
-
         # Jedi application name
         # ---------------------
         jedi_application = 'convert_state_soca2cice'
 
-        # Parse configuration
-        # -------------------
-        marine_models = self.config.marine_models()
-        self.jedi_rendering.add_key('marine_models', marine_models)
-
-        # Fail-safe
-        # ---------
-        if 'cice6' not in marine_models:
-            self.logger.info('Skipping Soca2cice as CICE6 analysis is not enabled.')
-            return
-
-        # cice6_domains = self.config.cice6_domains()
-        cice6_domains = ['arctic', 'antarctic']
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         observations = self.config.observations(None)
@@ -63,6 +46,7 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Background and analysis times
         # -----------------------------
@@ -75,60 +59,51 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # --------
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
 
-        # Loop over active CICE6 DA domains
-        # ---------------------------------
-        for cice6_domain in cice6_domains:
+        # Jedi configuration file
+        # -----------------------
+        jedi_config_file = os.path.join(self.cycle_dir(),
+                                        f'jedi_{jedi_application}_config.yaml')
 
-            # Add CICE6 domain to templates dictionary
-            # ----------------------------------------
-            self.jedi_rendering.add_key('cice6_domain', cice6_domain)
+        # Output log file
+        # ---------------
+        output_log_file = os.path.join(self.cycle_dir(),
+                                       f'jedi_{jedi_application}_log.log')
 
-            # Jedi configuration file
-            # -----------------------
-            jedi_config_file = os.path.join(self.cycle_dir(),
-                                            f'jedi_{jedi_application}_{cice6_domain}_config.yaml')
+        # Open the JEDI config file and fill initial templates
+        # ----------------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
 
-            # Output log file
-            # ---------------
-            output_log_file = os.path.join(self.cycle_dir(),
-                                           f'jedi_{jedi_application}_{cice6_domain}_log.log')
+        # Perform complete template rendering
+        # -----------------------------------
+        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
+                                 observations, jedi_forecast_model)
 
-            # Open the JEDI config file and fill initial templates
-            # ----------------------------------------------------
-            jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
+        # Write the expanded dictionary to YAML file
+        # ------------------------------------------
+        with open(jedi_config_file, 'w') as jedi_config_file_open:
+            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-            # Perform complete template rendering
-            # -----------------------------------
-            jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                     observations, jedi_forecast_model)
+        # Get the JEDI interface metadata
+        # -------------------------------
+        model_component_meta = self.jedi_rendering.render_interface_meta()
 
-            # Write the expanded dictionary to YAML file
-            # ------------------------------------------
-            with open(jedi_config_file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+        # Compute number of processors
+        # ----------------------------
+        np = eval(str(model_component_meta['total_processors']))
 
-            # Get the JEDI interface metadata
-            # -------------------------------
-            model_component_meta = self.jedi_rendering.render_interface_meta()
+        # Jedi executable name
+        # --------------------
+        jedi_executable = model_component_meta['executables'][f'{jedi_application}']
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                            'build', 'bin', jedi_executable)
 
-            # Compute number of processors (only requires a single node and fails
-            # for multiple nodes, so we set it to 36 processors for now)
-            # ----------------------------------------------------------
-            np = N_PROCESSORS
-
-            # Jedi executable name
-            # --------------------
-            jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
-                                                'build', 'bin', jedi_executable)
-
-            # Run the JEDI executable
-            # -----------------------
-            if not generate_yaml_and_exit:
-                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file)
-            else:
-                self.logger.info('YAML generated, now exiting.')
+        # Run the JEDI executable
+        # -----------------------
+        if not generate_yaml_and_exit:
+            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                           jedi_config_file, output_log_file)
+        else:
+            self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

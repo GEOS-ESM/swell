@@ -81,23 +81,26 @@
             GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            # StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            # Prepare analysis for next forecast
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
-            PrepareAnalysis-{{model_component}} =>  RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} =>  SaveRestart-{{model_component}}
-
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
             RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
+            # Prepare analysis for next forecast
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+            {% if 'cice6' in models["geos_marine"]["marine_models"] %}
+            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
+            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            {% endif %}
 
             # Move restart to next cycle
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
@@ -113,7 +116,7 @@
 
             # Clean up large files
             # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & RunJediConvertStateSoca2ciceExecutable-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """
@@ -213,6 +216,8 @@
     [[GenerateBClimatologyByLinking-{{model_component}}]]
         script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
+    {% if 'cice6' in models["geos_marine"]["marine_models"] %}
+
     [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
         script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
@@ -221,6 +226,8 @@
         {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    {% endif %}
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
