@@ -6,9 +6,11 @@ ocn_filename: 'MOM6.res.{{local_background_time}}.nc'
 ice_filename: 'cice.res.{{local_background_time}}.nc'
 {% endif %}
 state variables:
+{% if 'cice6' in marine_models %}
   - sea_ice_area_fraction
   - sea_ice_thickness
   - sea_ice_snow_thickness
+{% endif %}
   - sea_water_salinity
   - sea_water_potential_temperature
   - sea_surface_height_above_geoid

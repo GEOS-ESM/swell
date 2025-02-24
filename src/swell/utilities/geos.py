@@ -99,14 +99,19 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def exec_python(self, script_src: str, script: str, input: str = '') -> None:
+    def run_geos_script(
+        self,
+        script_src: str,
+        script: str,
+        input: str = '',
+        output: str = '',
+        **kwargs
+    ) -> None:
 
-        # Source g5_modules and execute py scripts in a new shell process then
-        # return to the current one
+        # Source g5_modules and execute scripts in a new shell process then return
         # Define the command to source the Bash script and run the Python command
         # -----------------------------------------------------------------------
-        command = f'source {script_src}/g5_modules.sh \n' + \
-            f'{script_src}/{script} {input}'
+        command = f'source {script_src}/g5_modules.sh && {script_src}/{script} {input} {output}'
 
         # Containerized run of the GEOS build steps
         # -----------------------------------------
