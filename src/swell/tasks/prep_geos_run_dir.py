@@ -307,6 +307,8 @@ class PrepGeosRunDir(taskBase):
                 'species.data',
             # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
             os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
+            os.path.join('/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/',
+                         '*'): self.forecast_dir('ExtData'),
             # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_landdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_landdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
