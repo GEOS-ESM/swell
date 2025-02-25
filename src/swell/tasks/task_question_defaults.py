@@ -9,10 +9,9 @@
 
 
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import List, Dict
 
-from swell.utilities.swell_questions import TaskQuestion
+from swell.utilities.swell_questions import TaskQuestion, QDtype
 
 
 # --------------------------------------------------------------------------------------------------
@@ -30,7 +29,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration from the middle of the window when forecasts start?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -43,7 +42,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What are the analysis variables?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -56,7 +55,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which background error model do you want to use?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -69,7 +68,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the name of the name of the experiment providing the backgrounds?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -84,7 +83,7 @@ class TaskQuestionDefaults():
             "window_type": "4D"
         })
         prompt: str = "What is the frequency of the background files?"
-        dtype: str = "iso-duration"
+        dtype: str = QDtype.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -97,7 +96,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("How long before the middle of the analysis window did"
                        " the background providing forecast begin?")
-        dtype: str = "iso-duration"
+        dtype: str = QDtype.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -124,7 +123,7 @@ class TaskQuestionDefaults():
             "jedi_build_method": "create"
         })
         prompt: str = "Which JEDI bundles do you wish to build?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -138,7 +137,7 @@ class TaskQuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Which CICE6 domains do you wish to run DA for?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -151,7 +150,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Provide a list of patterns that you wish to remove from the cycle directory."
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -163,7 +162,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -176,7 +175,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Do you want to use cycling VarBC option?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -190,7 +189,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -204,7 +203,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Enter hofx strategy."
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -217,7 +216,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "How many members comprise the ensemble?"
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -233,7 +232,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean only?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -249,7 +248,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -262,7 +261,7 @@ class TaskQuestionDefaults():
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS build directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -275,7 +274,7 @@ class TaskQuestionDefaults():
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS source code directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -288,7 +287,7 @@ class TaskQuestionDefaults():
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -301,7 +300,7 @@ class TaskQuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI build directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -314,7 +313,7 @@ class TaskQuestionDefaults():
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI source code directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -327,7 +326,7 @@ class TaskQuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -337,7 +336,7 @@ class TaskQuestionDefaults():
         default_value: str = "PT12H"
         ask_question: bool = True
         prompt: str = "GEOS forecast duration"
-        dtype: str = "iso-duration"
+        dtype: str = QDtype.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -346,7 +345,7 @@ class TaskQuestionDefaults():
         question_name: str = "generate_yaml_and_exit"
         default_value: str = False
         prompt: str = "Generate JEDI executable YAML and exit?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -360,7 +359,7 @@ class TaskQuestionDefaults():
             "create"
         ])
         prompt: str = "Do you want to use an existing GEOS build or create a new build?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -370,7 +369,7 @@ class TaskQuestionDefaults():
         default_value: str = "defer_to_platform"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -380,7 +379,7 @@ class TaskQuestionDefaults():
         default_value: str = "v11.6.0"
         ask_question: bool = True
         prompt: str = "Which GEOS tag do you wish to clone?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -390,7 +389,7 @@ class TaskQuestionDefaults():
         default_value: str = "defer_to_platform"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -407,7 +406,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the path to the GEOS X-backgrounds directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -420,7 +419,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 experiment providing the GeoVaLs?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -432,7 +431,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 database providing the GeoVaLs?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -444,7 +443,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What value of gradient norm reduction for convergence?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -456,7 +455,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which GSIBEC climatological or hybrid?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -481,7 +480,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("What is the maximum number of observations to consider"
                        " for horizontal covariance localization?")
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -494,7 +493,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the horizontal?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -508,7 +507,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -524,7 +523,7 @@ class TaskQuestionDefaults():
             "pinned_create"
         ])
         prompt: str = "Do you want to use an existing JEDI build or create a new build?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -541,7 +540,7 @@ class TaskQuestionDefaults():
             "window_type": "4D"
         })
         prompt: str = "What forecast model should be used within JEDI for 4D window propagation?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -593,7 +592,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble members?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -610,7 +609,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -627,7 +626,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -644,7 +643,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -658,7 +657,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -672,7 +671,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -686,7 +685,7 @@ class TaskQuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Enter the active SOCA models for this model."
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -699,7 +698,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which data assimilation minimizer do you wish to use?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -716,7 +715,7 @@ class TaskQuestionDefaults():
             "geos_ocean"
         ])
         prompt: str = "Do you wish to use IAU for MOM6?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -729,7 +728,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -742,7 +741,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -755,7 +754,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("What number of iterations do you wish to use for each outer loop?"
                        " Provide a list of integers the same length as the number of outer loops.")
-        dtype: str = "integer-list"
+        dtype: str = QDtype.INTEGER_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -768,7 +767,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the database providing the observations?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -781,7 +780,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which group(s) provide the observations?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -795,7 +794,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which observations do you want to include?"
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -807,7 +806,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the GSI formatted observing system records?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -819,7 +818,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the GSI formatted observing system records tag?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -831,7 +830,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -844,7 +843,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -858,7 +857,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("What is the path to where the cubed sphere "
                        "backgrounds are in the GEOSadas run?")
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -871,7 +870,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the location where GSI bias correction files can be found?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -884,7 +883,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where the GSI ncdiags are stored?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -902,7 +901,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("When running the ncdiag to ioda converted do you "
                        "want to produce GeoVaLs files?")
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -911,7 +910,7 @@ class TaskQuestionDefaults():
         question_name: str = "r2d2_local_path"
         default_value: str = "defer_to_platform"
         prompt: str = "What is the path to the R2D2 local directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -924,7 +923,7 @@ class TaskQuestionDefaults():
             False
         ])
         prompt: str = "When running hofx do you want to output the GeoVaLs?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -940,7 +939,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -954,7 +953,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -963,7 +962,7 @@ class TaskQuestionDefaults():
         question_name: str = "swell_static_files"
         default_value: str = "defer_to_platform"
         prompt: str = "What is the path to the Swell Static files directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -972,7 +971,7 @@ class TaskQuestionDefaults():
         question_name: str = "swell_static_files_user"
         default_value: str = "None"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -986,7 +985,7 @@ class TaskQuestionDefaults():
             "geos_ocean"
         ])
         prompt: str = "What is the number of processors for JEDI?"
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1004,7 +1003,7 @@ class TaskQuestionDefaults():
         prompt: str = ("Should a log (base 10) transformation be applied "
                        "to vertical coordinate when "
                        "constructing vertical localization?")
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1017,7 +1016,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the vertical?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1030,7 +1029,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which coordinate should be used in constructing vertical localization?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1044,7 +1043,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("Which vertical coordinate group should be used "
                        "in constructing vertical localization?")
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1056,7 +1055,7 @@ class TaskQuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
-        dtype: str = "integer"
+        dtype: str = QDtype.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1070,7 +1069,7 @@ class TaskQuestionDefaults():
         ])
         prompt: str = ("What localization scheme should be applied in "
                        "constructing a vertical localization?")
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1084,7 +1083,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the vertical resolution for the forecast model and background?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1096,7 +1095,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration for the data assimilation window?"
-        dtype: str = "iso-duration"
+        dtype: str = QDtype.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1109,7 +1108,7 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration between the middle of the window and the beginning?"
-        dtype: str = "iso-duration"
+        dtype: str = QDtype.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1126,6 +1125,6 @@ class TaskQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------

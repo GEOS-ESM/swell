@@ -8,11 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from enum import Enum
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, field
 from typing import List
 
-from swell.utilities.swell_questions import SuiteQuestion
+from swell.utilities.swell_questions import SuiteQuestion, QDtype
 
 
 # --------------------------------------------------------------------------------------------------
@@ -31,7 +30,7 @@ class SuiteQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the cycle times for this model."
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -43,7 +42,7 @@ class SuiteQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the number of ensemble packets."
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -55,7 +54,7 @@ class SuiteQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the ensemble hofx strategy."
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -65,7 +64,7 @@ class SuiteQuestionDefaults():
         default_value: str = "defer_to_code"
         ask_question: bool = True
         prompt: str = "What is the experiment id?"
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -76,7 +75,7 @@ class SuiteQuestionDefaults():
         ask_question: bool = True
         prompt: str = ("What is the experiment root (the directory where the "
                        "experiment will be stored)?")
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -86,7 +85,7 @@ class SuiteQuestionDefaults():
         default_value: str = "2023-10-10T06:00:00Z"
         ask_question: bool = True
         prompt: str = "What is the time of the final cycle (middle of the window)?"
-        dtype: str = "iso-datetime"
+        dtype: str = QDtype.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -100,7 +99,7 @@ class SuiteQuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Select the active SOCA models for this model."
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -111,7 +110,7 @@ class SuiteQuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_code"
         prompt: str = "Enter the model components for this model."
-        dtype: str = "string-check-list"
+        dtype: str = QDtype.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -122,7 +121,7 @@ class SuiteQuestionDefaults():
         ask_question: bool = True
         prompt: str = ("Since this suite is non-cycling choose how "
                        "many hours the workflow can run ahead?")
-        dtype: str = "string"
+        dtype: str = QDtype.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -134,7 +133,7 @@ class SuiteQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter if skip ensemble hofx."
-        dtype: str = "boolean"
+        dtype: str = QDtype.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -144,7 +143,7 @@ class SuiteQuestionDefaults():
         default_value: str = "2023-10-10T00:00:00Z"
         ask_question: bool = True
         prompt: str = "What is the time of the first cycle (middle of the window)?"
-        dtype: str = "iso-datetime"
+        dtype: str = QDtype.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -160,6 +159,6 @@ class SuiteQuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the window type for this model."
-        dtype: str = "string-drop-list"
+        dtype: str = QDtype.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------

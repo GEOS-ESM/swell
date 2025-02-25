@@ -9,7 +9,8 @@
 
 
 from dataclasses import dataclass, asdict, field
-from typing import List, Union, Optional
+from typing import Optional
+from enum import Enum
 
 
 # --------------------------------------------------------------------------------------------------
@@ -108,6 +109,19 @@ class SuiteQuestion(SwellQuestion):
 @dataclass
 class TaskQuestion(SwellQuestion):
     question_type: str = "task"
+
+
+# --------------------------------------------------------------------------------------------------
+
+class QDtype(Enum):
+    STRING = "string"
+    STRING_CHECK_LIST = "string-check-list"
+    STRING_DROP_LIST = "string-drop-list"
+    BOOLEAN = "boolean"
+    ISO_DURATION = "iso-duration"
+    ISO_DATETIME = "iso-datetime"
+    INTEGER = "integer"
+    INTEGER_LIST = "integer-list"
 
 
 # --------------------------------------------------------------------------------------------------
