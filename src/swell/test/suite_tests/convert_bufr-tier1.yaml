@@ -1,7 +1,11 @@
 start_cycle_point: '2021-12-12T00:00:00Z'
 final_cycle_point: '2021-12-12T06:00:00Z'
 jedi_build_method: use_existing
+<<<<<<< HEAD
 #bundles: REMOVE
+=======
+bundles: REMOVE
+>>>>>>> 2f6e7d08ad2a4c5cd6dd69bcc731af979bc07bc0
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
@@ -17,4 +21,8 @@ models:
     - gsi_ncdiags/aircraft/*.nc4
     - gsi_ncdiags/aircraft
     - gsi_ncdiags
+<<<<<<< HEAD
  #   path_to_gsi_nc_diags: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
+=======
+    path_to_gsi_nc_diags: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H
+>>>>>>> 2f6e7d08ad2a4c5cd6dd69bcc731af979bc07bc0

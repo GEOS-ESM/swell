@@ -32,12 +32,6 @@ class GetBufr(taskBase):
         # Replace bufr_path datetime string with the actual datetime
         # --------------------------------------------------------------
         cycle_time_dto = self.cycle_time_dto()
-        bufr_path = os.path.join(bufr_path, cycle_time_dto.strftime('Y%Y'), cycle_time_dto.strftime('M%m'))
-
-        # Get list of bufr to test with
-        # --------------------------------
-        bufr_filename_template = 'gdas1.' + cycle_time_dto.strftime('%y%d%m.t%Hz') + '.1bamua.tm00.bufr_d'
-        bufr_path_files_pattern = os.path.join(bufr_path, bufr_filename_template) 
         bufr_path = cycle_time_dto.strftime(bufr_path)
 
         # Get list of bufr to test with

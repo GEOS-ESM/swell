@@ -47,6 +47,7 @@ class GetBackgroundGeosExperiment(taskBase):
         background_experiment = self.config.background_experiment()
         geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()
+        horizontal_resolution = self.config.horizontal_resolution()
 
         # Since this is an optional task, check if the geos_x_background_directory is
         # set to /dev/null, if so fail the task
@@ -77,6 +78,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
         bkgr_tar = os.path.join(geos_x_background_directory,
+                                horizontal_resolution,
                                 background_experiment,
                                 'rs',
                                 bkgr_exp_start_dto.strftime('Y%Y'),
