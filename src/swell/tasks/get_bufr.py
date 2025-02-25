@@ -38,6 +38,11 @@ class GetBufr(taskBase):
         # --------------------------------
         bufr_filename_template = 'gdas1.' + cycle_time_dto.strftime('%y%d%m.t%Hz') + '.1bamua.tm00.bufr_d'
         bufr_path_files_pattern = os.path.join(bufr_path, bufr_filename_template) 
+        bufr_path = cycle_time_dto.strftime(bufr_path)
+
+        # Get list of bufr to test with
+        # --------------------------------
+        bufr_path_files_pattern = os.path.join(bufr_path, '*bufr*')
         bufr_path_files = glob.glob(bufr_path_files_pattern)
 
         # Get cycle dir and create if needed
