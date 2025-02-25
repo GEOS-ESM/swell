@@ -22,7 +22,8 @@ models:
     local_ensemble_save_posterior_ensemble_increments: false  # default: false
     path_to_ensemble: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - sondes
     - gps
     - amsua_aqua

@@ -10,6 +10,7 @@ cycle_times:
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
+  - convert_bufr
   - convert_ncdiags
   - forecast_geos
   - hofx
@@ -66,7 +67,7 @@ experiment_root:
 
 start_cycle_point:
   ask_question: True
-  default_value: '2021-12-12T00:00:00Z'
+  default_value: '2023-10-10T00:00:00Z'
   prompt: What is the time of the first cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
@@ -74,6 +75,7 @@ start_cycle_point:
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
+  - convert_bufr
   - convert_ncdiags
   - forecast_geos
   - hofx
@@ -83,7 +85,7 @@ start_cycle_point:
 
 final_cycle_point:
   ask_question: True
-  default_value: '2021-12-12T06:00:00Z'
+  default_value: '2023-10-10T06:00:00Z'
   prompt: What is the time of the final cycle (middle of the window)?
   suites:
   - 3dfgat_atmos
@@ -91,6 +93,7 @@ final_cycle_point:
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
+  - convert_bufr
   - convert_ncdiags
   - forecast_geos
   - hofx
@@ -123,6 +126,7 @@ model_components:
   - 3dvar_atmos
   - 3dvar_cycle
   - 3dvar
+  - convert_bufr
   - convert_ncdiags
   - hofx
   - localensembleda
@@ -140,6 +144,7 @@ runahead_limit:
   - 3dvar_atmos
   - 3dvar
   - 3dvar_cycle
+  - convert_bufr
   - convert_ncdiags
   - hofx
   - localensembleda

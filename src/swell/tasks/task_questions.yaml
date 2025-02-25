@@ -369,10 +369,10 @@ geos_x_background_directory:
   ask_question: true
   default_value: /dev/null/
   models:
-  - geos_atmosphere
+  - all
   options:
   - /dev/null/
-  - /gpfsm/dnb05/projects/p139/dao_it/archive/
+  - /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
   prompt: What is the path to the GEOS X-backgrounds directory?
   tasks:
   - GetBackgroundGeosExperiment
@@ -396,6 +396,22 @@ geovals_provider:
   prompt: What is the name of the R2D2 database providing the GeoVaLs?
   tasks:
   - GetGeovals
+  type: string
+
+gmao_perllib_path:
+  ask_question: false
+  default_value: defer_to_platform
+  prompt: What is the path to where the GMAO_perllib executables, acquire_obsys and acquire, are located?
+  tasks:
+  - CloneGmaoPerllib
+  type: string
+
+gmao_perllib_tag:
+  ask_question: false
+  default_value: g1.0.1
+  prompt: What is the target tag for GMAO_perllib?
+  tasks:
+  - CloneGmaoPerllib
   type: string
 
 gradient_norm_reduction:
@@ -464,6 +480,7 @@ horizontal_resolution:
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
+  - GetBackgroundGeosExperiment
   - RunJediEnsembleMeanVariance
   - RunJediFgatExecutable
   - RunJediHofxEnsembleExecutable
@@ -733,6 +750,7 @@ observations:
   options: defer_to_model
   prompt: Which observations do you want to include?
   tasks:
+  - BufrToIoda
   - EvaObservations
   - GenerateObservingSystemRecords
   - GetGeovals
@@ -793,6 +811,14 @@ observing_system_records_path:
   - SaveObsDiags
   type: string
 
+path_to_bufr:
+  ask_question: true
+  default_value: defer_to_platform
+  prompt: What is the path to the BUFR files to convert?
+  tasks:
+  - GetBufr
+  type: string
+
 path_to_ensemble:
   ask_question: true
   default_value: defer_to_model
@@ -845,6 +871,7 @@ produce_geovals:
   prompt: When running the ncdiag to ioda converted do you want to produce GeoVaLs
     files?
   tasks:
+  - BufrToIoda
   - GsiNcdiagToIoda
   type: boolean
 
@@ -881,6 +908,7 @@ single_observations:
   - false
   prompt: Is it a single-observation test?
   tasks:
+  - BufrToIoda
   - GsiNcdiagToIoda
   - RunJediUfoTestsExecutable
   type: boolean
@@ -1059,6 +1087,7 @@ window_offset:
   - all
   prompt: What is the duration between the middle of the window and the beginning?
   tasks:
+  - BufrToIoda
   - EvaIncrement
   - EvaObservations
   - GenerateBClimatology

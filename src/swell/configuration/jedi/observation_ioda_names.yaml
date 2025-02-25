@@ -8,6 +8,12 @@ ioda instrument names:
   - ioda name: aircraft
     full name: Aircraft
     inst type: conventional
+  - ioda name: aircraft_temperature
+    full name: Aircraft Temperature
+    inst type: conventional
+  - ioda name: aircraft_wind
+    full name: Aircraft Wind
+    inst type: conventional
   - ioda name: airs_aqua
     full name: AIRS (AQUA)
     inst type: radiance
@@ -159,6 +165,9 @@ ioda instrument names:
     inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
+    inst type: altimeter
+  - ioda name: adt_swot_nadir
+    full name: ADT SWOT Nadir
     inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)

@@ -29,6 +29,9 @@
             # Clone JEDI source code
             CloneJedi
 
+            # Clone GMAO_perllib
+            CloneGMAOPerllib
+
             # Build JEDI source code by linking
             CloneJedi => BuildJediByLinking?
 
@@ -66,6 +69,9 @@
     # -----
     [[CloneJedi]]
         script = "swell task CloneJedi $config"
+
+    [[CloneGMAOPerllib]]
+	script = "swell task CloneGmaoPerllib $config"
 
     [[BuildJediByLinking]]
         script = "swell task BuildJediByLinking $config"

@@ -28,12 +28,12 @@ class GetGsiNcdiag(taskBase):
         # Replace gsi_diag_path datetime string with the actual datetime
         # --------------------------------------------------------------
         cycle_time_dto = self.cycle_time_dto()
-        gsi_diag_path = cycle_time_dto.strftime(gsi_diag_path)
 
         # Get list of ncdiags to test with
         # --------------------------------
-        gsi_diag_path_files_pattern = os.path.join(gsi_diag_path, '*ges*.nc*')
-        gsi_diag_path_files = glob.glob(gsi_diag_path_files_pattern)
+        gsi_sat_diag_path = os.path.join(gsi_diag_path, '*ges*%Y%m%d_%Hz*nc*')
+        gsi_sat_diag_path = cycle_time_dto.strftime(gsi_sat_diag_path)
+        gsi_diag_path_files = glob.glob(gsi_sat_diag_path)
 
         # Get cycle dir and create if needed
         # ----------------------------------
@@ -43,7 +43,7 @@ class GetGsiNcdiag(taskBase):
         # Assert that some files were found
         self.logger.assert_abort(len(gsi_diag_path_files) != 0 is not None, f'No ncdiag ' +
                                  f'files found in the source directory ' +
-                                 f'\'{gsi_diag_path_files_pattern}\'')
+                                 f'\'{gsi_diag_path}\'')
 
         # Copy all the files into the cycle directory
         # -------------------------------------------

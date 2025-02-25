@@ -1,6 +1,8 @@
+start_cycle_point: '2023-10-10T00:00:00Z'
+final_cycle_point: '2023-10-10T06:00:00Z'
 jedi_build_method: use_existing
 model_components: ['geos_atmosphere']
-runahead_limit: 'P3'
+runahead_limit: 'P2'
 models:
   geos_atmosphere:
     cycle_times:
@@ -9,9 +11,11 @@ models:
     - T12
     - T18
     horizontal_resolution: '91'
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
     window_type: 4D
     observations:
-    - aircraft
+    - aircraft_temperature
+    - aircraft_wind
     - airs_aqua
     - amsr2_gcom-w1
     - amsua_aqua
