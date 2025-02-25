@@ -12,7 +12,7 @@
 from enum import Enum
 
 from swell.utilities.swell_questions import QuestionList, QuestionContainer
-from swell.tasks.task_question_defaults import TaskQuestionDefaults as qd
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------

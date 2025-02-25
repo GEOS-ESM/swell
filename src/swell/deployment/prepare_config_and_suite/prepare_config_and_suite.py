@@ -95,7 +95,7 @@ class PrepareExperimentConfigAndSuite:
 
         self.prepare_question_dictionaries()
         self.override_with_defaults()
-        # self.override_with_external()
+        self.override_with_external()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -326,23 +326,8 @@ class PrepareExperimentConfigAndSuite:
 
     def override_with_external(self) -> None:
 
-        # Create and override dictionary
+        # Create an override dictionary
         override_dict = {}
-
-        # Always start the override with the a suite test file
-        test_file = os.path.join(get_swell_path(), 'test', 'suite_tests',
-                                 self.suite + '-tier1.yaml')
-        if os.path.exists(test_file):
-            with open(test_file, 'r') as ymlfile:
-                override_dict = yaml.safe_load(ymlfile)
-
-        # Update overrides with tier2 suite test file if available
-        tier2_test_file = os.path.join(get_swell_path(), 'test', 'suite_tests',
-                                       self.suite + '-tier2.yaml')
-        if os.path.exists(tier2_test_file):
-            with open(tier2_test_file, 'r') as ymlfile:
-                tier2_override_dict = yaml.safe_load(ymlfile)
-            override_dict = update_dict(override_dict, tier2_override_dict)
 
         # Now append with any user provided override
         if self.override is not None:
@@ -355,24 +340,24 @@ class PrepareExperimentConfigAndSuite:
             else:
                 self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 
-        # In this case the user is sending in a dictionary that looks like the experiment dictionary
-        # that they will ultimately be looking at. This means the dictionary does not contain
-        # default_value or options and the override cannot be performed.
+            # In this case the user is sending in a dictionary that looks like the experiment dictionary
+            # that they will ultimately be looking at. This means the dictionary does not contain
+            # default_value or options and the override cannot be performed.
 
-        # Iterate over the model_ind dictionary and override
-        # --------------------------------------------------
-        for key, val in self.question_dictionary_model_ind.items():
-            if key in override_dict:
-                val['default_value'] = override_dict[key]
+            # Iterate over the model_ind dictionary and override
+            # --------------------------------------------------
+            for key, val in self.question_dictionary_model_ind.items():
+                if key in override_dict:
+                    val['default_value'] = override_dict[key]
 
-        # Iterate over the model_dep dictionary and override
-        # --------------------------------------------------
-        if self.suite_needs_model_components:
-            for model, model_dict in self.question_dictionary_model_dep.items():
-                for key, val in model_dict.items():
-                    if model in override_dict['models']:
-                        if key in override_dict['models'][model]:
-                            val['default_value'] = override_dict['models'][model][key]
+            # Iterate over the model_dep dictionary and override
+            # --------------------------------------------------
+            if self.suite_needs_model_components and 'models' in override_dict.keys():
+                for model, model_dict in self.question_dictionary_model_dep.items():
+                    for key, val in model_dict.items():
+                        if model in override_dict['models']:
+                            if key in override_dict['models'][model]:
+                                val['default_value'] = override_dict['models'][model][key]
 
     # ----------------------------------------------------------------------------------------------
 

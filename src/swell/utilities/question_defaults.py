@@ -24,8 +24,8 @@ class QuestionDefaults():
 
     @dataclass
     class cycle_times(SuiteQuestion):
-        question_name: str = "cycle_times"
         default_value: str = "defer_to_model"
+        question_name: str = "cycle_times"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -38,8 +38,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_hofx_packets(SuiteQuestion):
-        question_name: str = "ensemble_hofx_packets"
         default_value: str = "defer_to_model"
+        question_name: str = "ensemble_hofx_packets"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -50,8 +50,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_hofx_strategy(SuiteQuestion):
-        question_name: str = "ensemble_hofx_strategy"
         default_value: str = "defer_to_model"
+        question_name: str = "ensemble_hofx_strategy"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -62,8 +62,8 @@ class QuestionDefaults():
 
     @dataclass
     class experiment_id(SuiteQuestion):
-        question_name: str = "experiment_id"
         default_value: str = "defer_to_code"
+        question_name: str = "experiment_id"
         ask_question: bool = True
         prompt: str = "What is the experiment id?"
         dtype: str = QDtype.STRING
@@ -72,8 +72,8 @@ class QuestionDefaults():
 
     @dataclass
     class experiment_root(SuiteQuestion):
-        question_name: str = "experiment_root"
         default_value: str = "defer_to_platform"
+        question_name: str = "experiment_root"
         ask_question: bool = True
         prompt: str = ("What is the experiment root (the directory where the "
                        "experiment will be stored)?")
@@ -83,8 +83,8 @@ class QuestionDefaults():
 
     @dataclass
     class final_cycle_point(SuiteQuestion):
-        question_name: str = "final_cycle_point"
         default_value: str = "2023-10-10T06:00:00Z"
+        question_name: str = "final_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the final cycle (middle of the window)?"
         dtype: str = QDtype.ISO_DATETIME
@@ -93,8 +93,8 @@ class QuestionDefaults():
 
     @dataclass
     class marine_models(SuiteQuestion):
-        question_name: str = "marine_models"
         default_value: str = "defer_to_model"
+        question_name: str = "marine_models"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -107,8 +107,8 @@ class QuestionDefaults():
 
     @dataclass
     class model_components(SuiteQuestion):
-        question_name: str = "model_components"
         default_value: str = "defer_to_code"
+        question_name: str = "model_components"
         ask_question: bool = True
         options: str = "defer_to_code"
         prompt: str = "Enter the model components for this model."
@@ -118,8 +118,8 @@ class QuestionDefaults():
 
     @dataclass
     class runahead_limit(SuiteQuestion):
-        question_name: str = "runahead_limit"
         default_value: str = "P4"
+        question_name: str = "runahead_limit"
         ask_question: bool = True
         prompt: str = ("Since this suite is non-cycling choose how "
                        "many hours the workflow can run ahead?")
@@ -129,8 +129,8 @@ class QuestionDefaults():
 
     @dataclass
     class skip_ensemble_hofx(SuiteQuestion):
-        question_name: str = "skip_ensemble_hofx"
         default_value: str = "defer_to_model"
+        question_name: str = "skip_ensemble_hofx"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -141,8 +141,8 @@ class QuestionDefaults():
 
     @dataclass
     class start_cycle_point(SuiteQuestion):
-        question_name: str = "start_cycle_point"
         default_value: str = "2023-10-10T00:00:00Z"
+        question_name: str = "start_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the first cycle (middle of the window)?"
         dtype: str = QDtype.ISO_DATETIME
@@ -151,8 +151,8 @@ class QuestionDefaults():
 
     @dataclass
     class window_type(SuiteQuestion):
-        question_name: str = "window_type"
         default_value: str = "defer_to_model"
+        question_name: str = "window_type"
         options: List[str] = field(default_factory=lambda: [
             "3D",
             "4D"
@@ -169,8 +169,8 @@ class QuestionDefaults():
 
     @dataclass
     class analysis_forecast_window_offset(TaskQuestion):
-        question_name: str = "analysis_forecast_window_offset"
         default_value: str = "defer_to_model"
+        question_name: str = "analysis_forecast_window_offset"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -182,8 +182,8 @@ class QuestionDefaults():
 
     @dataclass
     class analysis_variables(TaskQuestion):
-        question_name: str = "analysis_variables"
         default_value: str = "defer_to_model"
+        question_name: str = "analysis_variables"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -195,8 +195,8 @@ class QuestionDefaults():
 
     @dataclass
     class background_error_model(TaskQuestion):
-        question_name: str = "background_error_model"
         default_value: str = "defer_to_model"
+        question_name: str = "background_error_model"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -208,8 +208,8 @@ class QuestionDefaults():
 
     @dataclass
     class background_experiment(TaskQuestion):
-        question_name: str = "background_experiment"
         default_value: str = "defer_to_model"
+        question_name: str = "background_experiment"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -221,8 +221,8 @@ class QuestionDefaults():
 
     @dataclass
     class background_frequency(TaskQuestion):
-        question_name: str = "background_frequency"
         default_value: str = "defer_to_model"
+        question_name: str = "background_frequency"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -236,8 +236,8 @@ class QuestionDefaults():
 
     @dataclass
     class background_time_offset(TaskQuestion):
-        question_name: str = "background_time_offset"
         default_value: str = "defer_to_model"
+        question_name: str = "background_time_offset"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -249,13 +249,13 @@ class QuestionDefaults():
 
     @dataclass
     class bundles(TaskQuestion):
-        question_name: str = "bundles"
         default_value: List[str] = field(default_factory=lambda: [
             "fv3-jedi",
             "soca",
             "iodaconv",
             "ufo"
         ])
+        question_name: str = "bundles"
         ask_question: bool = True
         options: List[str] = field(default_factory=lambda: [
             "fv3-jedi",
@@ -276,8 +276,8 @@ class QuestionDefaults():
 
     @dataclass
     class cice6_domains(TaskQuestion):
-        question_name: str = "cice6_domains"
         default_value: str = "defer_to_model"
+        question_name: str = "cice6_domains"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -290,8 +290,8 @@ class QuestionDefaults():
 
     @dataclass
     class clean_patterns(TaskQuestion):
-        question_name: str = "clean_patterns"
         default_value: str = "defer_to_model"
+        question_name: str = "clean_patterns"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -303,8 +303,8 @@ class QuestionDefaults():
 
     @dataclass
     class crtm_coeff_dir(TaskQuestion):
-        question_name: str = "crtm_coeff_dir"
         default_value: str = "defer_to_platform"
+        question_name: str = "crtm_coeff_dir"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -315,8 +315,8 @@ class QuestionDefaults():
 
     @dataclass
     class cycling_varbc(TaskQuestion):
-        question_name: str = "cycling_varbc"
         default_value: str = "defer_to_model"
+        question_name: str = "cycling_varbc"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -328,8 +328,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_hofx_packets(TaskQuestion):
-        question_name: str = "ensemble_hofx_packets"
         default_value: str = "defer_to_model"
+        question_name: str = "ensemble_hofx_packets"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -342,8 +342,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_hofx_strategy(TaskQuestion):
-        question_name: str = "ensemble_hofx_strategy"
         default_value: str = "defer_to_model"
+        question_name: str = "ensemble_hofx_strategy"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -356,8 +356,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_num_members(TaskQuestion):
-        question_name: str = "ensemble_num_members"
         default_value: str = "defer_to_model"
+        question_name: str = "ensemble_num_members"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -369,8 +369,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensmean_only(TaskQuestion):
-        question_name: str = "ensmean_only"
         default_value: str = False
+        question_name: str = "ensmean_only"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -385,8 +385,8 @@ class QuestionDefaults():
 
     @dataclass
     class ensmeanvariance_only(TaskQuestion):
-        question_name: str = "ensmeanvariance_only"
         default_value: str = False
+        question_name: str = "ensmeanvariance_only"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -401,8 +401,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_geos_gcm_build_path(TaskQuestion):
-        question_name: str = "existing_geos_gcm_build_path"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_geos_gcm_build_path"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "geos_build_method": "use_existing"
@@ -414,8 +414,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_geos_gcm_source_path(TaskQuestion):
-        question_name: str = "existing_geos_gcm_source_path"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_geos_gcm_source_path"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "geos_build_method": "use_existing"
@@ -427,8 +427,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_jedi_build_directory(TaskQuestion):
-        question_name: str = "existing_jedi_build_directory"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_jedi_build_directory"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_existing"
@@ -440,8 +440,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_jedi_build_directory_pinned(TaskQuestion):
-        question_name: str = "existing_jedi_build_directory_pinned"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_jedi_build_directory_pinned"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_pinned_existing"
@@ -453,8 +453,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_jedi_source_directory(TaskQuestion):
-        question_name: str = "existing_jedi_source_directory"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_jedi_source_directory"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_existing"
@@ -466,8 +466,8 @@ class QuestionDefaults():
 
     @dataclass
     class existing_jedi_source_directory_pinned(TaskQuestion):
-        question_name: str = "existing_jedi_source_directory_pinned"
         default_value: str = "defer_to_platform"
+        question_name: str = "existing_jedi_source_directory_pinned"
         ask_question: bool = True
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_pinned_existing"
@@ -479,8 +479,8 @@ class QuestionDefaults():
 
     @dataclass
     class forecast_duration(TaskQuestion):
-        question_name: str = "forecast_duration"
         default_value: str = "PT12H"
+        question_name: str = "forecast_duration"
         ask_question: bool = True
         prompt: str = "GEOS forecast duration"
         dtype: str = QDtype.ISO_DURATION
@@ -489,8 +489,8 @@ class QuestionDefaults():
 
     @dataclass
     class generate_yaml_and_exit(TaskQuestion):
-        question_name: str = "generate_yaml_and_exit"
         default_value: str = False
+        question_name: str = "generate_yaml_and_exit"
         prompt: str = "Generate JEDI executable YAML and exit?"
         dtype: str = QDtype.BOOLEAN
 
@@ -498,8 +498,8 @@ class QuestionDefaults():
 
     @dataclass
     class geos_build_method(TaskQuestion):
-        question_name: str = "geos_build_method"
         default_value: str = "create"
+        question_name: str = "geos_build_method"
         ask_question: bool = True
         options: List[str] = field(default_factory=lambda: [
             "use_existing",
@@ -512,8 +512,8 @@ class QuestionDefaults():
 
     @dataclass
     class geos_experiment_directory(TaskQuestion):
-        question_name: str = "geos_experiment_directory"
         default_value: str = "defer_to_platform"
+        question_name: str = "geos_experiment_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
         dtype: str = QDtype.STRING
@@ -522,8 +522,8 @@ class QuestionDefaults():
 
     @dataclass
     class geos_gcm_tag(TaskQuestion):
-        question_name: str = "geos_gcm_tag"
         default_value: str = "v11.6.0"
+        question_name: str = "geos_gcm_tag"
         ask_question: bool = True
         prompt: str = "Which GEOS tag do you wish to clone?"
         dtype: str = QDtype.STRING
@@ -532,8 +532,8 @@ class QuestionDefaults():
 
     @dataclass
     class geos_restarts_directory(TaskQuestion):
-        question_name: str = "geos_restarts_directory"
         default_value: str = "defer_to_platform"
+        question_name: str = "geos_restarts_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
         dtype: str = QDtype.STRING
@@ -542,8 +542,8 @@ class QuestionDefaults():
 
     @dataclass
     class geos_x_background_directory(TaskQuestion):
-        question_name: str = "geos_x_background_directory"
         default_value: str = "/dev/null/"
+        question_name: str = "geos_x_background_directory"
         ask_question: bool = True
         options: List[str] = field(default_factory=lambda: [
             "/dev/null/",
@@ -559,8 +559,8 @@ class QuestionDefaults():
 
     @dataclass
     class geovals_experiment(TaskQuestion):
-        question_name: str = "geovals_experiment"
         default_value: str = "defer_to_model"
+        question_name: str = "geovals_experiment"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -572,8 +572,8 @@ class QuestionDefaults():
 
     @dataclass
     class geovals_provider(TaskQuestion):
-        question_name: str = "geovals_provider"
         default_value: str = "defer_to_model"
+        question_name: str = "geovals_provider"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -584,8 +584,8 @@ class QuestionDefaults():
 
     @dataclass
     class gradient_norm_reduction(TaskQuestion):
-        question_name: str = "gradient_norm_reduction"
         default_value: str = "defer_to_model"
+        question_name: str = "gradient_norm_reduction"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -596,8 +596,8 @@ class QuestionDefaults():
 
     @dataclass
     class gsibec_configuration(TaskQuestion):
-        question_name: str = "gsibec_configuration"
         default_value: str = "defer_to_model"
+        question_name: str = "gsibec_configuration"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -608,8 +608,8 @@ class QuestionDefaults():
 
     @dataclass
     class horizontal_localization_lengthscale(TaskQuestion):
-        question_name: str = "horizontal_localization_lengthscale"
         default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_lengthscale"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -620,8 +620,8 @@ class QuestionDefaults():
 
     @dataclass
     class horizontal_localization_max_nobs(TaskQuestion):
-        question_name: str = "horizontal_localization_max_nobs"
         default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_max_nobs"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -633,8 +633,8 @@ class QuestionDefaults():
 
     @dataclass
     class horizontal_localization_method(TaskQuestion):
-        question_name: str = "horizontal_localization_method"
         default_value: str = "defer_to_model"
+        question_name: str = "horizontal_localization_method"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -646,8 +646,8 @@ class QuestionDefaults():
 
     @dataclass
     class horizontal_resolution(TaskQuestion):
-        question_name: str = "horizontal_resolution"
         default_value: str = "defer_to_model"
+        question_name: str = "horizontal_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -660,8 +660,8 @@ class QuestionDefaults():
 
     @dataclass
     class jedi_build_method(TaskQuestion):
-        question_name: str = "jedi_build_method"
         default_value: str = "create"
+        question_name: str = "jedi_build_method"
         ask_question: bool = True
         options: List[str] = field(default_factory=lambda: [
             "use_existing",
@@ -676,8 +676,8 @@ class QuestionDefaults():
 
     @dataclass
     class jedi_forecast_model(TaskQuestion):
-        question_name: str = "jedi_forecast_model"
         default_value: str = "defer_to_model"
+        question_name: str = "jedi_forecast_model"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -693,8 +693,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_inflation_mult(TaskQuestion):
-        question_name: str = "local_ensemble_inflation_mult"
         default_value: str = "defer_to_model"
+        question_name: str = "local_ensemble_inflation_mult"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -705,8 +705,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_inflation_rtpp(TaskQuestion):
-        question_name: str = "local_ensemble_inflation_rtpp"
         default_value: str = "defer_to_model"
+        question_name: str = "local_ensemble_inflation_rtpp"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -717,8 +717,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_inflation_rtps(TaskQuestion):
-        question_name: str = "local_ensemble_inflation_rtps"
         default_value: str = "defer_to_model"
+        question_name: str = "local_ensemble_inflation_rtps"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -729,8 +729,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_ensemble(TaskQuestion):
-        question_name: str = "local_ensemble_save_posterior_ensemble"
         default_value: str = False
+        question_name: str = "local_ensemble_save_posterior_ensemble"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -745,8 +745,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_ensemble_increments(TaskQuestion):
-        question_name: str = "local_ensemble_save_posterior_ensemble_increments"
         default_value: str = False
+        question_name: str = "local_ensemble_save_posterior_ensemble_increments"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -762,8 +762,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_mean(TaskQuestion):
-        question_name: str = "local_ensemble_save_posterior_mean"
         default_value: str = False
+        question_name: str = "local_ensemble_save_posterior_mean"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -779,8 +779,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_mean_increment(TaskQuestion):
-        question_name: str = "local_ensemble_save_posterior_mean_increment"
         default_value: str = True
+        question_name: str = "local_ensemble_save_posterior_mean_increment"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -796,8 +796,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_solver(TaskQuestion):
-        question_name: str = "local_ensemble_solver"
         default_value: str = "defer_to_model"
+        question_name: str = "local_ensemble_solver"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -810,8 +810,8 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_use_linear_observer(TaskQuestion):
-        question_name: str = "local_ensemble_use_linear_observer"
         default_value: str = "defer_to_model"
+        question_name: str = "local_ensemble_use_linear_observer"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -824,8 +824,8 @@ class QuestionDefaults():
 
     @dataclass
     class marine_models(TaskQuestion):
-        question_name: str = "marine_models"
         default_value: str = "defer_to_model"
+        question_name: str = "marine_models"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -838,8 +838,8 @@ class QuestionDefaults():
 
     @dataclass
     class minimizer(TaskQuestion):
-        question_name: str = "minimizer"
         default_value: str = "defer_to_model"
+        question_name: str = "minimizer"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -851,8 +851,8 @@ class QuestionDefaults():
 
     @dataclass
     class mom6_iau(TaskQuestion):
-        question_name: str = "mom6_iau"
         default_value: str = "defer_to_model"
+        question_name: str = "mom6_iau"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -868,8 +868,8 @@ class QuestionDefaults():
 
     @dataclass
     class npx_proc(TaskQuestion):
-        question_name: str = "npx_proc"
         default_value: str = "defer_to_model"
+        question_name: str = "npx_proc"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -881,8 +881,8 @@ class QuestionDefaults():
 
     @dataclass
     class npy_proc(TaskQuestion):
-        question_name: str = "npy_proc"
         default_value: str = "defer_to_model"
+        question_name: str = "npy_proc"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -894,8 +894,8 @@ class QuestionDefaults():
 
     @dataclass
     class number_of_iterations(TaskQuestion):
-        question_name: str = "number_of_iterations"
         default_value: str = "defer_to_model"
+        question_name: str = "number_of_iterations"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])
@@ -907,8 +907,8 @@ class QuestionDefaults():
 
     @dataclass
     class obs_experiment(TaskQuestion):
-        question_name: str = "obs_experiment"
         default_value: str = "defer_to_model"
+        question_name: str = "obs_experiment"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -920,8 +920,8 @@ class QuestionDefaults():
 
     @dataclass
     class obs_provider(TaskQuestion):
-        question_name: str = "obs_provider"
         default_value: str = "defer_to_model"
+        question_name: str = "obs_provider"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "all_models"
@@ -933,8 +933,8 @@ class QuestionDefaults():
 
     @dataclass
     class observations(TaskQuestion):
-        question_name: str = "observations"
         default_value: str = "defer_to_model"
+        question_name: str = "observations"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -947,8 +947,8 @@ class QuestionDefaults():
 
     @dataclass
     class observing_system_records_mksi_path(TaskQuestion):
-        question_name: str = "observing_system_records_mksi_path"
         default_value: str = "defer_to_model"
+        question_name: str = "observing_system_records_mksi_path"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -959,8 +959,8 @@ class QuestionDefaults():
 
     @dataclass
     class observing_system_records_mksi_path_tag(TaskQuestion):
-        question_name: str = "observing_system_records_mksi_path_tag"
         default_value: str = "defer_to_model"
+        question_name: str = "observing_system_records_mksi_path_tag"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -971,8 +971,8 @@ class QuestionDefaults():
 
     @dataclass
     class observing_system_records_path(TaskQuestion):
-        question_name: str = "observing_system_records_path"
         default_value: str = "defer_to_model"
+        question_name: str = "observing_system_records_path"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -983,8 +983,8 @@ class QuestionDefaults():
 
     @dataclass
     class path_to_ensemble(TaskQuestion):
-        question_name: str = "path_to_ensemble"
         default_value: str = "defer_to_model"
+        question_name: str = "path_to_ensemble"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -996,8 +996,8 @@ class QuestionDefaults():
 
     @dataclass
     class path_to_geos_adas_background(TaskQuestion):
-        question_name: str = "path_to_geos_adas_background"
         default_value: str = "defer_to_model"
+        question_name: str = "path_to_geos_adas_background"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1010,8 +1010,8 @@ class QuestionDefaults():
 
     @dataclass
     class path_to_gsi_bc_coefficients(TaskQuestion):
-        question_name: str = "path_to_gsi_bc_coefficients"
         default_value: str = "defer_to_model"
+        question_name: str = "path_to_gsi_bc_coefficients"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1023,8 +1023,8 @@ class QuestionDefaults():
 
     @dataclass
     class path_to_gsi_nc_diags(TaskQuestion):
-        question_name: str = "path_to_gsi_nc_diags"
         default_value: str = "defer_to_model"
+        question_name: str = "path_to_gsi_nc_diags"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1036,8 +1036,8 @@ class QuestionDefaults():
 
     @dataclass
     class produce_geovals(TaskQuestion):
-        question_name: str = "produce_geovals"
         default_value: str = "defer_to_model"
+        question_name: str = "produce_geovals"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -1054,8 +1054,8 @@ class QuestionDefaults():
 
     @dataclass
     class r2d2_local_path(TaskQuestion):
-        question_name: str = "r2d2_local_path"
         default_value: str = "defer_to_platform"
+        question_name: str = "r2d2_local_path"
         prompt: str = "What is the path to the R2D2 local directory?"
         dtype: str = QDtype.STRING
 
@@ -1063,8 +1063,8 @@ class QuestionDefaults():
 
     @dataclass
     class save_geovals(TaskQuestion):
-        question_name: str = "save_geovals"
         default_value: str = False
+        question_name: str = "save_geovals"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -1076,8 +1076,8 @@ class QuestionDefaults():
 
     @dataclass
     class single_observations(TaskQuestion):
-        question_name: str = "single_observations"
         default_value: str = False
+        question_name: str = "single_observations"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -1092,8 +1092,8 @@ class QuestionDefaults():
 
     @dataclass
     class skip_ensemble_hofx(TaskQuestion):
-        question_name: str = "skip_ensemble_hofx"
         default_value: str = "defer_to_model"
+        question_name: str = "skip_ensemble_hofx"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -1106,8 +1106,8 @@ class QuestionDefaults():
 
     @dataclass
     class swell_static_files(TaskQuestion):
-        question_name: str = "swell_static_files"
         default_value: str = "defer_to_platform"
+        question_name: str = "swell_static_files"
         prompt: str = "What is the path to the Swell Static files directory?"
         dtype: str = QDtype.STRING
 
@@ -1115,8 +1115,8 @@ class QuestionDefaults():
 
     @dataclass
     class swell_static_files_user(TaskQuestion):
-        question_name: str = "swell_static_files_user"
         default_value: str = "None"
+        question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
         dtype: str = QDtype.STRING
 
@@ -1124,8 +1124,8 @@ class QuestionDefaults():
 
     @dataclass
     class total_processors(TaskQuestion):
-        question_name: str = "total_processors"
         default_value: str = "defer_to_model"
+        question_name: str = "total_processors"
         ask_question: bool = True
         models: List[str] = field(default_factory=lambda: [
             "geos_marine",
@@ -1138,8 +1138,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_apply_log_transform(TaskQuestion):
-        question_name: str = "vertical_localization_apply_log_transform"
         default_value: str = True
+        question_name: str = "vertical_localization_apply_log_transform"
         options: List[bool] = field(default_factory=lambda: [
             True,
             False
@@ -1156,8 +1156,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_function(TaskQuestion):
-        question_name: str = "vertical_localization_function"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_function"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1169,8 +1169,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_ioda_vertical_coord(TaskQuestion):
-        question_name: str = "vertical_localization_ioda_vertical_coord"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_ioda_vertical_coord"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1182,8 +1182,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_ioda_vertical_coord_group(TaskQuestion):
-        question_name: str = "vertical_localization_ioda_vertical_coord_group"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_ioda_vertical_coord_group"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1196,8 +1196,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_lengthscale(TaskQuestion):
-        question_name: str = "vertical_localization_lengthscale"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_lengthscale"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
         ])
@@ -1208,8 +1208,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_method(TaskQuestion):
-        question_name: str = "vertical_localization_method"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_method"
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
             "geos_atmosphere"
@@ -1222,8 +1222,8 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_resolution(TaskQuestion):
-        question_name: str = "vertical_resolution"
         default_value: str = "defer_to_model"
+        question_name: str = "vertical_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = field(default_factory=lambda: [
@@ -1236,8 +1236,8 @@ class QuestionDefaults():
 
     @dataclass
     class window_length(TaskQuestion):
-        question_name: str = "window_length"
         default_value: str = "defer_to_model"
+        question_name: str = "window_length"
         models: List[str] = field(default_factory=lambda: [
             "all_models"
         ])

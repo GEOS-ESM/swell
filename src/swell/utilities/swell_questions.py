@@ -18,9 +18,9 @@ from enum import Enum
 @dataclass
 class SwellQuestion:
     """Basic dataclass for defining Swell questions for suites and tasks"""
+    default_value: str
     question_name: str
     dtype: str
-    default_value: str
     prompt: str
     question_type: str = None
     depends: Optional[dict] = None
