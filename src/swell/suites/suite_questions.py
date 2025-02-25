@@ -11,8 +11,7 @@
 from enum import Enum
 
 from swell.utilities.swell_questions import QuestionList, QuestionContainer
-from swell.suites.suite_question_defaults import SuiteQuestionDefaults as sq
-from swell.tasks.task_question_defaults import TaskQuestionDefaults as tq
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------
@@ -24,8 +23,8 @@ class SuiteQuestions(QuestionContainer, Enum):
     all_suites = QuestionList(
         list_name="all_suites",
         questions=[
-            sq.experiment_id(),
-            sq.experiment_root()
+            qd.experiment_id(),
+            qd.experiment_root()
         ]
     )
 
@@ -35,11 +34,11 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="common",
         questions=[
             all_suites,
-            sq.cycle_times(),
-            sq.start_cycle_point(),
-            sq.final_cycle_point(),
-            sq.model_components(),
-            sq.runahead_limit()
+            qd.cycle_times(),
+            qd.start_cycle_point(),
+            qd.final_cycle_point(),
+            qd.model_components(),
+            qd.runahead_limit()
         ]
     )
 
@@ -49,7 +48,7 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="marine",
         questions=[
             common,
-            sq.marine_models()
+            qd.marine_models()
         ]
     )
 
@@ -77,20 +76,20 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="3dvar_tier1",
         questions=[
             marine,
-            sq.start_cycle_point(default_value='2021-07-01T12:00:00Z'),
-            sq.final_cycle_point(default_value='2021-07-01T12:00:00Z'),
-            tq.jedi_build_method(default_value='use_existing'),
-            sq.model_components(default_value=['geos_ocean'])
+            qd.start_cycle_point(default_value='2021-07-01T12:00:00Z'),
+            qd.final_cycle_point(default_value='2021-07-01T12:00:00Z'),
+            qd.jedi_build_method(default_value='use_existing'),
+            qd.model_components(default_value=['geos_ocean'])
         ],
         geos_ocean=[
-            sq.cycle_times(default_value=['T12']),
-            tq.window_length(default_value='P1D'),
-            tq.window_offset(default_value='P12H'),
-            tq.horizontal_resolution(default_value='72x36'),
-            tq.vertical_resolution(default_value=50),
-            tq.total_processors(default_value=6),
-            tq.obs_experiment(default_value='s2s_v1'),
-            tq.observations(default_value=[
+            qd.cycle_times(default_value=['T12']),
+            qd.window_length(default_value='P1D'),
+            qd.window_offset(default_value='P12H'),
+            qd.horizontal_resolution(default_value='72x36'),
+            qd.vertical_resolution(default_value=50),
+            qd.total_processors(default_value=6),
+            qd.obs_experiment(default_value='s2s_v1'),
+            qd.observations(default_value=[
                 'adt_cryosat2n',
                 'adt_jason3',
                 'adt_saral',
@@ -105,10 +104,10 @@ class SuiteQuestions(QuestionContainer, Enum):
                 'sst_viirs_n20_l3u',
                 'temp_profile_xbt'
             ]),
-            tq.obs_provider(default_value=['odas', 'gdas_marine']),
-            tq.analysis_forecast_window_offset(default_value='-PT12H'),
-            tq.background_time_offset(default_value='PT18H'),
-            tq.clean_patterns(default_value=['*.nc4', '*.txt'])
+            qd.obs_provider(default_value=['odas', 'gdas_marine']),
+            qd.analysis_forecast_window_offset(default_value='-PT12H'),
+            qd.background_time_offset(default_value='PT18H'),
+            qd.clean_patterns(default_value=['*.nc4', '*.txt'])
         ]
     )
 
@@ -153,9 +152,9 @@ class SuiteQuestions(QuestionContainer, Enum):
     forecast_geos = QuestionList(
         list_name="forecast_geos",
         questions=[
-            sq.cycle_times(),
-            sq.final_cycle_point(),
-            sq.start_cycle_point()
+            qd.cycle_times(),
+            qd.final_cycle_point(),
+            qd.start_cycle_point()
         ]
     )
 
@@ -165,7 +164,7 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="hofx",
         questions=[
             marine,
-            sq.window_type()
+            qd.window_type()
         ]
     )
 
@@ -175,9 +174,9 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="localensembleda",
         questions=[
             marine,
-            sq.ensemble_hofx_packets(),
-            sq.ensemble_hofx_strategy(),
-            sq.skip_ensemble_hofx(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.skip_ensemble_hofx(),
         ]
     )
 

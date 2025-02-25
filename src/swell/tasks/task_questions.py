@@ -12,7 +12,7 @@
 from enum import Enum
 
 from swell.utilities.swell_questions import QuestionList, QuestionContainer
-from swell.tasks.task_question_defaults import TaskQuestionDefaults as tq
+from swell.tasks.task_question_defaults import TaskQuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ class TaskQuestions(QuestionContainer, Enum):
     window_questions = QuestionList(
         list_name="window_questions",
         questions=[
-            tq.window_length(),
-            tq.window_offset(),
-            tq.window_type()
+            qd.window_length(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -35,10 +35,10 @@ class TaskQuestions(QuestionContainer, Enum):
     np_proc_resolution = QuestionList(
         list_name="np_resolution",
         questions=[
-            tq.npx_proc(),
-            tq.npy_proc(),
-            tq.horizontal_resolution(),
-            tq.vertical_resolution()
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution()
         ]
     )
 
@@ -47,8 +47,8 @@ class TaskQuestions(QuestionContainer, Enum):
     swell_static_file_questions = QuestionList(
         list_name="swell_static_file_questions",
         questions=[
-            tq.swell_static_files(),
-            tq.swell_static_files_user()
+            qd.swell_static_files(),
+            qd.swell_static_files_user()
         ]
     )
 
@@ -57,9 +57,9 @@ class TaskQuestions(QuestionContainer, Enum):
     background_crtm_obs = QuestionList(
         list_name="background_crtm_obs",
         questions=[
-            tq.background_time_offset(),
-            tq.crtm_coeff_dir(),
-            tq.observations()
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations()
         ]
     )
 
@@ -71,16 +71,16 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
-            tq.analysis_variables(),
-            tq.background_frequency(),
-            tq.generate_yaml_and_exit(),
-            tq.gradient_norm_reduction(),
-            tq.gsibec_configuration(),
-            tq.jedi_forecast_model(),
-            tq.minimizer(),
-            tq.number_of_iterations(),
-            tq.observing_system_records_path(),
-            tq.total_processors(),
+            qd.analysis_variables(),
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.jedi_forecast_model(),
+            qd.minimizer(),
+            qd.number_of_iterations(),
+            qd.observing_system_records_path(),
+            qd.total_processors(),
         ]
     )
 
@@ -90,11 +90,11 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetBackground",
         questions=[
             window_questions,
-            tq.analysis_forecast_window_offset(),
-            tq.background_experiment(),
-            tq.background_frequency(),
-            tq.horizontal_resolution(),
-            tq.r2d2_local_path(),
+            qd.analysis_forecast_window_offset(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.r2d2_local_path(),
         ]
     )
 
@@ -103,9 +103,9 @@ class TaskQuestions(QuestionContainer, Enum):
     MoveDaRestart = QuestionList(
         list_name="MoveDaRestart",
         questions=[
-            tq.analysis_forecast_window_offset(),
-            tq.mom6_iau(),
-            tq.window_length()
+            qd.analysis_forecast_window_offset(),
+            qd.mom6_iau(),
+            qd.window_length()
         ]
     )
 
@@ -114,10 +114,10 @@ class TaskQuestions(QuestionContainer, Enum):
     PrepareAnalysis = QuestionList(
         list_name="PrepareAnalysis",
         questions=[
-            tq.analysis_forecast_window_offset(),
-            tq.analysis_variables(),
-            tq.mom6_iau(),
-            tq.total_processors()
+            qd.analysis_forecast_window_offset(),
+            qd.analysis_variables(),
+            qd.mom6_iau(),
+            qd.total_processors()
         ]
     )
 
@@ -127,11 +127,11 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="StoreBackground",
         questions=[
             window_questions,
-            tq.analysis_forecast_window_offset(),
-            tq.background_experiment(),
-            tq.background_frequency(),
-            tq.horizontal_resolution(),
-            tq.r2d2_local_path(),
+            qd.analysis_forecast_window_offset(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.r2d2_local_path(),
         ]
     )
 
@@ -142,13 +142,13 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             np_proc_resolution,
             swell_static_file_questions,
-            tq.analysis_variables(),
-            tq.background_error_model(),
-            tq.generate_yaml_and_exit(),
-            tq.marine_models(),
-            tq.total_processors(),
-            tq.window_offset(),
-            tq.window_type()
+            qd.analysis_variables(),
+            qd.background_error_model(),
+            qd.generate_yaml_and_exit(),
+            qd.marine_models(),
+            qd.total_processors(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -157,15 +157,15 @@ class TaskQuestions(QuestionContainer, Enum):
     RunJediConvertStateSoca2ciceExecutable = QuestionList(
         list_name="RunJediConvertStateSoca2ciceExecutable",
         questions=[
-            tq.analysis_variables(),
-            tq.cice6_domains(),
-            tq.generate_yaml_and_exit(),
-            tq.jedi_forecast_model(),
-            tq.marine_models(),
-            tq.observations(),
-            tq.total_processors(),
-            tq.window_offset(),
-            tq.window_type()
+            qd.analysis_variables(),
+            qd.cice6_domains(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -176,12 +176,12 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             np_proc_resolution,
             window_questions,
-            tq.analysis_variables(),
-            tq.ensemble_num_members(),
-            tq.generate_yaml_and_exit(),
-            tq.jedi_forecast_model(),
-            tq.observations(),
-            tq.observing_system_records_path(),
+            qd.analysis_variables(),
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.observations(),
+            qd.observing_system_records_path(),
         ]
     )
 
@@ -191,7 +191,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="RunJediFgatExecutable",
         questions=[
             run_jedi_executable,
-            tq.marine_models()
+            qd.marine_models()
         ]
     )
 
@@ -210,11 +210,11 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GenerateBClimatologyByLinking",
         questions=[
             swell_static_file_questions,
-            tq.background_error_model(),
-            tq.horizontal_resolution(),
-            tq.vertical_resolution(),
-            tq.window_offset(),
-            tq.window_type()
+            qd.background_error_model(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -223,10 +223,10 @@ class TaskQuestions(QuestionContainer, Enum):
     GetBackgroundGeosExperiment = QuestionList(
         list_name="GetBackgroundGeosExperiment",
         questions=[
-            tq.horizontal_resolution(),
-            tq.background_experiment(),
-            tq.background_time_offset(),
-            tq.geos_x_background_directory()
+            qd.horizontal_resolution(),
+            qd.background_experiment(),
+            qd.background_time_offset(),
+            qd.geos_x_background_directory()
         ]
     )
 
@@ -236,8 +236,8 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="LinkGeosOutput",
         questions=[
             window_questions,
-            tq.background_frequency(),
-            tq.marine_models()
+            qd.background_frequency(),
+            qd.marine_models()
         ]
     )
 
@@ -249,13 +249,13 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
-            tq.background_frequency(),
-            tq.ensemble_hofx_packets(),
-            tq.ensemble_hofx_strategy(),
-            tq.ensemble_num_members(),
-            tq.generate_yaml_and_exit(),
-            tq.jedi_forecast_model(),
-            tq.total_processors()
+            qd.background_frequency(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.total_processors()
         ]
     )
 
@@ -267,12 +267,12 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
-            tq.background_frequency(),
-            tq.generate_yaml_and_exit(),
-            tq.jedi_forecast_model(),
-            tq.observing_system_records_path(),
-            tq.save_geovals(),
-            tq.total_processors()
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.observing_system_records_path(),
+            qd.save_geovals(),
+            qd.total_processors()
         ]
     )
 
@@ -284,11 +284,11 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
-            tq.background_frequency(),
-            tq.generate_yaml_and_exit(),
-            tq.jedi_forecast_model(),
-            tq.observing_system_records_path(),
-            tq.total_processors()
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.observing_system_records_path(),
+            qd.total_processors()
         ]
     )
 
@@ -298,8 +298,8 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="EvaObservations",
         questions=[
             background_crtm_obs,
-            tq.observing_system_records_path(),
-            tq.window_offset()
+            qd.observing_system_records_path(),
+            qd.window_offset()
         ]
     )
 
@@ -309,11 +309,11 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetGeovals",
         questions=[
             background_crtm_obs,
-            tq.geovals_experiment(),
-            tq.geovals_provider(),
-            tq.r2d2_local_path(),
-            tq.window_length(),
-            tq.window_offset()
+            qd.geovals_experiment(),
+            qd.geovals_provider(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset()
         ]
     )
 
@@ -323,13 +323,13 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetObservations",
         questions=[
             background_crtm_obs,
-            tq.cycling_varbc(),
-            tq.obs_experiment(),
-            tq.obs_provider(),
-            tq.observing_system_records_path(),
-            tq.r2d2_local_path(),
-            tq.window_length(),
-            tq.window_offset()
+            qd.cycling_varbc(),
+            qd.obs_experiment(),
+            qd.obs_provider(),
+            qd.observing_system_records_path(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset()
         ]
     )
 
@@ -339,8 +339,8 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GsiBcToIoda",
         questions=[
             background_crtm_obs,
-            tq.observing_system_records_path(),
-            tq.window_offset()
+            qd.observing_system_records_path(),
+            qd.window_offset()
         ]
     )
 
@@ -352,34 +352,34 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
-            tq.ensemble_hofx_packets(),
-            tq.ensemble_hofx_strategy(),
-            tq.ensemble_num_members(),
-            tq.ensmean_only(),
-            tq.ensmeanvariance_only(),
-            tq.generate_yaml_and_exit(),
-            tq.horizontal_localization_lengthscale(),
-            tq.horizontal_localization_max_nobs(),
-            tq.horizontal_localization_method(),
-            tq.jedi_forecast_model(),
-            tq.local_ensemble_inflation_mult(),
-            tq.local_ensemble_inflation_rtpp(),
-            tq.local_ensemble_inflation_rtps(),
-            tq.local_ensemble_save_posterior_ensemble(),
-            tq.local_ensemble_save_posterior_ensemble_increments(),
-            tq.local_ensemble_save_posterior_mean(),
-            tq.local_ensemble_save_posterior_mean_increment(),
-            tq.local_ensemble_solver(),
-            tq.local_ensemble_use_linear_observer(),
-            tq.observing_system_records_path(),
-            tq.skip_ensemble_hofx(),
-            tq.total_processors(),
-            tq.vertical_localization_apply_log_transform(),
-            tq.vertical_localization_function(),
-            tq.vertical_localization_ioda_vertical_coord(),
-            tq.vertical_localization_ioda_vertical_coord_group(),
-            tq.vertical_localization_lengthscale(),
-            tq.vertical_localization_method()
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.ensmean_only(),
+            qd.ensmeanvariance_only(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.observing_system_records_path(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_method()
         ]
     )
 
@@ -389,11 +389,11 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="RunJediUfoTestsExecutable",
         questions=[
             background_crtm_obs,
-            tq.generate_yaml_and_exit(),
-            tq.observing_system_records_path(),
-            tq.single_observations(),
-            tq.window_length(),
-            tq.window_offset()
+            qd.generate_yaml_and_exit(),
+            qd.observing_system_records_path(),
+            qd.single_observations(),
+            qd.window_length(),
+            qd.window_offset()
         ]
     )
 
@@ -403,9 +403,9 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="SaveObsDiags",
         questions=[
             background_crtm_obs,
-            tq.observing_system_records_path(),
-            tq.r2d2_local_path(),
-            tq.window_offset()
+            qd.observing_system_records_path(),
+            qd.r2d2_local_path(),
+            qd.window_offset()
         ]
     )
 
@@ -414,8 +414,8 @@ class TaskQuestions(QuestionContainer, Enum):
     BuildJedi = QuestionList(
         list_name="BuildJedi",
         questions=[
-            tq.bundles(),
-            tq.jedi_build_method()
+            qd.bundles(),
+            qd.jedi_build_method()
         ]
     )
 
@@ -424,10 +424,10 @@ class TaskQuestions(QuestionContainer, Enum):
     CloneJedi = QuestionList(
         list_name="CloneJedi",
         questions=[
-            tq.bundles(),
-            tq.existing_jedi_source_directory(),
-            tq.existing_jedi_source_directory_pinned(),
-            tq.jedi_build_method()
+            qd.bundles(),
+            qd.existing_jedi_source_directory(),
+            qd.existing_jedi_source_directory_pinned(),
+            qd.jedi_build_method()
         ]
     )
 
@@ -436,7 +436,7 @@ class TaskQuestions(QuestionContainer, Enum):
     CleanCycle = QuestionList(
         list_name="CleanCycle",
         questions=[
-            tq.clean_patterns()
+            qd.clean_patterns()
         ]
     )
 
@@ -445,8 +445,8 @@ class TaskQuestions(QuestionContainer, Enum):
     BuildGeosByLinking = QuestionList(
         list_name="BuildGeosByLinking",
         questions=[
-            tq.existing_geos_gcm_build_path(),
-            tq.geos_build_method()
+            qd.existing_geos_gcm_build_path(),
+            qd.geos_build_method()
         ]
     )
 
@@ -456,9 +456,9 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="PrepGeosRunDir",
         questions=[
             swell_static_file_questions,
-            tq.existing_geos_gcm_build_path(),
-            tq.forecast_duration(),
-            tq.geos_experiment_directory()
+            qd.existing_geos_gcm_build_path(),
+            qd.forecast_duration(),
+            qd.geos_experiment_directory()
         ]
     )
 
@@ -467,9 +467,9 @@ class TaskQuestions(QuestionContainer, Enum):
     CloneGeos = QuestionList(
         list_name="CloneGeos",
         questions=[
-            tq.existing_geos_gcm_source_path(),
-            tq.geos_build_method(),
-            tq.geos_gcm_tag()
+            qd.existing_geos_gcm_source_path(),
+            qd.geos_build_method(),
+            qd.geos_gcm_tag()
         ]
     )
 
@@ -478,9 +478,9 @@ class TaskQuestions(QuestionContainer, Enum):
     BuildJediByLinking = QuestionList(
         list_name="BuildJediByLinking",
         questions=[
-            tq.existing_jedi_build_directory(),
-            tq.existing_jedi_build_directory_pinned(),
-            tq.jedi_build_method()
+            qd.existing_jedi_build_directory(),
+            qd.existing_jedi_build_directory_pinned(),
+            qd.jedi_build_method()
         ]
     )
 
@@ -489,7 +489,7 @@ class TaskQuestions(QuestionContainer, Enum):
     MoveForecastRestart = QuestionList(
         list_name="MoveForecastRestart",
         questions=[
-            tq.forecast_duration()
+            qd.forecast_duration()
         ]
     )
 
@@ -498,7 +498,7 @@ class TaskQuestions(QuestionContainer, Enum):
     BuildGeos = QuestionList(
         list_name="BuildGeos",
         questions=[
-            tq.geos_build_method()
+            qd.geos_build_method()
         ]
     )
 
@@ -508,7 +508,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetGeosRestart",
         questions=[
             swell_static_file_questions,
-            tq.geos_restarts_directory()
+            qd.geos_restarts_directory()
         ]
     )
 
@@ -518,9 +518,9 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="StageJedi",
         questions=[
             swell_static_file_questions,
-            tq.gsibec_configuration(),
-            tq.horizontal_resolution(),
-            tq.vertical_resolution()
+            qd.gsibec_configuration(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution()
         ]
     )
 
@@ -529,9 +529,9 @@ class TaskQuestions(QuestionContainer, Enum):
     EvaIncrement = QuestionList(
         list_name="EvaIncrement",
         questions=[
-            tq.marine_models(),
-            tq.window_offset(),
-            tq.window_type()
+            qd.marine_models(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -540,9 +540,9 @@ class TaskQuestions(QuestionContainer, Enum):
     GenerateObservingSystemRecords = QuestionList(
         list_name="GenerateObservingSystemRecords",
         questions=[
-            tq.observations(),
-            tq.observing_system_records_mksi_path(),
-            tq.observing_system_records_path()
+            qd.observations(),
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_path()
         ]
     )
 
@@ -551,10 +551,10 @@ class TaskQuestions(QuestionContainer, Enum):
     GsiNcdiagToIoda = QuestionList(
         list_name="GsiNcdiagToIoda",
         questions=[
-            tq.observations(),
-            tq.produce_geovals(),
-            tq.single_observations(),
-            tq.window_offset()
+            qd.observations(),
+            qd.produce_geovals(),
+            qd.single_observations(),
+            qd.window_offset()
         ]
     )
 
@@ -563,8 +563,8 @@ class TaskQuestions(QuestionContainer, Enum):
     CloneGeosMksi = QuestionList(
         list_name="CloneGeosMksi",
         questions=[
-            tq.observing_system_records_mksi_path(),
-            tq.observing_system_records_mksi_path_tag()
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_mksi_path_tag()
         ]
     )
 
@@ -573,7 +573,7 @@ class TaskQuestions(QuestionContainer, Enum):
     GetEnsemble = QuestionList(
         list_name="GetEnsemble",
         questions=[
-            tq.path_to_ensemble()
+            qd.path_to_ensemble()
         ]
     )
 
@@ -582,7 +582,7 @@ class TaskQuestions(QuestionContainer, Enum):
     GetGeosAdasBackground = QuestionList(
         list_name="GetGeosAdasBackground",
         questions=[
-            tq.path_to_geos_adas_background()
+            qd.path_to_geos_adas_background()
         ]
     )
 
@@ -591,8 +591,8 @@ class TaskQuestions(QuestionContainer, Enum):
     GetGsiBc = QuestionList(
         list_name="GetGsiBc",
         questions=[
-            tq.path_to_gsi_bc_coefficients(),
-            tq.window_length()
+            qd.path_to_gsi_bc_coefficients(),
+            qd.window_length()
         ]
     )
 
@@ -601,7 +601,7 @@ class TaskQuestions(QuestionContainer, Enum):
     GetGsiNcdiag = QuestionList(
         list_name="GetGsiNcdiag",
         questions=[
-            tq.path_to_gsi_nc_diags()
+            qd.path_to_gsi_nc_diags()
         ]
     )
 
