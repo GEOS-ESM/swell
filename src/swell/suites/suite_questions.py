@@ -55,7 +55,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-    # Basic definition of what questions are used for each suite, using the 
+    # Basic definition of what questions are used for each suite, using the
     # defaults for each question.
     # --------------------------------------------------------------------------------------------------
 
@@ -154,7 +154,6 @@ class SuiteQuestions(QuestionContainer, Enum):
         ]
     )
 
-
     # --------------------------------------------------------------------------------------------------
     # Tier 1 defaults
     # --------------------------------------------------------------------------------------------------
@@ -177,7 +176,8 @@ class SuiteQuestions(QuestionContainer, Enum):
                 "T18"
             ]),
             qd.horizontal_resolution("91"),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
+                                           "dadev/rtodling/archive/Restarts/JEDI/541x"),
             qd.window_type("4D"),
             qd.observations([
                 "aircraft_temperature",
@@ -335,7 +335,8 @@ class SuiteQuestions(QuestionContainer, Enum):
                 "T12",
                 "T18"
             ]),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
+                                           "dadev/rtodling/archive/Restarts/JEDI/541x"),
             qd.window_length("PT6H"),
             qd.window_offset("PT3H"),
             qd.window_type("3D"),
@@ -459,7 +460,8 @@ class SuiteQuestions(QuestionContainer, Enum):
                 "gsi_ncdiags/aircraft",
                 "gsi_ncdiags"
             ]),
-            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiagv2/%Y%m%d%H"),
+            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
+                                    "ufo_testing/ncdiagv2/%Y%m%d%H"),
         ]
     )
 
@@ -544,7 +546,8 @@ class SuiteQuestions(QuestionContainer, Enum):
         ],
         geos_atmosphere=[
             qd.horizontal_resolution("91"),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
+                                           "rtodling/archive/Restarts/JEDI/541x"),
             qd.npx_proc(2),
             qd.npy_proc(2),
             qd.observations([
@@ -611,7 +614,8 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.path_to_ensemble("/discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4"),
+            qd.path_to_ensemble("/discover/nobackup/projects/gmao/advda/SwellTestData/"
+                                "letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4"),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
@@ -706,8 +710,11 @@ class SuiteQuestions(QuestionContainer, Enum):
                 "gsi_ncdiags/aircraft",
                 "gsi_ncdiags"
             ]),
-            qd.path_to_gsi_bc_coefficients("/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan/x0050/ana/Y%Y/M%m/*bias*%Y%m%d_%Hz.txt"),
-            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan/x0050/obs/Y%Y/M%m/D%d/H%H/"),
+            qd.path_to_gsi_bc_coefficients("/discover/nobackup/projects/gmao/dadev/rtodling/"
+                                           "archive/541/Milan/x0050/ana/Y%Y/M%m/"
+                                           "*bias*%Y%m%d_%Hz.txt"),
+            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/archive/"
+                                    "541/Milan/x0050/obs/Y%Y/M%m/D%d/H%H/"),
         ]
     )
 
@@ -813,4 +820,3 @@ class SuiteQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-

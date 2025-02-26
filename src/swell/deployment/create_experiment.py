@@ -89,8 +89,8 @@ def prepare_config(
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config, platform,
-                                                               method, override)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
+                                                               platform, method, override)
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
@@ -181,7 +181,8 @@ def create_experiment_directory(
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, suite_config, method, platform, override, advanced, slurm)
+    experiment_dict_str = prepare_config(suite, suite_config, method, platform,
+                                         override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------

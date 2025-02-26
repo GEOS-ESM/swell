@@ -25,15 +25,18 @@ def get_suites() -> list:
 
     # List of base suites
     suites = sorted([sdir for sdir in os.listdir(suites_directory)
-              if (os.path.isdir(os.path.join(suites_directory, sdir))
-              and os.path.exists(os.path.join(suites_directory, sdir, 'flow.cylc')))])
+                     if (os.path.isdir(os.path.join(suites_directory, sdir))
+                         and os.path.exists(os.path.join(suites_directory, sdir, 'flow.cylc')))])
 
     # List of suites and associated sub-suites
     suite_config_list = []
 
     for suite in suites:
         suite_sub_list = []
-        [suite_sub_list.append(suite_config[1:] if suite_config[0]=='_' else suite_config) for suite_config in suite_questions.get_all() if suite_questions[suite_config].value.list_name == suite and '_base' not in suite_config]
+        [suite_sub_list.append(suite_config[1:] if suite_config[0] == '_' else suite_config)
+         for suite_config in suite_questions.get_all()
+         if suite_questions[suite_config].value.list_name == suite and '_base' not in suite_config]
+
         suite_config_list.extend(sorted(suite_sub_list))
 
     # List all directories in platform_directory

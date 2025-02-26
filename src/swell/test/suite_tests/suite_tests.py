@@ -131,7 +131,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
 
-    # Suites are currently set up to use tier2 defaults, this setting 
+    # Suites are currently set up to use tier2 defaults, this setting
     # may need to be changed in the future
     suite_tier_defaults = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
 

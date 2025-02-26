@@ -144,7 +144,8 @@ class PrepareExperimentConfigAndSuite:
         # Update model dependent overrides with suite questions
         for model in self.possible_model_components:
             model_dep_questions_override[model] = {}
-            for question in suite_questions[self.suite_config].value.expand_question_list_model(model):
+            for question in suite_questions[
+                    self.suite_config].value.expand_question_list_model(model):
                 model_dep_questions_override[model][question['question_name']] = question
 
         # Merge the dictionaries for task questions into the suite question
@@ -341,9 +342,9 @@ class PrepareExperimentConfigAndSuite:
             else:
                 self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 
-            # In this case the user is sending in a dictionary that looks like the experiment dictionary
-            # that they will ultimately be looking at. This means the dictionary does not contain
-            # default_value or options and the override cannot be performed.
+            # In this case the user is sending in a dictionary that looks like the experiment
+            # dictionary that they will ultimately be looking at. This means the dictionary does
+            # not contain default_value or options and the override cannot be performed.
 
             # Iterate over the model_ind dictionary and override
             # --------------------------------------------------
