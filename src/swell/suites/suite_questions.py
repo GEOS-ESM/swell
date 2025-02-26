@@ -55,11 +55,12 @@ class SuiteQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-    # Suite questions, using the defaults for each question.
+    # Basic definition of what questions are used for each suite, using the 
+    # defaults for each question.
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_atmos_base = QuestionList(
-        list_name="3dfgat_atmos_base",
+        list_name="3dfgat_atmos",
         questions=[
             common
         ]
@@ -68,7 +69,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_cycle_base = QuestionList(
-        list_name="3dfgat_cycle_base",
+        list_name="3dfgat_cycle",
         questions=[
             marine
         ]
@@ -77,7 +78,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_base = QuestionList(
-        list_name="3dvar_base",
+        list_name="3dvar",
         questions=[
             marine
         ]
@@ -86,7 +87,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_atmos_base = QuestionList(
-        list_name="3dvar_atmos_base",
+        list_name="3dvar_atmos",
         questions=[
             common
         ]
@@ -95,7 +96,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_cycle_base = QuestionList(
-        list_name="3dvar_cycle_base",
+        list_name="3dvar_cycle",
         questions=[
             marine
         ]
@@ -104,7 +105,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     convert_ncdiags_base = QuestionList(
-        list_name="convert_ncdiags_base",
+        list_name="convert_ncdiags",
         questions=[
             common
         ]
@@ -113,7 +114,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     forecast_geos_base = QuestionList(
-        list_name="forecast_geos_base",
+        list_name="forecast_geos",
         questions=[
             qd.cycle_times(),
             qd.final_cycle_point(),
@@ -124,7 +125,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     hofx_base = QuestionList(
-        list_name="hofx_base",
+        list_name="hofx",
         questions=[
             marine,
             qd.window_type()
@@ -134,7 +135,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_base = QuestionList(
-        list_name="localensembleda_base",
+        list_name="localensembleda",
         questions=[
             marine,
             qd.ensemble_hofx_packets(),
@@ -146,7 +147,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     ufo_testing_base = QuestionList(
-        list_name="ufo_testing_base",
+        list_name="ufo_testing",
         questions=[
             common,
         ]
@@ -158,7 +159,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_atmos_tier1 = QuestionList(
-        list_name="_3dfgat_atmos_tier1",
+        list_name="3dfgat_atmos",
         questions=[
             _3dfgat_atmos_base,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -222,7 +223,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_cycle_tier1 = QuestionList(
-        list_name="_3dfgat_cycle_tier1",
+        list_name="3dfgat_cycle",
         questions=[
             _3dfgat_cycle_base,
             qd.start_cycle_point("2021-06-01T12:00:00Z"),
@@ -276,7 +277,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_tier1 = QuestionList(
-        list_name="_3dvar_tier1",
+        list_name="3dvar",
         questions=[
             _3dvar_base,
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
@@ -317,7 +318,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_atmos_tier1 = QuestionList(
-        list_name="_3dvar_atmos_tier1",
+        list_name="3dvar_atmos",
         questions=[
             _3dvar_atmos_base,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -382,7 +383,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_cycle_tier1 = QuestionList(
-        list_name="_3dvar_cycle_tier1",
+        list_name="3dvar_cycle",
         questions=[
             _3dvar_cycle_base,
             qd.start_cycle_point("2021-06-01T12:00:00Z"),
@@ -436,7 +437,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     convert_ncdiags_tier1 = QuestionList(
-        list_name="convert_ncdiags_tier1",
+        list_name="convert_ncdiags",
         questions=[
             convert_ncdiags_base,
             qd.start_cycle_point("2021-12-12T00:00:00Z"),
@@ -464,7 +465,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     forecast_geos_tier1 = QuestionList(
-        list_name="forecast_geos_tier1",
+        list_name="forecast_geos",
         questions=[
             forecast_geos_base,
             qd.start_cycle_point("2021-06-20T00:00:00Z"),
@@ -483,7 +484,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     geosadas_tier1 = QuestionList(
-        list_name="geosadas_tier1",
+        list_name="geosadas",
         questions=[
             all_suites,
             qd.jedi_build_method("use_existing"),
@@ -533,7 +534,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     hofx_tier1 = QuestionList(
-        list_name="hofx_tier1",
+        list_name="hofx",
         questions=[
             hofx_base,
             qd.jedi_build_method("use_existing"),
@@ -588,7 +589,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_tier1 = QuestionList(
-        list_name="localensembleda_tier1",
+        list_name="localensembleda",
         questions=[
             localensembleda_base,
             qd.final_cycle_point("2021-12-12T00:00:00Z"),
@@ -648,7 +649,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     ufo_testing_tier1 = QuestionList(
-        list_name="ufo_testing_tier1",
+        list_name="ufo_testing",
         questions=[
             ufo_testing_base,
             qd.final_cycle_point("2023-10-10T00:00:00Z"),
@@ -714,7 +715,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_atmos = QuestionList(
-        list_name="_3dfgat_atmos",
+        list_name="3dfgat_atmos",
         questions=[
             _3dfgat_atmos_tier1
         ]
@@ -723,7 +724,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dfgat_cycle = QuestionList(
-        list_name="_3dfgat_cycle",
+        list_name="3dfgat_cycle",
         questions=[
             _3dfgat_cycle_tier1
         ]
@@ -732,7 +733,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar = QuestionList(
-        list_name="_3dvar",
+        list_name="3dvar",
         questions=[
             _3dvar_tier1
         ]
@@ -741,7 +742,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_atmos = QuestionList(
-        list_name="_3dvar_atmos",
+        list_name="3dvar_atmos",
         questions=[
             _3dvar_atmos_tier1
         ]
@@ -750,7 +751,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_cycle = QuestionList(
-        list_name="_3dvar_cycle",
+        list_name="3dvar_cycle",
         questions=[
             _3dvar_cycle_tier1
         ]
