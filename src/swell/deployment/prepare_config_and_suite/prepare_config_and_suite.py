@@ -54,6 +54,7 @@ class PrepareExperimentConfigAndSuite:
         self,
         logger: Logger,
         suite: str,
+        suite_config: str,
         platform: str,
         config_client: str,
         override: Union[str, dict, None]
@@ -62,7 +63,7 @@ class PrepareExperimentConfigAndSuite:
         # Store local copy of the inputs
         self.logger = logger
         self.suite = suite
-        self.suite_ind = ('_' if suite[0].isdigit() else '') + suite
+        self.suite_config = suite_config
         self.platform = platform
         self.override = override
 
@@ -134,7 +135,7 @@ class PrepareExperimentConfigAndSuite:
         # Get a list of all questions associated with the suite, except for those specified
         # seperately for models
         suite_question_list = (
-                suite_questions[self.suite_ind].value.expand_question_list())
+                suite_questions[self.suite_config].value.expand_question_list())
 
         # Convert the list of questions into a dictionary indexed by the question name
         for question in suite_question_list:
@@ -143,7 +144,7 @@ class PrepareExperimentConfigAndSuite:
         # Update model dependent overrides with suite questions
         for model in self.possible_model_components:
             model_dep_questions_override[model] = {}
-            for question in suite_questions[self.suite_ind].value.expand_question_list_model(model):
+            for question in suite_questions[self.suite_config].value.expand_question_list_model(model):
                 model_dep_questions_override[model][question['question_name']] = question
 
         # Merge the dictionaries for task questions into the suite question

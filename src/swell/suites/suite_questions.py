@@ -116,6 +116,7 @@ class SuiteQuestions(QuestionContainer, Enum):
     forecast_geos_base = QuestionList(
         list_name="forecast_geos",
         questions=[
+            all_suites,
             qd.cycle_times(),
             qd.final_cycle_point(),
             qd.start_cycle_point()

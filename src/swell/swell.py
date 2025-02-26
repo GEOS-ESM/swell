@@ -87,7 +87,7 @@ or for task-model combinations.
 
 
 @swell_driver.command()
-@click.argument('suite', type=click.Choice(get_suites()))
+@click.argument('suite_config', type=click.Choice(get_suites()))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
@@ -96,7 +96,7 @@ or for task-model combinations.
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
 def create(
-    suite: str,
+    suite_config: str,
     input_method: str,
     platform: str,
     override: Union[dict, str, None],
@@ -113,7 +113,7 @@ def create(
 
     """
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite_config, input_method, platform, override, advanced, slurm)
 
 
 # --------------------------------------------------------------------------------------------------
