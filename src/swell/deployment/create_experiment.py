@@ -23,7 +23,6 @@ from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
 from swell.utilities.slurm import prepare_scheduling_dict
-from swell.suites.suite_questions import SuiteQuestions as suite_questions
 
 
 # --------------------------------------------------------------------------------------------------

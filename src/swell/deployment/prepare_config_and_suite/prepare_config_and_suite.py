@@ -20,7 +20,6 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_defaults impo
 from swell.utilities.logger import Logger
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
-from swell.suites.suite_questions import SuiteQuestions as suite_questions
 from swell.tasks.task_questions import TaskQuestions as task_questions
 
 
