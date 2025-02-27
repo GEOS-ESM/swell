@@ -45,7 +45,7 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
         yaml.dump(override, f)
 
     create_experiment_directory(
-        "build_jedi", "defaults", platform,
+        "build_jedi", None, "defaults", platform,
         str(override_yml), False, None
     )
 
@@ -133,10 +133,10 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
 
     # Suites are currently set up to use tier2 defaults, this setting
     # may need to be changed in the future
-    suite_tier_defaults = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
+    suite_config = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
 
     create_experiment_directory(
-        suite_tier_defaults, "defaults", platform,
+        suite, suite_config, "defaults", platform,
         str(override_yml), False, None
     )
 

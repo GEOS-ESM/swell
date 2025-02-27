@@ -61,6 +61,9 @@ class QuestionList:
         question_list = []
 
         for question_obj in self.questions:
+
+            if isinstance(question_obj, Enum):
+                question_obj = question_obj.value
             question = asdict(question_obj)
 
             if 'list_name' in question.keys():
@@ -78,6 +81,10 @@ class QuestionList:
         # Check the default question list to see if any groups have
         # Model specific questions specified
         for question_obj in self.questions:
+
+            if isinstance(question_obj, Enum):
+                question_obj = question_obj.value
+
             question = asdict(question_obj)
 
             if 'list_name' in question.keys():

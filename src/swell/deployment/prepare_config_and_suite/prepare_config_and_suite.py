@@ -11,6 +11,7 @@
 import copy
 import os
 import yaml
+import importlib
 from typing import Union, Tuple, Optional
 
 from swell.swell_path import get_swell_path
@@ -134,8 +135,11 @@ class PrepareExperimentConfigAndSuite:
 
         # Get a list of all questions associated with the suite, except for those specified
         # seperately for models
+
+        suite_configs_obj = getattr(importlib.import_module(f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')
+
         suite_question_list = (
-                suite_questions[self.suite_config].value.expand_question_list())
+                suite_configs_obj[self.suite_config].value.expand_question_list())
 
         # Convert the list of questions into a dictionary indexed by the question name
         for question in suite_question_list:
@@ -144,7 +148,7 @@ class PrepareExperimentConfigAndSuite:
         # Update model dependent overrides with suite questions
         for model in self.possible_model_components:
             model_dep_questions_override[model] = {}
-            for question in suite_questions[
+            for question in suite_configs_obj[
                     self.suite_config].value.expand_question_list_model(model):
                 model_dep_questions_override[model][question['question_name']] = question
 

@@ -159,7 +159,8 @@ def prepare_config(
 
 
 def create_experiment_directory(
-    suite_config: str,
+    suite: str,
+    suite_config: Optional[str],
     method: str,
     platform: str,
     override: str,
@@ -167,13 +168,14 @@ def create_experiment_directory(
     slurm: Optional[str]
 ) -> None:
 
-    # Put an underscore in front if suite name begins with a digit
-    # ------------------------------------------------------------
-    suite_config = ('_' if suite_config[0].isdigit() else '') + suite_config
+    # Set the default suite config if none is specified
+    # -------------------------------------------------
+    if suite_config is None:
+        suite_config = suite
 
-    # Get the base name of the suite to be run
-    # ----------------------------------------
-    suite = suite_questions[suite_config].value.list_name
+    # Put an underscore in front of suite config if it begins with a digit
+    # --------------------------------------------------------------------
+    suite_config = ('_' if suite_config[0].isdigit() else '') + suite_config
 
     # Create a logger
     # ---------------
