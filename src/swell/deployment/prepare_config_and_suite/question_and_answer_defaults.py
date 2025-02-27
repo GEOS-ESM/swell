@@ -18,7 +18,6 @@ class GetAnswerDefaults:
     def get_answer(self, logger: Logger, key: str, val: dict) -> Union[int, float, str]:
         default = val['default_value']
         widget_type = val['widget_type']
-        options = val['options']
 
         if not widget_type.validate_value(default):
             logger.abort(f'Default value for {key}, {default}, does not conform to type '

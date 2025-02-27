@@ -8,10 +8,6 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import re
-import sys
-from typing import Union
-
 import questionary
 from questionary import Choice
 
