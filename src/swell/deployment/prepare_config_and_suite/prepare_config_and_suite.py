@@ -98,7 +98,6 @@ class PrepareExperimentConfigAndSuite:
         self.override_with_defaults()
         self.override_with_external()
 
-
     # ----------------------------------------------------------------------------------------------
 
     def prepare_question_dictionaries(self) -> None:
@@ -136,7 +135,8 @@ class PrepareExperimentConfigAndSuite:
         # Get a list of all questions associated with the suite, except for those specified
         # seperately for models
 
-        suite_configs_obj = getattr(importlib.import_module(f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')
+        suite_configs_obj = getattr(importlib.import_module(
+            f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')
 
         suite_question_list = (
                 suite_configs_obj[self.suite_config].value.expand_question_list())
@@ -324,7 +324,7 @@ class PrepareExperimentConfigAndSuite:
                     val['default_value'] = self.possible_model_components
                 if val['options'] == 'defer_to_code':
                     val['options'] = self.possible_model_components
-                    
+
             if key == 'experiment_id' and val['default_value'] == 'defer_to_code':
                 val['default_value'] = f'swell-{self.suite}'
 
@@ -565,7 +565,8 @@ class PrepareExperimentConfigAndSuite:
         # Ask the question using the selected client
         if ask_question:
             if model is None:
-                self.experiment_dict[question_key] = self.config_client.get_answer(self.logger, question_key, qd)
+                self.experiment_dict[question_key] = self.config_client.get_answer(
+                        self.logger, question_key, qd)
                 self.questions_dict[question_key] = qd['prompt']
             else:
                 self.experiment_dict['models'][model][question_key] = \

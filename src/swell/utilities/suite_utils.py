@@ -21,8 +21,8 @@ def get_suites() -> list:
 
     # Path to platforms
     suites_directory = os.path.join(get_swell_path(), 'suites')
-    
-    # List of base suites 
+
+    # List of base suites
     suites = sorted([sdir for sdir in os.listdir(suites_directory)
                      if (os.path.isdir(os.path.join(suites_directory, sdir))
                          and os.path.exists(os.path.join(suites_directory, sdir, 'flow.cylc')))])

@@ -12,6 +12,7 @@ from typing import Union
 
 from swell.utilities.logger import Logger
 
+
 class GetAnswerDefaults:
 
     def get_answer(self, logger: Logger, key: str, val: dict) -> Union[int, float, str]:
@@ -21,8 +22,8 @@ class GetAnswerDefaults:
 
         if not widget_type.validate_value(default):
             logger.abort(f'Default value for {key}, {default}, does not conform to type '
-                           '{widget_type.base_type.__name__}, check the override file or '
-                           'suite configuration.')
+                         f'{widget_type.base_type.__name__}, check the override file or '
+                         'suite configuration.')
 
         return default
 
