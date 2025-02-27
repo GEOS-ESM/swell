@@ -11,7 +11,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion, QDtype
+from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion, WidgetTWidype
 
 
 # --------------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the cycle times for this model."
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the number of ensemble packets."
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the ensemble hofx strategy."
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ class QuestionDefaults():
         question_name: str = "experiment_id"
         ask_question: bool = True
         prompt: str = "What is the experiment id?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ class QuestionDefaults():
         ask_question: bool = True
         prompt: str = ("What is the experiment root (the directory where the "
                        "experiment will be stored)?")
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ class QuestionDefaults():
         question_name: str = "final_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the final cycle (middle of the window)?"
-        dtype: str = QDtype.ISO_DATETIME
+        widget_type: WidgetType = WidgetType.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ class QuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Select the active SOCA models for this model."
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_code"
         prompt: str = "Enter the model components for this model."
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ class QuestionDefaults():
         ask_question: bool = True
         prompt: str = ("Since this suite is non-cycling choose how "
                        "many hours the workflow can run ahead?")
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -135,7 +135,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter if skip ensemble hofx."
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -145,7 +145,7 @@ class QuestionDefaults():
         question_name: str = "start_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the first cycle (middle of the window)?"
-        dtype: str = QDtype.ISO_DATETIME
+        widget_type: WidgetType = WidgetType.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the window type for this model."
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
     # Task question defaults go here
@@ -176,7 +176,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration from the middle of the window when forecasts start?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What are the analysis variables?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -202,7 +202,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which background error model do you want to use?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -215,7 +215,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the name of the name of the experiment providing the backgrounds?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -230,7 +230,7 @@ class QuestionDefaults():
             "window_type": "4D"
         })
         prompt: str = "What is the frequency of the background files?"
-        dtype: str = QDtype.ISO_DURATION
+        widget_type: WidgetType = WidgetType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("How long before the middle of the analysis window did"
                        " the background providing forecast begin?")
-        dtype: str = QDtype.ISO_DURATION
+        widget_type: WidgetType = WidgetType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -270,7 +270,7 @@ class QuestionDefaults():
             "jedi_build_method": "create"
         })
         prompt: str = "Which JEDI bundles do you wish to build?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -284,7 +284,7 @@ class QuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Which CICE6 domains do you wish to run DA for?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -297,7 +297,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Provide a list of patterns that you wish to remove from the cycle directory."
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -309,7 +309,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -322,7 +322,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Do you want to use cycling VarBC option?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -336,7 +336,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -350,7 +350,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Enter hofx strategy."
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -363,7 +363,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "How many members comprise the ensemble?"
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -379,7 +379,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean only?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -395,7 +395,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -408,7 +408,7 @@ class QuestionDefaults():
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS build directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -421,7 +421,7 @@ class QuestionDefaults():
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS source code directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -434,7 +434,7 @@ class QuestionDefaults():
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -447,7 +447,7 @@ class QuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI build directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -460,7 +460,7 @@ class QuestionDefaults():
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI source code directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -473,7 +473,7 @@ class QuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -483,7 +483,7 @@ class QuestionDefaults():
         question_name: str = "forecast_duration"
         ask_question: bool = True
         prompt: str = "GEOS forecast duration"
-        dtype: str = QDtype.ISO_DURATION
+        widget_type: WidgetType = WidgetType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -492,7 +492,7 @@ class QuestionDefaults():
         default_value: str = False
         question_name: str = "generate_yaml_and_exit"
         prompt: str = "Generate JEDI executable YAML and exit?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -506,7 +506,7 @@ class QuestionDefaults():
             "create"
         ])
         prompt: str = "Do you want to use an existing GEOS build or create a new build?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -516,7 +516,7 @@ class QuestionDefaults():
         question_name: str = "geos_experiment_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -526,7 +526,7 @@ class QuestionDefaults():
         question_name: str = "geos_gcm_tag"
         ask_question: bool = True
         prompt: str = "Which GEOS tag do you wish to clone?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -536,7 +536,7 @@ class QuestionDefaults():
         question_name: str = "geos_restarts_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -553,7 +553,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the path to the GEOS X-backgrounds directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -566,7 +566,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 experiment providing the GeoVaLs?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -578,7 +578,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 database providing the GeoVaLs?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -590,7 +590,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What value of gradient norm reduction for convergence?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -602,7 +602,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which GSIBEC climatological or hybrid?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -614,7 +614,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for horizontal covariance localization?"
-        dtype: str = "float"
+        widget_type: WidgetType = "float"
 
     # --------------------------------------------------------------------------------------------------
 
@@ -627,7 +627,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("What is the maximum number of observations to consider"
                        " for horizontal covariance localization?")
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -640,7 +640,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the horizontal?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -654,7 +654,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -670,7 +670,7 @@ class QuestionDefaults():
             "pinned_create"
         ])
         prompt: str = "Do you want to use an existing JEDI build or create a new build?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -687,7 +687,7 @@ class QuestionDefaults():
             "window_type": "4D"
         })
         prompt: str = "What forecast model should be used within JEDI for 4D window propagation?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -699,7 +699,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
-        dtype: str = "float"
+        widget_type: WidgetType = "float"
 
     # --------------------------------------------------------------------------------------------------
 
@@ -711,7 +711,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
-        dtype: str = "float"
+        widget_type: WidgetType = "float"
 
     # --------------------------------------------------------------------------------------------------
 
@@ -723,7 +723,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
-        dtype: str = "float"
+        widget_type: WidgetType = "float"
 
     # --------------------------------------------------------------------------------------------------
 
@@ -739,7 +739,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble members?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -756,7 +756,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -773,7 +773,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -790,7 +790,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -804,7 +804,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -818,7 +818,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -832,7 +832,7 @@ class QuestionDefaults():
             "geos_marine"
         ])
         prompt: str = "Enter the active SOCA models for this model."
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -845,7 +845,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which data assimilation minimizer do you wish to use?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -862,7 +862,7 @@ class QuestionDefaults():
             "geos_ocean"
         ])
         prompt: str = "Do you wish to use IAU for MOM6?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -875,7 +875,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -888,7 +888,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -901,7 +901,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("What number of iterations do you wish to use for each outer loop?"
                        " Provide a list of integers the same length as the number of outer loops.")
-        dtype: str = QDtype.INTEGER_LIST
+        widget_type: WidgetType = WidgetType.INTEGER_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -914,7 +914,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the database providing the observations?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -927,7 +927,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which group(s) provide the observations?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -941,7 +941,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which observations do you want to include?"
-        dtype: str = QDtype.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -953,7 +953,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the GSI formatted observing system records?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -965,7 +965,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the GSI formatted observing system records tag?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -977,7 +977,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -990,7 +990,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1004,7 +1004,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("What is the path to where the cubed sphere "
                        "backgrounds are in the GEOSadas run?")
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1017,7 +1017,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the location where GSI bias correction files can be found?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1030,7 +1030,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where the GSI ncdiags are stored?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1048,7 +1048,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("When running the ncdiag to ioda converted do you "
                        "want to produce GeoVaLs files?")
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1057,7 +1057,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "r2d2_local_path"
         prompt: str = "What is the path to the R2D2 local directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1070,7 +1070,7 @@ class QuestionDefaults():
             False
         ])
         prompt: str = "When running hofx do you want to output the GeoVaLs?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1086,7 +1086,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1100,7 +1100,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1109,7 +1109,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
         prompt: str = "What is the path to the Swell Static files directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1118,7 +1118,7 @@ class QuestionDefaults():
         default_value: str = "None"
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1132,7 +1132,7 @@ class QuestionDefaults():
             "geos_ocean"
         ])
         prompt: str = "What is the number of processors for JEDI?"
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1150,7 +1150,7 @@ class QuestionDefaults():
         prompt: str = ("Should a log (base 10) transformation be applied "
                        "to vertical coordinate when "
                        "constructing vertical localization?")
-        dtype: str = QDtype.BOOLEAN
+        widget_type: WidgetType = WidgetType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1163,7 +1163,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the vertical?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1176,7 +1176,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Which coordinate should be used in constructing vertical localization?"
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1190,7 +1190,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("Which vertical coordinate group should be used "
                        "in constructing vertical localization?")
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1202,7 +1202,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
-        dtype: str = QDtype.INTEGER
+        widget_type: WidgetType = WidgetType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1216,7 +1216,7 @@ class QuestionDefaults():
         ])
         prompt: str = ("What localization scheme should be applied in "
                        "constructing a vertical localization?")
-        dtype: str = QDtype.STRING
+        widget_type: WidgetType = WidgetType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1230,7 +1230,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the vertical resolution for the forecast model and background?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1242,7 +1242,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration for the data assimilation window?"
-        dtype: str = QDtype.ISO_DURATION
+        widget_type: WidgetType = WidgetType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1255,7 +1255,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration between the middle of the window and the beginning?"
-        dtype: str = QDtype.ISO_DURATION
+        widget_type: WidgetType = WidgetType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1272,6 +1272,6 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
-        dtype: str = QDtype.STRING_DROP_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------

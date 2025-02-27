@@ -564,11 +564,11 @@ class PrepareExperimentConfigAndSuite:
         # Ask the question using the selected client
         if ask_question:
             if model is None:
-                self.experiment_dict[question_key] = self.config_client.get_answer(question_key, qd)
+                self.experiment_dict[question_key] = self.config_client.get_answer(self.logger, question_key, qd)
                 self.questions_dict[question_key] = qd['prompt']
             else:
                 self.experiment_dict['models'][model][question_key] = \
-                    self.config_client.get_answer(question_key, qd)
+                    self.config_client.get_answer(self.logger, question_key, qd)
                 self.questions_dict[f'models.{model}.{question_key}'] = qd['prompt']
 
     # ----------------------------------------------------------------------------------------------
