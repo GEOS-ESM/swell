@@ -97,7 +97,8 @@ or for task-model combinations.
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
 def create(
-    suite_config: str,
+    suite: str,
+    config: str,
     input_method: str,
     platform: str,
     override: Union[dict, str, None],
@@ -114,7 +115,7 @@ def create(
 
     """
     # Create the experiment directory
-    create_experiment_directory(suite, suite_config, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite, config, input_method, platform, override, advanced, slurm)
 
 
 # --------------------------------------------------------------------------------------------------

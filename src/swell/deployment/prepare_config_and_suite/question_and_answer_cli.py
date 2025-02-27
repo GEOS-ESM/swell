@@ -15,186 +15,61 @@ from typing import Union
 import questionary
 from questionary import Choice
 
+from swell.utilities.logger import Logger
+from swell.utilities.swell_questions import WidgetType
+
 
 # --------------------------------------------------------------------------------------------------
 
 
 class GetAnswerCli:
 
-    def get_answer(self, key: str, val: dict) -> str:
-        # Set questionary variable
-        widget_type = val['type']
-        quest = val['prompt']
+    def get_answer(self, logger: Logger, key: str, val: dict):
+        prompt = val['prompt']
         default = val['default_value']
+        widget_type = val['widget_type']
+        options = val['options']
+        
+        if widget_type.is_drop_list:
+            answer = self.make_drop_widget(prompt, default, options, widget_type)
+        elif widget_type.is_check_list:
+            answer = self.make_check_widget(prompt, default, options, widget_type)
+        elif widget_type == WidgetType.BOOLEAN:
+            answer = self.make_boolean_widget(prompt, default)
 
-        # Check questionary input type and ask user
-        print('\n')
-        if widget_type == 'string':
-            answer = self.make_string_widget(quest, default, questionary.text)
-        elif widget_type == 'integer':
-            answer = self.make_int_widget(quest, default, questionary.text)
-        elif widget_type == 'float':
-            answer = self.make_float_widget(quest, default, questionary.text)
-        elif 'drop-list' in widget_type:
-            options = val['options']
-            answer = self.make_drop_widget(key, quest, options, default, questionary.select)
-        elif widget_type == 'boolean':
-            answer = self.make_boolean(quest, default, questionary.confirm)
-        elif widget_type == 'iso-datetime':
-            answer = self.make_datetime(quest, default, questionary.text)
-        elif widget_type == 'iso-duration':
-            answer = self.make_duration(quest, default, questionary.text)
-        elif 'check-list' in widget_type:
-            options = val['options']
-            answer = self.make_check_widget(quest, options, default, questionary.checkbox)
         else:
+            answer = self.make_generic_widget(prompt, default, options, widget_type)
+            
+        if answer in ['', []] and widget_type != WidgetType.FILE_CHECK_LIST:
             answer = default
-
-        if answer in ['', []] and widget_type != 'file-check-list':
-            answer = default
-
+        
         if answer == 'EXIT' or answer is None:
-            print('Exiting swell prepper...')
-            sys.exit()
+            logger.abort('Exiting Swell prepper...')
 
         return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_string_widget(self, quest: str, default: str, prompt: questionary.text) -> str:
-        answer = prompt(f"{quest} [{default}]", default=default).ask()
-
-        return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_int_widget(self, quest: str, default: str, prompt: questionary.text) -> str:
+        
+    # --------------------------------------------------------------------------------------------------
+            
+    def make_generic_widget(self, prompt: str, default, options: list, widget_type: WidgetType):
         default = str(default)
-        answer = prompt(f"{quest} [{default}]",
-                        validate=lambda text: True if text.isdigit()
-                        else 'Please enter an integer value',
-                        default=default).ask()
 
+        answer = questionary.text(f"{prompt} [{default}]", validate=lambda text: True if widget_type.validate_value(text) else f'Please enter a value of type: {widget_type.value}', default=default).ask()
+        
         return answer
 
-    # ----------------------------------------------------------------------------------------------
-
-    def make_float_widget(
-        self,
-        quest: str,
-        default: str,
-        prompt: questionary.text
-    ) -> str:
-        default = str(default)
-        answer = prompt(f"{quest} [{default}]",
-                        validate=lambda text: True if text.isdigit()
-                        else 'Please enter a float value',
-                        default=default).ask()
-
-        return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_drop_widget(
-        self,
-        method: str,
-        quest: str,
-        options: list,
-        default: str,
-        prompt: questionary.text
-    ) -> Union[str, list]:
-
+    # --------------------------------------------------------------------------------------------------
+        
+    def make_drop_widget(self, prompt: str, default, options: list, widget_type: WidgetType):
         default = str(default)
         choices = [str(x) for x in options]
-        answer = prompt(quest, choices=choices, default=default).ask()
 
+        answer = questionary.select(prompt, choices=choices, default=default).ask()
+        
         return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_boolean(
-        self,
-        quest: str,
-        default: str,
-        prompt: questionary.text
-    ) -> str:
-
-        answer = prompt(quest, default=default, auto_enter=False).ask()
-
-        return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_datetime(
-        self,
-        quest: str,
-        default: str,
-        prompt: questionary.text
-    ) -> str:
-
-        class dtValidator(questionary.Validator):
-            def validate(self, document):
-                r = re.compile('\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ')  # noqa
-                if r.match(document.text) is None and document.text != 'EXIT':
-                    raise questionary.ValidationError(
-                        message="Please enter a datetime with the following format: " +
-                                "YYYY-MM-DDThh:mm:ssZ",
-                        cursor_position=len(document.text),
-                    )
-
-        answer = prompt(f"{quest}\n[format YYYY-MM-DDThh:mm:ssZ e.g. {default}]", default=default,
-                        validate=dtValidator).ask()
-
-        return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_duration(
-        self,
-        quest: str,
-        default: str,
-        prompt: questionary.text
-    ) -> str:
-
-        class durValidator(questionary.Validator):
-            def validate(self, document):
-                r = re.compile('[-]?P(T\d{1,2}H|\d{1,2}D)')  # noqa
-                if r.match(document.text) is None and document.text != 'EXIT':
-                    raise questionary.ValidationError(
-                        message="Please enter a duration with the following format: PThhH",
-                        cursor_position=len(document.text),
-                    )  # Need to add validation to allow negative sign in the front.
-
-        if isinstance(default, list):
-            answer_list = []
-            answer = ''
-            r = re.compile('T\d\d')  # noqa
-            while answer != 'q':
-                answer = prompt(f"{quest}\n[format Thh e.g. {default}]",
-                                validate=lambda text: True if r.match(text) is not None or
-                                text == 'q'
-                                else "Please enter a duration with the following format: Thh",
-                                default=default).ask()
-                if answer == 'q':
-                    pass
-                else:
-                    answer_list.append(answer)
-        elif isinstance(default, str):
-            answer = prompt(f"{quest}\n[format PThhH or -PThhH e.g. {default}]",
-                            validate=durValidator, default=default).ask()
-
-        return answer
-
-    # ----------------------------------------------------------------------------------------------
-
-    def make_check_widget(
-        self,
-        quest: str,
-        options: list,
-        default: Union[str, list],
-        prompt: questionary.text
-    ) -> str:
-
+    
+    # --------------------------------------------------------------------------------------------------
+        
+    def make_check_widget(self, prompt: str, default, options: list, widget_type: WidgetType):
         choices = options.copy()
 
         if isinstance(default, list):
@@ -205,10 +80,16 @@ class GetAnswerCli:
                     choices[i] = Choice(c, checked=False)
             default = None
 
-        answer = prompt(quest, choices=choices, default=default,
-                        validate=lambda text: True if text != []
-                        else 'Please select one option').ask()
+        answer = questionary.checkbox(prompt, choices=choices, default=default, validate=lambda text: True if (widget_type.validate_value(text) and text != []) else 'Select at least one option, or selected option may be of invalid type').ask()
+        
         return answer
-
-
-# --------------------------------------------------------------------------------------------------
+    
+    # --------------------------------------------------------------------------------------------------
+    
+    def make_boolean_widget(self, prompt: str, default: bool):
+        
+        answer = questionary.confirm(prompt, default=default, auto_enter=False).ask()
+        
+        return answer
+    
+    # --------------------------------------------------------------------------------------------------

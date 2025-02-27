@@ -11,7 +11,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion, WidgetTWidype
+from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion, WidgetType
 
 
 # --------------------------------------------------------------------------------------------------

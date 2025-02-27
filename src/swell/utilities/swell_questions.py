@@ -16,12 +16,85 @@ from isodate import parse_datetime, parse_duration, ISO8601Error
 
 # --------------------------------------------------------------------------------------------------
 
+class WidgetType(Enum):
+    STRING = "string"
+    STRING_CHECK_LIST = "string-check-list"
+    STRING_DROP_LIST = "string-drop-list"
+    BOOLEAN = "boolean"
+    ISO_DURATION = "iso-duration"
+    ISO_DATETIME = "iso-datetime"
+    INTEGER = "integer"
+    INTEGER_LIST = "integer-list"
+    FILE_CHECK_LIST = "file-check-list"
+
+    @property
+    def is_drop_list(self) -> bool:
+        return 'drop-list' in self.value
+
+    @property
+    def is_check_list(self) -> bool:
+        return 'check-list' in self.value
+
+    @property
+    def base_type(self) -> type:
+        """ Get the base type of the value based on the widget type. """
+        if 'string' in self.value:
+            return str
+        if 'boolean' in self.value:
+            return bool
+        if 'integer' in self.value:
+            return int
+        if 'float' in self.value:
+            return float
+        if 'iso-' in self.value:
+            return str
+
+    def validate_value(self, value) -> bool:
+        """ Validate that the value matches the type and format of the widget type. """
+        base_type = self.base_type()
+
+        # Check that the answer fits the base type
+        if base_type == float:
+            try:
+                float(value)
+            except ValueError:
+                return False
+        elif base_type == int:
+            try:
+                int(value)
+            except ValueError:
+                return False
+        else:
+            try:
+                str(value)
+            except ValueError:
+                return False
+
+        # If the widget is a datetime, ensure it is in the right format
+        if self == WidgetType.ISO_DATETIME:
+            try:
+                parse_datetime(value)
+            except ISO8601Error:
+                return False
+
+        # Ensure the value is a duration
+        if self == WidgetType.ISO_DURATION:
+            try:
+                parse_duration(value)
+            except ISO8601Error:
+                return False
+
+        return True
+
+
+# --------------------------------------------------------------------------------------------------
+
 @dataclass
 class SwellQuestion:
     """Basic dataclass for defining Swell questions for suites and tasks"""
     default_value: str
     question_name: str
-    dtype: str
+    widget_type: WidgetType
     prompt: str
     question_type: str = None
     depends: Optional[dict] = None
@@ -117,79 +190,6 @@ class SuiteQuestion(SwellQuestion):
 @dataclass
 class TaskQuestion(SwellQuestion):
     question_type: str = "task"
-
-
-# --------------------------------------------------------------------------------------------------
-
-class WidgetType(Enum):
-    STRING = "string"
-    STRING_CHECK_LIST = "string-check-list"
-    STRING_DROP_LIST = "string-drop-list"
-    BOOLEAN = "boolean"
-    ISO_DURATION = "iso-duration"
-    ISO_DATETIME = "iso-datetime"
-    INTEGER = "integer"
-    INTEGER_LIST = "integer-list"
-    FILE_CHECK_LIST = "file-check-list"
-
-    @property
-    def is_drop_list(self) -> bool:
-        return 'drop-list' in self
-
-    @property
-    def is_check_list(self) -> bool:
-        return 'check-list' in self
-
-    @property
-    def base_type(self) -> type:
-        """ Get the base type of the value based on the widget type. """
-        if 'string' in self:
-            return str
-        if 'boolean' in self:
-            return bool
-        if 'integer' in self:
-            return int
-        if 'float' in self:
-            return float
-        if 'iso-' in self:
-            return str
-
-    def validate_value(self, value) -> bool:
-        """ Validate that the value matches the type and format of the widget type. """
-        base_type = self.base_type()
-
-        # Check that the answer fits the base type
-        if base_type == float:
-            try:
-                float(value)
-            except ValueError:
-                return False
-        elif base_type == int:
-            try:
-                int(value)
-            except ValueError:
-                return False
-        else base_type == str:
-            try:
-                str(value)
-            except ValueError:
-                return False
-
-        # If the widget is a datetime, ensure it is in the right format
-        if self == WidgetType.ISO_DATETIME:
-            try:
-                parse_datetime(value)
-            except ISO8601Error:
-                return False
-
-        # Ensure the value is a duration
-        if self == WidgetType.ISO_DURATION:
-            try:
-                parse_duration(value)
-            except ISO8601Error:
-                return False
-
-        return True
 
 
 # --------------------------------------------------------------------------------------------------

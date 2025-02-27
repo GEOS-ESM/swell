@@ -98,6 +98,7 @@ class PrepareExperimentConfigAndSuite:
         self.override_with_defaults()
         self.override_with_external()
 
+
     # ----------------------------------------------------------------------------------------------
 
     def prepare_question_dictionaries(self) -> None:
@@ -297,35 +298,35 @@ class PrepareExperimentConfigAndSuite:
 
                 # Loop over the keys in self.question_dictionary_model_ind and update with
                 # model_defaults or platform_defaults if that dictionary shares the key
-                for key, val in model_dict.items():
-                    if key in model_defaults.keys():
-                        for sub_key, sub_val in val.items():
+                for question_name, question in model_dict.items():
+                    if question_name in model_defaults.keys():
+                        for key, val in question.items():
                             # If the value of the question is still set as model-dependent,
                             # set the value for that model
-                            if isinstance(sub_val, dict) and \
-                                    'depends_on_model' in sub_val.keys() and \
-                                    model in sub_val['depends_on_model'].keys() and \
-                                    sub_val['depends_on_model'][model] != 'defer_to_model':
+                            if isinstance(val, dict) and \
+                                    'depends_on_model' in val.keys() and \
+                                    model in val['depends_on_model'].keys() and \
+                                    val['depends_on_model'][model] != 'defer_to_model':
 
-                                model_dict[key][sub_key] = sub_val['depends_on_model'][model]
-                            elif sub_key in model_defaults[key].keys() and \
-                                    model_dict[key][sub_key] == 'defer_to_model':
-                                model_dict[key][sub_key] = model_defaults[key][sub_key]
+                                model_dict[question_name][key] = val['depends_on_model'][model]
+                            elif key in model_defaults[question_name].keys() and (
+                                    val == 'defer_to_model' or val is None):
+                                model_dict[question_name][key] = model_defaults[question_name][key]
 
                     if key in platform_defaults.keys():
-                        model_dict[key].update(platform_defaults[key])
+                        model_dict[question_name].update(platform_defaults[question_name])
 
         # Look for defer_to_code in the model_ind dictionary
         # --------------------------------------------------
         for key, val in self.question_dictionary_model_ind.items():
-            if val['default_value'] == 'defer_to_code':
-
-                if key == 'experiment_id':
-                    val['default_value'] = f'swell-{self.suite}'
-
-                if key == 'model_components':
+            if key == 'model_components':
+                if val['default_value'] == 'defer_to_code':
                     val['default_value'] = self.possible_model_components
+                if val['options'] == 'defer_to_code':
                     val['options'] = self.possible_model_components
+                    
+            if key == 'experiment_id' and val['default_value'] == 'defer_to_code':
+                val['default_value'] = f'swell-{self.suite}'
 
     # ----------------------------------------------------------------------------------------------
 
