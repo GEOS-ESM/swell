@@ -26,8 +26,11 @@
 - Configuration files in swell
 
   - [Observation configuration](configs/observation_configuration.md)
-  - [Model configuration](configs/model_configuration.md)
   - [SLURM configuration](configs/slurm_configuration.md)
+  - Model configuration:
+    - [CICE6](configs/model_configurations/cice6.md)
+    - [MOM6](configs/model_configurations/mom6.md)
+    - [MOM6](configs/model_configurations/history_outputs.md)
 
 - Tasks
 

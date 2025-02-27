@@ -5,7 +5,7 @@ import numpy as np
 import datetime as dt
 from typing import Optional
 
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.gsi_record_parser import GSIRecordParser
 
 # --------------------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ class ObservingSystemRecords:
         self.available_df = None
         self.obs_registry = []
         self.record_type = record_type
-        self.logger = Logger('ObservingSystemRecords')
+        self.logger = get_logger('ObservingSystemRecords')
 
     def parse_records(self, path_to_sat_db: str) -> None:
 

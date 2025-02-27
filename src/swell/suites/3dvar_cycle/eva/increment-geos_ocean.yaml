@@ -1,0 +1,103 @@
+datasets:
+
+  - name: experiment_increment
+    type: SocaRestart
+    soca_filenames: {{increment_file_path}}
+    geometry_file: {{cycle_dir}}/INPUT/soca_gridspec.nc
+
+    variables: [Temp, Salt, ave_ssh]
+    coordinate variables: [lon, lat]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  - batch figure:
+      variables: [ave_ssh]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'SOCA Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSH Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment::SOCAgrid::lat
+          data:
+            variable: experiment_increment::SOCAVars::ave_ssh
+          label: ave_ssh increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -0.25
+          vmax: 0.25
+
+  - batch figure:
+      variables: [Temp]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SST Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment::SOCAgrid::lat
+          data:
+            variable: experiment_increment::SOCAVars::Temp
+            slices: '[0,...]'
+          label: SST increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -3
+          vmax: 3
+
+  - batch figure:
+      variables: [Salt]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSS Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment::SOCAgrid::lat
+          data:
+            variable: experiment_increment::SOCAVars::Salt
+            slices: '[0,...]'
+          label: SSS increment
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1
+          vmax: 1
