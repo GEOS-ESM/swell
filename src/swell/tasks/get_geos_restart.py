@@ -64,8 +64,7 @@ class GetGeosRestart(taskBase):
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
-        src_dst = {'tile.bin': '',
-                   'iced.nc': 'INPUT',
+        src_dst = {'iced.nc': 'INPUT',
                    }
 
         for src, dst in src_dst.items():
