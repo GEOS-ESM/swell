@@ -45,7 +45,7 @@ class GetBufr(taskBase):
         os.makedirs(bufr_dir, 0o755, exist_ok=True)
 
         # Assert that some files were found
-        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No ncdiag ' +
+        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No bufr ' +
                                  f'files found in the source directory ' +
                                  f'\'{bufr_path_files_pattern}\'')
 
