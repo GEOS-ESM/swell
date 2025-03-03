@@ -32,11 +32,14 @@ class GetBufr(taskBase):
         # Replace bufr_path datetime string with the actual datetime
         # --------------------------------------------------------------
         cycle_time_dto = self.cycle_time_dto()
-        bufr_path = cycle_time_dto.strftime(bufr_path)
+        bufr_path = os.path.join(bufr_path, cycle_time_dto.strftime('Y%Y'), cycle_time_dto.strftime('M%m'))
 
         # Get list of bufr to test with
         # --------------------------------
-        bufr_path_files_pattern = os.path.join(bufr_path, '*bufr*')
+        #bufr_filename_template = 'gdas1.' + cycle_time_dto.strftime('%y%d%m.t%Hz') + '.1bamua.tm00.bufr_d'
+        #bufr_path_files_pattern = os.path.join(bufr_path, bufr_filename_template) 
+        filename_dto = '*' + cycle_time_dto.strftime('%y%d%m.t%Hz') + '*'
+        bufr_path_files_pattern = os.path.join(bufr_path, filename_dto) # '*{cycle_time_dto.strftime("%y%d%m.t%Hz")}*')
         bufr_path_files = glob.glob(bufr_path_files_pattern)
 
         # Get cycle dir and create if needed
@@ -45,7 +48,7 @@ class GetBufr(taskBase):
         os.makedirs(bufr_dir, 0o755, exist_ok=True)
 
         # Assert that some files were found
-        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No bufr ' +
+        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No ncdiag ' +
                                  f'files found in the source directory ' +
                                  f'\'{bufr_path_files_pattern}\'')
 
@@ -67,20 +70,5 @@ class GetBufr(taskBase):
             self.logger.info(f'Creating sym link from {bufr_path_file} to '
                              f'{bufr_file_target}')
             os.symlink(bufr_path_file, bufr_file_target)
-"""
-        # Create another directory to hold the aircraft data
-        # --------------------------------------------------
-        prof_files = glob.glob(os.path.join(bufr_dir, '*prof*.nc4'))
 
-        for prof_file in prof_files:
-            os.makedirs(os.path.join(bufr_dir, 'WHAT IS THIS?: aircraft'), 0o755, exist_ok=True) # <------- still to do !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            # Replace _prof with nothing
-            file_name = os.path.basename(prof_file)
-            file_name = file_name.replace('_prof', '')
-
-            # Move the file into the prof directory
-            os.rename(prof_file, os.path.join(bufr_dir, 'WHAT IS THIS?: aircraft', file_name)) # <------- still to do !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-"""
 # --------------------------------------------------------------------------------------------------
