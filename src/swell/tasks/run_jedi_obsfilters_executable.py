@@ -175,8 +175,6 @@ class RunJediObsfiltersExecutable(taskBase):
 #            result = subprocess.run(command, shell=True, env=os.environ.copy(), capture_output=True, text=True)
             print("Output:", result.stdout)
             print("Return code:", result.returncode)
-# note: both did not solve the Mac problem
-#
         else:
             self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------

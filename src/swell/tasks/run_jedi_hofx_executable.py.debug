@@ -81,6 +81,15 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
+        
+        # Ensemble
+        # --------
+        if not ensemble_members:
+            print('p 0')
+            self.jedi_rendering.add_key('ensemble_members', None)
+        else:
+            print('p 1')            
+            self.jedi_rendering.add_key('ensemble_members', ensemble_members)
 
         # Model
         # -----
@@ -94,6 +103,8 @@ class RunJediHofxExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
+
+        print('hx: {jedi_application} {window_type}', jedi_application, window_type)
 
         # Run the JEDI executable - or render hofx templates for each ensemble member
         # ---------------------------------------------------------------------------
@@ -144,6 +155,7 @@ class RunJediHofxExecutable(taskBase):
                 model_component_meta['executables'][f'{jedi_application}{window_type}']
             jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
+            print('hx: {jedi_executable}', jedi_executable)
 
             # Run the JEDI executable
             # -----------------------
@@ -197,6 +209,8 @@ class RunJediHofxExecutable(taskBase):
 
                 # Open the JEDI config file and fill initial templates
                 # ----------------------------------------------------
+                self.jedi_rendering.add_dynamic_key('mem', mem)
+                print('hx exe: {jedi_application}{window_type}', {jedi_application}, {window_type})
                 jedi_config_dict = \
                     self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
 
