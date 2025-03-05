@@ -117,7 +117,7 @@ class PrepGeosRunDir(taskBase):
         # ------------------------------------------------------
         self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))
 
-        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file from gcm_run.j.
+        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file outside of gcm_run.j.
         # So parse linkbcs file using parse_gcmrun method and update gcm_dict
         # -----------------------------------------------------------------------
         self.gcm_dict.update(self.geos.parse_gcmrun(self.forecast_dir('linkbcs')))
@@ -150,6 +150,13 @@ class PrepGeosRunDir(taskBase):
         # -----------------
         self.get_dynamic()
 
+        # Create tile.bin file if it doesn't exist already
+        # ------------------------------------------------
+        if not os.path.exists(self.forecast_dir('tile.bin')):
+            self.logger.info('Creating tile.bin')
+            self.geos.run_geos_script(self.geosbin, 'binarytile.x', input='tile.data',
+                                      output='tile.bin')
+
         # Create cap_restart in GEOSgcm preferred format
         # ----------------------------------------------
         with open(self.forecast_dir('cap_restart'), 'w') as file:
@@ -157,7 +164,7 @@ class PrepGeosRunDir(taskBase):
 
         # Run bundleParser
         # ------------------
-        self.geos.exec_python(self.geosbin, 'bundleParser.py')
+        self.geos.run_geos_script(self.geosbin, 'bundleParser.py')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -189,8 +196,8 @@ class PrepGeosRunDir(taskBase):
                 self.geos.resub(self.forecast_dir('ExtData.rc'), pattern, replacement)
         else:
             self.logger.info('Creating extdata.yaml')
-            self.geos.exec_python(self.geosbin, 'construct_extdata_yaml_list.py',
-                                  './GEOS_ChemGridComp.rc')
+            self.geos.run_geos_script(self.geosbin, 'construct_extdata_yaml_list.py',
+                                      './GEOS_ChemGridComp.rc')
             open(self.forecast_dir('ExtData.rc'), 'w').close()
 
     # ----------------------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ class LinkGeosOutput(taskBase):
 
         # Parse configuration
         # -------------------
-        self.marine_models = self.config.marine_models(None)
+        self.marine_models = self.config.marine_models(None) or []
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_offset = self.config.window_offset()
