@@ -124,7 +124,7 @@ class PrepareExperimentConfigAndSuite:
                     question_dictionary_tasks[question['question_name']] = question
 
                 for model in self.possible_model_components:
-                    for question in task_questions[task].value.expand_question_list_model(model):
+                    for question in task_questions[task].value.expand_question_list(model):
                         model_dep_questions_override[model][question['question_name']] = question
 
                 self.questions_per_task[task] = [question['question_name']
@@ -149,7 +149,7 @@ class PrepareExperimentConfigAndSuite:
         for model in self.possible_model_components:
             model_dep_questions_override[model] = {}
             for question in suite_configs_obj[
-                    self.suite_config].value.expand_question_list_model(model):
+                    self.suite_config].value.expand_question_list(model):
                 model_dep_questions_override[model][question['question_name']] = question
 
         # Merge the dictionaries for task questions into the suite question

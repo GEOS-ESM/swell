@@ -131,51 +131,37 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def expand_question_list(self):
+    def expand_question_list(self, model: Optional[str] = None):
         question_list = []
 
+        # Loop through the items in the questions list
         for question_obj in self.questions:
 
+            # If the item is a reference to an external list, get its value
             if isinstance(question_obj, Enum):
                 question_obj = question_obj.value
+
+            # Convert the dataclass into a dictionary
             question = asdict(question_obj)
 
+            # If the item is a question list, expand its contents
             if 'list_name' in question.keys():
                 question_list.extend(question_obj.expand_question_list())
-            else:
+            elif model is None:
+                # Add to the model_independent question list
                 question_list.append(question)
 
-        return question_list
-
-    # --------------------------------------------------------------------------------------------------
-
-    def expand_question_list_model(self, model):
-        question_list = []
-
-        # Check the default question list to see if any groups have
-        # Model specific questions specified
-        for question_obj in self.questions:
-
-            if isinstance(question_obj, Enum):
-                question_obj = question_obj.value
-
-            question = asdict(question_obj)
-
-            if 'list_name' in question.keys():
-                question_list.extend(question_obj.expand_question_list_model(model))
-
-        # Add the model-specific questions
-        if hasattr(self, model):
-            for question_obj in getattr(self, model):
+        # Look specifically for model-dependent questions
+        if model is not None and hasattr(self, model):
+            for model_obj in getattr(self, model):
                 question = asdict(question_obj)
 
                 if 'list_name' in question.keys():
-                    question_list.extend(question_obj.expand_question_list_model(model))
+                    question_list.extend(model_obj.expand_question_list(model))
                 else:
                     question_list.append(question)
 
         return question_list
-
 
 # --------------------------------------------------------------------------------------------------
 
