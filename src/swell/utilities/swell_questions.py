@@ -146,18 +146,21 @@ class QuestionList:
 
             # If the item is a question list, expand its contents
             if 'list_name' in question.keys():
-                question_list.extend(question_obj.expand_question_list())
+                question_list.extend(question_obj.expand_question_list(model))
             elif model is None:
                 # Add to the model_independent question list
                 question_list.append(question)
 
         # Look specifically for model-dependent questions
         if model is not None and hasattr(self, model):
-            for model_obj in getattr(self, model):
+            for question_obj in getattr(self, model):
+                # If the item is a reference to an external list, get its value
+                if isinstance(question_obj, Enum):
+                    question_obj = question_obj.value
                 question = asdict(question_obj)
 
                 if 'list_name' in question.keys():
-                    question_list.extend(model_obj.expand_question_list(model))
+                    question_list.extend(question_obj.expand_question_list(model))
                 else:
                     question_list.append(question)
 
