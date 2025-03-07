@@ -15,7 +15,7 @@ import datetime as pydatetime
 
 datetime_formats = {
     'directory_format': '%Y%m%dT%H%M%SZ',   # yyyymmddThhMMssZ for directory formats
-    'ensemble_format': '%Y%m%d_%H%M%SZ',    # yyyymmdd_hhMMssz for JEDI ensemble files
+    'ensemble_format': '%Y%m%d_%H%M%Sz',    # yyyymmdd_hhMMssz for JEDI ensemble files
     'geos_format': '%Y%m%d_%H00z',          # yyyymmdd_hh00z for GEOS files
     'gsi_nc_diag_format': '%Y%m%d_%Hz',     # yyyymmdd_hhz Format for GSI netcdf diagnostic files
     'iso_format': '%Y-%m-%dT%H:%M:%SZ',     # yyyy-mm-ddThh:MM:ssZ ISO format

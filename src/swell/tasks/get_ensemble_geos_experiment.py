@@ -67,8 +67,8 @@ class GetEnsembleGeosExperiment(taskBase):
 
         # Get the ensemble experiment start time
         # -----------------------------------------
-        bkgr_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
-        bkgr_exp_start_geos = bkgr_exp_start_dto.strftime(datetime_formats['gsi_nc_diag_format'])
+        bkg_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
+        bkg_exp_start_geos = bkg_exp_start_dto.strftime(datetime_formats['gsi_nc_diag_format'])
 
         # Create cycle directory if needed
         # --------------------------------
@@ -77,12 +77,12 @@ class GetEnsembleGeosExperiment(taskBase):
 
         # Define the source tar folder and file
         # -------------------------------------
-        ens_tar_file = f'{background_experiment}.atmens_ebkgx.{bkgr_exp_start_geos}.tar'
+        ens_tar_file = f'{background_experiment}.atmens_ebkg.{bkg_exp_start_geos}.tar'
         ens_tar = os.path.join(geos_x_ensemble_directory,
                                 background_experiment,
                                 'atmens',
-                                bkgr_exp_start_dto.strftime('Y%Y'),
-                                bkgr_exp_start_dto.strftime('M%m'),
+                                bkg_exp_start_dto.strftime('Y%Y'),
+                                bkg_exp_start_dto.strftime('M%m'),
                                 ens_tar_file)
 
         # Link the ensemble tar archive to the cycle directory
@@ -96,27 +96,27 @@ class GetEnsembleGeosExperiment(taskBase):
         # Path to restarts in the cycle directory
         # ---------------------------------------
         cycle_tar = os.path.join(self.cycle_dir(), ens_tar_file)
-
+        
         with tarfile.open(cycle_tar) as cycle_tar_file:
             all_members = cycle_tar_file.getmembers()
-
             # Filter for top-level mem* directories
             member_dirs = [m for m in all_members if m.isdir() and
                         os.path.dirname(m.name) == ens_tar_folder and
                         m.name.startswith(ens_tar_folder + '/mem')]
-
+            
             for member_dir in member_dirs:
-                # Extract member number (e.g., '008' from 'x0048.atmens_ebkgx.20211211_21z/mem008')
+                # Extract member number (e.g., '008' from 'x0050.atmens_ebkg.20231009_21z/mem008')
                 member_num = member_dir.name.split('/')[-1][3:]  # Skip 'mem' prefix
 
                 # Create member-specific directory
-                member_path = os.path.join(self.cycle_dir(), f'mem{member_num}')
+                member_path = os.path.join(self.cycle_dir(), 'ebkg', f'mem{member_num}')
                 os.makedirs(member_path, exist_ok=True)
 
                 # Get all files within this member directory
                 member_files = [m for m in all_members if
                             m.name.startswith(member_dir.name + '/') and
                             not m.isdir()]
+                # print(f'member_files =  {member_files}')
 
                 # Process each file in the member directory
                 for member_file in member_files:
@@ -131,7 +131,6 @@ class GetEnsembleGeosExperiment(taskBase):
                     # Extract file to member directory
                     member_file.name = ens_filename_jedi
                     cycle_tar_file.extract(member_file, member_path)
-
-                    self.logger.info(f' Extracted and renamed file to: mem{member_num}/{ens_filename_jedi}')
-
+                    eff_path=member_path.split('/')[-2:] + [ens_filename_jedi]
+                    self.logger.info(f' Extracted and renamed file to: {"/".join(eff_path)}')
 # --------------------------------------------------------------------------------------------------
