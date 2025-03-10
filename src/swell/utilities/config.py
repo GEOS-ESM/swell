@@ -12,6 +12,7 @@ import yaml
 from typing import Callable
 
 from swell.swell_path import get_swell_path
+from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger
 
 
@@ -134,9 +135,8 @@ class Config():
             if default == 'LrZRExPGcQ':
                 self.__logger__.abort(f'In config class, trying to get variable \'{name}\' but ' +
                                       f'this variable was not created. Ensure that the variable ' +
-                                      f'is in the experiment configuration and that the task can ' +
-                                      f'access that key based on the rules in '
-                                      f'tasks/task_questions.yaml.')
+                                      f'is in the experiment configuration and specified in ' +
+                                      f'the question list for the task (task_questions.py).')
             else:
                 return default
         return variable_not_found
