@@ -13,8 +13,10 @@ from typing import Optional
 from enum import Enum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
+
 
 class WidgetType(Enum):
     STRING = "string"
@@ -128,6 +130,15 @@ class QuestionList:
     geos_ocean: list = field(default_factory=lambda: [])
     geos_atmosphere: list = field(default_factory=lambda: [])
     geos_marine: list = field(default_factory=lambda: [])
+
+    # --------------------------------------------------------------------------------------------------
+
+    def get_all_question_names(self) -> None:
+        out_list = []
+        for model in [None] + os.listdir(os.path.join(get_swell_path(),
+                                                      'configuration', 'jedi', 'interfaces')):
+            out_list.extend([q['question_name'] for q in self.expand_question_list(model)])
+        return sorted(list(set(out_list)))
 
     # --------------------------------------------------------------------------------------------------
 

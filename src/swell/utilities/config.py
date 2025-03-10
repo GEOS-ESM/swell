@@ -102,24 +102,21 @@ class Config():
         # Step 2: create variables in the object with the keys/values in the config
         # -------------------------------------------------------------------------
 
-        # Open the question dictionary
-        with open(os.path.join(get_swell_path(), 'tasks', 'task_questions.yaml'), 'r') as ymlfile:
-            question_dict = yaml.safe_load(ymlfile)
+        # Find the questions associated with the task
+        if task_name in task_questions.get_all():
+            task_questions_dict = task_questions[task_name].value
 
-        # Loop through the dictionary
-        for experiment_key, experiment_value in experiment_dict.items():
+            # Loop through the experiment dictionary
+            for exp_key, exp_val in experiment_dict.items():
 
-            key_question_dict = question_dict.get(experiment_key)
+                # Assign the value if needed by the task
+                if exp_key in task_questions_dict.get_all_question_names:
 
-            if key_question_dict is not None:
+                    # Set as a variable to config
+                    setattr(self, f'__{exp_key}__', exp_val)
 
-                if task_name in key_question_dict['tasks']:
-
-                    # Add this variable to the object
-                    setattr(self, f'__{experiment_key}__', experiment_value)
-
-                    # Add a method to get the variable
-                    setattr(self, f'{experiment_key}', self.get(experiment_key))
+                    # Add a get method to access variable
+                    setattr(self, f'{exp_key}', self.get(exp_key))
 
     # ----------------------------------------------------------------------------------------------
 
