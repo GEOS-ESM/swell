@@ -111,7 +111,7 @@ class Config():
             for exp_key, exp_val in experiment_dict.items():
 
                 # Assign the value if needed by the task
-                if exp_key in task_questions_dict.get_all_question_names:
+                if exp_key in task_questions_dict.get_all_question_names():
 
                     # Set as a variable to config
                     setattr(self, f'__{exp_key}__', exp_val)
