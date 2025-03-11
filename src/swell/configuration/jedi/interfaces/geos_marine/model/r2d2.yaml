@@ -2,13 +2,17 @@ fetch:
   an:
     - file_type: MOM.res
       filename: '{{cycle_dir}}/MOM6.res.{{local_background_time}}.nc'
+    {% if 'cice6' in marine_models %}
     - file_type: cice.res
       filename: '{{cycle_dir}}/cice.res.{{local_background_time}}.nc'
+    {% endif %}
   fc:
     - file_type: MOM.res
       filename: '{{cycle_dir}}/MOM6.res.{{local_background_time}}.nc'
+    {% if 'cice6' in marine_models %}
     - file_type: cice.res
       filename: '{{cycle_dir}}/cice.res.{{local_background_time}}.nc'
+    {% endif %}
 store:
   fc:
     - file_type: MOM.res

@@ -7,10 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import logging
 import unittest
 
 from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.logger import get_logger
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ class SLURMConfigTest(unittest.TestCase):
     @patch("platform.platform")
     def test_slurm_config(self, platform_mocked: Mock, mock_global_defaults: Mock) -> None:
 
-        logger = logging.getLogger()
+        logger = get_logger()
 
         # Fake user-specified global values (for consistent unit tests)
         mock_global_defaults.return_value = {"qos": "dastest"}
@@ -56,6 +56,10 @@ class SLURMConfigTest(unittest.TestCase):
         self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
                          ["constraint"], "cas|sky")
 
+        with self.assertRaises(AssertionError):
+            prepare_scheduling_dict(logger, experiment_dict,
+                                    platform="nccs_discover_sles15")
+
         platform_mocked.return_value = "Linux-5.14.21"
         sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
                                                      platform="nccs_discover_sles15")
@@ -64,17 +68,11 @@ class SLURMConfigTest(unittest.TestCase):
         self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
                          ["all"]["qos"], "dastest")
 
-        with self.assertRaises(AssertionError):
-            prepare_scheduling_dict(logger, experiment_dict,
-                                    platform="nccs_discover")
-
         # Platform generic tests
         for sd in [sd_discover, sd_discover_sles15]:
             for mc in ["all", "geos_atmosphere", "geos_ocean"]:
                 # Hard-coded task-specific defaults
                 self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
-                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]
-                                 ["ntasks-per-node"], 36)
                 self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]
                                  ["ntasks-per-node"], 1)
                 # Global defaults from experiment dict

@@ -2,7 +2,7 @@ import os
 import unittest
 import subprocess
 from datetime import datetime as dt
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.get_channels import get_channels
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
@@ -27,7 +27,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.logger = Logger("GenerateObservingSystemTest")
+        cls.logger = get_logger("GenerateObservingSystemTest")
         cls.observing_system_records_path = "./output/"
         cls.dt_cycle_time = dt.strptime("20211212T000000Z", "%Y%m%dT%H%M%SZ")
         cls.path_to_gsi_records = os.path.join("GEOS_mksi/", "sidb")
@@ -48,10 +48,19 @@ class GenerateObservingSystemTest(unittest.TestCase):
         abort_message = "\nHERE IS THE TRACEBACK: \n----------------------\n\n" + \
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
+
         with self.assertRaises(SystemExit) as abort, suppress_stdout():
+            log_level = self.logger.level
+            # Set logger priority to 60. This number sets the minimum level of message
+            # that the logger can register (Where message criticality ascends from 0 to 50).
+            # By setting a level of 60, we suppress all messages for the purpose of not polluting
+            # the stream with confusing warnings, which are generated as part of the test process.
+            self.logger.setLevel(60)
             get_channels(self.observing_system_records_path, observations[0],
                          self.dt_cycle_time, self.logger)
             self.assertEqual(abort.exception, abort_message)
+            # Reset level of logger to its original value
+            self.logger.setLevel(log_level)
 
     def test_geos_mksi_develop(self):
 

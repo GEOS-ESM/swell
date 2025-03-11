@@ -93,7 +93,7 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         obs_experiment = self.config.obs_experiment()
-        obs_provider = self.config.obs_provider()
+        obs_providers = self.config.obs_provider()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
@@ -127,6 +127,7 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Set R2D2 config file
         # --------------------
@@ -140,124 +141,127 @@ class GetObservations(taskBase):
             # ----------------------------------------
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Fetch observation files
-            # -----------------------
-            combine_input_files = []
-            # Here, we are fetching
-            for obs_num, obs_time in enumerate(obs_list_dto):
-                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
-                combine_input_files.append(target_file)
-                fetch(date=obs_window_begin,
-                      target_file=target_file,
-                      provider=obs_provider,
-                      obs_type=observation,
-                      time_window=obs_window_length,
-                      type='ob',
-                      experiment=obs_experiment)
-            target_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-            self.logger.info(f'Processing observation file {target_file}')
-
-            # If obs_list_dto has one member, then just rename the file
-            # ---------------------------------------------------------
-            if len(obs_list_dto) == 1:
-                os.rename(combine_input_files[0], target_file)
-            else:
-                self.read_and_combine(combine_input_files, target_file)
-
-            # Change permission
-            os.chmod(target_file, 0o644)
-
-            # Aircraft bias correction files
-            # ------------------------------
-            if observation == 'aircraft':
-
-                # Aircraft bias correction files
-                target_file_types = [
-                    f'aircraft_abias_air_ascent',
-                    f'aircraft_abias_air_ascentSquared',
-                    f'aircraft_abias_air_constant',
-                ]
-
-                for target_file_type in target_file_types:
-
-                    target_file = os.path.join(self.cycle_dir(),
-                                               f'{target_file_type}.{background_time}.csv')
-
-                    self.logger.info(f'Processing aircraft bias file {target_file}')
-
-                    fetch(date=background_time,
+            # Until R2D2v3 is fully implemented we will assume there could be multiple
+            # observation providers for a given observation type.
+            # We have to ensure obs_providers is a list for this loop to work
+            for obs_provider in (obs_providers if isinstance(obs_providers, list)
+                                 else [obs_providers]):
+                # Fetch observation files
+                # -----------------------
+                combine_input_files = []
+                # Here, we are fetching
+                for obs_num, obs_time in enumerate(obs_list_dto):
+                    obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+                    target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                    combine_input_files.append(target_file)
+                    fetch(date=obs_window_begin,
                           target_file=target_file,
-                          provider='gsi',
-                          obs_type=target_file_type,
-                          type='bc',
-                          experiment=obs_experiment,
-                          file_type='csv')
+                          provider=obs_provider,
+                          ignore_missing=True,
+                          obs_type=observation,
+                          time_window=obs_window_length,
+                          type='ob',
+                          experiment=obs_experiment)
+
+                # Check how many of the combine_input_files exist in the cycle directory.
+                # If all of them are missing proceed without creating an observation input
+                # file since bias correction files still need to be propagated to the next cycle
+                # for cycling VarBC.
+                # -----------------------------------------------------------------------
+                if not any([os.path.exists(f) for f in combine_input_files]):
+                    self.logger.info(f'None of the {observation} files exist for this cycle!')
+                    # continue
+                else:
+                    jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                    self.logger.info(f'Processing observation file {jedi_obs_file}')
+
+                    # If obs_list_dto has one member, then just rename the file
+                    # ---------------------------------------------------------
+                    if len(obs_list_dto) == 1:
+                        os.rename(combine_input_files[0], jedi_obs_file)
+                    else:
+                        self.read_and_combine(combine_input_files, jedi_obs_file)
 
                     # Change permission
-                    os.chmod(target_file, 0o644)
+                    os.chmod(jedi_obs_file, 0o644)
+
+                    # Observations were found for this provider, so we can break the provider loop
+                    break
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
             if 'obs bias' not in observation_dict:
                 continue
 
-            # Satellite bias correction (coeff and cov) files
+            # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
-            target_sbccoef = observation_dict['obs bias']['input file']
-            target_sbccovr = observation_dict['obs bias']['covariance']['prior']['input file']
+            target_bccoef = observation_dict['obs bias']['input file']
+            target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
             # We assume fetch is required unless we are cycling VarBC
             fetch_required = True
 
             if cycling_varbc:
                 if self.cycle_time_dto() == self.first_cycle_time_dto():
-                    self.logger.info(f'Process satellite file {target_sbccoef} for the first cycle')
-                    self.logger.info(f'Process satellite file {target_sbccovr} for the first cycle')
+                    self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
+                    self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
 
                 else:
-                    self.logger.info(f'Using satellite bias files from the previous cycle')
-                    previous_bias_coef = self.previous_cycle_bias(target_sbccoef, window_length)
-                    previous_bias_covr = self.previous_cycle_bias(target_sbccovr, window_length)
+                    self.logger.info(f'Using bias files from the previous cycle')
+                    previous_bias_coef = self.previous_cycle_bias(target_bccoef, window_length)
+                    previous_bias_covr = self.previous_cycle_bias(target_bccovr, window_length)
 
                     # Link the previous bias file to the current cycle directory
-                    # -----------------------------------------------------------
-                    self.logger.info(f'Linking {previous_bias_coef} to {target_sbccoef}')
-                    self.geos.linker(previous_bias_coef, target_sbccoef, dst_dir=self.cycle_dir())
-                    self.logger.info(f'Linking {previous_bias_covr} to {target_sbccovr}')
-                    self.geos.linker(previous_bias_covr, target_sbccovr, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_coef} to {target_bccoef}')
+                    self.geos.linker(previous_bias_coef, target_bccoef, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_covr} to {target_bccovr}')
+                    self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
 
                     fetch_required = False
 
+            # Determine the bias file type
+            if observation == 'aircraft_temperature':
+                bias_file_type = 'acftbias'
+            elif observation == 'aircraft_wind':
+                bias_file_type = 'null'
+            else:
+                bias_file_type = 'satbias'
+
             # This will skip the fetch if we are cycling VarBC
-            if fetch_required:
-                self.logger.info(f'Processing satellite bias file {target_sbccoef}')
-                fetch(date=background_time,
-                      target_file=target_sbccoef,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type='satbias')
+            if bias_file_type != 'null':
+                if bias_file_type != 'null' and fetch_required:
+                    self.logger.info(f'Processing bias file {target_bccoef}')
+                    fetch(date=background_time,
+                          target_file=target_bccoef,
+                          provider='gsi',
+                          obs_type=observation,
+                          type='bc',
+                          experiment=obs_experiment,
+                          file_type=bias_file_type)
 
-                self.logger.info(f'Processing satellite bias file {target_sbccovr}')
-                fetch(date=background_time,
-                      target_file=target_sbccovr,
-                      provider='gsi',
-                      obs_type=observation,
-                      type='bc',
-                      experiment=obs_experiment,
-                      file_type='satbias_cov')
+                    self.logger.info(f'Processing bias file {target_bccovr}')
+                    fetch(date=background_time,
+                          target_file=target_bccovr,
+                          provider='gsi',
+                          obs_type=observation,
+                          type='bc',
+                          experiment=obs_experiment,
+                          file_type=bias_file_type+'_cov')
 
-            # Change permission
-            os.chmod(target_sbccoef, 0o644)
-            os.chmod(target_sbccovr, 0o644)
+                # Change permission
+                os.chmod(target_bccoef, 0o644)
+                os.chmod(target_bccovr, 0o644)
+
+            # Skip time lapse part for aircraft observations
+            # ----------------------------------------------
+            if observation == 'aircraft_temperature' or observation == 'aircraft_wind':
+                continue
 
             # Satellite time lapse
             # --------------------
             for target_file in self.get_tlapse_files(observation_dict):
 
-                self.logger.info(f'Processing time lapse file {target_file}')
+                self.logger.info(f'Processing satellite time lapse file {target_file}')
 
                 fetch(date=background_time,
                       target_file=target_file,
@@ -397,6 +401,11 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
+
+        # Reduce the list of input files to only those that exist
+        # -------------------------------------------------------------
+        existing_files = [f for f in input_filenames if os.path.exists(f)]
+        input_filenames = existing_files
 
         # Loop through the input files and get the total dimension size for each dimension
         # Location requires special handling to get the cumulative sum of the dimension size

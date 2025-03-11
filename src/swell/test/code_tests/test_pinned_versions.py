@@ -1,7 +1,7 @@
 import os
 import unittest
 import subprocess
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.pinned_versions.check_hashes import check_hashes
 
@@ -9,7 +9,7 @@ from swell.utilities.pinned_versions.check_hashes import check_hashes
 class PinnedVersionsTest(unittest.TestCase):
 
     def test_wrong_hash(self) -> None:
-        logger = Logger("PinnedVersionsTest")
+        logger = get_logger("PinnedVersionsTest")
         jedi_bundle_dir = "jedi_bundle/"
         if not os.path.exists(jedi_bundle_dir):
             os.makedirs(jedi_bundle_dir)
@@ -25,5 +25,13 @@ class PinnedVersionsTest(unittest.TestCase):
         abort_message = "Wrong commit hashes found for these repositories in jedi_bundle: [oops]"
         # Run check hash (expect abort)
         with self.assertRaises(SystemExit) as abort, suppress_stdout():
+            log_level = logger.level
+            # Set logger priority to 60. This number sets the minimum level of message
+            # that the logger can register (Where message criticality ascends from 0 to 50).
+            # By setting a level of 60, we suppress all messages for the purpose of not polluting
+            # the stream with confusing warnings, which are generated as part of the test process.
+            logger.setLevel(60)
             check_hashes(jedi_bundle_dir, logger)
             self.assertEqual(abort.exception, abort_message)
+            # Reset level of logger to its original value
+            logger.setLevel(log_level)

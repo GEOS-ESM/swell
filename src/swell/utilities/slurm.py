@@ -11,16 +11,14 @@ import os
 import platform as pltfrm
 import re
 import yaml
-from typing import Union
 
 from importlib import resources
-from logging import Logger as pyLogger
 
 from swell.utilities.logger import Logger
 
 
 def prepare_scheduling_dict(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     experiment_dict: dict,
     platform: str,
 ) -> dict:
@@ -46,7 +44,7 @@ def prepare_scheduling_dict(
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
     task_defaults = {
-        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
+        "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
     }
@@ -58,9 +56,9 @@ def prepare_scheduling_dict(
     user_globals = slurm_global_defaults(logger)
 
     # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-5.14.21' in pltfrm.platform():
-        assert platform == "nccs_discover_sles15", (
-            "'Linux-5.14.21' detected, which implies platform 'nccs_discover_sles15. " +
+    if 'Linux-4.12.14' in pltfrm.platform():
+        assert platform == "nccs_discover", (
+            "'Linux-4.12.14' detected, which implies platform 'nccs_discover. " +
             f"That is inconsistent with user-specified platform '{platform}'."
         )
 
@@ -91,6 +89,7 @@ def prepare_scheduling_dict(
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
+        'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
         'RunGeosExecutable'
@@ -215,7 +214,7 @@ def validate_directives(directive_dict: dict) -> None:
 
 
 def slurm_global_defaults(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)
