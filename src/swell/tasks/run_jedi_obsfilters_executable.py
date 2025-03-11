@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-from shutil import copy
+import shutil
 import yaml
 from typing import Optional
 import subprocess
@@ -109,8 +109,12 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
+        print( f'jedi_config_dict = {jedi_config_dict}')
+        print( f'observations = {observations}')        
+        print( f'ck: bf l113')
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
                                  observations, self.cycle_time_dto(), jedi_forecast_model)
+        print( f'ck: af l113')
 
         # Filter Thinning
         # ----------------------
@@ -130,7 +134,8 @@ class RunJediObsfiltersExecutable(taskBase):
             name, extension = os.path.splitext(filename)
             new_filename = f"{name}_orig{extension}"
             new_obsfile_in = '/'.join(elements[:-1])+'/'+new_filename
-            copy(obsfile, new_obsfile_in)
+            #copy(obsfile, new_obsfile_in)
+            shutil.move(obsfile, new_obsfile_in)
             obs_space = {'name': obs_name,
                          'obsdatain':
                          {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
@@ -142,6 +147,8 @@ class RunJediObsfiltersExecutable(taskBase):
             new_dict['observations'].append(new_observer)
         del jedi_config_dict['observations']
         jedi_config_dict.update(new_dict)
+
+        print('ck: 150') 
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
@@ -155,6 +162,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                             'build', 'bin', jedi_executable)
 
+        print('ck: bf run exe') 
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:

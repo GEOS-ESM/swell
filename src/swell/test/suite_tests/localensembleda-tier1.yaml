@@ -6,7 +6,8 @@ models:
   geos_atmosphere:
     horizontal_resolution: '91'  #  13
     background_experiment: x0050
-    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
+    geos_x_background_directory: ${HOME2}/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
+    geos_x_ensemble_directory: ${HOME2}/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
     npx_proc: 1
     npy_proc: 1
     cycle_times:
@@ -23,17 +24,16 @@ models:
     local_ensemble_save_posterior_mean_increment: true        # default: true
     local_ensemble_save_posterior_ensemble: false             # default: false
     local_ensemble_save_posterior_ensemble_increments: false  # default: false
-##    path_to_ensemble: ${HOME2}/discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
 #    ensemblePacket: 
-    ensemble_hofx_strategy:   serial     # parallel
-    ensemble_hofx_packets:  1     # 2
+#    ensemble_hofx_strategy:  serial     # parallel
+#    ensemble_hofx_packets:   1          # 2
 
 
     observations:
 #    - aircraft_temperature
-#    - aircraft_wind
+    - aircraft_wind
     - sondes
-#    - gps
+    - gps
 #    - amsua_aqua
 #    - amsua_n15
 #    - amsua_n18
@@ -53,7 +53,6 @@ models:
 #    - mls55_aura      # small dataset
 #    - omi_aura
 
-    geos_x_ensemble_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
     window_type: 4D
     clean_patterns:
     - '*.txt'

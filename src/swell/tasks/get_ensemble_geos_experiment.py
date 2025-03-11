@@ -29,12 +29,12 @@ class GetEnsembleGeosExperiment(taskBase):
         certain assumptions about the file structure and naming conventions
         (examples are provided for the x0048 experiment):
 
-            - Background archive file:       x0048.bkgcrst.20211211_15z.tar
-            - First background file:         x0048.bkg_clcv_rst.20211211_2100z.nc4
+            - Background archive file:       x0050.atmens_ebkgx.20231009_21z.tar
+            - First background file:         ensbkgx/mem001/x0050.bkg_clcv.20231009_2100z.nc4
             .
             .
             .
-            - Last background file:          x0048.bkg_clcv_rst.20211212_0300z.nc4
+            - Last background file:          ensbkgx/mem001/x0050.bkg_clcv.20231010_0300z.nc4
 
         The name of the *bkgcrst.*.tar files correspond to the forecast start time.
         The file names in these tar archives corresponds to the background files
@@ -77,7 +77,7 @@ class GetEnsembleGeosExperiment(taskBase):
 
         # Define the source tar folder and file
         # -------------------------------------
-        ens_tar_file = f'{background_experiment}.atmens_ebkg.{bkg_exp_start_geos}.tar'
+        ens_tar_file = f'{background_experiment}.atmens_ebkgx.{bkg_exp_start_geos}.tar'
         ens_tar = os.path.join(geos_x_ensemble_directory,
                                 background_experiment,
                                 'atmens',
@@ -101,9 +101,10 @@ class GetEnsembleGeosExperiment(taskBase):
             all_members = cycle_tar_file.getmembers()
             # Filter for top-level mem* directories
             member_dirs = [m for m in all_members if m.isdir() and
-                        os.path.dirname(m.name) == ens_tar_folder and
-                        m.name.startswith(ens_tar_folder + '/mem')]
-            
+                           m.name.startswith(ens_tar_folder + '/ensbkgx/mem')]
+            print(f'all_members =  {all_members}')
+            print(f'member_dirs =  {member_dirs}')
+
             for member_dir in member_dirs:
                 # Extract member number (e.g., '008' from 'x0050.atmens_ebkg.20231009_21z/mem008')
                 member_num = member_dir.name.split('/')[-1][3:]  # Skip 'mem' prefix
@@ -116,7 +117,8 @@ class GetEnsembleGeosExperiment(taskBase):
                 member_files = [m for m in all_members if
                             m.name.startswith(member_dir.name + '/') and
                             not m.isdir()]
-                # print(f'member_files =  {member_files}')
+                print(f'member_files =  {member_files}')
+
 
                 # Process each file in the member directory
                 for member_file in member_files:
