@@ -109,12 +109,8 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Perform complete template rendering
         # -----------------------------------
-        print( f'jedi_config_dict = {jedi_config_dict}')
-        print( f'observations = {observations}')        
-        print( f'ck: bf l113')
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
                                  observations, self.cycle_time_dto(), jedi_forecast_model)
-        print( f'ck: af l113')
 
         # Filter Thinning
         # ----------------------
@@ -148,8 +144,6 @@ class RunJediObsfiltersExecutable(taskBase):
         del jedi_config_dict['observations']
         jedi_config_dict.update(new_dict)
 
-        print('ck: 150') 
-
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
@@ -162,27 +156,13 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                             'build', 'bin', jedi_executable)
 
-        print('ck: bf run exe') 
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
             command = (f'mpirun -np 1 {jedi_executable_path} ' +
                        f'{jedi_config_file} {output_log_file}')
-            print('cmd=', command)
-
-# 1st method: wrapping         
-#            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-#                           jedi_config_file, output_log_file)
-
-# 2nd method: clear
-#            print("Parent environment:")
-#            print(os.environ)
-#            subprocess.run(["env"])
             result = subprocess.run(command, shell=True, capture_output=True, text=True)
-#            result = subprocess.run(command, shell=True, env=os.environ.copy(), capture_output=True, text=True)
-            print("Output:", result.stdout)
-            print("Return code:", result.returncode)
         else:
             self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------

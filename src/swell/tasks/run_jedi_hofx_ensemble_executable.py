@@ -125,7 +125,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        print('enhx: {jedi_application} {window_type}', jedi_application, window_type)
+        # print('enhx: {jedi_application} {window_type}', jedi_application, window_type)
 
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
 
@@ -141,8 +141,8 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 
         # Call execute of RunJediHofxExecutable to render hofx templates for each member 
         # -----------------------------------------------------------------------------
-        print('ensemble_num_members, ensemble_hofx_packets', ensemble_num_members, ensemble_hofx_packets)
-        print('packet_ensemble_members', packet_ensemble_members)
+        # print('ensemble_num_members, ensemble_hofx_packets', ensemble_num_members, ensemble_hofx_packets)
+        # print('packet_ensemble_members', packet_ensemble_members)
 
         super().execute(ensemble_members=packet_ensemble_members)
 
@@ -159,7 +159,6 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
-        print('enhx: {jedi_executable}', jedi_executable)
 
         # Run the JEDI executable
         # -----------------------

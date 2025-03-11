@@ -50,7 +50,6 @@ class GetEnsembleGeosExperiment(taskBase):
         # background_time_offset = self.config.background_time_offset()
         background_time_offset = 'PT3H'
 
-        print(background_time_offset)
         # Since this is an optional task, check if the geos_x_ensemble_directory is
         # set to /dev/null, if so fail the task
         # ---------------------------------------------------------------------
@@ -102,8 +101,6 @@ class GetEnsembleGeosExperiment(taskBase):
             # Filter for top-level mem* directories
             member_dirs = [m for m in all_members if m.isdir() and
                            m.name.startswith(ens_tar_folder + '/ensbkgx/mem')]
-            print(f'all_members =  {all_members}')
-            print(f'member_dirs =  {member_dirs}')
 
             for member_dir in member_dirs:
                 # Extract member number (e.g., '008' from 'x0050.atmens_ebkg.20231009_21z/mem008')
@@ -117,8 +114,6 @@ class GetEnsembleGeosExperiment(taskBase):
                 member_files = [m for m in all_members if
                             m.name.startswith(member_dir.name + '/') and
                             not m.isdir()]
-                print(f'member_files =  {member_files}')
-
 
                 # Process each file in the member directory
                 for member_file in member_files:

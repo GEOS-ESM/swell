@@ -176,7 +176,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             for index, observation in enumerate(observations):
                 # Get pointer to observer (ref to list)
                 observer = jedi_config_dict['observations']['observers'][index]
-                print('ob=', observation)
                 config_file = os.path.join(localization_path, f'{observation}.yaml')
                 with open(config_file, 'r') as f:
                     loc_list = yaml.safe_load(f)
