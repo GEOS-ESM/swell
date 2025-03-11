@@ -56,7 +56,7 @@ class SaveObsDiags(taskBase):
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Check if observation was used
+            # Check if observation was used, here we don't care about the output
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
                                 observation_dict, self.cycle_time_dto())
             if not use_obs:
