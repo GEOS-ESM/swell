@@ -78,11 +78,11 @@ class GetEnsembleGeosExperiment(taskBase):
         # -------------------------------------
         ens_tar_file = f'{background_experiment}.atmens_ebkgx.{bkg_exp_start_geos}.tar'
         ens_tar = os.path.join(geos_x_ensemble_directory,
-                                background_experiment,
-                                'atmens',
-                                bkg_exp_start_dto.strftime('Y%Y'),
-                                bkg_exp_start_dto.strftime('M%m'),
-                                ens_tar_file)
+                               background_experiment,
+                               'atmens',
+                               bkg_exp_start_dto.strftime('Y%Y'),
+                               bkg_exp_start_dto.strftime('M%m'),
+                               ens_tar_file)
 
         # Link the ensemble tar archive to the cycle directory
         # ------------------------------------------------------
@@ -95,7 +95,7 @@ class GetEnsembleGeosExperiment(taskBase):
         # Path to restarts in the cycle directory
         # ---------------------------------------
         cycle_tar = os.path.join(self.cycle_dir(), ens_tar_file)
-        
+
         with tarfile.open(cycle_tar) as cycle_tar_file:
             all_members = cycle_tar_file.getmembers()
             # Filter for top-level mem* directories
@@ -112,8 +112,8 @@ class GetEnsembleGeosExperiment(taskBase):
 
                 # Get all files within this member directory
                 member_files = [m for m in all_members if
-                            m.name.startswith(member_dir.name + '/') and
-                            not m.isdir()]
+                                m.name.startswith(member_dir.name + '/') and
+                                not m.isdir()]
 
                 # Process each file in the member directory
                 for member_file in member_files:
@@ -128,6 +128,6 @@ class GetEnsembleGeosExperiment(taskBase):
                     # Extract file to member directory
                     member_file.name = ens_filename_jedi
                     cycle_tar_file.extract(member_file, member_path)
-                    eff_path=member_path.split('/')[-2:] + [ens_filename_jedi]
+                    eff_path = member_path.split('/')[-2:] + [ens_filename_jedi]
                     self.logger.info(f' Extracted and renamed file to: {"/".join(eff_path)}')
 # --------------------------------------------------------------------------------------------------

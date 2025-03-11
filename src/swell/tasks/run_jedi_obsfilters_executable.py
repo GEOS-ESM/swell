@@ -13,7 +13,7 @@ import yaml
 from typing import Optional
 import subprocess
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable 
+from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
 # --------------------------------------------------------------------------------------------------
 
@@ -130,7 +130,6 @@ class RunJediObsfiltersExecutable(taskBase):
             name, extension = os.path.splitext(filename)
             new_filename = f"{name}_orig{extension}"
             new_obsfile_in = '/'.join(elements[:-1])+'/'+new_filename
-            #copy(obsfile, new_obsfile_in)
             shutil.move(obsfile, new_obsfile_in)
             obs_space = {'name': obs_name,
                          'obsdatain':

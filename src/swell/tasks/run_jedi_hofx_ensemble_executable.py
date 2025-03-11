@@ -139,9 +139,10 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
 
-        # Call execute of RunJediHofxExecutable to render hofx templates for each member 
+        # Call execute of RunJediHofxExecutable to render hofx templates for each member
         # -----------------------------------------------------------------------------
-        # print('ensemble_num_members, ensemble_hofx_packets', ensemble_num_members, ensemble_hofx_packets)
+        # print('ensemble_num_members, ensemble_hofx_packets',
+        # ensemble_num_members, ensemble_hofx_packets)
         # print('packet_ensemble_members', packet_ensemble_members)
 
         super().execute(ensemble_members=packet_ensemble_members)
