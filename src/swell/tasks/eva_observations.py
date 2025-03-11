@@ -96,9 +96,10 @@ class EvaObservations(taskBase):
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Check if observation was used
+            # Check if IODA observation input and output have non-zero location dimensions
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                observation_dict, self.cycle_time_dto())
+                                observation_dict, self.cycle_time_dto(), input_and_output=True)
+
             if not use_obs:
                 continue
 
