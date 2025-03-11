@@ -40,6 +40,8 @@ obs filters:
   - variable: {name: ObsValue/salinity}
     minvalue: 1.0
     maxvalue: 40.0
+- filter: Background Check
+  threshold: 3.0
 # Measurement errors are too small, inflate almost everywhere
 #- filter: Background Check
 #  threshold: 0.01
