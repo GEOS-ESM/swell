@@ -121,7 +121,7 @@ graphics:
     plots:
       - mapping:
           projection: spstere
-          domain: global
+          domain: south
         add_map_features: ['coastline']
         add_colorbar:
           label: Sea-ice Concentration Increment
@@ -136,8 +136,8 @@ graphics:
             variable: seaice_increment::SOCAVars::aice_h
           label: Sea ice concentration increment
           colorbar: true
-          cmap: 'bwr'
-          vmin: -1
+          cmap: 'bone_r'
+          vmin: 0
           vmax: 1
   - batch figure:
       variables: [aice_h]
@@ -149,7 +149,7 @@ graphics:
     plots:
       - mapping:
           projection: npstere
-          domain: global
+          domain: north
         add_map_features: ['coastline']
         add_colorbar:
           label: Sea-ice Concentration Increment
@@ -164,7 +164,7 @@ graphics:
             variable: seaice_increment::SOCAVars::aice_h
           label: Sea-ice concentration increment
           colorbar: true
-          cmap: 'bwr'
-          vmin: -1
+          cmap: 'bone_r'
+          vmin: 0
           vmax: 1
 {% endif %}
