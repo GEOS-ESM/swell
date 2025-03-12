@@ -7,11 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
 from datetime import datetime as dt
 import isodate
 import os
-import sys
 import tarfile
 
 from swell.tasks.base.task_base import taskBase

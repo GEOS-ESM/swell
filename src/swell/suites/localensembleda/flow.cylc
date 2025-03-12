@@ -51,17 +51,15 @@
             # Perform staging that is cycle dependent
             BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}} => sync_point
 
-            GetBackground-{{model_component}} => sync_point
+            # GetBackground-{{model_component}} => sync_point
 
             GetObservations-{{model_component}} => sync_point
 
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
 
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
-            GetEnsemble-{{model_component}} => sync_point
    
             sync_point => ThinObs
-
 
             {% if skip_ensemble_hofx %}
                sync_point => ThinObs => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}

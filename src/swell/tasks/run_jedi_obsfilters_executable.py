@@ -13,7 +13,7 @@ import yaml
 from typing import Optional
 import subprocess
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
 
 # --------------------------------------------------------------------------------------------------
 
@@ -161,7 +161,8 @@ class RunJediObsfiltersExecutable(taskBase):
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
             command = (f'mpirun -np 1 {jedi_executable_path} ' +
                        f'{jedi_config_file} {output_log_file}')
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            results = subprocess.run(command, shell=True, capture_output=True, text=True)
+            print(results.stdout)
         else:
             self.logger.info('YAML generated, now exiting.')
 # --------------------------------------------------------------------------------------------------

@@ -97,8 +97,6 @@ class GetBackground(taskBase):
                 self.logger.abort('Window length not divisible by background frequency')
 
             # Loop over window
-            # print('self.cycle_time_dto()', self.cycle_time_dto())
-            # print('window_offset_dur', window_offset_dur)
 
             start_date = self.cycle_time_dto() - window_offset_dur
             final_date = self.cycle_time_dto() + window_offset_dur

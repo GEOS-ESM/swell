@@ -1,57 +1,52 @@
 final_cycle_point: '2023-10-12T00:00:00Z'
 jedi_build_method: use_existing
-#model_components: ['geos_ocean', 'geos_atmosphere']
 model_components: ['geos_atmosphere']
 models:
   geos_atmosphere:
-    horizontal_resolution: '91'  #  13
+    horizontal_resolution: '91'
     background_experiment: x0050
-    geos_x_background_directory: ${HOME2}/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
-    geos_x_ensemble_directory: ${HOME2}/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
-    npx_proc: 1
-    npy_proc: 1
+    geos_x_background_directory: /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x
+    geos_x_ensemble_directory:   /discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan
+    npx_proc: 4
+    npy_proc: 5
     cycle_times:
     - T00
 #    - T06
 #    - T12
 #    - T18
-    ensemble_num_members:  2
-    skip_ensemble_hofx: true
+    ensemble_num_members:  3
+    skip_ensemble_hofx:    true
     local_ensemble_solver: GETKF
     local_ensemble_use_linear_observer: true
     ensmean_only: false
-    local_ensemble_save_posterior_mean: false                 # default: false
+    local_ensemble_save_posterior_mean: true                  # default: false
     local_ensemble_save_posterior_mean_increment: true        # default: true
     local_ensemble_save_posterior_ensemble: false             # default: false
     local_ensemble_save_posterior_ensemble_increments: false  # default: false
-#    ensemblePacket: 
-#    ensemble_hofx_strategy:  serial     # parallel
-#    ensemble_hofx_packets:   1          # 2
-
 
     observations:
-#    - aircraft_temperature
+    - aircraft_temperature
     - aircraft_wind
     - sondes
     - gps
-#    - amsua_aqua
-#    - amsua_n15
-#    - amsua_n18
-#    - amsua_n19
-#    - amsr2_gcom-w1
-#    - atms_n20
-#    - atms_npp
-#    - avhrr3_metop-b
-#    - avhrr3_n18
-#    - avhrr3_n19
-#    - scatwind
-#    - sfcship
-#    - sfc
-#    - mhs_metop-b
-#    - mhs_metop-c
-#    - mhs_n19
-#    - mls55_aura      # small dataset
-#    - omi_aura
+    - amsua_aqua
+    - amsua_n15
+    - amsua_n18
+    - amsua_n19
+    - amsr2_gcom-w1
+    - atms_n20
+    - atms_npp
+    - avhrr3_metop-b
+    - avhrr3_n18
+    - avhrr3_n19
+    - scatwind
+    - sfcship
+    - sfc
+    - mhs_metop-b
+    - mhs_metop-c
+    - mhs_n19
+    - mls55_aura      # small dataset
+    - omi_aura
 
     window_type: 4D
     clean_patterns:
