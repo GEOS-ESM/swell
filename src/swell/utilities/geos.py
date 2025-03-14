@@ -119,29 +119,6 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_rst_time(self) -> datetime.datetime:
-
-        # Obtain time information from any of the rst files listed by glob
-        # ----------------------------------------------------------------
-        src = os.path.join(self.forecast_dir, '*_rst')
-
-        # Open any _rst file in cycle dir to read time and units
-        # ------------------------------------------------------
-        ncfile = netCDF4.Dataset(list(glob.glob(src))[0])
-        self.logger.info(f"Getting time information from: ' {list(glob.glob(src))[0]}")
-
-        time_var = ncfile.variables['time']
-        units = time_var.units
-
-        # Convert the time values to datetime objects
-        # ---------------------------------------------
-        times = netCDF4.num2date(time_var[:], units=units, calendar='standard')
-        ncfile.close()
-
-        return times[0]
-
-    # ----------------------------------------------------------------------------------------------
-
     def iso_to_time_str(
         self,
         iso_duration: str,
