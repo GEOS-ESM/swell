@@ -507,7 +507,6 @@ def prepare_cylc_suite_jinja2(
     # Render the template
     # -------------------
     new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
-#    print(f'new_suite_file = {new_suite_file}')
 
     # Write suite file to experiment
     # ------------------------------

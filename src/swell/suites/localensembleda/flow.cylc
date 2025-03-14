@@ -146,9 +146,6 @@
     [[GetEnsembleGeosExperiment-{{model_component}}]]
         script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
 
-    # [[GetEnsemble-{{model_component}}]]
-    #     script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
-
     [[ThinObs]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}

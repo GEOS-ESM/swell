@@ -234,8 +234,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             perhost_str = ''
         else:
             perhost_str = (f'-perhost {perhost}')
-        command = (f'mpirun {perhost_str} -np {np} {jedi_executable_path} ' +
-                   f'{jedi_config_file} {output_log_file}')
         if not generate_yaml_and_exit:
             if ensmean_only | ensmeanvariance_only:
                 self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
@@ -245,15 +243,11 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                jedi_ensmeanvariance_executable_path,
                                jedi_config_file, output_log_file)
             else:
-                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                self.logger.info(f'intended mpi command = {command}')
-#                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-#                               jedi_config_file, output_log_file)
-                os.chdir( self.cycle_dir() )
-                results = subprocess.run(command, shell=True, capture_output=True, text=True)
-                print( results )
+                self.logger.info('Running '+jedi_executable_path+' with np='+str(np)+' '+perhost_str)
+                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                               jedi_config_file, output_log_file, perhost_str = perhost_str)
         else:
-            print(f'intended mpi command = {command}')
+            print(f'intended mpi_command = {command}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
