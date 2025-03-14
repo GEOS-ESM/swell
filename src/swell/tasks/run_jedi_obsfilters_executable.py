@@ -120,9 +120,6 @@ class RunJediObsfiltersExecutable(taskBase):
                             'random seed': 0, 'member': 1,
                             'action': {'name': 'reduce obs space'}}]
 
-        print (f'filter_thinning =  {filter_thinning}')
-        exit()
-
         # Include filter_thinning into {observations: obs sapce: obs filters:}
         # -------------------------------------------------------------------
         new_dict = {'observations': []}

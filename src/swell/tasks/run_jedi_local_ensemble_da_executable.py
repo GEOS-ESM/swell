@@ -249,6 +249,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 self.logger.info(f'intended mpi command = {command}')
 #                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
 #                               jedi_config_file, output_log_file)
+                os.chdir( self.cycle_dir() )
                 results = subprocess.run(command, shell=True, capture_output=True, text=True)
                 print( results )
         else:
