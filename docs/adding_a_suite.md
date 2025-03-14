@@ -86,10 +86,6 @@ For context, tasks in `R1` are run as setup for later tasks. Here, `CloneJedi` i
 The actions associated with these tasks is defined in the `runtime` section of `flow.cylc`. Here is the runtime section for the tasks above:
 
 ```
-[[runtime]]
-
-...
-
 [runtime]
 
     # Task defaults
