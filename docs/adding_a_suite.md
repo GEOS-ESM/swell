@@ -256,7 +256,7 @@ An example question class:
         prompt: str = "What is the path to the existing JEDI build directory?"
         widget_type: WidgetType = WidgetType.STRING
 ```
-Calling `existing_jedi_build_directory()` creates an object matching the default values for the class. Fields set as `defer_to_platform`, `defer_to_model`, and `defer_to_code` are later override with corresponding values sourced from:
+Calling `existing_jedi_build_directory()` creates an object matching the default values for the class. The specific values `defer_to_platform`, `defer_to_model`, and `defer_to_code` are special values that will be substituted as follows, depending on the `platform` and `model`: 
 - defer_to_platform: src/swell/deployment/platforms/<platform>
 - defer_to_model: src/swell/configuration/jedi/interfaces/<model>
 - defer_to_code: Set by src/swell/deployment/prepare_config_and_suite/prepare_config_and_suite.py
