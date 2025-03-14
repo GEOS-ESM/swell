@@ -209,6 +209,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         slurm_dict = self.slurm_dict()
         m = self.get_model()
         classname = self.__class__.__name__
+        namex = self.suite_name()
+        print(f'classname namex = {classname} {namex}')
+        exit()
+
         perhost =  (
             slurm_dict.get(classname, {})
             .get(m, {})
