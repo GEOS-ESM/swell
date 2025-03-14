@@ -181,9 +181,13 @@ def prepare_scheduling_dict(
                     experiment_task_directives[slurm_task],
                     model_component
                 )
-            validate_directives(model_directives)
+                validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
+        x = None
+        if slurm_task in experiment_task_directives:
+            x = experiment_task_directives[slurm_task].get('execution_time_limit')
+        scheduling_dict[slurm_task]['execution_time_limit'] = x
     return scheduling_dict
 
 
@@ -198,7 +202,7 @@ def add_directives(target_dict: dict, input_dict: dict, key: str) -> dict:
 
 
 def validate_directives(directive_dict: dict) -> None:
-    directive_pattern = r'(?<=--)[a-zA-Z-]+'
+    directive_pattern = r'(?<=--)[a-zA-Z-_]+'
     # Parse sbatch docs and extract all directives (e.g., `--account`)
     directive_list = {
         re.search(directive_pattern, s).group(0)
@@ -354,6 +358,12 @@ GPU scheduling options:
       --gpus-per-socket=n     number of GPUs required per allocated socket
       --gpus-per-task=n       number of GPUs required per spawned task
       --mem-per-gpu=n         real memory required per allocated GPU
+
+Add usage: ./mpiexec:
+     --perhost=n              NCCS_discover perhost is n MPI process per node for ensemble runs
+
+Add
+     --execution_time_limit=n   To avoid validate_directives
 
 Help options:
   -h, --help                  show this help message

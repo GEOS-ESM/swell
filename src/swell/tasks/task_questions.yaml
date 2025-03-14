@@ -226,6 +226,16 @@ ensmeanvariance_only:
   - RunJediLocalEnsembleDaExecutable
   type: boolean
 
+obs_thinning_rej_fraction:
+  ask_question: false
+  default_value: defer_to_model
+  models:
+  - geos_atmosphere
+  prompt: What is the rejection fraction for obs thinning
+  tasks:
+  - RunJediObsfiltersExecutable
+  type: float
+
 existing_geos_gcm_build_path:
   ask_question: true
   default_value: defer_to_platform

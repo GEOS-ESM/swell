@@ -37,6 +37,8 @@ class RunJediObsfiltersExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        obs_thinning_rej_fraction = self.config.obs_thinning_rej_fraction()
+
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -114,9 +116,12 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # Filter Thinning
         # ----------------------
-        filter_thinning = [{'filter': 'Thinning', 'amount': 0.75,
+        filter_thinning = [{'filter': 'Thinning', 'amount': obs_thinning_rej_fraction,
                             'random seed': 0, 'member': 1,
                             'action': {'name': 'reduce obs space'}}]
+
+        print (f'filter_thinning =  {filter_thinning}')
+        exit()
 
         # Include filter_thinning into {observations: obs sapce: obs filters:}
         # -------------------------------------------------------------------

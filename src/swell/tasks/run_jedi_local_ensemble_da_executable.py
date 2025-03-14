@@ -10,6 +10,7 @@
 
 import os
 import yaml
+import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -205,6 +206,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
+        slurm_dict = self.slurm_dict()
+        m = self.get_model()
+        classname = self.__class__.__name__
+        perhost =  (
+            slurm_dict.get(classname, {})
+            .get(m, {})
+            .get('perhost', None)
+        )
+        print('perhost')
+        print(perhost)
 
         # Jedi executable name
         # --------------------
@@ -219,6 +230,12 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
+        if perhost is None:
+            perhost_str = ''
+        else:
+            perhost_str = (f'-perhost {perhost}')
+        command = (f'mpirun {perhost_str} -np {np} {jedi_executable_path} ' +
+                   f'{jedi_config_file} {output_log_file}')
         if not generate_yaml_and_exit:
             if ensmean_only | ensmeanvariance_only:
                 self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
@@ -229,9 +246,13 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file)
+                self.logger.info(f'intended mpi command = {command}')
+#                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+#                               jedi_config_file, output_log_file)
+                results = subprocess.run(command, shell=True, capture_output=True, text=True)
+                print( results )
         else:
+            print(f'intended mpi command = {command}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
