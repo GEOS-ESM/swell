@@ -228,7 +228,7 @@ ensmeanvariance_only:
 
 obs_thinning_rej_fraction:
   ask_question: false
-  default_value: defer_to_model
+  default_value: 0.75
   models:
   - geos_atmosphere
   prompt: What is the rejection fraction for obs thinning
