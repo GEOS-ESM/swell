@@ -9,9 +9,7 @@
 
 import datetime
 import f90nml
-import glob
 import isodate
-import netCDF4
 import os
 import re
 from typing import Tuple, Optional, Union

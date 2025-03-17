@@ -1075,8 +1075,8 @@ window_offset:
   - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
-  - SaveRestart
   - SaveObsDiags
+  - SaveRestart
   - StoreBackground
   type: iso-duration
 

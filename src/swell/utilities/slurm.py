@@ -8,7 +8,6 @@
 
 import importlib
 import os
-import platform as pltfrm
 import re
 import yaml
 
