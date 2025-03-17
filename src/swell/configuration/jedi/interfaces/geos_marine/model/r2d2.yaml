@@ -9,7 +9,7 @@ fetch:
 store:
   an:
     - file_type: ocn.incr
-      filename: '{{cycle_dir}}/ocn.{{experiment_id}}.incr.{{analysis_time_iso}}.nc'
+      filename: '{{cycle_dir}}/mom6_increment.nc'
     {% if 'cice6' in marine_models %}
     - file_type: ice.incr
       filename: '{{cycle_dir}}/ice.{{experiment_id}}.incr.{{analysis_time_iso}}.nc'
