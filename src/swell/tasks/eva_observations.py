@@ -132,15 +132,18 @@ class EvaObservations(taskBase):
             eva_override['simulated_variables'] = \
                 observation_dict['obs space']['simulated variables']
             eva_override['map_projection'] = 'plcarr'
+            eva_override['domain'] = 'global'
 
             # If filename contains icec_ change map projection to polar stereographic
             # -----------------------------------------------------------------------
             if 'icec_' in obs_file:
                 eva_override['map_projection'] = 'npstere'
+                eva_override['domain'] = 'north'
                 # if file name has 'south" or "sh" then change to south polar stereographic
                 # ---------------------------------------------------------------
                 if 'south' in obs_file or 'sh' in obs_file:
                     eva_override['map_projection'] = 'spstere'
+                    eva_override['domain'] = 'south'
 
             # # Check if the "passivate" condition exists within the "obs filters" list
             passivate_exists = any(
