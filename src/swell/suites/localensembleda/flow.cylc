@@ -62,7 +62,8 @@
             sync_point => ThinObs
 
             {% if skip_ensemble_hofx %}
-               sync_point => ThinObs => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+#               sync_point => ThinObs => RunJediEnsembleMeanVariance-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
@@ -213,7 +214,8 @@
 #        {%- endfor %}
 
     [[SaveObsDiags-{{model_component}}]]
-        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        script = true
+#        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
