@@ -38,6 +38,7 @@ class RunJediVariationalExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        perhost = self.config.perhost(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -81,7 +82,6 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('perhost', self.config.perhost(None))
 
         # Observations
         # ------------
@@ -152,7 +152,6 @@ class RunJediVariationalExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
-        perhost = str(model_component_meta['perhost'])
 
         # Jedi executable name
         # --------------------
