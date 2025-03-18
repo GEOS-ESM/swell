@@ -7,11 +7,9 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import os
 import yaml
 from typing import Callable
 
-from swell.swell_path import get_swell_path
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger
 
