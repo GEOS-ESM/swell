@@ -209,11 +209,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         slurm_dict = self.slurm_dict()
         m = self.get_model()
         classname = self.__class__.__name__
-        perhost =  (
-            slurm_dict.get(classname, {})
-            .get(m, {})
-            .get('perhost', None)
-        )
+        perhost = (slurm_dict.get(classname, {}).get(m, {}).get('perhost', None))
         print(f'perhost= {perhost}')
 
         # Jedi executable name
@@ -242,7 +238,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                jedi_config_file, output_log_file)
             else:
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file, perhost_str = perhost_str)
+                               jedi_config_file, output_log_file, perhost=perhost)
         else:
             print(f'intended mpi_command = {command}')
             self.logger.info('YAML generated, now exiting.')

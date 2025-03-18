@@ -105,7 +105,6 @@ def jedi_dictionary_iterator(
 
 # ----------------------------------------------------------------------------------------------
 
-
 def run_executable(
     logger: Logger,
     cycle_dir: str,
@@ -113,16 +112,16 @@ def run_executable(
     jedi_executable_path: str,
     jedi_config_file: str,
     output_log: str,
-    perhost_str: str = ''
+    perhost: int = None
 ) -> None:
 
     # Run the JEDI executable
     # -----------------------
-    logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors '+perhost_str)
-    if perhost_str == '':
+    logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors ')
+    if perhost == None:
         command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
     else:
-        command = ['mpirun', perhost_str, '-np', str(np), jedi_executable_path, jedi_config_file]
+        command = ['mpirun', '-perhost', str(perhost), '-np', str(np), jedi_executable_path, jedi_config_file]
     logger.info('mpi_command='+" ".join(command)+' '+output_log)
 
     # Run command

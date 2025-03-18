@@ -186,8 +186,8 @@ def prepare_scheduling_dict(
 
         x = None
         if slurm_task in experiment_task_directives.keys():
-            x = experiment_task_directives[slurm_task].get('execution_time_limit')
-            scheduling_dict[slurm_task]['execution_time_limit'] = x
+            x = experiment_task_directives[slurm_task].get('execution_time_limit', None)
+        scheduling_dict[slurm_task]['execution_time_limit'] = x
 
     return scheduling_dict
 
