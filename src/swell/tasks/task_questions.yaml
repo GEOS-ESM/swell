@@ -930,6 +930,17 @@ total_processors:
   - RunJediVariationalExecutable
   type: integer
 
+perhost:
+  ask_question: true
+  default_value: None
+  models:
+  - geos_atmosphere
+  prompt: What is the number of processors per host?
+  tasks:
+  - RunJediVariationalExecutable
+  type: integer
+
+
 vertical_localization_apply_log_transform:
   ask_question: false
   default_value: true

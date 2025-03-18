@@ -81,6 +81,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('perhost', self.config.perhost(None))
 
         # Observations
         # ------------
@@ -151,6 +152,7 @@ class RunJediVariationalExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
+        perhost = str(model_component_meta['perhost'])
 
         # Jedi executable name
         # --------------------
@@ -162,8 +164,13 @@ class RunJediVariationalExecutable(taskBase):
         # -----------------------
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
+            if perhost is None:
+               run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                              jedi_config_file, output_log_file)
+            else:
+               perhost = eval(perhost)
+               run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                              jedi_config_file, output_log_file, perhost)
         else:
             self.logger.info('YAML generated, now exiting.')
 

@@ -105,6 +105,7 @@ class JediConfigRendering():
             'npy_proc',
             'number_of_iterations',
             'packet_ensemble_members',
+            'perhost',
             'skip_ensemble_hofx',
             'swell_static_files',
             'total_processors',
