@@ -105,7 +105,7 @@ observations:
   - temp_profile_xbt
 
 path_to_ensemble:
-  default_value: 'test'
+  default_value: test
 
 total_processors:
   default_value: 24

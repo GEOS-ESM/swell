@@ -493,7 +493,7 @@ def prepare_cylc_suite_jinja2(
         render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = x
 
         # perhost be eliminatd before render flow.cylc
-        for mod in  ['all'] + model_components:
+        for mod in ['all'] + model_components:
             if mod in render_dictionary['scheduling'][slurm_task]['directives']:
                 x = render_dictionary['scheduling'][slurm_task]['directives'][mod]
                 x.pop('perhost', None)

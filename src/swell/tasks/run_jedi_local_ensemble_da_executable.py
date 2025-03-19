@@ -10,7 +10,6 @@
 
 import os
 import yaml
-import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -224,10 +223,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Run the JEDI executable
         # -----------------------
-        if perhost is None:
-            perhost_str = ''
-        else:
-            perhost_str = (f"--perhost={perhost}")
         if not generate_yaml_and_exit:
             if ensmean_only | ensmeanvariance_only:
                 self.logger.info('Running ' + jedi_ensmeanvariance_executable_path +
@@ -240,7 +235,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
         else:
-            print(f'intended mpi_command = {command}')
+            print(f'intended mpi_command = mpirun' +
+                  (f' -perhost {perhost}' if perhost is not None else '') +
+                  f' -np {np}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

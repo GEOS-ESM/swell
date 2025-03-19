@@ -26,12 +26,10 @@ class QuestionDictionaryTest(unittest.TestCase):
         # Run main task question dictionary generation
         tempdir = tempfile.mkdtemp()
         tq_dicts_rc = tq_dicts(tempdir)
-        print(f'T1: assert {tq_dicts_rc} == 0')
         assert tq_dicts_rc == 0
 
         # Run generation for defaults
         tq_dicts_defaults_rc = tq_dicts_defaults(tempdir)
-        print(f'T2: assert {tq_dicts_rc} == 0')
         assert tq_dicts_defaults_rc == 0
 
         # If we got this far without errors, we can remove the temporary

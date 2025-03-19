@@ -39,7 +39,6 @@ class RunJediObsfiltersExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         obs_thinning_rej_fraction = self.config.obs_thinning_rej_fraction()
 
-
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
