@@ -46,8 +46,13 @@ models:
     - mhs_metop-b
     - mhs_metop-c
     - mhs_n19
-    - mls55_aura      # small dataset
+    - mls55_aura
     - omi_aura
+    - ompsnm_npp
+    - pibal
+    - ssmis_f17
+    - amsua_metop-b
+    - amsua_metop-c
 
     window_type: 4D
     clean_patterns:

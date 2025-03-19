@@ -230,7 +230,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 self.logger.info('Running ensmean_only')
                 run_executable(self.logger, self.cycle_dir(), np,
                                jedi_ensmeanvariance_executable_path,
-                               jedi_config_file, output_log_file)
+                               jedi_config_file, output_log_file, perhost=perhost)
             else:
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
