@@ -287,7 +287,7 @@ Task question lists are stored in `src/swell/tasks/task_questions.py`
 
 During experiment creation, Swell scans the suite's `flow.cylc` file to find all of the tasks used in the workflow. It then finds the corresponding task lists in `src/swell/tasks/task_questions.py`, and fits together a list of uniquely named questions from all of the lists. Questions have a priority depending on order. In the case of duplicate questions, those further DOWN the list take priority. For this reason, it is NOT RECOMMENDED to set different default values for tasks in `task_questions.py`, since questions may be overridden by a questions in a different task. 
 
-In this question infrastructure, suites priority over tasks. Any question specified in a suite configuration will override the default value for a question in one of its member tasks. This allows for easily setting different configurations for suites without having to specify redundant questions. For ease of use, model-dependent questions can be assigned directly in their respective lists.
+In this question infrastructure, **suites take priority over tasks**. Any question specified in a suite configuration will override the default value for a question in one of its member tasks. This allows for easily setting different configurations for suites without having to specify redundant questions. For ease of use, model-dependent questions can be assigned directly in their respective lists.
 
 Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
 
