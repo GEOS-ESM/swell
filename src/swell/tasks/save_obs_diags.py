@@ -34,6 +34,7 @@ class SaveObsDiags(taskBase):
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_offset)
