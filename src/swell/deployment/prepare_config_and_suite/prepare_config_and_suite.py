@@ -115,8 +115,21 @@ class PrepareExperimentConfigAndSuite:
         # This will later be used to set defaults
         model_dep_questions_override = {}
 
+        # Get a list of all questions associated with the suite, except for those specified
+        # seperately for models
+
+        suite_config_obj = getattr(importlib.import_module(
+            f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')[self.suite_config].value
+
+        suite_question_list = suite_config_obj.expand_question_list()
+
+        # Allow for adding extra tasks manually from configuration
+        # For dynamic suite creation (e.g. comparison tests)
+
+        dynamic_tasks = self.get_dynamic_tasks(suite_question_list)
+
         # Loop through all tasks and get their associated tasks
-        for task in self.model_ind_tasks + self.all_model_dep_tasks:
+        for task in self.model_ind_tasks + self.all_model_dep_tasks + dynamic_tasks:
             if task in task_questions.get_all():
                 question_list = task_questions[task].value.expand_question_list()
 
@@ -131,15 +144,6 @@ class PrepareExperimentConfigAndSuite:
                                                  for question in question_list]
             else:
                 self.questions_per_task[task] = []
-
-        # Get a list of all questions associated with the suite, except for those specified
-        # seperately for models
-
-        suite_config_obj = getattr(importlib.import_module(
-            f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')[self.suite_config].value
-
-        suite_question_list = (
-                suite_config_obj.expand_question_list())
 
         # Convert the list of questions into a dictionary indexed by the question name
         for question in suite_question_list:
@@ -331,11 +335,11 @@ class PrepareExperimentConfigAndSuite:
 
     def override_with_external(self) -> None:
 
-        # Create an override dictionary
-        override_dict = {}
-
-        # Now append with any user provided override
+        # Append with any user provide overrides
         if self.override is not None:
+
+            # Create an override dictionary
+            override_dict = {}
 
             if isinstance(self.override, dict):
                 override_dict.update(self.override)
@@ -430,7 +434,8 @@ class PrepareExperimentConfigAndSuite:
             if self.question_dictionary_model_ind[question_key]['question_type'] != 'suite':
 
                 # Check if the question is associated with any model independent tasks
-                if any(question_key in self.questions_per_task[task] for task in model_ind_tasks):
+                if any(question_key in self.questions_per_task[task] for task in model_ind_tasks
+                       if task in self.questions_per_task.keys()):
 
                     # Ask the question
                     self.ask_a_question(self.question_dictionary_model_ind, question_key)
@@ -654,5 +659,16 @@ class PrepareExperimentConfigAndSuite:
 
         # Return the dictionary
         return model_tasks
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_dynamic_tasks(self, question_list: list) -> list:
+        tasks = []
+
+        for question in question_list:
+            if question['question_name'] == 'dynamic_task_list':
+                tasks.extend(question['default_value'])
+
+        return tasks
 
 # --------------------------------------------------------------------------------------------------
