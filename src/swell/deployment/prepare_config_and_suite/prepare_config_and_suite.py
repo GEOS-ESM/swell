@@ -12,6 +12,7 @@ import copy
 import os
 import yaml
 import importlib
+from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 
 from swell.swell_path import get_swell_path
@@ -173,7 +174,7 @@ class PrepareExperimentConfigAndSuite:
                 # see if there are any model-dependent fields which are not specified
                 # ----------------------------------------------------------------------------------------------------------------------
                 for sub_key, sub_val in question_dictionary[key].items():
-                    if isinstance(sub_val, dict) and 'depends_on_model' in sub_val.keys():
+                    if isinstance(sub_val, Mapping) and 'depends_on_model' in sub_val.keys():
                         for model in self.possible_model_components:
                             if model not in sub_val[
                                     'depends_on_model'].keys() and sub_key in value.keys():
@@ -181,8 +182,8 @@ class PrepareExperimentConfigAndSuite:
                                 # If the value is a model-dependent specification,
                                 # grab the value associated with each model, if present
                                 # ------------------------------------------------------------------------------------------------------
-                                if isinstance(value[sub_key],
-                                              dict) and 'depends_on_model' in value[sub_key].keys():
+                                if isinstance(value[sub_key], Mapping) and (
+                                        'depends_on_model' in value[sub_key].keys()):
                                     if model in value[sub_key]['depends_on_model'].keys():
                                         question_dictionary[key][sub_key][
                                                 'depends_on_model'][model] = \
@@ -306,7 +307,7 @@ class PrepareExperimentConfigAndSuite:
                         for key, val in question.items():
                             # If the value of the question is still set as model-dependent,
                             # set the value for that model
-                            if isinstance(val, dict) and \
+                            if isinstance(val, Mapping) and \
                                     'depends_on_model' in val.keys() and \
                                     model in val['depends_on_model'].keys() and \
                                     val['depends_on_model'][model] != 'defer_to_model':
@@ -341,7 +342,7 @@ class PrepareExperimentConfigAndSuite:
             # Create an override dictionary
             override_dict = {}
 
-            if isinstance(self.override, dict):
+            if isinstance(self.override, Mapping):
                 override_dict.update(self.override)
             elif isinstance(self.override, str):
                 with open(self.override, 'r') as ymlfile:
