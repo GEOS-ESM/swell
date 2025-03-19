@@ -11,7 +11,6 @@ import os
 import shutil
 import yaml
 from typing import Optional
-import subprocess
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
