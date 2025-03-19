@@ -57,10 +57,8 @@ def run_track_log_subprocess(
     rc = process.poll()
     if rc != 0:
         command_string = ' '.join(command)
-#        logger.abort(f'In run_and_track_subprocess command ' + command_string +
-#                     f' failed to execute.', False)
-        print(f'In run_and_track_subprocess command {command_string} failed to execute.')
-
+        msg = (f"In run_and_track_subprocess command '{command_string}' failed to execute.")
+        logger.abort(msg, False)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -90,9 +88,8 @@ def run_subprocess(
         subprocess.run(command, check=True, stdout=stdout, stderr=stderr, **kwargs)
     except subprocess.CalledProcessError as e:
         print(e)
-#        logger.abort(f'Subprocess with command {command} failed, throwing error {e}')
-        print(f'Subprocess with command {command} failed, throwing error {e}')
-
+        msg = (f"Subprocess with command '{command}' failed, throwing error '{e}'")
+        logger.abort(msg)
 
 # --------------------------------------------------------------------------------------------------
 

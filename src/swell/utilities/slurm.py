@@ -361,7 +361,7 @@ GPU scheduling options:
       --mem-per-gpu=n         real memory required per allocated GPU
 
 Add usage: ./mpiexec:
-     --perhost=n              NCCS_discover perhost is n MPI process per node for ensemble runs
+     --perhost=n              NCCS_discover perhost is n MPI process per node
 
 Help options:
   -h, --help                  show this help message
