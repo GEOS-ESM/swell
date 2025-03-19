@@ -292,6 +292,9 @@ In this question infrastructure, **suites take priority over tasks**. Any questi
 Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
 
 ```python
+from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.suites.suite_questions import SuiteQuestions as sq
+
 class SuiteQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
