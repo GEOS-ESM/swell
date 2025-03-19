@@ -614,7 +614,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for horizontal covariance localization?"
-        widget_type: WidgetType = "float"
+        widget_type: WidgetType = WidgetType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -699,7 +699,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
-        widget_type: WidgetType = "float"
+        widget_type: WidgetType = WidgetType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -711,7 +711,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
-        widget_type: WidgetType = "float"
+        widget_type: WidgetType = WidgetType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -723,7 +723,7 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
-        widget_type: WidgetType = "float"
+        widget_type: WidgetType = WidgetType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 

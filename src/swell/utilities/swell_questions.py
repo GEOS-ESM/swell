@@ -28,6 +28,7 @@ class WidgetType(Enum):
     INTEGER = "integer"
     INTEGER_LIST = "integer-list"
     FILE_CHECK_LIST = "file-check-list"
+    FLOAT = "float"
 
     @property
     def is_drop_list(self) -> bool:
