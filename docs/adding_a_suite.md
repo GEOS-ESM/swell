@@ -295,6 +295,9 @@ Consider the following example of suite questions for `3dvar` (in python, variab
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
+from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.suites.suite_questions import SuiteQuestions as sq
+
 class SuiteQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
