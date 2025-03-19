@@ -9,7 +9,7 @@
 
 
 from dataclasses import dataclass, asdict, field
-from typing import Optional
+from typing import List, Optional
 from enum import Enum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
@@ -126,7 +126,7 @@ class QuestionContainer:
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
     list_name: str
-    questions: list
+    questions: list[SwellQuestion]
 
     geos_ocean: list = field(default_factory=lambda: [])
     geos_atmosphere: list = field(default_factory=lambda: [])

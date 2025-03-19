@@ -369,7 +369,7 @@ class QuestionDefaults():
 
     @dataclass
     class ensmean_only(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "ensmean_only"
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -385,7 +385,7 @@ class QuestionDefaults():
 
     @dataclass
     class ensmeanvariance_only(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "ensmeanvariance_only"
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -489,7 +489,7 @@ class QuestionDefaults():
 
     @dataclass
     class generate_yaml_and_exit(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "generate_yaml_and_exit"
         prompt: str = "Generate JEDI executable YAML and exit?"
         widget_type: WidgetType = WidgetType.BOOLEAN
@@ -729,7 +729,7 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_ensemble(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble"
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -745,7 +745,7 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_ensemble_increments(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble_increments"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
@@ -762,7 +762,7 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_mean(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_mean"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
@@ -779,7 +779,7 @@ class QuestionDefaults():
 
     @dataclass
     class local_ensemble_save_posterior_mean_increment(TaskQuestion):
-        default_value: str = True
+        default_value: bool = True
         question_name: str = "local_ensemble_save_posterior_mean_increment"
         ask_question: bool = True
         options: List[bool] = field(default_factory=lambda: [
@@ -819,20 +819,6 @@ class QuestionDefaults():
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
         widget_type: WidgetType = WidgetType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class marine_models(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "marine_models"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
-            "geos_marine"
-        ])
-        prompt: str = "Enter the active SOCA models for this model."
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1063,7 +1049,7 @@ class QuestionDefaults():
 
     @dataclass
     class save_geovals(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "save_geovals"
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -1076,7 +1062,7 @@ class QuestionDefaults():
 
     @dataclass
     class single_observations(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "single_observations"
         options: List[bool] = field(default_factory=lambda: [
             True,
@@ -1138,7 +1124,7 @@ class QuestionDefaults():
 
     @dataclass
     class vertical_localization_apply_log_transform(TaskQuestion):
-        default_value: str = True
+        default_value: bool = True
         question_name: str = "vertical_localization_apply_log_transform"
         options: List[bool] = field(default_factory=lambda: [
             True,
