@@ -11,7 +11,7 @@ import os
 import shutil
 from typing import Tuple
 
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from jedi_bundle.utils.yaml import load_yaml
 from jedi_bundle.config.config import check_platform
 from jedi_bundle.bin.jedi_bundle import get_default_config
@@ -93,7 +93,7 @@ def set_jedi_bundle_config(
 
     # Add pinned_versions to jedi_bundle_config if applicable
     if use_pinned:
-        logger = Logger("LoadPinnedVersions")
+        logger = get_logger("LoadPinnedVersions")
         pinned_config_file = get_pinned_vers_path()
         pinned_versions_dict = load_yaml(logger, pinned_config_file)
         jedi_bundle_config['pinned_versions'] = pinned_versions_dict

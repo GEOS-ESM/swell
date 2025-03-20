@@ -275,20 +275,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class cice6_domains(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "cice6_domains"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
-            "geos_marine"
-        ])
-        prompt: str = "Which CICE6 domains do you wish to run DA for?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class clean_patterns(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "clean_patterns"

@@ -158,7 +158,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="RunJediConvertStateSoca2ciceExecutable",
         questions=[
             qd.analysis_variables(),
-            qd.cice6_domains(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.marine_models(),
@@ -298,6 +297,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="EvaObservations",
         questions=[
             background_crtm_obs,
+            qd.marine_models(),
             qd.observing_system_records_path(),
             qd.window_offset()
         ]

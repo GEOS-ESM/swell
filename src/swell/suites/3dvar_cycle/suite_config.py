@@ -32,14 +32,14 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_cycle",
         questions=[
             _3dvar_cycle_base,
-            qd.start_cycle_point("2021-06-01T12:00:00Z"),
-            qd.final_cycle_point("2021-06-02T00:00:00Z"),
+            qd.start_cycle_point("2021-07-02T06:00:00Z"),
+            qd.final_cycle_point("2021-07-02T12:00:00Z"),
             qd.runahead_limit("P2"),
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
-            qd.model_components(['geos_ocean']),
+            qd.model_components(['geos_marine']),
         ],
-        geos_ocean=[
+        geos_marine=[
             qd.cycle_times([
                 "T00",
                 "T06",
@@ -69,6 +69,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.number_of_iterations([10]),
             qd.obs_provider(['odas', 'gdas_marine']),
             qd.mom6_iau(True),
+            qd.marine_models(['mom6']),
             qd.analysis_forecast_window_offset("-PT3H"),
             qd.background_time_offset("PT9H"),
             qd.clean_patterns([

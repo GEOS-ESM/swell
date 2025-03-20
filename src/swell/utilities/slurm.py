@@ -11,16 +11,14 @@ import os
 import platform as pltfrm
 import re
 import yaml
-from typing import Union
 
 from importlib import resources
-from logging import Logger as pyLogger
 
 from swell.utilities.logger import Logger
 
 
 def prepare_scheduling_dict(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     experiment_dict: dict,
     platform: str,
 ) -> dict:
@@ -216,7 +214,7 @@ def validate_directives(directive_dict: dict) -> None:
 
 
 def slurm_global_defaults(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)

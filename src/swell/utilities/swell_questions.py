@@ -126,7 +126,7 @@ class QuestionContainer:
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
     list_name: str
-    questions: list[SwellQuestion]
+    questions: List[SwellQuestion, QuestionList]
 
     geos_ocean: list = field(default_factory=lambda: [])
     geos_atmosphere: list = field(default_factory=lambda: [])

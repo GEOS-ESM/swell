@@ -343,10 +343,11 @@ class PrepareExperimentConfigAndSuite:
             override_dict = {}
 
             if isinstance(self.override, Mapping):
-                override_dict.update(self.override)
+                override_dict.update_dict(override_dict, self.override)
+
             elif isinstance(self.override, str):
                 with open(self.override, 'r') as ymlfile:
-                    override_dict.update(yaml.safe_load(ymlfile))
+                    override_dict = update_dict(override_dict, yaml.safe_load(ymlfile))
             else:
                 self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 
