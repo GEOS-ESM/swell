@@ -206,10 +206,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
         slurm_dict = self.slurm_dict()
-        m = self.get_model()
         classname = self.__class__.__name__
-        perhost = (slurm_dict.get(classname, {}).get(m, {}).get('perhost', None))
-        print(f'perhost= {perhost}')
+        m = self.get_model()
+        sub_dict = slurm_dict.get(classname, {}).get(m, {}) or slurm_dict.get(classname, {}).get('all', {})
+        perhost = sub_dict.get('perhost', None)
 
         # Jedi executable name
         # --------------------
