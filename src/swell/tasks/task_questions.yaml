@@ -825,6 +825,16 @@ path_to_gsi_nc_diags:
   - GetGsiNcdiag
   type: string
 
+perhost:
+  ask_question: true
+  default_value: None
+  models:
+  - geos_atmosphere
+  prompt: What is the number of processors per host?
+  tasks:
+  - RunJediVariationalExecutable
+  type: integer
+
 produce_geovals:
   ask_question: true
   default_value: defer_to_model
@@ -929,17 +939,6 @@ total_processors:
   - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
   type: integer
-
-perhost:
-  ask_question: true
-  default_value: None
-  models:
-  - geos_atmosphere
-  prompt: What is the number of processors per host?
-  tasks:
-  - RunJediVariationalExecutable
-  type: integer
-
 
 vertical_localization_apply_log_transform:
   ask_question: false

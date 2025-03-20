@@ -113,7 +113,7 @@ def run_executable(
     jedi_executable_path: str,
     jedi_config_file: str,
     output_log: str,
-    perhost: Optional[int]=None
+    perhost: Optional[int] = None
 ) -> None:
 
     # Run the JEDI executable
