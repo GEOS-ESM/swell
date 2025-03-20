@@ -17,21 +17,25 @@ from swell.utilities.suite_utils import get_suites
 
 # --------------------------------------------------------------------------------------------------
 
+
 # Class methods for AllSuites enum
 
 @classmethod
 def get_config(self, config_name):
     return getattr(self, config_name).value.value
-    
+
+
 @classmethod
 def config_names(self):
     return self._member_names_
-    
+
+
 @classmethod
 def base_suite(self, config: str) -> str:
     return self.__config_suite_map__[config]
 
 # --------------------------------------------------------------------------------------------------
+
 
 def construct_suite_enum():
     # Automatically construct enum of all suite configs
@@ -79,6 +83,7 @@ def construct_suite_enum():
     return wrapper
 
 # --------------------------------------------------------------------------------------------------
+
 
 @construct_suite_enum()
 class AllSuites(Enum):
