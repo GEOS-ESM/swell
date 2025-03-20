@@ -184,6 +184,11 @@ def prepare_scheduling_dict(
             validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
+        x = None
+        if slurm_task in experiment_task_directives.keys():
+            x = experiment_task_directives[slurm_task].get('execution_time_limit', None)
+        scheduling_dict[slurm_task]['execution_time_limit'] = x
+
     return scheduling_dict
 
 

@@ -488,7 +488,9 @@ def prepare_cylc_suite_jinja2(
 
     # Default execution time limit for everthing is PT1H
     for slurm_task in render_dictionary['scheduling'].keys():
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
+        x = render_dictionary['scheduling'][slurm_task].get('execution_time_limit', None)
+        x = x if x is not None else 'PT1H'
+        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = x
 
     # Set some specific values for:
     # ------------------------------
