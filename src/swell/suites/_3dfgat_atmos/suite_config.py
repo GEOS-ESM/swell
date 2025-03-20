@@ -14,17 +14,27 @@ from swell.suites.suite_questions import SuiteQuestions as sq
 
 # --------------------------------------------------------------------------------------------------
 
-ufo_testing_tier1 = QuestionList(
-    list_name="ufo_testing",
+_3dfgat_atmos_tier1 = QuestionList(
+    list_name="3dfgat_atmos",
     questions=[
         sq.common,
-        qd.final_cycle_point("2023-10-10T00:00:00Z"),
+        qd.start_cycle_point("2023-10-10T00:00:00Z"),
+        qd.final_cycle_point("2023-10-10T06:00:00Z"),
         qd.jedi_build_method("use_existing"),
-        qd.bundles("REMOVE"),
         qd.model_components(['geos_atmosphere']),
+        qd.runahead_limit("P2"),
     ],
     geos_atmosphere=[
-        qd.cycle_times(['T00']),
+        qd.cycle_times([
+            "T00",
+            "T06",
+            "T12",
+            "T18"
+        ]),
+        qd.horizontal_resolution("91"),
+        qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
+                                        "dadev/rtodling/archive/Restarts/JEDI/541x"),
+        qd.window_type("4D"),
         qd.observations([
             "aircraft_temperature",
             "aircraft_wind",
@@ -34,10 +44,12 @@ ufo_testing_tier1 = QuestionList(
             "amsua_metop-b",
             "amsua_metop-c",
             "amsua_n15",
+            "amsua_n18",
             "amsua_n19",
             "atms_n20",
             "atms_npp",
             "avhrr3_metop-b",
+            "avhrr3_n18",
             "avhrr3_n19",
             "cris-fsr_n20",
             "cris-fsr_npp",
@@ -48,44 +60,28 @@ ufo_testing_tier1 = QuestionList(
             "mhs_metop-b",
             "mhs_metop-c",
             "mhs_n19",
+            "mls55_aura",
+            "omi_aura",
+            "ompsnm_npp",
             "pibal",
             "satwind",
             "scatwind",
-            "sfc",
             "sfcship",
+            "sfc",
             "sondes",
             "ssmis_f17"
         ]),
-        qd.produce_geovals(False),
-        qd.clean_patterns([
-            "*.txt",
-            "*.log",
-            "*.yaml",
-            "*.csv",
-            "gsi_bcs/*.nc4",
-            "gsi_bcs/*.txt",
-            "gsi_bcs/*.yaml",
-            "gsi_bcs",
-            "gsi_ncdiags/*.nc4",
-            "gsi_ncdiags/aircraft/*.nc4",
-            "gsi_ncdiags/aircraft",
-            "gsi_ncdiags"
-        ]),
-        qd.path_to_gsi_bc_coefficients("/discover/nobackup/projects/gmao/dadev/rtodling/"
-                                        "archive/541/Milan/x0050/ana/Y%Y/M%m/"
-                                        "*bias*%Y%m%d_%Hz.txt"),
-        qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/archive/"
-                                "541/Milan/x0050/obs/Y%Y/M%m/D%d/H%H/"),
+        qd.gradient_norm_reduction("1e-3"),
+        qd.number_of_iterations([10]),
+        qd.clean_patterns(['*.txt', '*.csv']),
     ]
 )
 
 # --------------------------------------------------------------------------------------------------
 
-ufo_testing = QuestionList(
-    list_name="ufo_testing",
+_3dfgat_atmos = QuestionList(
+    list_name="3dfgat_atmos",
     questions=[
-        ufo_testing_tier1
+        _3dfgat_atmos_tier1
     ]
 )
-
-# --------------------------------------------------------------------------------------------------

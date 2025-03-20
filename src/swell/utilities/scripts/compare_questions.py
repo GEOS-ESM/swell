@@ -9,7 +9,6 @@
 
 import os
 from typing import Optional, Tuple
-import importlib
 import re
 from enum import StrEnum, auto
 
@@ -18,6 +17,7 @@ from swell.utilities.suite_utils import get_suites
 from swell.tasks.task_questions import TaskQuestions as tq
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.case_switching import camel_case_to_snake_case
+from swell.suites.all_suites import all_suites
 
 
 # --------------------------------------------------------------------------------------------------
@@ -133,10 +133,7 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
         set_for = {}
 
         # Get the default suite configuration
-        config_name = ('_' if suite[0].isdigit() else '') + suite
-        suite_config = getattr(importlib.import_module(f'swell.suites.{suite}.suite_config'),
-                               'SuiteConfig')
-        base_config = suite_config[config_name].value
+        base_config = all_suites[suite].value
 
         config_questions = get_question_names(base_config)
 

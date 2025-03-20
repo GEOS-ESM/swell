@@ -10,9 +10,9 @@
 
 import glob
 import os
-import importlib
 
 from swell.swell_path import get_swell_path
+from swell.suites.all_suites import all_suites
 
 
 # --------------------------------------------------------------------------------------------------
@@ -41,8 +41,7 @@ def get_suite_configs() -> list:
 
     for suite in suites:
         suite_sub_list = []
-        suite_module = importlib.import_module(f'swell.suites.{suite}.suite_config')
-        suite_configs = getattr(suite_module, 'SuiteConfig')
+        suite_configs = all_suites[suite].value
 
         [suite_sub_list.append(suite_config[1:] if suite_config[0] == '_' else suite_config)
          for suite_config in suite_configs.get_all()]

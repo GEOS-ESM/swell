@@ -8,53 +8,39 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
+from swell.utilities.swell_questions import QuestionList
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
-from enum import Enum
+# --------------------------------------------------------------------------------------------------
 
+forecast_geos_tier1 = QuestionList(
+    list_name="forecast_geos",
+    questions=[
+        sq.all_suites,
+        qd.cycle_times(),
+        qd.final_cycle_point(),
+        qd.start_cycle_point()
+        qd.start_cycle_point("2021-06-20T00:00:00Z"),
+        qd.final_cycle_point("2021-06-21T00:00:00Z"),
+        qd.cycle_times([
+            "T00",
+            "T06",
+            "T12",
+            "T18"
+        ]),
+        qd.geos_build_method("use_existing"),
+        qd.forecast_duration("PT6H"),
+    ],
+)
 
 # --------------------------------------------------------------------------------------------------
 
-class SuiteConfig(QuestionContainer, Enum):
+forecast_geos = QuestionList(
+    list_name="forecast_geos",
+    questions=[
+        forecast_geos_tier1
+    ]
+)
 
-    forecast_geos_base = QuestionList(
-        list_name="forecast_geos",
-        questions=[
-            sq.all_suites,
-            qd.cycle_times(),
-            qd.final_cycle_point(),
-            qd.start_cycle_point()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    forecast_geos_tier1 = QuestionList(
-        list_name="forecast_geos",
-        questions=[
-            forecast_geos_base,
-            qd.start_cycle_point("2021-06-20T00:00:00Z"),
-            qd.final_cycle_point("2021-06-21T00:00:00Z"),
-            qd.cycle_times([
-                "T00",
-                "T06",
-                "T12",
-                "T18"
-            ]),
-            qd.geos_build_method("use_existing"),
-            qd.forecast_duration("PT6H"),
-        ],
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    forecast_geos = QuestionList(
-        list_name="forecast_geos",
-        questions=[
-            forecast_geos_tier1
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------

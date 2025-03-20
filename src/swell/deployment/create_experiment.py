@@ -214,12 +214,12 @@ def create_experiment_directory(
     # function to build the scheduling dictionary, combine with the experiment dictionary,
     # resolve the templates and write the suite file to the experiment suite directory.
     # --------------------------------------------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_config)
     prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
+    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite_config)
     copy_platform_files(logger, exp_suite_path, platform)
 
     if os.path.exists(os.path.join(swell_suite_path, 'eva')):

@@ -8,32 +8,25 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
+from swell.utilities.swell_questions import QuestionList
 from swell.suites.suite_questions import SuiteQuestions as sq
-
-from enum import Enum
-
 
 # --------------------------------------------------------------------------------------------------
 
-class SuiteConfig(QuestionContainer, Enum):
+build_jedi_base = QuestionList(
+    list_name="build_jedi",
+    questions=[
+        sq.all_suites
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    build_jedi_base = QuestionList(
-        list_name="build_jedi",
-        questions=[
-            sq.all_suites
-        ]
-    )
+build_jedi = QuestionList(
+    list_name="build_jedi",
+    questions=[
+        build_jedi_base
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
-
-    build_jedi = QuestionList(
-        list_name="build_jedi",
-        questions=[
-            build_jedi_base
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------

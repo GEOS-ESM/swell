@@ -12,53 +12,55 @@ from swell.utilities.swell_questions import QuestionList
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
+
 # --------------------------------------------------------------------------------------------------
 
-localensembleda_tier1 = QuestionList(
-    list_name="localensembleda",
+_3dvar_atmos_tier1 = QuestionList(
+    list_name="3dvar_atmos",
     questions=[
-        sq.marine,
-        qd.ensemble_hofx_packets(),
-        qd.ensemble_hofx_strategy(),
-        qd.skip_ensemble_hofx(),
-        qd.final_cycle_point("2021-12-12T00:00:00Z"),
+        sq.common,
+        qd.start_cycle_point("2023-10-10T00:00:00Z"),
+        qd.final_cycle_point("2023-10-10T06:00:00Z"),
+        qd.runahead_limit("P2"),
         qd.jedi_build_method("use_existing"),
         qd.model_components(['geos_atmosphere']),
     ],
     geos_atmosphere=[
-        qd.horizontal_resolution(91),
-        qd.npx_proc(4),
-        qd.npy_proc(4),
-        qd.cycle_times(['T00']),
-        qd.ensemble_num_members(5),
-        qd.skip_ensemble_hofx(True),
-        qd.local_ensemble_solver("GETKF"),
-        qd.local_ensemble_use_linear_observer(True),
-        qd.ensmean_only(False),
-        qd.local_ensemble_save_posterior_mean(False),
-        qd.local_ensemble_save_posterior_mean_increment(True),
-        qd.local_ensemble_save_posterior_ensemble(False),
-        qd.local_ensemble_save_posterior_ensemble_increments(False),
-        qd.path_to_ensemble("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                            "letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4"),
+        qd.cycle_times([
+            "T00",
+            "T06",
+            "T12",
+            "T18"
+        ]),
+        qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
+                                        "dadev/rtodling/archive/Restarts/JEDI/541x"),
+        qd.window_length("PT6H"),
+        qd.window_offset("PT3H"),
+        qd.window_type("3D"),
+        qd.horizontal_resolution("91"),
+        qd.vertical_resolution("72"),
         qd.observations([
             "aircraft_temperature",
             "aircraft_wind",
-            "sondes",
-            "gps",
+            "airs_aqua",
+            "amsr2_gcom-w1",
             "amsua_aqua",
+            "amsua_metop-b",
+            "amsua_metop-c",
             "amsua_n15",
             "amsua_n18",
             "amsua_n19",
-            "amsr2_gcom-w1",
             "atms_n20",
             "atms_npp",
             "avhrr3_metop-b",
             "avhrr3_n18",
             "avhrr3_n19",
-            "scatwind",
-            "sfcship",
-            "sfc",
+            "cris-fsr_n20",
+            "cris-fsr_npp",
+            "gmi_gpm",
+            "gps",
+            "iasi_metop-b",
+            "iasi_metop-c",
             "mhs_metop-b",
             "mhs_metop-c",
             "mhs_n19",
@@ -66,22 +68,23 @@ localensembleda_tier1 = QuestionList(
             "omi_aura",
             "ompsnm_npp",
             "pibal",
-            "ssmis_f17",
-            "amsua_metop-b",
-            "amsua_metop-c"
+            "satwind",
+            "scatwind",
+            "sfcship",
+            "sfc",
+            "sondes",
+            "ssmis_f17"
         ]),
-        qd.background_experiment("x0048"),
-        qd.window_type("3D"),
-        qd.clean_patterns(['*.txt']),
+        qd.clean_patterns(['*.txt', '*.csv']),
     ]
 )
 
 # --------------------------------------------------------------------------------------------------
 
-localensembleda = QuestionList(
-    list_name="localensembleda",
+_3dvar_atmos = QuestionList(
+    list_name="3dvar_atmos",
     questions=[
-        localensembleda_tier1
+        _3dvar_atmos_tier1
     ]
 )
 
