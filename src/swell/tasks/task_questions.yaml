@@ -825,6 +825,16 @@ path_to_gsi_nc_diags:
   - GetGsiNcdiag
   type: string
 
+perhost:
+  ask_question: true
+  default_value: None
+  models:
+  - geos_atmosphere
+  prompt: What is the number of processors per host?
+  tasks:
+  - RunJediVariationalExecutable
+  type: integer
+
 produce_geovals:
   ask_question: true
   default_value: defer_to_model

@@ -38,6 +38,7 @@ class RunJediVariationalExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        perhost = self.config.perhost(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -163,7 +164,7 @@ class RunJediVariationalExecutable(taskBase):
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
             run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
+                           jedi_config_file, output_log_file, perhost)
         else:
             self.logger.info('YAML generated, now exiting.')
 
