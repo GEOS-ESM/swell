@@ -22,6 +22,7 @@ from swell.utilities.logger import Logger
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
+from swell.suites.all_suites import AllSuites
 
 
 # --------------------------------------------------------------------------------------------------
@@ -119,9 +120,7 @@ class PrepareExperimentConfigAndSuite:
         # Get a list of all questions associated with the suite, except for those specified
         # seperately for models
 
-        suite_config_obj = getattr(importlib.import_module(
-            f'swell.suites.{self.suite}.suite_config'), 'SuiteConfig')[self.suite_config].value
-
+        suite_config_obj = AllSuites.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
 
         # Allow for adding extra tasks manually from configuration

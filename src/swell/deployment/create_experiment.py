@@ -16,6 +16,7 @@ import sys
 import yaml
 from typing import Union, Optional
 
+from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
@@ -158,8 +159,7 @@ def prepare_config(
 
 
 def create_experiment_directory(
-    suite: str,
-    suite_config: Optional[str],
+    suite_config: str,
     method: str,
     platform: str,
     override: str,
@@ -167,14 +167,9 @@ def create_experiment_directory(
     slurm: Optional[str]
 ) -> None:
 
-    # Set the default suite config if none is specified
-    # -------------------------------------------------
-    if suite_config is None:
-        suite_config = suite
-
-    # Put an underscore in front of suite config if it begins with a digit
-    # --------------------------------------------------------------------
-    suite_config = ('_' if suite_config[0].isdigit() else '') + suite_config
+    # Get the base name of the suite
+    # ------------------------------
+    suite = AllSuites.base_suite(suite_config)
 
     # Create a logger
     # ---------------
