@@ -246,8 +246,12 @@ An example question class:
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory"
         ask_question: bool = True
+        # Need to do a lambda here because dataclass fields cannot be
+        # initialized to mutable types (like dict or list).
+        # https://docs.python.org/3/library/dataclasses.html#mutable-default-values
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_existing"
+        })
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
         widget_type: WidgetType = WidgetType.STRING
