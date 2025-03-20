@@ -299,7 +299,8 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.marine_models(),
             qd.observing_system_records_path(),
-            qd.window_offset()
+            qd.window_offset(),
+            qd.marine_models()
         ]
     )
 
@@ -405,7 +406,8 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.observing_system_records_path(),
             qd.r2d2_local_path(),
-            qd.window_offset()
+            qd.window_offset(),
+            qd.marine_models()
         ]
     )
 
@@ -605,4 +607,20 @@ class TaskQuestions(QuestionContainer, Enum):
         ]
     )
 
-# --------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------
+
+    SaveRestart = QuestionList(
+        list_name="SaveRestart",
+        questions=[
+            window_questions,
+            qd.background_time_offset(),
+            qd.forecast_duration(),
+            qd.horizontal_resolution(),
+            qd.marine_models(),
+            qd.r2d2_local_path()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    
