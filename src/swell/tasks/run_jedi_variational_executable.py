@@ -163,13 +163,8 @@ class RunJediVariationalExecutable(taskBase):
         # -----------------------
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            if perhost is None:
-               run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                              jedi_config_file, output_log_file)
-            else:
-               perhost = eval(perhost)
-               run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                              jedi_config_file, output_log_file, perhost)
+            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                           jedi_config_file, output_log_file, perhost)
         else:
             self.logger.info('YAML generated, now exiting.')
 
