@@ -19,19 +19,12 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    ufo_testing_base = QuestionList(
-        list_name="ufo_testing",
-        questions=[
-            sq.common,
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     ufo_testing_tier1 = QuestionList(
         list_name="ufo_testing",
         questions=[
-            ufo_testing_base,
+            sq.common,
             qd.final_cycle_point("2023-10-10T00:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.bundles("REMOVE"),

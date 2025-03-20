@@ -19,19 +19,12 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    convert_ncdiags_base = QuestionList(
-        list_name="convert_ncdiags",
-        questions=[
-            sq.common
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     convert_ncdiags_tier1 = QuestionList(
         list_name="convert_ncdiags",
         questions=[
-            convert_ncdiags_base,
+            sq.common,
             qd.start_cycle_point("2021-12-12T00:00:00Z"),
             qd.final_cycle_point("2021-12-12T06:00:00Z"),
             qd.jedi_build_method("use_existing"),

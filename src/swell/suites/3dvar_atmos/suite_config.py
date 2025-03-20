@@ -19,19 +19,12 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    _3dvar_atmos_base = QuestionList(
-        list_name="3dvar_atmos",
-        questions=[
-            sq.common
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_atmos_tier1 = QuestionList(
         list_name="3dvar_atmos",
         questions=[
-            _3dvar_atmos_base,
+            sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
             qd.final_cycle_point("2023-10-10T06:00:00Z"),
             qd.runahead_limit("P2"),

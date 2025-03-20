@@ -19,19 +19,12 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    geosadas_base = QuestionList(
-        list_name="geosadas",
-        questions=[
-            sq.all_suites,
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     geosadas_tier1 = QuestionList(
         list_name="geosadas",
         questions=[
-            geosadas_base,
+            sq.all_suites,
             qd.jedi_build_method("use_existing"),
             qd.bundles("REMOVE"),
             qd.model_components(['geos_atmosphere']),

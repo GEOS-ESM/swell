@@ -19,22 +19,15 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    forecast_geos_base = QuestionList(
-        list_name="forecast_geos",
-        questions=[
-            sq.all_suites,
-            qd.cycle_times(),
-            qd.final_cycle_point(),
-            qd.start_cycle_point()
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     forecast_geos_tier1 = QuestionList(
         list_name="forecast_geos",
         questions=[
-            forecast_geos_base,
+            sq.all_suites,
+            qd.cycle_times(),
+            qd.final_cycle_point(),
+            qd.start_cycle_point(),
             qd.start_cycle_point("2021-06-20T00:00:00Z"),
             qd.final_cycle_point("2021-06-21T00:00:00Z"),
             qd.cycle_times([

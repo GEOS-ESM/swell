@@ -19,20 +19,13 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    hofx_base = QuestionList(
-        list_name="hofx",
-        questions=[
-            sq.marine,
-            qd.window_type()
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     hofx_tier1 = QuestionList(
         list_name="hofx",
         questions=[
-            hofx_base,
+            sq.marine,
+            qd.window_type(),
             qd.jedi_build_method("use_existing"),
             qd.save_geovals(True),
             qd.model_components(['geos_atmosphere']),

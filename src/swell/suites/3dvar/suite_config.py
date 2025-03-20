@@ -19,19 +19,12 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    _3dvar_base = QuestionList(
-        list_name="3dvar",
-        questions=[
-            sq.marine
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_tier1 = QuestionList(
         list_name="3dvar",
         questions=[
-            _3dvar_base,
+            sq.marine,
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
             qd.final_cycle_point("2021-07-01T12:00:00Z"),
             qd.jedi_build_method("use_existing"),

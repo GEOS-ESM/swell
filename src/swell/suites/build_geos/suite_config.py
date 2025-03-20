@@ -20,19 +20,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    build_geos_base = QuestionList(
-        list_name="build_geos",
-        questions=[
-            sq.all_suites
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     build_geos = QuestionList(
         list_name="build_geos",
         questions=[
-            build_geos_base
+            sq.all_suites
         ]
     )
 

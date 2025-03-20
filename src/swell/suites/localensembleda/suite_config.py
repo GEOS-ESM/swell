@@ -19,22 +19,15 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    localensembleda_base = QuestionList(
-        list_name="localensembleda",
-        questions=[
-            sq.marine,
-            qd.ensemble_hofx_packets(),
-            qd.ensemble_hofx_strategy(),
-            qd.skip_ensemble_hofx()
-        ]
-    )
-
     # --------------------------------------------------------------------------------------------------
 
     localensembleda_tier1 = QuestionList(
         list_name="localensembleda",
         questions=[
-            localensembleda_base,
+            sq.marine,
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.skip_ensemble_hofx(),
             qd.final_cycle_point("2021-12-12T00:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),

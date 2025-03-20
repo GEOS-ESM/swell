@@ -82,13 +82,18 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
+config_help = """
+Suite sub-configuration for default values.
+Common configurations for suites include tier testing defaults."""
+
 
 # --------------------------------------------------------------------------------------------------
 
 
 @swell_driver.command()
 @click.argument('suite', type=click.Choice(get_suites()))
-@click.option('-c', '--config', 'config', default=None, type=click.Choice(get_suite_configs()))
+@click.option('-c', '--config', 'config', default=None,
+              type=click.Choice(get_suite_configs()), help=config_help)
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
