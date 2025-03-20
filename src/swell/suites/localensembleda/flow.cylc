@@ -150,7 +150,7 @@
     [[ThinObs]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediObsfiltersExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediObsfiltersExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
