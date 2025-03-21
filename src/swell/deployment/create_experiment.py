@@ -486,17 +486,8 @@ def prepare_cylc_suite_jinja2(
 
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
-    # Default execution time limit for everthing is PT1H
     for slurm_task in render_dictionary['scheduling'].keys():
-        x = render_dictionary['scheduling'][slurm_task]['execution_time_limit']
-        x = x if x is not None else 'PT1H'
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = x
-
-        # perhost be eliminatd before render flow.cylc
-        for mod in ['all'] + model_components:
-            if mod in render_dictionary['scheduling'][slurm_task]['directives']:
-                x = render_dictionary['scheduling'][slurm_task]['directives'][mod]
-                x.pop('perhost', None)
+        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
 
     # Set some specific values for:
     # ------------------------------

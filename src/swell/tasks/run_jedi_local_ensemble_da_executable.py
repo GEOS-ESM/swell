@@ -205,11 +205,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
-        slurm_dict = self.slurm_dict()
-        classname = self.__class__.__name__
-        m = self.get_model()
-        sub_dict = slurm_dict.get(classname, {}).get(m, {}) or slurm_dict.get(classname, {}).get('all', {})
-        perhost = sub_dict.get('perhost', None)
+        perhost = self.config.perhost()
 
         # Jedi executable name
         # --------------------

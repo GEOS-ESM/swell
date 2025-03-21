@@ -61,7 +61,6 @@ class Config():
         self.__platform__ = experiment_dict.get('platform')
         self.__start_cycle_point__ = experiment_dict.get('start_cycle_point')
         self.__suite_to_run__ = experiment_dict.get('suite_to_run')
-        self.__slurm_dict__ = experiment_dict.get('slurm_directives_tasks')
 
         # If experiment_dict contains models key add the model components to the object
         if 'models' in experiment_dict.keys():

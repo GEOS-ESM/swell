@@ -184,11 +184,6 @@ def prepare_scheduling_dict(
             validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
-        x = None
-        if slurm_task in experiment_task_directives.keys():
-            x = experiment_task_directives[slurm_task].get('execution_time_limit', None)
-        scheduling_dict[slurm_task]['execution_time_limit'] = x
-
     return scheduling_dict
 
 
@@ -359,9 +354,6 @@ GPU scheduling options:
       --gpus-per-socket=n     number of GPUs required per allocated socket
       --gpus-per-task=n       number of GPUs required per spawned task
       --mem-per-gpu=n         real memory required per allocated GPU
-
-Add usage: ./mpiexec:
-     --perhost=n              NCCS_discover perhost is n MPI process per node
 
 Help options:
   -h, --help                  show this help message
