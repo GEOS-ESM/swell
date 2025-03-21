@@ -1006,6 +1006,23 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
+    @datalcass
+    class perhost(TaskQuestion):
+        default_value: str = None
+        question_name: str = "perhost"
+        ask_question: bool = True
+        options: List[bool] = field(default_factory=lambda: [
+            True,
+            False
+        ])
+        models: List[str] = field(default_factory=lambda: [
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the number of processors per host?"
+        widget_type: WidgetType = WidgetType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class produce_geovals(TaskQuestion):
         default_value: str = "defer_to_model"

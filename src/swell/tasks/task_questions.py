@@ -199,7 +199,8 @@ class TaskQuestions(QuestionContainer, Enum):
     RunJediVariationalExecutable = QuestionList(
         list_name="RunJediVariationalExecutable",
         questions=[
-            run_jedi_executable
+            run_jedi_executable,
+            qd.perhost()
         ]
     )
 
