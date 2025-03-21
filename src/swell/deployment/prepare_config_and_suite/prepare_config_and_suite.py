@@ -530,13 +530,8 @@ class PrepareExperimentConfigAndSuite:
     ) -> None:
 
         # Set flag for whether the question should be asked
-        ask_question = True
+        ask_question = self.question_not_been_asked(question_key, model)
 
-        # Has the question already been asked?
-        if question_key in self.experiment_dict:
-            ask_question = False
-
-        # Dictionary for this question
         qd = full_question_dictionary[question_key]
 
         # If model is not none then ensure the experiment dictionary has a dictionary for the model
@@ -554,7 +549,7 @@ class PrepareExperimentConfigAndSuite:
             for key, val in qd['depends'].items():
 
                 # Check is dependency has been asked
-                if key not in self.experiment_dict:
+                if self.question_not_been_asked(key, model):
 
                     # Iteratively ask the dependent question
                     self.ask_a_question(full_question_dictionary, key, model)
@@ -576,8 +571,23 @@ class PrepareExperimentConfigAndSuite:
                 self.questions_dict[question_key] = qd['prompt']
             else:
                 self.experiment_dict['models'][model][question_key] = \
-                    self.config_client.get_answer(self.logger, question_key, qd)
+                    self.config_client.get_answer(self.logger, question_key, qd, model)
                 self.questions_dict[f'models.{model}.{question_key}'] = qd['prompt']
+
+    # ----------------------------------------------------------------------------------------------
+
+    def question_not_been_asked(self, question_key, model):
+        # See if a question has been answered in the experiment dict
+
+        # Check model independent keys
+        if model is None and question_key in self.experiment_dict:
+            return False
+        # Check model dependent keys in the specific model
+        elif 'models' in self.experiment_dict and model in self.experiment_dict['models'] and (
+                question_key in self.experiment_dict['models'][model]):
+            return False
+
+        return True
 
     # ----------------------------------------------------------------------------------------------
 
