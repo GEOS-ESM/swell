@@ -397,9 +397,11 @@ class PrepareExperimentConfigAndSuite:
         7. Perform an exhaustive resolving of suite file templates. Now it is exhaustive because at
            this point we should have all the required information to resolve all the templates.
 
-        8. Build a list of tasks for each model component.
+        8. Ask the new task questions that do not actually depend on the model..
 
-        9. Ask the model dependent task questions.
+        9.1 Build a list of tasks for each model component.
+
+        9.2 Iterate over the model_dep dictionary and ask task questions.
         """
 
         # If the client is CLI put out some information about what is due to happen next
@@ -478,7 +480,7 @@ class PrepareExperimentConfigAndSuite:
         suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
                                            True)
 
-        # 9.1 Ask the new task questions that do not actually depend on the model
+        # 8. Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
         for question_key in self.question_dictionary_model_ind:
 
@@ -491,7 +493,7 @@ class PrepareExperimentConfigAndSuite:
                     # Ask the question
                     self.ask_a_question(self.question_dictionary_model_ind, question_key)
 
-        # 8. Build a list of tasks for each model component
+        # 9.1 Build a list of tasks for each model component
         # -------------------------------------------------
         model_dep_tasks = self.get_suite_task_list_model_dep(suite_str)
 
