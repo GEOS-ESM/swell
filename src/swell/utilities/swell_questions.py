@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
 from dataclasses import dataclass, asdict, field
 from typing import List, Optional, Self, Union
 from enum import Enum
