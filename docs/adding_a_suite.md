@@ -246,8 +246,12 @@ An example question class:
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory"
         ask_question: bool = True
+        # Need to do a lambda here because dataclass fields cannot be
+        # initialized to mutable types (like dict or list).
+        # https://docs.python.org/3/library/dataclasses.html#mutable-default-values
         depends: Dict = field(default_factory=lambda: {
             "jedi_build_method": "use_existing"
+        })
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
         widget_type: WidgetType = WidgetType.STRING
@@ -292,9 +296,6 @@ In this question infrastructure, **suites take priority over tasks**. Any questi
 Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
 
 ```python
-from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.suites.suite_questions import SuiteQuestions as sq
-
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
