@@ -1006,7 +1006,7 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
-    @datalcass
+    @dataclass
     class perhost(TaskQuestion):
         default_value: str = None
         question_name: str = "perhost"
