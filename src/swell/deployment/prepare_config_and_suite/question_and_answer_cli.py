@@ -10,6 +10,7 @@
 
 import questionary
 from questionary import Choice
+from typing import Optional
 
 from swell.utilities.logger import Logger
 from swell.utilities.swell_questions import WidgetType
@@ -20,12 +21,16 @@ from swell.utilities.swell_questions import WidgetType
 
 class GetAnswerCli:
 
-    def get_answer(self, logger: Logger, key: str, val: dict):
+    def get_answer(self, logger: Logger, key: str, val: dict, model: Optional[str] = None):
         prompt = val['prompt']
         default = val['default_value']
         widget_type = val['widget_type']
         options = val['options']
 
+        if model is not None:
+            prompt = f'[{model}] {prompt}'
+
+        print('\n')
         if widget_type.is_drop_list:
             answer = self.make_drop_widget(prompt, default, options, widget_type)
         elif widget_type.is_check_list:

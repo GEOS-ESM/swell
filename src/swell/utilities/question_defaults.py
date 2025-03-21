@@ -176,7 +176,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration from the middle of the window when forecasts start?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
