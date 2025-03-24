@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import isodate
 import glob
 import yaml
 
@@ -54,9 +55,13 @@ class PrepGeosRunDir(taskBase):
         self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
         self.logger.info('encouraged to validate file modifications.')
 
-        # Forecast start time object, useful for temporal BC constraints
+        # Forecast start time can be calculated from cycle_date and forecast_duration
+        # This task doesn't have access to DA window lengths since it could be used without the DA
+        # context. So forecast start will be assigned as cycle_date - forecast_duration*3/4
+        # Need to convert forecast_duration to a datetime object first
         # -------------------------------------------------------------
-        self.fc_dto = self.geos.get_rst_time()
+        self.forecast_duration = self.config.forecast_duration()
+        self.fc_dto = self.cycle_time_dto() - isodate.parse_duration(self.forecast_duration) * 3 / 4
 
         # Get static files
         # ----------------
@@ -307,6 +312,8 @@ class PrepGeosRunDir(taskBase):
                 'species.data',
             # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
             os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
+            os.path.join('/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/',
+                         '*'): self.forecast_dir('ExtData'),
             # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_landdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_landdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
@@ -458,8 +465,8 @@ class PrepGeosRunDir(taskBase):
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        forecast_dur = self.config.forecast_duration()
-        [time_string, days, half_duration] = self.geos.iso_to_time_str(forecast_dur, half=True)
+        [time_string, days, half_duration] = self.geos.iso_to_time_str(self.forecast_duration,
+                                                                       half=True)
 
         # We are assuming the beginning of the DA window is half of the forecast
         # duration. We don't need DA information in GEOS preparation tasks (for now).

@@ -8,7 +8,6 @@
 
 import importlib
 import os
-import platform as pltfrm
 import re
 import yaml
 
@@ -54,13 +53,6 @@ def prepare_scheduling_dict(
     # NOTE: Separate function to allow it to be mocked in unit tests.
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
-
-    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-4.12.14' in pltfrm.platform():
-        assert platform == "nccs_discover", (
-            "'Linux-4.12.14' detected, which implies platform 'nccs_discover. " +
-            f"That is inconsistent with user-specified platform '{platform}'."
-        )
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------

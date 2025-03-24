@@ -8,8 +8,11 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import importlib
 import os
 import yaml
+
+from importlib import resources
 
 from swell.swell_path import get_swell_path
 
@@ -43,15 +46,29 @@ def get_platforms() -> list:
 
 def login_or_compute(platform) -> str:
 
+    '''
+    Determine if running on login or compute node
+    '''
+
+    # Start by constructing the full platforms path
+    platform_path = f"swell.deployment.platforms.{platform}"
+
+    # Import the path dynamically
+    try:
+        path_import = importlib.import_module(platform_path)
+    except ModuleNotFoundError:
+        raise Exception(f"Platform '{platform}' has not been configured in SWELL")
+    except Exception as err:
+        raise err
+
     # Open the properties file
-    properties_file = os.path.join(platform_path(), 'properties.yaml')
+    properties_file = resources.files(path_import).joinpath('properties.yaml')
+    with properties_file.open('r') as yaml_file:
+        properties = yaml.safe_load(yaml_file)
 
     # If properties file does not exist return login to be safe
     if not os.path.exists(properties_file):
         return 'login'
-
-    with open(properties_file, 'r') as properties_file_open:
-        properties = yaml.safe_load(properties_file_open)
 
     # Query the hostname by issuing shell command hostname
     hostname = os.popen('hostname').read().strip()
