@@ -127,14 +127,32 @@ def run_executable(
     np: int,
     jedi_executable_path: str,
     jedi_config_file: str,
-    output_log: str
+    output_log: str,
+    perhost: Optional[int] = None
 ) -> None:
 
     # Run the JEDI executable
     # -----------------------
-    logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
 
-    command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
+    if perhost is None:
+        logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
+        command = [
+            'mpirun',
+            '-np', str(np),
+            jedi_executable_path,
+            jedi_config_file
+        ]
+    else:
+        logger.info(
+            f"Running {jedi_executable_path} with {str(np)} processors & perhost {str(perhost)}"
+        )
+        command = [
+            'mpirun',
+            '-np', str(np),
+            '-perhost', str(perhost),
+            jedi_executable_path,
+            jedi_config_file
+        ]
 
     # Run command
     # -----------
