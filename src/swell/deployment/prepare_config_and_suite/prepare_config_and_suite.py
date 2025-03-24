@@ -17,6 +17,7 @@ from typing import Union, Tuple, Optional
 from swell.swell_path import get_swell_path
 from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
 from swell.deployment.prepare_config_and_suite.question_and_answer_defaults import GetAnswerDefaults
+from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
@@ -209,7 +210,7 @@ class PrepareExperimentConfigAndSuite:
         # and questions not required by the suite
         keys_to_remove = []
         for key, val in question_dictionary_model_ind.items():
-            if val['models'] is not None:
+            if dict_get(self.logger, val, 'models', None) is not None:
                 keys_to_remove.append(key)
 
         # Cycle times can be a special case that is needed even when models are not. Though if they
@@ -243,7 +244,7 @@ class PrepareExperimentConfigAndSuite:
         # and questions not required by the suite
         keys_to_remove = []
         for key, val in question_dictionary_model_dep.items():
-            if val['models'] is None:
+            if dict_get(self.logger, val, 'models', None) is None:
                 keys_to_remove.append(key)
         for key in keys_to_remove:
             del question_dictionary_model_dep[key]
@@ -545,7 +546,7 @@ class PrepareExperimentConfigAndSuite:
                     f"Configuration for the {model} model component."
 
         # Check the dependency chain for the question
-        if qd['depends'] is not None:
+        if dict_get(self.logger, qd, 'depends', None) is not None:
             for key, val in qd['depends'].items():
 
                 # Check is dependency has been asked

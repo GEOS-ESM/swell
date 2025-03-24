@@ -101,8 +101,6 @@ class SwellQuestion:
     widget_type: WidgetType
     prompt: str
     question_type: str = None
-    depends: Optional[dict] = None
-    models: Optional[list] = None
     ask_question: bool = False
     options: Optional[str] = None
 
