@@ -121,7 +121,7 @@ graphics:
     plots:
       - mapping:
           projection: spstere
-          domain: global
+          domain: south
         add_map_features: ['coastline']
         add_colorbar:
           label: Sea-ice Concentration Increment
@@ -149,7 +149,7 @@ graphics:
     plots:
       - mapping:
           projection: npstere
-          domain: global
+          domain: north
         add_map_features: ['coastline']
         add_colorbar:
           label: Sea-ice Concentration Increment

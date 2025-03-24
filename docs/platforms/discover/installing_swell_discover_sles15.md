@@ -20,7 +20,7 @@ source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_
 
 ```bash
 module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core
-module load py_lmod_installer/sles15
+module load py_lmod_installer/sles15_spack19
 ```
 
 4. Issue the command to install swell:

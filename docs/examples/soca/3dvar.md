@@ -82,10 +82,10 @@ models:
 
     # What are the analysis variables?
     analysis_variables:
-    - socn
-    - tocn
-    - ssh
-    - hocn
+    - sea_water_salinity
+    - sea_water_potential_temperature
+    - sea_surface_height_above_geoid
+    - sea_water_cell_thickness
 
     # Which background error model do you want to use?
     background_error_model: explicit_diffusion
@@ -122,23 +122,25 @@ models:
     obs_experiment: s2s_v1
 
     # What is the group providing the observations?
-    obs_provider: gdas_marine
+    obs_provider:
+    - odas
+    - gdas_marine
 
     # Which observations do you want to include?
     observations:
-    - adt_3a_egm2008
-    - adt_3b_egm2008
-    - adt_c2_egm2008
-    - adt_j3_egm2008
-    - adt_sa_egm2008
-    - sst_ostia
-    - salt_profile_fnmoc
-    - sss_smos_esa
-    - sss_trak_fnmoc
-    - sst_gmi_l3u
-    - sst_ship_fnmoc
-    - sst_trak_fnmoc
-    - temp_profile_fnmoc
+     - adt_cryosat2n
+     - adt_jason3
+     - adt_saral
+     - adt_sentinel3a
+     - adt_sentinel3b
+     - insitu_profile_argo
+     - sst_ostia
+     - sss_smos
+     - sss_smapv5
+     - sst_abi_g16_l3c
+     - sst_gmi_l3u
+     - sst_viirs_n20_l3u
+     - temp_profile_xbt
 
     # What is the number of processors for JEDI?
     total_processors: 6
@@ -168,7 +170,7 @@ swell_static_files_user: None
 datetime_created: 20240507_100807Z
 
 # Computing platform to run the experiment
-platform: nccs_discover
+platform: nccs_discover_sles15
 
 # Record of the suite being executed
 suite_to_run: 3dvar
