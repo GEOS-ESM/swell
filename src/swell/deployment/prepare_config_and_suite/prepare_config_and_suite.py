@@ -576,7 +576,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def question_not_been_asked(self, question_key, model):
+    def question_not_been_asked(self, question_key: str, model: str) -> bool:
         # See if a question has been answered in the experiment dict
 
         # Check model independent keys
