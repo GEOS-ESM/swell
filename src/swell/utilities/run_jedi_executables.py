@@ -24,13 +24,14 @@ def check_obs(
     path_to_observing_sys_yamls: Optional[str],
     observation: str,
     obs_dict: dict,
-    cycle_time: Optional[str]
+    cycle_time: Optional[str],
+    input_and_output: Optional[bool] = False
 ) -> bool:
 
     use_observation = False
 
-    # Check if file exists
-    # --------------------
+    # Check if observations in input file exists
+    # ------------------------------------------
     filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
     if os.path.exists(filename):
 
@@ -42,8 +43,22 @@ def check_obs(
             if dim_name == 'Location' and dim.size > 0:
                 use_observation = True
 
-    return use_observation
+    if input_and_output:
+        # Check if observations in output file exists
+        # ------------------------------------------
+        filename = obs_dict['obs space']['obsdataout']['engine']['obsfile']
+        if os.path.exists(filename):
 
+            # Open file and check if number of location dimension is nonzero
+            # --------------------------------------------------------------
+            dataset = nc.Dataset(filename, 'r')
+
+            for dim_name, dim in dataset.dimensions.items():
+                if dim_name == 'Location' and dim.size < 1:
+                    print(f'IODA {observation} output has {dim.size} location dimension(s)')
+                    use_observation = False
+
+    return use_observation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -118,8 +133,7 @@ def run_executable(
 
     # Run the JEDI executable
     # -----------------------
-
-    if perhost is None:
+    if perhost is None or perhost == "None":
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
         command = [
             'mpirun',

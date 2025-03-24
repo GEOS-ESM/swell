@@ -261,7 +261,7 @@ graphics:
     plots:
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: ObsValue
@@ -283,7 +283,7 @@ graphics:
 
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: ObsValue
@@ -316,7 +316,7 @@ graphics:
     plots:
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: EffectiveQC1
@@ -349,7 +349,7 @@ graphics:
     plots:
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: Increment (OmBg - OmAn)
@@ -383,7 +383,7 @@ graphics:
     plots:
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: ObsValue
@@ -405,7 +405,7 @@ graphics:
 
       - mapping:
           projection: {{map_projection}}
-          domain: global
+          domain: {{domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: ObsValue
