@@ -8,10 +8,12 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Dict
 
-from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion, WidgetType
+from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
+from swell.utilities.swell_questions import WidgetType as WType
+from swell.utilities.dataclass_utils import mutable_field
 
 
 # --------------------------------------------------------------------------------------------------
@@ -28,11 +30,11 @@ class QuestionDefaults():
         question_name: str = "cycle_times"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the cycle times for this model."
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -40,11 +42,11 @@ class QuestionDefaults():
     class ensemble_hofx_packets(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the number of ensemble packets."
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -52,11 +54,11 @@ class QuestionDefaults():
     class ensemble_hofx_strategy(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_strategy"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the ensemble hofx strategy."
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -66,7 +68,7 @@ class QuestionDefaults():
         question_name: str = "experiment_id"
         ask_question: bool = True
         prompt: str = "What is the experiment id?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -77,7 +79,7 @@ class QuestionDefaults():
         ask_question: bool = True
         prompt: str = ("What is the experiment root (the directory where the "
                        "experiment will be stored)?")
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -87,7 +89,7 @@ class QuestionDefaults():
         question_name: str = "final_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the final cycle (middle of the window)?"
-        widget_type: WidgetType = WidgetType.ISO_DATETIME
+        widget_type: WType = WType.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -97,11 +99,11 @@ class QuestionDefaults():
         question_name: str = "marine_models"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_marine"
         ])
         prompt: str = "Select the active SOCA models for this model."
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -112,7 +114,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: str = "defer_to_code"
         prompt: str = "Enter the model components for this model."
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -123,7 +125,7 @@ class QuestionDefaults():
         ask_question: bool = True
         prompt: str = ("Since this suite is non-cycling choose how "
                        "many hours the workflow can run ahead?")
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -131,11 +133,11 @@ class QuestionDefaults():
     class skip_ensemble_hofx(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "skip_ensemble_hofx"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter if skip ensemble hofx."
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -145,7 +147,7 @@ class QuestionDefaults():
         question_name: str = "start_cycle_point"
         ask_question: bool = True
         prompt: str = "What is the time of the first cycle (middle of the window)?"
-        widget_type: WidgetType = WidgetType.ISO_DATETIME
+        widget_type: WType = WType.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
 
@@ -153,15 +155,15 @@ class QuestionDefaults():
     class window_type(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_type"
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "3D",
             "4D"
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the window type for this model."
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
     # Task question defaults go here
@@ -172,11 +174,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "analysis_forecast_window_offset"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the duration from the middle of the window when forecasts start?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -185,11 +187,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "analysis_variables"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What are the analysis variables?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -198,11 +200,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "background_error_model"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which background error model do you want to use?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -211,11 +213,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "background_experiment"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the name of the name of the experiment providing the backgrounds?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -223,14 +225,14 @@ class QuestionDefaults():
     class background_frequency(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_frequency"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "window_type": "4D"
         })
         prompt: str = "What is the frequency of the background files?"
-        widget_type: WidgetType = WidgetType.ISO_DURATION
+        widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -238,18 +240,18 @@ class QuestionDefaults():
     class background_time_offset(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_time_offset"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = ("How long before the middle of the analysis window did"
                        " the background providing forecast begin?")
-        widget_type: WidgetType = WidgetType.ISO_DURATION
+        widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class bundles(TaskQuestion):
-        default_value: List[str] = field(default_factory=lambda: [
+        default_value: List[str] = mutable_field([
             "fv3-jedi",
             "soca",
             "iodaconv",
@@ -257,7 +259,7 @@ class QuestionDefaults():
         ])
         question_name: str = "bundles"
         ask_question: bool = True
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "fv3-jedi",
             "soca",
             "iodaconv",
@@ -266,11 +268,11 @@ class QuestionDefaults():
             "oops",
             "saber"
         ])
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "jedi_build_method": "create"
         })
         prompt: str = "Which JEDI bundles do you wish to build?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -279,11 +281,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "clean_patterns"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Provide a list of patterns that you wish to remove from the cycle directory."
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -291,11 +293,11 @@ class QuestionDefaults():
     class crtm_coeff_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "crtm_coeff_dir"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -304,11 +306,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "cycling_varbc"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Do you want to use cycling VarBC option?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -318,11 +320,11 @@ class QuestionDefaults():
         question_name: str = "ensemble_hofx_packets"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -332,11 +334,11 @@ class QuestionDefaults():
         question_name: str = "ensemble_hofx_strategy"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Enter hofx strategy."
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -345,11 +347,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_num_members"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "How many members comprise the ensemble?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -357,15 +359,15 @@ class QuestionDefaults():
     class ensmean_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmean_only"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean only?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -373,15 +375,15 @@ class QuestionDefaults():
     class ensmeanvariance_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmeanvariance_only"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -390,11 +392,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_build_path"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS build directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -403,11 +405,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_source_path"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS source code directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -416,11 +418,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -429,11 +431,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory_pinned"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI build directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -442,11 +444,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_source_directory"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI source code directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -455,11 +457,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_source_directory_pinned"
         ask_question: bool = True
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -469,7 +471,7 @@ class QuestionDefaults():
         question_name: str = "forecast_duration"
         ask_question: bool = True
         prompt: str = "GEOS forecast duration"
-        widget_type: WidgetType = WidgetType.ISO_DURATION
+        widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -478,7 +480,7 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "generate_yaml_and_exit"
         prompt: str = "Generate JEDI executable YAML and exit?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -487,12 +489,12 @@ class QuestionDefaults():
         default_value: str = "create"
         question_name: str = "geos_build_method"
         ask_question: bool = True
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "use_existing",
             "create"
         ])
         prompt: str = "Do you want to use an existing GEOS build or create a new build?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -502,7 +504,7 @@ class QuestionDefaults():
         question_name: str = "geos_experiment_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -512,7 +514,7 @@ class QuestionDefaults():
         question_name: str = "geos_gcm_tag"
         ask_question: bool = True
         prompt: str = "Which GEOS tag do you wish to clone?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -522,7 +524,7 @@ class QuestionDefaults():
         question_name: str = "geos_restarts_directory"
         ask_question: bool = True
         prompt: str = "What is the path to the GEOS restarts directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -531,15 +533,15 @@ class QuestionDefaults():
         default_value: str = "/dev/null/"
         question_name: str = "geos_x_background_directory"
         ask_question: bool = True
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "/dev/null/",
             "/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the path to the GEOS X-backgrounds directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -548,11 +550,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "geovals_experiment"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 experiment providing the GeoVaLs?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -560,11 +562,11 @@ class QuestionDefaults():
     class geovals_provider(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "geovals_provider"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 database providing the GeoVaLs?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -572,11 +574,11 @@ class QuestionDefaults():
     class gradient_norm_reduction(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gradient_norm_reduction"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What value of gradient norm reduction for convergence?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -584,11 +586,11 @@ class QuestionDefaults():
     class gsibec_configuration(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gsibec_configuration"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which GSIBEC climatological or hybrid?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -596,11 +598,11 @@ class QuestionDefaults():
     class horizontal_localization_lengthscale(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_lengthscale"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for horizontal covariance localization?"
-        widget_type: WidgetType = WidgetType.FLOAT
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -608,12 +610,12 @@ class QuestionDefaults():
     class horizontal_localization_max_nobs(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_max_nobs"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("What is the maximum number of observations to consider"
                        " for horizontal covariance localization?")
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -622,11 +624,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_method"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the horizontal?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -636,11 +638,11 @@ class QuestionDefaults():
         question_name: str = "horizontal_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -649,14 +651,14 @@ class QuestionDefaults():
         default_value: str = "create"
         question_name: str = "jedi_build_method"
         ask_question: bool = True
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "use_existing",
             "use_pinned_existing",
             "create",
             "pinned_create"
         ])
         prompt: str = "Do you want to use an existing JEDI build or create a new build?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -666,14 +668,14 @@ class QuestionDefaults():
         question_name: str = "jedi_forecast_model"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
-        depends: Dict = field(default_factory=lambda: {
+        depends: Dict = mutable_field({
             "window_type": "4D"
         })
         prompt: str = "What forecast model should be used within JEDI for 4D window propagation?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -681,11 +683,11 @@ class QuestionDefaults():
     class local_ensemble_inflation_mult(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_mult"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
-        widget_type: WidgetType = WidgetType.FLOAT
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -693,11 +695,11 @@ class QuestionDefaults():
     class local_ensemble_inflation_rtpp(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtpp"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
-        widget_type: WidgetType = WidgetType.FLOAT
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -705,11 +707,11 @@ class QuestionDefaults():
     class local_ensemble_inflation_rtps(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtps"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
-        widget_type: WidgetType = WidgetType.FLOAT
+        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -717,15 +719,15 @@ class QuestionDefaults():
     class local_ensemble_save_posterior_ensemble(TaskQuestion):
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble members?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -734,15 +736,15 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble_increments"
         ask_question: bool = True
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -751,15 +753,15 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_mean"
         ask_question: bool = True
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -768,15 +770,15 @@ class QuestionDefaults():
         default_value: bool = True
         question_name: str = "local_ensemble_save_posterior_mean_increment"
         ask_question: bool = True
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -786,11 +788,11 @@ class QuestionDefaults():
         question_name: str = "local_ensemble_solver"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -800,11 +802,11 @@ class QuestionDefaults():
         question_name: str = "local_ensemble_use_linear_observer"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -813,11 +815,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "minimizer"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which data assimilation minimizer do you wish to use?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -825,16 +827,16 @@ class QuestionDefaults():
     class mom6_iau(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "mom6_iau"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_marine",
             "geos_ocean"
         ])
         prompt: str = "Do you wish to use IAU for MOM6?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -843,11 +845,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npx_proc"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -856,11 +858,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npy_proc"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -868,12 +870,12 @@ class QuestionDefaults():
     class number_of_iterations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "number_of_iterations"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = ("What number of iterations do you wish to use for each outer loop?"
                        " Provide a list of integers the same length as the number of outer loops.")
-        widget_type: WidgetType = WidgetType.INTEGER_LIST
+        widget_type: WType = WType.INTEGER_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -882,11 +884,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "obs_experiment"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the database providing the observations?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -895,11 +897,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "obs_provider"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which group(s) provide the observations?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -909,11 +911,11 @@ class QuestionDefaults():
         question_name: str = "observations"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which observations do you want to include?"
-        widget_type: WidgetType = WidgetType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -921,11 +923,11 @@ class QuestionDefaults():
     class observing_system_records_mksi_path(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_mksi_path"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the GSI formatted observing system records?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -933,11 +935,11 @@ class QuestionDefaults():
     class observing_system_records_mksi_path_tag(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_mksi_path_tag"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the GSI formatted observing system records tag?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -945,11 +947,11 @@ class QuestionDefaults():
     class observing_system_records_path(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_path"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -958,11 +960,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -971,12 +973,12 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_geos_adas_background"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("What is the path to where the cubed sphere "
                        "backgrounds are in the GEOSadas run?")
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -985,11 +987,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_gsi_bc_coefficients"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the location where GSI bias correction files can be found?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -998,11 +1000,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_gsi_nc_diags"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where the GSI ncdiags are stored?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1011,15 +1013,15 @@ class QuestionDefaults():
         default_value: str = None
         question_name: str = "perhost"
         ask_question: bool = True
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the number of processors per host?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1028,16 +1030,16 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "produce_geovals"
         ask_question: bool = True
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("When running the ncdiag to ioda converted do you "
                        "want to produce GeoVaLs files?")
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1046,7 +1048,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "r2d2_local_path"
         prompt: str = "What is the path to the R2D2 local directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1054,12 +1056,12 @@ class QuestionDefaults():
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
         prompt: str = "When running hofx do you want to output the GeoVaLs?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1067,15 +1069,15 @@ class QuestionDefaults():
     class single_observations(TaskQuestion):
         default_value: bool = False
         question_name: str = "single_observations"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1085,11 +1087,11 @@ class QuestionDefaults():
         question_name: str = "skip_ensemble_hofx"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1098,7 +1100,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
         prompt: str = "What is the path to the Swell Static files directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1107,7 +1109,7 @@ class QuestionDefaults():
         default_value: str = "None"
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1116,12 +1118,12 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "total_processors"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_marine",
             "geos_ocean"
         ])
         prompt: str = "What is the number of processors for JEDI?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1129,17 +1131,17 @@ class QuestionDefaults():
     class vertical_localization_apply_log_transform(TaskQuestion):
         default_value: bool = True
         question_name: str = "vertical_localization_apply_log_transform"
-        options: List[bool] = field(default_factory=lambda: [
+        options: List[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("Should a log (base 10) transformation be applied "
                        "to vertical coordinate when "
                        "constructing vertical localization?")
-        widget_type: WidgetType = WidgetType.BOOLEAN
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1148,11 +1150,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_function"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the vertical?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1161,11 +1163,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_ioda_vertical_coord"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which coordinate should be used in constructing vertical localization?"
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1174,12 +1176,12 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_ioda_vertical_coord_group"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("Which vertical coordinate group should be used "
                        "in constructing vertical localization?")
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1187,11 +1189,11 @@ class QuestionDefaults():
     class vertical_localization_lengthscale(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_lengthscale"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
-        widget_type: WidgetType = WidgetType.INTEGER
+        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1200,12 +1202,12 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_method"
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("What localization scheme should be applied in "
                        "constructing a vertical localization?")
-        widget_type: WidgetType = WidgetType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1215,11 +1217,11 @@ class QuestionDefaults():
         question_name: str = "vertical_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the vertical resolution for the forecast model and background?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1227,11 +1229,11 @@ class QuestionDefaults():
     class window_length(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_length"
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the duration for the data assimilation window?"
-        widget_type: WidgetType = WidgetType.ISO_DURATION
+        widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1240,11 +1242,11 @@ class QuestionDefaults():
         question_name: str = "window_offset"
         default_value: str = "defer_to_model"
         ask_question: bool = True
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the duration between the middle of the window and the beginning?"
-        widget_type: WidgetType = WidgetType.ISO_DURATION
+        widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1253,14 +1255,14 @@ class QuestionDefaults():
         question_name: str = "window_type"
         default_value: str = "defer_to_model"
         ask_question: bool = True
-        options: List[str] = field(default_factory=lambda: [
+        options: List[str] = mutable_field([
             "3D",
             "4D"
         ])
-        models: List[str] = field(default_factory=lambda: [
+        models: List[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
-        widget_type: WidgetType = WidgetType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
