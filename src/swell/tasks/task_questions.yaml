@@ -858,6 +858,7 @@ perhost:
   prompt: What is the number of processors per host?
   tasks:
   - RunJediVariationalExecutable
+  - RunJediLocalEnsembleDaExecutable
   type: integer
 
 produce_geovals:
