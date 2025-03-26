@@ -95,6 +95,7 @@ background_time_offset:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
+  - SaveRestart
   type: iso-duration
 
 bundles:
@@ -300,6 +301,7 @@ forecast_duration:
   tasks:
   - MoveForecastRestart
   - PrepGeosRunDir
+  - SaveRestart
   type: iso-duration
 
 generate_yaml_and_exit:
@@ -476,6 +478,7 @@ horizontal_resolution:
   - RunJediLocalEnsembleDaExecutable
   - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
+  - SaveRestart
   - StageJedi
   - StoreBackground
   type: string-drop-list
@@ -636,6 +639,8 @@ marine_models:
   - RunJediConvertStateSoca2ciceExecutable
   - RunJediFgatExecutable
   - RunJediVariationalExecutable
+  - SaveObsDiags
+  - SaveRestart
   type: string-check-list
 
 minimizer:
@@ -884,6 +889,7 @@ r2d2_local_path:
   - GetGeovals
   - GetObservations
   - SaveObsDiags
+  - SaveRestart
   - StoreBackground
   type: string
 
@@ -1076,6 +1082,7 @@ window_length:
   - RunJediObsfiltersExecutable
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
+  - SaveRestart
   - StoreBackground
   type: iso-duration
 
@@ -1106,6 +1113,7 @@ window_offset:
   - RunJediUfoTestsExecutable
   - RunJediVariationalExecutable
   - SaveObsDiags
+  - SaveRestart
   - StoreBackground
   type: iso-duration
 
@@ -1132,6 +1140,7 @@ window_type:
   - RunJediLocalEnsembleDaExecutable
   - RunJediObsfiltersExecutable
   - RunJediVariationalExecutable
+  - SaveRestart
   - StoreBackground
   type: string-drop-list
 

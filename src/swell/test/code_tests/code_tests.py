@@ -28,8 +28,11 @@ def code_tests() -> None:
     logger.info('Running Swell Test Suite')
 
     # Default log_level minimum to warning
-    os.environ.setdefault("LOGLEVEL", "WARNING")
     # Set to INFO or DEBUG when errors are being debugged
+    os.environ.setdefault("LOGLEVEL", "WARNING")
+    logger.info(f"LOGLEVEL set to {os.environ['LOGLEVEL']} [Valid Options: WARNING/DEBUG/INFO]")
+    if os.environ['LOGLEVEL'] == 'WARNING':
+        logger.info("Set $LOGLEVEL to DEBUG for more detailed output")
 
     # Create a test suite
     test_suite = unittest.TestSuite()

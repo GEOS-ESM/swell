@@ -96,9 +96,10 @@ class EvaObservations(taskBase):
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Check if observation was used
+            # Check if IODA observation input and output have non-zero location dimensions
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                observation_dict, self.cycle_time_dto())
+                                observation_dict, self.cycle_time_dto(), input_and_output=True)
+
             if not use_obs:
                 continue
 
@@ -131,15 +132,18 @@ class EvaObservations(taskBase):
             eva_override['simulated_variables'] = \
                 observation_dict['obs space']['simulated variables']
             eva_override['map_projection'] = 'plcarr'
+            eva_override['domain'] = 'global'
 
             # If filename contains icec_ change map projection to polar stereographic
             # -----------------------------------------------------------------------
             if 'icec_' in obs_file:
                 eva_override['map_projection'] = 'npstere'
+                eva_override['domain'] = 'north'
                 # if file name has 'south" or "sh" then change to south polar stereographic
                 # ---------------------------------------------------------------
                 if 'south' in obs_file or 'sh' in obs_file:
                     eva_override['map_projection'] = 'spstere'
+                    eva_override['domain'] = 'south'
 
             # # Check if the "passivate" condition exists within the "obs filters" list
             passivate_exists = any(
