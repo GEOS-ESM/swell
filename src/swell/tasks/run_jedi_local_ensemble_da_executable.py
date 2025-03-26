@@ -127,7 +127,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
 
         # Prevent both 'local_ensemble_save_posterior_mean' and
-        # 'local_ensemble_save_posterior_ensemble' from being true  ?? why ??
+        # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
         if self.config.local_ensemble_save_posterior_mean() and \
            self.config.local_ensemble_save_posterior_ensemble():
