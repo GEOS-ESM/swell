@@ -231,19 +231,11 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
         else:
-#            print((f'intended mpi_command = mpirun') +
-#                  (f' -perhost {perhost}' if perhost is not None else '') +
-#                  (f' -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}'))
-#            mpi_command = f"mpirun{f' -perhost {perhost}' if perhost is not None else ''} -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
-#            mpi_command = f"mpirun{' -perhost ' + str(perhost) if perhost is not None else ''} -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
-
-# this still shows errors
-            print(f'perhost =  {perhost}')
             mpi_command = "mpirun"
-            if perhost is not None:
+            if not (perhost is None or perhost == "None"):
                 mpi_command += f" -perhost {perhost}"
             mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
-            print(f'new mpi_command = {mpi_command}')
+            print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
