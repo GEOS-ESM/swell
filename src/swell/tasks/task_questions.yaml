@@ -862,8 +862,8 @@ perhost:
   - geos_atmosphere
   prompt: What is the number of processors per host?
   tasks:
-  - RunJediVariationalExecutable
   - RunJediLocalEnsembleDaExecutable
+  - RunJediVariationalExecutable
   type: integer
 
 produce_geovals:

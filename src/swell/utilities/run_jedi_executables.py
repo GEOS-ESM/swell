@@ -151,7 +151,8 @@ def run_executable(
             jedi_executable_path,
             jedi_config_file
         ]
-    print('mpi_command='+" ".join(command)+' '+output_log)
+        s = ('mpi_command='+" ".join(command)+' '+output_log)
+        logger.debug(s)
 
     # Run command
     # -----------

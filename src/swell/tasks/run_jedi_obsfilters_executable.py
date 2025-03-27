@@ -151,7 +151,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                             'build', 'bin', jedi_executable)
 
-        np = 1
+        np = 1  #  np: NPROCS
         # Run the JEDI executable
         # -----------------------
         if not generate_yaml_and_exit:
