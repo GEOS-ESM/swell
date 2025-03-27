@@ -832,7 +832,7 @@ path_to_gsi_nc_diags:
 
 perhost:
   ask_question: true
-  default_value: None
+  default_value: null
   models:
   - geos_atmosphere
   prompt: What is the number of processors per host?
