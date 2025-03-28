@@ -120,7 +120,8 @@ class Geos():
     def iso_to_time_str(
         self,
         iso_duration: str,
-        half: bool = False
+        half: bool = False,
+        agcm: bool = False,
     ) -> Tuple[str, int, datetime.timedelta]:
 
         # Parse the ISO duration string and get the total number of seconds
@@ -141,12 +142,17 @@ class Geos():
         # --------------------------------------------
         days, remainder = divmod(duration_seconds, 60*60*24)
 
-        # Convert the duration to a string in the format of "HHMMSS" to be used
-        # with AGCM.rc and CAP.rc
+        # Convert the duration to a string in the format of "HHMMSS" to be used in CAP.rc
         # ---------------------------------------------------------------------
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
         time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
+
+        # If AGCM.rc is used, for RECORD_FREQUENCY the time string should be in the format
+        # of "HHHMMSS"
+        # ----------------------------------------------------------------------
+        if agcm:
+            time_string = f'{int(hours):03d}{int(minutes):02d}{int(seconds):02d}'
 
         return time_string, days, duration
 
