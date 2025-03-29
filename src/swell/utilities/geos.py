@@ -149,10 +149,11 @@ class Geos():
         time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
 
         # If AGCM.rc is used, for RECORD_FREQUENCY the time string should be in the format
-        # of "HHHMMSS"
-        # ----------------------------------------------------------------------
+        # of "HHHMMSS", where HHH is the total number of hours so need to include days again
+        # --------------------------------------------------------------------------------
         if agcm:
-            time_string = f'{int(hours):03d}{int(minutes):02d}{int(seconds):02d}'
+            hours = int(hours) + 24 * int(days)
+            time_string = f'{hours:03d}{int(minutes):02d}{int(seconds):02d}'
 
         return time_string, days, duration
 
