@@ -31,7 +31,7 @@ class SLURMConfigTest(unittest.TestCase):
 
         # Nested example
         experiment_dict = {
-            "model_components": ["geos_atmosphere", "geos_ocean"],
+            "model_components": ["geos_atmosphere", "geos_marine"],
             "slurm_directives_global": {
                 "account": "x1234",
             },
@@ -49,17 +49,6 @@ class SLURMConfigTest(unittest.TestCase):
             }
         }
 
-        platform_mocked.return_value = "Linux-4.12.14"
-        # Platform-specific definitions and tests
-        sd_discover = prepare_scheduling_dict(logger, experiment_dict,
-                                              platform="nccs_discover")
-        self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
-                         ["constraint"], "cas|sky")
-
-        with self.assertRaises(AssertionError):
-            prepare_scheduling_dict(logger, experiment_dict,
-                                    platform="nccs_discover_sles15")
-
         platform_mocked.return_value = "Linux-5.14.21"
         sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
                                                      platform="nccs_discover_sles15")
@@ -69,8 +58,8 @@ class SLURMConfigTest(unittest.TestCase):
                          ["all"]["qos"], "dastest")
 
         # Platform generic tests
-        for sd in [sd_discover, sd_discover_sles15]:
-            for mc in ["all", "geos_atmosphere", "geos_ocean"]:
+        for sd in [sd_discover_sles15]:
+            for mc in ["all", "geos_atmosphere", "geos_marine"]:
                 # Hard-coded task-specific defaults
                 self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
                 self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]
@@ -84,7 +73,7 @@ class SLURMConfigTest(unittest.TestCase):
                 self.assertEqual(sd["EvaObservations"]["directives"][mc]["ntasks-per-node"], 4)
 
             # Task-specific, model-specific configs
-            self.assertEqual(sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"], 2)
+            self.assertEqual(sd["EvaObservations"]["directives"]["geos_marine"]["nodes"], 2)
             self.assertEqual(sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"], 4)
 
 # --------------------------------------------------------------------------------------------------
