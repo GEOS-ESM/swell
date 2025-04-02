@@ -76,9 +76,20 @@ class PrepGeosRunDir(taskBase):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
+               # mom6_iau_nhours = self.config.mom6_iau_nhours()
 
                 mom_input = self.forecast_dir('MOM_input')
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
+
+                mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
+                #convert PT3H to 3.0
+                duration = isodate.parse_duration('PT12H')
+                hours = duration.total_seconds() / 3600
+
+                mom6_config["ODA_INCUPD_NHOURS"] = hours
+                # Write the updated configuration back to a file
+                output_path = self.forecast_dir('MOM_oda_incupd')
+                self.geos.write_mom6_input(mom6_config, output_path)
 
                 with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
                     mom_input_txt = inp_f.read()

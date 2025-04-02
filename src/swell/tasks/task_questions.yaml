@@ -655,6 +655,17 @@ mom6_iau:
   - PrepareAnalysis
   type: boolean
 
+mom6_iau_nhours:
+  ask_question: false
+  default_value: PT3H
+  depends:
+    key: mom6_iau
+    value: true
+  prompt: What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?
+  tasks:
+  - PrepGeosRunDir
+  type: iso-duration
+
 npx_proc:
   ask_question: true
   default_value: defer_to_model
