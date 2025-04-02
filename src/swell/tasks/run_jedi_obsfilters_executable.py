@@ -11,6 +11,7 @@ import os
 import shutil
 import yaml
 from typing import Optional
+import random
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 
@@ -108,12 +109,6 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
                                  observations, self.cycle_time_dto(), jedi_forecast_model)
 
-        # Filter Thinning
-        # ----------------------
-        filter_thinning = [{'filter': 'Thinning', 'amount': obs_thinning_rej_fraction,
-                            'random seed': 0, 'member': 1,
-                            'action': {'name': 'reduce obs space'}}]
-
         # Include filter_thinning into {observations: obs sapce: obs filters:}
         # -------------------------------------------------------------------
         new_dict = {'observations': []}
@@ -132,6 +127,12 @@ class RunJediObsfiltersExecutable(taskBase):
                          {'engine': {'type': 'H5File', 'obsfile': new_obsfile_in}},
                          'obsdataout': {'engine': {'type': 'H5File', 'obsfile': obsfile}},
                          'simulated variables': sim_vars}
+            # Filter Thinning
+            # ----------------------
+            x = random.randrange(0,100,1)
+            filter_thinning = [{'filter': 'Thinning', 'amount': obs_thinning_rej_fraction,
+                                'random seed': x, 'member': 1,
+                                'action': {'name': 'reduce obs space'}}]
             new_observer = {'obs space': obs_space,
                             'obs filters': filter_thinning,
                             'expectVariablesNotToExist': ['VariablesNotToExist']}

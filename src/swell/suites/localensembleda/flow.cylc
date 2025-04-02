@@ -211,8 +211,7 @@
 #        {%- endfor %}
 
     [[SaveObsDiags-{{model_component}}]]
-        script = true
-#        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
