@@ -55,5 +55,6 @@ models:
     - amsua_metop-c
 
     window_type: 4D
+    background_time_offset: PT3H
     clean_patterns:
     - '*.txt'
