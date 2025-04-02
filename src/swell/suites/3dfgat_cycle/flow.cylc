@@ -68,8 +68,8 @@
             # Model preperation
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            # MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
-            MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
+            #MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
             # Run the analysis
@@ -174,6 +174,7 @@
         {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+        execution retry delays = 2*PT1M
 
     [[PrepGeosRunDir]]
         script = "swell task PrepGeosRunDir $config -d $datetime"
