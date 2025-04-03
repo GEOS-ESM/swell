@@ -129,7 +129,7 @@ class RunJediObsfiltersExecutable(taskBase):
                          'simulated variables': sim_vars}
             # Filter Thinning
             # ----------------------
-            x = random.randrange(0,100,1)
+            x = random.randrange(0, 100, 1)
             filter_thinning = [{'filter': 'Thinning', 'amount': obs_thinning_rej_fraction,
                                 'random seed': x, 'member': 1,
                                 'action': {'name': 'reduce obs space'}}]
