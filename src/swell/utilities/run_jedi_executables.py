@@ -120,7 +120,6 @@ def jedi_dictionary_iterator(
 
 # ----------------------------------------------------------------------------------------------
 
-
 def run_executable(
     logger: Logger,
     cycle_dir: str,
@@ -152,10 +151,11 @@ def run_executable(
             jedi_executable_path,
             jedi_config_file
         ]
+        s = ('mpi_command='+" ".join(command)+' '+output_log)
+        logger.debug(s)
 
     # Run command
     # -----------
     run_track_log_subprocess(logger, command, output_log=output_log, cwd=cycle_dir)
-
 
 # --------------------------------------------------------------------------------------------------
