@@ -49,6 +49,7 @@ background_experiment:
   tasks:
   - GetBackground
   - GetBackgroundGeosExperiment
+  - GetEnsembleGeosExperiment
   - StoreBackground
   type: string
 
@@ -82,6 +83,7 @@ background_time_offset:
   tasks:
   - EvaObservations
   - GetBackgroundGeosExperiment
+  - GetEnsembleGeosExperiment
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -367,6 +369,19 @@ geos_x_background_directory:
   prompt: What is the path to the GEOS X-backgrounds directory?
   tasks:
   - GetBackgroundGeosExperiment
+  type: string
+
+geos_x_ensemble_directory:
+  ask_question: true
+  default_value: /dev/null/
+  models:
+  - geos_atmosphere
+  options:
+  - /dev/null/
+  - /gpfsm/dnb05/projects/p139/rtodling/archive/
+  prompt: What is the path to the GEOS X-backgrounds directory?
+  tasks:
+  - GetEnsembleGeosExperiment
   type: string
 
 geovals_experiment:
@@ -721,6 +736,16 @@ obs_provider:
   - GetObservations
   type: string-check-list
 
+obs_thinning_rej_fraction:
+  ask_question: false
+  default_value: 0.75
+  models:
+  - geos_atmosphere
+  prompt: What is the rejection fraction for obs thinning
+  tasks:
+  - RunJediObsfiltersExecutable
+  type: float
+
 observations:
   ask_question: true
   default_value: defer_to_model
@@ -794,6 +819,7 @@ path_to_ensemble:
   default_value: defer_to_model
   models:
   - geos_atmosphere
+  - geos_ocean
   prompt: What is the path to where ensemble members are stored?
   tasks:
   - GetEnsemble
@@ -804,8 +830,7 @@ path_to_geos_adas_background:
   default_value: defer_to_model
   models:
   - geos_atmosphere
-  prompt: What is the path to where the cubed sphere backgrounds are in the GEOSadas
-    run?
+  prompt: What is the path for the GEOSadas cubed sphere backgrounds?
   tasks:
   - GetGeosAdasBackground
   type: string
@@ -837,6 +862,7 @@ perhost:
   - geos_atmosphere
   prompt: What is the number of processors per host?
   tasks:
+  - RunJediLocalEnsembleDaExecutable
   - RunJediVariationalExecutable
   type: integer
 
