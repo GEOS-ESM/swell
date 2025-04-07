@@ -235,6 +235,11 @@ class Geos():
         # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuratin values.
         # ---------------------------------------------------------------------------------
         mom6_config = {}
+
+        # check if the file exists
+        if not os.path.isfile(mom6_input_path):
+            self.logger.abort(f"MOM6 input file not found: {mom6_input_path}")
+
         self.logger.info(f"Parsing MOM6 input file: {mom6_input_path}")
 
         with open(mom6_input_path, 'r') as file:

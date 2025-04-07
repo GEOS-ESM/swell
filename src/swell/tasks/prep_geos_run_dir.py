@@ -67,13 +67,12 @@ class PrepGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
-        mom6_iau = self.config.mom6_iau()
-        # Augment MOM_oda_incupd (IAU) with MOM_input IF it exists and IF mom6_increment.nc
-        # file is located inside the INPUT directory. This allows not having a mom6_iau
-        # switch in the cycling suite file.
+        # Augment MOM_oda_incupd (IAU) with MOM_input IF mom6_iau is true and IF mom6_increment.nc
+        # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
+        # be present in the INPUT directory, so this step is skipped.
         # --------------------------------------------------------------------------
-        if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
-            if os.path.exists(self.forecast_dir('MOM_oda_incupd')):
+        if self.config.mom6_iau():
+            if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
@@ -99,8 +98,7 @@ class PrepGeosRunDir(taskBase):
                 with open(mom_input, 'w') as out_f:
                     out_f.write(mom_input_txt + mom_oda_txt)
             else:
-                self.logger.info('MOM6 Increment file found in INPUT directory')
-                self.logger.abort('MOM_oda_incupd not found. Failed augmentation')
+                self.logger.warning('MOM6 Increment file was not found in INPUT directory')
 
         # Combine input.nml and fvcore_layout
         # Modify input.nml if not cold start (default)
