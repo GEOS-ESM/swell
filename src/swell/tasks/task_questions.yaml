@@ -674,6 +674,9 @@ mom6_iau:
 mom6_iau_nhours:
   ask_question: false
   default_value: PT3H
+  models:
+  - geos_marine
+  - geos_ocean
   depends:
     key: mom6_iau
     value: true

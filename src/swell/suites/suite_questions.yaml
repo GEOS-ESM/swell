@@ -130,19 +130,6 @@ model_components:
   prompt: Enter the model components for this model.
   type: string-check-list
 
-mom6_iau:
-  ask_question: True
-  default_value: defer_to_model
-  models:
-  - geos_marine
-  - geos_ocean
-  options: defer_to_model
-  suites:
-  - 3dfgat_cycle
-  - 3dvar_cycle
-  prompt: Enter the number of hours for MOM6 IAU.
-  type: boolean
-
 runahead_limit:
   ask_question: True
   default_value: 'P4'

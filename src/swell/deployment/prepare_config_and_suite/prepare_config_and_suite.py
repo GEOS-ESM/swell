@@ -511,8 +511,6 @@ class PrepareExperimentConfigAndSuite:
         # Dictionary for this question
         qd = full_question_dictionary[question_key]
 
-        print(f'Asking question: {qd["prompt"]}')
-
         # If model is not none then ensure the experiment dictionary has a dictionary for the model
         if model is not None:
             if 'models' not in self.experiment_dict:
