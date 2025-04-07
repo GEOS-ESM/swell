@@ -652,6 +652,7 @@ mom6_iau:
   prompt: Do you wish to use IAU for MOM6?
   tasks:
   - MoveDaRestart
+  - PrepGeosRunDir
   - PrepareAnalysis
   type: boolean
 
@@ -661,6 +662,9 @@ mom6_iau_nhours:
   depends:
     key: mom6_iau
     value: true
+  options:
+  - PT3H
+  - PT12H
   prompt: What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?
   tasks:
   - PrepGeosRunDir

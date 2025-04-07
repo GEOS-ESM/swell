@@ -67,6 +67,7 @@ class PrepGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
+        mom6_iau = self.config.mom6_iau()
         # Augment MOM_oda_incupd (IAU) with MOM_input IF it exists and IF mom6_increment.nc
         # file is located inside the INPUT directory. This allows not having a mom6_iau
         # switch in the cycling suite file.
@@ -76,17 +77,17 @@ class PrepGeosRunDir(taskBase):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
-               # mom6_iau_nhours = self.config.mom6_iau_nhours()
 
+                mom6_iau_nhours = self.config.mom6_iau_nhours()
                 mom_input = self.forecast_dir('MOM_input')
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
-
                 mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
-                #convert PT3H to 3.0
-                duration = isodate.parse_duration('PT12H')
-                hours = duration.total_seconds() / 3600
 
+                # convert ISO to 3.0
+                duration = isodate.parse_duration(mom6_iau_nhours)
+                hours = duration.total_seconds() / 3600
                 mom6_config["ODA_INCUPD_NHOURS"] = hours
+
                 # Write the updated configuration back to a file
                 output_path = self.forecast_dir('MOM_oda_incupd')
                 self.geos.write_mom6_input(mom6_config, output_path)
