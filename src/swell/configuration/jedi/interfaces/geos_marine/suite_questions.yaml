@@ -8,5 +8,8 @@ ensemble_hofx_strategy:
 ensemble_hofx_packets:
   default_value: 1
 
+mom6_iau:
+  default_value: false
+
 skip_ensemble_hofx:
   default_value: true
