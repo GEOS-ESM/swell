@@ -170,11 +170,11 @@
         script = "swell task RunGeosExecutable $config -d $datetime"
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        execution retry delays = 2*PT1M
         [[[directives]]]
         {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
-        execution retry delays = 2*PT1M
 
     [[PrepGeosRunDir]]
         script = "swell task PrepGeosRunDir $config -d $datetime"
