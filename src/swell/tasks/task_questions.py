@@ -288,7 +288,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.observing_system_records_path(),
-            qd.total_processors()
+            qd.total_processors(),
+            qd.obs_thinning_rej_fraction()
         ]
     )
 
@@ -381,7 +382,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_ioda_vertical_coord(),
             qd.vertical_localization_ioda_vertical_coord_group(),
             qd.vertical_localization_lengthscale(),
-            qd.vertical_localization_method()
+            qd.vertical_localization_method(),
+            qd.perhost()
         ]
     )
 
@@ -577,6 +579,17 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetEnsemble",
         questions=[
             qd.path_to_ensemble()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetEnsembleGeosExperiment = QuestionList(
+        list_name="GetEnsembleGeosExperiment",
+        questions=[
+            qd.background_experiment(),
+            qd.background_time_offset(),
+            qd.geos_x_ensemble_directory()
         ]
     )
 

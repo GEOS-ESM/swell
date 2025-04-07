@@ -546,6 +546,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class geos_x_ensemble_directory(TaskQuestion):
+        default_value: str = "/dev/null/"
+        question_name: str = "geos_x_ensemble_directory"
+        ask_question: bool = True
+        options: List[str] = mutable_field([
+            "/dev/null/",
+            "/gpfsm/dnb05/projects/p139/rtodling/archive/"
+        ])
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the path to the GEOS X-backgrounds directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class geovals_experiment(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "geovals_experiment"
@@ -956,12 +973,25 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class obs_thinning_rej_fraction(TaskQuestion):
+        default_value: float = 0.75
+        question_name: str = "obs_thinning_rej_fraction"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the rejection fraction for obs thinning?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class path_to_ensemble(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "geos_atmosphere",
+            "geos_ocean"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
         widget_type: WType = WType.STRING
@@ -976,8 +1006,7 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = ("What is the path to where the cubed sphere "
-                       "backgrounds are in the GEOSadas run?")
+        prompt: str = ("What is the path for the GEOSadas cubed sphere backgrounds?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
