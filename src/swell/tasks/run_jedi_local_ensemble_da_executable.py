@@ -129,7 +129,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------
-        if self.config.local_ensemble_save_posterior_mean() or \
+        if self.config.local_ensemble_save_posterior_mean() and \
            self.config.local_ensemble_save_posterior_ensemble():
             raise ValueError("'local_ensemble_save_posterior_mean' and\
             'local_ensemble_save_posterior_ensemble' cannot be both true!")
@@ -176,7 +176,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             for index, observation in enumerate(observations):
                 # Get pointer to observer (ref to list)
                 observer = jedi_config_dict['observations']['observers'][index]
-                print('ob=', observation)
                 config_file = os.path.join(localization_path, f'{observation}.yaml')
                 with open(config_file, 'r') as f:
                     loc_list = yaml.safe_load(f)
@@ -206,10 +205,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
+        perhost = self.config.perhost()
 
         # Jedi executable name
         # --------------------
-
         jedi_ensmeanvariance_executable = model_component_meta['executables']
         [f'{jedi_ensmeanvariance_application}']
         jedi_ensmeanvariance_executable_path = os.path.join
@@ -227,12 +226,16 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 self.logger.info('Running ensmean_only')
                 run_executable(self.logger, self.cycle_dir(), np,
                                jedi_ensmeanvariance_executable_path,
-                               jedi_config_file, output_log_file)
+                               jedi_config_file, output_log_file, perhost=perhost)
             else:
-                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                               jedi_config_file, output_log_file)
+                               jedi_config_file, output_log_file, perhost=perhost)
         else:
+            mpi_command = "mpirun"
+            if not (perhost is None or perhost == "None"):
+                mpi_command += f" -perhost {perhost}"
+            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+            print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
