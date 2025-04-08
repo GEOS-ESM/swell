@@ -115,8 +115,8 @@ class QuestionContainer:
         setattr(self, arg_dict['list_name'], args[0])
 
     @classmethod
-    def get_all(self):
-        return self._member_names_
+    def get_all(cls):
+        return cls._member_names_
 
 # --------------------------------------------------------------------------------------------------
 

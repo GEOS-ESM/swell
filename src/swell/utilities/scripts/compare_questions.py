@@ -29,8 +29,8 @@ class CodeDependentQuestions(StrEnum):
     PLATFORM = auto()
 
     @classmethod
-    def filter_list(self, lst: list) -> list:
-        values = [item.value for item in self]
+    def filter_list(cls, lst: list) -> list:
+        values = [item.value for item in cls]
         return [item for item in lst if item not in values]
 
 # --------------------------------------------------------------------------------------------------
