@@ -294,6 +294,13 @@ obs post filters:
         use_air_pressure: false
         variable: stationPressure
   defer to post: true
+- filter: Bounds Check
+  filter variables:
+  - name: stationPressure
+  test variables:
+  - name: ObsErrorData/stationPressure
+  maxvalue: 100000.0
+  defer to post: true
 
 ## specificHumidity. Both types 181 & 187 are rejected.
 - filter: Perform Action
