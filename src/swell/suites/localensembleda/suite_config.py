@@ -28,26 +28,28 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2021-12-12T00:00:00Z"),
+            qd.final_cycle_point("2023-10-10T12:00:00Z"), # set 1DA step
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
-            qd.horizontal_resolution(91),
+            qd.horizontal_resolution('91'),
+            qd.background_experiment('x0050'),
+            qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x'),
+            qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(4),
             qd.cycle_times(['T00']),
-            qd.ensemble_num_members(5),
+            qd.ensemble_num_members(16),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("GETKF"),
             qd.local_ensemble_use_linear_observer(True),
             qd.ensmean_only(False),
-            qd.local_ensemble_save_posterior_mean(False),
+            qd.local_ensemble_save_posterior_mean(True),
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.path_to_ensemble("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                "letk/ensemble/91/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4"),
+            qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
@@ -77,9 +79,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_metop-b",
                 "amsua_metop-c"
             ]),
-            qd.background_experiment("x0048"),
-            qd.window_type("3D"),
-            qd.clean_patterns(['*.txt']),
+            qd.window_type("4D"),
+            qd.clean_patterns(['*.txt'])
         ]
     )
 

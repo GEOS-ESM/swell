@@ -493,10 +493,6 @@ def prepare_cylc_suite_jinja2(
 
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
-    # Default execution time limit for everthing is PT1H
-    for slurm_task in render_dictionary['scheduling'].keys():
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
-
     # Set some specific values for:
     # ------------------------------
     # run time (note: these overwrite defaults above)
