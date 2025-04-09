@@ -117,17 +117,19 @@ class MoveDaRestart(taskBase):
 
             an_fcst_offset = self.config.analysis_forecast_window_offset()
             rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
-            seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
+            seconds = rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second
 
+            # Ensure seconds is a string with 5 digits
+            seconds_str = f"{seconds:05d}"
             rst_files = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-                                           + seconds + '*.nc'])
+                                           + seconds_str + '*.nc'])
 
             for filepath in list(glob.glob(rst_files)):
                 filename = os.path.basename(filepath)
 
                 # Use re.sub to remove the time pattern from the string
                 # -----------------------------------------------------
-                filenext = re.sub(rst_dto.strftime('_Y%Y_D%j_S') + seconds, "", filename)
+                filenext = re.sub(rst_dto.strftime('_Y%Y_D%j_S') + seconds_str, "", filename)
 
                 src_dst_dict.update({
                         filepath: self.at_next_fcst_dir(['INPUT', filenext]),

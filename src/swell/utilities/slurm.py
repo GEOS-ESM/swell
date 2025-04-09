@@ -8,7 +8,6 @@
 
 import importlib
 import os
-import platform as pltfrm
 import re
 import yaml
 
@@ -54,13 +53,6 @@ def prepare_scheduling_dict(
     # NOTE: Separate function to allow it to be mocked in unit tests.
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
-
-    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-4.12.14' in pltfrm.platform():
-        assert platform == "nccs_discover", (
-            "'Linux-4.12.14' detected, which implies platform 'nccs_discover. " +
-            f"That is inconsistent with user-specified platform '{platform}'."
-        )
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
@@ -183,6 +175,12 @@ def prepare_scheduling_dict(
                 )
             validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
+
+        # Default execution time limit for everthing is PT1H
+        x = 'PT1H'
+        if slurm_task in experiment_task_directives.keys():
+            x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
+        scheduling_dict[slurm_task]['execution_time_limit'] = x
 
     return scheduling_dict
 
