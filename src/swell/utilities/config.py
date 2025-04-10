@@ -12,6 +12,7 @@ from typing import Callable
 
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger
+from swell.suites.all_suites import AllSuites
 
 
 # --------------------------------------------------------------------------------------------------
@@ -101,28 +102,50 @@ class Config():
         # Step 2: create variables in the object with the keys/values in the config
         # -------------------------------------------------------------------------
 
+        # Check for suite questions
+        suite_questions = AllSuites.get_config(
+                self.__suite_to_run__).get_all_question_names('suite')
+        question_list = []
+
+        # Add suite questions if they aren't already set
+        for question in suite_questions:
+            if not self.has_attr(question):
+                question_list.append(question)
+
         # Find the questions associated with the task
         if task_name in task_questions.get_all():
-            task_questions_dict = task_questions[task_name].value
+            question_list.extend(task_questions[task_name].value.get_all_question_names())
 
-            # Loop through the experiment dictionary
-            for exp_key, exp_val in experiment_dict.items():
+        # Loop through the experiment dictionary
+        for exp_key, exp_val in experiment_dict.items():
 
-                # Assign the value if needed by the task
-                if exp_key in task_questions_dict.get_all_question_names():
+            # Assign the value if needed by the task
+            if exp_key in question_list:
 
-                    # Set as a variable to config
-                    setattr(self, f'__{exp_key}__', exp_val)
+                # Set as a variable to config
+                setattr(self, f'__{exp_key}__', exp_val)
 
-                    # Add a get method to access variable
-                    setattr(self, f'{exp_key}', self.get(exp_key))
+                # Add a get method to access variable
+                setattr(self, f'{exp_key}', self.get(exp_key))
 
     # ----------------------------------------------------------------------------------------------
 
     def get(self, experiment_key: str) -> Callable:
+
         def getter(default='None'):
             return getattr(self, f'__{experiment_key}__')
         return getter
+
+    # ----------------------------------------------------------------------------------------------
+
+    # Implementation to check if object has attribute that works with custom __get_attr__
+    def has_attr(self, name: str):
+        attr = getattr(self, f'__{name}__')
+
+        if hasattr(attr, '__name__') and attr.__name__ == 'variable_not_found':
+            return False
+
+        return True
 
     # ----------------------------------------------------------------------------------------------
 

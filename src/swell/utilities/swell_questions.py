@@ -10,7 +10,7 @@
 
 import os
 from dataclasses import dataclass, asdict, field
-from typing import List, Optional, Self, Union
+from typing import List, Optional, Self, Union, Literal
 from enum import Enum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
@@ -133,11 +133,18 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_all_question_names(self) -> None:
-        out_list = []
+    def get_all_question_names(self, suite_task: Optional[Literal['suite', 'task']] = None) -> None:
+        question_list = []
         for model in [None] + os.listdir(os.path.join(get_swell_path(),
                                                       'configuration', 'jedi', 'interfaces')):
-            out_list.extend([q['question_name'] for q in self.expand_question_list(model)])
+            question_list.extend([q for q in self.expand_question_list(model)])
+
+        if suite_task is not None:
+            out_list = [q['question_name'] for q in question_list if
+                        q['question_type'] == suite_task]
+        else:
+            out_list = [q['question_name'] for q in question_list]
+
         return sorted(list(set(out_list)))
 
     # --------------------------------------------------------------------------------------------------
