@@ -316,8 +316,11 @@ class PrepareExperimentConfigAndSuite:
                                     val == 'defer_to_model' or val is None):
                                 model_dict[question_name][key] = model_defaults[question_name][key]
 
-                    if key in platform_defaults.keys():
-                        model_dict[question_name].update(platform_defaults[question_name])
+                    if question_name in platform_defaults.keys():
+                        for key, val in question.items():
+                            if val == 'defer_to_platform':
+                                model_dict[question_name][key] = platform_defaults[
+                                        question_name][key]
 
         # Look for defer_to_code in the model_ind dictionary
         # --------------------------------------------------

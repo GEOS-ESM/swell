@@ -136,7 +136,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     suite_config = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
 
     create_experiment_directory(
-        suite, suite_config, "defaults", platform,
+        suite_config, "defaults", platform,
         str(override_yml), False, None
     )
 
