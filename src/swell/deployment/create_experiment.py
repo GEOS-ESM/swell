@@ -16,6 +16,7 @@ import sys
 import yaml
 from typing import Union, Optional
 
+from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
@@ -67,6 +68,7 @@ def clone_config(
 
 def prepare_config(
     suite: str,
+    suite_config: str,
     method: str,
     platform: str,
     override: Union[dict, str, None],
@@ -87,8 +89,8 @@ def prepare_config(
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
-                                                               method, override)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
+                                                               platform, method, override)
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
@@ -157,7 +159,7 @@ def prepare_config(
 
 
 def create_experiment_directory(
-    suite: str,
+    suite_config: str,
     method: str,
     platform: str,
     override: str,
@@ -165,13 +167,18 @@ def create_experiment_directory(
     slurm: Optional[str]
 ) -> None:
 
+    # Get the base name of the suite
+    # ------------------------------
+    suite = AllSuites.base_suite(suite_config)
+
     # Create a logger
     # ---------------
     logger = get_logger('SwellCreateExperiment')
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, method, platform, override, advanced, slurm)
+    experiment_dict_str = prepare_config(suite, suite_config, method, platform,
+                                         override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------
