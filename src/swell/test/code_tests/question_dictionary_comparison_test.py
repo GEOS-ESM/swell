@@ -9,11 +9,8 @@
 
 
 import unittest
-import tempfile
-import shutil
 
-from swell.utilities.scripts.task_question_dicts import tq_dicts
-from swell.utilities.scripts.task_question_dicts_defaults import tq_dicts_defaults
+from swell.utilities.scripts.compare_questions import compare_used_and_set_questions
 
 
 # --------------------------------------------------------------------------------------------------
@@ -23,18 +20,24 @@ class QuestionDictionaryTest(unittest.TestCase):
 
     def test_dictionary_comparison(self):
 
-        # Run main task question dictionary generation
-        tempdir = tempfile.mkdtemp()
-        tq_dicts_rc = tq_dicts(tempdir)
-        assert tq_dicts_rc == 0
+        used_not_set, set_not_used = compare_used_and_set_questions()
 
-        # Run generation for defaults
-        tq_dicts_defaults_rc = tq_dicts_defaults(tempdir)
-        assert tq_dicts_defaults_rc == 0
+        # Throw error if there are any unassigned variables used by the code
+        if len(used_not_set) > 0:
+            error_msg = ("Questions which are required by the code are missing from the question "
+                         "configurations:\n\n")
 
-        # If we got this far without errors, we can remove the temporary
-        # directory (otherwise, it will persist).
-        shutil.rmtree(tempdir)
+            for suite in used_not_set.keys():
+                for task_or_suite in used_not_set[suite]:
+                    questions_str = ""
+                    for q in used_not_set[suite][task_or_suite]:
+                        questions_str += q + '\n'
+                    error_msg += (f"In suite {suite}, the {task_or_suite} question configuration "
+                                  f"is missing the required question(s):\n{questions_str}\n")
 
+        assert len(used_not_set) == 0, error_msg
+
+        # TODO: Implement a check for set-but-not-used questions
+        # This will require a fix/adjustment for some suites
 
 # --------------------------------------------------------------------------------------------------
