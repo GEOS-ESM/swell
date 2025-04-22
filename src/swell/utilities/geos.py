@@ -9,9 +9,7 @@
 
 import datetime
 import f90nml
-import glob
 import isodate
-import netCDF4
 import os
 import re
 from typing import Tuple, Optional, Union
@@ -119,33 +117,11 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_rst_time(self) -> datetime.datetime:
-
-        # Obtain time information from any of the rst files listed by glob
-        # ----------------------------------------------------------------
-        src = os.path.join(self.forecast_dir, '*_rst')
-
-        # Open any _rst file in cycle dir to read time and units
-        # ------------------------------------------------------
-        ncfile = netCDF4.Dataset(list(glob.glob(src))[0])
-        self.logger.info(f"Getting time information from: ' {list(glob.glob(src))[0]}")
-
-        time_var = ncfile.variables['time']
-        units = time_var.units
-
-        # Convert the time values to datetime objects
-        # ---------------------------------------------
-        times = netCDF4.num2date(time_var[:], units=units, calendar='standard')
-        ncfile.close()
-
-        return times[0]
-
-    # ----------------------------------------------------------------------------------------------
-
     def iso_to_time_str(
         self,
         iso_duration: str,
-        half: bool = False
+        half: bool = False,
+        agcm: bool = False,
     ) -> Tuple[str, int, datetime.timedelta]:
 
         # Parse the ISO duration string and get the total number of seconds
@@ -166,12 +142,18 @@ class Geos():
         # --------------------------------------------
         days, remainder = divmod(duration_seconds, 60*60*24)
 
-        # Convert the duration to a string in the format of "HHMMSS" to be used
-        # with AGCM.rc and CAP.rc
+        # Convert the duration to a string in the format of "HHMMSS" to be used in CAP.rc
         # ---------------------------------------------------------------------
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
         time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
+
+        # If AGCM.rc is used, for RECORD_FREQUENCY the time string should be in the format
+        # of "HHHMMSS", where HHH is the total number of hours so need to include days again
+        # --------------------------------------------------------------------------------
+        if agcm:
+            hours = int(hours) + 24 * int(days)
+            time_string = f'{hours:03d}{int(minutes):02d}{int(seconds):02d}'
 
         return time_string, days, duration
 

@@ -104,6 +104,9 @@ observations:
   - sst_viirs_n20_l3u
   - temp_profile_xbt
 
+path_to_ensemble:
+  default_value: test
+
 total_processors:
   default_value: 24
 

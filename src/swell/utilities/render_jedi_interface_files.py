@@ -74,6 +74,7 @@ class JediConfigRendering():
             'cice6_domain',
             'crtm_coeff_dir',
             'cycling_varbc',
+            'ensemble_members',
             'ensemble_hofx_packets',
             'ensemble_hofx_strategy',
             'ensemble_num_members',
@@ -105,6 +106,7 @@ class JediConfigRendering():
             'npy_proc',
             'number_of_iterations',
             'packet_ensemble_members',
+            'perhost',
             'skip_ensemble_hofx',
             'swell_static_files',
             'total_processors',
@@ -124,6 +126,7 @@ class JediConfigRendering():
         # List of all potential valid dynamic keys that can be used in templates
         self.valid_dynamic_keys = [
             'states',
+            'mem',
         ]
 
     # ----------------------------------------------------------------------------------------------

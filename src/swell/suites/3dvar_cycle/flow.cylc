@@ -105,7 +105,7 @@
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            # RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
@@ -116,7 +116,7 @@
 
             # Clean up large files
             # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}}  & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """

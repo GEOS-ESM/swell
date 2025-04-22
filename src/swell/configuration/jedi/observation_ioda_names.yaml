@@ -163,6 +163,9 @@ ioda instrument names:
   - ioda name: adt_jason3
     full name: ADT Jason-3
     inst type: altimeter
+  - ioda name: adt_jason3n
+    full name: ADT Jason-3N
+    inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
     inst type: altimeter

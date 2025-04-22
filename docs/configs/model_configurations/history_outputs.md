@@ -16,15 +16,15 @@ background:
   ocn_filename: MOM6.res.20210702T030000Z.nc
   read_from_file: 1
   state variables:
-  - cicen
-  - hicen
-  - hsnon
-  - socn
-  - tocn
-  - ssh
-  - hocn
-  - mld
-  - layer_depth
+  - sea_ice_area_fraction
+  - sea_ice_thickness
+  - sea_ice_snow_thickness
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
+  - ocean_mixed_layer_thickness
+  - sea_water_depth
 ```
 
 and ocean and sea-ice states:

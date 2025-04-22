@@ -23,7 +23,7 @@ sbatch ... --account=x1234 --nodes=1 --qos=allqueues --no-requeue
 
 Note that the slurm directives such as `--no-requeue` take no arguments, so it was set to `''`. This is a Cylc reqirement for their SLURM directives handling. More details on this can be seen in their documentation [here](https://cylc.github.io/cylc-doc/stable/html/user-guide/task-implementation/job-submission.html#directives-section-quirks-pbs-sge).
 
-Since there are a few SLURM directives that are platform specific, they are stored under `deployment/platforms/{platform_name}/slurm.yaml`. For instance, requested nodes are `constraint: cas` for `nccs_discover` and `constraint: mil` for `nccs_discover_sles15`.
+Since there are a few SLURM directives that are platform specific, they are stored under `deployment/platforms/{platform_name}/slurm.yaml`. For instance, requested nodes are `constraint: cas` for `nccs_discover_cascade` and `constraint: mil` for `nccs_discover_sles15`.
 
 All `sbatch` directives are supported (see [`man sbatch`](https://slurm.schedmd.com/sbatch.html)).
 However, note that SWELL will only validate that a given directive exists; we do not validate data types, or do anything fancy with type conversion (e.g., concatenation of arrays).

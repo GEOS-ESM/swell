@@ -8,13 +8,23 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from typing import Union
-from datetime import datetime as dt
+from typing import Union, Optional
+
+from swell.utilities.logger import Logger
 
 
 class GetAnswerDefaults:
 
-    def get_answer(self, key: str, val: dict) -> Union[int, float, str, dt]:
-        return val['default_value']
+    def get_answer(self, logger: Logger, key: str, val: dict,
+                   model: Optional[str] = None) -> Union[int, float, str]:
+        default = val['default_value']
+        widget_type = val['widget_type']
+
+        if not widget_type.validate_value(default):
+            logger.abort(f'Default value for {key}, {default}, does not conform to type '
+                         f'{widget_type.base_type.__name__}, check the override file or '
+                         'suite configuration.')
+
+        return default
 
 # --------------------------------------------------------------------------------------------------
