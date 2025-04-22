@@ -83,6 +83,7 @@ class taskBase(ABC):
 
         if datetime_input is not None:
             self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
+            self.__final_cycle_point__ = Datetime(self.config.__final_cycle_point__)
 
         # Save the model components
         # -------------------------
@@ -148,7 +149,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    # Method to get the experiment ID
+    # Method to get current platform
     def platform(self) -> str:
         return self.__platform__
 
@@ -235,15 +236,27 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def first_cycle_time(self) -> str:
+    def start_cycle_point(self) -> str:
 
         return self.__start_cycle_point__.string_iso()
 
     # ----------------------------------------------------------------------------------------------
 
-    def first_cycle_time_dto(self) -> dt:
+    def start_cycle_point_dto(self) -> dt:
 
         return self.__start_cycle_point__.dto()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def final_cycle_point(self) -> str:
+
+        return self.__final_cycle_point__.string_iso()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def final_cycle_point_dto(self) -> dt:
+
+        return self.__final_cycle_point__.dto()
 
 # --------------------------------------------------------------------------------------------------
 

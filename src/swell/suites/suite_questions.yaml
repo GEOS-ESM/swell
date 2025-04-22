@@ -11,6 +11,7 @@ cycle_times:
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
+  - eva_capabilities
   - forecast_geos
   - hofx
   - localensembleda
@@ -75,6 +76,7 @@ start_cycle_point:
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
+  - eva_capabilities
   - forecast_geos
   - hofx
   - localensembleda
@@ -92,6 +94,7 @@ final_cycle_point:
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
+  - eva_capabilities
   - forecast_geos
   - hofx
   - localensembleda
@@ -124,6 +127,7 @@ model_components:
   - 3dvar_cycle
   - 3dvar
   - convert_ncdiags
+  - eva_capabilities
   - hofx
   - localensembleda
   - ufo_testing
@@ -141,6 +145,7 @@ runahead_limit:
   - 3dvar
   - 3dvar_cycle
   - convert_ncdiags
+  - eva_capabilities
   - hofx
   - localensembleda
   - ufo_testing

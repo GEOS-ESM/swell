@@ -1,0 +1,22 @@
+start_cycle_point: '2021-07-02T06:00:00Z'
+final_cycle_point: '2021-07-02T18:00:00Z'
+model_components: ['geos_marine']
+models:
+  geos_marine:
+    cycle_times:
+    - T00
+    - T06
+    - T12
+    - T18
+    observations:
+    - adt_cryosat2n
+    - adt_jason3
+    - adt_saral
+    - adt_sentinel3a
+    ncdiag_experiments:
+    - fgat_jra55_01
+    - fgat_jra55_02
+    window_offset: PT3H
+    window_length: PT6H
+    clean_patterns:
+    - '*.taSÅxt'

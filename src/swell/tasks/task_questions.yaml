@@ -82,6 +82,7 @@ background_time_offset:
     forecast begin?
   tasks:
   - EvaObservations
+  - EvaTimeseries
   - GetBackgroundGeosExperiment
   - GetEnsembleGeosExperiment
   - GetGeovals
@@ -141,6 +142,7 @@ crtm_coeff_dir:
   prompt: What is the path to the CRTM coefficient files?
   tasks:
   - EvaObservations
+  - EvaTimeseries
   - GetGeovals
   - GetObservations
   - GsiBcToIoda
@@ -633,7 +635,9 @@ marine_models:
   tasks:
   - EvaIncrement
   - EvaObservations
+  - EvaTimeseries
   - GenerateBClimatology
+  - GetNcdiags
   - GetObservations
   - LinkGeosOutput
   - RunJediConvertStateSoca2ciceExecutable
@@ -669,6 +673,17 @@ mom6_iau:
   - MoveDaRestart
   - PrepareAnalysis
   type: boolean
+
+ncdiag_experiments:
+  ask_question: true
+  default_value: defer_to_model
+  models:
+  - all
+  prompt: Experiment name(s) of the stored ncdiags?
+  tasks:
+  - EvaTimeseries
+  - GetNcdiags
+  type: string-check-list
 
 npx_proc:
   ask_question: true
@@ -755,8 +770,10 @@ observations:
   prompt: Which observations do you want to include?
   tasks:
   - EvaObservations
+  - EvaTimeseries
   - GenerateObservingSystemRecords
   - GetGeovals
+  - GetNcdiags
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
@@ -887,6 +904,7 @@ r2d2_local_path:
   tasks:
   - GetBackground
   - GetGeovals
+  - GetNcdiags
   - GetObservations
   - SaveObsDiags
   - SaveRestart
@@ -1068,6 +1086,7 @@ window_length:
   - all
   prompt: What is the duration for the data assimilation window?
   tasks:
+  - EvaTimeseries
   - GetBackground
   - GetGeovals
   - GetGsiBc
@@ -1095,10 +1114,12 @@ window_offset:
   tasks:
   - EvaIncrement
   - EvaObservations
+  - EvaTimeseries
   - GenerateBClimatology
   - GenerateBClimatologyByLinking
   - GetBackground
   - GetGeovals
+  - GetNcdiags
   - GetObservations
   - GsiBcToIoda
   - GsiNcdiagToIoda
