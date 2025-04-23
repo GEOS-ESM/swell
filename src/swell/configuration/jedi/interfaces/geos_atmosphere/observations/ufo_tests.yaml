@@ -8,17 +8,21 @@ default:
 # Values for individual observation types
 # ---------------------------------------
 
-aircraft:
+aircraft_temperature:
   filter_test:
-    passedBenchmark: 341973
+    passedBenchmark: 160674
+
+aircraft_wind:
+  filter_test:
+    passedBenchmark: 319238
 
 airs_aqua:
   filter_test:
-    passedBenchmark: 360289
+    passedBenchmark: 359077
 
 amsr2_gcom-w1:
   filter_test:
-    passedBenchmark: 8087
+    passedBenchmark: 8900
 
 amsua_aqua:
   filter_test:
@@ -26,75 +30,75 @@ amsua_aqua:
 
 amsua_metop-b:
   filter_test:
-    passedBenchmark: 71950
+    passedBenchmark: 70067
 
 amsua_metop-c:
   filter_test:
-    passedBenchmark: 91408
+    passedBenchmark: 71747
 
 amsua_n15:
   filter_test:
-    passedBenchmark: 56155
+    passedBenchmark: 58981
 
 amsua_n18:
   filter_test:
-    passedBenchmark: 69692
+    passedBenchmark: 0
 
 amsua_n19:
   filter_test:
-    passedBenchmark: 73428
+    passedBenchmark: 72518
 
 atms_n20:
   filter_test:
-    passedBenchmark: 131783
+    passedBenchmark: 123376
 
 atms_npp:
   filter_test:
-    passedBenchmark: 130828
+    passedBenchmark: 122199
 
 avhrr3_metop-b:
   filter_test:
-    passedBenchmark: 4940
+    passedBenchmark: 5334
 
 avhrr3_n18:
   filter_test:
-    passedBenchmark: 5455
+    passedBenchmark: 0
 
 avhrr3_n19:
   filter_test:
-    passedBenchmark: 4948
+    passedBenchmark: 6057
 
 cris-fsr_n20:
   filter_test:
-    passedBenchmark: 220521
+    passedBenchmark: 202110
 
 cris-fsr_npp:
   filter_test:
-    passedBenchmark: 210980
+    passedBenchmark: 0
 
 gmi_gpm:
   filter_test:
-    passedBenchmark: 18608
+    passedBenchmark: 17311
 
 gps:
   filter_test:
-    passedBenchmark: 469594
+    passedBenchmark: 364465
 
 iasi_metop-b:
   filter_test:
-    passedBenchmark: 561875
+    passedBenchmark: 560033
 
 iasi_metop-c:
   filter_test:
-    passedBenchmark: 559038
+    passedBenchmark: 588105
 
 mhs_metop-b:
   filter_test:
-    passedBenchmark: 29630
+    passedBenchmark: 29294
 
 mhs_metop-c:
   filter_test:
-    passedBenchmark: 29812
+    passedBenchmark: 29928
 
 mhs_n19:
   filter_test:
@@ -102,35 +106,35 @@ mhs_n19:
 
 mls55_aura:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 30482
 
 omi_aura:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 2571
 
 ompsnm_npp:
   filter_test:
-    passedBenchmark: 1
+    passedBenchmark: 6706
 
 pibal:
   filter_test:
-    passedBenchmark: 1204
+    passedBenchmark: 1358
 
 satwind:
   filter_test:
-    passedBenchmark: 231948
+    passedBenchmark: 299672
 
 scatwind:
   filter_test:
-    passedBenchmark: 16384
+    passedBenchmark: 16282
 
 sfcship:
   filter_test:
-    passedBenchmark: 99142
+    passedBenchmark: 101086
 
 sfc:
   filter_test:
-    passedBenchmark: 71960
+    passedBenchmark: 74731
 
 sondes:
   filter_test:
@@ -138,4 +142,4 @@ sondes:
 
 ssmis_f17:
   filter_test:
-    passedBenchmark: 48492
+    passedBenchmark: 48507
