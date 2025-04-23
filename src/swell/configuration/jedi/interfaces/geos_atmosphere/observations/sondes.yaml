@@ -261,17 +261,45 @@ obs post filters:
         adjusted_error_name: GsiAdjustObsError
         geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   defer to post: true
-# assign TempObsErrorData/stationPressure <--- ObsErrorData
-- filter: Variable Assignment
-  assignments:
-  - name: TempObsErrorData/specificHumidity
-    type: float
-    function:
-      name: ObsFunction/Arithmetic
-      options:
-        variables:
-        - name: ObsErrorData/specificHumidity
+
+# gross-check appied on specific humidity itself:
+# if abs(omf)>1.0 for quality mark(PreQC) neither 3 nor 7, then obs rejected
+# if abs(omf)>0.7 for quality mark equal either 3 or 7, then obs rejected
+# Background  check
+- filter: Background Check
+  filter variables:
+  - name: specificHumidity
+  threshold: 1.0
+  action:
+    name: reject
+  where:
+  - variable: PreQC/specificHumidity
+    is_not_in: [3 7]
   defer to post: true
+# threshold * 0.7 if PreQC=3 7
+- filter: Background Check
+  filter variables:
+  - name: specificHumidity
+  threshold: 0.7
+  action:
+    name: reject
+  where:
+  - variable: PreQC/specificHumidity
+    is_in: [3 7]
+  defer to post: true
+
+# Gross Check on relative humidity
+- filter: Background Check
+  filter variables:
+  - name: specificHumidity
+  function absolute threshold:
+  - name: ObsFunction/SpecHumidityCheck
+    options:
+      cgross:     [ 8.0]
+      error_min:  [ 10.0 ]
+      error_max:  [ 100.0 ]
+  action:
+    name: reject
 
 # Duplicate factor
 - filter: Perform Action
