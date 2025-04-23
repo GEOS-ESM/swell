@@ -269,7 +269,7 @@ obs post filters:
 - filter: Background Check
   filter variables:
   - name: specificHumidity
-  threshold: 1.0
+  absolute threshold: 1.0
   action:
     name: reject
   where:
@@ -280,7 +280,7 @@ obs post filters:
 - filter: Background Check
   filter variables:
   - name: specificHumidity
-  threshold: 0.7
+  absolute threshold: 0.7
   action:
     name: reject
   where:
