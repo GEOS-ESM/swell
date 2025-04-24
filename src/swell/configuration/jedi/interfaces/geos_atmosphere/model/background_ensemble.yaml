@@ -1,4 +1,4 @@
-date: '{{window_begin_iso}}'
+date: '{{local_background_time_iso}}'
 members from template:
   template:
     datetime: '{{local_background_time_iso}}'
