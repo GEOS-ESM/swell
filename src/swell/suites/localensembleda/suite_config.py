@@ -82,6 +82,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_metop-c"
             ]),
             qd.window_type("3D"),
+            qd.background_time_offset("PT3H"),
             qd.clean_patterns(['*.txt'])
         ]
     )
