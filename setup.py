@@ -52,7 +52,8 @@ setuptools.setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'swell = swell.swell:main'
+            'swell = swell.swell:main',
+            'cylc = swell.cylc:main'
         ],
     },
     )
