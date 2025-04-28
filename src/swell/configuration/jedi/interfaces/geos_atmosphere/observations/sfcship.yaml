@@ -465,6 +465,14 @@ obs post filters:
         use_air_pressure: true
         variable: airTemperature
   defer to post: true
+- filter: Bounds Check
+  filter variables:
+  - name: airTemperature
+  test variables:
+  - name: ObsErrorData/airTemperature
+  maxvalue: 100000.0
+  defer to post: true
+
 
 # ------------------
 # virtualTemperature
@@ -669,6 +677,13 @@ obs post filters:
       options:
         use_air_pressure: true
         variable: virtualTemperature
+  defer to post: true
+- filter: Bounds Check
+  filter variables:
+  - name: virtualTemperature
+  test variables:
+  - name: ObsErrorData/virtualTemperature
+  maxvalue: 100000.0
   defer to post: true
 
 
