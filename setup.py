@@ -53,7 +53,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'swell = swell.swell:main',
-            'cylc = swell.cylc:main'
+            'cylc = swell.cylc_swell:execute_cylc'
         ],
     },
     )
