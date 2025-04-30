@@ -78,6 +78,9 @@ mom6_iau:
   - true
   - false
 
+mom6_iau_nhours:
+  default_value: PT3H
+
 number_of_iterations:
   default_value:
   - 5

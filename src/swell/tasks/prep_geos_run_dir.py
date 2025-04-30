@@ -71,7 +71,7 @@ class PrepGeosRunDir(taskBase):
         # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
         # be present in the INPUT directory, so this step is skipped.
         # --------------------------------------------------------------------------
-        if self.config.get_key_for_model('mom6_iau', 'geos_marine'):
+        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
             if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
