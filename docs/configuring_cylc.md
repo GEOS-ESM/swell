@@ -1,8 +1,9 @@
 # Configuring `cylc`
 
-Before you can run a swell generated workflow it's necessary to configure `cylc`. This is only done before the first run, or when the `cylc` version needs to be updated or when the behavior of `cylc` needs to be modified.
 
-For the first step of this configuration it is necessary to ensure `cylc` is immediately visible in your path when starting a new session. This is achieved by creating a file `$HOME/bin/cylc` (which is typically in the path). This file can then add additional things to the path to start `cylc`.
+Before you can run a swell generated workflow it's necessary to configure `cylc`. Swell requires a `cylc` executable to be visible in the path, and `cylc` requires a file `$HOME/.cylc/flow/global.cylc` to set common aspects of the workflow system.
+
+Configuring the `cylc` executable on Discover is handled automatically by Swell, so no additional steps are necessary. On other platforms, the user needs to ensure a `cylc` executable is immediately discoverable in the path. Usually this is achieved by creating a `~/bin/cylc` file which handles loading an existing `cylc` installation.
 
 Additionally `cylc` uses a file called `$HOME/.cylc/flow/global.cylc` to control common aspects of the workflow system. The `cylc` documentation describes some of the things controlled by `global.cylc`.
 
