@@ -1,0 +1,198 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+from typing import Union, Optional, Self
+from collections.abc import Mapping
+
+from swell.utilities.cylc_formatting import Section, indent_lines
+
+# --------------------------------------------------------------------------------------------------
+
+class CylcWorkflow():
+    def __init__(self, experiment_dict, slurm_external) -> None:
+        self.experiment_dict = experiment_dict
+        self.slurm_external = slurm_external
+
+        self.setup_workflow()
+
+    def set_experiment_dict(self, experiment_dict) -> None:
+        self.experiment_dict = experiment_dict
+
+    def format_string_block(self, string) -> str:
+        out_string = '"""\n'
+        out_string += indent_lines(string, 1)
+        out_string += '"""\n'
+
+        return out_string
+
+    def format_cycle(self, name: str, cycle: str) -> str:
+        cycle_string = f'{name} = '
+        cycle_string += self.format_string_block(cycle)
+        return cycle_string
+    
+    def reset_indentation(self, string: str) -> str:
+        out_string = ''
+
+        start = False
+        for line in string.split('\n'):
+            line = line.strip()
+
+            if len(line) > 0:
+                start = True
+
+            if start:
+                out_string += line
+
+        return out_string
+    
+    def setup_workflow(self) -> None:
+        self.header = self.define_header()
+        self.description = self.define_description()
+        self.scheduler = self.define_scheduler()
+
+        self.scheduling_section = self.define_scheduling_section()
+        self.graph_section = self.define_graph_section()
+
+        self.scheduling = self.define_scheduling()
+
+        self.tasks = self.parse_graph_for_tasks()
+        
+
+    def define_header(self) -> str:
+        return self.reset_indentation("""
+                # (C) Copyright 2021- United States Government as represented by the Administrator of the
+                # National Aeronautics and Space Administration. All Rights Reserved.
+                #
+                # This software is licensed under the terms of the Apache Licence Version 2.0
+                # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
+    
+    def define_description(self) -> str:
+        return self.reset_indentation("""# Cylc workflow auto-generated for suite 
+                                      {suite_to_run} by Swell.""".format(**self.experiment_dict))
+    
+    def define_scheduler(self) -> str:
+        scheduler_dict = {'UTC mode': True, 'allow implicit tasks': False}
+        scheduler = self.create_new_section('scheduler', scheduler_dict)
+
+        return scheduler.get_section_str()
+    
+    def define_scheduling(self) -> str:
+        scheduling = self.scheduling_section.add_subsection(self.graph_section)
+
+        return scheduling.get_section_str()
+    
+    def define_scheduling_section(self) -> Section:
+        scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
+                           'final cycle point': self.experiment_dict['final_cycle_point'],
+                           'runahead limit': self.experiment_dict['runahead_limit']}
+        
+        scheduling_section = Section('scheduling', scheduling_dict)
+
+        return scheduling_section
+    
+    def define_graph_section(self) -> Section:
+        return self.create_new_section('graph')
+    
+    def parse_graph_for_tasks(self) -> Section:
+        tasks = []
+
+        cylc_characters = [':', '[', ']']
+        
+        in_graph = False
+        in_cycle = False
+
+        for line in self.scheduling:
+            comment = False
+            sub_strings = line.split(' ')
+
+            for sub_string in sub_strings:
+                sub_string = sub_string.strip()
+
+                if '#' in sub_string:
+                    comment = True
+
+                if '"""' in sub_string:
+                    in_cycle = not in_cycle
+
+                if not comment and in_graph and in_cycle:
+                    if len(sub_string) > 0 and sub_string not in ['=>', '&', '|']:
+                        task = sub_string
+                        for i, char in enumerate(task):
+                            if char in cylc_characters:
+                                task = task.split(char)[0]
+
+                        if task not in tasks:
+                            tasks.append(task)
+
+            if '[graph]' in line:
+                in_graph = True
+
+        return tasks
+    
+    def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
+        ind_tasks = []
+        model_tasks = {}
+
+        models = []
+        if 'model_components' in self.experiment_dict:
+            models = self.experiment_dict['model_components']
+
+        for model in models:
+            model_tasks[model] = []
+
+        for task in self.tasks:
+            if '-' in task:
+                task_name = task.split('-')[0]
+                model = task.split('-')[1]
+
+                if model in models:
+                    model_tasks[model].append(task_name)
+            else:
+                ind_tasks.append(task)
+
+        return ind_tasks, model_tasks
+    
+    def define_runtime_task_overrides(self) -> dict:
+        return {}
+    
+    def create_new_section(name: Optional[str], content: Union[str, dict], level: int = 0):
+        return Section(name, content, level)
+    
+    def define_runtime(self) -> str:
+        runtime_section = Section('runtime', '# Task defaults\n# -------------\n')
+
+        for task in ['root'] + self.tasks:
+            if task in self.runtime_task_overrides.keys():
+                task_section = self.define_runtime_task_overrides[task]
+
+                runtime_section.add_subsection(task_section)
+
+            else:
+                if '-' in task:
+                    task_name = task.split('-')[0]
+                    model = task.split('-')[1]
+                    if model not in self.experiment_dict['model_components']:
+                        task_name = task
+                        model = None
+                else:
+                    task_name = task
+                    model = None
+                    
+                task_class = TaskRuntime[task_name]
+                task_section = task_class().get_section(model, self.experiment_dict, self.slurm_external)
+
+
+        return runtime_str
+
+
+    
+
+    
+
+

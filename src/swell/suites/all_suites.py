@@ -14,6 +14,7 @@ from importlib import import_module
 
 from swell.swell_path import get_swell_path
 from swell.utilities.suite_utils import get_suites
+from swell.suites.suite_questions import SuiteQuestions
 
 # --------------------------------------------------------------------------------------------------
 
@@ -36,12 +37,13 @@ def base_suite(cls, config: str) -> str:
 
 # --------------------------------------------------------------------------------------------------
 
+def format_suite_name(suite_name):
+    return suite_name[1:] if suite_name[0] == '_' else suite_name
 
-def construct_suite_enum():
+# --------------------------------------------------------------------------------------------------
+
+def construct_suite_config_enum():
     # Automatically construct enum of all suite configs
-
-    def format_config_name(config_name):
-        return config_name[1:] if config_name[0] == '_' else config_name
 
     def wrapper(suite_config_enum):
         # Dictionary used to create the enum
@@ -58,10 +60,10 @@ def construct_suite_enum():
                 suite_configs = suite_container.get_all()
 
                 for config in suite_configs:
-                    enum_dict[format_config_name(config)] = getattr(suite_container, config)
-                    config_suite_map[format_config_name(config)] = suite
+                    enum_dict[format_suite_name(config)] = getattr(suite_container, config)
+                    config_suite_map[format_suite_name(config)] = suite
             else:
-                enum_dict[suite] = SuiteQuestions.all_suites
+                enum_dict[suite] = SuiteQuestions.all_suites.value
                 config_suite_map[suite] = suite
 
         # Set the map dictionary to a hidden attribute
@@ -85,9 +87,48 @@ def construct_suite_enum():
 # --------------------------------------------------------------------------------------------------
 
 
-@construct_suite_enum()
-class AllSuites(Enum):
+def construct_workflow_enum():
+    # Automatically construct enum of all suite configs
+
+    def wrapper(workflow_enum):
+        # Dictionary used to create the enum
+        enum_dict = {}
+        # Map of config names to their parent suites
+        config_suite_map = {}
+
+        # Find all of the suite configs
+        for suite in get_suites():
+            config_path = os.path.join(get_swell_path(), 'suites', suite, 'workflow.py')
+            if os.path.exists(config_path):
+                workflow = getattr(
+                        import_module(f'swell.suites.{suite}.workflow'), f'Workflow_{suite}')
+
+                enum_dict[suite] = workflow
+
+        # Set the map dictionary to a hidden attribute
+        enum_dict['__config_suite_map__'] = config_suite_map
+
+        # Override with manually specified keys in enum
+        for item in workflow_enum:
+            enum_dict[item.name] = item.value
+
+        # Build the enum
+        enum_cls = Enum(workflow_enum.__name__, enum_dict)
+
+        return enum_cls
+    return wrapper
+
+# --------------------------------------------------------------------------------------------------
+
+@construct_suite_config_enum()
+class SuiteConfigs(Enum):
     pass
 
+
+# --------------------------------------------------------------------------------------------------
+
+@construct_workflow_enum()
+class Workflows(Enum):
+    pass
 
 # --------------------------------------------------------------------------------------------------

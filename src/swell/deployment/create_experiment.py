@@ -16,14 +16,15 @@ import sys
 import yaml
 from typing import Union, Optional
 
-from swell.suites.all_suites import AllSuites
+from swell.suites.all_suites import SuiteConfigs
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
-from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
+from swell.suites.all_suites import SuiteConfigs, Workflows
 
 
 # --------------------------------------------------------------------------------------------------
@@ -91,50 +92,27 @@ def prepare_config(
     # ---------------------------------------------------------------
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
                                                                platform, method, override)
+    
+    suite_dict = prepare_config_and_suite.get_experiment_dict()
+
+    slurm_dict = prepare_slurm_defaults_and_overrides(logger, slurm, platform)
+
+    workflow = Workflows[suite](suite_dict, slurm_dict)
+
+    model_ind_tasks, model_dep_tasks = workflow.get_independent_and_model_tasks()
+
+    prepare_config_and_suite.set_model_ind_tasks(model_ind_tasks)
+    prepare_config_and_suite.set_model_dep_tasks(model_dep_tasks)
+
+    experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
+
+    workflow.set_experiment_dict(experiment_dict)
+
+    workflow_string = workflow.get_workflow_str()
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
     experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
-    # Add the datetime to the dictionary
-    # ----------------------------------
-    experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
-    comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
-
-    # Add the platform the dictionary
-    # -------------------------------
-    experiment_dict['platform'] = platform
-    comment_dict['platform'] = 'Computing platform to run the experiment'
-
-    # Add the suite_to_run to the dictionary
-    # --------------------------------------
-    experiment_dict['suite_to_run'] = suite
-    comment_dict['suite_to_run'] = 'Record of the suite being executed'
-
-    # Add the model components to the dictionary
-    # ------------------------------------------
-    if 'models' in experiment_dict:
-        experiment_dict['model_components'] = list(experiment_dict['models'].keys())
-        comment_dict['model_components'] = 'List of models in this experiment'
-
-    # Expand experiment dict with SLURM overrides.
-    # NOTE: This is a bit of a hack. We should really either commit to using a
-    # separate file and pass it around everywhere, or commit fully to keeping
-    # everything in `experiment.yaml` and support it through the Questionary
-    # infrastructure.
-    # ----------------------------------
-    if slurm is not None:
-        logger.info(f"Reading SLURM directives from {slurm}.")
-        assert os.path.exists(slurm)
-        with open(slurm, "r") as slurmfile:
-            slurm_dict = yaml.safe_load(slurmfile)
-        # Ensure that SLURM dict is _only_ used for SLURM directives.
-        slurm_invalid_keys = set(slurm_dict.keys()).difference({
-            "slurm_directives_global",
-            "slurm_directives_tasks"
-        })
-        if slurm_invalid_keys:
-            logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
-        experiment_dict = {**experiment_dict, **slurm_dict}
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
@@ -152,7 +130,7 @@ def prepare_config(
     # Return path to dictionary file
     # ------------------------------
 
-    return experiment_dict_string_comments
+    return experiment_dict_string_comments, workflow_string
 
 
 # --------------------------------------------------------------------------------------------------
@@ -169,7 +147,7 @@ def create_experiment_directory(
 
     # Get the base name of the suite
     # ------------------------------
-    suite = AllSuites.base_suite(suite_config)
+    suite = SuiteConfigs.base_suite(suite_config)
 
     # Create a logger
     # ---------------
@@ -177,7 +155,7 @@ def create_experiment_directory(
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, suite_config, method, platform,
+    experiment_dict_str, workflow_str = prepare_config(suite, suite_config, method, platform,
                                          override, advanced, slurm)
 
     # Load the string using yaml
@@ -205,12 +183,8 @@ def create_experiment_directory(
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
 
-    # At this point we need to write the complete suite file with all templates resolved. Call the
-    # function to build the scheduling dictionary, combine with the experiment dictionary,
-    # resolve the templates and write the suite file to the experiment suite directory.
-    # --------------------------------------------------------------------------------------------
-    swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform)
+    with open(os.path.join(exp_suite_path, 'flow.cylc'), 'w') as file:
+        file.write(workflow_str)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------

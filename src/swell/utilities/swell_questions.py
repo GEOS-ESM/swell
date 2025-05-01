@@ -11,13 +11,18 @@
 import os
 from dataclasses import dataclass, asdict, field
 from typing import List, Optional, Self, Union, Literal
-from enum import Enum
+from enum import Enum, StrEnum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
 from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
+class QuestionType(StrEnum):
+    SUITE = 'suite'
+    TASK = 'task'
+
+# --------------------------------------------------------------------------------------------------
 
 class WidgetType(Enum):
     STRING = "string"
@@ -189,14 +194,14 @@ class QuestionList:
 
 @dataclass
 class SuiteQuestion(SwellQuestion):
-    question_type: str = "suite"
+    question_type: QuestionType = QuestionType.SUITE
 
 
 # --------------------------------------------------------------------------------------------------
 
 @dataclass
 class TaskQuestion(SwellQuestion):
-    question_type: str = "task"
+    question_type: QuestionType = QuestionType.TASK
 
 
 # --------------------------------------------------------------------------------------------------

@@ -10,18 +10,18 @@ import importlib
 import os
 import re
 import yaml
+from typing import Optional
 
 from importlib import resources
 
 from swell.utilities.logger import Logger
 
-
-def prepare_scheduling_dict(
+def prepare_slurm_defaults_and_overrides(
     logger: Logger,
-    experiment_dict: dict,
     platform: str,
+    slurm_file: Optional[str],
 ) -> dict:
-
+    
     # Obtain platform-specific SLURM directives and set them as global defaults
     # Start by constructing the full platforms path
     # -------------------------------------------
@@ -35,18 +35,13 @@ def prepare_scheduling_dict(
         raise Exception(f"Platform '{platform}' has not been configured in SWELL")
     except Exception as err:
         raise err
+    
+    global_defaults = {}
+    global_defaults['slurm_directives_global'] = {}
 
     logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
     with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
-        global_defaults = yaml.safe_load(yaml_file)
-
-    # Hard-coded SLURM defaults for certain tasks
-    # -------------------------------------------
-    task_defaults = {
-        "RunJediVariationalExecutable": {"all": {"nodes": 3}},
-        "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
-        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
-    }
+        global_defaults['slurm_directives_global'] = yaml.safe_load(yaml_file)
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
     # ----------------------------------------------
@@ -54,146 +49,32 @@ def prepare_scheduling_dict(
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
 
-    # Global SLURM settings from experiment dict (questionary / overrides YAML)
-    # ----------------------------------------------
-    experiment_globals = {}
-    if "slurm_directives_global" in experiment_dict:
-        logger.info(f"Loading additional SLURM globals from experiment dict")
-        experiment_globals = experiment_dict["slurm_directives_global"]
+    # Expand experiment dict with SLURM overrides.
+    # NOTE: This is a bit of a hack. We should really either commit to using a
+    # separate file and pass it around everywhere, or commit fully to keeping
+    # everything in `experiment.yaml` and support it through the Questionary
+    # infrastructure.
+    # ----------------------------------
+    if slurm_file is not None:
+        logger.info(f"Reading SLURM directives from {slurm_file}.")
+        assert os.path.exists(slurm_file)
+        with open(slurm_file, "r") as slurmfile:
+            slurm_overrides = yaml.safe_load(slurmfile)
+        # Ensure that SLURM dict is _only_ used for SLURM directives.
+        slurm_invalid_keys = set(slurm_overrides.keys()).difference({
+            "slurm_directives_global",
+            "slurm_directives_tasks"
+        })
+        if slurm_invalid_keys:
+            logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
 
-    # Task-specific SLURM settings from experiment dict (questionary / overrides YAML)
-    # ----------------------------------------------
-    experiment_task_directives = {}
-    if "slurm_directives_tasks" in experiment_dict:
-        logger.info(f"Loading experiment-specific SLURM configs from experiment dict")
-        experiment_task_directives = experiment_dict["slurm_directives_tasks"]
+    slurm_dict = {**global_defaults,
+                  **user_globals,
+                  **slurm_overrides}
+    
+    validate_directives(slurm_dict)
 
-    # List of tasks using slurm
-    # -------------------------
-    slurm_tasks = {
-        'BuildJedi',
-        'BuildGeos',
-        'EvaObservations',
-        'GenerateBClimatology',
-        'RunJediEnsembleMeanVariance',
-        'RunJediConvertStateSoca2ciceExecutable',
-        'RunJediFgatExecutable',
-        'RunJediHofxEnsembleExecutable',
-        'RunJediHofxExecutable',
-        'RunJediLocalEnsembleDaExecutable',
-        'RunJediObsfiltersExecutable',
-        'RunJediUfoTestsExecutable',
-        'RunJediVariationalExecutable',
-        'RunGeosExecutable'
-        }
-
-    # Throw an error if a user tries to set SLURM directives for a task that
-    # doesn't use SLURM.
-    experiment_slurm_tasks = set(experiment_task_directives.keys())
-    non_slurm_tasks = experiment_slurm_tasks.difference(slurm_tasks)
-    assert len(non_slurm_tasks) == 0, \
-        f"The following tasks cannot use SLURM: {non_slurm_tasks}"
-
-    model_components = experiment_dict["model_components"] \
-        if "model_components" in experiment_dict \
-        else []
-
-    scheduling_dict = {}
-    for slurm_task in slurm_tasks:
-        # Priority order (first = highest priority)
-        # 1. Task-specific directives from experiment
-        #    (experiment_task_directives[slurm_task]["all"])
-        # 2. Global directives from experiment (experiment_globals)
-        # 3. Directives from user config (user_globals)
-        # 4. Hard-coded task-specific defaults (task_defaults)
-        # 5. Hard-coded global defaults (global_defaults)
-        # NOTE: Hard-code "job-name" to SWELL task here but it can be
-        # overwritten in task-specific directives.
-        directives = {
-            "job-name": slurm_task,
-            **global_defaults,
-            **user_globals,
-            **experiment_globals
-        }
-        if slurm_task in task_defaults:
-            if "all" in task_defaults[slurm_task]:
-                directives = {
-                    **directives,
-                    **task_defaults[slurm_task]["all"]
-                }
-        if slurm_task in experiment_task_directives:
-            if "all" in experiment_task_directives[slurm_task]:
-                directives = {
-                    **directives,
-                    **experiment_task_directives[slurm_task]["all"]
-                }
-        # Set model_agnostic directives
-        validate_directives(directives)
-        scheduling_dict[slurm_task] = {"directives": {"all": directives}}
-
-        # Now, add model component-specific logic. The inheritance here is more
-        # complicated:
-        # - Experiment global defaults (`experiment_globals`)
-        # - User global defaults (`user_globals`)
-        # - Task- and model-specific hard-coded defaults
-        # - Task-specific, model-generic hard-coded defaults
-        # - Global hard-coded defaults
-        # Now, for every model component, set the model-generic directives
-        # (`directives`) but overwrite with model-specific directives if
-        # present.
-        for model_component in model_components:
-            model_directives = {
-                "job-name": f"{slurm_task}-{model_component}",
-                **global_defaults
-            }
-            if slurm_task in task_defaults:
-                model_directives = add_directives(
-                    model_directives,
-                    task_defaults[slurm_task],
-                    "all"
-                )
-                model_directives = add_directives(
-                    model_directives,
-                    task_defaults[slurm_task],
-                    model_component
-                )
-            model_directives = {
-                **model_directives,
-                **user_globals,
-                **experiment_globals
-            }
-            if slurm_task in experiment_task_directives:
-                model_directives = add_directives(
-                    model_directives,
-                    experiment_task_directives[slurm_task],
-                    "all"
-                )
-                model_directives = add_directives(
-                    model_directives,
-                    experiment_task_directives[slurm_task],
-                    model_component
-                )
-            validate_directives(model_directives)
-            scheduling_dict[slurm_task]["directives"][model_component] = model_directives
-
-        # Default execution time limit for everthing is PT1H
-        x = 'PT1H'
-        if slurm_task in experiment_task_directives.keys():
-            x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
-        scheduling_dict[slurm_task]['execution_time_limit'] = x
-
-    return scheduling_dict
-
-
-def add_directives(target_dict: dict, input_dict: dict, key: str) -> dict:
-    if key in input_dict:
-        return {
-            **target_dict,
-            **input_dict[key]
-        }
-    else:
-        return target_dict
-
+    return slurm_dict
 
 def validate_directives(directive_dict: dict) -> None:
     directive_pattern = r'(?<=--)[a-zA-Z-]+'
@@ -217,10 +98,12 @@ def slurm_global_defaults(
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)
     user_globals = {}
+    user_globals['slurm_directives_global'] = {}
+
     if os.path.exists(yaml_path):
         logger.info(f"Loading SLURM user configuration from {yaml_path}")
         with open(yaml_path, "r") as yaml_file:
-            user_globals = yaml.safe_load(yaml_file)
+            user_globals['slurm_directives_global'] = yaml.safe_load(yaml_file)
     return user_globals
 
 

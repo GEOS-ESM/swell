@@ -17,7 +17,7 @@ from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
-from swell.suites.all_suites import AllSuites
+from swell.suites.all_suites import SuiteConfigs
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 
@@ -87,7 +87,7 @@ or for task-model combinations.
 
 
 @swell_driver.command()
-@click.argument('suite', type=click.Choice(AllSuites.config_names()))
+@click.argument('suite', type=click.Choice(SuiteConfigs.config_names()))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',

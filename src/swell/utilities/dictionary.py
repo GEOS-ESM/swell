@@ -8,7 +8,7 @@
 
 
 import yaml
-from collections.abc import Hashable
+from collections.abc import Hashable, Mapping
 from typing import Union
 
 from swell.utilities.logger import Logger
@@ -174,5 +174,21 @@ def dictionary_override(logger: Logger, orig_dict: dict, override_dict: dict) ->
 
     return orig_dict
 
+
+# --------------------------------------------------------------------------------------------------
+
+def add_dict(priority_dict: Mapping, additional_dict: Mapping) -> Mapping:
+    # Return version of dictionary 1 updated with additional keys from dictionary 2 without
+    # overwriting entries in dictionary 1
+
+    for key, value in additional_dict.items():
+        if key in priority_dict.keys():
+            priority_value = priority_dict[key]
+            if isinstance(value, Mapping) and isinstance(priority_value, Mapping):
+                priority_dict[key] = add_dict(priority_value, value)
+        else:
+            priority_dict[key] = value
+
+    return priority_dict
 
 # --------------------------------------------------------------------------------------------------
