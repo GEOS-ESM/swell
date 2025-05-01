@@ -858,6 +858,24 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class mom6_iau_nhours(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "mom6_iau_nhours"
+        options: List[str] = mutable_field([
+            'PT3H',
+            'PT12H'
+        ])
+        depends: dict = mutable_field({'mom6_iau': True})
+        models: List[str] = mutable_field([
+            "geos_marine",
+            "geos_ocean"
+        ])
+        prompt: str = "What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class npx_proc(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "npx_proc"
