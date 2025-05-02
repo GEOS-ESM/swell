@@ -168,6 +168,8 @@ class CylcWorkflow():
         models = []
         if 'model_components' in self.experiment_dict:
             models = self.experiment_dict['model_components']
+        else:
+            models = []
 
         for model in models:
             model_tasks[model] = []

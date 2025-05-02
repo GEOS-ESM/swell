@@ -144,6 +144,41 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
+    def prepare_task_question_dictionary(self):
+        for task in self.model_independent_tasks:
+            if task in task_questions.get_all():
+                question_list = task_questions[task].value.expand_question_list()
+                for question in question_list:
+                    question_dict = {question['question_name']: question}
+
+                    if question['models'] is not None:
+                        model_dict = {}
+
+                        for question_model in question['models']:
+                            if question_model == 'all_models':
+                                for model in self.experiment_dict['model_components']:
+                                    model_dict[model] = question_dict
+                            elif question_model in self.experiment_dict['model_components']:
+                                model_dict[question_model] = question_dict
+
+                        self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, model_dict)
+                    
+                    else:
+                        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind, question_dict)
+        
+        for model, task_list in self.model_dependent_tasks.items():
+            for task in task_list:
+                if task in task_questions.get_all():
+                    question_list = task_questions[task].value.expand_question_list()
+
+                    for question in question_list:
+                        question_dict = {question['question_name']: question}
+                        if question['models'] is None:
+                            self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind, question_dict)
+                        elif model in question['models']:
+                            self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, {model: question_dict})
+
+
 
     def prepare_task_question_dictionary(self):
         for task in self.model_independent_tasks:
