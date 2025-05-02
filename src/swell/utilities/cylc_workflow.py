@@ -63,6 +63,7 @@ class CylcWorkflow():
         self.scheduling = self.define_scheduling()
 
         self.tasks = self.parse_graph_for_tasks()
+        print(self.tasks)
         
 
     def define_header(self) -> str:
@@ -84,12 +85,16 @@ class CylcWorkflow():
 
         string = indent_lines(string, level, reset=True)
 
+        start = False
         for line in string.split('\n'):
             if len(line.strip()) > 0:
-                out_string += line
+                start = True
+
+            if start:
+                out_string += f'{line}\n'
 
         if section_break:
-            out_string += f'\n# {"-" *98}'
+            out_string += f'\n# {"-" *98}\n\n'
 
         return out_string
 
@@ -123,12 +128,12 @@ class CylcWorkflow():
     def parse_graph_for_tasks(self) -> CylcSection:
         tasks = []
 
-        cylc_characters = [':', '[', ']']
+        cylc_characters = [':', '[', ']', '?']
         
         in_graph = False
         in_cycle = False
 
-        for line in self.scheduling:
+        for line in self.scheduling.split('\n'):
             comment = False
             sub_strings = line.split(' ')
 
@@ -138,18 +143,18 @@ class CylcWorkflow():
                 if '#' in sub_string:
                     comment = True
 
-                if '"""' in sub_string:
-                    in_cycle = not in_cycle
-
                 if not comment and in_graph and in_cycle:
-                    if len(sub_string) > 0 and sub_string not in ['=>', '&', '|']:
+                    if len(sub_string) > 0 and sub_string not in ['=>', '&', '|', '"""']:
                         task = sub_string
                         for i, char in enumerate(task):
                             if char in cylc_characters:
                                 task = task.split(char)[0]
 
-                        if task not in tasks:
+                        if len(task) > 0 and task not in tasks:
                             tasks.append(task)
+
+                if '"""' in sub_string:
+                    in_cycle = not in_cycle
 
             if '[graph]' in line:
                 in_graph = True
@@ -186,7 +191,7 @@ class CylcWorkflow():
         return CylcSection(name, content, level)
     
     def define_runtime(self) -> str:
-        runtime_section = self.create_new_section('runtime', '# Task defaults\n# -------------\n')
+        runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
 
         runtime_overrides = self.define_runtime_task_overrides()
 
@@ -207,8 +212,8 @@ class CylcWorkflow():
                     task_name = task
                     model = None
                     
-                task_class = TaskRuntimes[task_name].value
-                task_section = task_class().get_section(model, self.experiment_dict, self.slurm_external)
+                task_class = TaskRuntimes.get(task_name)
+                task_section = task_class(model=model).get_section(self.experiment_dict, self.slurm_external)
 
                 runtime_section.add_subsection(task_section)
 
@@ -222,12 +227,12 @@ class CylcWorkflow():
         workflow_str = ''
 
         workflow_str += self.header
-        print('DESCRIPTION', self.description)
         workflow_str += self.description
         workflow_str += self.scheduler
         workflow_str += self.scheduling
 
         runtime = self.define_runtime()
         workflow_str += runtime
+
         print(workflow_str)
         return workflow_str

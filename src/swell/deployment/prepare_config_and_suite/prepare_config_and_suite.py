@@ -149,18 +149,18 @@ class PrepareExperimentConfigAndSuite:
         for task in self.model_independent_tasks:
             if task in task_questions.get_all():
                 if self.suite_needs_model_components:
-                    for model in self.experiment_dict['model_components'].keys():
+                    for model in self.experiment_dict['model_components']:
                         model_dict = {model: {}}
-                        for question in task_questions[task].expand_question_list(model):
+                        for question in task_questions[task].value.expand_question_list(model):
                             model_dict[model][question['question_name']] = question
                         
                         self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, model_dict)
                 
-                    for question in task_questions[task].expand_question_list():
+                    for question in task_questions[task].value.expand_question_list():
                         if question['models'] is not None:
-                            for model in self.experiment_dict['model_components'].keys():
+                            for model in self.experiment_dict['model_components']:
                                 model_dict = {model: {}}
-                                for question in task_questions[task].expand_question_list(model):
+                                for question in task_questions[task].value.expand_question_list(model):
                                     if model in question['models'] or 'all_models' in question['models']:
                                         model_dict[model][question['question_name']] = question
 
@@ -168,7 +168,7 @@ class PrepareExperimentConfigAndSuite:
                 
                 else:
                     question_dict = {}
-                    for question in task_questions[task].expand_question_list():
+                    for question in task_questions[task].value.expand_question_list():
                         if question['models'] is not None:
                             self.logger.abort('The model components question has not been answered.')
                         else:

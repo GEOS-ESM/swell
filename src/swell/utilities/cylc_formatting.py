@@ -55,9 +55,6 @@ class CylcSection():
 
         section_str += indent_lines(content, level+1, False)
 
-        if level == 0:
-            section_str += f'# {"-"*98}\n'
-
         return section_str
     
     def add_subsection(self, subsection: Self):
@@ -67,7 +64,7 @@ class CylcSection():
         section_str = self.section_str
 
         if self.level == 0:
-            section_str += f'# {"-"*98}\n'
+            section_str += f'# {"-"*98}\n\n'
 
         return section_str
 

@@ -22,13 +22,15 @@ class Task:
     base_name: Optional[str] = None
     scheduling_name: Optional[str] = None
 
+    model: Optional[str] = None
+
     pre_script: Union[str, bool, None] = False
     script: Union[str, bool, None] = None
 
     retry: Union[str, Mapping, None] = None
     time_limit: Union[str, Mapping, None] = None
     environment: Optional[Mapping] = None
-    slurm: Union[bool, Mapping, None] = None
+    slurm: Optional[Mapping] = None
 
     is_cycling: bool = False
     is_model: bool = False
@@ -42,7 +44,7 @@ class Task:
             self.scheduling_name = self.base_name
 
             if self.is_model:
-                self.scheduling_name += '-{model_component}'
+                self.scheduling_name += f'-{self.model}'
 
         if self.script is None:
             self.script = f'swell task {self.base_name} $config'
@@ -51,12 +53,12 @@ class Task:
                 self.script += ' -d $datetime'
 
             if self.is_model:
-                self.script += ' -m {model_component}'
+                self.script += f' -m {self.model}'
 
     def format_string_block(self, string: str) -> str:
         out_string = '"""\n'
         out_string += indent_lines(string, 1)
-        out_string += '"""\n'
+        out_string += '"""'
 
         return out_string
     
@@ -72,9 +74,8 @@ class Task:
     def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int =0) -> CylcSection:
         return CylcSection(name, content, level)
 
-    def get_section(self, model_component: Optional[str], experiment_dict: Mapping, slurm_external: Mapping):
+    def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
         platform = experiment_dict['platform']
-
         runtime_dict = {}
 
         if self.pre_script:
@@ -99,12 +100,10 @@ class Task:
             runtime_dict['execution retry delays'] = retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
-
-        if self.slurm:
-            if isinstance(self.slurm, Mapping):
-                slurm_dict = {}
-                for key, value in self.slurm.items():
-                    slurm_dict[key] = self.match_platform(value, platform)
+        if self.slurm is not None:
+            slurm_dict = {}
+            for key, value in self.slurm.items():
+                slurm_dict[key] = self.match_platform(value, platform)
             else:
                 slurm_dict = {}
 
@@ -123,16 +122,19 @@ class Task:
 
             slurm_dict = {'job-name': self.scheduling_name,
                           **slurm_globals,
-                          **slurm_dict
+                          **slurm_dict,
                           **slurm_task
                         }
 
             slurm_section_dict = {}
-
+            print('slurm', slurm_section_dict)
             for key, value in slurm_dict.items():
                 slurm_section_dict[f'--{key}'] = value
-
-            runtime_section.add_section(self.create_new_section('directives', slurm_section_dict))
+            print('slurm', slurm_section_dict)
+            directive_section = self.create_new_section('directives', slurm_section_dict)
+        
+            runtime_section.add_subsection(directive_section)
+            print(runtime_section.get_section_str())
 
         return runtime_section
 
@@ -140,7 +142,7 @@ class Task:
 
 @dataclass
 class Model(Task):
-    def __post_init(self):
+    def __post_init__(self):
         self.is_model = True
         super().__post_init__()
 
@@ -148,7 +150,7 @@ class Model(Task):
 
 @dataclass
 class Cycling(Task):
-    def __post_init(self):
+    def __post_init__(self):
         self.is_cycling = True
         super().__post_init__()
 

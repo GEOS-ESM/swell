@@ -70,10 +70,21 @@ def prepare_slurm_defaults_and_overrides(
     else:
         slurm_overrides = {}
 
-    slurm_dict = {**global_defaults,
-                  **user_globals,
-                  **slurm_overrides}
+    if 'slurm_directives_global' not in slurm_overrides.keys():
+        slurm_overrides['slurm_directives_global'] = {}
+
+    if 'slurm_directives_tasks' not in slurm_overrides.keys():
+        slurm_overrides['slurm_directives_tasks'] = {}
+
+    slurm_dict = {}
+
+    slurm_dict['slurm_directives_global'] = {
+            **global_defaults['slurm_directives_global'],
+            **user_globals['slurm_directives_global'],
+            **slurm_overrides['slurm_directives_global']}
+
     validate_directives(slurm_dict["slurm_directives_global"])
+
     if 'slurm_directives_tasks' in slurm_dict:
         for task in slurm_dict["slurm_directives_tasks"].keys():
             validate_directives(slurm_dict["slurm_directives_tasks"][task])

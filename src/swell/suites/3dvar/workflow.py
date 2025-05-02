@@ -13,9 +13,9 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 
 class Workflow_3dvar(CylcWorkflow):
     def define_description(self):
-        description = """
+        description = self.comment_block("""
         # Cylc suite for executing JEDI-based non-cycling variational data assimilation
-        """
+        """)
 
         return description
     
@@ -57,7 +57,7 @@ class Workflow_3dvar(CylcWorkflow):
             GetObservations-{model_component}
 
             # GenerateBClimatology, for ocean it is cycle dependent
-            GenerateBClimatologyByLinking-{model_component} :fail? => GenerateBClimatology-{model_component}
+            GenerateBClimatologyByLinking-{model_component}:fail? => GenerateBClimatology-{model_component}
             GetBackground-{model_component} => GenerateBClimatology-{model_component}
 
             # Perform staging that is cycle dependent
