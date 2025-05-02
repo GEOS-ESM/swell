@@ -45,7 +45,8 @@ class TaskRuntimes():
 
     @dataclass
     class StageJediCycle(Cycling, Model):
-        pass
+        base_name: str = "StageJedi"
+        scheduling_name: str = "StageJediCycle-{model}"
 
     @dataclass
     class GetBackground(Cycling, Model):

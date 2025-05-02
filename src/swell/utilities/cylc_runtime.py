@@ -46,6 +46,9 @@ class Task:
             if self.is_model:
                 self.scheduling_name += f'-{self.model}'
 
+        elif self.is_model:
+            self.scheduling_name = self.scheduling_name.format(model = self.model)
+
         if self.script is None:
             self.script = f'swell task {self.base_name} $config'
 
@@ -79,7 +82,7 @@ class Task:
         runtime_dict = {}
 
         if self.pre_script:
-            runtime_dict['pre_script'] = self.format_string_block(self.pre_script)
+            runtime_dict['pre-script'] = self.format_string_block(self.pre_script)
 
         if self.script:
             runtime_dict['script'] = self.format_string_block(self.script)

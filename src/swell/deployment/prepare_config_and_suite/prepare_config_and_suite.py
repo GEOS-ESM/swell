@@ -144,6 +144,39 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
+    def prepare_suite_question_dictionary(self) -> None:
+
+        question_dictionary_model_ind = {}
+        question_dictionary_model_dep = {}
+
+        suite_config_obj = SuiteConfigs.get_config(self.suite_config)
+        suite_question_list = suite_config_obj.expand_question_list()
+
+        for model in self.possible_model_components:
+            question_dictionary_model_dep[model] = {}
+
+            for question in suite_config_obj.expand_question_list(model):
+                question_dictionary_model_dep[model][question['question_name']] = question
+
+        for question in suite_question_list:
+            if question['models'] is None:
+                question_dictionary_model_ind[question['question_name']] = question
+            else:
+                if 'all_models' in question['models']:
+                    question_models = self.possible_model_components
+                else:
+                    question_models = question['models']
+
+                for model in question_models:
+                    question_dictionary_model_dep = add_dict(question_dictionary_model_dep, {model: {question['question_name']: question}})
+
+        self.suite_needs_model_components = True
+        if 'model_components' not in question_dictionary_model_ind.keys():
+            self.suite_needs_model_components = False
+
+        self.question_dictionary_model_ind = question_dictionary_model_ind
+        self.question_dictionary_model_dep = question_dictionary_model_dep
+
     def prepare_task_question_dictionary(self):
         for task in self.model_independent_tasks:
             if task in task_questions.get_all():
@@ -175,7 +208,7 @@ class PrepareExperimentConfigAndSuite:
                         question_dict = {question['question_name']: question}
                         if question['models'] is None:
                             self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind, question_dict)
-                        elif model in question['models']:
+                        elif model in question['models'] or 'all_models' in question['models']:
                             self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, {model: question_dict})
 
 
