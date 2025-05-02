@@ -40,12 +40,13 @@ class CylcSection():
         self.name = name
         self.content = content
         self.level = level
-
+        print(name)
+        print(content)
         self.section_str = self.__format_section__(self.name, self.content, self.level)
 
     def __format_section__(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0) -> str:
         section_str = ''
-
+        print(level)
         if name is not None:
             section_str += f'{level*"["}{name}{"]"*level}\n'
         else:

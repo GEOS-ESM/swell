@@ -67,13 +67,18 @@ def prepare_slurm_defaults_and_overrides(
         })
         if slurm_invalid_keys:
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
+    else:
+        slurm_overrides = {}
 
     slurm_dict = {**global_defaults,
                   **user_globals,
                   **slurm_overrides}
-    
-    validate_directives(slurm_dict)
-
+    print('huh')
+    validate_directives(slurm_dict["slurm_directives_global"])
+    if 'slurm_directives_tasks' in slurm_dict:
+        for task in slurm_dict["slurm_directives_tasks"].keys():
+            validate_directives(slurm_dict["slurm_directives_tasks"][task])
+    print('huh')
     return slurm_dict
 
 def validate_directives(directive_dict: dict) -> None:

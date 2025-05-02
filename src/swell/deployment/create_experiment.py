@@ -94,15 +94,15 @@ def prepare_config(
                                                                platform, method, override)
     
     suite_dict = prepare_config_and_suite.get_experiment_dict()
+    print(suite_dict)
+    slurm_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
 
-    slurm_dict = prepare_slurm_defaults_and_overrides(logger, slurm, platform)
-
-    workflow = Workflows[suite](suite_dict, slurm_dict)
+    workflow = Workflows.get_workflow(suite)(suite_dict, slurm_dict)
 
     model_ind_tasks, model_dep_tasks = workflow.get_independent_and_model_tasks()
 
-    prepare_config_and_suite.set_model_ind_tasks(model_ind_tasks)
-    prepare_config_and_suite.set_model_dep_tasks(model_dep_tasks)
+    prepare_config_and_suite.set_model_independent_tasks(model_ind_tasks)
+    prepare_config_and_suite.set_model_dependent_tasks(model_dep_tasks)
 
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 

@@ -119,13 +119,13 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_model_ind_tasks(self, tasks: list) -> None:
-        self.model_ind_tasks = tasks
+    def set_model_independent_tasks(self, tasks: list) -> None:
+        self.model_independent_tasks = tasks
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_model_dep_tasks(self, model_task_dict: Mapping) -> None:
-        self.model_dep_tasks = model_task_dict
+    def set_model_dependent_tasks(self, model_task_dict: Mapping) -> None:
+        self.model_dependent_tasks = model_task_dict
 
     # ----------------------------------------------------------------------------------------------
 
@@ -403,11 +403,11 @@ class PrepareExperimentConfigAndSuite:
             if model is None:
                 self.experiment_dict[question_key] = self.config_client.get_answer(
                         self.logger, question_key, qd)
-                self.questions_dict[question_key] = qd['prompt']
+                self.comment_dict[question_key] = qd['prompt']
             else:
                 self.experiment_dict['models'][model][question_key] = \
                     self.config_client.get_answer(self.logger, question_key, qd, model)
-                self.questions_dict[f'models.{model}.{question_key}'] = qd['prompt']
+                self.comment_dict[f'models.{model}.{question_key}'] = qd['prompt']
 
     # ----------------------------------------------------------------------------------------------
 

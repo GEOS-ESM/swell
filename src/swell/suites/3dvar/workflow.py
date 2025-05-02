@@ -20,6 +20,8 @@ class Workflow_3dvar(CylcWorkflow):
         return description
     
     def define_graph_section(self):
+        graph_str = ''
+
         r1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
@@ -43,8 +45,8 @@ class Workflow_3dvar(CylcWorkflow):
         graph_str += self.format_cycle('R1', r1)
 
         for model_component in self.experiment_dict['model_components']:
-            if 'cycle_times' in self.experiment_dict[model_component]:
-                for cycle_time in self.experiment_dict[model_component]['cycle_times']:
+            if 'cycle_times' in self.experiment_dict['models'][model_component]:
+                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
                     cycle_str = """
             # Task triggers for: {model_component}
             # ------------------

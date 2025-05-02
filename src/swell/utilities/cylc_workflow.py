@@ -7,10 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from typing import Union, Optional, Self
+from typing import Union, Optional, Self, Tuple
 from collections.abc import Mapping
 
-from swell.utilities.cylc_formatting import Section, indent_lines
+from swell.utilities.cylc_formatting import CylcSection, indent_lines
 
 # --------------------------------------------------------------------------------------------------
 
@@ -83,23 +83,26 @@ class CylcWorkflow():
         return scheduler.get_section_str()
     
     def define_scheduling(self) -> str:
-        scheduling = self.scheduling_section.add_subsection(self.graph_section)
+        scheduling = self.define_scheduling_section()
+        graph = self.define_graph_section()
+
+        scheduling.add_subsection(graph)
 
         return scheduling.get_section_str()
     
-    def define_scheduling_section(self) -> Section:
+    def define_scheduling_section(self) -> CylcSection:
         scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
                            'final cycle point': self.experiment_dict['final_cycle_point'],
                            'runahead limit': self.experiment_dict['runahead_limit']}
         
-        scheduling_section = Section('scheduling', scheduling_dict)
+        scheduling_section = self.create_new_section('scheduling', scheduling_dict)
 
         return scheduling_section
     
-    def define_graph_section(self) -> Section:
+    def define_graph_section(self) -> CylcSection:
         return self.create_new_section('graph')
     
-    def parse_graph_for_tasks(self) -> Section:
+    def parse_graph_for_tasks(self) -> CylcSection:
         tasks = []
 
         cylc_characters = [':', '[', ']']
@@ -161,8 +164,8 @@ class CylcWorkflow():
     def define_runtime_task_overrides(self) -> dict:
         return {}
     
-    def create_new_section(name: Optional[str], content: Union[str, dict], level: int = 0):
-        return Section(name, content, level)
+    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0):
+        return CylcSection(name, content, level)
     
     def define_runtime(self) -> str:
         runtime_section = Section('runtime', '# Task defaults\n# -------------\n')
@@ -189,10 +192,5 @@ class CylcWorkflow():
 
 
         return runtime_str
-
-
-    
-
-    
 
 

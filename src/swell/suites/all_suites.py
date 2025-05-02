@@ -19,11 +19,11 @@ from swell.suites.suite_questions import SuiteQuestions
 # --------------------------------------------------------------------------------------------------
 
 
-# Class methods for AllSuites enum
+# Class methods for SuiteConfigs enum
 
 @classmethod
-def get_config(cls, config_name):
-    return getattr(cls, config_name).value.value
+def get(cls, name):
+    return getattr(cls, name).value.value
 
 
 @classmethod
@@ -77,7 +77,7 @@ def construct_suite_config_enum():
         enum_cls = Enum(suite_config_enum.__name__, enum_dict)
 
         # Set classmethods for the enum
-        setattr(enum_cls, 'get_config', get_config)
+        setattr(enum_cls, 'get_config', get)
         setattr(enum_cls, 'config_names', config_names)
         setattr(enum_cls, 'base_suite', base_suite)
 
@@ -85,6 +85,10 @@ def construct_suite_config_enum():
     return wrapper
 
 # --------------------------------------------------------------------------------------------------
+
+@classmethod
+def get_workflow(cls, name):
+    return getattr(cls, name).value
 
 
 def construct_workflow_enum():
@@ -114,6 +118,9 @@ def construct_workflow_enum():
 
         # Build the enum
         enum_cls = Enum(workflow_enum.__name__, enum_dict)
+
+        # Set classmethods
+        setattr(enum_cls, 'get_workflow', get_workflow)
 
         return enum_cls
     return wrapper
