@@ -11,6 +11,7 @@ from typing import Union, Optional, Self, Tuple
 from collections.abc import Mapping
 
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
+from swell.tasks.task_runtimes import TaskRuntimes
 
 # --------------------------------------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ class CylcWorkflow():
 
     def format_string_block(self, string) -> str:
         out_string = '"""\n'
-        out_string += indent_lines(string, 1)
+        out_string += indent_lines(string, 1, True)
         out_string += '"""\n'
 
         return out_string
@@ -65,17 +66,34 @@ class CylcWorkflow():
         
 
     def define_header(self) -> str:
-        return self.reset_indentation("""
+        header = self.comment_block(string = """
                 # (C) Copyright 2021- United States Government as represented by the Administrator of the
                 # National Aeronautics and Space Administration. All Rights Reserved.
                 #
                 # This software is licensed under the terms of the Apache Licence Version 2.0
                 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
+
+        return header
     
     def define_description(self) -> str:
-        return self.reset_indentation("""# Cylc workflow auto-generated for suite 
-                                      {suite_to_run} by Swell.""".format(**self.experiment_dict))
-    
+        description = self.comment_block("""# Cylc workflow auto-generated for suite {suite_to_run} by Swell.""".format(**self.experiment_dict))
+        return description
+
+    def comment_block(self, string, level: int = 0, section_break: bool = True):
+        out_string = ''
+
+        string = indent_lines(string, level, reset=True)
+
+        for line in string.split('\n'):
+            if len(line.strip()) > 0:
+                out_string += line
+
+        if section_break:
+            out_string += f'\n# {"-" *98}'
+
+        return out_string
+
+
     def define_scheduler(self) -> str:
         scheduler_dict = {'UTC mode': True, 'allow implicit tasks': False}
         scheduler = self.create_new_section('scheduler', scheduler_dict)
@@ -168,10 +186,12 @@ class CylcWorkflow():
         return CylcSection(name, content, level)
     
     def define_runtime(self) -> str:
-        runtime_section = Section('runtime', '# Task defaults\n# -------------\n')
+        runtime_section = self.create_new_section('runtime', '# Task defaults\n# -------------\n')
+
+        runtime_overrides = self.define_runtime_task_overrides()
 
         for task in ['root'] + self.tasks:
-            if task in self.runtime_task_overrides.keys():
+            if task in runtime_overrides.keys():
                 task_section = self.define_runtime_task_overrides[task]
 
                 runtime_section.add_subsection(task_section)
@@ -187,10 +207,27 @@ class CylcWorkflow():
                     task_name = task
                     model = None
                     
-                task_class = TaskRuntime[task_name]
+                task_class = TaskRuntimes[task_name].value
                 task_section = task_class().get_section(model, self.experiment_dict, self.slurm_external)
 
+                runtime_section.add_subsection(task_section)
+
+        runtime_str = runtime_section.get_section_str()
 
         return runtime_str
 
 
+    def get_workflow_str(self) -> str:
+
+        workflow_str = ''
+
+        workflow_str += self.header
+        print('DESCRIPTION', self.description)
+        workflow_str += self.description
+        workflow_str += self.scheduler
+        workflow_str += self.scheduling
+
+        runtime = self.define_runtime()
+        workflow_str += runtime
+        print(workflow_str)
+        return workflow_str

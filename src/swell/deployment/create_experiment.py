@@ -94,7 +94,6 @@ def prepare_config(
                                                                platform, method, override)
     
     suite_dict = prepare_config_and_suite.get_experiment_dict()
-    print(suite_dict)
     slurm_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
 
     workflow = Workflows.get_workflow(suite)(suite_dict, slurm_dict)
@@ -109,10 +108,6 @@ def prepare_config(
     workflow.set_experiment_dict(experiment_dict)
 
     workflow_string = workflow.get_workflow_str()
-
-    # Ask questions as the suite gets configured
-    # ------------------------------------------
-    experiment_dict, comment_dict = prepare_config_and_suite.ask_questions_and_configure_suite()
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------

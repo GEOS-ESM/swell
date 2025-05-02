@@ -22,11 +22,12 @@ def format_dict(dictionary: Mapping):
 
     return dict_str
 
-def indent_lines(string: str, level: int = 0):
+def indent_lines(string: str, level: int = 0, reset: bool = False):
     out_string = ''
 
     for line in string.split('\n'):
-        line = line.strip()
+        if reset:
+            line = line.strip()
 
         if len(line) > 0:
             line = f'{indent*level}{line}'
@@ -40,22 +41,19 @@ class CylcSection():
         self.name = name
         self.content = content
         self.level = level
-        print(name)
-        print(content)
         self.section_str = self.__format_section__(self.name, self.content, self.level)
 
     def __format_section__(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0) -> str:
         section_str = ''
-        print(level)
         if name is not None:
-            section_str += f'{level*"["}{name}{"]"*level}\n'
+            section_str += f'{indent*level}{(level+1)*"["}{name}{"]"*(level+1)}\n'
         else:
             level -= 1
 
         if isinstance(content, Mapping):
             content = format_dict(content)
 
-        section_str += indent_lines(content, level+1)
+        section_str += indent_lines(content, level+1, False)
 
         if level == 0:
             section_str += f'# {"-"*98}\n'
@@ -66,6 +64,11 @@ class CylcSection():
         self.section_str += subsection.__format_section__(subsection.name, subsection.content, self.level+1)
 
     def get_section_str(self):
-        return self.section_str
+        section_str = self.section_str
+
+        if self.level == 0:
+            section_str += f'# {"-"*98}\n'
+
+        return section_str
 
 # --------------------------------------------------------------------------------------------------

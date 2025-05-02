@@ -9,8 +9,9 @@
 
 from typing import Union, Optional, Self
 from collections.abc import Mapping
+from dataclasses import dataclass
 
-from swell.utilities.cylc_formatting import Section, indent_lines
+from swell.utilities.cylc_formatting import CylcSection, indent_lines
 
 # --------------------------------------------------------------------------------------------------
 
@@ -68,10 +69,10 @@ class Task:
         
         return content
 
-    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int =0) -> Section:
-        return Section(name, content, level)
+    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int =0) -> CylcSection:
+        return CylcSection(name, content, level)
 
-    def get_runtime_section(self, model_component: Optional[str], experiment_dict: Mapping, slurm_external: Mapping):
+    def get_section(self, model_component: Optional[str], experiment_dict: Mapping, slurm_external: Mapping):
         platform = experiment_dict['platform']
 
         runtime_dict = {}

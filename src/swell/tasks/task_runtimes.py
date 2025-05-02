@@ -18,6 +18,14 @@ from swell.utilities.cylc_runtime import Task, Model, Cycling, Slurm
 class TaskRuntimes(Enum):
 
     @member
+    class root(Task):
+        script: bool = False
+        pre_script: str = "source $CYLC_SUITE_DEF_PATH/modules"
+        environment: dict = {'datetime': '$CYLC_TASK_CYCLE_POINT',
+                             'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'}
+
+
+    @member
     class CloneJedi(Task):
         pass
 
