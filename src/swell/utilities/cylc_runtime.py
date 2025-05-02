@@ -71,8 +71,8 @@ class Task:
         
         return content
 
-    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int =0) -> CylcSection:
-        return CylcSection(name, content, level)
+    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '') -> CylcSection:
+        return CylcSection(name, content)
 
     def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
         platform = experiment_dict['platform']
@@ -100,6 +100,11 @@ class Task:
             runtime_dict['execution retry delays'] = retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
+
+        if self.environment is not None:
+            environment_section = self.create_new_section('environment', self.environment)
+            runtime_section.add_subsection(environment_section)
+
         if self.slurm is not None:
             slurm_dict = {}
             for key, value in self.slurm.items():
@@ -127,14 +132,11 @@ class Task:
                         }
 
             slurm_section_dict = {}
-            print('slurm', slurm_section_dict)
             for key, value in slurm_dict.items():
                 slurm_section_dict[f'--{key}'] = value
-            print('slurm', slurm_section_dict)
             directive_section = self.create_new_section('directives', slurm_section_dict)
         
             runtime_section.add_subsection(directive_section)
-            print(runtime_section.get_section_str())
 
         return runtime_section
 

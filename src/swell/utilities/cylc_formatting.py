@@ -36,36 +36,63 @@ def indent_lines(string: str, level: int = 0, reset: bool = False):
     
     return out_string
 
+def format_section(section: Self, level: int = 0) -> str:
+    section_str = ''
+
+    name = section.name
+    if name is not None:
+        section_str += f'{indent*level}{(level+1)*"["}{name}{"]"*(level+1)}\n'
+    else:
+        level -= 1
+
+    content = section.content
+    if isinstance(content, Mapping):
+        content = format_dict(content)
+
+    section_str += indent_lines(content, level+1)
+
+    return section_str
+
 class CylcSection():
-    def __init__(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0) -> None:
+    def __init__(self, name: Optional[str] = None, content: Union[str, dict] = '') -> None:
         self.name = name
         self.content = content
-        self.level = level
-        self.section_str = self.__format_section__(self.name, self.content, self.level)
+        
+        self.subsections = []
 
-    def __format_section__(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0) -> str:
+    def __format_section__(self, section: Self, level: int = 0) -> str:
         section_str = ''
+
+        name = section.name
         if name is not None:
             section_str += f'{indent*level}{(level+1)*"["}{name}{"]"*(level+1)}\n'
         else:
             level -= 1
 
+        content = section.content
         if isinstance(content, Mapping):
             content = format_dict(content)
 
         section_str += indent_lines(content, level+1, False)
 
-        return section_str
-    
-    def add_subsection(self, subsection: Self):
-        self.section_str += subsection.__format_section__(subsection.name, subsection.content, self.level+1)
-
-    def get_section_str(self):
-        section_str = self.section_str
-
-        if self.level == 0:
+        if level == 0:
             section_str += f'# {"-"*98}\n\n'
 
         return section_str
+    
+    def add_subsection(self, subsection: Self) -> None:
+        self.subsections.append(subsection)
+
+    def get_section_str(self, level: int = 0) -> str:
+        section_str = format_section(self, level)
+
+        for subsection in self.subsections:
+            section_str += subsection.get_section_str(level+1)
+
+        if level == 0:
+            section_str += f'# {"-"*98}\n\n'
+
+        return section_str
+
 
 # --------------------------------------------------------------------------------------------------

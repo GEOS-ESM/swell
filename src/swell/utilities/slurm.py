@@ -85,6 +85,8 @@ def prepare_slurm_defaults_and_overrides(
 
     validate_directives(slurm_dict["slurm_directives_global"])
 
+    slurm_dict['slurm_directives_tasks'] = slurm_overrides['slurm_directives_tasks']
+
     if 'slurm_directives_tasks' in slurm_dict:
         for task in slurm_dict["slurm_directives_tasks"].keys():
             validate_directives(slurm_dict["slurm_directives_tasks"][task])

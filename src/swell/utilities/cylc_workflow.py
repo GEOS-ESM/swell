@@ -187,8 +187,8 @@ class CylcWorkflow():
     def define_runtime_task_overrides(self) -> dict:
         return {}
     
-    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '', level: int = 0):
-        return CylcSection(name, content, level)
+    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = ''):
+        return CylcSection(name, content)
     
     def define_runtime(self) -> str:
         runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
@@ -234,5 +234,4 @@ class CylcWorkflow():
         runtime = self.define_runtime()
         workflow_str += runtime
 
-        print(workflow_str)
         return workflow_str

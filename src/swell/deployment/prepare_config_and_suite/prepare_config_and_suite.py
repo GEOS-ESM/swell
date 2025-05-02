@@ -147,6 +147,7 @@ class PrepareExperimentConfigAndSuite:
 
     def prepare_task_question_dictionary(self):
         for task in self.model_independent_tasks:
+            print(task)
             if task in task_questions.get_all():
                 if self.suite_needs_model_components:
                     for model in self.experiment_dict['model_components']:
@@ -357,6 +358,7 @@ class PrepareExperimentConfigAndSuite:
                     self.ask_a_question(model_dict, question_name, model)
 
     # ----------------------------------------------------------------------------------------------
+    
     def ask_a_question(
         self,
         full_question_dictionary: dict,
