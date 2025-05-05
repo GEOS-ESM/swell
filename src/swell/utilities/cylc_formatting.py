@@ -15,6 +15,8 @@ from collections.abc import Mapping
 indent = '    '
 
 def format_dict(dictionary: Mapping):
+    # Convert a dictionary into a string
+
     dict_str = ''
 
     for key, value in dictionary.items():
@@ -22,7 +24,11 @@ def format_dict(dictionary: Mapping):
 
     return dict_str
 
+# --------------------------------------------------------------------------------------------------
+
 def indent_lines(string: str, level: int = 0, reset: bool = False):
+    # Reset line indentation for string, and indent lines by level
+
     out_string = ''
 
     for line in string.split('\n'):
@@ -36,7 +42,12 @@ def indent_lines(string: str, level: int = 0, reset: bool = False):
     
     return out_string
 
+# --------------------------------------------------------------------------------------------------
+
 def format_section(section: Self, level: int = 0) -> str:
+    # Format a string to match cylc's section syntax
+    # format the header with the appropriate amount of enclosing brackets and indents
+
     section_str = ''
 
     name = section.name
@@ -53,7 +64,15 @@ def format_section(section: Self, level: int = 0) -> str:
 
     return section_str
 
+# --------------------------------------------------------------------------------------------------
+
 class CylcSection():
+    ''' 
+    Holds the information contained in a section, including the name and contents, which can be a
+    string or dictionary. Also tracks child subsections, automatically handling indentation and syntax 
+    at the time when the string is called. 
+    '''
+
     def __init__(self, name: Optional[str] = None, content: Union[str, dict] = '') -> None:
         self.name = name
         self.content = content

@@ -19,6 +19,11 @@ indent = '    '
 
 @dataclass
 class Task:
+
+    ''' 
+    Contains the basic properties and information needed to format the cylc [runtime] section.
+    '''
+
     base_name: Optional[str] = None
     scheduling_name: Optional[str] = None
 
@@ -87,7 +92,7 @@ class Task:
         if self.script:
             runtime_dict['script'] = self.format_string_block(self.script)
 
-        if self.slurm:
+        if self.slurm is not None:
             runtime_dict['platform'] = platform
 
         if self.time_limit is True:

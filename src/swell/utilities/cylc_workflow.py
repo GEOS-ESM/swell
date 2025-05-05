@@ -16,14 +16,27 @@ from swell.tasks.task_runtimes import TaskRuntimes
 # --------------------------------------------------------------------------------------------------
 
 class CylcWorkflow():
+
+    ''' 
+    Handles generating the flow.cylc file contents using the CylcSection syntax for each
+    necessary section in the cylc file. Since Swell workflows share a lot of common language,
+    this method has the convenience of automatically setting a lot of the contents. This means
+    that the graph section is the only part that will need to be adjusted in many cases, 
+    and tasks may need to be altered in src/swell/tasks/task_runtimes.py.
+    '''
+
     def __init__(self, experiment_dict, slurm_external) -> None:
         self.experiment_dict = experiment_dict
         self.slurm_external = slurm_external
 
         self.setup_workflow()
 
+    # --------------------------------------------------------------------------------------------------
+
     def set_experiment_dict(self, experiment_dict) -> None:
         self.experiment_dict = experiment_dict
+
+    # --------------------------------------------------------------------------------------------------
 
     def format_string_block(self, string) -> str:
         out_string = '"""\n'
@@ -32,10 +45,14 @@ class CylcWorkflow():
 
         return out_string
 
+    # --------------------------------------------------------------------------------------------------
+
     def format_cycle(self, name: str, cycle: str) -> str:
         cycle_string = f'{name} = '
         cycle_string += self.format_string_block(cycle)
         return cycle_string
+
+    # --------------------------------------------------------------------------------------------------
     
     def reset_indentation(self, string: str) -> str:
         out_string = ''
@@ -51,6 +68,8 @@ class CylcWorkflow():
                 out_string += line
 
         return out_string
+
+    # --------------------------------------------------------------------------------------------------
     
     def setup_workflow(self) -> None:
         self.header = self.define_header()
@@ -64,7 +83,8 @@ class CylcWorkflow():
 
         self.tasks = self.parse_graph_for_tasks()
         print(self.tasks)
-        
+
+    # --------------------------------------------------------------------------------------------------
 
     def define_header(self) -> str:
         header = self.comment_block(string = """
@@ -79,6 +99,8 @@ class CylcWorkflow():
     def define_description(self) -> str:
         description = self.comment_block("""# Cylc workflow auto-generated for suite {suite_to_run} by Swell.""".format(**self.experiment_dict))
         return description
+
+    # --------------------------------------------------------------------------------------------------
 
     def comment_block(self, string, level: int = 0, section_break: bool = True):
         out_string = ''
@@ -98,12 +120,16 @@ class CylcWorkflow():
 
         return out_string
 
+    # --------------------------------------------------------------------------------------------------
+
 
     def define_scheduler(self) -> str:
         scheduler_dict = {'UTC mode': True, 'allow implicit tasks': False}
         scheduler = self.create_new_section('scheduler', scheduler_dict)
 
         return scheduler.get_section_str()
+
+    # --------------------------------------------------------------------------------------------------
     
     def define_scheduling(self) -> str:
         scheduling = self.define_scheduling_section()
@@ -112,6 +138,8 @@ class CylcWorkflow():
         scheduling.add_subsection(graph)
 
         return scheduling.get_section_str()
+
+    # --------------------------------------------------------------------------------------------------
     
     def define_scheduling_section(self) -> CylcSection:
         scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
@@ -121,9 +149,13 @@ class CylcWorkflow():
         scheduling_section = self.create_new_section('scheduling', scheduling_dict)
 
         return scheduling_section
-    
+
+    # --------------------------------------------------------------------------------------------------
+
     def define_graph_section(self) -> CylcSection:
         return self.create_new_section('graph')
+
+    # --------------------------------------------------------------------------------------------------
     
     def parse_graph_for_tasks(self) -> CylcSection:
         tasks = []
@@ -160,6 +192,8 @@ class CylcWorkflow():
                 in_graph = True
 
         return tasks
+
+    # --------------------------------------------------------------------------------------------------
     
     def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
         ind_tasks = []
@@ -185,12 +219,18 @@ class CylcWorkflow():
                 ind_tasks.append(task)
 
         return ind_tasks, model_tasks
+
+    # --------------------------------------------------------------------------------------------------
     
     def define_runtime_task_overrides(self) -> dict:
         return {}
+
+    # --------------------------------------------------------------------------------------------------
     
     def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = ''):
         return CylcSection(name, content)
+
+    # --------------------------------------------------------------------------------------------------
     
     def define_runtime(self) -> str:
         runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
@@ -223,6 +263,7 @@ class CylcWorkflow():
 
         return runtime_str
 
+    # --------------------------------------------------------------------------------------------------
 
     def get_workflow_str(self) -> str:
 
@@ -237,3 +278,5 @@ class CylcWorkflow():
         workflow_str += runtime
 
         return workflow_str
+
+    # --------------------------------------------------------------------------------------------------
