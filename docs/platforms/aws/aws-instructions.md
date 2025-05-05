@@ -1,5 +1,18 @@
 # Swell configuration in AWS (`smce-gmao`)
 
+## Installing cylc
+
+Swell on AWS (and likely elsewhere) seems to work fine with just a standard global installation of cylc.
+Therefore, the recommendation on AWS is to install cylc standalone.
+A very easy and convenient way to do that is using the [pixi package manager](https://pixi.sh/latest/):
+
+1. Install `pixi` itself (per its instructions).
+Note that this is a user-level install; you do not need sudo permissions.
+Then, restart your shell (or log out and back in).
+
+2. Install cylc with `pixi global install cylc-flow --expose cylc`.
+This will make `cylc` available as a global standalone executable available everywhere (including Swell).
+
 ## Installing swell
 
 1. Clone Swell: `git clone https://github.com/geos-esm/swell`
