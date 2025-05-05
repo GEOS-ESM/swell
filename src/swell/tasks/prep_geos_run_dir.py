@@ -77,10 +77,12 @@ class PrepGeosRunDir(taskBase):
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
 
-                mom6_iau_nhours = self.config.mom6_iau_nhours()
                 mom_input = self.forecast_dir('MOM_input')
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
                 mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
+                # P50D is just a random input for get_key_for_model to function
+                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
+                                                                'PT50D')
 
                 # convert ISO to 3.0
                 duration = isodate.parse_duration(mom6_iau_nhours)
