@@ -28,7 +28,7 @@ geos_restarts_directory:
   default_value: restarts_20210701_210000_5deg
 
 r2d2_local_path:
-  default_value: /home/${USER}/R2D2DataStore/Local
+  default_value: /efs/${USER}/R2D2DataStore/Local
 
 swell_static_files:
   default_value: /shared/SwellStaticFiles
