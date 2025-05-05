@@ -92,21 +92,38 @@ def prepare_config(
     # ---------------------------------------------------------------
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
                                                                platform, method, override)
-    
+
+    # Retrieved the answered suite questions
+    # --------------------------------------
     suite_dict = prepare_config_and_suite.get_experiment_dict()
+
+    # Get the slurm defaults from the user and platform
+    # -------------------------------------------------
     slurm_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
 
+    # Initialize the workflow
+    # -----------------------
     workflow = Workflows.get_workflow(suite)(suite_dict, slurm_dict)
 
+    # Get the list of tasks from the workflow's graph
+    # -----------------------------------------------
     model_ind_tasks, model_dep_tasks = workflow.get_independent_and_model_tasks()
 
+    # Set the tasks to be used in preparing the suite
+    # -----------------------------------------------
     prepare_config_and_suite.set_model_independent_tasks(model_ind_tasks)
     prepare_config_and_suite.set_model_dependent_tasks(model_dep_tasks)
 
+    # Ask the task questions
+    # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 
+    # Update the workflow with the answered task questions
+    # ----------------------------------------------------
     workflow.set_experiment_dict(experiment_dict)
 
+    # Finalize the workflow by adding the runtime section, and get the contents
+    # -------------------------------------------------------------------------
     workflow_string = workflow.get_workflow_str()
 
     # Expand all environment vars in the dictionary
@@ -151,7 +168,7 @@ def create_experiment_directory(
     # Call the experiment config and suite generation
     # ------------------------------------------------
     experiment_dict_str, workflow_str = prepare_config(suite, suite_config, method, platform,
-                                         override, advanced, slurm)
+                                                       override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------

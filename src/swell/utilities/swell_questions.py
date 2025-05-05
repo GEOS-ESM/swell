@@ -18,11 +18,13 @@ from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
+
 class QuestionType(StrEnum):
     SUITE = 'suite'
     TASK = 'task'
 
 # --------------------------------------------------------------------------------------------------
+
 
 class WidgetType(Enum):
     STRING = "string"

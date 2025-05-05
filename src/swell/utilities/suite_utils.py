@@ -17,6 +17,7 @@ from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
+
 def get_model_components() -> list:
 
     # Path to model interfaces
@@ -26,6 +27,7 @@ def get_model_components() -> list:
     return os.listdir(interface_directory)
 
 # --------------------------------------------------------------------------------------------------
+
 
 def get_suites() -> list:
 
@@ -40,4 +42,3 @@ def get_suites() -> list:
     return suites
 
 # --------------------------------------------------------------------------------------------------
-

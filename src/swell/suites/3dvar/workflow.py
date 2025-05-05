@@ -11,6 +11,7 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
+
 class Workflow_3dvar(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""
@@ -18,7 +19,9 @@ class Workflow_3dvar(CylcWorkflow):
         """)
 
         return description
-    
+
+    # --------------------------------------------------------------------------------------------------
+
     def define_graph_section(self):
         graph_str = ''
 
@@ -34,7 +37,7 @@ class Workflow_3dvar(CylcWorkflow):
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
             """
-        
+
         for model_component in self.experiment_dict['model_components']:
             r1 += """
 
@@ -57,7 +60,9 @@ class Workflow_3dvar(CylcWorkflow):
             GetObservations-{model_component}
 
             # GenerateBClimatology, for ocean it is cycle dependent
-            GenerateBClimatologyByLinking-{model_component}:fail? => GenerateBClimatology-{model_component}
+            GenerateBClimatologyByLinking-{model_component}:fail? =>
+            GenerateBClimatology-{model_component}
+
             GetBackground-{model_component} => GenerateBClimatology-{model_component}
 
             # Perform staging that is cycle dependent
@@ -68,7 +73,11 @@ class Workflow_3dvar(CylcWorkflow):
             StageJedi-{model_component}[^] => RunJediVariationalExecutable-{model_component}
             StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
             GetBackground-{model_component} => RunJediVariationalExecutable-{model_component}
-            GenerateBClimatologyByLinking-{model_component}? | GenerateBClimatology-{model_component} => RunJediVariationalExecutable-{model_component}
+
+            GenerateBClimatologyByLinking-{model_component}? |
+            GenerateBClimatology-{model_component} =>
+            RunJediVariationalExecutable-{model_component}
+
             GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
 
             # EvaObservations
@@ -85,13 +94,13 @@ class Workflow_3dvar(CylcWorkflow):
 
             # Clean up large files
             EvaObservations-{model_component} & SaveObsDiags-{model_component} =>
-            CleanCycle-{model_component} 
+            CleanCycle-{model_component}
             """
 
             cycle_str = cycle_str.format(model_component=model_component)
-                    
+
             graph_str += self.format_cycle(cycle_time, cycle_str)
 
         return self.create_new_section('graph', graph_str)
-    
+
 # --------------------------------------------------------------------------------------------------

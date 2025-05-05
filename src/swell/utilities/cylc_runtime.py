@@ -17,10 +17,11 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 
 indent = '    '
 
+
 @dataclass
 class Task:
 
-    ''' 
+    '''
     Contains the basic properties and information needed to format the cylc [runtime] section.
     '''
 
@@ -52,7 +53,7 @@ class Task:
                 self.scheduling_name += f'-{self.model}'
 
         elif self.is_model:
-            self.scheduling_name = self.scheduling_name.format(model = self.model)
+            self.scheduling_name = self.scheduling_name.format(model=self.model)
 
         if self.script is None:
             self.script = f'swell task {self.base_name} $config'
@@ -69,17 +70,20 @@ class Task:
         out_string += '"""'
 
         return out_string
-    
+
     def match_platform(self, content: Union[str, dict], platform: str):
         if isinstance(content, Mapping):
             if platform in content.keys():
                 content = content[platform]
             elif 'all' in content.keys():
                 content = content['all']
-        
+
         return content
 
-    def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = '') -> CylcSection:
+    def create_new_section(self,
+                           name: Optional[str] = None,
+                           content: Union[str, dict] = ''
+                           ) -> CylcSection:
         return CylcSection(name, content)
 
     def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
@@ -137,18 +141,19 @@ class Task:
                           **slurm_globals,
                           **slurm_dict,
                           **slurm_task
-                        }
+                          }
 
             slurm_section_dict = {}
             for key, value in slurm_dict.items():
                 slurm_section_dict[f'--{key}'] = value
             directive_section = self.create_new_section('directives', slurm_section_dict)
-        
+
             runtime_section.add_subsection(directive_section)
 
         return runtime_section
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class Model(Task):
@@ -158,6 +163,7 @@ class Model(Task):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class Cycling(Task):
     def __post_init__(self):
@@ -165,6 +171,7 @@ class Cycling(Task):
         super().__post_init__()
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class Slurm(Task):

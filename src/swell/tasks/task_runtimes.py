@@ -17,6 +17,7 @@ from swell.utilities.cylc_runtime import Task, Model, Cycling, Slurm
 
 # --------------------------------------------------------------------------------------------------
 
+
 class TaskRuntimes():
 
     @dataclass
@@ -24,8 +25,7 @@ class TaskRuntimes():
         script: bool = False
         pre_script: str = "source $CYLC_SUITE_DEF_PATH/modules"
         environment: dict = mutable_field({'datetime': '$CYLC_TASK_CYCLE_POINT',
-                             'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})
-
+                                           'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})
 
     @dataclass
     class CloneJedi(Task):

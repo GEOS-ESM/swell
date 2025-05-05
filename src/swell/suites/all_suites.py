@@ -37,10 +37,12 @@ def base_suite(cls, config: str) -> str:
 
 # --------------------------------------------------------------------------------------------------
 
+
 def format_suite_name(suite_name):
     return suite_name[1:] if suite_name[0] == '_' else suite_name
 
 # --------------------------------------------------------------------------------------------------
+
 
 def construct_suite_config_enum():
     # Automatically construct enum of all suite configs
@@ -86,9 +88,12 @@ def construct_suite_config_enum():
 
 # --------------------------------------------------------------------------------------------------
 
+
 @classmethod
 def get_workflow(cls, name):
     return getattr(cls, name).value
+
+# --------------------------------------------------------------------------------------------------
 
 
 def construct_workflow_enum():
@@ -127,12 +132,14 @@ def construct_workflow_enum():
 
 # --------------------------------------------------------------------------------------------------
 
+
 @construct_suite_config_enum()
 class SuiteConfigs(Enum):
     pass
 
 
 # --------------------------------------------------------------------------------------------------
+
 
 @construct_workflow_enum()
 class Workflows(Enum):

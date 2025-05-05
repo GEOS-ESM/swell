@@ -86,7 +86,8 @@ class PrepareExperimentConfigAndSuite:
 
         # Add the datetime to the dictionary
         # ----------------------------------
-        self.experiment_dict['datetime_created'] = datetime.datetime.today().strftime("%Y%m%d_%H%M%SZ")
+        self.experiment_dict['datetime_created'] = datetime.datetime.today().strftime(
+                "%Y%m%d_%H%M%SZ")
         self.comment_dict['datetime_created'] = 'Datetime this file was created (auto added)'
 
         # Add the platform the dictionary
@@ -131,7 +132,7 @@ class PrepareExperimentConfigAndSuite:
 
     def get_experiment_dict(self) -> Mapping:
         return self.experiment_dict
-    
+
     # ----------------------------------------------------------------------------------------------
 
     def get_workflow_file_str(self, slurm_dict):
@@ -168,7 +169,9 @@ class PrepareExperimentConfigAndSuite:
                     question_models = question['models']
 
                 for model in question_models:
-                    question_dictionary_model_dep = add_dict(question_dictionary_model_dep, {model: {question['question_name']: question}})
+                    question_dictionary_model_dep = add_dict(question_dictionary_model_dep,
+                                                             {model: {question['question_name']:
+                                                                      question}})
 
         self.suite_needs_model_components = True
         if 'model_components' not in question_dictionary_model_ind.keys():
@@ -194,11 +197,13 @@ class PrepareExperimentConfigAndSuite:
                             elif question_model in self.experiment_dict['model_components']:
                                 model_dict[question_model] = question_dict
 
-                        self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, model_dict)
-                    
+                        self.question_dictionary_model_dep = add_dict(
+                                self.question_dictionary_model_dep, model_dict)
+
                     else:
-                        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind, question_dict)
-        
+                        self.question_dictionary_model_ind = add_dict(
+                                self.question_dictionary_model_ind, question_dict)
+
         for model, task_list in self.model_dependent_tasks.items():
             for task in task_list:
                 if task in task_questions.get_all():
@@ -207,10 +212,11 @@ class PrepareExperimentConfigAndSuite:
                     for question in question_list:
                         question_dict = {question['question_name']: question}
                         if question['models'] is None:
-                            self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind, question_dict)
+                            self.question_dictionary_model_ind = add_dict(
+                                    self.question_dictionary_model_ind, question_dict)
                         elif model in question['models'] or 'all_models' in question['models']:
-                            self.question_dictionary_model_dep = add_dict(self.question_dictionary_model_dep, {model: question_dict})
-
+                            self.question_dictionary_model_dep = add_dict(
+                                    self.question_dictionary_model_dep, {model: question_dict})
 
     def override_with_defaults(self, suite_task: QuestionType) -> None:
 
@@ -231,7 +237,7 @@ class PrepareExperimentConfigAndSuite:
                     for key, val in platform_defaults[question_name].items():
                         if key not in question.keys() or question[key] == 'defer_to_platform':
                             question[key] = val
-                        
+
         # Perform a model override on the model_dep dictionary
         # ----------------------------------------------------
         if self.suite_needs_model_components:
@@ -239,9 +245,11 @@ class PrepareExperimentConfigAndSuite:
 
                 # Open the suite and task default dictionaries
                 model_defaults = {}
-                
+
                 model_dict_file = os.path.join(get_swell_path(), 'configuration', 'jedi',
-                                               'interfaces', model, f'{suite_task.value}_questions.yaml')
+                                               'interfaces', model,
+                                               f'{suite_task.value}_questions.yaml')
+
                 with open(model_dict_file, 'r') as ymlfile:
                     model_defaults.update(yaml.safe_load(ymlfile))
 
@@ -254,14 +262,15 @@ class PrepareExperimentConfigAndSuite:
                                 # If the value of the question is still set as model-dependent,
                                 # set the value for that model
                                 if isinstance(val, Mapping) and \
-                                    'depends_on_model' in val.keys() and \
-                                    model in val['depends_on_model'].keys() and \
-                                    val['depends_on_model'][model] != 'defer_to_model':
+                                        'depends_on_model' in val.keys() and \
+                                        model in val['depends_on_model'].keys() and \
+                                        val['depends_on_model'][model] != 'defer_to_model':
 
                                     model_dict[question_name][key] = val['depends_on_model'][model]
                                 elif key in model_defaults[question_name].keys() and (
                                         val == 'defer_to_model' or val is None):
-                                    model_dict[question_name][key] = model_defaults[question_name][key]
+                                    model_dict[question_name][key] = model_defaults[
+                                            question_name][key]
 
                         if question_name in platform_defaults.keys():
                             for key, val in platform_defaults[question_name].items():
@@ -279,7 +288,8 @@ class PrepareExperimentConfigAndSuite:
                     if question['options'] == 'defer_to_code':
                         question['options'] = self.possible_model_components
 
-                if question_name == 'experiment_id' and question['default_value'] == 'defer_to_code':
+                if question_name == 'experiment_id' and question[
+                        'default_value'] == 'defer_to_code':
                     question['default_value'] = f'swell-{self.suite}'
 
     # ----------------------------------------------------------------------------------------------
@@ -320,33 +330,40 @@ class PrepareExperimentConfigAndSuite:
                         if question['question_type'] == suite_task:
                             if model in override_dict['models']:
                                 if question_name in override_dict['models'][model]:
-                                    question['default_value'] = override_dict['models'][model][question_name]
+                                    question['default_value'] = override_dict[
+                                            'models'][model][question_name]
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_questions_of_type(self, suite_task: QuestionType, question_dictionary: Mapping) -> Mapping:
+    def get_questions_of_type(self,
+                              suite_task: QuestionType,
+                              question_dictionary: Mapping
+                              ) -> Mapping:
         out_dict = {}
-        
+
         if 'models' in question_dictionary.keys():
             for model in self.possible_model_components:
                 if model in question_dictionary.keys():
-                    out_dict[model] = self.get_questions_of_type(suite_task, question_dictionary[model])
+                    out_dict[model] = self.get_questions_of_type(
+                            suite_task, question_dictionary[model])
 
         else:
             for question_name, question in question_dictionary.items():
                 if question['question_type'] == suite_task:
                     out_dict[question['question_name']] = question
-        
+
         return out_dict
 
     # ----------------------------------------------------------------------------------------------
 
     def ask_questions_and_configure(self, suite_task: QuestionType) -> Tuple[dict, dict]:
 
-        if self.config_client.__class__.__name__ == 'GetAnswerCli' and suite_task == QuestionType.SUITE:
+        if self.config_client.__class__.__name__ == 'GetAnswerCli' and (
+                suite_task == QuestionType.SUITE):
             self.logger.info("Please answer the following questions to configure your experiment ")
 
-        for question_name, question in self.get_questions_of_type(suite_task, self.question_dictionary_model_ind).items():
+        for question_name, question in self.get_questions_of_type(
+                suite_task, self.question_dictionary_model_ind).items():
             self.ask_a_question(self.question_dictionary_model_ind, question_name)
 
         if self.suite_needs_model_components:
@@ -356,11 +373,12 @@ class PrepareExperimentConfigAndSuite:
             for model in self.experiment_dict['model_components']:
                 model_dict = self.question_dictionary_model_dep[model]
 
-                for question_name, question in self.get_questions_of_type(suite_task, model_dict).items():
+                for question_name, question in self.get_questions_of_type(
+                        suite_task, model_dict).items():
                     self.ask_a_question(model_dict, question_name, model)
 
     # ----------------------------------------------------------------------------------------------
-    
+
     def ask_a_question(
         self,
         full_question_dictionary: dict,

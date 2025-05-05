@@ -14,6 +14,7 @@ from collections.abc import Mapping
 
 indent = '    '
 
+
 def format_dict(dictionary: Mapping):
     # Convert a dictionary into a string
 
@@ -25,6 +26,7 @@ def format_dict(dictionary: Mapping):
     return dict_str
 
 # --------------------------------------------------------------------------------------------------
+
 
 def indent_lines(string: str, level: int = 0, reset: bool = False):
     # Reset line indentation for string, and indent lines by level
@@ -39,10 +41,11 @@ def indent_lines(string: str, level: int = 0, reset: bool = False):
             line = f'{indent*level}{line}'
 
         out_string += f'{line}\n'
-    
+
     return out_string
 
 # --------------------------------------------------------------------------------------------------
+
 
 def format_section(section: Self, level: int = 0) -> str:
     # Format a string to match cylc's section syntax
@@ -66,17 +69,18 @@ def format_section(section: Self, level: int = 0) -> str:
 
 # --------------------------------------------------------------------------------------------------
 
+
 class CylcSection():
-    ''' 
+    '''
     Holds the information contained in a section, including the name and contents, which can be a
-    string or dictionary. Also tracks child subsections, automatically handling indentation and syntax 
-    at the time when the string is called. 
+    string or dictionary. Also tracks child subsections, automatically handling indentation
+    and syntax at the time when the string is retrieved.
     '''
 
     def __init__(self, name: Optional[str] = None, content: Union[str, dict] = '') -> None:
         self.name = name
         self.content = content
-        
+
         self.subsections = []
 
     def __format_section__(self, section: Self, level: int = 0) -> str:
@@ -98,7 +102,7 @@ class CylcSection():
             section_str += f'# {"-"*98}\n\n'
 
         return section_str
-    
+
     def add_subsection(self, subsection: Self) -> None:
         self.subsections.append(subsection)
 

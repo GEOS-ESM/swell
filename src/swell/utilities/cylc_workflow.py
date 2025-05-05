@@ -15,13 +15,14 @@ from swell.tasks.task_runtimes import TaskRuntimes
 
 # --------------------------------------------------------------------------------------------------
 
+
 class CylcWorkflow():
 
-    ''' 
+    '''
     Handles generating the flow.cylc file contents using the CylcSection syntax for each
     necessary section in the cylc file. Since Swell workflows share a lot of common language,
     this method has the convenience of automatically setting a lot of the contents. This means
-    that the graph section is the only part that will need to be adjusted in many cases, 
+    that the graph section is the only part that will need to be adjusted in many cases,
     and tasks may need to be altered in src/swell/tasks/task_runtimes.py.
     '''
 
@@ -53,7 +54,7 @@ class CylcWorkflow():
         return cycle_string
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def reset_indentation(self, string: str) -> str:
         out_string = ''
 
@@ -70,7 +71,7 @@ class CylcWorkflow():
         return out_string
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def setup_workflow(self) -> None:
         self.header = self.define_header()
         self.description = self.define_description()
@@ -87,17 +88,19 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_header(self) -> str:
-        header = self.comment_block(string = """
-                # (C) Copyright 2021- United States Government as represented by the Administrator of the
-                # National Aeronautics and Space Administration. All Rights Reserved.
-                #
-                # This software is licensed under the terms of the Apache Licence Version 2.0
-                # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
+        header = self.comment_block(string="""
+        # (C) Copyright 2021- United States Government as represented by the Administrator of the
+        # National Aeronautics and Space Administration. All Rights Reserved.
+        #
+        # This software is licensed under the terms of the Apache Licence Version 2.0
+        # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
 
         return header
-    
+
     def define_description(self) -> str:
-        description = self.comment_block("""# Cylc workflow auto-generated for suite {suite_to_run} by Swell.""".format(**self.experiment_dict))
+        description = self.comment_block(
+                """# Cylc workflow auto-generated for suite {suite_to_run} by Swell."""
+                .format(**self.experiment_dict))
         return description
 
     # --------------------------------------------------------------------------------------------------
@@ -122,7 +125,6 @@ class CylcWorkflow():
 
     # --------------------------------------------------------------------------------------------------
 
-
     def define_scheduler(self) -> str:
         scheduler_dict = {'UTC mode': True, 'allow implicit tasks': False}
         scheduler = self.create_new_section('scheduler', scheduler_dict)
@@ -130,7 +132,7 @@ class CylcWorkflow():
         return scheduler.get_section_str()
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def define_scheduling(self) -> str:
         scheduling = self.define_scheduling_section()
         graph = self.define_graph_section()
@@ -140,12 +142,12 @@ class CylcWorkflow():
         return scheduling.get_section_str()
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def define_scheduling_section(self) -> CylcSection:
         scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
                            'final cycle point': self.experiment_dict['final_cycle_point'],
                            'runahead limit': self.experiment_dict['runahead_limit']}
-        
+
         scheduling_section = self.create_new_section('scheduling', scheduling_dict)
 
         return scheduling_section
@@ -156,12 +158,12 @@ class CylcWorkflow():
         return self.create_new_section('graph')
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def parse_graph_for_tasks(self) -> CylcSection:
         tasks = []
 
         cylc_characters = [':', '[', ']', '?']
-        
+
         in_graph = False
         in_cycle = False
 
@@ -194,7 +196,7 @@ class CylcWorkflow():
         return tasks
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
         ind_tasks = []
         model_tasks = {}
@@ -221,17 +223,17 @@ class CylcWorkflow():
         return ind_tasks, model_tasks
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def define_runtime_task_overrides(self) -> dict:
         return {}
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = ''):
         return CylcSection(name, content)
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def define_runtime(self) -> str:
         runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
 
@@ -253,9 +255,10 @@ class CylcWorkflow():
                 else:
                     task_name = task
                     model = None
-                    
+
                 task_class = TaskRuntimes.get(task_name)
-                task_section = task_class(model=model).get_section(self.experiment_dict, self.slurm_external)
+                task_section = task_class(model=model).get_section(
+                        self.experiment_dict, self.slurm_external)
 
                 runtime_section.add_subsection(task_section)
 

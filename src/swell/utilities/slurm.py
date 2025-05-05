@@ -16,12 +16,13 @@ from importlib import resources
 
 from swell.utilities.logger import Logger
 
+
 def prepare_slurm_defaults_and_overrides(
     logger: Logger,
     platform: str,
     slurm_file: Optional[str],
 ) -> dict:
-    
+
     # Obtain platform-specific SLURM directives and set them as global defaults
     # Start by constructing the full platforms path
     # -------------------------------------------
@@ -35,7 +36,7 @@ def prepare_slurm_defaults_and_overrides(
         raise Exception(f"Platform '{platform}' has not been configured in SWELL")
     except Exception as err:
         raise err
-    
+
     global_defaults = {}
     global_defaults['slurm_directives_global'] = {}
 
@@ -91,6 +92,7 @@ def prepare_slurm_defaults_and_overrides(
         for task in slurm_dict["slurm_directives_tasks"].keys():
             validate_directives(slurm_dict["slurm_directives_tasks"][task])
     return slurm_dict
+
 
 def validate_directives(directive_dict: dict) -> None:
     directive_pattern = r'(?<=--)[a-zA-Z-]+'
