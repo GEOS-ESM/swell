@@ -1,6 +1,8 @@
 import os
 import unittest
 import subprocess
+import shutil
+import atexit
 from datetime import datetime as dt
 from swell.utilities.logger import get_logger
 from swell.utilities.exceptions import SwellError
@@ -26,6 +28,8 @@ def setup_geos_mksi(reference: str):
     if not os.path.exists(geos_mksi_path):
         git_clone_cmd = ["git", "clone", url, geos_mksi_path]
         subprocess.run(git_clone_cmd, stderr=subprocess.DEVNULL)
+        # Delete the GEOS_mksi directory after the test runs, to keep things clean
+        atexit.register(lambda: shutil.rmtree("GEOS_mksi"))
 
     git_checkout_cmd = ["git", "checkout", reference]
     subprocess.run(git_checkout_cmd, cwd=geos_mksi_path, stdout=subprocess.DEVNULL,
