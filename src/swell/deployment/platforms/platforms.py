@@ -11,6 +11,8 @@
 import importlib
 import os
 import yaml
+from enum import Enum
+import subprocess
 
 from importlib import resources
 
@@ -81,5 +83,40 @@ def login_or_compute(platform) -> str:
     # Fallback to returning login to be safe
     return 'login'
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+class SwellPlatform(Enum):
+    ''' Store filepaths for platform defaults. '''
+    NCCS_DISCOVER_SLES15 = os.path.join(platform_path(), 'nccs_discover_sles15')
+    NCCS_DISCOVER_CASCADE = os.path.join(platform_path(), 'nccs_discover')
+    GENERIC = os.path.join(platform_path(), 'generic')
+
+    @classmethod
+    def detect_platform(cls):
+        ''' Detect the current platform, or return generic (NCCS only). '''
+
+        # Try to get the hostname
+        hostname = os.environ.get('HOSTNAME')
+        if hostname is None or not any(key in hostname for key in ['discover', 'borg', 'warp']):
+            return cls.GENERIC
+
+        # Try the lscpu shell command, which should be available across NCCS
+        try:
+            cpu_info = str(subprocess.run('lscpu', capture_output=True).stdout)
+
+            model_name = cpu_info.split('Model name:')[1].strip().split('\n')[0].strip()
+
+            # Match the cpu to the expected platform
+            if all(key in model_name for key in ['Intel', 'Xeon']):
+                return cls.NCCS_DISCOVER_CASCADE
+            elif all(key in model_name for key in ['AMD', 'EPYC']):
+                return cls.NCCS_DISCOVER_SLES15
+            else:
+                return cls.GENERIC
+
+        except (FileNotFoundError, IndexError):
+            return cls.GENERIC
 
 # --------------------------------------------------------------------------------------------------

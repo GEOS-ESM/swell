@@ -1,5 +1,31 @@
 # Configuring `cylc` on Discover.
 
+## Setting Cylc global defaults
+
+Cylc consults a file in the user's home directory for default attributes.
+
+Create a file called `$HOME/.cylc/flow/global.cylc` and fill it with the following:
+
+```bash
+[scheduler]
+  UTC mode = True
+  process pool timeout = PT10M
+  process pool size = 4
+
+[platforms]
+  [[nccs_discover_cascade]]
+    job runner = slurm
+    install target = localhost
+    hosts = localhost
+  [[nccs_discover_sles15]]
+    job runner = slurm
+    install target = localhost
+    hosts = localhost
+```
+
+## Configuring the executable
+<u>Note:</u> As of PR 537, configuration of the Cylc executable on Discover is handled automatically by Swell. The following instructions are for earlier versions, and will be removed in a future PR. Removing/renaming the existing `~/bin/cylc` is recommended.
+
  The following script loads spack-modules and the latest `cylc` installation. To run `cylc` locally, create a file called `$HOME/bin/cylc` for running `cylc` on Discover and fill it with the following :
 
 ```bash
@@ -30,26 +56,4 @@ Afterwards, make sure that the `$HOME/bin/cylc` file has executable permission:
 ```bash
 chmod +x $HOME/bin/cylc
 ```
-
-Create a file called `$HOME/.cylc/flow/global.cylc` and fill it with the following:
-
-```bash
-[scheduler]
-  UTC mode = True
-  process pool timeout = PT10M
-  process pool size = 4
-
-[platforms]
-  [[nccs_discover_cascade]]
-    job runner = slurm
-    install target = localhost
-    hosts = localhost
-  [[nccs_discover_sles15]]
-    job runner = slurm
-    install target = localhost
-    hosts = localhost
-```
-
-
-
 
