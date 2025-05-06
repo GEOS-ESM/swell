@@ -83,7 +83,6 @@ class CylcWorkflow():
         self.scheduling = self.define_scheduling()
 
         self.tasks = self.parse_graph_for_tasks()
-        print(self.tasks)
 
     # --------------------------------------------------------------------------------------------------
 
