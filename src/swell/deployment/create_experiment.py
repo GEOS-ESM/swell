@@ -110,8 +110,8 @@ def prepare_config(
 
     # Set the tasks to be used in preparing the suite
     # -----------------------------------------------
-    prepare_config_and_suite.set_model_independent_tasks(model_ind_tasks)
-    prepare_config_and_suite.set_model_dependent_tasks(model_dep_tasks)
+    prepare_config_and_suite.model_independent_tasks = model_ind_tasks
+    prepare_config_and_suite.model_dependent_tasks = model_dep_tasks
 
     # Ask the task questions
     # ----------------------
@@ -119,7 +119,7 @@ def prepare_config(
 
     # Update the workflow with the answered task questions
     # ----------------------------------------------------
-    workflow.set_experiment_dict(experiment_dict)
+    workflow.experiment_dict = experiment_dict
 
     # Finalize the workflow by adding the runtime section, and get the contents
     # -------------------------------------------------------------------------

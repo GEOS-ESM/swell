@@ -120,16 +120,6 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_model_independent_tasks(self, tasks: list) -> None:
-        self.model_independent_tasks = tasks
-
-    # ----------------------------------------------------------------------------------------------
-
-    def set_model_dependent_tasks(self, model_task_dict: Mapping) -> None:
-        self.model_dependent_tasks = model_task_dict
-
-    # ----------------------------------------------------------------------------------------------
-
     def get_experiment_dict(self) -> Mapping:
         return self.experiment_dict
 

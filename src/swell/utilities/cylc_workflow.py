@@ -34,11 +34,6 @@ class CylcWorkflow():
 
     # --------------------------------------------------------------------------------------------------
 
-    def set_experiment_dict(self, experiment_dict) -> None:
-        self.experiment_dict = experiment_dict
-
-    # --------------------------------------------------------------------------------------------------
-
     def format_string_block(self, string) -> str:
         out_string = '"""\n'
         out_string += indent_lines(string, 1, True)
