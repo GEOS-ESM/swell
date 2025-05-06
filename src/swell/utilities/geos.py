@@ -232,7 +232,7 @@ class Geos():
 
     def parse_mom6_input(self, mom6_input_path: str) -> dict:
 
-        # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuratin values.
+        # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuration values.
         # ---------------------------------------------------------------------------------
         mom6_config = {}
 
