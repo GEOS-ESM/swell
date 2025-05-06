@@ -58,9 +58,12 @@ def prepare_slurm_defaults_and_overrides(
     # ----------------------------------
     if slurm_file is not None:
         logger.info(f"Reading SLURM directives from {slurm_file}.")
-        assert os.path.exists(slurm_file)
-        with open(slurm_file, "r") as slurmfile:
-            slurm_overrides = yaml.safe_load(slurmfile)
+        try:
+            with open(slurm_file, "r") as slurmfile:
+                slurm_overrides = yaml.safe_load(slurmfile)
+        except FileNotFoundError as err:
+            raise FileNotFoundError(f"Slurm config {slurm_file} not found.")
+
         # Ensure that SLURM dict is _only_ used for SLURM directives.
         slurm_invalid_keys = set(slurm_overrides.keys()).difference({
             "slurm_directives_global",
