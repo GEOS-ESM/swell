@@ -84,6 +84,14 @@ class Config():
         else:
             model_config = {}
 
+        if 'models' in experiment_dict.keys():
+
+            # Add a dictionary tracking all model-dependent values
+            setattr(self, f'__all_model_configs__', experiment_dict['models'])
+
+            # Add a method to access the model-dependent dictionary
+            setattr(self, f'all_model_configs', self.get('all_model_configs'))
+
         # Remove the model specific part from the full config
         if 'models' in experiment_dict.keys():
             del experiment_dict['models']
@@ -161,5 +169,22 @@ class Config():
             else:
                 return default
         return variable_not_found
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_key_for_model(self, name: str, model: str, default='LrZRExPGcQ'):
+        """ Access keys in any model component. Provide a default to avoid errors. """
+
+        if hasattr(self, 'all_model_configs'):
+            all_configs = self.all_model_configs()
+
+            if model in all_configs.keys() and name in all_configs[model].keys():
+                default = all_configs[model][name]
+
+        if default == 'LrZRExPGcQ':
+            self.__logger__.abort(f"In config class, trying to reference value '{name}'" +
+                                  f" for model '{model}', but config key does not exist and no" +
+                                  f" default has been provided.")
+        return default
 
 # ----------------------------------------------------------------------------------------------
