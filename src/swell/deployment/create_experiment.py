@@ -16,7 +16,6 @@ import sys
 import yaml
 from typing import Union, Optional
 
-from swell.suites.all_suites import SuiteConfigs
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
