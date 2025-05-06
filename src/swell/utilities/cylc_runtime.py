@@ -87,24 +87,31 @@ class Task:
         return CylcSection(name, content)
 
     def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
+        ''' Return the runtime section for the given task. '''
+
         platform = experiment_dict['platform']
         runtime_dict = {}
 
+        # Set the pre_script only if it is specified
         if self.pre_script:
             runtime_dict['pre-script'] = self.format_string_block(self.pre_script)
 
+        # Set the script
         if self.script:
             runtime_dict['script'] = self.format_string_block(self.script)
 
+        # Specify the platform if this is a slurm task
         if self.slurm is not None:
             runtime_dict['platform'] = platform
 
+        # Set the time limit, default is 1 hour
         if self.time_limit is True:
             runtime_dict['execution time limit'] = 'PT1H'
         elif self.time_limit:
             time_limit = self.match_platform(self.time_limit, platform)
             runtime_dict['execution time limit'] = time_limit
 
+        # Set the retry if this task needs it
         if self.retry is True:
             runtime_dict['execution retry delays'] = '2*PT1M'
         if self.retry:
@@ -113,16 +120,17 @@ class Task:
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
 
+        # Set the environment dictionary
         if self.environment is not None:
             environment_section = self.create_new_section('environment', self.environment)
             runtime_section.add_subsection(environment_section)
 
+        # Specify the slurm dictionary with defaults from user and global settings
         if self.slurm is not None:
             slurm_dict = {}
+
             for key, value in self.slurm.items():
                 slurm_dict[key] = self.match_platform(value, platform)
-            else:
-                slurm_dict = {}
 
             slurm_globals = slurm_external['slurm_directives_global']
             slurm_task = {}
@@ -137,15 +145,18 @@ class Task:
             else:
                 slurm_task = {}
 
+            # Set values from globals, task specifications, and overrides, in order of priority
             slurm_dict = {'job-name': self.scheduling_name,
                           **slurm_globals,
                           **slurm_dict,
                           **slurm_task
                           }
 
+            # Format the dictionary for cylc
             slurm_section_dict = {}
             for key, value in slurm_dict.items():
                 slurm_section_dict[f'--{key}'] = value
+
             directive_section = self.create_new_section('directives', slurm_section_dict)
 
             runtime_section.add_subsection(directive_section)
@@ -178,7 +189,6 @@ class Slurm(Task):
     def __post_init__(self):
         if not self.slurm:
             self.slurm = {}
-
         super().__post_init__()
 
 # --------------------------------------------------------------------------------------------------
