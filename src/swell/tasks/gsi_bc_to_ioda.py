@@ -54,7 +54,10 @@ class GsiBcToIoda(taskBase):
 
             print('observation', observation)
             # Open configuration file for observation
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            if observation == 'aircraft':
+              observation_dict = self.jedi_rendering.render_interface_observations('aircraft_temperature')
+            else:
+              observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Check for sensor key
             try:
@@ -100,7 +103,7 @@ class GsiBcToIoda(taskBase):
                                  f'In GsiBcToIoda no satbias file found in {gsi_bc_dir}.')
         self.logger.assert_abort(satbiaspc_file_index is not None,
                                  f'In GsiBcToIoda no satbiaspc file found in {gsi_bc_dir}.')
-        if 'aircraft' in observations:
+        if 'aircraft_temperature' in observations:
             self.logger.assert_abort(acftbias_file_index is not None,
                                      f'In GsiBcToIoda no acftbias file found in {gsi_bc_dir}.')
 
@@ -202,7 +205,7 @@ class GsiBcToIoda(taskBase):
 
             acftbias_converter_dict['output'] = acftbias_converter_dict_output
 
-            acftbias_converter_yaml = os.path.join(gsi_bc_dir, 'acftbias.yaml')
+            acftbias_converter_yaml = os.path.join(gsi_bc_dir, 'acftbias_temperature.yaml')
             write_dict_to_yaml(acftbias_converter_dict, acftbias_converter_yaml)
 
             # Run IODA acftbias converter
