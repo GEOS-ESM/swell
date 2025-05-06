@@ -13,7 +13,7 @@ from enum import Enum, member
 from dataclasses import dataclass
 
 from swell.utilities.dataclass_utils import mutable_field
-from swell.utilities.cylc_runtime import Task, Model, Cycling, Slurm
+from swell.utilities.cylc_runtime import Task
 
 # --------------------------------------------------------------------------------------------------
 
@@ -36,57 +36,76 @@ class TaskRuntimes():
         pass
 
     @dataclass
-    class BuildJedi(Slurm):
+    class BuildJedi(Task):
         time_limit: bool = True
+        slurm: dict = mutable_field({})
 
     @dataclass
-    class StageJedi(Model):
-        pass
+    class StageJedi(Task):
+        is_model: bool = True
 
     @dataclass
-    class StageJediCycle(Cycling, Model):
+    class StageJediCycle(Task):
+        is_cycling: bool = True
+        is_model: bool = True
         base_name: str = "StageJedi"
         scheduling_name: str = "StageJediCycle-{model}"
 
     @dataclass
-    class GetBackground(Cycling, Model):
-        pass
+    class GetBackground(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class GetObservations(Cycling, Model):
-        pass
+    class GetObservations(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class GenerateBClimatology(Cycling, Model, Slurm):
+    class GenerateBClimatology(Task):
         time_limit: bool = True
+        is_cycling: bool = True
+        is_model: bool = True
+        slurm: dict = mutable_field({})
 
     @dataclass
-    class GenerateBClimatologyByLinking(Cycling, Model):
-        pass
+    class GenerateBClimatologyByLinking(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class RunJediVariationalExecutable(Cycling, Model, Slurm):
+    class RunJediVariationalExecutable(Task):
         time_limit: bool = True
+        is_cycling: bool = True
+        is_model: bool = True
+        slurm: dict = mutable_field({})
 
     @dataclass
-    class EvaJediLog(Cycling, Model):
-        pass
+    class EvaJediLog(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class EvaIncrement(Cycling, Model):
-        pass
+    class EvaIncrement(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class EvaObservations(Cycling, Model, Slurm):
+    class EvaObservations(Task):
         time_limit: bool = True
+        is_cycling: bool = True
+        is_model: bool = True
+        slurm: dict = mutable_field({})
 
     @dataclass
-    class SaveObsDiags(Cycling, Model):
-        pass
+    class SaveObsDiags(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @dataclass
-    class CleanCycle(Cycling, Model):
-        pass
+    class CleanCycle(Task):
+        is_cycling: bool = True
+        is_model: bool = True
 
     @classmethod
     def get(cls, name: str) -> Task:
@@ -94,8 +113,3 @@ class TaskRuntimes():
 
 
 # --------------------------------------------------------------------------------------------------
-
-if __name__ == "__main__":
-    print(TaskRuntimes.get('RunJediVariationalExecutable')())
-    r = TaskRuntimes.get('root')()
-    print(r.pre_script)

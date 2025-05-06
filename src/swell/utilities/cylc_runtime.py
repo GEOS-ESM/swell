@@ -164,31 +164,3 @@ class Task:
         return runtime_section
 
 # --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class Model(Task):
-    def __post_init__(self):
-        self.is_model = True
-        super().__post_init__()
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class Cycling(Task):
-    def __post_init__(self):
-        self.is_cycling = True
-        super().__post_init__()
-
-# --------------------------------------------------------------------------------------------------
-
-
-@dataclass
-class Slurm(Task):
-    def __post_init__(self):
-        if not self.slurm:
-            self.slurm = {}
-        super().__post_init__()
-
-# --------------------------------------------------------------------------------------------------
