@@ -112,10 +112,12 @@ class Task:
             runtime_dict['execution time limit'] = time_limit
 
         # Set the retry if this task needs it
-        if self.retry is True:
-            runtime_dict['execution retry delays'] = '2*PT1M'
         if self.retry:
-            retry = self.match_platform(self.retry, platform)
+            if self.retry is True:
+                retry = '2*PT1M'
+            else:
+                retry = self.match_platform(self.retry, platform)
+
             runtime_dict['execution retry delays'] = retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
