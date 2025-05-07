@@ -11,7 +11,7 @@
 import click
 from typing import Union, Optional, Literal
 
-from swell.deployment.platforms.platforms import get_platforms
+from swell.deployment.platforms.platforms import SwellPlatforms as platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
@@ -55,7 +55,7 @@ input_method_help = 'Method by which to create the YAML configuration file. If c
 
 platform_help = 'If using defaults for input_method, this option is used to determine which ' + \
                 'platform to use for platform specific defaults. Options are ' + \
-                str(get_platforms())
+                str(platforms.get_all())
 
 override_help = 'After generating the config file, parameters inside can be overridden ' + \
                 'using values from the override config file.'
@@ -90,8 +90,8 @@ or for task-model combinations.
 @click.argument('suite', type=click.Choice(AllSuites.config_names()))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
-@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
-              type=click.Choice(get_platforms()), help=platform_help)
+@click.option('-p', '--platform', 'platform', default=platforms.detect_platform().value,
+              type=click.Choice(platforms.get_all()), help=platform_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
@@ -112,6 +112,7 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
+
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
@@ -244,8 +245,8 @@ def test(test: str) -> None:
 
 
 @swell_driver.command()
-@click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
-              default="nccs_discover_sles15", help=platform_help)
+@click.option('-p', '--platform', 'platform', type=click.Choice(platforms.get_all()),
+              default=platforms.detect_platform().value, help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing")))
 def t1test(
     suite: Literal["hofx", "3dvar", "ufo_testing"],
@@ -264,8 +265,8 @@ def t1test(
 
 
 @swell_driver.command()
-@click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
-              default="nccs_discover_sles15", help=platform_help)
+@click.option('-p', '--platform', 'platform', type=click.Choice(platforms.get_all()),
+              default=platforms.detect_platform().value, help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
                                             "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
 def t2test(

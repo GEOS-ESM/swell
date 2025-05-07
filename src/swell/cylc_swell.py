@@ -12,7 +12,7 @@ import subprocess
 import os
 import sys
 
-from swell.deployment.platforms.platforms import SwellPlatform
+from swell.deployment.platforms.platforms import SwellPlatforms
 from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ def execute_cylc(argv=sys.argv) -> None:
     platform = SwellPlatform.detect_platform()
 
     # Location for Discover cylc installation
-    if platform in [SwellPlatform.NCCS_DISCOVER_CASCADE, SwellPlatform.NCCS_DISCOVER_SLES15]:
+    if platform in [SwellPlatforms.NCCS_DISCOVER_CASCADE, SwellPlatforms.NCCS_DISCOVER_SLES15]:
         opt = '/discover/nobackup/projects/gmao/advda/swell/dev/core/cylc/sles15_8.4.0/'
         python_ver = 'python3.11'
 

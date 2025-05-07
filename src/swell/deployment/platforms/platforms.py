@@ -14,6 +14,7 @@ import yaml
 from enum import Enum
 import subprocess
 import platform as pltfrm
+from typing import Self
 
 from importlib import resources
 
@@ -26,22 +27,6 @@ from swell.swell_path import get_swell_path
 def platform_path() -> str:
 
     return os.path.join(get_swell_path(), 'deployment', 'platforms')
-
-
-# --------------------------------------------------------------------------------------------------
-
-
-def get_platforms() -> list:
-
-    # Get list of supported platforms
-    platforms = [dir for dir in os.listdir(platform_path())
-                 if os.path.isdir(os.path.join(platform_path(), dir))]
-
-    # If anything in platforms contains '__' remove it from platforms list
-    platforms = [platform for platform in platforms if '__' not in platform]
-
-    # List all directories in directory
-    return platforms
 
 
 # --------------------------------------------------------------------------------------------------
@@ -88,13 +73,13 @@ def login_or_compute(platform) -> str:
 # --------------------------------------------------------------------------------------------------
 
 
-class SwellPlatform(Enum):
-    ''' Store filepaths for platform defaults. '''
-    NCCS_DISCOVER_SLES15 = os.path.join(platform_path(), 'nccs_discover_sles15')
-    NCCS_DISCOVER_CASCADE = os.path.join(platform_path(), 'nccs_discover')
-    AWS = os.path.join(platform_path(), 'aws')
-    MAC = os.path.join(platform_path(), 'mac')
-    GENERIC = os.path.join(platform_path(), 'generic')
+class SwellPlatforms(Enum):
+    ''' Track platforms supported by Swell. '''
+    NCCS_DISCOVER_SLES15 = 'nccs_discover_sles15'
+    NCCS_DISCOVER_CASCADE = 'nccs_discover_cascade'
+    AWS = 'aws'
+    MAC = 'mac'
+    GENERIC = 'generic'
 
     @classmethod
     def detect_platform(cls):
@@ -131,5 +116,19 @@ class SwellPlatform(Enum):
         # Check for Mac
         if all(key in os_name for key in ['macOS', 'arm64']):
             return cls.MAC
+
+    # --------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def get_all(cls) -> list:
+        return [item.value for item in cls]
+
+    # --------------------------------------------------------------------------------------------------
+
+    @classmethod
+    def match_name(cls, name: str) -> Self:
+        # Return the enum instance based on the name
+        return getattr(cls, name.upper())
+
 
 # --------------------------------------------------------------------------------------------------
