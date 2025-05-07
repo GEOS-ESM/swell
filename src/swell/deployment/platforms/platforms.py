@@ -117,6 +117,8 @@ class SwellPlatforms(Enum):
         if all(key in os_name for key in ['macOS', 'arm64']):
             return cls.MAC
 
+        return cls.GENERIC
+
     # --------------------------------------------------------------------------------------------------
 
     @classmethod
