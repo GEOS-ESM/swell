@@ -13,6 +13,7 @@ import os
 import yaml
 from enum import Enum
 import subprocess
+import platform as pltfrm
 
 from importlib import resources
 
@@ -91,32 +92,44 @@ class SwellPlatform(Enum):
     ''' Store filepaths for platform defaults. '''
     NCCS_DISCOVER_SLES15 = os.path.join(platform_path(), 'nccs_discover_sles15')
     NCCS_DISCOVER_CASCADE = os.path.join(platform_path(), 'nccs_discover')
+    AWS = os.path.join(platform_path(), 'aws')
+    MAC = os.path.join(platform_path(), 'mac')
     GENERIC = os.path.join(platform_path(), 'generic')
 
     @classmethod
     def detect_platform(cls):
-        ''' Detect the current platform, or return generic (NCCS only). '''
+        ''' Detect the current platform, or return generic. '''
 
         # Try to get the hostname
         hostname = os.environ.get('HOSTNAME')
-        if hostname is None or not any(key in hostname for key in ['discover', 'borg', 'warp']):
-            return cls.GENERIC
+        os_name = pltfrm.platform()
 
-        # Try the lscpu shell command, which should be available across NCCS
-        try:
-            cpu_info = str(subprocess.run('lscpu', capture_output=True).stdout)
+        if hostname is not None:
 
-            model_name = cpu_info.split('Model name:')[1].strip().split('\n')[0].strip()
+            # Check for Discover hostnames
+            if any(key in hostname for key in ['discover', 'borg', 'warp']):
 
-            # Match the cpu to the expected platform
-            if all(key in model_name for key in ['Intel', 'Xeon']):
-                return cls.NCCS_DISCOVER_CASCADE
-            elif all(key in model_name for key in ['AMD', 'EPYC']):
-                return cls.NCCS_DISCOVER_SLES15
-            else:
-                return cls.GENERIC
+                try:
+                    # Try the lscpu shell command, which should be available across NCCS
+                    cpu_info = str(subprocess.run('lscpu', capture_output=True).stdout)
 
-        except (FileNotFoundError, IndexError):
-            return cls.GENERIC
+                    model_name = cpu_info.split('Model name:')[1].strip().split('\n')[0].strip()
+
+                    # Match the cpu to the expected platform
+                    if all(key in model_name for key in ['Intel', 'Xeon']):
+                        return cls.NCCS_DISCOVER_CASCADE
+                    elif all(key in model_name for key in ['AMD', 'EPYC']):
+                        return cls.NCCS_DISCOVER_SLES15
+
+                except (FileNotFoundError, IndexError):
+                    return cls.GENERIC
+
+        # Check for AWS
+        if all(key in os_name for key in ['Linux', 'aws']):
+            return cls.AWS
+
+        # Check for Mac
+        if all(key in os_name for key in ['macOS', 'arm64']):
+            return cls.MAC
 
 # --------------------------------------------------------------------------------------------------
