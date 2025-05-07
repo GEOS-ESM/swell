@@ -23,7 +23,7 @@ from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
-from swell.suites.all_suites import SuiteConfigs, Workflows
+from swell.suites.all_suites import suite_configs, workflows
 
 
 # --------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ def prepare_config(
 
     # Initialize the workflow
     # -----------------------
-    workflow = Workflows.get_workflow(suite)(suite_dict, slurm_dict)
+    workflow = workflows.get_workflow(suite)(suite_dict, slurm_dict)
 
     # Get the list of tasks from the workflow's graph
     # -----------------------------------------------
@@ -158,7 +158,7 @@ def create_experiment_directory(
 
     # Get the base name of the suite
     # ------------------------------
-    suite = SuiteConfigs.base_suite(suite_config)
+    suite = suite_configs.base_suite(suite_config)
 
     # Create a logger
     # ---------------

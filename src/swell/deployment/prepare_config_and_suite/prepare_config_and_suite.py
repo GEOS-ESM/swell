@@ -25,7 +25,7 @@ from swell.utilities.logger import Logger
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict, add_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
-from swell.suites.all_suites import SuiteConfigs, Workflows
+from swell.suites.all_suites import suite_configs
 from swell.utilities.swell_questions import QuestionType
 
 
@@ -140,7 +140,7 @@ class PrepareExperimentConfigAndSuite:
         question_dictionary_model_ind = {}
         question_dictionary_model_dep = {}
 
-        suite_config_obj = SuiteConfigs.get_config(self.suite_config)
+        suite_config_obj = suite_configs.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
 
         for model in self.possible_model_components:
