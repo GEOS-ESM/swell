@@ -73,7 +73,7 @@ def execute_cylc(argv=sys.argv) -> None:
     elif platform == SwellPlatforms.AWS:
         cylc_command = ['/usr/local/bin/cylc'] + sys.argv[1:]
 
-        subprocess.run(cylc_command, env=env)
+        subprocess.run(cylc_command)
 
     # Try just calling cylc from the path
     else:
