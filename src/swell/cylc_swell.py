@@ -70,6 +70,11 @@ def execute_cylc(argv=sys.argv) -> None:
 
         subprocess.run(cylc_command, env=env)
 
+    elif platform == SwellPlatforms.AWS:
+        cylc_command = ['/usr/local/bin/cylc'] + sys.argv[1:]
+
+        subprocess.run(cylc_command, env=env)
+
     # Try just calling cylc from the path
     else:
         logger.warning('Platform not recognized, attempting to call Cylc executable from the path.')
