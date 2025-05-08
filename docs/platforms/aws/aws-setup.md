@@ -184,3 +184,51 @@ module load sp/2.5.0
 cd "$JEDI_BUILD"
 ecbuild "$JEDI_SRC"
 ```
+
+## Internal JCSDA dependencies
+
+You will also need the following JCSDA dependencies that are not (currently) in public repositories:
+
+- `r2d2`
+- `solo`
+
+Sources for these may be available in `/discover/nobackup/projects/gmao/advda/JediOpt/src`.
+
+On Discover, these are available as environment modules.
+On AWS, these are just open source code folders and are installed in Swell via `pip` (see `requirements-aws.txt`).
+
+## Essential data for Swell
+
+NOTE: These instructions are current as of **May 5, 2025**.
+Data used by Swell change frequently as Swell evolves, so these instructions may quickly become outdated.
+Hopefully, they give you a sense of how Swell looks for files.
+
+### `SwellStaticFiles`
+
+On Discover, these are stored in `/discover/nobackup/projects/gmao/advda/SwellStaticFiles`.
+The relevant `task_question`s are:
+- `swell_static_files` --- root directory
+- `geos_experiment_directory` --- expands to: `<swell_static_files>/geos/run_dirs/<geos_experiment_directory>`
+- `geos_restarts_directory` --- expands to `<swell_static_files>/geos/restarts/<geos_restarts_directory>`
+
+The complete `SwellStaticFiles` directory on Discover is several hundred GB, but not all of the data are needed for basic Swell tier 1 tests.
+You may be able to get away with copying over only the following:
+
+- `/discover/nobackup/projects/gmao/advda/SwellStaticFiles/`
+    - `/jedi/`
+        - `interfaces/`
+            - `/geos_ocean/model/`
+            - `/geos_atmosphere/`
+        - `/crtm_coefficients/`
+    - `/geos/`
+        - `/run_dirs/5deg_0701/`
+        - `/restarts/restarts_20210701_210000_5deg/`
+
+### `R2D2DataStore`
+
+On Discover, this is stored in `/discover/nobackup/projects/gmao/advda/R2D2DataStore/Shared`.
+As above, the full directory is quite large, but you may be able to get away with just the following:
+
+- `/discover/nobackup/projects/gmao/advda/R2D2DataStore/Shared`
+    - `mom6_cice6_UFS/fc/s2s/`
+    - `geos/fc/x0048/`
