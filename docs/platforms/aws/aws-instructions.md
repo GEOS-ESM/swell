@@ -1,10 +1,31 @@
 # Swell configuration in AWS (`smce-gmao`)
 
-## Installing cylc
+## Cylc
 
-Swell on AWS (and likely elsewhere) seems to work fine with just a standard global installation of cylc.
-Therefore, the recommendation on AWS is to install cylc standalone.
-A very easy and convenient way to do that is using the [pixi package manager](https://pixi.sh/latest/):
+The Swell AWS installation comes with a global installation of cylc.
+You should be able to use it with no additional configuration (assuming `/usr/local/bin` is on your `PATH`).
+
+The `cylc` configuration on AWS is basically identical to Discover.
+Ensure the following are in your `~/.cylc/flow/global.cylc` file.
+
+```
+[scheduler]
+  UTC mode = True
+  process pool timeout = PT10M
+  process pool size = 4
+
+[platforms]
+  [[aws]]
+    job runner = slurm
+    install target = localhost
+    hosts = localhost
+```
+
+### (Optional) Install your own version of cylc
+
+If you would like to install your own `cylc`, read on:
+
+A very easy and convenient way to install `cylc` is using the [pixi package manager](https://pixi.sh/latest/):
 
 1. Install `pixi` itself (per its instructions).
 Note that this is a user-level install; you do not need sudo permissions.
