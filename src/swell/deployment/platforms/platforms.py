@@ -78,8 +78,6 @@ class SwellPlatforms(Enum):
     NCCS_DISCOVER_SLES15 = 'nccs_discover_sles15'
     NCCS_DISCOVER_CASCADE = 'nccs_discover_cascade'
     AWS = 'aws'
-    MAC = 'mac'
-    GENERIC = 'generic'
 
     @classmethod
     def detect_platform(cls):
@@ -100,24 +98,24 @@ class SwellPlatforms(Enum):
 
                     model_name = cpu_info.split('Model name:')[1].strip().split('\n')[0].strip()
 
-                    # Match the cpu to the expected platform
-                    if all(key in model_name for key in ['Intel', 'Xeon']):
-                        return cls.NCCS_DISCOVER_CASCADE
-                    elif all(key in model_name for key in ['AMD', 'EPYC']):
-                        return cls.NCCS_DISCOVER_SLES15
-
                 except (FileNotFoundError, IndexError):
-                    return cls.GENERIC
+                    raise ValueError('NCCS Discover hostname detected, but failed to '
+                                     'automatically detect cpu type with "lscpu".')
+
+                # Match the cpu to the expected platform
+                if all(key in model_name for key in ['Intel', 'Xeon']):
+                    return cls.NCCS_DISCOVER_CASCADE
+                elif all(key in model_name for key in ['AMD', 'EPYC']):
+                    return cls.NCCS_DISCOVER_SLES15
+                else:
+                    raise ValueError(f'NCCS Discover hostname detected, but CPU model '
+                                     f'{model_name} does not match any known node types')
 
         # Check for AWS
         if all(key in os_name for key in ['Linux', 'aws']):
             return cls.AWS
 
-        # Check for Mac
-        if all(key in os_name for key in ['macOS', 'arm64']):
-            return cls.MAC
-
-        return cls.GENERIC
+        raise ValueError(f'Unknown or unsupported platform: {os_name}.')
 
     # --------------------------------------------------------------------------------------------------
 
