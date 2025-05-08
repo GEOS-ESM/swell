@@ -55,7 +55,7 @@ def execute_cylc(argv=sys.argv) -> None:
 
     logger = Logger('SwellCylcEntryPoint')
 
-    platform = SwellPlatform.detect_platform()
+    platform = SwellPlatforms.detect_platform()
 
     # Location for Discover cylc installation
     if platform in [SwellPlatforms.NCCS_DISCOVER_CASCADE, SwellPlatforms.NCCS_DISCOVER_SLES15]:
