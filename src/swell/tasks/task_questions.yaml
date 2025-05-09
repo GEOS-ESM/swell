@@ -1090,6 +1090,7 @@ window_length:
   - GetBackground
   - GetGeovals
   - GetGsiBc
+  - GetNcdiags
   - GetObservations
   - LinkGeosOutput
   - MoveDaRestart
