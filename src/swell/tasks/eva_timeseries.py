@@ -19,10 +19,9 @@ from eva.eva_driver import eva
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
+# from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
-from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
@@ -96,18 +95,18 @@ class EvaTimeseries(taskBase):
         # Set channels for which plots will be made
         # This should be configurable once we do the eva refactoring.
         # -------------------------------------------------------------
-        channels_to_plot = {
-            'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
-                          1088, 1329, 1449, 1766, 1800, 1869, 1918],
-            'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
-                             402, 487, 501, 626, 874, 882, 1008],
-            'cris-fsr_npp': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
-                             402, 487, 501, 626, 874, 882, 1008],
-            'iasi_metop-b': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
-                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
-            'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
-                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
-            }
+        # channels_to_plot = {
+        #     'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
+        #                   1088, 1329, 1449, 1766, 1800, 1869, 1918],
+        #     'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+        #                      402, 487, 501, 626, 874, 882, 1008],
+        #     'cris-fsr_npp': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+        #                      402, 487, 501, 626, 874, 882, 1008],
+        #     'iasi_metop-b': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+        #                      445, 552, 573, 906, 1121, 1194, 1427, 1585],
+        #     'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+        #                      445, 552, 573, 906, 1121, 1194, 1427, 1585],
+        #     }
 
         # Loop over observations and create dictionaries
         # ----------------------------------------------
