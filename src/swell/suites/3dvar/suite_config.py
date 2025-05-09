@@ -32,6 +32,7 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
         geos_marine=[
             qd.cycle_times(['T12']),
+            qd.marine_models(['mom6']),
             qd.window_length("P1D"),
             qd.window_offset("PT12H"),
             qd.horizontal_resolution("72x36"),
