@@ -81,6 +81,11 @@ mom6_iau:
 mom6_iau_nhours:
   default_value: PT3H
 
+ncdiag_experiments:
+  default_value: fgat_jra55_01
+  options:
+  - fgat_jra55_01
+
 number_of_iterations:
   default_value:
   - 5

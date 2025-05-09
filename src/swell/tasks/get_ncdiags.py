@@ -60,10 +60,10 @@ class GetNcdiags(taskBase):
                                            f'{window_begin}.nc4')
 
                 fetch(date=window_begin,
-                    provider='ncdiag',
-                    target_file=target_file,
-                    ignore_missing=True,
-                    time_window=window_length,
-                    obs_type=name,
-                    type='ob',
-                    experiment=ncdiag_experiment)
+                      provider='ncdiag',
+                      target_file=target_file,
+                      ignore_missing=True,
+                      time_window=window_length,
+                      obs_type=name,
+                      type='ob',
+                      experiment=ncdiag_experiment)

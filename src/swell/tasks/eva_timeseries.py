@@ -184,27 +184,6 @@ class EvaTimeseries(taskBase):
         with Pool(processes=number_of_workers) as pool:
             pool.map(run_eva, eva_dicts)
 
-        #     # If filename contains icec_ change map projection to polar stereographic
-        #     # -----------------------------------------------------------------------
-        #     if 'icec_' in obs_file:
-        #         eva_override['map_projection'] = 'npstere'
-        #         eva_override['domain'] = 'north'
-        #         # if file name has 'south" or "sh" then change to south polar stereographic
-        #         # ---------------------------------------------------------------
-        #         if 'south' in obs_file or 'sh' in obs_file:
-        #             eva_override['map_projection'] = 'spstere'
-        #             eva_override['domain'] = 'south'
-
-        #     # # Check if the "passivate" condition exists within the "obs filters" list
-        #     passivate_exists = any(
-        #         filter_item.get('action', {}).get('name') == 'passivate'
-        #         for filter_item in observation_dict.get('obs filters', [])
-        #     )
-
-        #     if passivate_exists:
-        #         self.logger.info("Condition 'passivate' exists in 'obs filters'")
-        #         eva_override['passivated_variables'] = True
-
         #     if 'channels' in observation_dict['obs space']:
         #         need_channels = True
         #         if observation in channels_to_plot:
@@ -215,11 +194,6 @@ class EvaTimeseries(taskBase):
         #         need_channels = False
         #         eva_override['channels'] = ''
         #         eva_override['channel'] = ''
-
-        #     # Override the eva dictionary
-        #     # ---------------------------
-        #     eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-        #     eva_dict =.safe_load(eva_str)
 
         #     # Remove channel keys if not needed
         #     # ---------------------------------
