@@ -230,6 +230,52 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
+    def parse_mom6_input(self, mom6_input_path: str) -> dict:
+
+        # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuration values.
+        # ---------------------------------------------------------------------------------
+        mom6_config = {}
+
+        # check if the file exists
+        if not os.path.isfile(mom6_input_path):
+            self.logger.abort(f"MOM6 input file not found: {mom6_input_path}")
+
+        self.logger.info(f"Parsing MOM6 input file: {mom6_input_path}")
+
+        with open(mom6_input_path, 'r') as file:
+            for line in file:
+                # Ignore comments and empty lines
+                line = line.strip()
+                if not line or line.startswith('!'):
+                    continue
+
+                # Split the line into key and value
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    # Remove inline comments (anything after '!')
+                    if '!' in value:
+                        value = value.split('!', 1)[0].strip()
+
+                    # Remove surrounding quotes from strings
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+
+                    # Convert boolean and numeric values
+                    if value.lower() in ('true', 'false'):
+                        value = value.lower() == 'true'
+                    elif value.replace('.', '', 1).isdigit():
+                        value = float(value) if '.' in value else int(value)
+
+                    # Store the key-value pair in the dictionary
+                    mom6_config[key] = value
+
+        return mom6_config
+
+    # ----------------------------------------------------------------------------------------------
+
     def parse_rc(self, rcfile: str) -> dict:
 
         # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
@@ -427,5 +473,23 @@ class Geos():
             states.append(state)
 
         return states
+
+    # --------------------------------------------------------------------------------------------------
+
+    def write_mom6_input(self, mom6_config: dict, output_path: str) -> None:
+
+        self.logger.info(f"Writing MOM6 configuration to: {output_path}")
+
+        try:
+            with open(output_path, 'w') as file:
+                file.write("! === module MOM_oda_incupd ===\n")
+                for key, value in mom6_config.items():
+                    # Format bool values as True/False
+                    if isinstance(value, bool):
+                        value = "True" if value else "False"
+                    # Write the key-value pair to the file
+                    file.write(f"{key} = {value}\n")
+        except Exception as e:
+            self.logger.abort(f"Failed to write MOM6 configuration to {output_path}: {e}")
 
 # --------------------------------------------------------------------------------------------------
