@@ -21,7 +21,6 @@ from r2d2 import fetch
 r2d2_model_dict = {
     'geos_atmosphere': 'geos',
     'geos_marine': 'mom6_cice6_UFS',
-    'geos_ocean': 'mom6_cice6_UFS',
 }
 
 

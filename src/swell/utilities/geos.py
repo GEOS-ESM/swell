@@ -429,7 +429,7 @@ class Geos():
 
         states = []
         self.logger.info('Generating states for model: '+model)
-        if model in ("geos_ocean", "geos_marine"):
+        if model in ("geos_marine"):
             states = self.marine_states(background_frequency, window_length, window_begin_iso,
                                         marine_models)
 

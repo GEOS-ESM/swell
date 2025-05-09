@@ -127,7 +127,6 @@ class QuestionList:
     list_name: str
     questions: List[Union[SwellQuestion, Self]]
 
-    geos_ocean: list = field(default_factory=lambda: [])
     geos_atmosphere: list = field(default_factory=lambda: [])
     geos_marine: list = field(default_factory=lambda: [])
 
