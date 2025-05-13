@@ -850,7 +850,6 @@ class QuestionDefaults():
         ])
         models: List[str] = mutable_field([
             "geos_marine",
-            "geos_ocean"
         ])
         prompt: str = "Do you wish to use IAU for MOM6?"
         widget_type: WType = WType.BOOLEAN
@@ -868,7 +867,6 @@ class QuestionDefaults():
         depends: dict = mutable_field({'mom6_iau': True})
         models: List[str] = mutable_field([
             "geos_marine",
-            "geos_ocean"
         ])
         prompt: str = "What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?"
         widget_type: WType = WType.ISO_DURATION
@@ -1009,7 +1007,7 @@ class QuestionDefaults():
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_atmosphere",
-            "geos_ocean"
+            "geos_marine"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"
         widget_type: WType = WType.STRING
@@ -1167,7 +1165,6 @@ class QuestionDefaults():
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_marine",
-            "geos_ocean"
         ])
         prompt: str = "What is the number of processors for JEDI?"
         widget_type: WType = WType.INTEGER
