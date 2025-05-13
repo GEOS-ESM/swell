@@ -54,6 +54,8 @@ Therefore, it is **huge** (final install is ~76 GB) and takes **forever** (6-8 h
 ```sh
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 ################################################################################
 # Creating a new environment
 # https://spack-stack.readthedocs.io/en/1.9.1/NewSiteConfigs.html#prerequisites-red-hat-centos-8-one-off
@@ -150,6 +152,8 @@ This also builds JEDI to `/shared/build-jedi/build` --- you may want to give thi
 ```sh
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 module purge
 module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core
 
@@ -232,3 +236,39 @@ As above, the full directory is quite large, but you may be able to get away wit
 - `/discover/nobackup/projects/gmao/advda/R2D2DataStore/Shared`
     - `mom6_cice6_UFS/fc/s2s/`
     - `geos/fc/x0048/`
+
+### Local ensemble DA inputs
+
+NOTE: These are only needed for the `localensembleda` suite, which is not a part of the core Swell tests (yet).
+So, you may not need these...which is good, because these are massive (10s of TB). Be judicious about what you copy over!
+In both cases, note also the `background_experiment` and background experiment start and end dates, as these will determine exactly which folders and files you need.
+- Backgrounds:
+    - See the `geos_x_background_directory` variable and the `GetEnsembleGeosExperiment` task.
+    - By default, on Discover, these are in `/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x`.
+    - On AWS, these are in `/efs/shared/restarts/jedi/541x/`.
+    - An rsync command like the following may be useful:
+
+    ```sh
+    nohup rsync -avz --copy-unsafe-links --progress \
+        --dry-run \
+        --filter '+ 13/**' \
+        --filter '+ 19/**' \
+        --filter '+ 181/' \
+        --filter '+ 181/x0050/' \
+        --filter '+ 181/x0050/atmens' \
+        --filter '+ 181/x0050/atmens/Y2023/' \
+        --filter '+ 181/x0050/atmens/Y2023/M10/' \
+        --filter '+ 181/x0050/atmens/Y2023/M10/*.20231009*' \
+        --filter '+ 181/x0050/atmens/Y2023/M10/*.20231010*' \
+        --filter '- 181/**'\
+        --filter '- *'\
+        /discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x/ \
+        swelldev:/efs/shared/restarts/jedi/541x/ \
+        &> ~/geos_bkg.log &
+    ```
+
+- Ensembles:
+    - NOTE: These are needed only for the `localensembleda` suite, which is not a part of the core tests.
+    - See the `geos_x_ensemble_directory` variable, the `GetEnsembleGeosExperiment` task, and the file `src/swell/configuration/jedi/interfaces/geos_atmosphere/task_questions.yaml`
+        - Background experiment: `x0050`
+    - By default, on Discover, these are in `/discover/nobackup/projects/gmao/dadev/rtodling/archive/541/Milan`.
