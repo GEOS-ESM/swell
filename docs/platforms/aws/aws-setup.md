@@ -187,6 +187,8 @@ module load sp/2.5.0
 
 cd "$JEDI_BUILD"
 ecbuild "$JEDI_SRC"
+make update
+make -j2
 ```
 
 ## Internal JCSDA dependencies
