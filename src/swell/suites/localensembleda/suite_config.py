@@ -33,7 +33,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
-            qd.horizontal_resolution('91'),
+            qd.horizontal_resolution('13'),
             qd.background_experiment('x0050'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
                                            'rtodling/archive/Restarts/JEDI/541x'),
@@ -41,8 +41,9 @@ class SuiteConfig(QuestionContainer, Enum):
                                          'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(4),
+#            qd.perhost(32),
             qd.cycle_times(['T00']),
-            qd.ensemble_num_members(32),
+            qd.ensemble_num_members(3),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("GETKF"),
             qd.local_ensemble_use_linear_observer(True),

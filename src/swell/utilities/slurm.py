@@ -45,7 +45,8 @@ def prepare_scheduling_dict(
     task_defaults = {
         "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
-        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
+        "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
+        "RunJediLocalEnsembleDaExecutable": {"all": {"nodes": 3}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
