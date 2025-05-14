@@ -1,12 +1,12 @@
 crtm_coeff_dir:
   default_value: /shared/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
-#
-# existing_geos_gcm_build_path:
-#   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/install-SLES15
-#
-# existing_geos_gcm_source_path:
-#   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/
-#
+
+existing_geos_gcm_build_path:
+  default_value: /shared/GEOSgcm/v11.6.0/install/
+
+existing_geos_gcm_source_path:
+  default_value: /shared/GEOSgcm/v11.6.0/
+
 existing_jedi_build_directory:
   default_value: /shared/build-jedi/build
 

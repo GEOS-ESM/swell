@@ -201,6 +201,50 @@ Sources for these may be available in `/discover/nobackup/projects/gmao/advda/Je
 On Discover, these are available as environment modules.
 On AWS, these are just open source code folders and are installed in Swell via `pip` (see `requirements-aws.txt`).
 
+## Building GEOS
+
+Follow the instructions on the GEOS-ESM repo (https://github.com/geos-esm/geosgcm).
+The instructions below are abbreviated and opinionated and are meant only to document the configuration used for the current AWS Swell deployment.
+
+Clone GEOS and checkout the relevant tag.
+
+```sh
+mkdir -p /shared/GEOSgcm
+git clone https://github.com/geos-esm/geosgcm /shared/GEOSgcm/main
+
+cd /shared/GEOSgcm/main
+git worktree add ../v11.6.0 v11.6.0
+```
+
+Load required modules.
+(NOTE: This includes a `mepo` installation).
+
+```sh
+module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core/
+module load stack-gcc/11.4.0
+module load stack-openmpi/5.0.5
+module load geos-gcm-env/1.0.0
+```
+
+Clone stuff that GEOS needs.
+
+```sh
+cd /shared/GEOSgcm/v11.6.0
+mepo clone
+```
+
+Build using cmake.
+(NOTE: This assumes build directory `./build` and install directory `./install`).
+
+```sh
+# Configure the build
+cmake -B build -S . --install-prefix=install
+# ...and actually do the build
+cmake --build build --target install
+```
+
+The resulting GEOS installation lives is in `/shared/GEOSgcm/v11.6.0/install`.
+
 ## Essential data for Swell
 
 NOTE: These instructions are current as of **May 5, 2025**.
