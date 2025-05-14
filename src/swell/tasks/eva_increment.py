@@ -28,10 +28,6 @@ class EvaIncrement(taskBase):
         model = self.get_model()
         window_type = self.config.window_type()
 
-        # TODO: This is temporary until we get rid of the geos_ocean config
-        if model == 'geos_ocean':
-            marine_models = ['mom6']
-
         if model == 'geos_marine':
             marine_models = self.config.marine_models()
 
@@ -75,7 +71,7 @@ class EvaIncrement(taskBase):
         eva_override = {}
 
         # Soca case
-        if model == 'geos_ocean' or model == 'geos_marine':
+        if model == 'geos_marine':
             ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
             incr_file = f'ocn.{self.experiment_id()}.incr.{ocn_cycle_time}.nc'
 

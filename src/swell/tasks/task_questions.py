@@ -94,6 +94,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
+            qd.marine_models(),
             qd.r2d2_local_path(),
         ]
     )
@@ -463,7 +464,8 @@ class TaskQuestions(QuestionContainer, Enum):
             swell_static_file_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_experiment_directory()
+            qd.geos_experiment_directory(),
+            qd.mom6_iau_nhours()
         ]
     )
 

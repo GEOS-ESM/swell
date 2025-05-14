@@ -1,7 +1,0 @@
-write increment: true
-increment:
-  state component:
-    datadir: ./
-    date: '{{window_begin_iso}}'
-    exp: {{experiment_id}}
-    type: incr

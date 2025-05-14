@@ -516,7 +516,7 @@ class PrepareExperimentConfigAndSuite:
 
                     # Check whether any of tasks_dep_per_model are in question_tasks
                     if any(question_key in self.questions_per_task[task]
-                           for task in model_dep_tasks[model]):
+                           for task in model_dep_tasks[model] + model_ind_tasks):
 
                         # Ask the question
                         self.ask_a_question(self.question_dictionary_model_dep[model], question_key,
