@@ -146,13 +146,24 @@ module load py-pip/23.1.2
 
 ## Building JEDI
 
-NOTE: This builds skylab-v8 and assumes the instructions above were followed for building spack-stack.
-This also builds JEDI to `/shared/build-jedi/build` --- you may want to give this a more informative path.
+Public releases of JEDI source code are significantly behind (~1 year or more) the latest version.
+Swell works best with a recent version of JEDI, but currently, the JCSDA repository is not public.
+Therefore, we pull the latest JEDI source code from Discover (where it is updated daily):
+
+```
+/discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
+```
+
+On the current AWS configuration, this is synced to `/shared/jedi-bundles/latest/source/`.
+
+NOTE: The instructions below assume `spack-stack` 1.9 was built as described above.
 
 ```sh
-#!/usr/bin/env bash
+# ---
+# /shared/jedi-bundles/jedi-modules.sh
+# ---
 
-set -euo pipefail
+#!/usr/bin/env bash
 
 module purge
 module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core
@@ -161,22 +172,6 @@ module load stack-gcc/11.4.0
 module load stack-openmpi/5.0.5
 module load ecbuild/3.7.2
 
-if [[ ! -d jedi-bundle ]]; then
-  git clone https://github.com/jcsda/jedi-bundle
-fi
-
-cd jedi-bundle
-git switch release/skylab-v8
-
-################################################################################
-
-export JEDI_ROOT=/shared/build-jedi
-export JEDI_SRC="$JEDI_ROOT/jedi-bundle"
-
-cd "$JEDI_ROOT"
-mkdir build
-export JEDI_BUILD="$JEDI_ROOT/build"
-
 # NOTE: Depends on stack-openmpi
 module load jedi-fv3-env/1.0.0
 module load ewok-env/1.0.0
@@ -184,12 +179,44 @@ module load soca-env/1.0.0
 
 # NOTE: Depends on stack-gcc
 module load sp/2.5.0
+```
 
+```sh
+# ---
+# /shared/jedi-bundles/build-jedi.sh
+# ---
+
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+VERSION="latest"
+
+JEDI_ROOT="/shared/jedi-bundles/$VERSION"
+JEDI_SRC="$JEDI_ROOT/source"
+if [[ ! -f "$JEDI_SRC/CMakeLists.txt" ]]; then
+  echo "$JEDI_SRC/CMakeLists.txt not found."
+  echo "Confirm that $JEDI_ROOT is correctly set."
+  # exit 1
+fi
+JEDI_BUILD="$JEDI_ROOT/build"
+
+echo "Source directory: $JEDI_SRC"
+echo "Build directory: $JEDI_BUILD"
+
+mkdir -p "$JEDI_BUILD"
 cd "$JEDI_BUILD"
+
+source jedi-modules.sh
+
 ecbuild "$JEDI_SRC"
-make update
-# NOTE: Not running in parallel here because parallel build is buggy
-make
+# NOTE: If using git, can run this to update
+# make update
+
+# Build using an sbatch job (recommended because the JEDI build is resource intensive!)
+sbatch --output "build.log" --wrap "make -j8"
+
+# Or, just run `make` directly.
 ```
 
 ## Internal JCSDA dependencies
