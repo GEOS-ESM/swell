@@ -1,5 +1,5 @@
 <div style="border:1px solid red; padding: 5px; background-color: #ffe6e6; color: black; margin-bottom: 10px;">
-    <strong>Warning:</strong> Currently, <strong>3dvar</strong> suite only contains the <strong>geos_ocean</strong> configuration and <strong>3dvar_atmos</strong> only contains the <strong>geos_atmosphere</strong> configuration. This will likely change in a future SWELL version.
+    <strong>Warning:</strong> Currently, <strong>3dvar</strong> suite only contains the <strong>geos_marine</strong> configuration and <strong>3dvar_atmos</strong> only contains the <strong>geos_atmosphere</strong> configuration. This will likely change in a future SWELL version.
 </div>
 
 ## Create a Swell 3DVar experiment:
@@ -53,26 +53,30 @@ runahead_limit: P4
 
 # List of models in this experiment
 model_components:
-- geos_ocean
+- geos_marine
 
 # Do you want to use an existing JEDI build or create a new build?
 jedi_build_method: use_existing
 
 # What is the path to the existing JEDI build directory?
-existing_jedi_build_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/build/
+existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025/build-intel-release
 
 # What is the path to the existing JEDI source code directory?
-existing_jedi_source_directory: /discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
+existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025
 
 # Configurations for the model components.
 models:
 
-  # Configuration for the geos_ocean model component.
-  geos_ocean:
+  # Configuration for the geos_marine model component.
+  geos_marine:
 
     # Enter the cycle times for this model.
     cycle_times:
     - T12
+
+    # Select the active SOCA models for this model.
+    marine_models:
+    - mom6
 
     # Enter the cycle times for this model.
     window_type: 3D
@@ -176,13 +180,18 @@ platform: nccs_discover_sles15
 suite_to_run: 3dvar
 ```
 
-Most of these configurations are self explanatory, we will mention only two here for now.
+Most of these configurations are self explanatory, we will mention only a few here for now.
 
 `clean_patterns`: This key controls which files will be erased after the experiment run is complete.
 Currently, `IODA` output files are erased after the diagnostic plots (using EVA) are created.
 
 `generate_yaml_and_exit`: When this key is `True`, the code will progress right before the execution
 and generate a JEDI Config YAML. This could be useful while debugging problems.
+
+
+`marine_models`: JEDI/SOCA interface is designed to handle multiple marine model outputs. Currently in SWELL,
+`mom6` and `cice6` model interfaces are supported. `mom6` should always be active for `SOCA` however `cice6` is
+optional. If `cice6` model is not active one should take out sea-ice related observations and variables from the `experiment.yaml` and from the `analysis_variables`.
 
 If you would like to change any of these parameters, it is suggested to copy `experiment.yaml`
 to `override.yaml` and make desired configuration changes. Afterwards, create the experiment again:
@@ -232,14 +241,14 @@ If all goes well, the run will complete successfully.
 
 ## After the run is complete:
 
-In this default example, there is a single model type (`geos_ocean`) that contains a single cycle (`20210701T120000Z`).
+In this default example, there is a single model type (`geos_marine`) that contains a single cycle (`20210701T120000Z`).
 
-Let's take a look at the `geos_ocean` folder after the run is complete.
+Let's take a look at the `geos_marine` folder after the run is complete.
 
 ```bash
 run
 └── 20210701T120000Z
-    └── geos_ocean
+    └── geos_marine
         ├── background_error_model/
         ├── INPUT/
         ├── eva/

@@ -258,6 +258,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
+            qd.marine_models(),
             qd.r2d2_local_path(),
         ]
     )

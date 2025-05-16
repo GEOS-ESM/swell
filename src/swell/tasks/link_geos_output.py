@@ -53,7 +53,7 @@ class LinkGeosOutput(taskBase):
         # -----------------------------------------------------------------------------------
         self.src_dst_dict = {}
 
-        if self.get_model() in ('geos_ocean', 'geos_marine'):
+        if self.get_model() in ('geos_marine'):
             if self.window_type == '4D' or 'fgat' in self.suite_name():
                 self.link_mom6_history_4d()
             else:

@@ -59,7 +59,7 @@ When SLURM directives conflict, the pattern of overrides generally proceeds such
 The full priority list is as follows (directives higher in this list override directives lower):
 
 1. Task- and model-specific directives (`slurm_directives_tasks`) set via `--slurm <somefile.yaml>` (e.g., `RunHofxExecutable.geos_atmosphere` would have `--nodes=4`).
-2. Task-specific (but model-agnostic) directives (`slurm_directives_tasks`) from `--slurm <somefile.yaml>` (e.g., `RunHofxExecutable.geos_ocean` and all other `RunHofxExecutable` tasks would have `--nodes=2`)
+2. Task-specific (but model-agnostic) directives (`slurm_directives_tasks`) from `--slurm <somefile.yaml>` (e.g., `RunHofxExecutable.geos_marine` and all other `RunHofxExecutable` tasks would have `--nodes=2`)
 3. Global directives set from `--slurm <somefile.yaml>` (e.g., all tasks use account `x1234`; all tasks _except_ `RunHofxExecutable` and `BuildJEDI` use `--nodes=1`)
 4. User-level global directives in `$HOME/.swell/swell-slurm.yaml`
 5. Hard-coded platform specific directives (in SWELL source code `.../platforms/{platform_name}/slurm.yaml`)

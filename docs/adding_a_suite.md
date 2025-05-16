@@ -37,13 +37,13 @@ final_cycle_point: '2021-07-01T12:00:00Z'
 
 # List of models in this experiment
 model_components:
-- geos_ocean
+- geos_marine
 
 # Configurations for the model components.
 models:
 
-  # Configuration for the geos_ocean model component.
-  geos_ocean:
+  # Configuration for the geos_marine model component.
+  geos_marine:
 
     # Enter the cycle times for this model.
     cycle_times:
@@ -53,7 +53,7 @@ models:
     background_error_model: explicit_diffusion
 ```
 
-The questions near the top of the file are suite questions, and are referred to as "model independent". The section under "models" describes parameters used by the `geos_ocean` model. Some tasks are shared across models, necessitating different values for the same parameter depending on model. Thus, these parameters are referred to as "model dependent".
+The questions near the top of the file are suite questions, and are referred to as "model independent". The section under "models" describes parameters used by the `geos_marine` model. Some tasks are shared across models, necessitating different values for the same parameter depending on model. Thus, these parameters are referred to as "model dependent".
 
 ## Example Experiment Workflow
 
@@ -358,10 +358,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
             qd.final_cycle_point("2021-07-01T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_ocean']),
+            qd.model_components(['geos_marine']),
         ],
-        geos_ocean=[
+        geos_marine=[
             qd.cycle_times(['T12']),
+            qd.marine_models(['mom6']),
             qd.window_length("P1D"),
             qd.window_offset("PT12H"),
             qd.horizontal_resolution("72x36"),
