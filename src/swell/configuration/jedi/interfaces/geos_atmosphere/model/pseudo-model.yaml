@@ -5,3 +5,4 @@ provider: geos
 datapath: '{{cycle_dir}}'
 filenames: ['bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
             'fv3-jedi/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
+field io names: *field_io_names

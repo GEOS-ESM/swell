@@ -1,3 +1,4 @@
 filetype: auxgrid
 gridtype: latlon
 filename: '{{cycle_dir}}/geos.analysis.mem%{member}%.'
+field io names: *field_io_names

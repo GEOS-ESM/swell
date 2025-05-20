@@ -5,3 +5,4 @@ increment:
     gridtype: latlon
     datapath: ./
     filename: {{experiment_id}}.increment-iter1.
+    field io names: *field_io_names

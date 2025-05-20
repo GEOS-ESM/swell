@@ -1,4 +1,5 @@
 filetype: auxgrid
 gridtype: latlon
 filename: '{{cycle_dir}}/geos.mem%{member}%-inc'
+field io names: *field_io_names
 
