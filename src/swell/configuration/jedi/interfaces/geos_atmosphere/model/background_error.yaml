@@ -3,13 +3,27 @@ saber central block:
   saber block name: gsi hybrid covariance
   read:
     gsi akbk: './fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4'
-    gsi error covariance file: './fv3-jedi/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
-    gsi berror namelist file: './fv3-jedi/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml'
+    gsi error covariance file: './fv3-jedi/gsibec/gsibec_coefficients_x{{gsibec_nlons}}y{{gsibec_nlats}}l{{vertical_resolution}}.nc4'
+    gsi berror namelist file: './fv3-jedi/gsibec/{{gsibec_configuration}}_x{{gsibec_nlons}}y{{gsibec_nlats}}l{{vertical_resolution}}.nml'
     processor layout x direction: {{gsibec_npx_proc}}
     processor layout y direction: {{gsibec_npy_proc}}
     debugging mode: false
 saber outer blocks:
-- saber block name: gsi interpolation to model grid
+- saber block name: interpolation
+  inner geometry:
+    function space: StructuredColumns
+    custom grid matching gsi:
+      type: latlon
+      lats: {{gsibec_nlats}}
+      lons: {{gsibec_nlons}}
+    custom partitioner matching gsi:
+      bands: {{gsibec_npy_proc}}
+    halo: 1
+  forward interpolator:
+    local interpolator type: oops unstructured grid interpolator
+  inverse interpolator:
+    local interpolator type: oops unstructured grid interpolator
+
   state variables to inverse: &bvars [eastward_wind,
                                       northward_wind,air_temperature,
                                       air_pressure_at_surface,
@@ -24,12 +38,6 @@ saber outer blocks:
                                       fraction_of_ice,
                                       geopotential_height_times_gravity_at_surface,
                                       skin_temperature_at_surface]
-  gsi akbk: './fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4'
-  gsi error covariance file: './fv3-jedi/gsibec/gsibec_coefficients_c{{horizontal_resolution}}.nc4'
-  gsi berror namelist file: './fv3-jedi/gsibec/{{gsibec_configuration}}_c{{horizontal_resolution}}.nml'
-  processor layout x direction: {{gsibec_npx_proc}}
-  processor layout y direction: {{gsibec_npy_proc}}
-  debugging mode: false
 linear variable change:
   linear variable change name: Control2Analysis
   input variables: *bvars
