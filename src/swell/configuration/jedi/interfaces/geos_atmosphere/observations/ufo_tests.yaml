@@ -60,6 +60,10 @@ avhrr3_metop-b:
   filter_test:
     passedBenchmark: 5334
 
+avhrr3_metop-c:
+  filter_test:
+    passedBenchmark: 5334
+
 avhrr3_n18:
   filter_test:
     passedBenchmark: 0

@@ -60,7 +60,7 @@ obs prior filters:
     channels: *avhrr3_n19_channels
   action:
     name: assign error
-    error parameter vector: [ 0.6, 0.68, 0.72 ]
+    error parameter vector: [ 1.0, 1.08, 1.12 ]
 # assign ObsError <---- ObsErrorData (Assigned in Yaml)
 - filter: Variable Assignment
   assignments:
@@ -146,6 +146,7 @@ obs post filters:
       use_flag: &useflag_avhrr3_n19 {{avhrr3_n19_active_channels}}
       use_flag_clddet: [ 1,  1,  1 ]
       obserr_dtempf: [0.50,2.00,4.00,2.00,4.00]
+      cloud detection criteria: [0.60, 0.68, 0.72]
   maxvalue: 1.0e-12
   action:
     name: reject
