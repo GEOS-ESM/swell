@@ -57,7 +57,7 @@ class EvaTimeseries(taskBase):
         window_offset = isodate.parse_duration(self.config.window_offset())
 
         # Create a list of cycles beginning with the start cycle point
-        # and ending with the final cycle point usng the window length
+        # and ending with the final cycle point using the window length
         # -------------------------------------------------------------
         ncdiag_cycles = []
 
@@ -95,18 +95,18 @@ class EvaTimeseries(taskBase):
         # Set channels for which plots will be made
         # This should be configurable once we do the eva refactoring.
         # -------------------------------------------------------------
-        # channels_to_plot = {
-        #     'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
-        #                   1088, 1329, 1449, 1766, 1800, 1869, 1918],
-        #     'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
-        #                      402, 487, 501, 626, 874, 882, 1008],
-        #     'cris-fsr_npp': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
-        #                      402, 487, 501, 626, 874, 882, 1008],
-        #     'iasi_metop-b': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
-        #                      445, 552, 573, 906, 1121, 1194, 1427, 1585],
-        #     'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
-        #                      445, 552, 573, 906, 1121, 1194, 1427, 1585],
-        #     }
+        channels_to_plot = {
+            'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
+                          1088, 1329, 1449, 1766, 1800, 1869, 1918],
+            'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+                             402, 487, 501, 626, 874, 882, 1008],
+            'cris-fsr_npp': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
+                             402, 487, 501, 626, 874, 882, 1008],
+            'iasi_metop-b': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
+            'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
+                             445, 552, 573, 906, 1121, 1194, 1427, 1585],
+            }
 
         # Loop over observations and create dictionaries
         # ----------------------------------------------
@@ -164,6 +164,26 @@ class EvaTimeseries(taskBase):
             eva_override['start_cycle_point'] = start_cycle_point_dto.strftime('%Y-%m-%dT%H:%M:%S')
             eva_override['final_cycle_point'] = final_cycle_point_dto.strftime('%Y-%m-%dT%H:%M:%S')
 
+            # Handle the channels key
+            # -----------------------
+            if 'channels' in observation_dict['obs space']:
+                need_channels = True
+                if observation in channels_to_plot:
+                    eva_override['channels'] = channels_to_plot[observation]
+                else:
+                    eva_override['channels'] = observation_dict['obs space']['channels']
+            else:
+                need_channels = False
+                eva_override['channels'] = ''
+                eva_override['channel'] = ''
+
+            # Remove channel keys if not needed
+            # ---------------------------------
+            if not need_channels:
+                remove_matching_keys(eva_dict, 'channel')
+                remove_matching_keys(eva_dict, 'channels')
+                eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')
+
             eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
             eva_dict = yaml.safe_load(eva_str)
 
@@ -183,20 +203,3 @@ class EvaTimeseries(taskBase):
         with Pool(processes=number_of_workers) as pool:
             pool.map(run_eva, eva_dicts)
 
-        #     if 'channels' in observation_dict['obs space']:
-        #         need_channels = True
-        #         if observation in channels_to_plot:
-        #             eva_override['channels'] = channels_to_plot[observation]
-        #         else:
-        #             eva_override['channels'] = observation_dict['obs space']['channels']
-        #     else:
-        #         need_channels = False
-        #         eva_override['channels'] = ''
-        #         eva_override['channel'] = ''
-
-        #     # Remove channel keys if not needed
-        #     # ---------------------------------
-        #     if not need_channels:
-        #         remove_matching_keys(eva_dict, 'channel')
-        #         remove_matching_keys(eva_dict, 'channels')
-        #         eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')

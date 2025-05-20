@@ -28,7 +28,8 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.background_time_offset(),
             qd.crtm_coeff_dir(),
-            qd.observations()
+            qd.observations(),
+            qd.observing_system_records_path()
         ]
     )
 
@@ -71,7 +72,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.jedi_forecast_model(),
             qd.minimizer(),
             qd.number_of_iterations(),
-            qd.observing_system_records_path(),
             qd.total_processors(),
         ]
     )
@@ -188,7 +188,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.marine_models(),
-            qd.observing_system_records_path(),
             qd.window_offset(),
         ]
     )
@@ -352,8 +351,8 @@ class TaskQuestions(QuestionContainer, Enum):
     GetNcdiags = QuestionList(
         list_name="GetNcdiags",
         questions=[
+            background_crtm_obs,
             qd.ncdiag_experiments(),
-            qd.observations(),
             qd.r2d2_local_path(),
             qd.window_length(),
             qd.window_offset(),
@@ -369,7 +368,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.obs_provider(),
-            qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_length(),
             qd.window_offset()
@@ -382,7 +380,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GsiBcToIoda",
         questions=[
             background_crtm_obs,
-            qd.observing_system_records_path(),
             qd.window_offset()
         ]
     )
@@ -526,7 +523,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
-            qd.observing_system_records_path(),
             qd.save_geovals(),
             qd.total_processors()
         ]
@@ -559,7 +555,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(),
             qd.local_ensemble_solver(),
             qd.local_ensemble_use_linear_observer(),
-            qd.observing_system_records_path(),
             qd.skip_ensemble_hofx(),
             qd.total_processors(),
             qd.vertical_localization_apply_log_transform(),
@@ -583,7 +578,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
-            qd.observing_system_records_path(),
             qd.total_processors(),
             qd.obs_thinning_rej_fraction()
         ]
@@ -596,7 +590,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.generate_yaml_and_exit(),
-            qd.observing_system_records_path(),
             qd.single_observations(),
             qd.window_length(),
             qd.window_offset()
@@ -619,7 +612,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="SaveObsDiags",
         questions=[
             background_crtm_obs,
-            qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_offset(),
             qd.marine_models()

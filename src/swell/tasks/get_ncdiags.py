@@ -30,12 +30,23 @@ class GetNcdiags(taskBase):
         window_offset = self.config.window_offset()
         window_length = self.config.window_length()
         r2d2_local_path = self.config.r2d2_local_path()
+        background_time_offset = self.config.background_time_offset()
 
-        # Get window beginning
+        # Compute data assimilation window parameters
+        # --------------------------------------------
         window_begin = self.da_window_params.window_begin(window_offset)
-
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
         self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('background_time', background_time)
+
+        # Set the JEDI rendering parameters. Model specific ones have None as default
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+
+        # Set the observing system records path
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+
 
         # Set R2D2 config file
         # --------------------
@@ -49,6 +60,7 @@ class GetNcdiags(taskBase):
             # -------------------------------
             for observation in observations:
 
+                print(f"Fetching {observation} for {ncdiag_experiment}")
                 # Load the observation dictionary
                 observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
@@ -65,5 +77,6 @@ class GetNcdiags(taskBase):
                       ignore_missing=True,
                       time_window=window_length,
                       obs_type=name,
+                    #   obs_type=observation,
                       type='ob',
                       experiment=ncdiag_experiment)

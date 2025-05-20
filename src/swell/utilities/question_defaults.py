@@ -877,13 +877,11 @@ class QuestionDefaults():
     class ncdiag_experiments(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ncdiag_experiments"
-        options: List[str] = mutable_field([
-            'fgat_jra55_01',
-        ])
+        options: List[str] = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_marine",
+            "all_models"
         ])
-        prompt: str = "Which previosly run experiments do you wish to use for the NCdiag?"
+        prompt: str = "Which previously run experiments do you wish to use for the NCdiag?"
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------

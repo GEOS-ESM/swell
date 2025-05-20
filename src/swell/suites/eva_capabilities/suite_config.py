@@ -21,9 +21,19 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eva_capabilities_tier1 = QuestionList(
+    eva_capabilities = QuestionList(
         list_name="eva_capabilities",
         questions=[
+            sq.common,
+            ],
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    eva_capabilities_marine = QuestionList(
+        list_name="eva_capabilities_marine",
+        questions=[
+            eva_capabilities,
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
             qd.final_cycle_point("2021-07-02T18:00:00Z"),
@@ -52,12 +62,54 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-    # --------------------------------------------------------------------------------------------------
-
-    eva_capabilities = QuestionList(
-        list_name="eva_capabilities",
+    eva_capabilities_atmosphere = QuestionList(
+        list_name="eva_capabilities_atmosphere",
         questions=[
-            eva_capabilities_tier1
+            eva_capabilities,
+            qd.start_cycle_point("2023-10-10T00:00:00Z"),
+            qd.final_cycle_point("2023-10-10T06:00:00Z"),
+            qd.model_components(['geos_atmosphere']),
+        ],
+        geos_atmosphere=[
+            qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
+            qd.observations([
+                # "aircraft_temperature",
+                # "aircraft_wind",
+                "airs_aqua",
+                # "amsr2_gcom-w1",
+                # "amsua_aqua",
+                # "amsua_metop-b",
+                # "amsua_metop-c",
+                # "amsua_n15",
+                # "amsua_n18",
+                # "amsua_n19",
+                # "atms_n20",
+                # "atms_npp",
+                # "avhrr3_metop-b",
+                # "avhrr3_n18",
+                # "avhrr3_n19",
+                # "cris-fsr_n20",
+                # "cris-fsr_npp",
+                # "gmi_gpm",
+                # "gps",
+                # "iasi_metop-b",
+                # "iasi_metop-c",
+                # "mhs_metop-b",
+                # "mhs_metop-c",
+                # "mhs_n19",
+                # "mls55_aura",
+                # "omi_aura",
+                # "ompsnm_npp",
+                # "pibal",
+                # "satwind",
+                # "scatwind",
+                # "sfcship",
+                # "sfc",
+                # "sondes",
+                # "ssmis_f17"
+            ]),
+            qd.ncdiag_experiments(['x0050_fgat']),
+            qd.clean_patterns(['*.txt', '*.csv']),
         ]
     )
 
