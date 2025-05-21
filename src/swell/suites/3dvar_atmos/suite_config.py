@@ -44,6 +44,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_offset("PT3H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
+            qd.gsibec_nlats("91"),
+            qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
             qd.observations([
                 "aircraft_temperature",
