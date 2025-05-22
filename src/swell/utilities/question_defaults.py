@@ -612,6 +612,30 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class gsibec_nlats(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "gsibec_nlats"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Number of latitudes in GSIBEC grid?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class gsibec_nlons(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "gsibec_nlons"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Number of longitudes in GSIBEC grid?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class horizontal_localization_lengthscale(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_lengthscale"
