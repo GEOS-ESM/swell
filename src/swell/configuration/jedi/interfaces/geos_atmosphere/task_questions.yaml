@@ -99,6 +99,24 @@ gradient_norm_reduction:
 gsibec_configuration:
   default_value: cli_gsibec_configuration
 
+gsibec_nlats:
+  default_value: 181
+  options:
+  - 46
+  - 91
+  - 181
+  - 361
+  - 721
+
+gsibec_nlons:
+  default_value: 288
+  options:
+  - 72
+  - 144
+  - 288
+  - 576
+  - 1152
+
 horizontal_localization_lengthscale:
   default_value: 10000e3
 

@@ -154,6 +154,9 @@ ioda instrument names:
   - ioda name: adt_sentinel3b
     full name: ADT Sentinel-3B
     inst type: altimeter
+  - ioda name: adt_sentinel6a
+    full name: ADT Sentinel-6A
+    inst type: altimeter
   - ioda name: adt_coperl4
     full name: ADT Copernicus Level-4
     inst type: altimeter
