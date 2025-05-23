@@ -6,7 +6,7 @@ variable maps:
   - name: windNorthward
     alias: northward_wind
   - name: specificHumidity
-    alias: specific_humidity
+    alias: water_vapor_mixing_ratio_wrt_moist_air
   - name: relativeHumidity
     alias: relative_humidity
   - name: pressure
@@ -14,13 +14,13 @@ variable maps:
   - name: virtualTemperature
     alias: virtual_temperature
   - name: stationPressure
-    alias: surface_pressure
+    alias: air_pressure_at_surface
   - name: depthBelowWaterSurface
     alias: ocean_depth
   - name: waterTemperature
     alias: ocean_temperature
   - name: surfacePressure
-    alias: surface_pressure
+    alias: air_pressure_at_surface
   - name: seaSurfaceTemperature
     alias: sea_surface_temperature
   - name: equivalentReflectivityFactor
@@ -28,11 +28,19 @@ variable maps:
   - name: salinity
     alias: sea_water_salinity
   - name: seaSurfaceTemperature
-    alias: sea_surface_temperature
-  - name: ozoneLayer
+    alias: skin_temperature_at_surface
+  - name: ozoneProfile
     alias: mole_fraction_of_ozone_in_air
   - name: ozoneTotal
     alias: integrated_layer_ozone_in_air
+  - name: cloudAmount
+    alias: cloud_layer
+  - name: height
+    alias: height_above_mean_sea_level
+  - name: height_levels
+    alias: height_above_mean_sea_level_levels
+  - name: height_levels_minus_one
+    alias: height_above_mean_sea_level_levels_minus_one
   # This came from fv3-jedi but not sure it is needed and it seems to be the same maping as
   # ozoneLayer
   #- name: ozoneProfile

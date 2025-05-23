@@ -1,19 +1,20 @@
 analysis_forecast_window_offset:
   default_value: -PT6H
   options:
+  - -PT12H
   - -PT6H
 
 analysis_variables:
   default_value:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
   options:
-  - socn
-  - tocn
-  - ssh
-  - hocn
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
 
 background_error_model:
   default_value: explicit_diffusion
@@ -25,17 +26,13 @@ background_experiment:
 
 background_frequency:
   default_value: PT3H
+  options:
+  - PT3H
 
 background_time_offset:
   default_value: PT9H
-
-cice6_domains:
-  default_value:
-  - arctic
-  - antarctic
   options:
-  - arctic
-  - antarctic
+  - PT9H
 
 clean_patterns:
   default_value:
@@ -44,6 +41,8 @@ clean_patterns:
   - '*MOM*'
   - logfile.*.out
   options:
+  - logfile.*.out
+  - background_error_model/*.nc
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
@@ -55,6 +54,7 @@ gradient_norm_reduction:
 horizontal_resolution:
   default_value: 1440x1080
   options:
+  - 72x36
   - 360x320
   - 1440x1080
 
@@ -84,35 +84,45 @@ mom6_iau:
   - true
   - false
 
+mom6_iau_nhours:
+  default_value: PT3H
+
 number_of_iterations:
   default_value:
   - 5
 
 obs_experiment:
-  default_value: s2s
+  default_value: s2s_v1
 
 obs_provider:
   default_value: odas
+  options:
+  - gdas_marine
+  - odas
 
 observations:
   default_value:
-  - adt
-  - insitus
-  - insitut
+  - adt_sentinel3a
+  - insitu_profile_argo
+  - sss_smos
+  - sst_ostia
   options:
-  - adt
-  - insitus
-  - insitut
-  - adt_3a_egm2008
-  - adt_3b_egm2008
-  - adt_c2_egm2008
-  - adt_j3_egm2008
-  - adt_sa_egm2008
-  - salt_profile_fnmoc
-  - sss_smos_esa
+  - adt_cryosat2n
+  - adt_jason3
+  - adt_saral
+  - adt_sentinel3a
+  - adt_sentinel3b
+  - insitu_profile_argo
+  - sst_ostia
+  - sss_smos
+  - sss_smapv5
+  - sst_abi_g16_l3c
   - sst_gmi_l3u
-  - sst_ship_fnmoc
-  - temp_profile_fnmoc
+  - sst_viirs_n20_l3u
+  - temp_profile_xbt
+
+path_to_ensemble:
+  default_value: test
 
 total_processors:
   default_value: 24
@@ -120,6 +130,7 @@ total_processors:
 vertical_resolution:
   default_value: '75'
   options:
+  - '50'
   - '75'
 
 window_length:
@@ -130,4 +141,7 @@ window_offset:
 
 window_type:
   default_value: 3D
+  options:
+  - 3D
+  - 4D
 

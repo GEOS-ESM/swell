@@ -45,13 +45,15 @@ setuptools.setup(
                'configuration/*/*/*',
                'configuration/*/*/*/*',
                'configuration/*/*/*/*/*',
+               'configuration/*/*/*/*/*/*',
                'utilities/pinned_versions/*.yaml'
              ],
     },
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'swell = swell.swell:main'
+            'swell = swell.swell:main',
+            'cylc = swell.cylc_swell:execute_cylc'
         ],
     },
     )

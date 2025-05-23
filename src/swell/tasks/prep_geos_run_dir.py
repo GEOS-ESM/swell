@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import isodate
 import glob
 import yaml
 
@@ -54,26 +55,43 @@ class PrepGeosRunDir(taskBase):
         self.logger.info(' file contents (i.e., WSUB_ExtData.*). Users are ')
         self.logger.info('encouraged to validate file modifications.')
 
-        # Forecast start time object, useful for temporal BC constraints
+        # Forecast start time can be calculated from cycle_date and forecast_duration
+        # This task doesn't have access to DA window lengths since it could be used without the DA
+        # context. So forecast start will be assigned as cycle_date - forecast_duration*3/4
+        # Need to convert forecast_duration to a datetime object first
         # -------------------------------------------------------------
-        self.fc_dto = self.geos.get_rst_time()
+        self.forecast_duration = self.config.forecast_duration()
+        self.fc_dto = self.cycle_time_dto() - isodate.parse_duration(self.forecast_duration) * 3 / 4
 
         # Get static files
         # ----------------
         self.get_static()
 
-        # Augment MOM_oda_incupd (IAU) with MOM_input IF it exists and IF mom6_increment.nc
-        # file is located inside the INPUT directory. This allows not having a mom6_iau
-        # switch in the cycling suite file.
+        # Augment MOM_oda_incupd (IAU) with MOM_input IF mom6_iau is true and IF mom6_increment.nc
+        # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
+        # be present in the INPUT directory, so this step is skipped.
         # --------------------------------------------------------------------------
-        if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
-            if os.path.exists(self.forecast_dir('MOM_oda_incupd')):
+        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
+            if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
 
                 mom_input = self.forecast_dir('MOM_input')
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
+                mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
+                # P50D is just a random input for get_key_for_model to function
+                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
+                                                                'PT50D')
+
+                # convert ISO to 3.0
+                duration = isodate.parse_duration(mom6_iau_nhours)
+                hours = duration.total_seconds() / 3600
+                mom6_config["ODA_INCUPD_NHOURS"] = hours
+
+                # Write the updated configuration back to a file
+                output_path = self.forecast_dir('MOM_oda_incupd')
+                self.geos.write_mom6_input(mom6_config, output_path)
 
                 with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
                     mom_input_txt = inp_f.read()
@@ -82,8 +100,7 @@ class PrepGeosRunDir(taskBase):
                 with open(mom_input, 'w') as out_f:
                     out_f.write(mom_input_txt + mom_oda_txt)
             else:
-                self.logger.info('MOM6 Increment file found in INPUT directory')
-                self.logger.abort('MOM_oda_incupd not found. Failed augmentation')
+                self.logger.warning('MOM6 Increment file was not found in INPUT directory')
 
         # Combine input.nml and fvcore_layout
         # Modify input.nml if not cold start (default)
@@ -117,7 +134,7 @@ class PrepGeosRunDir(taskBase):
         # ------------------------------------------------------
         self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))
 
-        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file from gcm_run.j.
+        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file outside of gcm_run.j.
         # So parse linkbcs file using parse_gcmrun method and update gcm_dict
         # -----------------------------------------------------------------------
         self.gcm_dict.update(self.geos.parse_gcmrun(self.forecast_dir('linkbcs')))
@@ -150,6 +167,13 @@ class PrepGeosRunDir(taskBase):
         # -----------------
         self.get_dynamic()
 
+        # Create tile.bin file if it doesn't exist already
+        # ------------------------------------------------
+        if not os.path.exists(self.forecast_dir('tile.bin')):
+            self.logger.info('Creating tile.bin')
+            self.geos.run_geos_script(self.geosbin, 'binarytile.x', input='tile.data',
+                                      output='tile.bin')
+
         # Create cap_restart in GEOSgcm preferred format
         # ----------------------------------------------
         with open(self.forecast_dir('cap_restart'), 'w') as file:
@@ -157,7 +181,7 @@ class PrepGeosRunDir(taskBase):
 
         # Run bundleParser
         # ------------------
-        self.geos.exec_python(self.geosbin, 'bundleParser.py')
+        self.geos.run_geos_script(self.geosbin, 'bundleParser.py')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -189,8 +213,8 @@ class PrepGeosRunDir(taskBase):
                 self.geos.resub(self.forecast_dir('ExtData.rc'), pattern, replacement)
         else:
             self.logger.info('Creating extdata.yaml')
-            self.geos.exec_python(self.geosbin, 'construct_extdata_yaml_list.py',
-                                  './GEOS_ChemGridComp.rc')
+            self.geos.run_geos_script(self.geosbin, 'construct_extdata_yaml_list.py',
+                                      './GEOS_ChemGridComp.rc')
             open(self.forecast_dir('ExtData.rc'), 'w').close()
 
     # ----------------------------------------------------------------------------------------------
@@ -300,6 +324,8 @@ class PrepGeosRunDir(taskBase):
                 'species.data',
             # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
             os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
+            os.path.join('/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/',
+                         '*'): self.forecast_dir('ExtData'),
             # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_landdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_landdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
@@ -451,19 +477,14 @@ class PrepGeosRunDir(taskBase):
         # AGCM.rc might require some modifications depending on the restart intervals
         # ----------------------------------------------------------------------------
         self.logger.info('Modifying AGCM.rc RECORD_* entries')
-        forecast_dur = self.config.forecast_duration()
-        [time_string, days, half_duration] = self.geos.iso_to_time_str(forecast_dur, half=True)
+        [time_string, _, half_duration] = self.geos.iso_to_time_str(self.forecast_duration,
+                                                                    half=True,
+                                                                    agcm=True)
 
         # We are assuming the beginning of the DA window is half of the forecast
         # duration. We don't need DA information in GEOS preparation tasks (for now).
         # --------------------------------------------------------------------------
         da_begin_dto = self.fc_dto + half_duration
-
-        # Prepend day information only record frequency is longer than a day
-        # ------------------------------------------------------------------
-        # TODO: float precision or scientific
-        if days + 0.0000001 >= 1:
-            time_string = f'0000{int(days):02d} ' + time_string
 
         rcdict['RECORD_FREQUENCY'] = time_string
         rcdict['RECORD_REF_DATE'] = da_begin_dto.strftime("%Y%m%d")

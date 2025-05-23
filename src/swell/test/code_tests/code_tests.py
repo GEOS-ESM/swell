@@ -11,7 +11,7 @@
 import os
 import unittest
 
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.test.code_tests.slurm_test import SLURMConfigTest
 from swell.test.code_tests.test_pinned_versions import PinnedVersionsTest
 from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
@@ -24,12 +24,15 @@ from swell.test.code_tests.test_generate_observing_system import GenerateObservi
 def code_tests() -> None:
 
     # Create a logger
-    logger = Logger('TestSuite')
-    logger.test('Running Swell Test Suite')
+    logger = get_logger('TestSuite')
+    logger.info('Running Swell Test Suite')
 
-    # Default log_info testing to false
-    os.environ.setdefault("LOG_INFO", "0")
-    # Set to 1 when errors are being debugged
+    # Default log_level minimum to warning
+    # Set to INFO or DEBUG when errors are being debugged
+    os.environ.setdefault("LOGLEVEL", "WARNING")
+    logger.info(f"LOGLEVEL set to {os.environ['LOGLEVEL']} [Valid Options: WARNING/DEBUG/INFO]")
+    if os.environ['LOGLEVEL'] == 'WARNING':
+        logger.info("Set $LOGLEVEL to DEBUG for more detailed output")
 
     # Create a test suite
     test_suite = unittest.TestSuite()

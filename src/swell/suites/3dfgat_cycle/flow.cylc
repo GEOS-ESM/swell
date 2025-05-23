@@ -82,7 +82,6 @@
             GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            # StageJedi-{{model_component}}[^] => RunJediFgatExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
@@ -107,7 +106,7 @@
 
             # Save analysis output
             # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            # RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
@@ -117,8 +116,7 @@
             MoveDaRestart-{{model_component}} => RemoveForecastDir
 
             # Clean up large files
-            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """
@@ -172,6 +170,7 @@
         script = "swell task RunGeosExecutable $config -d $datetime"
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        execution retry delays = 2*PT1M
         [[[directives]]]
         {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}

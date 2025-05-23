@@ -7,7 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
+from collections import OrderedDict
 import os
 import yaml
 
@@ -38,10 +38,13 @@ class RunJediVariationalExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        perhost = self.config.perhost(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
+        gsibec_nlats = self.config.gsibec_nlats(None)
+        gsibec_nlons = self.config.gsibec_nlons(None)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
 
@@ -67,6 +70,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Background
         # ----------
@@ -77,6 +81,8 @@ class RunJediVariationalExecutable(taskBase):
         # Geometry
         # --------
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
+        self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
+        self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
@@ -91,6 +97,8 @@ class RunJediVariationalExecutable(taskBase):
         # ---------------------------------
         if npx_proc is not None and npy_proc is not None:
             self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
+            self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
+            self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
             self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
@@ -116,10 +124,32 @@ class RunJediVariationalExecutable(taskBase):
         jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
                                  self.cycle_time_dto(), jedi_forecast_model)
 
-        # Write the expanded dictionary to YAML file
-        # ------------------------------------------
+        def represent_ordereddict(dumper, data):
+            # Serialize an OrderedDict as a YAML mapping
+            return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
+
+        def construct_ordereddict(loader, node):
+            # Construct an OrderedDict from a YAML mapping
+            return OrderedDict(loader.construct_pairs(node))
+
+        # Recursive conversion, dictionary to an OrderedDict
+        def dict_to_ordereddict(d):
+            if isinstance(d, dict):
+                return OrderedDict((k, dict_to_ordereddict(v)) for k, v in d.items())
+            elif isinstance(d, list):
+                return [dict_to_ordereddict(v) for v in d]
+            else:
+                return d
+
+        yaml.add_representer(OrderedDict, represent_ordereddict)
+        yaml.add_constructor('tag:yaml.org,2002:map', construct_ordereddict)
+
+        # Assuming jedi_config_dict is your original dictionary
+        ordered_dict = dict_to_ordereddict(jedi_config_dict)
+
+        # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(ordered_dict, jedi_config_file_open, default_flow_style=False)
 
         # Get the JEDI interface metadata
         # -------------------------------
@@ -140,7 +170,7 @@ class RunJediVariationalExecutable(taskBase):
         if not generate_yaml_and_exit:
             self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
             run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
+                           jedi_config_file, output_log_file, perhost)
         else:
             self.logger.info('YAML generated, now exiting.')
 

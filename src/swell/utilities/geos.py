@@ -9,9 +9,7 @@
 
 import datetime
 import f90nml
-import glob
 import isodate
-import netCDF4
 import os
 import re
 from typing import Tuple, Optional, Union
@@ -99,14 +97,19 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def exec_python(self, script_src: str, script: str, input: str = '') -> None:
+    def run_geos_script(
+        self,
+        script_src: str,
+        script: str,
+        input: str = '',
+        output: str = '',
+        **kwargs
+    ) -> None:
 
-        # Source g5_modules and execute py scripts in a new shell process then
-        # return to the current one
+        # Source g5_modules and execute scripts in a new shell process then return
         # Define the command to source the Bash script and run the Python command
         # -----------------------------------------------------------------------
-        command = f'source {script_src}/g5_modules.sh \n' + \
-            f'{script_src}/{script} {input}'
+        command = f'source {script_src}/g5_modules.sh && {script_src}/{script} {input} {output}'
 
         # Containerized run of the GEOS build steps
         # -----------------------------------------
@@ -114,33 +117,11 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_rst_time(self) -> datetime.datetime:
-
-        # Obtain time information from any of the rst files listed by glob
-        # ----------------------------------------------------------------
-        src = os.path.join(self.forecast_dir, '*_rst')
-
-        # Open any _rst file in cycle dir to read time and units
-        # ------------------------------------------------------
-        ncfile = netCDF4.Dataset(list(glob.glob(src))[0])
-        self.logger.info(f"Getting time information from: ' {list(glob.glob(src))[0]}")
-
-        time_var = ncfile.variables['time']
-        units = time_var.units
-
-        # Convert the time values to datetime objects
-        # ---------------------------------------------
-        times = netCDF4.num2date(time_var[:], units=units, calendar='standard')
-        ncfile.close()
-
-        return times[0]
-
-    # ----------------------------------------------------------------------------------------------
-
     def iso_to_time_str(
         self,
         iso_duration: str,
-        half: bool = False
+        half: bool = False,
+        agcm: bool = False,
     ) -> Tuple[str, int, datetime.timedelta]:
 
         # Parse the ISO duration string and get the total number of seconds
@@ -161,12 +142,18 @@ class Geos():
         # --------------------------------------------
         days, remainder = divmod(duration_seconds, 60*60*24)
 
-        # Convert the duration to a string in the format of "HHMMSS" to be used
-        # with AGCM.rc and CAP.rc
+        # Convert the duration to a string in the format of "HHMMSS" to be used in CAP.rc
         # ---------------------------------------------------------------------
         hours, remainder = divmod(remainder, 3600)
         minutes, seconds = divmod(remainder, 60)
         time_string = f'{int(hours):02d}{int(minutes):02d}{int(seconds):02d}'
+
+        # If AGCM.rc is used, for RECORD_FREQUENCY the time string should be in the format
+        # of "HHHMMSS", where HHH is the total number of hours so need to include days again
+        # --------------------------------------------------------------------------------
+        if agcm:
+            hours = int(hours) + 24 * int(days)
+            time_string = f'{hours:03d}{int(minutes):02d}{int(seconds):02d}'
 
         return time_string, days, duration
 
@@ -240,6 +227,52 @@ class Geos():
                     rcdict[key] = parts[2]
 
         return rcdict
+
+    # ----------------------------------------------------------------------------------------------
+
+    def parse_mom6_input(self, mom6_input_path: str) -> dict:
+
+        # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuration values.
+        # ---------------------------------------------------------------------------------
+        mom6_config = {}
+
+        # check if the file exists
+        if not os.path.isfile(mom6_input_path):
+            self.logger.abort(f"MOM6 input file not found: {mom6_input_path}")
+
+        self.logger.info(f"Parsing MOM6 input file: {mom6_input_path}")
+
+        with open(mom6_input_path, 'r') as file:
+            for line in file:
+                # Ignore comments and empty lines
+                line = line.strip()
+                if not line or line.startswith('!'):
+                    continue
+
+                # Split the line into key and value
+                if '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+
+                    # Remove inline comments (anything after '!')
+                    if '!' in value:
+                        value = value.split('!', 1)[0].strip()
+
+                    # Remove surrounding quotes from strings
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+
+                    # Convert boolean and numeric values
+                    if value.lower() in ('true', 'false'):
+                        value = value.lower() == 'true'
+                    elif value.replace('.', '', 1).isdigit():
+                        value = float(value) if '.' in value else int(value)
+
+                    # Store the key-value pair in the dictionary
+                    mom6_config[key] = value
+
+        return mom6_config
 
     # ----------------------------------------------------------------------------------------------
 
@@ -396,7 +429,7 @@ class Geos():
 
         states = []
         self.logger.info('Generating states for model: '+model)
-        if model in ("geos_ocean", "geos_marine"):
+        if model in ("geos_marine"):
             states = self.marine_states(background_frequency, window_length, window_begin_iso,
                                         marine_models)
 
@@ -440,5 +473,23 @@ class Geos():
             states.append(state)
 
         return states
+
+    # --------------------------------------------------------------------------------------------------
+
+    def write_mom6_input(self, mom6_config: dict, output_path: str) -> None:
+
+        self.logger.info(f"Writing MOM6 configuration to: {output_path}")
+
+        try:
+            with open(output_path, 'w') as file:
+                file.write("! === module MOM_oda_incupd ===\n")
+                for key, value in mom6_config.items():
+                    # Format bool values as True/False
+                    if isinstance(value, bool):
+                        value = "True" if value else "False"
+                    # Write the key-value pair to the file
+                    file.write(f"{key} = {value}\n")
+        except Exception as e:
+            self.logger.abort(f"Failed to write MOM6 configuration to {output_path}: {e}")
 
 # --------------------------------------------------------------------------------------------------

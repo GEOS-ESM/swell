@@ -16,12 +16,13 @@ import sys
 import yaml
 from typing import Union, Optional
 
+from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
 from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.logger import Logger
+from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_scheduling_dict
 
 
@@ -36,7 +37,7 @@ def clone_config(
     advanced: bool
 ) -> str:
     # Create a logger
-    logger = Logger('SwellCloneExperiment')
+    logger = get_logger('SwellCloneExperiment')
 
     # Check that configuration exists and is a YAML file
     if not os.path.isfile(configuration):
@@ -67,6 +68,7 @@ def clone_config(
 
 def prepare_config(
     suite: str,
+    suite_config: str,
     method: str,
     platform: str,
     override: Union[dict, str, None],
@@ -76,7 +78,7 @@ def prepare_config(
 
     # Create a logger
     # ---------------
-    logger = Logger('SwellPrepSuiteConfig')
+    logger = get_logger('SwellPrepSuiteConfig')
 
     # Assert valid method
     # -------------------
@@ -87,8 +89,8 @@ def prepare_config(
 
     # Set the object that will be used to populate dictionary options
     # ---------------------------------------------------------------
-    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, platform,
-                                                               method, override)
+    prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger, suite, suite_config,
+                                                               platform, method, override)
 
     # Ask questions as the suite gets configured
     # ------------------------------------------
@@ -157,7 +159,7 @@ def prepare_config(
 
 
 def create_experiment_directory(
-    suite: str,
+    suite_config: str,
     method: str,
     platform: str,
     override: str,
@@ -165,13 +167,18 @@ def create_experiment_directory(
     slurm: Optional[str]
 ) -> None:
 
+    # Get the base name of the suite
+    # ------------------------------
+    suite = AllSuites.base_suite(suite_config)
+
     # Create a logger
     # ---------------
-    logger = Logger('SwellCreateExperiment')
+    logger = get_logger('SwellCreateExperiment')
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
-    experiment_dict_str = prepare_config(suite, method, platform, override, advanced, slurm)
+    experiment_dict_str = prepare_config(suite, suite_config, method, platform,
+                                         override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------
@@ -277,7 +284,7 @@ def copy_platform_files(
             src_path_file = os.path.join(platform_path, os.path.split(s)[0], src_file)
             dst_path_file = os.path.join(exp_suite_path, '{}'.format(src_file))
             if os.path.exists(src_path_file):
-                logger.trace('Copying {} to {}'.format(src_path_file, dst_path_file))
+                logger.debug('Copying {} to {}'.format(src_path_file, dst_path_file))
                 shutil.copy(src_path_file, dst_path_file)
 
 
@@ -485,10 +492,6 @@ def prepare_cylc_suite_jinja2(
                          'geos_marine is not in the model components.')
 
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
-
-    # Default execution time limit for everthing is PT1H
-    for slurm_task in render_dictionary['scheduling'].keys():
-        render_dictionary['scheduling'][slurm_task]['execution_time_limit'] = 'PT1H'
 
     # Set some specific values for:
     # ------------------------------

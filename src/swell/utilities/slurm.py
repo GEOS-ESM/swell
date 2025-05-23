@@ -8,19 +8,16 @@
 
 import importlib
 import os
-import platform as pltfrm
 import re
 import yaml
-from typing import Union
 
 from importlib import resources
-from logging import Logger as pyLogger
 
 from swell.utilities.logger import Logger
 
 
 def prepare_scheduling_dict(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     experiment_dict: dict,
     platform: str,
 ) -> dict:
@@ -46,7 +43,7 @@ def prepare_scheduling_dict(
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
     task_defaults = {
-        "RunJediVariationalExecutable": {"all": {"nodes": 3, "ntasks-per-node": 36}},
+        "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}}
     }
@@ -56,13 +53,6 @@ def prepare_scheduling_dict(
     # NOTE: Separate function to allow it to be mocked in unit tests.
     # See https://github.com/GEOS-ESM/swell/issues/351
     user_globals = slurm_global_defaults(logger)
-
-    # Check if platform contains Linux-5.14.21, which indicates platform is SLES15
-    if 'Linux-5.14.21' in pltfrm.platform():
-        assert platform == "nccs_discover_sles15", (
-            "'Linux-5.14.21' detected, which implies platform 'nccs_discover_sles15. " +
-            f"That is inconsistent with user-specified platform '{platform}'."
-        )
 
     # Global SLURM settings from experiment dict (questionary / overrides YAML)
     # ----------------------------------------------
@@ -91,6 +81,7 @@ def prepare_scheduling_dict(
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
+        'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
         'RunGeosExecutable'
@@ -185,6 +176,12 @@ def prepare_scheduling_dict(
             validate_directives(model_directives)
             scheduling_dict[slurm_task]["directives"][model_component] = model_directives
 
+        # Default execution time limit for everthing is PT1H
+        x = 'PT1H'
+        if slurm_task in experiment_task_directives.keys():
+            x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
+        scheduling_dict[slurm_task]['execution_time_limit'] = x
+
     return scheduling_dict
 
 
@@ -215,7 +212,7 @@ def validate_directives(directive_dict: dict) -> None:
 
 
 def slurm_global_defaults(
-    logger: Union[Logger, pyLogger],
+    logger: Logger,
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)

@@ -7,10 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import logging
 import unittest
 
 from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.logger import get_logger
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
@@ -24,14 +24,14 @@ class SLURMConfigTest(unittest.TestCase):
     @patch("platform.platform")
     def test_slurm_config(self, platform_mocked: Mock, mock_global_defaults: Mock) -> None:
 
-        logger = logging.getLogger()
+        logger = get_logger()
 
         # Fake user-specified global values (for consistent unit tests)
         mock_global_defaults.return_value = {"qos": "dastest"}
 
         # Nested example
         experiment_dict = {
-            "model_components": ["geos_atmosphere", "geos_ocean"],
+            "model_components": ["geos_atmosphere", "geos_marine"],
             "slurm_directives_global": {
                 "account": "x1234",
             },
@@ -49,13 +49,6 @@ class SLURMConfigTest(unittest.TestCase):
             }
         }
 
-        platform_mocked.return_value = "Linux-4.12.14"
-        # Platform-specific definitions and tests
-        sd_discover = prepare_scheduling_dict(logger, experiment_dict,
-                                              platform="nccs_discover")
-        self.assertEqual(sd_discover["RunJediVariationalExecutable"]["directives"]["all"]
-                         ["constraint"], "cas|sky")
-
         platform_mocked.return_value = "Linux-5.14.21"
         sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
                                                      platform="nccs_discover_sles15")
@@ -64,17 +57,11 @@ class SLURMConfigTest(unittest.TestCase):
         self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
                          ["all"]["qos"], "dastest")
 
-        with self.assertRaises(AssertionError):
-            prepare_scheduling_dict(logger, experiment_dict,
-                                    platform="nccs_discover")
-
         # Platform generic tests
-        for sd in [sd_discover, sd_discover_sles15]:
-            for mc in ["all", "geos_atmosphere", "geos_ocean"]:
+        for sd in [sd_discover_sles15]:
+            for mc in ["all", "geos_atmosphere", "geos_marine"]:
                 # Hard-coded task-specific defaults
                 self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
-                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]
-                                 ["ntasks-per-node"], 36)
                 self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]
                                  ["ntasks-per-node"], 1)
                 # Global defaults from experiment dict
@@ -86,7 +73,7 @@ class SLURMConfigTest(unittest.TestCase):
                 self.assertEqual(sd["EvaObservations"]["directives"][mc]["ntasks-per-node"], 4)
 
             # Task-specific, model-specific configs
-            self.assertEqual(sd["EvaObservations"]["directives"]["geos_ocean"]["nodes"], 2)
+            self.assertEqual(sd["EvaObservations"]["directives"]["geos_marine"]["nodes"], 2)
             self.assertEqual(sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"], 4)
 
 # --------------------------------------------------------------------------------------------------

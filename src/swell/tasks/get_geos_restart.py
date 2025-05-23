@@ -64,9 +64,19 @@ class GetGeosRestart(taskBase):
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
-        src_dst = {'tile.bin': '',
-                   'iced.nc': 'INPUT',
+        src_dst = {'iced.nc': 'INPUT',
                    }
+
+        # Create a dictionary for optional src/dst for the single files, and combine them with the
+        # src_dst dictionary if they exist
+        src_dst_optional = {'mom6_increment.nc': 'INPUT'
+                            }
+
+        for src, dst in src_dst_optional.items():
+            if os.path.isfile(os.path.join(self.swell_static_files, 'geos', 'restarts',
+                                           rst_path, src)):
+                self.logger.info(' Found optional restart file: ' + src)
+                src_dst.update({src: dst})
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, src)

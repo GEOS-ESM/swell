@@ -1,3 +1,5 @@
+# History outputs
+
 History outputs, as opposed to model restarts containing full diagnostic fields, provides a subset of variables in preset frequencies. They are typically used for providing more frequent outputs of reduced dimension variables for plotting or analysis (i.e., vertically averaged or surface-only, such as SST).
 
 GEOSgcm provides a mechanism for dumping restarts (aka `_checkpoint`) more frequently via `Restart Record Parameters` section in `AGCM.rc`. However, this causes model to stop and create these large files with full model fields which is undesirable for long simulation times.
@@ -14,15 +16,15 @@ background:
   ocn_filename: MOM6.res.20210702T030000Z.nc
   read_from_file: 1
   state variables:
-  - cicen
-  - hicen
-  - hsnon
-  - socn
-  - tocn
-  - ssh
-  - hocn
-  - mld
-  - layer_depth
+  - sea_ice_area_fraction
+  - sea_ice_thickness
+  - sea_ice_snow_thickness
+  - sea_water_salinity
+  - sea_water_potential_temperature
+  - sea_surface_height_above_geoid
+  - sea_water_cell_thickness
+  - ocean_mixed_layer_thickness
+  - sea_water_depth
 ```
 
 and ocean and sea-ice states:

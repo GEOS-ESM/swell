@@ -5,19 +5,67 @@ import random
 from pathlib import Path
 from datetime import datetime
 from importlib import resources
+from enum import Enum
 
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.deployment.launch_experiment import launch_experiment
 from swell.utilities.dictionary import update_dict
 
 
-def run_suite(suite: str):
+class TestSuite(Enum):
+    TIER1 = "tier1"
+    TIER2 = "tier2"
+
+
+def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, test_config: dict):
+    suite_overrides_file = (resources.files("swell") /
+                            "test" /
+                            "suite_tests" /
+                            "build_jedi-tier1.yaml")
+
+    with suite_overrides_file.open("r") as f:
+        suite_overrides = yaml.safe_load(f)
+
+    experiment_id = experiment_id_root + "build_jedi"
+
+    override = {
+        "experiment_id": experiment_id,
+        "experiment_root": str(test_dir),
+        **suite_overrides
+    }
+
+    if "override" in test_config:
+        override = update_dict(override, test_config['override'])
+
+    experiment_dir = test_dir / experiment_id
+    experiment_dir.mkdir(parents=True, exist_ok=True)
+    override_yml = experiment_dir / "override.yaml"
+
+    with open(override_yml, "w") as f:
+        yaml.dump(override, f)
+
+    create_experiment_directory(
+        "build_jedi", None, "defaults", platform,
+        str(override_yml), False, None
+    )
+
+    suite_path = str(experiment_dir / f"{experiment_id}-suite")
+    log_path = str(experiment_dir / "log")
+
+    launch_experiment(suite_path, True, log_path)
+
+    return experiment_dir
+
+
+def run_suite(suite: str, platform: str, test_tier: TestSuite):
     # Add a random int to the experiment_id to mitigate errors from workflows
     # created at (roughly) the same time.
     ii = random.randint(0, 99)
-    experiment_id = f"t{datetime.now().strftime('%Y%jT%H%M')}r{ii:02d}{suite}"
 
-    # Get test directory from `~/.swell/swell-test.yml`
+    experiment_id_root = f"t{datetime.now().strftime('%Y%jT%H%M')}r{ii:02d}"
+    experiment_id = f"{experiment_id_root}{suite}"
+
+    # Get test directory from `~/.swell/swell-test.yaml`
     test_config = {
         "test_root": Path(tempfile.TemporaryDirectory().name)
     }
@@ -39,18 +87,9 @@ def run_suite(suite: str):
     print(f"Test directory: {testdir}")
     print(f"Experiment ID: {experiment_id}")
 
-    suite_overrides_file = (resources.files("swell") /
-                            "test" /
-                            "suite_tests" /
-                            f"{suite}-tier1.yaml")
-    print(f"Reading suite overrides from: {suite_overrides_file}")
-    with suite_overrides_file.open("r") as f:
-        suite_overrides = yaml.safe_load(f)
-
     override = {
         "experiment_id": experiment_id,
         "experiment_root": str(testdir),
-        **suite_overrides
     }
     if "override" in test_config:
         override = update_dict(override, test_config["override"])
@@ -71,12 +110,33 @@ def run_suite(suite: str):
     experiment_dir = testdir / experiment_id
     experiment_dir.mkdir(parents=True, exist_ok=True)
 
+    # Build JEDI for tier 2 tests if existing build is not specified in user yaml
+    if test_tier == TestSuite.TIER2:
+        if not ("jedi_build_method" in test_config
+           and test_config["jedi_build_method"] == "use_existing"
+           and 'existing_jedi_source_directory' in test_config
+           and 'existing_jedi_build_directory' in test_config):
+            jedi_dir = build_jedi_for_tier2(testdir, experiment_id_root, platform, test_config)
+
+            tier2_override = {"jedi_build_method": "use_existing",
+                              "existing_jedi_source_directory": f"{jedi_dir}/jedi_bundle/source",
+                              "existing_jedi_build_directory": f"{jedi_dir}/jedi_bundle/build"}
+
+            override = update_dict(override, tier2_override)
+
+            if suite == "build_jedi":
+                return None
+
     override_yml = experiment_dir / "override.yaml"
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
 
+    # Suites are currently set up to use tier2 defaults, this setting
+    # may need to be changed in the future
+    suite_config = suite + ('_tier1' if test_tier == TestSuite.TIER1 else '')
+
     create_experiment_directory(
-        suite, "defaults", "nccs_discover_sles15",
+        suite_config, "defaults", platform,
         str(override_yml), False, None
     )
 

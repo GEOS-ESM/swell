@@ -13,14 +13,14 @@ cd $NOBACKUP/opt
 2. Load the modules that swell needs in order to be installed. Swell is designed to work with the spack-stack modules that JEDI uses so load which ever version of spack-stack you wish to use. For convenience the latest stable version can be obtained with:
 
 ```bash
-source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/modules-intel-sles15
+source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_intel_bundle
 ```
 
 3. Load the software that is used to perform the install.
 
 ```bash
 module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core
-module load py_lmod_installer/sles15
+module load py_lmod_installer/sles15_spack19
 ```
 
 4. Issue the command to install swell:

@@ -21,7 +21,6 @@ from r2d2 import fetch
 r2d2_model_dict = {
     'geos_atmosphere': 'geos',
     'geos_marine': 'mom6_cice6_UFS',
-    'geos_ocean': 'mom6_cice6_UFS',
 }
 
 
@@ -56,9 +55,12 @@ class GetBackground(taskBase):
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_offset,
                                                                             window_type)
+        analysis_time_iso = self.da_window_params.analysis_time_iso(window_type, self.suite_name())
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
         # Set R2D2 config file
         # --------------------

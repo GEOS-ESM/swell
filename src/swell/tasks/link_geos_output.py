@@ -35,7 +35,7 @@ class LinkGeosOutput(taskBase):
 
         # Parse configuration
         # -------------------
-        self.marine_models = self.config.marine_models(None)
+        self.marine_models = self.config.marine_models(None) or []
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_offset = self.config.window_offset()
@@ -53,7 +53,7 @@ class LinkGeosOutput(taskBase):
         # -----------------------------------------------------------------------------------
         self.src_dst_dict = {}
 
-        if self.get_model() in ('geos_ocean', 'geos_marine'):
+        if self.get_model() in ('geos_marine'):
             if self.window_type == '4D' or 'fgat' in self.suite_name():
                 self.link_mom6_history_4d()
             else:
@@ -125,7 +125,7 @@ class LinkGeosOutput(taskBase):
         date_str = src_date.strftime('%Y-%m-%d')
         seconds = src_date.hour * 3600 + src_date.minute * 60 + src_date.second
 
-        return self.forecast_dir(f'iceh_{hour_prefix}.{date_str}-{seconds}.nc')
+        return self.forecast_dir(f'iceh_{hour_prefix}.{date_str}-{seconds:05d}.nc')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -195,7 +195,7 @@ class LinkGeosOutput(taskBase):
 
         # rename the dimensions to xaxis_1 and yaxis_1 and rename the variables
         ds = ds.rename({'ni': 'xaxis_1', 'nj': 'yaxis_1'})
-        ds = ds.rename({'aice': 'aicen', 'hi': 'hicen', 'hs': 'hsnon'})
+        ds = ds.rename({'aice': 'aice_h', 'hi': 'hi_h', 'hs': 'hs_h'})
 
         # Save as a new file
         ds.to_netcdf(dst_history, mode='w')
@@ -207,9 +207,9 @@ class LinkGeosOutput(taskBase):
         # time dimension added to the dataset.
         # SOCA needs icea area (aicen), ice volume (vicen), and snow area (vsnon)
         # --------------------------------------------------------------------
-        soca2cice_vars = {'aicen': 'aicen',
-                          'hicen': 'vicen',
-                          'hsnon': 'vsnon'}
+        soca2cice_vars = {'aice_h': 'aicen',
+                          'hi_h': 'vicen',
+                          'hs_h': 'vsnon'}
 
         # read CICE6 restart
         # -----------------

@@ -11,7 +11,7 @@
 import os
 
 # local imports
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger
 from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ class DeployWorkflow():
         log_path: str
     ) -> None:
 
-        self.logger = Logger('DeployWorkflow')
+        self.logger = get_logger('DeployWorkflow')
         self.suite_path = suite_path
         self.experiment_name = experiment_name
         self.no_detach = no_detach
@@ -88,7 +88,8 @@ class DeployWorkflow():
             self.logger.info(' ', False)
 
             # Launch the job monitor
-            self.logger.input('Launching the TUI, press \'q\' at any time to exit the TUI')
+            self.logger.critical('Launching the TUI, press \'q\' at any time to exit the TUI')
+            input()
             self.logger.info(' ', False)
             self.logger.info('TUI can be relaunched with:')
             self.logger.info(' ', False)
