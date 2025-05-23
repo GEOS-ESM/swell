@@ -55,9 +55,9 @@ class GsiBcToIoda(taskBase):
             print('observation', observation)
             # Open configuration file for observation
             if observation == 'aircraft':
-              observation_dict = self.jedi_rendering.render_interface_observations('aircraft_temperature')
+               observation_dict = self.jedi_rendering.render_interface_observations('aircraft_temperature')
             else:
-              observation_dict = self.jedi_rendering.render_interface_observations(observation)
+               observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Check for sensor key
             try:
@@ -197,7 +197,7 @@ class GsiBcToIoda(taskBase):
 
             acftbias_converter_dict_output = []
             output_dict = {}
-            output_dict['sensor'] = 'aircft'
+            output_dict['sensor'] = 'aircraft'
             output_dict['output file'] = os.path.join(self.cycle_dir(),
                                                       f'aircraft_abias_air.{background_time}.nc4')
             output_dict['predictors'] = default_predictors
