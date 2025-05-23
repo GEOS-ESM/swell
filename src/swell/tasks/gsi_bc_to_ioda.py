@@ -55,9 +55,10 @@ class GsiBcToIoda(taskBase):
             print('observation', observation)
             # Open configuration file for observation
             if observation == 'aircraft':
-               observation_dict = self.jedi_rendering.render_interface_observations('aircraft_temperature')
+                observation_dict = self.jedi_rendering.render_interface_observations(
+                                  'aircraft_temperature')
             else:
-               observation_dict = self.jedi_rendering.render_interface_observations(observation)
+                observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Check for sensor key
             try:
