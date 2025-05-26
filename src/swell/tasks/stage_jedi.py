@@ -46,12 +46,16 @@ class StageJedi(taskBase):
 
         vertical_resolution = self.config.vertical_resolution()
         gsibec_configuration = self.config.gsibec_configuration(None)
+        gsibec_nlats = self.config.gsibec_nlats(None)
+        gsibec_nlons = self.config.gsibec_nlons(None)
 
         # Add jedi interface template keys
         self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
         self.jedi_rendering.add_key('swell_static_files', swell_static_files)
         self.jedi_rendering.add_key('vertical_resolution', vertical_resolution)
         self.jedi_rendering.add_key('gsibec_configuration', gsibec_configuration)
+        self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
+        self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
 
         # Open the stage configuration file
         # ---------------------------------

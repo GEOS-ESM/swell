@@ -51,8 +51,6 @@ def configure_cylc_environment(append_dict: dict = {}) -> dict:
 def execute_cylc(argv=sys.argv) -> None:
     ''' Custom entry point for Cylc on Discover. '''
 
-    cylc_command = ['cylc'] + argv[1:]
-
     logger = Logger('SwellCylcEntryPoint')
 
     platform = SwellPlatform.detect_platform()
@@ -66,12 +64,17 @@ def execute_cylc(argv=sys.argv) -> None:
                       'PYTHONPATH': os.path.join(opt, 'lib', python_ver, 'site-packages'),
                       'CYLC_PYTHONPATH': os.path.join(opt, 'lib', python_ver, 'site-packages')}
 
+        # Point directly to cylc installation
+        cylc_command = [os.path.join(opt, 'bin', 'cylc')] + argv[1:]
+
         env = configure_cylc_environment(append_env)
 
         subprocess.run(cylc_command, env=env)
 
     # Try just calling cylc from the path
     else:
+        cylc_command = ['cylc'] + argv[1:]
+
         logger.warning('Platform not recognized, attempting to call Cylc executable from the path.')
         logger.warning('Cylc must be installed for this to work.')
 
