@@ -618,8 +618,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = "Number of latitudes in GSIBEC grid?"
-        widget_type: WType = WType.INTEGER
+        prompt: str = "How many number of latutides in GSIBEC grid?"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -630,8 +630,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = "Number of longitudes in GSIBEC grid?"
-        widget_type: WType = WType.INTEGER
+        prompt: str = "How many number of longitudes in GSIBEC grid?"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
