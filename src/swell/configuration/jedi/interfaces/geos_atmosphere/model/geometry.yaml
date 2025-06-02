@@ -6,4 +6,3 @@ layout: [{{npx_proc}},{{npy_proc}}]
 npx: {{horizontal_resolution}}
 npy: {{horizontal_resolution}}
 npz: {{vertical_resolution}}
-field metadata override: './fv3-jedi/fieldmetadata/geos.yaml'

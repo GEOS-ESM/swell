@@ -44,6 +44,8 @@ class RunJediFgatExecutable(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
+        gsibec_nlats = self.config.gsibec_nlats(None)
+        gsibec_nlons = self.config.gsibec_nlons(None)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
 
@@ -80,6 +82,8 @@ class RunJediFgatExecutable(taskBase):
         # Geometry
         # --------
         self.jedi_rendering.add_key('vertical_resolution', self.config.vertical_resolution())
+        self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
+        self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
@@ -94,6 +98,8 @@ class RunJediFgatExecutable(taskBase):
         # ---------------------------------
         if npx_proc is not None and npy_proc is not None:
             self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
+            self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
+            self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)
             self.jedi_rendering.add_key('gsibec_npy_proc', 6*npy_proc)
 
