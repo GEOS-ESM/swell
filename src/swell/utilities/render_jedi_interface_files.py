@@ -83,6 +83,8 @@ class JediConfigRendering():
             'final_cycle_point',
             'gradient_norm_reduction',
             'gsibec_configuration',
+            'gsibec_nlats',
+            'gsibec_nlons',
             'gsibec_npx_proc',
             'gsibec_npy_proc',
             'horizontal_localization_lengthscale',
