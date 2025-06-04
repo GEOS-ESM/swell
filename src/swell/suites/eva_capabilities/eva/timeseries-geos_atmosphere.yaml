@@ -57,10 +57,11 @@ graphics:
 
   - batch figure:
       variables: *variables
+      channels: *channels
     figure:
       layout: [1,1]
       title: 'Mean OmB | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_mean_ombg_{{instrument}}_${variable}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}${channel}/jedi_timeseries_mean_ombg_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'Datetime'
         add_ylabel: 'Mean'
@@ -69,6 +70,7 @@ graphics:
           loc: 'upper left'
         layers:
         - type: LinePlot
+          channel: ${channel}
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
@@ -78,6 +80,7 @@ graphics:
           label: 'Mean Observation - Background (ombg)'
 
         - type: LinePlot
+          channel: ${channel}
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
@@ -88,10 +91,11 @@ graphics:
 
   - batch figure:
       variables: *variables
+      channels: *channels
     figure:
       layout: [1,1]
       title: 'Obs Counts | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_counts_{{instrument}}_${variable}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}${channel}/jedi_timeseries_counts_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'Datetime'
         add_ylabel: 'Number of Observations'
@@ -106,6 +110,7 @@ graphics:
             variable: experiment_time_series::ombgPassedQc::${variable}_count
           markersize: 5
           color: 'black'
+          channel: ${channel}
           label: 'Obs count Observation - Background (ombg)'
 
         - type: LinePlot
@@ -115,14 +120,16 @@ graphics:
             variable: experiment_time_series::omanPassedQc::${variable}_count
           markersize: 5
           color: 'red'
+          channel: ${channel}
           label: 'Obs count Observation - Analysis h(x) (oman)'
 
   - batch figure:
       variables: *variables
+      channels: *channels
     figure:
       layout: [1,1]
       title: 'Std Error | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_std_{{instrument}}_${variable}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}${channel}/jedi_timeseries_std_{{instrument}}_${variable}${channel}.png'
     plots:
       - add_xlabel: 'Datetime'
         add_ylabel: 'Std in Obs Space'
@@ -131,6 +138,7 @@ graphics:
           loc: 'upper left'
         layers:
         - type: LinePlot
+          channel: ${channel}
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
@@ -140,6 +148,7 @@ graphics:
           label: 'Std of Observation - Background (ombg)'
 
         - type: LinePlot
+          channel: ${channel}
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
