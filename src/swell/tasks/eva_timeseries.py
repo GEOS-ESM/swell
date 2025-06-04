@@ -19,7 +19,7 @@ from eva.eva_driver import eva
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-# from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
+from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 
@@ -177,6 +177,9 @@ class EvaTimeseries(taskBase):
                 eva_override['channels'] = ''
                 eva_override['channel'] = ''
 
+            eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
+            eva_dict = yaml.safe_load(eva_str)
+
             # Remove channel keys if not needed
             # ---------------------------------
             if not need_channels:
@@ -184,8 +187,6 @@ class EvaTimeseries(taskBase):
                 remove_matching_keys(eva_dict, 'channels')
                 eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')
 
-            eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-            eva_dict = yaml.safe_load(eva_str)
 
             # Write eva dictionary to file
             # ----------------------------
@@ -197,7 +198,7 @@ class EvaTimeseries(taskBase):
             # Add eva dictionary to list
             # --------------------------
             eva_dicts.append(eva_dict)
-
+    
         # Call eva in parallel
         # --------------------
         with Pool(processes=number_of_workers) as pool:
