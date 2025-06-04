@@ -32,6 +32,75 @@ transforms:
   for:
     variable: *variables
 
+# Generate oman that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::omanPassedQcshallownorth::${variable}
+  starting field: experiment::oman::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+    - experiment::MetaData::latitude > 0
+    - experiment::MetaData::latitude < 60
+  for:
+    variable: *variables
+
+# Generate oman that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::omanPassedQcshallowsouth::${variable}
+  starting field: experiment::oman::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+    - experiment::MetaData::latitude < 0
+    - experiment::MetaData::latitude > -60
+  for:
+    variable: *variables
+
+# Generate oman that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::omanPassedQcshallow::${variable}
+  starting field: experiment::oman::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+  for:
+    variable: *variables
+
+# Generate ombg that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::ombgPassedQcshallow::${variable}
+  starting field: experiment::ombg::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+  for:
+    variable: *variables
+
+# Generate ombg that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::ombgPassedQcshallownorth::${variable}
+  starting field: experiment::ombg::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+    - experiment::MetaData::latitude > 0
+    - experiment::MetaData::latitude < 60
+  for:
+    variable: *variables
+
+# Generate ombg that passed QC for JEDI for depth less than 300m
+- transform: accept where
+  new name: experiment::ombgPassedQcshallowsouth::${variable}
+  starting field: experiment::ombg::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+    - experiment::MetaData::depth < 300
+    - experiment::MetaData::latitude < 0
+    - experiment::MetaData::latitude > -60
+  for:
+    variable: *variables
+
+
 time_series:
 
   - begin_date: '{{start_cycle_point}}'
@@ -41,11 +110,17 @@ time_series:
     collection: experiment
     groups:
       - omanPassedQc
+      - omanPassedQcshallow
+      - omanPassedQcshallownorth
+      - omanPassedQcshallowsouth
       - ombgPassedQc
+      - ombgPassedQcshallow
+      - ombgPassedQcshallownorth
+      - ombgPassedQcshallowsouth
     variables: *variables
     aggregation_methods:
       - mean
-      - count
+      # - count
       - std
     dimension:  Location
 
@@ -89,11 +164,114 @@ graphics:
       variables: *variables
     figure:
       layout: [1,1]
-      title: 'Obs Counts | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_counts_{{instrument}}_${variable}.png'
+      title: 'Mean OmB | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_mean_ombg_{{instrument}}_${variable}_300glb.png'
     plots:
       - add_xlabel: 'Datetime'
-        add_ylabel: 'Number of Observations'
+        add_ylabel: 'Mean'
+        add_grid:
+        set_ylim: [-0.4, 0.4]
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ombgPassedQcshallow::${variable}_mean
+          markersize: 5
+          color: 'black'
+          label: 'Global mean ombg (0-300m)'
+          # label: 'Mean Observation - Background 0-300m (ombg)'
+
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::omanPassedQcshallow::${variable}_mean
+          markersize: 5
+          color: 'red'
+          # label: 'Mean Observation - Analysis h(x) 0-300m (oman)'
+          label: 'Global mean oman (0-300m)'
+
+  # - batch figure:
+  #     variables: *variables
+  #   figure:
+  #     layout: [1,1]
+  #     title: 'Obs Counts | {{instrument_title}} | ${variable_title}'
+  #     output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_counts_{{instrument}}_${variable}.png'
+  #   plots:
+  #     - add_xlabel: 'Datetime'
+  #       add_ylabel: 'Number of Observations'
+  #       add_grid:
+  #       add_legend:
+  #         loc: 'upper left'
+  #       layers:
+  #       - type: LinePlot
+  #         x:
+  #           variable: experiment_time_series::MetaData::Dates
+  #         y:
+  #           variable: experiment_time_series::ombgPassedQc::${variable}_count
+  #         markersize: 5
+  #         color: 'black'
+  #         label: 'Obs count Observation - Background (ombg)'
+
+  #       - type: LinePlot
+  #         x:
+  #           variable: experiment_time_series::MetaData::Dates
+  #         y:
+  #           variable: experiment_time_series::omanPassedQc::${variable}_count
+  #         markersize: 5
+  #         color: 'red'
+  #         label: 'Obs count Observation - Analysis h(x) (oman)'
+
+  # - batch figure:
+  #     variables: *variables
+  #   figure:
+  #     layout: [1,1]
+  #     title: 'Std Error | {{instrument_title}} | ${variable_title}'
+  #     output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_std_{{instrument}}_${variable}.png'
+  #   plots:
+  #     - add_xlabel: 'Datetime'
+  #       add_ylabel: 'Std in Obs Space'
+  #       add_grid:
+  #       add_legend:
+  #         loc: 'upper left'
+  #       layers:
+  #       - type: LinePlot
+  #         x:
+  #           variable: experiment_time_series::MetaData::Dates
+  #         y:
+  #           variable: experiment_time_series::ombgPassedQc::${variable}_std
+  #         markersize: 5
+  #         color: 'black'
+  #         label: 'Std of Observation - Background (ombg)'
+
+  #       - type: LinePlot
+  #         x:
+  #           variable: experiment_time_series::MetaData::Dates
+  #         y:
+  #           variable: experiment_time_series::omanPassedQc::${variable}_std
+  #         markersize: 5
+  #         color: 'red'
+  #         label: 'Std of Observation - Analysis h(x) (oman)'
+
+  # - batch figure:
+  #     variables: *variables
+  #   figure:
+  #     layout: [1,1]
+  #     title: 'Std Error | {{instrument_title}} | ${variable_title}'
+  #     output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_std_{{instrument}}_${variable}_300_n.png'
+
+  - batch figure:
+      variables: *variables
+    figure:
+      layout: [2,1]
+      title: 'mean Error | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_mean_{{instrument}}_${variable}_0_300.png'
+    plots:
+      - add_xlabel: 'Datetime'
+        add_ylabel: 'mean in Obs Space'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -102,26 +280,50 @@ graphics:
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
-            variable: experiment_time_series::ombgPassedQc::${variable}_count
+            variable: experiment_time_series::ombgPassedQcshallownorth::${variable}_mean
           markersize: 5
           color: 'black'
-          label: 'Obs count Observation - Background (ombg)'
+          label: 'mean of Observation - Analysis h(x) (ombg) 0-300m NH (0 to 60N)'
 
         - type: LinePlot
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
-            variable: experiment_time_series::omanPassedQc::${variable}_count
+            variable: experiment_time_series::omanPassedQcshallownorth::${variable}_mean
           markersize: 5
           color: 'red'
-          label: 'Obs count Observation - Analysis h(x) (oman)'
+          label: 'mean of Observation - Analysis h(x) (oman) 0-300m NH (0 to 60N)'
+
+      - add_xlabel: 'Datetime'
+        add_ylabel: 'mean in Obs Space'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ombgPassedQcshallowsouth::${variable}_mean
+          markersize: 5
+          color: 'black'
+          label: 'mean of Observation - Analysis h(x) (ombg) 0-300m SH (0 to 60S)'
+
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::omanPassedQcshallowsouth::${variable}_mean
+          markersize: 5
+          color: 'red'
+          label: 'mean of Observation - Analysis h(x) (oman) 0-300m SH (0 to 60S)'
 
   - batch figure:
       variables: *variables
     figure:
-      layout: [1,1]
+      layout: [2,1]
       title: 'Std Error | {{instrument_title}} | ${variable_title}'
-      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_std_{{instrument}}_${variable}.png'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_std_{{instrument}}_${variable}_0_300.png'
     plots:
       - add_xlabel: 'Datetime'
         add_ylabel: 'Std in Obs Space'
@@ -133,17 +335,42 @@ graphics:
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
-            variable: experiment_time_series::ombgPassedQc::${variable}_std
+            variable: experiment_time_series::ombgPassedQcshallownorth::${variable}_std
           markersize: 5
           color: 'black'
-          label: 'Std of Observation - Background (ombg)'
+          label: 'Std of Observation - Analysis h(x) (ombg) 0-300m (0 to 60N)'
 
         - type: LinePlot
           x:
             variable: experiment_time_series::MetaData::Dates
           y:
-            variable: experiment_time_series::omanPassedQc::${variable}_std
+            variable: experiment_time_series::omanPassedQcshallownorth::${variable}_std
           markersize: 5
           color: 'red'
-          label: 'Std of Observation - Analysis h(x) (oman)'
+          label: 'Std of Observation - Analysis h(x) (oman) 0-300m (0 to 60N)'
+
+      - add_xlabel: 'Datetime'
+        add_ylabel: 'Std in Obs Space'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ombgPassedQcshallowsouth::${variable}_std
+          markersize: 5
+          color: 'black'
+          label: 'Std of Observation - Analysis h(x) (ombg) 0-300m (0 to 60S)'
+
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::omanPassedQcshallowsouth::${variable}_std
+          markersize: 5
+          color: 'red'
+          label: 'Std of Observation - Analysis h(x) (oman) 0-300m (0 to 60S)'
+
 
