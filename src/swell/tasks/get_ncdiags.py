@@ -81,6 +81,5 @@ class GetNcdiags(taskBase):
                       ignore_missing=True,
                       time_window=window_length,
                       obs_type=name,
-                    #   obs_type=observation,
                       type='ob',
                       experiment=ncdiag_experiment)

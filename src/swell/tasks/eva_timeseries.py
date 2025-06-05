@@ -187,7 +187,6 @@ class EvaTimeseries(taskBase):
                 remove_matching_keys(eva_dict, 'channels')
                 eva_dict = replace_string_in_dictionary(eva_dict, '${channel}', '')
 
-
             # Write eva dictionary to file
             # ----------------------------
             conf_output = os.path.join(self.cycle_dir(), 'eva', ioda_name, ioda_name+'_eva.yaml')
@@ -198,9 +197,8 @@ class EvaTimeseries(taskBase):
             # Add eva dictionary to list
             # --------------------------
             eva_dicts.append(eva_dict)
-    
+
         # Call eva in parallel
         # --------------------
         with Pool(processes=number_of_workers) as pool:
             pool.map(run_eva, eva_dicts)
-
