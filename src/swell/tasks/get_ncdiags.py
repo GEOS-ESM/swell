@@ -70,7 +70,7 @@ class GetNcdiags(taskBase):
                                            f'{ncdiag_experiment}.{observation}.' +
                                            f'{window_begin}.nc4')
 
-                # TODO: this is handled badly for now, due to the atmopshere observation yaml names
+                # TODO: this is handled badly for now, due to the atmosphere observation yaml names
                 # If the model is geos_marine, name is observation
                 if self.get_model() == 'geos_marine':
                     name = observation
