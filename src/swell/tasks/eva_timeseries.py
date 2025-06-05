@@ -127,7 +127,6 @@ class EvaTimeseries(taskBase):
 
             for ncdiag_cycle in ncdiag_cycles:
 
-                # Create obs_root fgat_jra55_01.adt_cryosat2n.20210702T150000Z.nc4
                 # Obs time starts at the beginning of the cycle
                 obs_time = ncdiag_cycle - window_offset
                 obs_root = '.'.join([ncdiag_experiments[0],
