@@ -47,7 +47,6 @@ class GetNcdiags(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
 
-
         # Set R2D2 config file
         # --------------------
         create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
@@ -70,6 +69,11 @@ class GetNcdiags(taskBase):
                 target_file = os.path.join(self.cycle_dir(),
                                            f'{ncdiag_experiment}.{observation}.' +
                                            f'{window_begin}.nc4')
+
+                # TODO: this is handled badly for now, due to the atmopshere observation yaml names
+                # If the model is geos_marine, name is observation
+                if self.get_model() == 'geos_marine':
+                    name = observation
 
                 fetch(date=window_begin,
                       provider='ncdiag',

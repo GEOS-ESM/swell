@@ -361,6 +361,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.ncdiag_experiments(),
+            qd.marine_models(),
             qd.r2d2_local_path(),
             qd.window_length(),
             qd.window_offset(),

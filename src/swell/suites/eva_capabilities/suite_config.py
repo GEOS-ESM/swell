@@ -24,19 +24,9 @@ class SuiteConfig(QuestionContainer, Enum):
     eva_capabilities = QuestionList(
         list_name="eva_capabilities",
         questions=[
-            sq.common,
-            ],
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    eva_capabilities_marine = QuestionList(
-        list_name="eva_capabilities_marine",
-        questions=[
-            eva_capabilities,
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
-            qd.final_cycle_point("2021-07-02T18:00:00Z"),
+            qd.final_cycle_point("2021-07-03T06:00:00Z"),
             qd.model_components(['geos_marine']),
         ],
         geos_marine=[
@@ -81,12 +71,12 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_metop-b",
                 "amsua_metop-c",
                 "amsua_n15",
-                "amsua_n18",
-                "amsua_n19",
+                # "amsua_n18",
+                # "amsua_n19",
                 "atms_n20",
                 "atms_npp",
                 "avhrr3_metop-b",
-                "avhrr3_n18",
+                # "avhrr3_n18",
                 "avhrr3_n19",
                 "cris-fsr_n20",
                 "cris-fsr_npp",
@@ -97,10 +87,10 @@ class SuiteConfig(QuestionContainer, Enum):
                 "mhs_metop-b",
                 "mhs_metop-c",
                 "mhs_n19",
-                "mls55_aura",
-                "omi_aura",
-                "ompsnm_npp",
-                "pibal",
+                # "mls55_aura",
+                # "omi_aura",
+                # "ompsnm_npp",
+                # "pibal",
                 "satwind",
                 "scatwind",
                 "sfcship",
