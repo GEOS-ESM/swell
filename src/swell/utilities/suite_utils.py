@@ -37,7 +37,8 @@ def get_suites() -> list:
     # List of base suites
     suites = sorted([sdir for sdir in os.listdir(suites_directory)
                      if (os.path.isdir(os.path.join(suites_directory, sdir))
-                         and os.path.exists(os.path.join(suites_directory, sdir, 'flow.cylc')))])
+                         and os.path.exists(
+                             os.path.join(suites_directory, sdir, 'suite_config.py')))])
 
     return suites
 

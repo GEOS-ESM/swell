@@ -11,6 +11,8 @@ from typing import Union, Optional, Self
 from collections.abc import Mapping
 import textwrap
 
+INDENT = ' ' * 4
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -33,7 +35,7 @@ def indent_lines(string: str, level: int = 0, reset: bool = False):
     if reset:
         string = textwrap.dedent(string)
 
-    string = textwrap.indent(string, '    '*level) + '\n'
+    string = textwrap.indent(string, INDENT*level) + '\n'
 
     return string
 
@@ -48,7 +50,7 @@ def format_section(section: Self, level: int = 0) -> str:
 
     name = section.name
     if name is not None:
-        section_str += textwrap.indent(f'{(level+1)*"["}{name}{"]"*(level+1)}\n', '    '*level)
+        section_str += textwrap.indent(f'{(level+1)*"["}{name}{"]"*(level+1)}\n', INDENT*level)
     else:
         level -= 1
 

@@ -8,12 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import copy
 import os
 import yaml
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
-from enum import StrEnum
 import datetime
 
 from swell.swell_path import get_swell_path
@@ -22,7 +20,6 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_cli import Ge
 from swell.deployment.prepare_config_and_suite.question_and_answer_defaults import GetAnswerDefaults
 from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
-from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict, add_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import suite_configs
@@ -122,16 +119,6 @@ class PrepareExperimentConfigAndSuite:
 
     def get_experiment_dict(self) -> Mapping:
         return self.experiment_dict
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_workflow_file_str(self, slurm_dict):
-        self.workflow.set_experiment_dict(self.experiment_dict, slurm_dict)
-        self.workflow.set_runtime_str()
-
-        self.workflow_str = self.workflow.get_workflow_str()
-
-        return self.workflow_str
 
     # ----------------------------------------------------------------------------------------------
 

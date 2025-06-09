@@ -923,6 +923,18 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class obs_thinning_rej_fraction(TaskQuestion):
+        default_value: float = 0.75
+        question_name: str = "obs_thinning_rej_fraction"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the rejection fraction for obs thinning?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class observations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observations"
@@ -969,18 +981,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class obs_thinning_rej_fraction(TaskQuestion):
-        default_value: float = 0.75
-        question_name: str = "obs_thinning_rej_fraction"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "What is the rejection fraction for obs thinning?"
-        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 

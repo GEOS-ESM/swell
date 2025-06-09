@@ -91,6 +91,8 @@ class CylcWorkflow():
 
         return header
 
+    # --------------------------------------------------------------------------------------------------
+
     def define_description(self) -> str:
         description = self.comment_block(
                 """# Cylc workflow auto-generated for suite {suite_to_run} by Swell."""
@@ -168,7 +170,7 @@ class CylcWorkflow():
             for sub_string in sub_strings:
                 sub_string = sub_string.strip()
 
-                if '#' in sub_string:
+                if sub_string.startswith('#'):
                     comment = True
 
                 if not comment and in_graph and in_cycle:
