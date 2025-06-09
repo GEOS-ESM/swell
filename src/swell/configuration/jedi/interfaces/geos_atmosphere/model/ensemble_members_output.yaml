@@ -1,3 +1,13 @@
 filetype: auxgrid
 gridtype: latlon
 filename: '{{cycle_dir}}/geos.analysis.mem%{member}%.'
+#field io names: *field_io_names
+field io names:
+  eastward_wind: ua
+  northward_wind: va
+  air_temperature: t
+  air_pressure_thickness: delp
+  water_vapor_mixing_ratio_wrt_moist_air: q
+  cloud_liquid_ice: qi
+  cloud_liquid_water: ql
+  mole_fraction_of_ozone_in_air: o3ppmv
