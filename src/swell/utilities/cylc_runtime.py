@@ -15,8 +15,6 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 
 # --------------------------------------------------------------------------------------------------
 
-indent = '    '
-
 
 @dataclass
 class Task:
@@ -41,6 +39,8 @@ class Task:
     is_cycling: bool = False
     is_model: bool = False
 
+    # --------------------------------------------------------------------------------------------------
+
     def __post_init__(self):
 
         if self.base_name is None:
@@ -64,12 +64,16 @@ class Task:
             if self.is_model:
                 self.script += f' -m {self.model}'
 
+    # --------------------------------------------------------------------------------------------------
+
     def format_string_block(self, string: str) -> str:
         out_string = '"""\n'
         out_string += indent_lines(string, 1)
         out_string += '"""'
 
         return out_string
+
+    # --------------------------------------------------------------------------------------------------
 
     def match_platform(self, content: Union[str, dict], platform: str):
         if isinstance(content, Mapping):
@@ -80,11 +84,15 @@ class Task:
 
         return content
 
+    # --------------------------------------------------------------------------------------------------
+
     def create_new_section(self,
                            name: Optional[str] = None,
                            content: Union[str, dict] = ''
                            ) -> CylcSection:
         return CylcSection(name, content)
+
+    # --------------------------------------------------------------------------------------------------
 
     def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
         ''' Return the runtime section for the given task. '''

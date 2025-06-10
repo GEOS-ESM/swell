@@ -98,7 +98,7 @@ class Workflow_compare_variational(CylcWorkflow):
 
             for model in exp_dict['model_components']:
                 task_str = (f'script = """swell task FGrepResidualNorm {config_file} -d $datetime'
-                            ' -m {model} -i {i} -o {output_dir}"""')
+                            f' -m {model} -i {i} -o {output_dir}"""')
 
                 task_section = self.create_new_section(f'FGrepResidualNorm-{model}-{i}', task_str)
                 runtime_section.add_subsection(task_section)
