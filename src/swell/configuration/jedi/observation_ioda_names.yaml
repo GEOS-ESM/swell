@@ -59,6 +59,9 @@ ioda instrument names:
   - ioda name: avhrr3_metop-b
     full name: AVHRR-3 (METOP-B)
     inst type: radiance
+  - ioda name: avhrr3_metop-c
+    full name: AVHRR-3 (METOP-C)
+    inst type: radiance
   - ioda name: cris-fsr_n20
     full name: CRIS-FSR (NOAA-20)
     inst type: radiance
