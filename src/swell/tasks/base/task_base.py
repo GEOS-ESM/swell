@@ -289,7 +289,7 @@ def get_tasks() -> list:
     tasks = []
     for task_file in task_files:
         base_name = os.path.basename(task_file)
-        if '__' not in base_name:
+        if '__' not in base_name and base_name not in ['task_questions.py', 'task_runtimes.py']:
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
 
     # Return list of valid task choices
