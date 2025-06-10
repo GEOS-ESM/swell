@@ -39,6 +39,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class comparison_experiment_paths(SuiteQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "comparison_experiment_paths"
+        ask_question: bool = True
+        prompt: str = "Provide paths to two or more experiments to run comparison tests on."
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensemble_hofx_packets(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"

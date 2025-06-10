@@ -41,7 +41,9 @@ class taskBase(ABC):
         datetime_input: Optional[str],
         model: str,
         ensemblePacket: Optional[str],
-        task_name: str
+        task_name: str,
+        test_iteration: Optional[int],
+        test_output: Optional[str],
     ) -> None:
 
         # Create message logger
@@ -119,6 +121,17 @@ class taskBase(ABC):
             # Object for computing data assimilation window parameters
             self.da_window_params = DataAssimilationWindowParams(self.logger,
                                                                  self.__datetime__.string_iso())
+
+        # Set the test iteration number
+        # -----------------------------
+        self.test_iteration = test_iteration
+
+        # Set the output directory for test results
+        # -----------------------------------------
+        if test_output is not None:
+            self.test_output = test_output
+        else:
+            self.test_output = self.experiment_path()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -262,7 +275,9 @@ class taskFactory():
         config: str,
         datetime: Union[str, dt, None],
         model: str,
-        ensemblePacket: Optional[str]
+        ensemblePacket: Optional[str],
+        test_iteration: Optional[int],
+        test_output: Optional[str]
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -272,7 +287,8 @@ class taskFactory():
         task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, task)
+        return task_class(config, datetime, model, ensemblePacket,
+                          task, test_iteration, test_output)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -303,13 +319,16 @@ def task_wrapper(
     config: str,
     datetime: Union[str, dt, None],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    ensemblePacket: Optional[str],
+    test_iteration: Optional[int],
+    test_output: Optional[str]
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
-    task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
+    task_object = creator.create_task(task, config, datetime, model, ensemblePacket,
+                                      test_iteration, test_output)
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 

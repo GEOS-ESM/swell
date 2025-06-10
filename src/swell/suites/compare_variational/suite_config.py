@@ -1,0 +1,33 @@
+# --------------------------------------------------------------------------------------------------
+#  @package configuration
+#
+#  Class containing the configuration. This is a dictionary that is converted from
+#  an input yaml configuration file. Various function are included for interacting with the
+#  dictionary.
+#
+# --------------------------------------------------------------------------------------------------
+
+
+from swell.utilities.swell_questions import QuestionContainer, QuestionList
+from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.suites.suite_questions import SuiteQuestions as sq
+
+from enum import Enum
+
+
+# --------------------------------------------------------------------------------------------------
+
+class SuiteConfig(QuestionContainer, Enum):
+
+    # --------------------------------------------------------------------------------------------------
+
+    compare_variational = QuestionList(
+        list_name="compare",
+        questions=[
+            sq.all_suites,
+            qd.runahead_limit(),
+            qd.comparison_experiment_paths(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------

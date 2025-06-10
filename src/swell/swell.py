@@ -9,7 +9,8 @@
 
 
 import click
-from typing import Union, Optional, Literal
+from collections.abc import Mapping
+from typing import Union, Optional, Literal, Tuple
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -18,6 +19,7 @@ from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import suite_configs
+from swell.utilities.dictionary import update_dict
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 
@@ -82,6 +84,13 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
+test_iteration_help = """
+(For diagnostic tasks only) - Set the number that is associated with the particular experiment
+that is being compared. """
+
+test_output_help = """
+(For diagnostic tasks only) - Define the output directory that diagnostics tests will send
+their results. Used in comparison suites. """
 
 # --------------------------------------------------------------------------------------------------
 
@@ -184,12 +193,16 @@ def launch(
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+@click.option('-i', '--testIteration', 'testIteration', default=None, help=test_iteration_help)
+@click.option('-o', '--testOutput', 'testOutput', default=None, help=test_output_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    ensemblePacket: Optional[str],
+    testIteration: Optional[int],
+    testOutput: Optional[str]
 ) -> None:
     """
     Run a workflow task
@@ -201,7 +214,7 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
+    task_wrapper(task, config, datetime, model, ensemblePacket, testIteration, testOutput)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -224,6 +237,33 @@ def utility(utility: str) -> None:
 
 # --------------------------------------------------------------------------------------------------
 
+@swell_driver.command()
+@click.argument('comparison_type', type=click.Choice(['variational']))
+@click.argument('experiments', type=click.Path(), nargs=-1)
+@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
+              type=click.Choice(get_platforms()), help=platform_help)
+@click.option('-o', '--override', 'override', default=None, help=override_help)
+@click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+def compare(comparison_type, experiments: Tuple[str], platform, override, advanced, slurm) -> None:
+    if override is not None:
+        if isinstance(override, str):
+            with open(override, 'r') as f:
+                override = yaml.safe_load(f)
+    else:
+        override = {}
+
+    if 'comparison_experiment_paths' in override.keys():
+        override['comparison_experiment_paths'] = (
+               override['comparison_experiment_paths'].extend(list(experiments)))
+    else:
+        override['comparison_experiment_paths'] = list(experiments)
+
+    create_experiment_directory(f'compare_{comparison_type}', 'defaults',
+                                platform, override, advanced, slurm)
+
+
+# --------------------------------------------------------------------------------------------------
 
 @swell_driver.command()
 @click.argument('test', type=click.Choice(valid_tests))

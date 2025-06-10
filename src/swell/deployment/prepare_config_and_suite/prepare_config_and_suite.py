@@ -170,6 +170,8 @@ class PrepareExperimentConfigAndSuite:
         self.question_dictionary_model_ind = question_dictionary_model_ind
         self.question_dictionary_model_dep = question_dictionary_model_dep
 
+    # ----------------------------------------------------------------------------------------------
+
     def prepare_task_question_dictionary(self):
         for task in self.model_independent_tasks:
             if task in task_questions.get_all():
@@ -207,6 +209,8 @@ class PrepareExperimentConfigAndSuite:
                         elif model in question['models'] or 'all_models' in question['models']:
                             self.question_dictionary_model_dep = add_dict(
                                     self.question_dictionary_model_dep, {model: question_dict})
+
+    # ----------------------------------------------------------------------------------------------
 
     def override_with_defaults(self, suite_task: QuestionType) -> None:
 
@@ -293,7 +297,7 @@ class PrepareExperimentConfigAndSuite:
             override_dict = {}
 
             if isinstance(self.override, Mapping):
-                override_dict.update_dict(override_dict, self.override)
+                override_dict = update_dict(override_dict, self.override)
 
             elif isinstance(self.override, str):
                 with open(self.override, 'r') as ymlfile:

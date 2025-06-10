@@ -71,10 +71,6 @@ class CylcWorkflow():
         self.header = self.define_header()
         self.description = self.define_description()
         self.scheduler = self.define_scheduler()
-
-        self.scheduling_section = self.define_scheduling_section()
-        self.graph_section = self.define_graph_section()
-
         self.scheduling = self.define_scheduling()
 
         self.tasks = self.parse_graph_for_tasks()
@@ -90,6 +86,8 @@ class CylcWorkflow():
         # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
 
         return header
+
+    # --------------------------------------------------------------------------------------------------
 
     def define_description(self) -> str:
         description = self.comment_block(
@@ -207,10 +205,11 @@ class CylcWorkflow():
         for task in self.tasks:
             if '-' in task:
                 task_name = task.split('-')[0]
-                model = task.split('-')[1]
 
-                if model in models:
-                    model_tasks[model].append(task_name)
+                for entry in task.split('-'):
+                    if entry in models:
+                        model_tasks[model].append(task_name)
+
             else:
                 ind_tasks.append(task)
 
