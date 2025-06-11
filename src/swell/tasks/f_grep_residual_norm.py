@@ -37,7 +37,8 @@ class FGrepResidualNorm(taskBase):
         results = output.stdout
 
         # Create the output directory
-        os.makedirs(self.test_output, exist_ok=True)
+        out_dir = os.path.join(self.test_output, 'comparison_tests')
+        os.makedirs(out_dir, exist_ok=True)
 
         out_name = f'residual_norms_{model}_{cycle_time}'
         if self.test_iteration is not None:
@@ -45,7 +46,7 @@ class FGrepResidualNorm(taskBase):
         out_name += '.txt'
 
         # Write the output file
-        out_file = os.path.join(self.test_output, out_name)
+        out_file = os.path.join(out_dir, out_name)
         with open(out_file, 'w') as f:
             f.write(f'Residual norms output for experiment: {self.experiment_path()}:\n')
             f.write(f'Model: {model}\n')

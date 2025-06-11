@@ -55,3 +55,13 @@ class SuiteQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    compare = QuestionList(
+        list_name="compare",
+        questions=[
+            all_suites,
+            qd.comparison_experiment_paths()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------

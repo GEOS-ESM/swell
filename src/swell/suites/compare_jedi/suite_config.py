@@ -21,11 +21,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    compare_variational = QuestionList(
-        list_name="compare",
+    compare_jedi = QuestionList(
+        list_name="compare_jedi",
         questions=[
             sq.compare,
-            qd.runahead_limit(),
         ]
     )
 

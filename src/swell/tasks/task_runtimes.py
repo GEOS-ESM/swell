@@ -32,6 +32,10 @@ class TaskRuntimes():
         pass
 
     @dataclass
+    class CompareJediCTestOutput(Task):
+        pass
+
+    @dataclass
     class BuildJediByLinking(Task):
         pass
 

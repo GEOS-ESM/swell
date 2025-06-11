@@ -1,4 +1,3 @@
-# --------------------------------------------------------------------------------------------------
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -486,6 +485,16 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.existing_jedi_build_directory(),
             qd.existing_jedi_build_directory_pinned(),
             qd.jedi_build_method()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    JediCTest = QuestionList(
+        list_name="JediCTest",
+        questions=[
+            qd.existing_jedi_build_directory(),
+            qd.existing_jedi_source_directory()
         ]
     )
 

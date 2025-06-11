@@ -234,7 +234,8 @@ class CylcWorkflow():
 
         for task in ['root'] + self.tasks:
             if task in runtime_overrides.keys():
-                task_section = self.define_runtime_task_overrides[task]
+                task_section = runtime_overrides[task].get_section(
+                        self.experiment_dict, self.slurm_external)
 
                 runtime_section.add_subsection(task_section)
 
@@ -242,7 +243,8 @@ class CylcWorkflow():
                 if '-' in task:
                     task_name = task.split('-')[0]
                     model = task.split('-')[1]
-                    if model not in self.experiment_dict['model_components']:
+                    if 'model_components' not in self.experiment_dict or (
+                            model not in self.experiment_dict['model_components']):
                         task_name = task
                         model = None
                 else:

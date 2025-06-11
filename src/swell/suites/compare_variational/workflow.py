@@ -12,6 +12,7 @@ import os
 
 from swell.utilities.cylc_workflow import CylcWorkflow
 from swell.tasks.task_runtimes import TaskRuntimes
+from swell.utilities.cylc_runtime import Task
 
 # --------------------------------------------------------------------------------------------------
 
@@ -75,21 +76,15 @@ class Workflow_compare_variational(CylcWorkflow):
 
     # --------------------------------------------------------------------------------------------------
 
-    def define_runtime(self):
-        runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
-
-        task_class = TaskRuntimes.get('root')
-        task_section = task_class().get_section(
-                self.experiment_dict, self.slurm_external)
-
-        runtime_section.add_subsection(task_section)
-
-        paths = self.experiment_dict['comparison_experiment_paths']
+    def define_runtime_task_overrides(self):
+        overrides = {}
 
         exp_root = os.path.expandvars(self.experiment_dict['experiment_root'])
         exp_id = self.experiment_dict['experiment_id']
 
-        output_dir = os.path.join(exp_root, exp_id, 'comparison_tests')
+        output_dir = os.path.join(exp_root, exp_id)
+
+        paths = self.experiment_dict['comparison_experiment_paths']
 
         for i, path in enumerate(paths):
             config_file = os.path.join(os.path.dirname(path), 'experiment.yaml')
@@ -97,13 +92,12 @@ class Workflow_compare_variational(CylcWorkflow):
                 exp_dict = yaml.safe_load(f)
 
             for model in exp_dict['model_components']:
-                task_str = (f'script = """swell task FGrepResidualNorm {config_file} -d $datetime'
-                            f' -m {model} -i {i} -o {output_dir}"""')
+                overrides[f'FGrepResidualNorm-{model}-{i}'] = Task(
+                        base_name='FGrepResidualNorm',
+                        scheduling_name=(f'FGrepResidualNorm-{model}-{i}'),
+                        script=(f'swell task FGrepResidualNorm {config_file} -d $datetime'
+                                f' -m {model} -i {i} -o {output_dir}'))
 
-                task_section = self.create_new_section(f'FGrepResidualNorm-{model}-{i}', task_str)
-                runtime_section.add_subsection(task_section)
-
-        return runtime_section.get_section_str()
-
+        return overrides
 
 # --------------------------------------------------------------------------------------------------
