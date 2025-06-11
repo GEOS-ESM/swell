@@ -260,3 +260,6 @@ ioda instrument names:
   - ioda name : icec_ssmis_f18_south
     full name: SSMIS (Ice Concentration)
     inst type: radiance
+  - ioda name: icec_merra2
+    full name: MERRA2 (Ice Concentration)
+    inst type: conventional
