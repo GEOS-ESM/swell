@@ -116,6 +116,9 @@ ioda instrument names:
   - ioda name: ompsnm_npp
     full name: OMPS Nadir Mapper (NPP)
     inst type: ozone
+  - ioda name: ompslpnc_n21
+    full name: OMPS Limb Profiler (N21)
+    inst type: ozone
   - ioda name: ompslpnc_npp
     full name: OMPS Limb Profiler (NPP)
     inst type: ozone
