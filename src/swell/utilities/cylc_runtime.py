@@ -198,7 +198,7 @@ class Task:
                 settings_dict = yaml.safe_load(f)
             if 'email_address' in settings_dict.keys():
                 email_address = settings_dict['email_address']
-                address_section = self.create_new_section('mail', f'mail events = {email_address}')
+                address_section = self.create_new_section('mail', f'to = {email_address}')
                 runtime_section.add_subsection(address_section)
 
                 event_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"

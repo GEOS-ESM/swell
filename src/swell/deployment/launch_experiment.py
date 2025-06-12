@@ -87,6 +87,12 @@ class DeployWorkflow():
             self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name + '\033[0m')
             self.logger.info(' ', False)
 
+            send_messages = os.environ.get('SWELL_SEND_MESSAGES')
+            if send_messages == '1':
+                self.logger.info('  Workflow will pause on tasks configured to do so. To unpause:')
+                self.logger.info('  \u001b[32mcylc play ' + self.experiment_name + '\033[0m')
+                self.logger.info(' ', False)
+
             # Launch the job monitor
             self.logger.critical('Launching the TUI, press \'q\' at any time to exit the TUI')
             input()
