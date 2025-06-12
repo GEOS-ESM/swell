@@ -167,10 +167,14 @@ def clone(
 @click.argument('suite_path')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False, help=no_detach_help)
 @click.option('-l', '--log_path', 'log_path', default=None, help=log_path_help)
+@click.option('-m', '--send-messages', 'send_messages', is_flag=True)
+@click.option('-d', '--pause-workflow', 'pause_workflow', is_flag=True)
 def launch(
     suite_path: str,
     no_detach: bool,
-    log_path: str
+    log_path: str,
+    send_messages: bool,
+    pause_workflow: bool
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -181,7 +185,7 @@ def launch(
         suite_path (str): Path to where the flow.cylc and associated suite files are located. \n
 
     """
-    launch_experiment(suite_path, no_detach, log_path)
+    launch_experiment(suite_path, no_detach, log_path, send_messages, pause_workflow)
 
 
 # --------------------------------------------------------------------------------------------------

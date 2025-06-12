@@ -9,6 +9,8 @@
 
 from typing import Union, Optional, Self, Tuple
 from collections.abc import Mapping
+import os
+import yaml
 
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.tasks.task_runtimes import TaskRuntimes
@@ -78,7 +80,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_header(self) -> str:
-        header = self.comment_block(string="""
+        header = '#!jinja2\n'
+        header += self.comment_block(string="""
         # (C) Copyright 2021- United States Government as represented by the Administrator of the
         # National Aeronautics and Space Administration. All Rights Reserved.
         #
@@ -118,8 +121,25 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_scheduler(self) -> str:
-        scheduler_dict = {'UTC mode': True, 'allow implicit tasks': False}
-        scheduler = self.create_new_section('scheduler', scheduler_dict)
+        scheduler_str = 'UTC mode = True\nallow implicit tasks = False\n'
+
+        settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
+        if os.path.exists(settings_file):
+            with open(settings_file, 'r') as f:
+                settings_dict = yaml.safe_load(f)
+            if 'email_address' in settings_dict.keys():
+                email_address = settings_dict['email_address']
+
+                message_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
+                message_str += '[[events]]\n'
+                message_str += indent_lines('mail events = startup, shutdown\n', 1)
+                message_str += '[[mail]]\n'
+                message_str += indent_lines(f'to = {email_address}\n', 1)
+                message_str += '{% endif %}\n'
+
+                scheduler_str += message_str
+
+        scheduler = self.create_new_section('scheduler', scheduler_str)
 
         return scheduler.get_section_str()
 

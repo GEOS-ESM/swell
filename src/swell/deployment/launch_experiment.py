@@ -103,7 +103,9 @@ class DeployWorkflow():
 def launch_experiment(
     suite_path: str,
     no_detach: bool,
-    log_path: str
+    log_path: str,
+    send_cylc_messages: bool = False,
+    allow_pause: bool = False
 ) -> None:
 
     # Get the path to where the suite files are located
@@ -126,6 +128,20 @@ def launch_experiment(
     deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.',
                                 False)
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
+
+    # Set environment variable allowing for cylc email messaging
+    # ----------------------------------------------------------
+    if send_cylc_messages:
+        os.environ['SWELL_SEND_MESSAGES'] = str(1)
+    else:
+        os.environ['SWELL_SEND_MESSAGES'] = str(0)
+
+    # Set environment variable allowing for pausing on set tasks
+    # ----------------------------------------------------------
+    if allow_pause:
+        os.environ['SWELL_PAUSE_WORKFLOW'] = str(1)
+    else:
+        os.environ['SWELL_PAUSE_WORKFLOW'] = str(0)
 
     # Launch the workflow
     # -------------------

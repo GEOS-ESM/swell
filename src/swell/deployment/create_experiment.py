@@ -101,7 +101,8 @@ def prepare_config(
 
     # Initialize the workflow
     # -----------------------
-    workflow = workflows.get_workflow(suite)(suite_dict, slurm_dict)
+    workflow_class = workflows.get_workflow(suite)
+    workflow = workflow_class(suite_dict, slurm_dict)
 
     # Get the list of tasks from the workflow's graph
     # -----------------------------------------------

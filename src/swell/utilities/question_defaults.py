@@ -9,7 +9,7 @@
 
 
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -1048,6 +1048,17 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class pause_on_tasks(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "pause_on_tasks"
+        ask_question: bool = False
+        prompt: str = ("Specify any tasks that the workflow should pause on "
+                       "(for development purposes).")
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class perhost(TaskQuestion):
         default_value: str = None
         question_name: str = "perhost"
@@ -1148,6 +1159,16 @@ class QuestionDefaults():
         default_value: str = "None"
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class task_email_parameters(TaskQuestion):
+        default_value: Union[str, dict] = "auto"
+        question_name: str = "task_email_parameters"
+        prompt: str = ("Provide a dictionary mapping tasks to cylc event statuses, or 'auto' to "
+                       "automatically configure these based on the graph.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

@@ -7,6 +7,8 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import os
+import yaml
 from typing import Union, Optional, Self
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -106,7 +108,14 @@ class Task:
 
         # Set the script
         if self.script:
-            runtime_dict['script'] = self.format_string_block(self.script)
+            script_str = self.script
+
+            if 'pause_on_tasks' in experiment_dict.keys():
+                if len(set([self.base_name, self.scheduling_name])
+                       & set(experiment_dict['pause_on_tasks'])) > 0:
+                    script_str += '\ncylc pause $CYLC_WORKFLOW_ID'
+
+            runtime_dict['script'] = self.format_string_block(script_str)
 
         # Specify the platform if this is a slurm task
         if self.slurm is not None:
@@ -170,6 +179,34 @@ class Task:
             directive_section = self.create_new_section('directives', slurm_section_dict)
 
             runtime_section.add_subsection(directive_section)
+
+        # Check slurm messaging parameters
+        events = []
+        if 'task_email_parameters' in experiment_dict.keys():
+            if experiment_dict['task_email_parameters'] == 'auto':
+                # Set message status to fail or event fail
+                events = ['failed', 'submit-failed']
+            elif self.scheduling_name in experiment_dict['task_email_parameters'].keys():
+                events = experiment_dict['task_email_parameters'][self.scheduling_name]
+            elif self.base_name in experiment_dict['task_email_parameters'].keys():
+                events = experiment_dict['task_email_parameters'][self.base_name]
+
+        # Add messaging section
+        settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
+        if os.path.exists(settings_file) and len(events) > 0:
+            with open(settings_file, 'r') as f:
+                settings_dict = yaml.safe_load(f)
+            if 'email_address' in settings_dict.keys():
+                email_address = settings_dict['email_address']
+                address_section = self.create_new_section('mail', f'mail events = {email_address}')
+                runtime_section.add_subsection(address_section)
+
+                event_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
+                event_str += "mail events = " + ', '.join(events)
+                event_str += "\n{% endif %}\n"
+
+                event_section = self.create_new_section('events', event_str)
+                runtime_section.add_subsection(event_section)
 
         return runtime_section
 

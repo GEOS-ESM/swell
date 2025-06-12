@@ -13,6 +13,7 @@ import yaml
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 import datetime
+from dataclasses import asdict
 
 from swell.swell_path import get_swell_path
 from swell.utilities.suite_utils import get_model_components
@@ -24,6 +25,7 @@ from swell.utilities.dictionary import update_dict, add_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import suite_configs
 from swell.utilities.swell_questions import QuestionType
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------
@@ -160,7 +162,13 @@ class PrepareExperimentConfigAndSuite:
     # ----------------------------------------------------------------------------------------------
 
     def prepare_task_question_dictionary(self):
+
+        # Track all possible tasks
+        task_options = []
+
+        # Iterate through model independent tasks and update with defaults if not already set
         for task in self.model_independent_tasks:
+            task_options.append(task)
             if task in task_questions.get_all():
                 question_list = task_questions[task].value.expand_question_list()
                 for question in question_list:
@@ -183,8 +191,10 @@ class PrepareExperimentConfigAndSuite:
                         self.question_dictionary_model_ind = add_dict(
                                 self.question_dictionary_model_ind, question_dict)
 
+        # Iterate through model dependent tasks and update if not already set
         for model, task_list in self.model_dependent_tasks.items():
             for task in task_list:
+                task_options.append(task)
                 if task in task_questions.get_all():
                     question_list = task_questions[task].value.expand_question_list()
 
@@ -196,6 +206,20 @@ class PrepareExperimentConfigAndSuite:
                         elif model in question['models'] or 'all_models' in question['models']:
                             self.question_dictionary_model_dep = add_dict(
                                     self.question_dictionary_model_dep, {model: question_dict})
+
+        # Set options for task email parameters
+        message_question_dict = {'task_email_parameters':
+                                 asdict(qd.task_email_parameters(options=task_options))}
+
+        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind,
+                                                      message_question_dict)
+
+        # Set options for workflow pause
+        pause_question_dict = {'pause_on_tasks':
+                               asdict(qd.pause_on_tasks(options=task_options))}
+
+        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind,
+                                                      pause_question_dict)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -305,7 +329,7 @@ class PrepareExperimentConfigAndSuite:
 
             # Iterate over the model_dep dictionary and override
             # --------------------------------------------------
-            if self.suite_needs_model_components and override_dict['models'] is not None:
+            if self.suite_needs_model_components and 'models' in override_dict.keys():
                 for model, model_dict in self.question_dictionary_model_dep.items():
                     for question_name, question in model_dict.items():
                         if question['question_type'] == suite_task:
