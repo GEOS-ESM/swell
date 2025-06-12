@@ -238,7 +238,7 @@ def utility(utility: str) -> None:
 # --------------------------------------------------------------------------------------------------
 
 @swell_driver.command()
-@click.argument('comparison_type', type=click.Choice(['variational']))
+@click.argument('comparison_type', type=click.Choice(['variational', 'jedi']))
 @click.argument('experiments', type=click.Path(), nargs=-1)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
               type=click.Choice(get_platforms()), help=platform_help)
