@@ -37,6 +37,11 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
+
+            # CloneGeosMksi
+            CloneGeos => BuildGeosByLinking?
+
+            BuildGeosByLinking:fail? => BuildGeos
         """
 
         {% for cycle_time in cycle_times %}
@@ -84,9 +89,27 @@
         {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+        
+    [[CloneGeos]]
+        script = "swell task CloneGeos $config"
+
+    [[BuildGeosByLinking]]
+        script = "swell task BuildGeosByLinking $config"
+
+    [[BuildGeos]]
+        script = "swell task BuildGeos $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[ GetBufr ]]
         script = "swell task GetBufr $config -d $datetime -m geos_atmosphere"
+
+    # GetYaml ~ existing code outside of Swell workflow
+    # EditYaml
 
     [[ BufrToIoda ]]
         script = "swell task BufrToIoda $config -d $datetime -m geos_atmosphere"

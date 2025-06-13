@@ -3,7 +3,7 @@ import yaml
 import os
 
 # Path to yaml templates for bufr2ioda.x conversion
-bufr_to_ioda_yaml_dir = 'jedi_bundle/build/iodaconv/test/testinput/'
+bufr_to_ioda_yaml_dir = 'configuration/jedi' #'jedi_bundle/build/iodaconv/test/testinput/'
 
 # Dictionary linking each obs type to the appropriate yaml template
 bufr_to_ioda_yaml_dict = {

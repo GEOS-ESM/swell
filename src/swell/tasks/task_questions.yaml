@@ -1137,57 +1137,6 @@ path_to_bufr:
   - GetBufr
   type: string
 
-  
-bymd:
-  ask_question: true 
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the beginning year-month-day?
-  tasks:
-  - GetBufrUseAcquire
-  type: string
-
-bhms:
-  ask_question: true 
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the begininng hour-minute-seconds?
-  tasks:
-  - GetBufrUseAcquire
-  type: string
-
-ihms:
-  ask_question: true 
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: Wht is the timestep increment in hour-min-sec format (e.g. 060000)?
-  tasks:
-  - GetBufrUseAcquire
-  type: string
-
-nstep:
-  ask_question: true 
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the number of timesteps for time looping?
-  tasks:
-  - GetBufrUseAcquire
-  type: string
-
-obsclass:
-  ask_question: true 
-  default_value: defer_to_model
-  models:
-  - geos_atmosphere
-  prompt: What is the obs class?
-  tasks:
-  - GetBufrUseAcquire
-  type: string
-
 path_to_obsys_rc:
   ask_question: true 
   default_value: defer_to_model
@@ -1197,5 +1146,4 @@ path_to_obsys_rc:
   tasks:
   - GetBufrUseAcquire
   type: string
-
-
+  

@@ -636,3 +636,37 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetBufr= QuestionList(
+        list_name="GetBufr",
+        questions=[
+            window_questions,
+            BuildJediByLinking,
+            #CleanCycle,
+            CloneGeosMksi,
+            qd.observations()
+          
+        ]
+    )
+    
+    # --------------------------------------------------------------------------------------------------
+
+
+    # --------------------------------------------------------------------------------------------------
+
+    BufrToIoda = QuestionList(
+        list_name="BufrToIoda",
+        questions=[
+            window_questions,
+            BuildJediByLinking,
+            CleanCycle,
+            CloneGeosMksi,
+            #qd.observations()
+          
+        ]
+    )
+    
+    # --------------------------------------------------------------------------------------------------
+

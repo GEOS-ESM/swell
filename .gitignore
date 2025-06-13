@@ -137,3 +137,7 @@ dmypy.json
 .pyre/
 *.egg-info
 
+# sicohen dev directories and scrap work
+sic_scrap/
+src/swell/Swell_sles15/src/swell/tasks/get_bufr_no_acuqire.py
+src/swell/Swell_sles15/src/swell/tasks/get_bufr_iodaconv_yaml.py

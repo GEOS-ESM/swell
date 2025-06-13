@@ -1,6 +1,3 @@
-# BufrToIoda.py
-# With the files from GetBufr.py, convert BUFR files to IODA 
-
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -11,414 +8,280 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import copy
-import datetime
-import glob
 import os
-import re
+import subprocess
 
-# Ioda converters
-import pyiodaconv.bufr as bufr  #import pyiodaconv.gsi_ncdiag as gsid
-from pyiodaconv.combine_obsspace import combine_obsspace
-
-from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.shell_commands import run_subprocess, create_executable_file
+#from swell.utilities.copy_to_dst_dir import copy_to_dst_dir
+from swell.tasks.base.task_base import taskBase
 
+import datetime
 
+import glob
+import yaml
 # --------------------------------------------------------------------------------------------------
 
+# Dictionary linking each obs type to the appropriate yaml template
+#path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(), 'configuration/iodaconv')
 
+#bufr_to_ioda_yaml_obs_type_dict = {
+bufr2ioda_obs_type_dict = {
+    '1bmhs': 'bufr_ncep_1bmhs.yaml',
+    'amsua': 'bufr_ncep_1bamua_ta.yaml',
+    '1bamua': 'bufr_ncep_1bamua_ta.yaml',
+    'atms': 'bufr_ncep_atms.yaml',
+    'mtiasi': 'bufr_ncep_mtiasi.yaml',
+    'satwind': 'bufr_ncep_satwind_avhrr.yaml',
+    'aircft': 'bufr_ncep_prepbufr_aircft.yaml',
+    'sevcsr': 'bufr_ncep_sevcsr.yaml'
+}
+
+
+# python split filename by delimiter period and then search for string in the resulting list
+def find_obstype_match(filename):
+    """
+    Splits the filename by '.' and returns the first match found in obs_type_search_dict.
+    Prints the match if found, otherwise prints 'No match found.'
+
+    Dictionary:
+    bufr2ioda_obs_type_dict = {
+        '1bmhs': 'bufr_ncep_1bmhs.yaml',
+        'amsua': 'bufr_ncep_1bamua_ta.yaml',
+        '1bamua': 'bufr_ncep_1bamua_ta.yaml',
+        'atms': 'bufr_ncep_atms.yaml',
+        'mtiasi': 'bufr_ncep_mtiasi.yaml',
+        'satwind': 'bufr_ncep_satwind_avhrr.yaml',
+        'aircft': 'bufr_ncep_prepbufr_aircft.yaml',
+        'sevcsr': 'bufr_ncep_sevcsr.yaml'
+    }
+    
+    """
+    # 
+    obs_type_search_dict = bufr2ioda_obs_type_dict
+    parts = filename.split('.')
+    for part in parts:
+        if part in obs_type_search_dict:
+            print(f"Match found: {part}")
+            return part
+    print("No match found.")
+    return None
+
+# 
+def generate_iodaconv_yaml(bufr_file_source_path, ioda_file_target_path, path_to_ioda_conv_yaml_tmpl_dir,
+                            swell_exp_path, cycle_dir, ioda_dir,
+                            yaml_file_source=None, yaml_file_target=None):
+#def generate_iodaconv_yaml(obsdatain, obsdataout, obs_type, yaml_file_source=None, yaml_file_target=None):
+    '''
+    obsdatain: input file path to be inserted into the conversion yaml
+    obsdataout: output file path to be inserted into the conversion yaml
+    obs_type: observation type ~ 'amsua,atms,1bmhs...'
+    yaml_file_source: yaml file to use to replicate the structure for the specific obs_type
+    yaml_file_target:
+    '''
+    #path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(), 'configuration/iodaconv') # where the yaml 'templates' are stored
+
+    # Keep?
+    # ------            
+    #yaml_file_source =  # in case user wants to user an alternative (custom) yaml file
+    #yaml_file_target =  # in case user wants to user an alternative (custom) yaml file
+    #ioda_file_target_path =  
+    obsdatain = bufr_file_source_path # Value to insert into the yaml file as the value for 'obsdatain'. Source file ~ bufr file to be converted 
+    obsdataout = ioda_file_target_path # Value to insert into the yaml file as the value for 'obsdataout'. Target file ~ conversion output file name
+
+    # find the obs type from file name
+    bufr_file_obs_type = find_obstype_match(obsdatain)
+
+    # Testing
+    # -------
+    #print(f'''obsdatain: {obsdatain} -----------------------------------''')
+    #print(f'''obsdataout: {obsdataout} -----------------------------------''')
+    #print(f'''path_to_ioda_conv_yaml_tmpl_dir: {path_to_ioda_conv_yaml_tmpl_dir} -----------------------------------''')
+    #print(f'''bufr_file_obs_type: {bufr_file_obs_type} -----------------------------------''')
+    
+    # Determine which yaml template to use based on the found 'obs_type' and set the file path
+    # -----------------------------------------------------------------------------------------
+    if yaml_file_source is None:
+        # Path to use as the yaml template
+        yaml_file_source = os.path.join(path_to_ioda_conv_yaml_tmpl_dir,
+                                            f'{bufr2ioda_obs_type_dict[bufr_file_obs_type]}')
+
+    # Determine the target path of the generated yaml file 
+    # ----------------------------------------------------
+    if yaml_file_target is None:
+        yaml_file_target = os.path.join(cycle_dir, 'generated_iodaconv_input.yaml')  # Overwrite original if no output file is specified
+
+    print(f'YAML template used:  {yaml_file_source}.------------------------------ ')
+    print(f'YAML file saved as {yaml_file_target}. ------------------------------ ')
+
+    # Copy the yaml file 
+    # copy_to_dst_dir(logger, yaml_file_source, yaml_file_target)
+    #os.system(f"cp {yaml_file_source} {yaml_file_target}")
+    subprocess.run(['cp', yaml_file_source, yaml_file_target])
+
+    # Generate the yaml file that will be used in the conversion step ~ bufr2ioda.x [yaml file]
+    # -----------------------------------------------------------------------------------------
+    try:
+            # Load the YAML template file 
+            with open(yaml_file_source, 'r') as file:
+                yaml_content = yaml.safe_load(file)
+                file.close()
+
+            print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
+
+            # Apply the replacements for input and output file paths
+            yaml_content['observations'][0]['obs space']['obsdatain'] = obsdatain # Source file ~ bufr file to be converted (must be a bufr or prepbufr file) 
+            yaml_content['observations'][0]['ioda']['obsdataout'] = obsdataout # Target file ~ conversion output file name (should end in .nc4)
+
+            
+            with open(yaml_file_target, 'w') as file:
+                yaml.dump(yaml_content, file, default_flow_style=False, sort_keys=False)
+                print('Updated YAML file content:')
+                print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
+                     
+            # Testing
+            # -------
+
+            print(f'----------------------------------- 136            --------------------------------------------------------')
+            print(f'''obsdatain: {yaml_content['observations'][0]['obs space']['obsdatain']} -----------------------------------''')
+            print(f'''obsdataout: {yaml_content['observations'][0]['ioda']['obsdataout']} -----------------------------------''')
+            print(f'YAML template used:  {yaml_file_source}.')
+            print(f'YAML file saved as {yaml_file_target}.')
+            
+            # Assert that the files were all found
+            #self.logger.assert_abort(yaml_file_source is not None, f'In BufrToIoda no YAML template file found in {path_to_ioda_conv_yaml_tmpl_dir}.')
+            #self.logger.assert_abort(satbiaspc_file_index is not None,
+            #                         f'In BufrToIoda no satbiaspc file found in {gsi_bc_dir}.')
+            #if 'aircraft' in observations:
+            #    self.logger.assert_abort(acftbias_file_index is not None,
+            #                             f'In BufrToIoda no acftbias file found in {gsi_bc_dir}.')
+
+    except FileNotFoundError:
+        print(f'Error: File "{yaml_file_source}" not found.')
+    except yaml.YAMLError as e:
+        print(f'Error processing YAML file: {e}')
+    return yaml_file_target # returns the path of the yaml file the function generated
+
+# --------------------------------------------------------------------------------------------------
 class BufrToIoda(taskBase):
 
     def execute(self) -> None:
+        # 1. Task Configuration and directory setup & init
+        # ------------------------------------------------------------------------------------------
+        # experiment directory in SwellExperiments
+        swell_exp_path = self.experiment_path()
+        cycle_dir = self.cycle_dir()
 
-        # Parse configuration
-        # -------------------
-        observations = self.config.observations()
-        single_observations = self.config.single_observations()
-        produce_geovals = self.config.produce_geovals()
-        window_offset = self.config.window_offset()
-
-        # Get window beginning time
-        window_begin = self.da_window_params.window_begin(window_offset)
-
-        # Keep copy of the
-        observations_orig = observations.copy()
-
-        # Directory containing the ncdiags
+        # Get cycle dir and create if needed
+        # ----------------------------------
+        # Set Bufr File Directory (Input)
         bufr_dir = os.path.join(self.cycle_dir(), 'bufr')
 
-    
- # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # Set Ioda File Directory (Output) and create if needed
+        ioda_dir = os.path.join(self.cycle_dir(), 'ioda')
+        os.makedirs(ioda_dir, 0o755, exist_ok=True)
+        # GOOD ~ print(f'ioda_dir: {ioda_dir}')
+
+        # Set the Bufr2Ioda Yaml Template Directory 
+        path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(), 'configuration/jedi/iodaconv')
+
+        # 2. Find Bufr files to converter
+        # ------------------------------------------------------------------------------------------
+        # Get list of all files in cycle dir  with .bufr_d suffix or *bufr* 
+        # --------------------------------
+        bufr_path_files_pattern = os.path.join(bufr_dir, '*bufr*')
+        bufr_path_files = glob.glob(bufr_path_files_pattern)
+        
+        # Assert that some files were found
+        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No bufr ' +
+                                    f'files found in the source directory ' +
+                                    f'\'{bufr_path_files_pattern}\'')
+        
+
+        # 3. Convert Bufr Files (one by one)
+        # ------------------------------------------------------------------------------------------
+        for bufr_path_file in bufr_path_files:
+            #print(f'----------------------------------- 193 bufr_path_file ---------------------------------------------------------')
+            #print(f'bufr_path_file: {bufr_path_file}')  # GOOD ~ 
+            # bufr_path_file: /discover/nobackup/sicohen/SwellExperiments/swell-convert_bufr/run/20211212T000000Z/geos_atmosphere/bufr/gdas1.211212.t00z.1bamua.tm00.bufr_d
+            #print(f'logger: {self.logger}')  # GOOD ~ 
+
+
+            #print(f'----------------------------------- 200 find_obstype_match ---------------------------------------------------------')
+            # find the obs type within the filename
+            obs_type = find_obstype_match(bufr_path_file)
+            #print(f'obs_type: {obs_type}') # GOOD ~ 
+
+            # Source file ~ bufr file to be converted 
+            bufr_file_source_path = os.path.basename(bufr_path_file)
+            #print(f'bufr_file_source_path: {bufr_file_source_path}')
+            #   bufr_file_source_path: gdas1.211212.t00z.1bamua.tm00.bufr_d
+            #print(f'----------------------------------- 206 # Source file ~ bufr file to be converted  ---------------------------------------------------------')
+
+            # Target file ~ conversion output file name (should end in .nc4). Use the same name but replace the suffix.
+            parts = bufr_file_source_path.rsplit('.', 2)
+            print(f'ioda file name parts: {parts}')
+            ioda_file_target_name = parts[0] + '.{splits/satId}.tm00.nc4'
+            print(f'ioda file name parts: {parts}')
+            ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
+            #print(f'----------------------------------- 212 # Target file ~ conversion output file name--------------------------------------------------------')
+            #print(f'parts: {parts}')
+            #print(f'ioda_file_target_name: {ioda_file_target_name}')
+            #print(f'ioda_file_target_path: {ioda_file_target_path}')
+
+            print(f'----------------------------------- 216 generate_iodaconv_yaml ---------------------------------------------------------')
+            # Generate the yaml file that will be used in the conversion step ~ bufr2ioda.x [yaml file]
+            print(f'ioda_file_target_path: {bufr_path_file}')
+            print(f'ioda_file_target_path: {ioda_file_target_path}')
+            print(f'ioda_file_target_path: {path_to_ioda_conv_yaml_tmpl_dir}')
+            print(f'ioda_file_target_path: {swell_exp_path}')
+            print(f'ioda_file_target_path: {cycle_dir}')
+            print(f'ioda_file_target_path: {ioda_dir}')
+            bufr2ioda_conv_yaml = generate_iodaconv_yaml(bufr_path_file, ioda_file_target_path, path_to_ioda_conv_yaml_tmpl_dir,swell_exp_path,cycle_dir, ioda_dir)
+
+            print(f'----------------------------------- 223 bufr2ioda_conv_yaml--------------------------------------------------------')
+
+            #current_directory = os.getcwd()
+            #print(f' CURRENT DIRECTORY: {current_directory} ---------------------------------------------' )
+            #print(f'ioda_file_target_path: {bufr2ioda_conv_yaml}')
+
+            subprocess.run(['bufr2ioda.x', bufr2ioda_conv_yaml])
 
-        """
-        What to replace the gsid.conv_platforms with? 
-            https://github.com/JCSDA-internal/ioda-converters/blob/develop/src/gsi_ncdiag/gsi_ncdiag.py 
-            A dictionary of what obs types we can run the bufr to ioda conversion for? That is the list in the comment: https://github.com/GEOS-ESM/swell/issues/378#issuecomment-2444625889 
 
-            classes
-            1bmhs
-            amsua
-            amsua
-            atms
-            mtiasi
-            satwind (am & pm)
-            aircft
-            sevcsr
-            
-        """
-        # Assemble all conventional types that ioda considers
-        # ---------------------------------------------------
-        gsi_to_ioda_dict = copy.copy(gsid.conv_platforms)
-
-        # Remove aircraft from the lists and add new dictionaries for aircraft
-        # --------------------------------------------------------------------
-        aircraft_is_in_prof_files = True
-
-        if aircraft_is_in_prof_files:
-            for key, value in gsi_to_ioda_dict.items():
-                gsi_to_ioda_dict[key] = [x for x in value if x not in ['aircraft']]
-
-            if 'aircraft' in observations:
-                gsi_to_ioda_dict['conv_prof_t'] = ['aircraft']
-                gsi_to_ioda_dict['conv_prof_uv'] = ['aircraft']
-
-        ioda_types = []
-        for key in gsi_to_ioda_dict:
-            ioda_types += gsi_to_ioda_dict[key]
-
-        # Remove duplicates
-        ioda_types = list(set(ioda_types))
-
-        # Invert the dictionary so for each ioda type we know the gsi files that provide data
-        ioda_to_gsi_dict = {}
-        for ioda_type in ioda_types:
-            ioda_to_gsi_dict[ioda_type] = []
-            for key in gsi_to_ioda_dict:
-                if ioda_type in gsi_to_ioda_dict[key]:
-                    ioda_to_gsi_dict[ioda_type].append(key)
-
-        # Get all the elements that are in both observations and ioda_types
-        needed_ioda_types = [elem for elem in observations if elem in ioda_types]
-
-        # Determine which gsi files need to be processed
-        gsi_types_to_process = []
-        for needed_ioda_type in needed_ioda_types:
-            gsi_types_to_process += ioda_to_gsi_dict[needed_ioda_type]
-        gsi_types_to_process = list(set(gsi_types_to_process))  # Unique values only
-        gsi_types_to_process = sorted(gsi_types_to_process)
-
-        # Remove conv_platforms_to_process from the total observations list, leaving rad and ozn
-        for needed_ioda_type in needed_ioda_types:
-            observations.remove(needed_ioda_type)
-
-        # Convert cycle time datetime object to string with format yyyymmdd_hhz
-        gsi_datetime_str = datetime.datetime.strftime(self.cycle_time_dto(),
-                                                      datetime_formats['gsi_nc_diag_format'])
-
-        # Clean up any files that are the end result of this program, in case of multiple runs
-        # ------------------------------------------------------------------------------------
-        for observation in observations_orig:
-
-            obs_file = f'{observation}_obs.{window_begin}.nc4'
-            geo_file = f'{observation}_geovals.{window_begin}.nc4'
-
-            # If obs_file exists remove it
-            if os.path.exists(os.path.join(self.cycle_dir(), obs_file)):
-                os.remove(os.path.join(self.cycle_dir(), obs_file))
-
-            # If geo exists remove it
-            if produce_geovals:
-                if os.path.exists(os.path.join(self.cycle_dir(), geo_file)):
-                    os.remove(os.path.join(self.cycle_dir(), geo_file))
-
-        # First process the conventional data (if needed)
-        # -----------------------------------------------
-        for gsi_type_to_process in gsi_types_to_process:
-
-            log_str = f'Processing GSI file {gsi_type_to_process}'
-            self.logger.info('', wrap=False)
-            self.logger.info(log_str)
-            self.logger.info('-'*len(log_str))
-
-            # If prof in the name then it is aircraft data. Adjust path and rename
-            if 'prof' in gsi_type_to_process:
-                gsi_type_to_process_actual = gsi_type_to_process.replace('_prof', '')
-                extra_path = 'aircraft'
-            else:
-                gsi_type_to_process_actual = gsi_type_to_process
-                extra_path = ''
-
-            # Path to search to GSI ncdiag files
-            path_to_search = os.path.join(gsi_diag_dir, extra_path,
-                                          f'*{gsi_type_to_process_actual}_*{gsi_datetime_str}*')
-
-            # Get the list of files
-            gsi_conv_file = glob.glob(path_to_search)
-
-            # Check that some files where found
-            self.logger.assert_abort(len(gsi_conv_file) != 0, 'The search for GSI ncdiags files ' +
-                                     f'returned no files. Search path: \'{path_to_search}\'')
-
-            # Check that only one file was found
-            self.logger.assert_abort(len(gsi_conv_file) == 1, 'The search for GSI ncdiags files ' +
-                                     f'returned more than one file. Files: \'{gsi_conv_file}\'')
-
-            # Open the file
-            Diag = gsid.Conv(gsi_conv_file[0])
-            Diag.read()
-
-            # Assemble list of needed platforms
-            needed_platforms = []
-            for platform in gsid.conv_platforms[gsi_type_to_process_actual]:
-                if platform in needed_ioda_types:
-                    needed_platforms.append(platform)
-
-            # Extract data
-            Diag.toIODAobs(self.cycle_dir(), platforms=needed_platforms)
-
-            if produce_geovals:
-                self.logger.info('', wrap=False)
-                self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process_actual}')
-                Diag.toGeovals(self.cycle_dir())
-
-            Diag.close()
-
-        # Rename gps files from gps_bend if they exist
-        if 'gps' in observations_orig:
-            gps_files = glob.glob(os.path.join(self.cycle_dir(), 'gps_bend*'))
-            for gps_file in gps_files:
-                gps_file_newname = os.path.basename(gps_file).replace('gps_bend', 'gps')
-                os.rename(gps_file, os.path.join(self.cycle_dir(), gps_file_newname))
-
-        # Combine the conventional data
-        # -----------------------------
-        for needed_ioda_type in needed_ioda_types:
-
-            # Logging
-            log_str = f'Combining IODA files for {needed_ioda_type}'
-            self.logger.info('', wrap=False)
-            self.logger.info(log_str)
-            self.logger.info('-'*len(log_str))
-
-            # Check the number of files that are found. Pattern, e.g.: *aircraft*_obs_*.nc4
-            ioda_type_pattern = f'{needed_ioda_type}*_obs_*.nc4'
-
-            # List of files for that instrument
-            ioda_path_files = glob.glob(os.path.join(self.cycle_dir(), ioda_type_pattern))
-            ioda_path_files = sorted(ioda_path_files)
-
-            if single_observations:
-                # Save single observation in geoval files
-                if produce_geovals:
-                    # Pattern, e.g.: *aircraft*_geoval_*.nc4
-                    ioda_type_geoval_pattern = f'{needed_ioda_type}*_geoval_*.nc4'
-                    ioda_path_geovalfiles = glob.glob(os.path.join(self.cycle_dir(),
-                                                      ioda_type_geoval_pattern))
-                    ioda_path_geovalfiles = sorted(ioda_path_geovalfiles)
-                    for ioda_geoval_file_name in ioda_path_geovalfiles:
-                        self.logger.info('Converting to a singler-observation file: ' +
-                                         f'{ioda_geoval_file_name}')
-                        os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_file_name} ' +
-                                  f'{ioda_geoval_file_name}')
-
-                # Save single observation in obs files
-                for ioda_obs_file_name in ioda_path_files:
-                    # Create a bash file to process ioda_obs files because command lines fails.
-                    module_path_miniconda = '/discover/nobackup/drholdaw/opt/modulefiles/core/'
-                    make_file_name = ioda_obs_file_name + '.sh'
-                    make_file = f'#!/bin/bash \n' + \
-                                f'module use -a {module_path_miniconda} \n' + \
-                                f'ml miniconda/py39_23.3.1 \n' + \
-                                f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} ' + \
-                                f'{ioda_obs_file_name}'
-                    self.logger.info('Making a single-observation file by executing ' +
-                                     f'{make_file_name}')
-                    create_executable_file(self.logger, make_file_name, make_file)
-                    run_subprocess(self.logger, make_file_name)
-                    os.remove(make_file_name)
-
-            # For sfc make sure there are no surface ship files
-            if needed_ioda_type == 'sfc':
-                ioda_path_files = [x for x in ioda_path_files if 'sfcship' not in x]
-
-            # Show files that will be combined
-            self.logger.info(f'Files to combine:')
-            for ioda_path_file in ioda_path_files:
-                self.logger.info(f' - {os.path.basename(ioda_path_file)}')
-
-            # Check that there are some files to combine
-            self.logger.assert_abort(len(ioda_path_files) > 0, f'In combine of ' +
-                                     f'{needed_ioda_type} no files where found. Ensure that ' +
-                                     f'the converter worked as expected.')
-
-            # Get last file (first could be type_obs_ if the code already ran)
-            ioda_file_0 = os.path.basename(ioda_path_files[-1])
-
-            # Split by underscore
-            ioda_file_0_ = ioda_file_0.split('_')
-
-            # Logic fails for gps so skip
-            if needed_ioda_type == 'gps':
-                ioda_file_0_ = ['gps', 'is', 'skipped']
-
-            # Only combine if the split name has 4 elements
-            if len(ioda_file_0_) == 4:
-
-                # If we are here there should be more than one file associated with the ioda type.
-                # i.e. files with *_uv_*, *_tsen_* for aircraft.
-                if len(ioda_path_files) == 1:
-                    self.logger.abort(f'Combine issue for {needed_ioda_type}, not multiple files.')
-
-                # Create new file name
-                new_name_split = ioda_file_0_
-                del new_name_split[1]
-                new_name = os.path.join(self.cycle_dir(), '_'.join(new_name_split))
-
-                # Check if new file already exists and remove if so
-                if os.path.exists(new_name):
-                    os.remove(new_name)
-                    if new_name in ioda_path_files:
-                        ioda_path_files.remove(new_name)
-
-                # Run the combine step
-                geo_dir = None
-                if produce_geovals:
-                    geo_dir = self.cycle_dir()
-
-                combine_obsspace(ioda_path_files, new_name, geo_dir)
-
-                # Remove input files
-                for ioda_path_file in ioda_path_files:
-                    os.remove(ioda_path_file)
-
-            elif len(ioda_file_0_) == 3:
-                self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
-
-            else:
-                self.logger.abort(f'Combine failed for {needed_ioda_type}, file name issue.')
-
-        # Get list of the observations that are ozone observations
-        # --------------------------------------------------------
-        ozone_sensors = gsid.oz_lay_sensors + gsid.oz_lev_sensors
-        ozone_observations = []
-        for observation in observations:
-            for ozone_sensor in ozone_sensors:
-                if ozone_sensor in observation:
-                    ozone_observations.append(observation)
-
-        # Transform radiances and ozone
-        # -----------------------------
-        for observation in observations:
-
-            self.logger.info(f'Converting {observation} to IODA format')
-
-            observation_search_name = copy.copy(observation)
-
-            # For avhrr replace the search with just avhrr
-            if 'avhrr3' in observation_search_name:
-                observation_search_name = observation_search_name.replace('avhrr3', 'avhrr')
-
-            gsi_obs_file = glob.glob(os.path.join(gsi_diag_dir, f'*{observation_search_name}*'))
-
-            # Skip this observation if not files were found
-            if len(gsi_obs_file) == 0:
-                self.logger.info(f'No observation files found for {observation}. Skipping convert')
-                continue
-
-            if observation not in ozone_observations:
-
-                # Radiances
-                Diag = gsid.Radiances(gsi_obs_file[0])
-                Diag.read()
-                Diag.toIODAobs(self.cycle_dir(), False, False, False, False)
-
-            else:
-
-                # Ozone
-                Diag = gsid.Ozone(gsi_obs_file[0])
-                Diag.read()
-                Diag.toIODAobs(self.cycle_dir())
-
-            # GeoVaLs call
-            if produce_geovals:
-                Diag.toGeovals(self.cycle_dir())
-
-            if observation not in ozone_observations:
-                Diag.close()
-
-        # Rename avhrr files to avhrr3
-        # ----------------------------
-        gsi_datetime = re.sub('\D', '', self.cycle_time())[0:10]  # noqa
-        if any('avhrr' in item for item in observations):
-            avhrr_files = glob.glob(os.path.join(self.cycle_dir(),
-                                                 f'avhrr_*_obs_{gsi_datetime}.nc4'))
-            # Add geovals files
-            avhrr_files = avhrr_files + glob.glob(os.path.join(self.cycle_dir(),
-                                                  f'avhrr_*_geoval_{gsi_datetime}.nc4'))
-            for avhrr_file in avhrr_files:
-                avhrr_file_newname = os.path.basename(avhrr_file).replace('avhrr_', 'avhrr3_')
-                os.rename(avhrr_file, os.path.join(self.cycle_dir(), avhrr_file_newname))
-
-        # Rename files to be swell compliant
-        # ----------------------------------
-        for observation in observations_orig:
-
-            self.logger.info(f'Renaming \'{observation}\' to be swell compliant')
-
-            # Change to gps_bend
-            search_name = observation
-
-            # Input filename
-            ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
-
-            ioda_obs_in_found = glob.glob(os.path.join(self.cycle_dir(), ioda_obs_in_pattern))
-
-            # If nothing found then skip  this observation
-            if len(ioda_obs_in_found) == 0:
-                self.logger.info(f'No observation files found for {observation}. Skipping rename')
-                continue
-
-            ioda_obs_in = ioda_obs_in_found[0]
-
-            ioda_obs_file_name = f'{search_name}.{window_begin}.nc4'
-
-            ioda_obs_out = os.path.join(self.cycle_dir(), ioda_obs_file_name)
-
-            os.rename(ioda_obs_in, ioda_obs_out)
-
-            # Make single ozone or radiance observation files
-            if single_observations and observation in observations:
-                os.system(f'ncks -d Location,0,0,1 -Q -O {ioda_obs_out} {ioda_obs_out}')
-
-            # Rename GeoVaLs file if need be
-            if produce_geovals:
-                ioda_geoval_in_pattern = f'{search_name}_geoval_*.nc*'
-                ioda_geoval_in = glob.glob(os.path.join(self.cycle_dir(),
-                                                        ioda_geoval_in_pattern))[0]
-
-                ioda_geoval_file_name = f'{search_name}_geovals.{window_begin}.nc4'
-
-                ioda_geoval_out = os.path.join(self.cycle_dir(), ioda_geoval_file_name)
-
-                os.rename(ioda_geoval_in, ioda_geoval_out)
-
-                if single_observations and observation in observations:
-                    os.system(f'ncks -d nlocs,0,0,1 -Q -O {ioda_geoval_out} {ioda_geoval_out}')
-
-        # Remove left over files
-        # ------------------------------
-        self.logger.info('Removing residual files...')
-
-        patterns = [
-            '*_geoval_*',
-        ]
-
-        for pattern in patterns:
-            geoval_files = glob.glob(os.path.join(self.cycle_dir(), pattern))
-            for geoval_file in geoval_files:
-                self.logger.info(f' - Removing {os.path.basename(geoval_file)}')
-                os.remove(geoval_file)
 
 # --------------------------------------------------------------------------------------------------
+# For later
+"""
+
+1.--------------------------------------------------------------------------------------------------
+
+        # Directory containing the bufr files
+        bufr_dir = os.path.join(self.cycle_dir(), 'bufr/.')
+        ioda_dir = os.path.join(self.cycle_dir(), 'ioda/.')
+        #ioda_conv_yaml_dir = os.path.join(self.cycle_dir(), 'ioda_conv_yaml/.')
+        #path_to_ioda_conv_yaml_tmpl = os.path.join(self.cycle_dir(), 'ioda_conv_yaml_tmpl/.') # yamls used for bufr2ioda.x
+        #bufr2ioda_yaml_dir = os.path.join(self.cycle_dir(), 'ioda_conv_yaml/.') # yamls used for bufr2ioda.x
+
+.--------------------------------------------------------------------------------------------------
+
+            # Determine the target path of the generated yaml file 
+            if yaml_file_target is None:
+                yaml_file_target = f'{bufr2ioda_obs_type_dict[bufr_file_obs_type]}'  # Overwrite original if no output file is specified
+            # Determine the output file path
+            if yaml_file_target is None:
+                yaml_file_target = os.path.join(bufr2ioda_obs_type_dict,'generated_iodaconv_input.yaml')  # Overwrite original if no output file is specified
+
+.--------------------------------------------------------------------------------------------------
+        ...
+
+        # Get list of all files in cycle dir  with .bufr_d suffix or *bufr* 
+        # --------------------------------
+        bufr_path_files_pattern = os.path.join(bufr_path, '*bufr*')
+        bufr_path_files = glob.glob(bufr_path_files_pattern)
+        
+        # more complete version (for later)
+        #bufr_filename_template = 'gdas1.' + cycle_time_dto.strftime('%y%d%m.t%Hz.') + '1bamua' + '.tm00.bufr_d'
+        #bufr_path = cycle_time_dto.strftime(bufr_path)
+        #bufr_filename_template = 'gdas1.' + cycle_time_dto.strftime('%y%d%m.t%Hz.') + obs_type + '.tm00.bufr_d'
+        #bufr_path_files_pattern = os.path.join(bufr_path, bufr_filename_template) 
+
+"""
