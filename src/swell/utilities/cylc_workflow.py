@@ -114,7 +114,7 @@ class CylcWorkflow():
                 out_string += f'{line}\n'
 
         if section_break:
-            out_string += f'\n# {"-" *98}\n\n'
+            out_string += f'\n# {"-" * 98}\n\n'
 
         return out_string
 
