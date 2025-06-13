@@ -1052,6 +1052,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class path_to_geos_jedi_background(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "path_to_geos_jedi_background"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = ("What is the path for the GEOS-JEDI background?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class path_to_gsi_bc_coefficients(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "path_to_gsi_bc_coefficients"

@@ -610,6 +610,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetGeosJediBackground = QuestionList(
+        list_name="GetGeosJediBackground",
+        questions=[
+            qd.path_to_geos_jedi_background()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetGsiBc = QuestionList(
         list_name="GetGsiBc",
         questions=[
