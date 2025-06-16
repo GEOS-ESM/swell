@@ -4,6 +4,7 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/gps.{{window_begin}}.nc4'
+      missing file action: warn
     obsgrouping:
       group variables: [ 'sequenceNumber' ]
       sort variable: 'impactHeightRO'
@@ -12,6 +13,8 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.gps.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
   simulated variables: [bendingAngle]
 
 obs operator:
