@@ -14,6 +14,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
+from swell.utilities.suite_utils import get_model_components
+from swell.utilities.dictionary import update_dict
 
 # --------------------------------------------------------------------------------------------------
 
@@ -96,6 +98,48 @@ class Task:
 
     # --------------------------------------------------------------------------------------------------
 
+    def resolve_model(self, slurm_dict: Mapping) -> dict:
+        ''' Resolve "all" and "model" entries in slurm dictionary '''
+        if 'all' in slurm_dict.keys() and isinstance(slurm_dict['all'], Mapping):
+            slurm_dict = update_dict(slurm_dict, slurm_dict['all'])
+            del slurm_dict['all']
+        if self.model in slurm_dict.keys() and isinstance(slurm_dict[self.model], Mapping):
+            slurm_dict = update_dict(slurm_dict, slurm_dict[self.model])
+
+        for model in get_model_components():
+            if model in slurm_dict.keys():
+                del slurm_dict[model]
+
+        return slurm_dict
+
+    # --------------------------------------------------------------------------------------------------
+
+    def generate_task_slurm_dict(self, slurm_external: Mapping, platform: str) -> Mapping:
+        slurm_dict = {}
+        if self.slurm is not None:
+            for key, value in self.slurm.items():
+                slurm_dict[key] = self.match_platform(value, platform)
+
+        slurm_globals = slurm_external['slurm_directives_global']
+        slurm_task = {}
+
+        if 'slurm_directives_tasks' in slurm_external.keys():
+            task_directives = slurm_external['slurm_directives_tasks']
+
+            if self.base_name in task_directives:
+                slurm_task = task_directives[self.base_name]
+            if self.scheduling_name in task_directives:
+                slurm_task = task_directives[self.scheduling_name]
+
+        slurm_dict = {'job-name': self.scheduling_name,
+                      **self.resolve_model(slurm_globals),
+                      **self.resolve_model(slurm_dict),
+                      **self.resolve_model(slurm_task)}
+
+        return slurm_dict
+
+    # --------------------------------------------------------------------------------------------------
+
     def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
         ''' Return the runtime section for the given task. '''
 
@@ -146,32 +190,9 @@ class Task:
 
         # Specify the slurm dictionary with defaults from user and global settings
         if self.slurm is not None:
-            slurm_dict = {}
 
-            for key, value in self.slurm.items():
-                slurm_dict[key] = self.match_platform(value, platform)
+            slurm_dict = self.generate_task_slurm_dict(slurm_external, platform)
 
-            slurm_globals = slurm_external['slurm_directives_global']
-            slurm_task = {}
-
-            if 'slurm_directives_tasks' in slurm_external.keys():
-                task_directives = slurm_external['slurm_directives_tasks']
-
-                if self.base_name in task_directives:
-                    slurm_task = task_directives[self.base_name]
-                if self.scheduling_name in task_directives:
-                    slurm_task = task_directives[self.scheduling_name]
-            else:
-                slurm_task = {}
-
-            # Set values from globals, task specifications, and overrides, in order of priority
-            slurm_dict = {'job-name': self.scheduling_name,
-                          **slurm_globals,
-                          **slurm_dict,
-                          **slurm_task
-                          }
-
-            # Format the dictionary for cylc
             slurm_section_dict = {}
             for key, value in slurm_dict.items():
                 slurm_section_dict[f'--{key}'] = value

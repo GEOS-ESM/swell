@@ -25,6 +25,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class comparison_experiment_paths(SuiteQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "comparison_experiment_paths"
+        ask_question: bool = True
+        prompt: str = "Provide paths to two or more experiments to run comparison tests on."
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class cycle_times(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "cycle_times"
@@ -34,16 +44,6 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Enter the cycle times for this model."
-        widget_type: WType = WType.STRING_CHECK_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class comparison_experiment_paths(SuiteQuestion):
-        default_value: list = mutable_field([])
-        question_name: str = "comparison_experiment_paths"
-        ask_question: bool = True
-        prompt: str = "Provide paths to two or more experiments to run comparison tests on."
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------

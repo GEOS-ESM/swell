@@ -10,17 +10,20 @@ import importlib
 import os
 import re
 import yaml
-from typing import Optional
+from typing import Optional, Union
+from collections.abc import Mapping
 
 from importlib import resources
 
 from swell.utilities.logger import Logger
 
+# --------------------------------------------------------------------------------------------------
+
 
 def prepare_slurm_defaults_and_overrides(
     logger: Logger,
     platform: str,
-    slurm_file: Optional[str],
+    slurm_overrides: Union[Mapping, str, None],
 ) -> dict:
 
     # Obtain platform-specific SLURM directives and set them as global defaults
@@ -56,13 +59,16 @@ def prepare_slurm_defaults_and_overrides(
     # everything in `experiment.yaml` and support it through the Questionary
     # infrastructure.
     # ----------------------------------
-    if slurm_file is not None:
-        logger.info(f"Reading SLURM directives from {slurm_file}.")
-        try:
-            with open(slurm_file, "r") as slurmfile:
-                slurm_overrides = yaml.safe_load(slurmfile)
-        except FileNotFoundError as err:
-            raise FileNotFoundError(f"Slurm config {slurm_file} not found.")
+    if slurm_overrides is not None:
+        if isinstance(slurm_overrides, str):
+            logger.info(f"Reading SLURM directives from {slurm_overrides}.")
+            try:
+                with open(slurm_file, "r") as slurmfile:
+                    slurm_overrides = yaml.safe_load(slurm_overrides)
+            except FileNotFoundError as err:
+                raise FileNotFoundError(f"Slurm config {slurm_overrides} not found.")
+        elif not isinstance(slurm_overrides, Mapping):
+            raise TypeError("Slurm overrides is not of type Mapping")
 
         # Ensure that SLURM dict is _only_ used for SLURM directives.
         slurm_invalid_keys = set(slurm_overrides.keys()).difference({
@@ -84,7 +90,7 @@ def prepare_slurm_defaults_and_overrides(
 
     slurm_dict['slurm_directives_global'] = {
             **global_defaults['slurm_directives_global'],
-            **user_globals['slurm_directives_global'],
+            **user_globals,
             **slurm_overrides['slurm_directives_global']}
 
     validate_directives(slurm_dict["slurm_directives_global"])
@@ -96,6 +102,8 @@ def prepare_slurm_defaults_and_overrides(
             validate_directives(slurm_dict["slurm_directives_tasks"][task])
     return slurm_dict
 
+# --------------------------------------------------------------------------------------------------
+
 
 def validate_directives(directive_dict: dict) -> None:
     directive_pattern = r'(?<=--)[a-zA-Z-]+'
@@ -105,12 +113,19 @@ def validate_directives(directive_dict: dict) -> None:
         for s in man_sbatch.split("\n")
         if re.search(directive_pattern, s)
     }
-    # Make sure that everything in `directive_dict` is in `directive_list`;
-    # i.e., that all entries are valid slurm directives.
-    invalid_directives = set(directive_dict.keys()).difference(directive_list)
-    assert \
-        len(invalid_directives) == 0, \
-        f"The following are invalid SLURM directives: {invalid_directives}"
+
+    for key, item in directive_dict.items():
+        if isinstance(item, Mapping):
+            validate_directives(item)
+        else:
+            # Make sure that everything in `directive_dict` is in `directive_list`;
+            # i.e., that all entries are valid slurm directives.
+            invalid_directives = set(directive_dict.keys()).difference(directive_list)
+            assert \
+                len(invalid_directives) == 0, \
+                f"The following are invalid SLURM directives: {invalid_directives}"
+
+# --------------------------------------------------------------------------------------------------
 
 
 def slurm_global_defaults(
@@ -118,6 +133,7 @@ def slurm_global_defaults(
     yaml_path: str = "~/.swell/swell-slurm.yaml"
 ) -> dict:
     yaml_path = os.path.expanduser(yaml_path)
+    '''
     user_globals = {}
     user_globals['slurm_directives_global'] = {}
 
@@ -125,7 +141,13 @@ def slurm_global_defaults(
         logger.info(f"Loading SLURM user configuration from {yaml_path}")
         with open(yaml_path, "r") as yaml_file:
             user_globals['slurm_directives_global'] = yaml.safe_load(yaml_file)
+    '''
+    with open(yaml_path, 'r') as yaml_file:
+        user_globals = yaml.safe_load(yaml_file)
+
     return user_globals
+
+# --------------------------------------------------------------------------------------------------
 
 
 man_sbatch = """

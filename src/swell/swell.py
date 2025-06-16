@@ -9,7 +9,6 @@
 
 
 import click
-from collections.abc import Mapping
 from typing import Union, Optional, Literal, Tuple
 
 from swell.deployment.platforms.platforms import get_platforms
@@ -19,7 +18,6 @@ from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import suite_configs
-from swell.utilities.dictionary import update_dict
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 

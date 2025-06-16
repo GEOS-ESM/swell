@@ -9,8 +9,9 @@
 
 import unittest
 
-from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
 from swell.utilities.logger import get_logger
+from swell.tasks.task_runtimes import TaskRuntimes
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
@@ -31,7 +32,6 @@ class SLURMConfigTest(unittest.TestCase):
 
         # Nested example
         experiment_dict = {
-            "model_components": ["geos_atmosphere", "geos_marine"],
             "slurm_directives_global": {
                 "account": "x1234",
             },
@@ -50,30 +50,52 @@ class SLURMConfigTest(unittest.TestCase):
         }
 
         platform_mocked.return_value = "Linux-5.14.21"
-        sd_discover_sles15 = prepare_scheduling_dict(logger, experiment_dict,
-                                                     platform="nccs_discover_sles15")
-        self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
-                         ["all"]["constraint"], "mil")
-        self.assertEqual(sd_discover_sles15["RunJediVariationalExecutable"]["directives"]
-                         ["all"]["qos"], "dastest")
+        sd_discover_sles15 = prepare_slurm_defaults_and_overrides(logger, 'nccs_discover_sles15',
+                                                                  experiment_dict)
+
+        run_jedi_var_class = TaskRuntimes.get('RunJediVariationalExecutable')
+        run_jedi_var_obj = run_jedi_var_class()
+        run_jedi_var_slurm = run_jedi_var_obj.generate_task_slurm_dict(
+                sd_discover_sles15, 'nccs_discover_sles15')
+
+        self.assertEqual(run_jedi_var_slurm["constraint"], "mil")
+        self.assertEqual(run_jedi_var_slurm["qos"], "dastest")
+
+        eva_obs_class = TaskRuntimes.get('EvaObservations')
+        build_jedi_class = TaskRuntimes.get('BuildJedi')
+        run_jedi_ufo_class = TaskRuntimes.get('RunJediUfoExecutable')
 
         # Platform generic tests
         for sd in [sd_discover_sles15]:
             for mc in ["all", "geos_atmosphere", "geos_marine"]:
+                run_jedi_var_obj = run_jedi_var_class(model=mc)
+                eva_obs_obj = eva_obs_class(model=mc)
+                build_jedi_obj = build_jedi_class(model=mc)
+                run_jedi_ufo_obj = run_jedi_ufo_class(model=mc)
+
+                run_jedi_var_dict = run_jedi_var_obj.generate_task_slurm_dict(
+                        sd, 'nccs_discover_sles15')
+                eva_obs_dict = eva_obs_obj.generate_task_slurm_dict(
+                        sd, 'nccs_discover_sles15')
+                build_jedi_dict = build_jedi_obj.generate_task_slurm_dict(
+                        sd, 'nccs_discover_sles15')
+                run_jedi_ufo_dict = run_jedi_ufo_obj.generate_task_slurm_dict(
+                        sd, 'nccs_discover_sles15')
+
                 # Hard-coded task-specific defaults
-                self.assertEqual(sd["RunJediVariationalExecutable"]["directives"][mc]["nodes"], 3)
-                self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]
-                                 ["ntasks-per-node"], 1)
+                self.assertEqual(run_jedi_var_dict["nodes"], 3)
+                self.assertEqual(run_jedi_ufo_dict["ntasks-per-node"], 1)
                 # Global defaults from experiment dict
-                self.assertEqual(sd["BuildJedi"]["directives"][mc]["account"], "x1234")
-                self.assertEqual(sd["RunJediUfoTestsExecutable"]["directives"][mc]["account"],
-                                 "x1234")
+                self.assertEqual(build_jedi_dict["account"], "x1234")
+                self.assertEqual(run_jedi_ufo_dict["account"], "x1234")
                 # Task-specific, model-generic config
-                self.assertEqual(sd["EvaObservations"]["directives"][mc]["account"], "x5678")
-                self.assertEqual(sd["EvaObservations"]["directives"][mc]["ntasks-per-node"], 4)
+                self.assertEqual(eva_obs_dict["account"], "x5678")
+                self.assertEqual(eva_obs_dict["ntasks-per-node"], 4)
 
             # Task-specific, model-specific configs
-            self.assertEqual(sd["EvaObservations"]["directives"]["geos_marine"]["nodes"], 2)
-            self.assertEqual(sd["EvaObservations"]["directives"]["geos_atmosphere"]["nodes"], 4)
+            if mc == "geos_marine":
+                self.assertEqual(eva_obs_dict["nodes"], 2)
+            if mc == "geos_atmosphere":
+                self.assertEqual(eva_obs_dict["nodes"], 4)
 
 # --------------------------------------------------------------------------------------------------

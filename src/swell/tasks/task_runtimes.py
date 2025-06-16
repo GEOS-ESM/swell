@@ -82,7 +82,7 @@ class TaskRuntimes():
         time_limit: bool = True
         is_cycling: bool = True
         is_model: bool = True
-        slurm: dict = mutable_field({})
+        slurm: dict = mutable_field({'nodes': 3})
 
     @dataclass
     class EvaJediLog(Task):
@@ -110,6 +110,13 @@ class TaskRuntimes():
     class CleanCycle(Task):
         is_cycling: bool = True
         is_model: bool = True
+
+    @dataclass
+    class RunJediUfoExecutable(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+        slurm: dict = mutable_field({'ntasks-per-node': 1})
+        time_limit: bool = True
 
     @classmethod
     def get(cls, name: str) -> Task:
