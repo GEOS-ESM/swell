@@ -12,10 +12,10 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 # --------------------------------------------------------------------------------------------------
 
 
-class Workflow_3dfgat_atmos(CylcWorkflow):
+class Workflow_hofx(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""
-        # Cylc suite for executing JEDI-based non-cycling variational data assimilation
+        # Cylc suite for executing JEDI-based h(x)
         """)
 
         return description
@@ -45,7 +45,7 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
 
             # Clone geos ana for generating observing system records
             CloneGeosMksi-{model_component}
-             """
+            """
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
@@ -64,42 +64,24 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
             GetBackgroundGeosExperiment-{model_component} :fail? => GetBackground-{model_component}
 
             # Get observations
-            """
-            if self.experiment_dict['cycling_varbc']:
-                cycle_str += f"""
-                # Cycling VarBC is active, biases from the previous cycle will be used
+            GetObservations-{model_component}
 
-                RunJediVariationalExecutable-{model_component}[-PT6H] => GetObservations-{model_component}
-                """
-            else:
-                cycle_str += """
-                # Cycling VarBC is inactive, static bias files will be used
-                GetObservations-{model_component}
-                """
-
-            cycle_str += f"""
             # Perform staging that is cycle dependent
             StageJediCycle-{model_component}
 
-            # Run Jedi variational executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{model_component}
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{model_component}
             CloneJedi[^] => StageJediCycle-{model_component}
-            StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-            GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} => RunJediVariationalExecutable-{model_component}
-            GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
-            GenerateObservingSystemRecords-{model_component} => RunJediVariationalExecutable-{model_component}
+            StageJediCycle-{model_component} => RunJediHofxExecutable-{model_component}
+            GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} => RunJediHofxExecutable-{model_component}
+            GetObservations-{model_component} => RunJediHofxExecutable-{model_component}
+            GenerateObservingSystemRecords-{model_component} => RunJediHofxExecutable-{model_component}
 
             # EvaObservations
-            RunJediVariationalExecutable-{model_component} => EvaObservations-{model_component}
-
-            # EvaJediLog
-            RunJediVariationalExecutable-{model_component} => EvaJediLog-{model_component}
-
-            # EvaIncrement
-            RunJediVariationalExecutable-{model_component} => EvaIncrement-{model_component}
+            RunJediHofxExecutable-{model_component} => EvaObservations-{model_component}
 
             # Save observations
-            RunJediVariationalExecutable-{model_component} => SaveObsDiags-{model_component}
+            RunJediHofxExecutable-{model_component} => SaveObsDiags-{model_component}
 
             # Clean up large files
             EvaObservations-{model_component} & SaveObsDiags-{model_component} =>

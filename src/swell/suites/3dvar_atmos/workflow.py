@@ -12,7 +12,7 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 # --------------------------------------------------------------------------------------------------
 
 
-class Workflow_3dvar(CylcWorkflow):
+class Workflow_3dvar_atmos(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""
         # Cylc suite for executing JEDI-based non-cycling variational data assimilation
@@ -44,7 +44,7 @@ class Workflow_3dvar(CylcWorkflow):
             r1 += f"""
 
             # Stage JEDI static files
-            CloneJedi => StageJedi-{model_component}
+            CloneGeosMksi-{model_component}
              """
 
         # Format the R1 cycle and add it to the graph
@@ -57,32 +57,38 @@ class Workflow_3dvar(CylcWorkflow):
                     cycle_str = f"""
                     # Task triggers for: {model_component}
                     # ------------------
-                    # Get background
-                    GetBackground-{model_component}
+                    # Generate satellite channel records
+                    CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_component}
+
+                    # Get background, provide a way to get background directly from GEOS experiment
+                    GetBackgroundGeosExperiment-{model_component} :fail? => GetBackground-{model_component}
 
                     # Get observations
-                    GetObservations-{model_component}
+                    """
+            
+                    if self.experiment_dict['cycling_varbc']:
+                        cycle_str += f"""
+                        # Cycling VarBC is active, biases from the previous cycle will be used
 
-                    # GenerateBClimatology, for ocean it is cycle dependent
-                    GenerateBClimatologyByLinking-{model_component}:fail? =>
-                    GenerateBClimatology-{model_component}
+                        RunJediVariationalExecutable-{model_component}[-PT6H] => GetObservations-{model_component}
+                        """
+                    else:
+                        cycle_str += f"""
+                        # Cycling VarBC is inactive, static bias files will be used
+                        GetObservations-{model_component}
+                        """
 
-                    GetBackground-{model_component} => GenerateBClimatology-{model_component}
-
+                    cycle_str += f"""
                     # Perform staging that is cycle dependent
                     StageJediCycle-{model_component}
 
                     # Run Jedi variational executable
                     BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{model_component}
-                    StageJedi-{model_component}[^] => RunJediVariationalExecutable-{model_component}
+                    CloneJedi[^] => StageJediCycle-{model_component}
                     StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-                    GetBackground-{model_component} => RunJediVariationalExecutable-{model_component}
-
-                    GenerateBClimatologyByLinking-{model_component}? |
-                    GenerateBClimatology-{model_component} =>
-                    RunJediVariationalExecutable-{model_component}
-
+                    GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} => RunJediVariationalExecutable-{model_component}
                     GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
+                    GenerateObservingSystemRecords-{model_component} => RunJediVariationalExecutable-{model_component}
 
                     # EvaObservations
                     RunJediVariationalExecutable-{model_component} => EvaObservations-{model_component}
@@ -101,8 +107,8 @@ class Workflow_3dvar(CylcWorkflow):
                     CleanCycle-{model_component}
                     """
 
-            # Add the cycle string to the graph string
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Add the cycle string to the graph string
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)

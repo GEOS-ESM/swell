@@ -12,7 +12,7 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 # --------------------------------------------------------------------------------------------------
 
 
-class Workflow_3dvar(CylcWorkflow):
+class Workflow_3dfgat_cycle(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""
         # Cylc suite for executing Geos forecast
