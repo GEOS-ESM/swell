@@ -44,22 +44,24 @@ class Workflow_convert_ncdiags(CylcWorkflow):
         graph_str += self.format_cycle('R1', r1)
 
         # Format the string for each cycle
-        for cycle_time in self.experiment_dict['cycle_times']:
-            cycle_str = f"""
-            # Convert bias correction to ioda
-            GetGsiBc
-            GetGsiBc => GsiBcToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+        for model in self.experiment_dict['models'].keys():
+            if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
+                for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
+                    cycle_str = f"""
+                    # Convert bias correction to ioda
+                    GetGsiBc
+                    GetGsiBc => GsiBcToIoda
+                    BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
 
-            # Convert ncdiags to ioda
-            GetGsiNcdiag
-            GetGsiNcdiag => GsiNcdiagToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+                    # Convert ncdiags to ioda
+                    GetGsiNcdiag
+                    GetGsiNcdiag => GsiNcdiagToIoda
+                    BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
 
-            # Clean up
-            GsiNcdiagToIoda => CleanCycle
-            """
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Clean up
+                    GsiNcdiagToIoda => CleanCycle
+                    """
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)

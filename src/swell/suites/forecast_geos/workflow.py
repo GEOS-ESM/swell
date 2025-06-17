@@ -50,23 +50,25 @@ class Workflow_forecast_geos(CylcWorkflow):
         graph_str += self.format_cycle('R1', r1)
 
         # Format the string for each cycle
-        for cycle_time in self.experiment_dict['cycle_times']:
-            cycle_str = f"""
+        for model in self.experiment_dict['models'].keys():
+            if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
+                for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
+                    cycle_str = f"""
 
-            # Run Geos Executable
-            PrepGeosRunDir => RunGeosExecutable
-            MoveForecastRestart[-PT6H] => PrepGeosRunDir
+                    # Run Geos Executable
+                    PrepGeosRunDir => RunGeosExecutable
+                    MoveForecastRestart[-PT6H] => PrepGeosRunDir
 
-            # Move restart to next cycle
-            RunGeosExecutable => MoveForecastRestart
+                    # Move restart to next cycle
+                    RunGeosExecutable => MoveForecastRestart
 
-            # Save restarts if requested
-            # MoveForecastRestart[-PT6H] => SaveRestart
+                    # Save restarts if requested
+                    # MoveForecastRestart[-PT6H] => SaveRestart
 
-            # Remove Run Directory
-            MoveForecastRestart => RemoveForecastDir
-            """
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Remove Run Directory
+                    MoveForecastRestart => RemoveForecastDir
+                    """
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)
