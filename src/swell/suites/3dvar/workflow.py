@@ -23,8 +23,10 @@ class Workflow_3dvar(CylcWorkflow):
     # --------------------------------------------------------------------------------------------------
 
     def define_graph_section(self):
+        # Define the string of the graph section
         graph_str = ''
 
+        # Define the string for the R1 (first non-cycling) section
         r1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
@@ -39,18 +41,20 @@ class Workflow_3dvar(CylcWorkflow):
             """
 
         for model_component in self.experiment_dict['model_components']:
-            r1 += """
+            r1 += f"""
 
             # Stage JEDI static files
             CloneJedi => StageJedi-{model_component}
-             """.format(model_component=model_component)
+             """
 
+        # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
 
+        # Format the string for each cycle
         for model_component in self.experiment_dict['model_components']:
             if 'cycle_times' in self.experiment_dict['models'][model_component]:
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                    cycle_str = """
+                    cycle_str = f"""
             # Task triggers for: {model_component}
             # ------------------
             # Get background
@@ -97,10 +101,12 @@ class Workflow_3dvar(CylcWorkflow):
             CleanCycle-{model_component}
             """
 
-            cycle_str = cycle_str.format(model_component=model_component)
-
+            # Add the cycle string to the graph string
             graph_str += self.format_cycle(cycle_time, cycle_str)
 
-        return self.create_new_section('graph', graph_str)
+        # Create the graph section
+        graph_section = self.create_new_section('graph', graph_str)
+
+        return graph_section
 
 # --------------------------------------------------------------------------------------------------

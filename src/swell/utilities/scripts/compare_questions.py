@@ -18,6 +18,9 @@ from swell.utilities.suite_utils import get_suites
 from swell.tasks.task_questions import TaskQuestions as tq
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.case_switching import camel_case_to_snake_case
+from swell.suites.all_suites import Workflows, SuiteConfigs
+from swell.utilities.logger import get_logger
+from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import PrepareExperimentConfigAndSuite
 
 
 # --------------------------------------------------------------------------------------------------
@@ -52,11 +55,22 @@ def read_cylc_lines(suite: str) -> list:
 def get_all_tasks(suite: str) -> list:
     """ Parse the suite's flow.cylc file and get all the tasks used by the suite. """
 
-    lines = read_cylc_lines(suite)
+    logger = get_logger('CodeTests')
 
-    tasks = [line.split('swell task ')[1].split(' ')[0] for line in lines if 'swell task' in line]
+    prepare_config = PrepareExperimentConfigAndSuite(logger,
+                                                     suite,
+                                                     suite,
+                                                     'defaults',
+                                                     'nccs_discover_sles15',
+                                                     False)
 
-    tasks = sorted(list(set(tasks)))
+    suite_dict = prepare_config.get_experiment_dict()
+
+    workflow_class = Workflows.get_workflow(suite)
+    workflow_obj = workflow_class(suite_dict)
+
+    tasks = workflow_obj.parse_graph_for_tasks()
+
 
     return tasks
 
