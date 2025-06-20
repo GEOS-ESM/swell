@@ -335,7 +335,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_length(),
-            qd.window_offset()
+            qd.window_offset(),
+            qd.ioda_locations_not_in_r2d2(),
         ]
     )
 
@@ -605,15 +606,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetGeosAdasBackground",
         questions=[
             qd.path_to_geos_adas_background()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetGeosJediBackground = QuestionList(
-        list_name="GetGeosJediBackground",
-        questions=[
-            qd.path_to_geos_jedi_background()
         ]
     )
 

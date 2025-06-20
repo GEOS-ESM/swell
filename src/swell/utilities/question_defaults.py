@@ -686,6 +686,19 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
+    
+    @dataclass
+    class ioda_locations_not_in_r2d2(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "ioda_locations_not_in_r2d2"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = ("Provide a path that contains observation files not in r2d2.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class jedi_build_method(TaskQuestion):
@@ -1047,19 +1060,6 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = ("What is the path for the GEOSadas cubed sphere backgrounds?")
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class path_to_geos_jedi_background(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "path_to_geos_jedi_background"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = ("What is the path for the GEOS-JEDI background?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
