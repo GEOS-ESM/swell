@@ -163,10 +163,6 @@ class GetObservations(taskBase):
                           type='ob',
                           experiment=obs_experiment)
 
-                    if ioda_locations_not_in_r2d2 is not None:
-                        ioda_file_not_in_r2d2 = os.path.join(ioda_locations_not_in_r2d2, obs_window_begin, self.__model__)
-                        subprocess.run(['cp'
-
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input
                 # file since bias correction files still need to be propagated to the next cycle
