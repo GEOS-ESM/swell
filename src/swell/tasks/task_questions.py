@@ -311,6 +311,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetExistingObservations = QuestionList(
+        list_name="GetExistingObservations",
+        questions=[
+            qd.ioda_locations_not_in_r2d2(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetGeovals = QuestionList(
         list_name="GetGeovals",
         questions=[
@@ -336,7 +345,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.r2d2_local_path(),
             qd.window_length(),
             qd.window_offset(),
-            qd.ioda_locations_not_in_r2d2(),
         ]
     )
 

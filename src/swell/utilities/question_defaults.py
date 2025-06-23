@@ -588,6 +588,18 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class get_existing_observations(TaskQuestion):
+        default_value: str = False
+        question_name: str = "get_existing_observations"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Get observations from existing location (rather than R2D2)?"
+        widget_type: WType = WType.STRING
+
+    # -------------------------------------------------------------------------------------------------
+
+    @dataclass
     class gradient_norm_reduction(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gradient_norm_reduction"
