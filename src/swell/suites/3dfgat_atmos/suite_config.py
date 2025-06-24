@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
             qd.runahead_limit("P2"),
+            qd.get_existing_observations(True),
         ],
         geos_atmosphere=[
             qd.cycle_times([

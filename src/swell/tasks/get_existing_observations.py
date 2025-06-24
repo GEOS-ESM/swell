@@ -72,7 +72,7 @@ class GetExistingObservations(taskBase):
 
             # Build the copy command
             # ----------------------
-            command = ['cp', existing_path_file, existing_path_file_target]
+            command = ['ln', '-s', existing_path_file, existing_path_file_target]
 
             self.logger.info(f'Copying {existing_path_file} '
                              f'to {existing_path_file_target}', wrap=False)

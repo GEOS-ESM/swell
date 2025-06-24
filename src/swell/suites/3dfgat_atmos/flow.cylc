@@ -65,6 +65,11 @@
             GetObservations-{{model_component}}
             {% endif %}
 
+            {% if get_existing_observations %}
+            # Get IODA locations not in R2D2
+            GetExistingObservations-{{model_component}}
+            {% endif %}
+
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
@@ -131,6 +136,9 @@
 
     [[CloneGeosMksi-{{model_component}}]]
         script = "swell task CloneGeosMksi $config -m {{model_component}}"
+
+    [[GetExistingObservations-{{model_component}}]]
+        script = "swell task GetExistingObservations $config -d $datetime -m {{model_component}}"
 
     [[GenerateObservingSystemRecords-{{model_component}}]]
         script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
