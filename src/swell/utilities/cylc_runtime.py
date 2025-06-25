@@ -53,7 +53,7 @@ class Task:
         if self.scheduling_name is None:
             self.scheduling_name = self.base_name
 
-            if self.is_model:
+            if self.is_model and self.model is not None:
                 self.scheduling_name += f'-{self.model}'
 
         elif self.is_model:
@@ -65,7 +65,7 @@ class Task:
             if self.is_cycling:
                 self.script += ' -d $datetime'
 
-            if self.is_model:
+            if self.is_model and self.model is not None:
                 self.script += f' -m {self.model}'
 
     # --------------------------------------------------------------------------------------------------

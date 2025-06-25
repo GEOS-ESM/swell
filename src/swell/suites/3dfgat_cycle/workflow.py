@@ -58,10 +58,10 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
         for model_component in self.experiment_dict['model_components']:
             r1 += f"""
             # JEDI cannot run without code
-            BuildJediByLinking? | BuildJedi => RunJediFgatExecutable-{{model_component}}
+            BuildJediByLinking? | BuildJedi => RunJediFgatExecutable-{model_component}
 
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            CloneJedi => StageJedi-{model_component} => RunJediFgatExecutable-{model_component}
              """
 
         # Format the R1 cycle and add it to the graph
@@ -101,18 +101,18 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             # Prepare analysis for next forecast
             RunJediFgatExecutable-{model_component} => EvaIncrement-{model_component}
             """
-            if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
-                cycle_str += f"""
+                    if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
+                        cycle_str += f"""
                 PrepareAnalysis-{model_component} => RunJediConvertStateSoca2ciceExecutable-{model_component}
                 RunJediConvertStateSoca2ciceExecutable-{model_component} => SaveRestart-{model_component}
                 RunJediConvertStateSoca2ciceExecutable-{model_component} => CleanCycle-{model_component}
                 """
-            else:
-                cycle_str += """
+                    else:
+                        cycle_str += f"""
                 PrepareAnalysis-{model_component} => SaveRestart-{model_component}
                 """
 
-            cycle_str += f"""
+                    cycle_str += f"""
             # Move restart to next cycle
             SaveRestart-{model_component} => MoveDaRestart-{model_component}
 

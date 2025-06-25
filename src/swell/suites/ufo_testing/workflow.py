@@ -38,48 +38,54 @@ class Workflow_ufo_testing(CylcWorkflow):
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
+            """
+
+        for model_component in self.experiment_dict['models']:
+            r1 += f"""
 
             # Clone geos ana for generating observing system records
-            CloneGeosMksi
+            CloneGeosMksi-{model_component}
             """
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
 
         # Format the string for each cycle
-        for cycle_time in self.experiment_dict['cycle_times']:
-            cycle_str = f"""
+        for model_component in self.experiment_dict['models']:
+            if 'cycle_times' in self.experiment_dict['models'][model_component].keys():
+                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
+                    cycle_str = f"""
 
             # Generate satellite channel records
-            CloneGeosMksi[^] => GenerateObservingSystemRecords
+            CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_component}
 
             # Convert bias correction to ioda
-            GetGsiBc
-            GetGsiBc => GsiBcToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+            GetGsiBc-{model_component}
+            GetGsiBc-{model_component} => GsiBcToIoda-{model_component}
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda-{model_component}
 
             # Convert ncdiags to ioda
-            GetGsiNcdiag
-            GetGsiNcdiag => GsiNcdiagToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+            GetGsiNcdiag-{model_component}
+            GetGsiNcdiag-{model_component} => GsiNcdiagToIoda-{model_component}
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda-{model_component}
 
-            GetGeovals
+            GetGeovals-{model_component}
 
             # Run Jedi hofx executable
-            GenerateObservingSystemRecords => RunJediUfoTestsExecutable
-            GsiNcdiagToIoda => RunJediUfoTestsExecutable
-            GsiBcToIoda => RunJediUfoTestsExecutable
-            GetGeovals => RunJediUfoTestsExecutable
+            GenerateObservingSystemRecords-{model_component} => RunJediUfoTestsExecutable-{model_component}
+            GsiNcdiagToIoda-{model_component} => RunJediUfoTestsExecutable-{model_component}
+            GsiBcToIoda-{model_component} => RunJediUfoTestsExecutable-{model_component}
+            GetGeovals-{model_component} => RunJediUfoTestsExecutable-{model_component}
 
             # EvaObservations
-            RunJediUfoTestsExecutable => EvaObservations
+            RunJediUfoTestsExecutable-{model_component} => EvaObservations-{model_component}
 
             # Clean up large files
-            EvaObservations => CleanCycle
+            EvaObservations-{model_component} => CleanCycle-{model_component}
             """
 
-            # Add the cycle string to the graph string
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Add the cycle string to the graph string
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)

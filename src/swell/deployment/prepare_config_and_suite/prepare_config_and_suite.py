@@ -156,6 +156,11 @@ class PrepareExperimentConfigAndSuite:
         if 'model_components' not in question_dictionary_model_ind.keys():
             self.suite_needs_model_components = False
 
+            for question in suite_question_list:
+                if question['question_name'] == 'cycle_times':
+                    question['models'] = None
+                    question_dictionary_model_ind['cycle_times'] = question
+
         self.question_dictionary_model_ind = question_dictionary_model_ind
         self.question_dictionary_model_dep = question_dictionary_model_dep
 
@@ -348,7 +353,7 @@ class PrepareExperimentConfigAndSuite:
 
         if 'models' in question_dictionary.keys():
             for model in self.possible_model_components:
-                if model in question_dictionary.keys():
+                if model in question_dictionary['models'].keys():
                     out_dict[model] = self.get_questions_of_type(
                             suite_task, question_dictionary[model])
 
@@ -377,7 +382,6 @@ class PrepareExperimentConfigAndSuite:
 
             for model in self.experiment_dict['model_components']:
                 model_dict = self.question_dictionary_model_dep[model]
-
                 for question_name, question in self.get_questions_of_type(
                         suite_task, model_dict).items():
                     self.ask_a_question(model_dict, question_name, model)

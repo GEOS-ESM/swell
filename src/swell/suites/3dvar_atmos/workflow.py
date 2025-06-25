@@ -66,7 +66,7 @@ class Workflow_3dvar_atmos(CylcWorkflow):
                     # Get observations
                     """
             
-                    if self.experiment_dict['cycling_varbc']:
+                    if self.experiment_dict['models'][model_component]['cycling_varbc']:
                         cycle_str += f"""
                         # Cycling VarBC is active, biases from the previous cycle will be used
 

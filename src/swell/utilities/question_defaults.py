@@ -49,6 +49,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class cycling_varbc(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "cycling_varbc"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Do you want to use cycling VarBC option?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensemble_hofx_packets(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"
@@ -308,19 +321,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class cycling_varbc(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "cycling_varbc"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Do you want to use cycling VarBC option?"
-        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1127,20 +1127,6 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class skip_ensemble_hofx(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "skip_ensemble_hofx"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Which local ensemble solver type should be implemented?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
