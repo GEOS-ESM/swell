@@ -4,10 +4,13 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/iasi_metop-c.{{window_begin}}.nc4'
+      missing file action: warn
   obsdataout:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.iasi_metop-c.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
   simulated variables: [brightnessTemperature]
   channels: &iasi_metop-c_channels {{iasi_metopc_avail_channels}}
 
