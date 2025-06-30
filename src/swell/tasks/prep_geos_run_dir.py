@@ -67,18 +67,31 @@ class PrepGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
-        # Augment MOM_oda_incupd (IAU) with MOM_input IF it exists and IF mom6_increment.nc
-        # file is located inside the INPUT directory. This allows not having a mom6_iau
-        # switch in the cycling suite file.
+        # Augment MOM_oda_incupd (IAU) with MOM_input IF mom6_iau is true and IF mom6_increment.nc
+        # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
+        # be present in the INPUT directory, so this step is skipped.
         # --------------------------------------------------------------------------
-        if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
-            if os.path.exists(self.forecast_dir('MOM_oda_incupd')):
+        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
+            if os.path.exists(self.forecast_dir('INPUT/mom6_increment.nc')):
 
                 self.logger.info('MOM6 Increment file found in INPUT directory')
                 self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
 
                 mom_input = self.forecast_dir('MOM_input')
                 mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
+                mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
+                # P50D is just a random input for get_key_for_model to function
+                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
+                                                                'PT50D')
+
+                # convert ISO to 3.0
+                duration = isodate.parse_duration(mom6_iau_nhours)
+                hours = duration.total_seconds() / 3600
+                mom6_config["ODA_INCUPD_NHOURS"] = hours
+
+                # Write the updated configuration back to a file
+                output_path = self.forecast_dir('MOM_oda_incupd')
+                self.geos.write_mom6_input(mom6_config, output_path)
 
                 with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
                     mom_input_txt = inp_f.read()
@@ -87,8 +100,7 @@ class PrepGeosRunDir(taskBase):
                 with open(mom_input, 'w') as out_f:
                     out_f.write(mom_input_txt + mom_oda_txt)
             else:
-                self.logger.info('MOM6 Increment file found in INPUT directory')
-                self.logger.abort('MOM_oda_incupd not found. Failed augmentation')
+                self.logger.warning('MOM6 Increment file was not found in INPUT directory')
 
         # Combine input.nml and fvcore_layout
         # Modify input.nml if not cold start (default)

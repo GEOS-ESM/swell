@@ -76,6 +76,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.generate_yaml_and_exit(),
             qd.gradient_norm_reduction(),
             qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
             qd.jedi_forecast_model(),
             qd.minimizer(),
             qd.number_of_iterations(),
@@ -94,6 +96,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
+            qd.marine_models(),
             qd.r2d2_local_path(),
         ]
     )
@@ -463,7 +466,8 @@ class TaskQuestions(QuestionContainer, Enum):
             swell_static_file_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_experiment_directory()
+            qd.geos_experiment_directory(),
+            qd.mom6_iau_nhours()
         ]
     )
 
@@ -524,6 +528,8 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             swell_static_file_questions,
             qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
         ]
