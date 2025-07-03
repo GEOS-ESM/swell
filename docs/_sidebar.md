@@ -14,6 +14,7 @@
     - [Installing Swell on SLES15](platforms/discover/installing_swell_discover_sles15.md)
     - [Installing Swell using `uv` and `venv`](platforms/discover/installing_swell_uv_venv.md)
     - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)
+    - [Offline Intallation of SWELL and `uv`](platforms/discover/installing_swell_uv_offline.md)
 
 - Practical Examples
 
