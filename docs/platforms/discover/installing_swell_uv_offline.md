@@ -1,4 +1,7 @@
-# Install `uv` & `Swell` on Discover with offline packages
+# Installing Swell with `uv` without internet access
+This page is only for the users **who have no outranet on Discover**. We show here:
+- How to install uv and Swell using offline packages;
+- How to synchronize your code between Discover and GitHub.
 
 #### Install uv
 1. get the installer `wget -c https://astral.sh/uv/install.sh`
