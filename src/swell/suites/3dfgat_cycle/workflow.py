@@ -103,14 +103,14 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             """
                     if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
                         cycle_str += f"""
-                PrepareAnalysis-{model_component} => RunJediConvertStateSoca2ciceExecutable-{model_component}
-                RunJediConvertStateSoca2ciceExecutable-{model_component} => SaveRestart-{model_component}
-                RunJediConvertStateSoca2ciceExecutable-{model_component} => CleanCycle-{model_component}
-                """
+            PrepareAnalysis-{model_component} => RunJediConvertStateSoca2ciceExecutable-{model_component}
+            RunJediConvertStateSoca2ciceExecutable-{model_component} => SaveRestart-{model_component}
+            RunJediConvertStateSoca2ciceExecutable-{model_component} => CleanCycle-{model_component}
+            """
                     else:
                         cycle_str += f"""
-                PrepareAnalysis-{model_component} => SaveRestart-{model_component}
-                """
+            PrepareAnalysis-{model_component} => SaveRestart-{model_component}
+            """
 
                     cycle_str += f"""
             # Move restart to next cycle

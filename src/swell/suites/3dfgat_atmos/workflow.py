@@ -25,7 +25,7 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
     def define_graph_section(self):
         # Define the string of the graph section
         graph_str = ''
-        print('graph', self.experiment_dict)
+
         # Define the string for the R1 (first non-cycling) section
         r1 = """
             # Triggers for non cycle time dependent tasks
@@ -67,15 +67,15 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
             """
                     if self.experiment_dict['models'][model_component]['cycling_varbc']:
                         cycle_str += f"""
-                # Cycling VarBC is active, biases from the previous cycle will be used
+            # Cycling VarBC is active, biases from the previous cycle will be used
 
-                RunJediVariationalExecutable-{model_component}[-PT6H] => GetObservations-{model_component}
+            RunJediVariationalExecutable-{model_component}[-PT6H] => GetObservations-{model_component}
                 """
                     else:
                         cycle_str += f"""
-                # Cycling VarBC is inactive, static bias files will be used
-                GetObservations-{model_component}
-                """
+            # Cycling VarBC is inactive, static bias files will be used
+            GetObservations-{model_component} 
+            """
 
                     cycle_str += f"""
             # Perform staging that is cycle dependent
