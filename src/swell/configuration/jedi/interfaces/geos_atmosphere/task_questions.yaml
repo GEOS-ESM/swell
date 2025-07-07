@@ -5,37 +5,37 @@ analysis_forecast_window_offset:
 
 analysis_variables:
   default_value:
-  - ua
-  - va
-  - t
-  - q
-  - ps
-  - qi
-  - ql
-  - qr
-  - qs
-  - o3ppmv
-  - phis
-  - frocean
-  - frlake
-  - frseaice
-  - ts
+  - eastward_wind
+  - northward_wind
+  - air_temperature
+  - water_vapor_mixing_ratio_wrt_moist_air
+  - air_pressure_at_surface
+  - cloud_liquid_ice
+  - cloud_liquid_water
+  - rain_water
+  - snow_water
+  - mole_fraction_of_ozone_in_air
+  - geopotential_height_times_gravity_at_surface
+  - fraction_of_ocean
+  - fraction_of_lake
+  - fraction_of_ice
+  - skin_temperature_at_surface
   options:
-  - ua
-  - va
-  - t
-  - q
-  - ps
-  - qi
-  - ql
-  - qr
-  - qs
-  - o3ppmv
-  - phis
-  - frocean
-  - frlake
-  - frseaice
-  - ts
+  - eastward_wind
+  - northward_wind
+  - air_temperature
+  - water_vapor_mixing_ratio_wrt_moist_air
+  - air_pressure_at_surface
+  - cloud_liquid_ice
+  - cloud_liquid_water
+  - rain_water
+  - snow_water
+  - mole_fraction_of_ozone_in_air
+  - geopotential_height_times_gravity_at_surface
+  - fraction_of_ocean
+  - fraction_of_lake
+  - fraction_of_ice
+  - skin_temperature_at_surface
 
 background_error_model:
   default_value: GSIbec
@@ -92,6 +92,24 @@ gradient_norm_reduction:
 
 gsibec_configuration:
   default_value: cli_gsibec_configuration
+
+gsibec_nlats:
+  default_value: 181
+  options:
+  - '46'
+  - '91'
+  - '181'
+  - '361'
+  - '721'
+
+gsibec_nlons:
+  default_value: 288
+  options:
+  - '72'
+  - '144'
+  - '288'
+  - '576'
+  - '1152'
 
 horizontal_localization_lengthscale:
   default_value: 10000e3
@@ -240,7 +258,7 @@ observing_system_records_mksi_path:
   default_value: None
 
 observing_system_records_mksi_path_tag:
-  default_value: g5.41.3
+  default_value: v5.42.7
 
 observing_system_records_path:
   default_value: None

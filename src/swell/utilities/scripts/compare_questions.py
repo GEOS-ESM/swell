@@ -186,8 +186,21 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
             with open(task_file, 'r') as f:
                 config_lines = [line for line in f.readlines() if 'self.config.' in line]
                 for line in config_lines:
+                    if 'get_key_for_model' in line:
+                        field = line.split(
+                                'self.config.get_key_for_model(')[1].split(')')[0].strip() + ')'
+                        if len(field.split(',')) == 1:
+                            field = field.split(',')[0] + '()'
+                        else:
+                            field = field.split(',')[
+                                    0].strip() + '(' + field.split(',')[-1].strip() + ')'
+
+                        field = field.replace('"', '')
+                        field = field.replace("'", '')
+                    else:
+                        field = line.split('self.config.')[1].split(')')[0].strip() + ')'
                     # Include the parentheses, so we can later assess whether the key is optional
-                    used_task.append(line.split('self.config.')[1].split(')')[0].strip() + ')')
+                    used_task.append(field)
 
             set_task = sorted(list(set(set_task)))
             used_task = sorted(list(set(used_task)))
@@ -209,8 +222,8 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
             for question in lst:
                 question_name = question.split('(')[0].strip()
                 # Include only non-optional calls from the code
-                if 'None' not in question and question_name not in (
-                        set_for[suite_task] + set_for['suite']):
+                if len(question_name.split(')')[0].strip()) == 0 and (
+                        question_name not in set_for[suite_task] + set_for['suite']):
                     used_not_set[suite][suite_task].append(question_name)
 
             # Clear the suite or task key if there are no discrepancies

@@ -69,10 +69,10 @@ existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEO
 existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/
 
 # What is the path to the existing JEDI build directory?
-existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_02062025/build-intel-release
+existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025/build-intel-release
 
 # What is the path to the existing JEDI source code directory?
-existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_02062025
+existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025
 
 # GEOS forecast duration
 forecast_duration: PT12H

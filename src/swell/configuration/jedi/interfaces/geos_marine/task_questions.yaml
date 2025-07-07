@@ -1,6 +1,7 @@
 analysis_forecast_window_offset:
   default_value: -PT6H
   options:
+  - -PT12H
   - -PT6H
 
 analysis_variables:
@@ -30,6 +31,8 @@ background_frequency:
 
 background_time_offset:
   default_value: PT9H
+  options:
+  - PT9H
 
 clean_patterns:
   default_value:
@@ -38,6 +41,8 @@ clean_patterns:
   - '*MOM*'
   - logfile.*.out
   options:
+  - logfile.*.out
+  - background_error_model/*.nc
   - '*.nc4'
   - '*.txt'
   - '*MOM*'
@@ -49,6 +54,7 @@ gradient_norm_reduction:
 horizontal_resolution:
   default_value: 1440x1080
   options:
+  - 72x36
   - 360x320
   - 1440x1080
 
@@ -67,6 +73,9 @@ mom6_iau:
   options:
   - true
   - false
+
+mom6_iau_nhours:
+  default_value: PT3H
 
 number_of_iterations:
   default_value:
@@ -102,12 +111,16 @@ observations:
   - sst_viirs_n20_l3u
   - temp_profile_xbt
 
+path_to_ensemble:
+  default_value: test
+
 total_processors:
   default_value: 24
 
 vertical_resolution:
   default_value: '75'
   options:
+  - '50'
   - '75'
 
 window_length:
