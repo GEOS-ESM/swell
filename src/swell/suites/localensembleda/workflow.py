@@ -51,19 +51,29 @@ sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_3 = """
-sync_point => RunJediEnsembleMeanVariance-{model_component} => RunJediHofxEnsembleExecutable-{model_component}
-RunJediHofxEnsembleExecutable-{model_component} => RunJediLocalEnsembleDaExecutable-{model_component}
+sync_point => RunJediEnsembleMeanVariance-{model_component} =>
+RunJediHofxEnsembleExecutable-{model_component}
+
+RunJediHofxEnsembleExecutable-{model_component} =>
+RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_4 = """
-# When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes successfully for each packet
+# When strategy is parallel, only proceed if all RunJediHofxEnsembleExecutable completes
+# successfully for each packet
 
-# There is a need for a task to combine all hofx observations together, compute node preferred, put here as placeholder
-# RunJediHofxEnsembleExecutable-{model_component}_pack{packet} => RunEnsembleHofxCombiner-{model_component}
-# RunEnsembleHofxCombiner-{model_component} => RunJediLocalEnsembleDaExecutable-{model_component}
+# There is a need for a task to combine all hofx observations together, compute node preferred,
+# put here as placeholder
+
+# RunJediHofxEnsembleExecutable-{model_component}_pack{packet} =>
+# RunEnsembleHofxCombiner-{model_component}
+
+# RunEnsembleHofxCombiner-{model_component} =>
+# RunJediLocalEnsembleDaExecutable-{model_component}
 
 sync_point => RunJediHofxEnsembleExecutable-{model_component}_pack{packet}
-RunJediHofxEnsembleExecutable-{model_component}_pack{packet} => RunJediLocalEnsembleDaExecutable-{model_component}
+RunJediHofxEnsembleExecutable-{model_component}_pack{packet} =>
+RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_5 = """
@@ -79,6 +89,7 @@ CleanCycle-{model_component}
 """
 
 # --------------------------------------------------------------------------------------------------
+
 
 class Workflow_localensembleda(CylcWorkflow):
     def define_description(self):
@@ -116,7 +127,8 @@ class Workflow_localensembleda(CylcWorkflow):
                             cycle_str += cycle_template_3.format(model_component=model_component)
                         elif self.experiment_dict['ensemble_hofx_strategy'] == 'parallel':
                             for packet in range(self.experiment_dict['ensemble_hofx_packets']):
-                                cycle_str += cycle_template_4.format(model_component=model_component, packet=packet)
+                                cycle_str += cycle_template_4.format(
+                                        model_component=model_component, packet=packet)
 
                     cycle_str += cycle_template_5.format(model_component=model_component)
 

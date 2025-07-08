@@ -18,9 +18,10 @@ from swell.utilities.suite_utils import get_suites
 from swell.tasks.task_questions import TaskQuestions as tq
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.case_switching import camel_case_to_snake_case
-from swell.suites.all_suites import workflows, suite_configs
+from swell.suites.all_suites import workflows
 from swell.utilities.logger import get_logger
-from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import PrepareExperimentConfigAndSuite
+from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import (
+        PrepareExperimentConfigAndSuite)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ class CodeDependentQuestions(StrEnum):
         return [item for item in lst if item not in values]
 
 # --------------------------------------------------------------------------------------------------
+
 
 def get_workflow(suite: str):
     """ Parse the suite's flow.cylc file and get all the tasks used by the suite. """
@@ -59,8 +61,9 @@ def get_workflow(suite: str):
 
 # --------------------------------------------------------------------------------------------------
 
+
 def get_scheduling(suite: str):
-    
+
     workflow_obj = get_workflow(suite)
 
     scheduling_section = workflow_obj.define_scheduling()
@@ -68,6 +71,7 @@ def get_scheduling(suite: str):
     return scheduling_section
 
 # --------------------------------------------------------------------------------------------------
+
 
 def get_all_tasks(suite: str) -> list:
     """ Parse the suite's flow.cylc file and get all the tasks used by the suite. """
@@ -214,7 +218,8 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
                         else:
                             field = line.split('self.config.')[1].split(')')[0].strip() + ')'
 
-                        # Include the parentheses, so we can later assess whether the key is optional
+                        # Include the parentheses, so we can later
+                        # assess whether the key is optional
                         used_task.append(field)
 
             set_task = sorted(list(set(set_task)))

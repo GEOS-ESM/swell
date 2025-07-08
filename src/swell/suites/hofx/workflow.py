@@ -49,7 +49,9 @@ StageJediCycle-{model_component}
 BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{model_component}
 CloneJedi[^] => StageJediCycle-{model_component}
 StageJediCycle-{model_component} => RunJediHofxExecutable-{model_component}
-GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} => RunJediHofxExecutable-{model_component}
+GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} =>
+RunJediHofxExecutable-{model_component}
+
 GetObservations-{model_component} => RunJediHofxExecutable-{model_component}
 GenerateObservingSystemRecords-{model_component} => RunJediHofxExecutable-{model_component}
 
@@ -65,6 +67,7 @@ CleanCycle-{model_component}
 """
 
 # --------------------------------------------------------------------------------------------------
+
 
 class Workflow_hofx(CylcWorkflow):
     def define_description(self):

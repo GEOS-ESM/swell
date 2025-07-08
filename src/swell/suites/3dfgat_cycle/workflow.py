@@ -86,11 +86,14 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
 
             # Data assimilation preperation
             GetObservations-{model_component}
-            GenerateBClimatologyByLinking-{model_component} :fail? => GenerateBClimatology-{model_component}
+            GenerateBClimatologyByLinking-{model_component} :fail? =>
+            GenerateBClimatology-{model_component}
 
             LinkGeosOutput-{model_component} => RunJediFgatExecutable-{model_component}
             StageJediCycle-{model_component} => RunJediFgatExecutable-{model_component}
-            GenerateBClimatologyByLinking-{model_component}? | GenerateBClimatology-{model_component} => RunJediFgatExecutable-{model_component}
+            GenerateBClimatologyByLinking-{model_component}? |
+            GenerateBClimatology-{model_component} => RunJediFgatExecutable-{model_component}
+
             GetObservations-{model_component} => RunJediFgatExecutable-{model_component}
 
             # Run analysis diagnostics
@@ -103,9 +106,14 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             """
                     if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
                         cycle_str += f"""
-            PrepareAnalysis-{model_component} => RunJediConvertStateSoca2ciceExecutable-{model_component}
-            RunJediConvertStateSoca2ciceExecutable-{model_component} => SaveRestart-{model_component}
-            RunJediConvertStateSoca2ciceExecutable-{model_component} => CleanCycle-{model_component}
+            PrepareAnalysis-{model_component} =>
+            RunJediConvertStateSoca2ciceExecutable-{model_component}
+
+            RunJediConvertStateSoca2ciceExecutable-{model_component} =>
+            SaveRestart-{model_component}
+
+            RunJediConvertStateSoca2ciceExecutable-{model_component} =>
+            CleanCycle-{model_component}
             """
                     else:
                         cycle_str += f"""
@@ -124,11 +132,14 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             # MoveBackground-{model_component} => StoreBackground-{model_component}
 
             # Remove Run Directory
-            # MoveDaRestart-{model_component} & MoveBackground-{model_component} => RemoveForecastDir
+            # MoveDaRestart-{model_component} & MoveBackground-{model_component} =>
+            RemoveForecastDir
+
             MoveDaRestart-{model_component} => RemoveForecastDir
 
             # Clean up large files
-            EvaObservations-{model_component} & EvaJediLog-{model_component} & EvaIncrement-{model_component} & SaveObsDiags-{model_component} =>
+            EvaObservations-{model_component} & EvaJediLog-{model_component} &
+            EvaIncrement-{model_component} & SaveObsDiags-{model_component} =>
             CleanCycle-{model_component}
             """
 

@@ -9,7 +9,7 @@
 
 import os
 import yaml
-from typing import Union, Optional, Self
+from typing import Union, Optional
 from collections.abc import Mapping
 from dataclasses import dataclass
 

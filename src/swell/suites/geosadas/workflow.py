@@ -52,6 +52,7 @@ RunJediVariationalExecutable => CleanCycle
 
 # --------------------------------------------------------------------------------------------------
 
+
 class Workflow_geosadas(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""
@@ -61,11 +62,11 @@ class Workflow_geosadas(CylcWorkflow):
         return description
 
     # --------------------------------------------------------------------------------------------------
-    
+
     def define_scheduling_section(self):
         scheduling_dict = {'initial cycle point': '2020-12-15T00:00:00Z',
                            'final cycle point': '2020-12-15T00:00:00Z'}
-        
+
         scheduling_section = self.create_new_section('scheduling', scheduling_dict)
         return scheduling_section
 

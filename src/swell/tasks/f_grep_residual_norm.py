@@ -9,11 +9,9 @@
 
 
 import os
-import re
 import subprocess
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.suite_utils import get_model_components
 
 # --------------------------------------------------------------------------------------------------
 

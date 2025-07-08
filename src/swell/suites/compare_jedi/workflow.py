@@ -7,11 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import yaml
 import os
 
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes
 from swell.utilities.cylc_runtime import Task
 
 # --------------------------------------------------------------------------------------------------

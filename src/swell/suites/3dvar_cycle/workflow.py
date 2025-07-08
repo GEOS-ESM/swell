@@ -67,7 +67,9 @@ GenerateBClimatologyByLinking-{model_component} :fail? => GenerateBClimatology-{
 
 LinkGeosOutput-{model_component} => RunJediVariationalExecutable-{model_component}
 StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-GenerateBClimatologyByLinking-{model_component}? | GenerateBClimatology-{model_component} => RunJediVariationalExecutable-{model_component}
+GenerateBClimatologyByLinking-{model_component}? | GenerateBClimatology-{model_component} =>
+RunJediVariationalExecutable-{model_component}
+
 GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
 
 # Run analysis diagnostics
@@ -105,12 +107,15 @@ RunJediVariationalExecutable-{model_component} => SaveObsDiags-{model_component}
 MoveDaRestart-{model_component} => RemoveForecastDir
 
 # Clean up large files
-# EvaObservations-{model_component} & EvaJediLog-{model_component} & SaveObsDiags-{model_component} & RemoveForecastDir =>
-EvaObservations-{model_component} & EvaJediLog-{model_component} & EvaIncrement-{model_component}  & SaveObsDiags-{model_component} =>
+# EvaObservations-{model_component} & EvaJediLog-{model_component} &
+SaveObsDiags-{model_component} & RemoveForecastDir =>
+EvaObservations-{model_component} & EvaJediLog-{model_component} &
+EvaIncrement-{model_component}  & SaveObsDiags-{model_component} =>
 CleanCycle-{model_component}
 """
 
 # --------------------------------------------------------------------------------------------------
+
 
 class Workflow_3dvar_cycle(CylcWorkflow):
     def define_description(self):
@@ -140,7 +145,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             if 'cycle_times' in self.experiment_dict['models'][model_component]:
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
                     cycle_str = cycle_template_1.format(model_component=model_component)
-                    
+
                     if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
                         cycle_str += cycle_template_2.format(model_component=model_component)
                     else:

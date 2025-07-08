@@ -48,7 +48,7 @@ class Workflow_build_geos(CylcWorkflow):
         scheduler = self.create_new_section('scheduler', scheduler_str)
 
         return scheduler.get_section_str()
-    
+
     # --------------------------------------------------------------------------------------------------
 
     def define_scheduling_section(self):

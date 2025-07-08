@@ -47,6 +47,7 @@ MoveForecastRestart => RemoveForecastDir
 
 # --------------------------------------------------------------------------------------------------
 
+
 class Workflow_forecast_geos(CylcWorkflow):
     def define_description(self):
         description = self.comment_block("""

@@ -9,7 +9,6 @@
 
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
 from enum import Enum
