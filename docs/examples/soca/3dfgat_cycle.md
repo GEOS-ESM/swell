@@ -25,7 +25,7 @@ experiment_id: fgat_test
 With this, the following experiment folder will be created:
 `/discover/nobackup/dardag/test_folder/fgat_test`
 
-Another critical input argument for `swell create` is  `-s slurmfile.yaml`. Please see [slurm config instructions](../../configs/slurm_configuration.md) for more details on how to use it for high resolution tests. Below `experiment.yaml` will show a 5-deg setup created with a 0.25-deg `slurmfile.yaml` to demonstrate the  proper use of `slurmfile.yaml` though 1 node configurations will suffice for a 5-deg cycle.
+Another critical input argument for `swell create` is  `-s slurmfile.yaml`. Please see [slurm config instructions](configs/slurm_configuration.md) for more details on how to use it for high resolution tests. Below `experiment.yaml` will show a 5-deg setup created with a 0.25-deg `slurmfile.yaml` to demonstrate the  proper use of `slurmfile.yaml` though 1 node configurations will suffice for a 5-deg cycle.
 
 Before launching the experiment, let's take a look at the `experiment.yaml`.
 
