@@ -63,7 +63,7 @@ class SLURMConfigTest(unittest.TestCase):
 
         eva_obs_class = TaskRuntimes.get('EvaObservations')
         build_jedi_class = TaskRuntimes.get('BuildJedi')
-        run_jedi_ufo_class = TaskRuntimes.get('RunJediUfoExecutable')
+        run_jedi_ufo_class = TaskRuntimes.get('RunJediUfoTestsExecutable')
 
         # Platform generic tests
         for sd in [sd_discover_sles15]:

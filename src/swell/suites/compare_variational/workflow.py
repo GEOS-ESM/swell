@@ -51,7 +51,11 @@ class Workflow_compare_variational(CylcWorkflow):
                         cycle_model_times[cycle_time] = []
                     cycle_model_times[cycle_time].append(model)
         else:
-            raise Exception('No experiments have been specified')
+            start_cycle_point = 'None'
+            final_cycle_point = 'None'
+            cycle_model_times = {}
+
+            self.logger.info('No experiments have been specified')
 
         scheduling_section = self.create_new_section('scheduling',
                                                      {'initial cycle point': start_cycle_point,

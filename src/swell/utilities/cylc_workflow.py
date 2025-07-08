@@ -15,6 +15,7 @@ import yaml
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.tasks.task_runtimes import TaskRuntimes
 from swell.utilities.dictionary import update_dict
+from swell.utilities.logger import get_logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -32,6 +33,8 @@ class CylcWorkflow():
     def __init__(self, experiment_dict, slurm_external) -> None:
         self.experiment_dict = experiment_dict
         self.slurm_external = slurm_external
+
+        self.logger = get_logger(self.__class__.__name__)
 
         self.setup_workflow()
 

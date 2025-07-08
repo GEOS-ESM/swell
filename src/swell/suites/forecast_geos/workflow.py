@@ -68,11 +68,9 @@ class Workflow_forecast_geos(CylcWorkflow):
         graph_str += self.format_cycle('R1', r1)
 
         # Format the string for each cycle
-        for model in self.experiment_dict['models'].keys():
-            if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
-                for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
-                    cycle_str = cycle_template
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
+        for cycle_time in self.experiment_dict['cycle_times']:
+            cycle_str = cycle_template
+            graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)

@@ -18,7 +18,7 @@ from swell.utilities.suite_utils import get_suites
 from swell.tasks.task_questions import TaskQuestions as tq
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.case_switching import camel_case_to_snake_case
-from swell.suites.all_suites import Workflows, SuiteConfigs
+from swell.suites.all_suites import workflows, suite_configs
 from swell.utilities.logger import get_logger
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import PrepareExperimentConfigAndSuite
 
@@ -38,21 +38,7 @@ class CodeDependentQuestions(StrEnum):
 
 # --------------------------------------------------------------------------------------------------
 
-
-def read_cylc_lines(suite: str) -> list:
-    """ Get lines from the suite's flow.cylc file, in list seperated by newline. """
-
-    suite_file = os.path.join(get_swell_path(), 'suites', suite, 'flow.cylc')
-
-    with open(suite_file, 'r') as f:
-        lines = f.readlines()
-
-    return lines
-
-# --------------------------------------------------------------------------------------------------
-
-
-def get_all_tasks(suite: str) -> list:
+def get_workflow(suite: str):
     """ Parse the suite's flow.cylc file and get all the tasks used by the suite. """
 
     logger = get_logger('CodeTests')
@@ -60,19 +46,44 @@ def get_all_tasks(suite: str) -> list:
     prepare_config = PrepareExperimentConfigAndSuite(logger,
                                                      suite,
                                                      suite,
-                                                     'defaults',
                                                      'nccs_discover_sles15',
-                                                     False)
+                                                     'defaults',
+                                                     None)
 
     suite_dict = prepare_config.get_experiment_dict()
 
-    workflow_class = Workflows.get_workflow(suite)
-    workflow_obj = workflow_class(suite_dict)
+    workflow_class = workflows.get_workflow(suite)
+    workflow_obj = workflow_class(suite_dict, {})
+
+    return workflow_obj
+
+# --------------------------------------------------------------------------------------------------
+
+def get_scheduling(suite: str):
+    
+    workflow_obj = get_workflow(suite)
+
+    scheduling_section = workflow_obj.define_scheduling()
+
+    return scheduling_section
+
+# --------------------------------------------------------------------------------------------------
+
+def get_all_tasks(suite: str) -> list:
+    """ Parse the suite's flow.cylc file and get all the tasks used by the suite. """
+
+    workflow_obj = get_workflow(suite)
 
     tasks = workflow_obj.parse_graph_for_tasks()
 
+    base_tasks = []
 
-    return tasks
+    for task in tasks:
+        base_task = task.split('-')[0]
+        if base_task not in ['StageJediCycle', 'sync_point']:
+            base_tasks.append(base_task)
+
+    return base_tasks
 
 # --------------------------------------------------------------------------------------------------
 
@@ -89,7 +100,9 @@ def questions_in_cylc(suite: str) -> list:
 
     cylc_questions = []
 
-    lines = read_cylc_lines(suite)
+    scheduling = get_scheduling(suite)
+
+    lines = scheduling.split('\n')
 
     for line in lines:
         line = line.strip()
@@ -183,24 +196,26 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
             task_file = os.path.join(get_swell_path(), 'tasks',
                                      camel_case_to_snake_case(task) + '.py')
 
-            with open(task_file, 'r') as f:
-                config_lines = [line for line in f.readlines() if 'self.config.' in line]
-                for line in config_lines:
-                    if 'get_key_for_model' in line:
-                        field = line.split(
-                                'self.config.get_key_for_model(')[1].split(')')[0].strip() + ')'
-                        if len(field.split(',')) == 1:
-                            field = field.split(',')[0] + '()'
-                        else:
-                            field = field.split(',')[
-                                    0].strip() + '(' + field.split(',')[-1].strip() + ')'
+            if os.path.exists(task_file):
+                with open(task_file, 'r') as f:
+                    config_lines = [line for line in f.readlines() if 'self.config.' in line]
+                    for line in config_lines:
+                        if 'get_key_for_model' in line:
+                            field = line.split(
+                                    'self.config.get_key_for_model(')[1].split(')')[0].strip() + ')'
+                            if len(field.split(',')) == 1:
+                                field = field.split(',')[0] + '()'
+                            else:
+                                field = field.split(',')[
+                                        0].strip() + '(' + field.split(',')[-1].strip() + ')'
 
-                        field = field.replace('"', '')
-                        field = field.replace("'", '')
-                    else:
-                        field = line.split('self.config.')[1].split(')')[0].strip() + ')'
-                    # Include the parentheses, so we can later assess whether the key is optional
-                    used_task.append(field)
+                            field = field.replace('"', '')
+                            field = field.replace("'", '')
+                        else:
+                            field = line.split('self.config.')[1].split(')')[0].strip() + ')'
+
+                        # Include the parentheses, so we can later assess whether the key is optional
+                        used_task.append(field)
 
             set_task = sorted(list(set(set_task)))
             used_task = sorted(list(set(used_task)))

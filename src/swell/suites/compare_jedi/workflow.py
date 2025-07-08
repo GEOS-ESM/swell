@@ -34,12 +34,8 @@ class Workflow_compare_jedi(CylcWorkflow):
 
         paths = self.experiment_dict['comparison_experiment_paths']
 
-        if len(paths) == 2:
-            config_file = os.path.join(os.path.dirname(paths[0]), 'experiment.yaml')
-            with open(config_file, 'r') as f:
-                base_dict = yaml.safe_load(f)
-        else:
-            raise Exception('Please specify two experiments')
+        if len(paths) < 2:
+            self.logger.info('Please specify two experiments')
 
         scheduling_section = self.create_new_section('scheduling')
 
