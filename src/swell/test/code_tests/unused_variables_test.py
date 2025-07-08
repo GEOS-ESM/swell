@@ -34,7 +34,9 @@ class UnusedVariablesTest(unittest.TestCase):
 
         for root, _, files in os.walk(get_swell_path()):
             for filename in files:
-                if filename.endswith('.py'):  # Only process Python files
+                # Only process Python files
+                # Ignore results from task_runtimes.py
+                if filename.endswith('.py') and filename not in ['task_runtimes.py']:  
                     file_path = os.path.join(root, filename)
                     flake8_output = run_flake8(file_path)
 

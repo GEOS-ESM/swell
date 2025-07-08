@@ -18,7 +18,7 @@ from swell.utilities.suite_utils import get_suites
 from swell.tasks.task_questions import TaskQuestions as tq
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.case_switching import camel_case_to_snake_case
-from swell.suites.all_suites import workflows, suite_configs
+from swell.suites.all_suites import workflows
 from swell.utilities.logger import get_logger
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import PrepareExperimentConfigAndSuite
 

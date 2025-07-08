@@ -10,7 +10,7 @@ import importlib
 import os
 import re
 import yaml
-from typing import Optional, Union
+from typing import Union
 from collections.abc import Mapping
 
 from importlib import resources
@@ -63,9 +63,9 @@ def prepare_slurm_defaults_and_overrides(
         if isinstance(slurm_overrides, str):
             logger.info(f"Reading SLURM directives from {slurm_overrides}.")
             try:
-                with open(slurm_file, "r") as slurmfile:
-                    slurm_overrides = yaml.safe_load(slurm_overrides)
-            except FileNotFoundError as err:
+                with open(slurm_overrides, "r") as slurmfile:
+                    slurm_overrides = yaml.safe_load(slurmfile)
+            except FileNotFoundError:
                 raise FileNotFoundError(f"Slurm config {slurm_overrides} not found.")
         elif not isinstance(slurm_overrides, Mapping):
             raise TypeError("Slurm overrides is not of type Mapping")

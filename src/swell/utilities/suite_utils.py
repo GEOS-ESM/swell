@@ -8,9 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import glob
 import os
-import importlib
 
 from swell.swell_path import get_swell_path
 

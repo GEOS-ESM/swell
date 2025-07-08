@@ -7,8 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from typing import Union, Optional, Self, Tuple
-from collections.abc import Mapping
+from typing import Union, Optional, Tuple
 import os
 import yaml
 

@@ -9,7 +9,6 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-from enum import Enum
 from importlib import import_module
 
 from swell.swell_path import get_swell_path
