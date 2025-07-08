@@ -25,6 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="hofx",
         questions=[
             sq.marine,
+            qd.cycling_varbc(),
             qd.window_type(),
             qd.jedi_build_method("use_existing"),
             qd.save_geovals(True),

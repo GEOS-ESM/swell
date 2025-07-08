@@ -25,6 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_cycle",
         questions=[
             sq.marine,
+            qd.cycling_varbc(),
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
             qd.final_cycle_point("2021-07-02T12:00:00Z"),
             qd.runahead_limit("P2"),

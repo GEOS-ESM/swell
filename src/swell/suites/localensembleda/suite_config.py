@@ -25,6 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="localensembleda",
         questions=[
             sq.marine,
+            qd.cycling_varbc(),
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.skip_ensemble_hofx(),

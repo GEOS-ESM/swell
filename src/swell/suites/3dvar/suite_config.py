@@ -25,6 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar",
         questions=[
             sq.marine,
+            qd.cycling_varbc(),
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
             qd.final_cycle_point("2021-07-01T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
