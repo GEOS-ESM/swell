@@ -108,7 +108,7 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
 
                     # Add the cycle string to the graph string
                     graph_str += self.format_cycle(cycle_time, cycle_str)
-        print(graph_str)
+
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)
 
