@@ -341,6 +341,23 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+
+    GetObservationsR2d2 = QuestionList(
+        list_name="GetObservationsR2d2",
+        questions=[
+            background_crtm_obs,
+            qd.cycling_varbc(),
+            qd.obs_experiment(),
+            qd.obs_provider(),
+            qd.observing_system_records_path(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GsiBcToIoda = QuestionList(
         list_name="GsiBcToIoda",
         questions=[
