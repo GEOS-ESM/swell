@@ -11,6 +11,46 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
+r1_template = """
+# Clone JEDI source code
+CloneJedi
+
+# Build JEDI source code by linking
+BuildJediByLinking?
+
+# Stage JEDI static files
+CloneJedi => StageJedi
+
+# Clone geos ana for generating observing system records
+CloneGeosMksi
+"""
+
+cycle_template = """
+# Generate satellite channel records
+CloneGeosMksi[^] => GenerateObservingSystemRecords
+
+# Get and convert bias correction coefficients
+GetGsiBc => GsiBcToIoda
+
+# Get and convert ncdiags
+GetGsiNcdiag => GsiNcdiagToIoda
+
+# Get background
+GetGeosAdasBackground
+
+# Run Jedi variational executable
+GenerateObservingSystemRecords => RunJediVariationalExecutable
+BuildJediByLinking[^]  => RunJediVariationalExecutable
+StageJedi[^] => RunJediVariationalExecutable
+GsiBcToIoda => RunJediVariationalExecutable
+GsiNcdiagToIoda => RunJediVariationalExecutable
+GetGeosAdasBackground => RunJediVariationalExecutable
+
+# Clean cycle
+RunJediVariationalExecutable => CleanCycle
+"""
+
+# --------------------------------------------------------------------------------------------------
 
 class Workflow_geosadas(CylcWorkflow):
     def define_description(self):
@@ -36,49 +76,14 @@ class Workflow_geosadas(CylcWorkflow):
         graph_str = ''
 
         # Define the string for the R1 (first non-cycling) section
-        r1 = """
-            # Clone JEDI source code
-            CloneJedi
-
-            # Build JEDI source code by linking
-            BuildJediByLinking?
-
-            # Stage JEDI static files
-            CloneJedi => StageJedi
-
-            # Clone geos ana for generating observing system records
-            CloneGeosMksi
-            """
+        r1 = r1_template
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
 
         # Format the string for each cycle
         for cycle_time in ['T00']:
-            cycle_str = f"""
-            # Generate satellite channel records
-            CloneGeosMksi[^] => GenerateObservingSystemRecords
-
-            # Get and convert bias correction coefficients
-            GetGsiBc => GsiBcToIoda
-
-            # Get and convert ncdiags
-            GetGsiNcdiag => GsiNcdiagToIoda
-
-            # Get background
-            GetGeosAdasBackground
-
-            # Run Jedi variational executable
-            GenerateObservingSystemRecords => RunJediVariationalExecutable
-            BuildJediByLinking[^]  => RunJediVariationalExecutable
-            StageJedi[^] => RunJediVariationalExecutable
-            GsiBcToIoda => RunJediVariationalExecutable
-            GsiNcdiagToIoda => RunJediVariationalExecutable
-            GetGeosAdasBackground => RunJediVariationalExecutable
-
-            # Clean cycle
-            RunJediVariationalExecutable => CleanCycle
-            """
+            cycle_str = cycle_template
             graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section

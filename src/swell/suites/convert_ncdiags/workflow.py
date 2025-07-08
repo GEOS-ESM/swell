@@ -11,6 +11,35 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
+r1_template = """
+# Triggers for non cycle time dependent tasks
+# -------------------------------------------
+# Clone JEDI source code
+CloneJedi
+
+# Build JEDI source code by linking
+CloneJedi => BuildJediByLinking?
+
+# If not able to link to build create the build
+BuildJediByLinking:fail? => BuildJedi
+"""
+
+cycle_template = """
+# Convert bias correction to ioda
+GetGsiBc
+GetGsiBc => GsiBcToIoda
+BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+
+# Convert ncdiags to ioda
+GetGsiNcdiag
+GetGsiNcdiag => GsiNcdiagToIoda
+BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+# Clean up
+GsiNcdiagToIoda => CleanCycle
+"""
+
+# --------------------------------------------------------------------------------------------------
 
 class Workflow_convert_ncdiags(CylcWorkflow):
     def define_description(self):
@@ -27,18 +56,7 @@ class Workflow_convert_ncdiags(CylcWorkflow):
         graph_str = ''
 
         # Define the string for the R1 (first non-cycling) section
-        r1 = """
-            # Triggers for non cycle time dependent tasks
-            # -------------------------------------------
-            # Clone JEDI source code
-            CloneJedi
-
-            # Build JEDI source code by linking
-            CloneJedi => BuildJediByLinking?
-
-            # If not able to link to build create the build
-            BuildJediByLinking:fail? => BuildJedi
-            """
+        r1 = r1_template
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
@@ -47,20 +65,7 @@ class Workflow_convert_ncdiags(CylcWorkflow):
         for model in self.experiment_dict['models'].keys():
             if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
                 for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
-                    cycle_str = f"""
-                    # Convert bias correction to ioda
-                    GetGsiBc
-                    GetGsiBc => GsiBcToIoda
-                    BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
-
-                    # Convert ncdiags to ioda
-                    GetGsiNcdiag
-                    GetGsiNcdiag => GsiNcdiagToIoda
-                    BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
-
-                    # Clean up
-                    GsiNcdiagToIoda => CleanCycle
-                    """
+                    cycle_str = cycle_template
                     graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section

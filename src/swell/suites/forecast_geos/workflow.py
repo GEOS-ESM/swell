@@ -11,6 +11,41 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
+r1_template = """
+# Triggers for non cycle time dependent tasks
+# -------------------------------------------
+# Clone Geos source code
+CloneGeos
+
+# Build Geos source code by linking
+CloneGeos => BuildGeosByLinking?
+
+# If not able to link to build create the build
+BuildGeosByLinking:fail? => BuildGeos
+
+# Need first set of restarts to run model
+GetGeosRestart => PrepGeosRunDir
+
+# Get first set of restarts
+BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
+"""
+
+cycle_template = """
+# Run Geos Executable
+PrepGeosRunDir => RunGeosExecutable
+MoveForecastRestart[-PT6H] => PrepGeosRunDir
+
+# Move restart to next cycle
+RunGeosExecutable => MoveForecastRestart
+
+# Save restarts if requested
+# MoveForecastRestart[-PT6H] => SaveRestart
+
+# Remove Run Directory
+MoveForecastRestart => RemoveForecastDir
+"""
+
+# --------------------------------------------------------------------------------------------------
 
 class Workflow_forecast_geos(CylcWorkflow):
     def define_description(self):
@@ -27,24 +62,7 @@ class Workflow_forecast_geos(CylcWorkflow):
         graph_str = ''
 
         # Define the string for the R1 (first non-cycling) section
-        r1 = """
-            # Triggers for non cycle time dependent tasks
-            # -------------------------------------------
-            # Clone Geos source code
-            CloneGeos
-
-            # Build Geos source code by linking
-            CloneGeos => BuildGeosByLinking?
-
-            # If not able to link to build create the build
-            BuildGeosByLinking:fail? => BuildGeos
-
-            # Need first set of restarts to run model
-            GetGeosRestart => PrepGeosRunDir
-
-            # Get first set of restarts
-            BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
-            """
+        r1 = r1_template
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)
@@ -53,21 +71,7 @@ class Workflow_forecast_geos(CylcWorkflow):
         for model in self.experiment_dict['models'].keys():
             if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
                 for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
-                    cycle_str = f"""
-
-                    # Run Geos Executable
-                    PrepGeosRunDir => RunGeosExecutable
-                    MoveForecastRestart[-PT6H] => PrepGeosRunDir
-
-                    # Move restart to next cycle
-                    RunGeosExecutable => MoveForecastRestart
-
-                    # Save restarts if requested
-                    # MoveForecastRestart[-PT6H] => SaveRestart
-
-                    # Remove Run Directory
-                    MoveForecastRestart => RemoveForecastDir
-                    """
+                    cycle_str = cycle_template
                     graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
