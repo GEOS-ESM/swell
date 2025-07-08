@@ -36,7 +36,7 @@ class UnusedVariablesTest(unittest.TestCase):
             for filename in files:
                 # Only process Python files
                 # Ignore results from task_runtimes.py
-                if filename.endswith('.py') and filename not in ['task_runtimes.py']:  
+                if filename.endswith('.py') and filename not in ['task_runtimes.py']:
                     file_path = os.path.join(root, filename)
                     flake8_output = run_flake8(file_path)
 

@@ -161,9 +161,11 @@ class CylcWorkflow():
     def define_scheduling_section(self) -> CylcSection:
         scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
                            'final cycle point': self.experiment_dict['final_cycle_point']}
-        
+
         if 'runahead_limit' in self.experiment_dict:
-            scheduling_dict = update_dict(scheduling_dict, {'runahead limit': self.experiment_dict['runahead_limit']})
+            scheduling_dict = update_dict(
+                    scheduling_dict,
+                    {'runahead limit': self.experiment_dict['runahead_limit']})
 
         scheduling_section = self.create_new_section('scheduling', scheduling_dict)
 

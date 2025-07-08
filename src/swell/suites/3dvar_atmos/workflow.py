@@ -61,7 +61,9 @@ StageJediCycle-{model_component}
 BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{model_component}
 CloneJedi[^] => StageJediCycle-{model_component}
 StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} => RunJediVariationalExecutable-{model_component}
+GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} =>
+RunJediVariationalExecutable-{model_component}
+
 GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
 GenerateObservingSystemRecords-{model_component} => RunJediVariationalExecutable-{model_component}
 
@@ -83,6 +85,7 @@ CleanCycle-{model_component}
 """
 
 # --------------------------------------------------------------------------------------------------
+
 
 class Workflow_3dvar_atmos(CylcWorkflow):
     def define_description(self):
@@ -112,7 +115,7 @@ class Workflow_3dvar_atmos(CylcWorkflow):
             if 'cycle_times' in self.experiment_dict['models'][model_component]:
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
                     cycle_str = cycle_template_1.format(model_component=model_component)
-            
+
                     if self.experiment_dict['models'][model_component]['cycling_varbc']:
                         cycle_str += cycle_template_2.format(model_component=model_component)
                     else:
