@@ -108,8 +108,8 @@ class Workflow_3dvar(CylcWorkflow):
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
                     cycle_str = cycle_template.format(model_component=model_component)
 
-            # Add the cycle string to the graph string
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Add the cycle string to the graph string
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)

@@ -148,6 +148,7 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
         for model_component in self.experiment_dict['model_components']:
             if 'cycle_times' in self.experiment_dict['models'][model_component]:
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
+
                     cycle_str = cycle_template_1.format(model_component=model_component)
                     if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
                         cycle_str += cycle_template_2.format(model_component=model_component)
@@ -156,8 +157,8 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
 
                     cycle_str += cycle_template_4.format(model_component=model_component)
 
-            # Add the cycle string to the graph string
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                    # Add the cycle string to the graph string
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
 
         # Create the graph section
         graph_section = self.create_new_section('graph', graph_str)
