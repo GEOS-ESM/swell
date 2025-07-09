@@ -171,6 +171,11 @@ class PrepareExperimentConfigAndSuite:
         # Track all possible tasks
         task_options = []
 
+        # Model components used by the experiment
+        model_components = []
+        if 'model_components' in self.experiment_dict.keys():
+            model_components = self.experiment_dict['model_components']
+
         # Iterate through model independent tasks and update with defaults if not already set
         for task in self.model_independent_tasks:
             task_options.append(task)
@@ -184,9 +189,9 @@ class PrepareExperimentConfigAndSuite:
 
                         for question_model in question['models']:
                             if question_model == 'all_models':
-                                for model in self.experiment_dict['model_components']:
+                                for model in model_components:
                                     model_dict[model] = question_dict
-                            elif question_model in self.experiment_dict['model_components']:
+                            elif question_model in model_components:
                                 model_dict[question_model] = question_dict
 
                         self.question_dictionary_model_dep = add_dict(
