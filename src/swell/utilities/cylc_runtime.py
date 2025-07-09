@@ -80,6 +80,8 @@ class Task:
     # --------------------------------------------------------------------------------------------------
 
     def match_platform(self, content: Union[str, dict], platform: str):
+        # Resolve platform-specific entries in the task object
+
         if isinstance(content, Mapping):
             if platform in content.keys():
                 content = content[platform]
@@ -115,6 +117,9 @@ class Task:
     # --------------------------------------------------------------------------------------------------
 
     def generate_task_slurm_dict(self, slurm_external: Mapping, platform: str) -> Mapping:
+        # Take the external slurm dictionary and merge it with the task's parameters
+        # to get the dict that will be output in the flow.cylc
+
         slurm_dict = {}
         if self.slurm is not None:
             for key, value in self.slurm.items():

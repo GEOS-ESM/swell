@@ -100,8 +100,11 @@ class PrepareExperimentConfigAndSuite:
         self.comment_dict['suite_to_run'] = 'Record of the suite being executed'
 
         # Get list of all possible models
+        # -------------------------------
         self.possible_model_components = get_model_components()
 
+        # Start initializing the suite questions first
+        # --------------------------------------------
         self.prepare_suite_question_dictionary()
         self.override_with_defaults(QuestionType.SUITE)
         self.override_with_external(QuestionType.SUITE)
@@ -110,6 +113,8 @@ class PrepareExperimentConfigAndSuite:
     # ----------------------------------------------------------------------------------------------
 
     def configure_and_ask_task_questions(self) -> None:
+        # Finalize the experiment config with task questions
+
         self.prepare_task_question_dictionary()
         self.override_with_defaults(QuestionType.TASK)
         self.override_with_external(QuestionType.TASK)
@@ -125,6 +130,7 @@ class PrepareExperimentConfigAndSuite:
     # ----------------------------------------------------------------------------------------------
 
     def prepare_suite_question_dictionary(self) -> None:
+        # Get questions from the suite config
 
         question_dictionary_model_ind = {}
         question_dictionary_model_dep = {}
@@ -167,6 +173,7 @@ class PrepareExperimentConfigAndSuite:
     # ----------------------------------------------------------------------------------------------
 
     def prepare_task_question_dictionary(self):
+        # Fill in the question dictionaries with questions from the tasks
 
         # Track all possible tasks
         task_options = []
@@ -354,6 +361,8 @@ class PrepareExperimentConfigAndSuite:
                               suite_task: QuestionType,
                               question_dictionary: Mapping
                               ) -> Mapping:
+
+        # Get all questions of a certain type
         out_dict = {}
 
         if 'models' in question_dictionary.keys():
@@ -372,6 +381,7 @@ class PrepareExperimentConfigAndSuite:
     # ----------------------------------------------------------------------------------------------
 
     def ask_questions_and_configure(self, suite_task: QuestionType) -> Tuple[dict, dict]:
+        # Handle asking questions for either suites or tasks
 
         if self.config_client.__class__.__name__ == 'GetAnswerCli' and (
                 suite_task == QuestionType.SUITE):
@@ -459,99 +469,5 @@ class PrepareExperimentConfigAndSuite:
             return False
 
         return True
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_suite_task_list_model_ind(self, suite_str: str) -> list:
-
-        # Search the suite string for lines containing 'swell task' and not '-m'
-        swell_task_lines = [line for line in suite_str.split('\n') if 'swell task' in line and
-                            '-m' not in line]
-
-        # Now get the task part
-        tasks = []
-        for line in swell_task_lines:
-            # Split by 'swell task'
-            # Remove any leading spaces
-            # Split by space
-            tasks.append(line.split('swell task')[1].strip().split(' ')[0])
-
-        # Ensure there are no duplicate tasks
-        tasks = list(set(tasks))
-
-        # Return tasks
-        return tasks
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_all_model_dep_tasks(self, suite_str: str) -> list:
-
-        # Search the suite string for lines containing 'swell task' and '-m'
-        swell_task_lines = [line for line in suite_str.split('\n') if 'swell task' in line and
-                            '-m' in line]
-
-        # Strip " and spaces from all lines
-        swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
-        swell_task_lines = [line.strip() for line in swell_task_lines]
-
-        # All tasks
-        all_tasks = []
-
-        for line in swell_task_lines:
-            all_tasks.append(line.split('swell task ')[1].split(' ')[0])
-
-        # Ensure all_tasks are unique
-        all_tasks = list(set(all_tasks))
-
-        return all_tasks
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_suite_task_list_model_dep(self, suite_str: str) -> dict:
-
-        # Search the suite string for lines containing 'swell task' and '-m'
-        swell_task_lines = [line for line in suite_str.split('\n') if 'swell task' in line and
-                            '-m' in line]
-
-        # Strip " and spaces from all lines
-        swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
-        swell_task_lines = [line.strip() for line in swell_task_lines]
-
-        # Now get the model part
-        models = []
-        for line in swell_task_lines:
-            models.append(line.split('-m')[1].split('0')[0].strip())
-
-        # Unique models
-        models = list(set(models))
-
-        # Assemble dictionary where key is model and val is the tasks that model is associated with
-        model_tasks = {}
-        for model in models:
-
-            # Get all elements of swell_task_lines that contains "-m {model}"
-            model_tasks_this_model = [line for line in swell_task_lines if f'-m {model}' in line]
-
-            # Get task name
-            tasks = []
-            for line in model_tasks_this_model:
-                tasks.append(line.split('swell task ')[1].split(' ')[0])
-
-            # Unique model tasks
-            model_tasks[model] = list(set(tasks))
-
-        # Return the dictionary
-        return model_tasks
-
-    # ----------------------------------------------------------------------------------------------
-
-    def get_dynamic_tasks(self, question_list: list) -> list:
-        tasks = []
-
-        for question in question_list:
-            if question['question_name'] == 'dynamic_task_list':
-                tasks.extend(question['default_value'])
-
-        return tasks
 
 # --------------------------------------------------------------------------------------------------

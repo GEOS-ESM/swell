@@ -40,6 +40,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def format_string_block(self, string) -> str:
+        # Format a string block with proper indentation
+
         out_string = '"""\n'
         out_string += indent_lines(string, 1, True)
         out_string += '"""\n'
@@ -49,6 +51,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def format_cycle(self, name: str, cycle: str) -> str:
+        # Format a cycle in the graph section
+
         cycle_string = f'{name} = '
         cycle_string += self.format_string_block(cycle)
         return cycle_string
@@ -56,6 +60,7 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def reset_indentation(self, string: str) -> str:
+
         out_string = ''
 
         start = False
@@ -73,6 +78,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def setup_workflow(self) -> None:
+        # Initial setup for the workflow, includes everything but the runtime section
+
         self.header = self.define_header()
         self.description = self.define_description()
         self.scheduler = self.define_scheduler()
@@ -83,6 +90,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_header(self) -> str:
+        # Define a 'header', usually this includes any copyright information
+
         header = '#!jinja2\n'
         header += self.comment_block(string="""
         # (C) Copyright 2021- United States Government as represented by the Administrator of the
@@ -104,6 +113,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def comment_block(self, string, level: int = 0, section_break: bool = True):
+        # Format a comment block with proper indentation
+
         out_string = ''
 
         string = indent_lines(string, level, reset=True)
@@ -124,6 +135,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_scheduler(self) -> str:
+        # Define a scheduler section that includes email infrastructure
+
         scheduler_str = 'UTC mode = True\nallow implicit tasks = False\n'
 
         settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
@@ -149,6 +162,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_scheduling(self) -> str:
+        # Get the string for the entire scheduling section
+
         scheduling = self.define_scheduling_section()
         graph = self.define_graph_section()
 
@@ -159,6 +174,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_scheduling_section(self) -> CylcSection:
+        # Define a CylcSection object that comprises the initial contents of the scheduling section
+        # This will be appended to the graph section to create the overall section
         scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
                            'final cycle point': self.experiment_dict['final_cycle_point']}
 
@@ -174,11 +191,14 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_graph_section(self) -> CylcSection:
+        # Define a CylcSection object that will be used to build the scheduling section
         return self.create_new_section('graph')
 
     # --------------------------------------------------------------------------------------------------
 
     def parse_graph_for_tasks(self) -> CylcSection:
+        # Iterate through the graph section and determine all the tasks used by the suite
+
         tasks = []
 
         cylc_characters = [':', '[', ']', '?']
@@ -217,6 +237,8 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
+        # Separate the tasks into model independent and dependent
+
         ind_tasks = []
         model_tasks = {}
 
@@ -245,18 +267,23 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def define_runtime_task_overrides(self) -> dict:
+        # Override in suite file to set any custom runtimes as needed by the suite
         return {}
 
     # --------------------------------------------------------------------------------------------------
 
     def create_new_section(self, name: Optional[str] = None, content: Union[str, dict] = ''):
+        # Create a new section with indentation and content
         return CylcSection(name, content)
 
     # --------------------------------------------------------------------------------------------------
 
     def define_runtime(self) -> str:
+        # Handle adding runtime sections for all tasks
+
         runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
 
+        # Grab any overrides for certain tasks
         runtime_overrides = self.define_runtime_task_overrides()
 
         for task in ['root'] + self.tasks:
@@ -291,6 +318,7 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def get_workflow_str(self) -> str:
+        # Get the whole string to go into the flow.cylc file
 
         workflow_str = ''
 
