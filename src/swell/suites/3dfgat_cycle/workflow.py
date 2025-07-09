@@ -140,7 +140,7 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
         r1 = r1_template
 
         for model_component in self.experiment_dict['model_components']:
-            r1 += r1_template.format(model_component=model_component)
+            r1 += r1_model.format(model_component=model_component)
 
         # Format the R1 cycle and add it to the graph
         graph_str += self.format_cycle('R1', r1)

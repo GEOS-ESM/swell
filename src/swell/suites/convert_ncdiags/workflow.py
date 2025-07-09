@@ -64,7 +64,7 @@ class Workflow_convert_ncdiags(CylcWorkflow):
 
         # Format the string for each cycle
         for model in self.experiment_dict['models'].keys():
-            if 'cycle_times' in self.experiment_dict['models'][model]['cycle_times']:
+            if 'cycle_times' in self.experiment_dict['models'][model].keys():
                 for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
                     cycle_str = cycle_template
                     graph_str += self.format_cycle(cycle_time, cycle_str)
