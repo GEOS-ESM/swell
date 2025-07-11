@@ -6,7 +6,15 @@ time window:
   end: '{{window_end_iso}}'
   bound to include: begin
 
-increment variables: [ua,va,t,delp,q,qi,ql,o3ppmv]
+increment variables:
+  - eastward_wind
+  - northward_wind
+  - air_temperature
+  - air_pressure_thickness
+  - water_vapor_mixing_ratio_wrt_moist_air
+  - cloud_liquid_ice
+  - cloud_liquid_water
+  - mole_fraction_of_ozone_in_air
 
 background:
   TASKFILLbackground_ensemble

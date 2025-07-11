@@ -4,10 +4,13 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/amsua_n19.{{window_begin}}.nc4'
+      missing file action: warn
   obsdataout:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsua_n19.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
   simulated variables: [brightnessTemperature]
   channels: &amsua_n19_available_channels {{amsua_n19_avail_channels}}
 
@@ -25,8 +28,6 @@ obs operator:
 obs bias:
   input file: '{{cycle_dir}}/amsua_n19.{{background_time}}.satbias.nc4'
   output file: '{{cycle_dir}}/amsua_n19.{{window_begin}}.satbias.nc4'
-  variables without bc: [brightnessTemperature]
-  channels: 14
   variational bc:
     predictors:
     - name: constant
