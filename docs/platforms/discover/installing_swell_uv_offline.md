@@ -1,6 +1,6 @@
-# Installing Swell with `uv` without internet access
+# Installing SWELL with `uv` without internet access
 This page is only for the users **who have no outranet on Discover**. We show here:
-- How to install uv and Swell using offline packages;
+- How to install uv and SWELL using offline packages;
 - How to synchronize your code between Discover and GitHub.
 
 #### Install uv
@@ -12,32 +12,49 @@ This page is only for the users **who have no outranet on Discover**. We show he
 ```bash
     INSTALLER_DOWNLOAD_URL=[discover_path] ./install.sh
 ```
-This will finish the uv installation. Then follow the Swell documentation to finish other uv settings
+This will finish the uv installation. Then follow the SWELL documentation to finish other uv settings
 
-#### Install Swell
-We will download all the required packages on local with the corresponding python version `` [python_version]`, and then install those packages on Discover.
-1. on a `x86_64` Linux machine (e.g., an AWS ec2 instance with Intel or AMD CPU, and with os=`sles15`), get all the required offline installation packages. 
+#### Install SWELL
+We will download all the required packages on local with the corresponding python version `[python_version]`, and then install those packages on Discover.
+1. Find the python version used by the JEDI module. On Discover, Load the `mod_swell` (see instructions [here](platforms/discover/installing_swell_uv_venv.md)). Then get the python version `[python_version]` by running `python --version`.
+2. On a `x86_64` Linux machine (e.g., an AWS ec2 instance with Intel or AMD CPU, and with os=`sles15`), get all the required offline installation packages. 
 ```bash
     #install uv first
 
-    #assume you now have installed uv 
-    uv venv -p python[python_version] myenv 
-    source myenv/bin/activate
-
     git clone https://github.com/GEOS-ESM/swell
     cd swell    # your swell repo
+
+    #assume you now have installed uv 
+    uv venv --python=python[python3_version]  # e.g., uv venv --python=python3.11.7
+    source .venv/bin/activate
+    python --version # check if this gives the same [python_version] as on Discover
+
     uv pip install pip
     which pip3  # make sure that the path of pip3 is the one under your venv
 
     mkdir ../downloaded # where offline packages will be saved to
-    pip3 download setuptools>=40.8.0 -d ../downloaded
+    pip3 download "setuptools>=40.8.0" -d ../downloaded
     pip3 download -r requirements.txt -d ../downloaded  
 ```
 3. Upload the packages under `downloaded` to a Discover directory, `[discover_offline_pkg_path]`
-4. Install the packages on Discover. 
+4. On Discover, install the packages by
 ```bash
-pip3 install --no-index --find-links=[discover_offline_pkg_path] -r requirements.txt
+    # get into the swell directory
+
+    # load mod_swell
+
+    uv venv
+    source .venv/bin/activate
+    which python  # ensure python points to the python under your venv
+
+    # include pip3 under the same venv
+    which pip3    # as you can see, now pip3 is outside of the venv
+    python -m ensurepip --upgrade
+    which pip3    # now pip3 points to the same dir as python under your venv
+
+    pip3 install --no-index --find-links=[discover_offline_pkg_path] -r requirements.txt
 ```
+5. Install SWELL in editable mode `python -m pip install -e .`
 
 
 #### Code synchronization when outranet is disabled on Discover
