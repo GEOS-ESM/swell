@@ -22,7 +22,7 @@ We will download all the required packages on local with the corresponding pytho
     #install uv first
 
     git clone https://github.com/GEOS-ESM/swell
-    cd swell    # your swell repo
+    cd swell    # your SWELL repo
 
     #assume you now have installed uv 
     uv venv --python=python[python3_version]  # e.g., uv venv --python=python3.11.7
@@ -32,30 +32,38 @@ We will download all the required packages on local with the corresponding pytho
     uv pip install pip
     which pip3  # make sure that the path of pip3 is the one under your venv
 
-    mkdir ../downloaded # where offline packages will be saved to
-    pip3 download "setuptools>=40.8.0" -d ../downloaded
+    mkdir ../downloaded  # where offline packages will be saved to
     pip3 download -r requirements.txt -d ../downloaded  
 ```
 3. Upload the packages under `downloaded` to a Discover directory, `[discover_offline_pkg_path]`
-4. On Discover, install the packages by
+4. On a milan node from Discover, install the packages by
 ```bash
     # get into the swell directory
 
-    # load mod_swell
-
+    mod_swell
     uv venv
     source .venv/bin/activate
     which python  # ensure python points to the python under your venv
-
-    # include pip3 under the same venv
-    which pip3    # as you can see, now pip3 is outside of the venv
-    python -m ensurepip --upgrade
-    which pip3    # now pip3 points to the same dir as python under your venv
-
+    ml purge
+    python -m ensurepip --upgrade  # this installed pip & setuptools
+    which pip3    # ensure pip3 points to the same dir as python under your venv
     pip3 install --no-index --find-links=[discover_offline_pkg_path] -r requirements.txt
 ```
-5. Install SWELL in editable mode `python -m pip install -e .`
-
+5. Install SWELL in editable mode 
+```
+    deactivate 
+    mod_swell
+    source .venv/bin/activate
+    python -m pip install -e .
+```
+#### Reuse SWELL and launch SWELL jobs
+Log into a **Milan** node on Discover, run 
+```
+mod_swell
+cd swell  # your SWELL repo
+source .venv/bin/activate
+```
+Then use `swell create/launch [...]` to create/launch your SWELL jobs.
 
 #### Code synchronization when outranet is disabled on Discover
 The idea is to use the repo at local as a middle man, so that you can 
