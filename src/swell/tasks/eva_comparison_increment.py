@@ -121,7 +121,7 @@ class EvaComparisonIncrement(taskBase):
                                        cycle_time, self.get_model())
             cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
                                        cycle_time, self.get_model())
-            
+
             # Files to fill the template in the config file
             increment_file_path_1 = os.path.join(cycle_dir_1, incr_file_1)
             increment_file_path_2 = os.path.join(cycle_dir_2, incr_file_2)
