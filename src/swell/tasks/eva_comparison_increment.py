@@ -30,7 +30,7 @@ class EvaComparisonIncrement(taskBase):
         cycle_times = []
 
         for cycle_path in cycle_paths:
-            cycle_time = cycle_path.split(f'Z/{self.get_model()}')[0].split('run/')[1]
+            cycle_time = cycle_path.split(f'/{self.get_model()}')[0].split('run/')[1]
             cycle_times.append(cycle_time)
 
         return cycle_times
@@ -49,8 +49,8 @@ class EvaComparisonIncrement(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
-        experiment_id_1 = os.path.basename(os.path.dirname(experiment_path_1))
-        experiment_id_2 = os.path.basename(os.path.dirname(experiment_path_2))
+        experiment_id_1 = os.path.basename(os.path.dirname(experiment_path_1)).replace('-suite', '')
+        experiment_id_2 = os.path.basename(os.path.dirname(experiment_path_2)).replace('-suite', '')
 
         cycle_times_1 = self.cycles_in_experiment(experiment_path_1)
         cycle_times_2 = self.cycles_in_experiment(experiment_path_2)
@@ -58,8 +58,9 @@ class EvaComparisonIncrement(taskBase):
         cycle_times = list(set(cycle_times_1) & set(cycle_times_2))
 
         for cycle_time in cycle_times:
-            cycle_dir = os.path.join(self.experiment_root(), 'run', cycle_time, self.get_model(), 'eva')
+            cycle_dir = os.path.join(self.experiment_path(), 'run', cycle_time, self.get_model())
             os.makedirs(cycle_dir, exist_ok=True)
+            print(cycle_dir)
 
             cycle_time_dto = datetime.datetime.strptime(cycle_time, '%Y%m%dT%H%M%SZ')
 
@@ -87,7 +88,10 @@ class EvaComparisonIncrement(taskBase):
             increment_file_path_1 = os.path.join(cycle_dir_1, incr_file_1)
             increment_file_path_2 = os.path.join(cycle_dir_2, incr_file_2)
 
-            eva_override['cycle_dir'] = self.cycle_dir()
+            eva_override['cycle_dir'] = cycle_dir
+            eva_override['cycle_dir_1'] = cycle_dir_1
+            eva_override['cycle_dir_2'] = cycle_dir_2
+
             eva_override['cycle_time'] = cycle_time_reformat
             eva_override['increment_file_path_1'] = increment_file_path_1
             eva_override['increment_file_path_2'] = increment_file_path_2
@@ -98,7 +102,7 @@ class EvaComparisonIncrement(taskBase):
 
             # Write eva dictionary to file
             # ----------------------------
-            conf_output = os.path.join(self.cycle_dir(), 'eva', 'increment', 'comparison_increment_eva.yaml')
+            conf_output = os.path.join(cycle_dir, 'eva', 'increment', 'comparison_increment_eva.yaml')
             os.makedirs(os.path.dirname(conf_output), exist_ok=True)
             with open(conf_output, 'w') as outfile:
                 yaml.dump(eva_dict, outfile, default_flow_style=False)

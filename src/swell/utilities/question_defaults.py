@@ -29,7 +29,7 @@ class QuestionDefaults():
         default_value: list = mutable_field([])
         question_name: str = "comparison_experiment_paths"
         ask_question: bool = True
-        prompt: str = "Provide paths to two or more experiments to run comparison tests on."
+        prompt: str = "Provide paths to two experiments to run comparison tests on."
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------

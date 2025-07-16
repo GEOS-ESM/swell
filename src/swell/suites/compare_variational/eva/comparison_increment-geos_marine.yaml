@@ -36,16 +36,16 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSH Increment
+          label: SSH Increment 1
         add_grid:
         layers:
         - type: MapGridded
           longitude:
-            variable: experiment_increment::SOCAgrid::lon
+            variable: experiment_increment_1::SOCAgrid::lon
           latitude:
-            variable: experiment_increment::SOCAgrid::lat
+            variable: experiment_increment_1::SOCAgrid::lat
           data:
-            variable: experiment_increment::SOCAVars::ave_ssh
+            variable: experiment_increment_1::SOCAVars::ave_ssh
           label: ave_ssh increment 1
           colorbar: true
           cmap: 'bwr'
@@ -58,7 +58,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSH Increment
+          label: SSH Increment 2
         add_grid:
         layers:
         - type: MapGridded
@@ -93,8 +93,6 @@ graphics:
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ave_ssh
-          vmax: *vmax_ave_ssh
 
   - batch figure:
       variables: [Temp]
@@ -110,7 +108,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SST Increment
+          label: SST Increment 1
         add_grid:
         layers:
         - type: MapGridded
@@ -144,7 +142,7 @@ graphics:
           data:
             variable: experiment_increment_2::SOCAVars::Temp
             slices: '[0,...]'
-          label: SST increment
+          label: SST increment 2
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_temp
@@ -167,11 +165,9 @@ graphics:
           data:
             variable: experiment_increment_1::SOCAVars::Temp_diff
             slices: '[0,...]'
-          label: SST increment
+          label: SST increment (1-2) Diff
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_temp
-          vmax: *vmax_temp
 
   - batch figure:
       variables: [Salt]
@@ -187,7 +183,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment
+          label: SSS Increment 1
         add_grid:
         layers:
         - type: MapGridded
@@ -210,7 +206,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment
+          label: SSS Increment 2
         add_grid:
         layers:
         - type: MapGridded
@@ -225,7 +221,7 @@ graphics:
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_salt
-          vmax: *vmin_salt
+          vmax: *vmax_salt
 
       # Salt Diff plot
       - mapping:
@@ -233,7 +229,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment
+          label: SSS Increment (1-2) Diff
         add_grid:
         layers:
         - type: MapGridded
@@ -247,8 +243,6 @@ graphics:
           label: SSS increment (1-2) Diff
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_salt
-          vmax: *vmin_salt
 
 # ssh diff
 transforms:
@@ -259,7 +253,6 @@ transforms:
   transform: arithmetic
 
 # Temp diff
-transforms:
 - equals: experiment_increment_1::SOCAVars::Temp-experiment_increment_2::SOCAVars::Temp
   for:
     variable: Temp
@@ -267,7 +260,6 @@ transforms:
   transform: arithmetic
 
 # Salt diff
-transforms:
 - equals: experiment_increment_1::SOCAVars::Salt-experiment_increment_2::SOCAVars::Salt
   for:
     variable: Salt
