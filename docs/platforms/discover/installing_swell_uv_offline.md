@@ -33,6 +33,7 @@ We will download all the required packages on local with the corresponding pytho
     which pip3  # make sure that the path of pip3 is the one under your venv
 
     mkdir ../downloaded  # where offline packages will be saved to
+    pip3 download "setuptools>=40.8.0" -d ../downloaded
     pip3 download -r requirements.txt -d ../downloaded  
 ```
 3. Upload the packages under `downloaded` to a Discover directory, `[discover_offline_pkg_path]`
@@ -47,6 +48,11 @@ We will download all the required packages on local with the corresponding pytho
     ml purge
     python -m ensurepip --upgrade  # this installed pip & setuptools
     which pip3    # ensure pip3 points to the same dir as python under your venv
+    # (optional_start) run these if pip3 does not points to the one under your venv
+    deactivate
+    source .venv/bin/activate
+    which pip3    # ensure pip3 points to the same dir as python under your venv
+    # (optional_end)
     pip3 install --no-index --find-links=[discover_offline_pkg_path] -r requirements.txt
 ```
 5. Install SWELL in editable mode 
