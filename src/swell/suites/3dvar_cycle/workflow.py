@@ -108,7 +108,7 @@ MoveDaRestart-{model_component} => RemoveForecastDir
 
 # Clean up large files
 # EvaObservations-{model_component} & EvaJediLog-{model_component} &
-SaveObsDiags-{model_component} & RemoveForecastDir =>
+# SaveObsDiags-{model_component} & RemoveForecastDir =>
 EvaObservations-{model_component} & EvaJediLog-{model_component} &
 EvaIncrement-{model_component}  & SaveObsDiags-{model_component} =>
 CleanCycle-{model_component}

@@ -565,6 +565,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    EvaComparisonIncrement = QuestionList(
+        list_name="EvaIncrement",
+        questions=[
+            EvaIncrement
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GenerateObservingSystemRecords = QuestionList(
         list_name="GenerateObservingSystemRecords",
         questions=[

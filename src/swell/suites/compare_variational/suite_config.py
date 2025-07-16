@@ -21,6 +21,7 @@ _3dvar = getattr(_3dvar_config, '_3dvar')
 
 # --------------------------------------------------------------------------------------------------
 
+
 class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="compare",
         questions=[
             sq.compare,
+            qd.model_components(),
             qd.runahead_limit(),
         ]
     )

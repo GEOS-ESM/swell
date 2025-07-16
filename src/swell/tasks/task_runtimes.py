@@ -70,6 +70,10 @@ class TaskRuntimes():
         is_model: bool = True
 
     @dataclass
+    class EvaComparisonIncrement(Task):
+        is_model: bool = True
+
+    @dataclass
     class EvaIncrement(Task):
         is_cycling: bool = True
         is_model: bool = True

@@ -62,6 +62,9 @@ class Workflow_compare_variational(CylcWorkflow):
 
         graph_str = ''
 
+        for model in self.experiment_dict['model_components']:
+            graph_str += self.format_cycle('R1', f"EvaComparisonIncrement-{model}\n")
+
         for cycle_time, models in cycle_model_times.items():
             cycle_str = ''
 
