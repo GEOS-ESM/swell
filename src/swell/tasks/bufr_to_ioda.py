@@ -164,8 +164,7 @@ class BufrToIoda(taskBase):
 
             # find the obs type within the filename
             obs_type = find_obstype_match(bufr_path_file)
-            #print(f'obs_type: {obs_type}') # GOOD ~ 
-
+            
             # Source file ~ bufr file to be converted 
             bufr_file_source_path = os.path.basename(bufr_path_file)
             
