@@ -104,7 +104,7 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[ GetBufr ]]
+    [[GetBufr]]
         script = "swell task GetBufr $config -d $datetime -m geos_atmosphere"
 
     # GetYaml ~ existing code outside of Swell workflow
