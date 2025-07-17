@@ -53,10 +53,9 @@ def find_obstype_match(filename):
     
     """
     # 
-    obs_type_search_dict = bufr2ioda_obs_type_dict
     parts = filename.split('.')
     for part in parts:
-        if part in obs_type_search_dict:
+        if part in bufr2ioda_obs_type_dict:
             print(f"Match found: {part}")
             return part
     print("No match found.")

@@ -107,10 +107,7 @@
     [[GetBufr]]
         script = "swell task GetBufr $config -d $datetime -m geos_atmosphere"
 
-    # GetYaml ~ existing code outside of Swell workflow
-    # EditYaml
-
-    [[ BufrToIoda ]]
+    [[BufrToIoda]]
         script = "swell task BufrToIoda $config -d $datetime -m geos_atmosphere"
 
     [[CleanCycle]]
