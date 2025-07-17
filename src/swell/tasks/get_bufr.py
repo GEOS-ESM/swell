@@ -47,10 +47,7 @@ class GetBufr(taskBase):
 
 
         # --------------------------------------------------------------
-
-        print(self.cycle_time_dto())
-        #print(self.observations())
-
+        
         # Convert cycle time datetime object to string with format yyyymmdd
         bymd = datetime.datetime.strftime(self.cycle_time_dto(),
                                                       datetime_formats['ymd_format'])
@@ -67,10 +64,10 @@ class GetBufr(taskBase):
 
         ihms = '060000' # window_length in experiment.yaml
         nstep = '1'
-        obsclass = 'ncep_1bamua_bufr' # ['ncep_1bamua_bufr','ncep_1bamub_bufr']
-        #obsclass = self.observations()
+        obsclass = 'ncep_1bamua_bufr'         #obsclass = self.observations()
 
-        #spool = os.path.join(swell_exp_path, "spool")
+        # Example values
+        # --------------
         #bymd = '20211212'
         #bhms = '120000'
         #geos_mksi_obsysrc_path = 'SwellExperiments/swell-convert_bufr/GEOS_mksi/ObsClass/obsys-nccs.rc' 
