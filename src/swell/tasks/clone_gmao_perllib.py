@@ -46,9 +46,9 @@ class CloneGmaoPerllib(taskBase):
                              + "CloneGMAOPerllib will now attempt to clone "
                              + "it from Github, which will fail on compute "
                              + "nodes with no internet access.")
-            subprocess.run(f"git clone -b {gmao_perllib_tag} "
-                           + "https://github.com/GEOS-ESM/GMAO_perllib.git "
-                           + os.path.join(self.experiment_path(),"GMAO_perllib"))
+            subprocess.run(['git', 'clone', '-b', gmao_perllib_tag,
+                            'https://github.com/GEOS-ESM/GMAO_perllib.git',
+                             os.path.join(self.experiment_path(), 'GMAO_perllib')])
 
         # Link to existing GMAO_perllib
         elif os.path.exists(existing_perllib_path):
