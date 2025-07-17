@@ -48,7 +48,6 @@
         {{cycle_time.cycle_time}} = """
 
             # Convert BUFR to ioda
-            GetBufr
             GetBufr => BufrToIoda
             BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda
 
