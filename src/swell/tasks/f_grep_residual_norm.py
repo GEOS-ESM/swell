@@ -31,7 +31,7 @@ class FGrepResidualNorm(taskBase):
         command = ' '.join(command)
 
         # Run the fgrep command
-        output = subprocess.run(command, capture_output=True, text=True, shell=True)
+        output = subprocess.run(command, capture_output=True, text=True, shell=True, check=True)
         results = output.stdout
 
         # Create the output directory
