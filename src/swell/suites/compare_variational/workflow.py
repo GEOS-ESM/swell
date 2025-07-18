@@ -50,8 +50,8 @@ class Workflow_compare_variational(CylcWorkflow):
                         cycle_model_times[cycle_time] = []
                     cycle_model_times[cycle_time].append(model)
         else:
-            start_cycle_point = 'None'
-            final_cycle_point = 'None'
+            start_cycle_point = '2021-07-01T12:00:00Z'
+            final_cycle_point = '2021-07-01T12:00:00Z'
             cycle_model_times = {}
 
             self.logger.info('No experiments have been specified')
