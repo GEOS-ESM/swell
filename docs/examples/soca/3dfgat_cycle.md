@@ -25,7 +25,7 @@ experiment_id: fgat_test
 With this, the following experiment folder will be created:
 `/discover/nobackup/dardag/test_folder/fgat_test`
 
-Another critical input argument for `swell create` is  `-s slurmfile.yaml`. Please see [slurm config instructions](../../configs/slurm_configuration.md) for more details on how to use it for high resolution tests. Below `experiment.yaml` will show a 5-deg setup created with a 0.25-deg `slurmfile.yaml` to demonstrate the  proper use of `slurmfile.yaml` though 1 node configurations will suffice for a 5-deg cycle.
+Another critical input argument for `swell create` is  `-s slurmfile.yaml`. Please see [slurm config instructions](configs/slurm_configuration.md) for more details on how to use it for high resolution tests. Below `experiment.yaml` will show a 5-deg setup created with a 0.25-deg `slurmfile.yaml` to demonstrate the  proper use of `slurmfile.yaml` though 1 node configurations will suffice for a 5-deg cycle.
 
 Before launching the experiment, let's take a look at the `experiment.yaml`.
 
@@ -254,7 +254,7 @@ folder for GEOS restarts and experiment directory:
 `mom6` and `cice6` model interfaces are supported. `mom6` should always be active for `SOCA` however `cice6` is
 optional. If `cice6` model is not active one should take out sea-ice related observations and variables from the `experiment.yaml` and from the `analysis_variables`.
 
-- `mom6_iau`: This is optional, however highly recommended for model stability. See [MOM6 settings](../../configs/model_configurations/mom6.md) for details.
+- `mom6_iau`: This is optional, however highly recommended for model stability. See [MOM6 settings](configs/model_configurations/mom6.md) for details.
 
 - `obs_provider`: For marine observations, two providers are used `odas` (GMAO) and `gdas_marine` (NOAA-EMC). R2D2 will
 scan `Local` (as highlighted in `r2d2_local_path`) and `Shared` (GMAO-wide) locations for these two providers.
@@ -265,7 +265,7 @@ If you would like to change any of these parameters, it is suggested to copy `ex
 to `override.yaml` and make desired configuration changes. Afterwards, create the experiment again:
 
 ```bash
-swell create 3dvar -o override.yaml
+swell create 3dfgat_cycle -o override.yaml
 ```
 
 However, most of these settings, especially the ones pertaining the DA windows, are tied to the way
