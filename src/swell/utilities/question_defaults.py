@@ -248,6 +248,19 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class bufr_obs_classes(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "bufr_obs_classes"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What BUFR observation classes will be used?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class bundles(TaskQuestion):
