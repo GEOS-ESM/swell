@@ -479,6 +479,24 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class existing_perllib_path(TaskQuestion):
+        default_value: str = 'defer_to_platform'
+        question_name: str = 'existing_perllib_path'
+        prompt: str = "Provide a path to an existing location for GMAO_perllib."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class gmao_perllib_tag(TaskQuestion):
+        default_value: str = 'g1.0.1'
+        question_name: str = 'gmao_perllib_tag'
+        prompt: str = "Specify the tag at which GMAO_perllib should be cloned."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class forecast_duration(TaskQuestion):
         default_value: str = "PT12H"
         question_name: str = "forecast_duration"

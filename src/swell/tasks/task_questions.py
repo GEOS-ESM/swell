@@ -450,6 +450,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CloneGmaoPerllib = QuestionList(
+        list_name="CloneGmaoPerllib",
+        questions=[
+            qd.existing_perllib_path(),
+            qd.gmao_perllib_tag()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     BuildGeosByLinking = QuestionList(
         list_name="BuildGeosByLinking",
         questions=[
