@@ -45,14 +45,23 @@
         """
 
         {% for cycle_time in cycle_times %}
+        {% for model_component in model_components %}
         {{cycle_time.cycle_time}} = """
+        {% if cycle_time[model_component] %}
+
+            # Make sure GMAO_perllib, Mksi and JEDI are cloned and/or linked
+            CloneGmaoPerllib[^] => GetBufr-{{model_component}}
+            CloneGeosMksi-{{model_component}}[^] => GetBufr-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Convert BUFR to ioda
-            GetBufr => BufrToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda
+            GetBufr-{{model_component}} => BufrToIoda-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Clean up
-            BufrToIoda => CleanCycle
+            BufrToIoda-{{model_component}} => CleanCycle-{{model_component}}
+        {% endif %}
+        {% endfor %}
         """
         {% endfor %}
 
