@@ -61,7 +61,6 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-
     localensembleda_tier2 = QuestionList(
         list_name="localensembleda",
         questions=[
@@ -82,7 +81,7 @@ class SuiteConfig(QuestionContainer, Enum):
                                          'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(4),
-#            qd.perhost(32),
+            # qd.perhost(32),
             qd.cycle_times(['T00']),
             qd.ensemble_num_members(16),
             qd.skip_ensemble_hofx(True),
