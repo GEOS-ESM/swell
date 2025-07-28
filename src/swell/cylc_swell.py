@@ -69,7 +69,7 @@ def execute_cylc(argv=sys.argv) -> None:
 
         env = configure_cylc_environment(append_env)
 
-        subprocess.run(cylc_command, env=env)
+        subprocess.run(cylc_command, env=env, check=True)
 
     # Try just calling cylc from the path
     else:
@@ -80,6 +80,6 @@ def execute_cylc(argv=sys.argv) -> None:
 
         env = configure_cylc_environment()
 
-        subprocess.run(cylc_command, env=env)
+        subprocess.run(cylc_command, env=env, check=True)
 
 # --------------------------------------------------------------------------------------------------
