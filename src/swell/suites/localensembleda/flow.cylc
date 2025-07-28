@@ -57,12 +57,8 @@
 
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
 
-# ygyu  test wo thinobs
-#            sync_point => ThinObs
-
             {% if skip_ensemble_hofx %}
-#               sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
-               sync_point => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}

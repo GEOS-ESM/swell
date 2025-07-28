@@ -248,8 +248,7 @@ def test(test: str) -> None:
               default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing", "localensembleda")))
 def t1test(
-#    suite: Literal["hofx", "3dvar", "ufo_testing", "localensembleda"],
-    suite: Literal["localensembleda"],
+    suite: Literal["hofx", "3dvar", "ufo_testing", "localensembleda"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
