@@ -57,6 +57,7 @@
 
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
 
+            sync_point => ThinObs
             {% if skip_ensemble_hofx %}
                sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}

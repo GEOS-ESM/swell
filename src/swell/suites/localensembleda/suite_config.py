@@ -44,7 +44,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(['T00']),
             qd.ensemble_num_members(16),
             qd.skip_ensemble_hofx(True),
-            qd.local_ensemble_solver("Deterministic GETKF"),
+            qd.local_ensemble_solver("GETKF"),
             qd.local_ensemble_use_linear_observer(True),
             qd.ensmean_only(False),
             qd.local_ensemble_save_posterior_mean(True),
