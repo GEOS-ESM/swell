@@ -311,7 +311,7 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    GetExistingObservations = QuestionList(
+    GetObsNotInR2d2 = QuestionList(
         list_name="GetExistingObservations",
         questions=[
             qd.ioda_locations_not_in_r2d2(),

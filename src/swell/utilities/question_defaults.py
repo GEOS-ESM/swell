@@ -94,15 +94,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class get_existing_observations(SuiteQuestion):
-        default_value: str = False
-        question_name: str = "get_existing_observations"
-        prompt: str = "Get observations from existing location (rather than R2D2)?"
-        widget_type: WType = WType.STRING
-
-    # -------------------------------------------------------------------------------------------------
-
-    @dataclass
     class marine_models(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "marine_models"
