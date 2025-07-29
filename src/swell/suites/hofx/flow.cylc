@@ -55,7 +55,7 @@
             GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
             # Get observations
-            GetObservations-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
@@ -65,7 +65,7 @@
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
