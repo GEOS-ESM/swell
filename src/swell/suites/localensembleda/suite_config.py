@@ -55,8 +55,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "atms_n20",
             ]),
-            qd.window_type("3D"),
-            qd.background_time_offset("PT3H"),
+            qd.window_type("4D"),
             qd.clean_patterns(['*.txt'])
         ]
     )
@@ -122,8 +121,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_metop-b",
                 "amsua_metop-c"
             ]),
-            qd.window_type("3D"),
-            qd.background_time_offset("PT3H"),
+            qd.window_type("4D"),
             qd.clean_patterns(['*.txt'])
         ]
     )
