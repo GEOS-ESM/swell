@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2021-07-01T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_marine']),
+            qd.parser_options(),
         ],
         geos_marine=[
             qd.cycle_times(['T12']),

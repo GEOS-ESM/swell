@@ -60,7 +60,7 @@ class Workflow_compare_variational(CylcWorkflow):
                     cycle_str += f"EvaComparisonIncrement-{model}\n"
 
                     for i in range(len(config_list)):
-                        cycle_str += f"FGrepResidualNorm-{model}-{i}\n"
+                        cycle_str += f"JediOopsLogParser-{model}-{i}\n"
 
                     graph_str += self.format_cycle(cycle_time, cycle_str)
 
@@ -91,10 +91,10 @@ class Workflow_compare_variational(CylcWorkflow):
                 exp_dict = yaml.safe_load(f)
 
             for model in exp_dict['model_components']:
-                overrides[f'FGrepResidualNorm-{model}-{i}'] = Task(
-                        base_name='FGrepResidualNorm',
-                        scheduling_name=(f'FGrepResidualNorm-{model}-{i}'),
-                        script=(f'swell task FGrepResidualNorm {config_file} -d $datetime'
+                overrides[f'JediOopsLogParser-{model}-{i}'] = Task(
+                        base_name='JediOopsLogParser',
+                        scheduling_name=(f'JediOopsLogParser-{model}-{i}'),
+                        script=(f'swell task JediOopsLogParser {config_file} -d $datetime'
                                 f' -m {model} -i {i} -o {output_dir}'))
 
         return overrides

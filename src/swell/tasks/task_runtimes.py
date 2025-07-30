@@ -86,6 +86,11 @@ class TaskRuntimes():
         slurm: dict = mutable_field({})
 
     @dataclass
+    class JediOopsLogParser(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+
+    @dataclass
     class GetBackground(Task):
         is_cycling: bool = True
         is_model: bool = True

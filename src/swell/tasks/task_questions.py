@@ -102,6 +102,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    JediOopsLogParser = QuestionList(
+        list_name="JediOopsLogParser",
+        questions=[
+            qd.parser_options(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     MoveDaRestart = QuestionList(
         list_name="MoveDaRestart",
         questions=[

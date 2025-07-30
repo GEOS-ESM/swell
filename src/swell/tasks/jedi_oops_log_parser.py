@@ -16,9 +16,9 @@ from swell.tasks.base.task_base import taskBase
 # --------------------------------------------------------------------------------------------------
 
 
-class FGrepResidualNorm(taskBase):
+class JediOopsLogParser(taskBase):
 
-    def execute(self) -> None:
+    def fgrep_residual_norm(self):
 
         cycle_dir = self.cycle_dir()
 
@@ -51,6 +51,12 @@ class FGrepResidualNorm(taskBase):
             f.write(f'Cycle: {cycle_time}\n\n')
             f.write(f'RESULTS:\n')
             f.write(results)
+
+    def execute(self) -> None:
+
+        for parser_option in self.config.parser_options(['fgrep_residual_norm']):
+            if parser_option == 'fgrep_residual_norm':
+                self.fgrep_residual_norm()
 
 
 # --------------------------------------------------------------------------------------------------
