@@ -133,6 +133,9 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
+    [[GetObsNotInR2d2-{{model_component}}]]
+        script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
+
     [[RunJediHofxExecutable-{{model_component}}]]
         script = "swell task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
