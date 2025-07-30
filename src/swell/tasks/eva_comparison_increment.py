@@ -52,10 +52,6 @@ class EvaComparisonIncrement(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
-        # Experiment IDs for the two experiments
-        experiment_id_1 = os.path.basename(os.path.dirname(experiment_path_1)).replace('-suite', '')
-        experiment_id_2 = os.path.basename(os.path.dirname(experiment_path_2)).replace('-suite', '')
-
         # Window information
         window_offset = self.config.window_offset()
         window_type = self.config.window_type()
@@ -101,12 +97,12 @@ class EvaComparisonIncrement(taskBase):
             # which is currenly manually set in varincrement1.yaml
             # For now we are only plotting the first one
             iter_no = 1
-            incr_file_1 = f'{experiment_id_1}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-            incr_file_2 = f'{experiment_id_2}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+            incr_file_1 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+            incr_file_2 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
 
             if window_type == '4D' and 'atmos' in self.suite_name():
-                incr_file_1 = f'{experiment_id_1}.increment-iter{iter_no}.{window_begin}.nc4'
-                incr_file_2 = f'{experiment_id_2}.increment-iter{iter_no}.{window_begin}.nc4'
+                incr_file_1 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
+                incr_file_2 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
 
             # Create dictionary used to override the eva config
             eva_override = {}
@@ -114,8 +110,8 @@ class EvaComparisonIncrement(taskBase):
             # Soca case
             if model == 'geos_marine':
                 ocn_cycle_time = cycle_time_dto.strftime('%Y-%m-%dT%H:%M:%SZ')
-                incr_file_1 = f'ocn.{experiment_id_1}.incr.{ocn_cycle_time}.nc'
-                incr_file_2 = f'ocn.{experiment_id_2}.incr.{ocn_cycle_time}.nc'
+                incr_file_1 = f'ocn.*.incr.{ocn_cycle_time}.nc'
+                incr_file_2 = f'ocn.*.incr.{ocn_cycle_time}.nc'
 
             cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
                                        cycle_time, self.get_model())
@@ -123,8 +119,8 @@ class EvaComparisonIncrement(taskBase):
                                        cycle_time, self.get_model())
 
             # Files to fill the template in the config file
-            increment_file_path_1 = os.path.join(cycle_dir_1, incr_file_1)
-            increment_file_path_2 = os.path.join(cycle_dir_2, incr_file_2)
+            increment_file_path_1 = glob.glob(os.path.join(cycle_dir_1, incr_file_1))[0]
+            increment_file_path_2 = glob.glob(os.path.join(cycle_dir_2, incr_file_2))[0]
 
             eva_override['cycle_dir'] = cycle_dir
             eva_override['window_begin'] = window_begin

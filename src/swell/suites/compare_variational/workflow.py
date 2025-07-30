@@ -12,6 +12,7 @@ import os
 
 from swell.utilities.cylc_workflow import CylcWorkflow
 from swell.utilities.cylc_runtime import Task
+from swell.utilities.check_da_params import check_da_params
 
 # --------------------------------------------------------------------------------------------------
 
@@ -31,48 +32,40 @@ class Workflow_compare_variational(CylcWorkflow):
 
     def define_scheduling(self):
 
-        paths = self.experiment_dict['comparison_experiment_paths']
+        config_list = self.experiment_dict['comparison_experiment_paths']
 
-        if len(paths) > 0:
-            config_file = os.path.join(os.path.dirname(paths[0]), 'experiment.yaml')
-            with open(config_file, 'r') as f:
-                base_dict = yaml.safe_load(f)
-
-            start_cycle_point = base_dict['start_cycle_point']
-            final_cycle_point = base_dict['final_cycle_point']
-
-            cycle_model_times = {}
-
-            for model in base_dict['models'].keys():
-                cycle_times = base_dict['models'][model]['cycle_times']
-                for cycle_time in cycle_times:
-                    if cycle_time not in cycle_model_times:
-                        cycle_model_times[cycle_time] = []
-                    cycle_model_times[cycle_time].append(model)
-        else:
-            start_cycle_point = '2021-07-01T12:00:00Z'
-            final_cycle_point = '2021-07-01T12:00:00Z'
-            cycle_model_times = {}
-
-            self.logger.info('No experiments have been specified')
-
-        scheduling_section = self.create_new_section('scheduling',
-                                                     {'initial cycle point': start_cycle_point,
-                                                      'final cycle point': final_cycle_point})
+        start_cycle_point = self.experiment_dict['start_cycle_point']
+        final_cycle_point = self.experiment_dict['final_cycle_point']
 
         graph_str = ''
 
-        for model in self.experiment_dict['model_components']:
-            graph_str += self.format_cycle('R1', f"EvaComparisonIncrement-{model}\n")
+        if 'models' in self.experiment_dict:
+            for model in self.experiment_dict['models'].keys():
+                cycle_times = self.experiment_dict['models'][model]['cycle_times']
 
-        for cycle_time, models in cycle_model_times.items():
-            cycle_str = ''
+                start_cycle_point, final_cycle_point, cycle_times = check_da_params(
+                        config_list,
+                        model,
+                        start_cycle_point,
+                        final_cycle_point,
+                        cycle_times)
 
-            for model in models:
-                for i in range(len(paths)):
-                    cycle_str += f"FGrepResidualNorm-{model}-{i}\n"
+                scheduling_section = self.create_new_section(
+                        'scheduling', {'initial cycle point': start_cycle_point,
+                                       'final cycle point': final_cycle_point})
 
-            graph_str += self.format_cycle(cycle_time, cycle_str)
+                for cycle_time in cycle_times:
+                    cycle_str = ''
+
+                    cycle_str += f"EvaComparisonIncrement-{model}\n"
+
+                    for i in range(len(config_list)):
+                        cycle_str += f"FGrepResidualNorm-{model}-{i}\n"
+
+                    graph_str += self.format_cycle(cycle_time, cycle_str)
+
+        else:
+            scheduling_section = self.create_new_section('scheduling', {})
 
         graph_section = self.create_new_section('graph', graph_str)
 

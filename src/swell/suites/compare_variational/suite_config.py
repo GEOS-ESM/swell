@@ -9,7 +9,7 @@
 
 import importlib
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
+from swell.utilities.swell_questions import QuestionContainer, QuestionList, WidgetType
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.suites.suite_questions import SuiteQuestions as sq
 
@@ -30,6 +30,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="compare",
         questions=[
             sq.compare,
+            qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+            qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
             qd.model_components(),
             qd.runahead_limit(),
         ]
@@ -40,10 +42,11 @@ class SuiteConfig(QuestionContainer, Enum):
     compare_3dvar = QuestionList(
         list_name="compare_3dvar",
         questions=[
+            _3dvar,
             compare_variational,
             qd.model_components(['geos_marine']),
-            _3dvar,
-
+            qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+            qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
         ]
     )
 
