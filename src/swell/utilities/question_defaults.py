@@ -688,6 +688,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ioda_locations_not_in_r2d2(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "ioda_locations_not_in_r2d2"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = ("Provide a path that contains observation files not in r2d2.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class jedi_build_method(TaskQuestion):
         default_value: str = "create"
         question_name: str = "jedi_build_method"

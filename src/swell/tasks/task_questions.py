@@ -47,17 +47,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    window_questions = QuestionList(
-        list_name="window_questions",
-        questions=[
-            qd.window_length(),
-            qd.window_offset(),
-            qd.window_type()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     run_jedi_executable = QuestionList(
         list_name="run_jedi_executable",
         questions=[
@@ -73,6 +62,17 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.minimizer(),
             qd.number_of_iterations(),
             qd.total_processors(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    window_questions = QuestionList(
+        list_name="window_questions",
+        questions=[
+            qd.window_length(),
+            qd.window_offset(),
+            qd.window_type()
         ]
     )
 
@@ -188,7 +188,9 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.marine_models(),
+            qd.observing_system_records_path(),
             qd.window_offset(),
+            qd.marine_models(),
         ]
     )
 
@@ -377,9 +379,19 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.obs_provider(),
+            qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_length(),
-            qd.window_offset()
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetObsNotInR2d2 = QuestionList(
+        list_name="GetExistingObservations",
+        questions=[
+            qd.ioda_locations_not_in_r2d2(),
         ]
     )
 
@@ -389,6 +401,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GsiBcToIoda",
         questions=[
             background_crtm_obs,
+            qd.observing_system_records_path(),
             qd.window_offset()
         ]
     )
@@ -587,6 +600,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
+            qd.observing_system_records_path(),
             qd.total_processors(),
             qd.obs_thinning_rej_fraction()
         ]
