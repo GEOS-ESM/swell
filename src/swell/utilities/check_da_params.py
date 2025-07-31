@@ -103,15 +103,21 @@ def check_da_params(config_list: list,
 
     # Get the start cycle dto object, or set automatically
     if start_cycle_point_in is None or start_cycle_point_in == 'None':
-        start_cycle_dto = max(start_cycle_dtos)
-        start_cycle_point_out = start_cycle_dto.strftime(datetime_formats['iso_format'])
+        if len(start_cycle_dtos) > 0:
+            start_cycle_dto = max(start_cycle_dtos)
+            start_cycle_point_out = start_cycle_dto.strftime(datetime_formats['iso_format'])
+        else:
+            start_cycle_point_out = None
     else:
         start_cycle_point_out = start_cycle_point_in
 
     # Get the final cycle dto object, or set automatically
     if final_cycle_point_in is None or final_cycle_point_in == 'None':
-        final_cycle_dto = min(final_cycle_dtos)
-        final_cycle_point_out = final_cycle_dto.strftime(datetime_formats['iso_format'])
+        if len(final_cycle_dtos) > 0:
+            final_cycle_dto = min(final_cycle_dtos)
+            final_cycle_point_out = final_cycle_dto.strftime(datetime_formats['iso_format'])
+        else:
+            final_cycle_point_out = None
     else:
         final_cycle_point_out = final_cycle_point_in
 
