@@ -82,7 +82,7 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[ GetNcdiags-{{model_component}} ]]
+    [[GetNcdiags-{{model_component}}]]
         script = "swell task GetNcdiags $config -d $datetime -m {{model_component}}"
 
     [[CleanCycle-{{model_component}}]]

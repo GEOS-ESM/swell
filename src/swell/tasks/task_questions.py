@@ -47,6 +47,17 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    window_questions = QuestionList(
+        list_name="window_questions",
+        questions=[
+            qd.window_length(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     run_jedi_executable = QuestionList(
         list_name="run_jedi_executable",
         questions=[
@@ -62,17 +73,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.minimizer(),
             qd.number_of_iterations(),
             qd.total_processors(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    window_questions = QuestionList(
-        list_name="window_questions",
-        questions=[
-            qd.window_length(),
-            qd.window_offset(),
-            qd.window_type()
         ]
     )
 
