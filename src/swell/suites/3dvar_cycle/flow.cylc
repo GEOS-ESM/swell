@@ -67,8 +67,7 @@
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            # MoveDaRestart-{{model_component}}[-P1D] => PrepGeosRunDir
-            MoveDaRestart-{{model_component}}[-PT6H] => PrepGeosRunDir
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepGeosRunDir
             PrepGeosRunDir => RunGeosExecutable
 
             # Run the analysis
@@ -92,7 +91,7 @@
 
             # Prepare analysis for next forecast
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
-            {% if 'cice6' in models["geos_marine"]["marine_models"] %}
+            {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
