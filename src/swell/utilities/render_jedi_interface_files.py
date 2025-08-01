@@ -10,11 +10,13 @@
 import os
 import yaml
 from typing import Union, Optional, Any
+from importlib import import_module
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
 from swell.utilities.logger import Logger
 from swell.utilities.datetime_util import Datetime
+from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -180,13 +182,35 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to oops file and call rendering
-    def render_oops_file(self, config_name: str) -> dict:
+    def render_oops_file(self, config_name: str, window_type: str, obs: list, jedi_forecast_model: str) -> dict:
 
-        # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'oops', f'{config_name}.yaml')
+        oops_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'oops')
+
+        config_file = os.path.join(oops_path, f'{config_name}.py')
+
+        if not os.path.exists(config_file):
+            self.logger.abort(f'Config file {config_file} does not exist.')
+
+        module = import_module(f'swell.configuration.jedi.oops.{config_name}')
+
+        if not hasattr(module, config_name):
+            self.logger.abort(f'Config file {config_file} has no attribute {config_file}.')
+        
+        config_class = getattr(module, config_name)
+
+        config_obj = config_class(self.logger,
+                                  self.jedi_interface,
+                                  self.__template_dict__,
+                                  window_type,
+                                  obs,
+                                  self.cycle_time,
+                                  jedi_forecast_model,
+                                  self.observing_system_records_path)
+        
+        oops_dict = config_obj.render_oops()
 
         # Render templates in file and return dictionary
-        return self.__open_file_render_to_dict__(config_file)
+        return oops_dict
 
     # ----------------------------------------------------------------------------------------------
 

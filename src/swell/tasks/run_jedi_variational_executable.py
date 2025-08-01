@@ -117,7 +117,10 @@ class RunJediVariationalExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+                                                                window_type, observations, jedi_forecast_model)
+
+        print(jedi_config_dict)
 
         # Perform complete template rendering
         # -----------------------------------
