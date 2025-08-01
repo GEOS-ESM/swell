@@ -11,7 +11,7 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 def geometry_inner(template_dict: Mapping) -> Mapping:
-    geometry = {
+    geometry_inner = {
         'mom6_input_nml': 'soca/input.nml',
         'fields metadata': 'soca/fields_metadata.yaml',
         'geom_grid_file': 'INPUT/soca_gridspec.nc',

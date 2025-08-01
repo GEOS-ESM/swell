@@ -120,13 +120,6 @@ class RunJediVariationalExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                                 window_type, observations, jedi_forecast_model)
 
-        print(jedi_config_dict)
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.cycle_time_dto(), jedi_forecast_model)
-
         def represent_ordereddict(dumper, data):
             # Serialize an OrderedDict as a YAML mapping
             return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())

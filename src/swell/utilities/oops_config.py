@@ -40,6 +40,8 @@ class OopsConfig():
         self.jedi_forecast_model = jedi_forecast_model
         self.observing_system_records_path = observing_system_records_path
 
+        self.jedi_config_path = os.path.join(get_swell_path(), 'configuration', 'jedi')
+
     def render_interface_observations(self, config_name: str) -> dict:
 
         # Assert that there is a jedi interface associated with the task
@@ -97,7 +99,7 @@ class OopsConfig():
         for ob in obs_list:
             obs_dict = self.render_interface_observations(ob)
             use_observation = check_obs(self.observing_system_records_path, ob, obs_dict, self.cycle_time)
-
+            print(use_observation)
             if use_observation:
                 observations.append(obs_dict)
             else:
@@ -109,7 +111,7 @@ class OopsConfig():
         interface_model_path = os.path.join(get_swell_path(), 'configuration', 'jedi',
                                             'interfaces', self.jedi_interface, 'model')
         
-        config_file = os.path.join(interface_model_path, f'{config_file}.py')
+        config_file = os.path.join(interface_model_path, f'{config_name}.py')
 
         if not os.path.exists(config_file):
             self.logger.abort(f'Interface model file {config_file} does not exist.')

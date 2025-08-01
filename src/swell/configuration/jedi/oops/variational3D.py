@@ -40,9 +40,7 @@ class variational3D(OopsConfig):
                     'diagnostics': {
                         'departures': 'ombg'
                     },
-                    'online diagnostics': {
-                        self.interface_model('varincrement1')
-                    }
+                    'online diagnostics': self.interface_model('varincrement1')
                 }
             },
             'final': {

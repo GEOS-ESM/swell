@@ -33,6 +33,7 @@ def check_obs(
     # Check if observations in input file exists
     # ------------------------------------------
     filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
+
     if os.path.exists(filename):
 
         # Open file and check if number of location dimension is nonzero
