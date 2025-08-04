@@ -10,18 +10,23 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
-class variational3D(OopsConfig):
+class variational4D(OopsConfig):
 
     def render_oops(self):
         oops = {
             'cost function': {
-                'cost type': '3D-Var',
+                'cost type': '4D-Var',
                 'jb evaluation': False,
                 'time window': {
                     'begin': self.template_dict['window_begin_iso'],
                     'end': self.template_dict['window_end_iso'],
                     'bound to include': 'begin'
                 },
+                'geometry': self.interface_model('geometry'),
+                'model': self.interface_model('pseudo-model'),
+                'variable change': {'variable change name': 'Analysis2Model'},
+                'forecast length': self.template_dict['window_length'],
+                'analysis variables': self.template_dict['analysis_variables'],
                 'background': self.interface_model('background'),
                 'background_error': self.interface_model('background_error'),
                 'observations': {
@@ -37,11 +42,15 @@ class variational3D(OopsConfig):
                     'geometry': self.interface_model('geometry_inner'),
                     'gradient norm reduction': self.template_dict['gradient_norm_reduction'],
                     'ninner': self.template_dict['number_of_iterations'],
-                    'diagnostics': {
-                        'departures': 'ombg'
+                    'linear model': {
+                        'name': 'Identity',
+                        'increment variables': self.template_dict['analysis_variables'],
+                        'variable change': 'Identity',
+                        'tstep': 'PT1H'
                     },
+                    'diagnostics': {'departures': 'ombg'},
                     'online diagnostics': self.interface_model('varincrement1')
-                }],
+                }]
             },
             'final': {
                 'diagnostics': {

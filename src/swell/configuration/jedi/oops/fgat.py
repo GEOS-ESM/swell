@@ -10,46 +10,43 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
-class variational3D(OopsConfig):
+class fgat(OopsConfig):
 
     def render_oops(self):
+
         oops = {
             'cost function': {
-                'cost type': '3D-Var',
+                'cost type': '3D-FGAT',
                 'jb evaluation': False,
                 'time window': {
                     'begin': self.template_dict['window_begin_iso'],
                     'end': self.template_dict['window_end_iso'],
-                    'bound to include': 'begin'
+                    'bound to include': 'begin',
                 },
+                'geometry': self.interface_model('geometry'),
+                'analysis variables': self.template_dict['analysis_variables'],
+                'model': self.interface_model('pseudo-model'),
                 'background': self.interface_model('background'),
-                'background_error': self.interface_model('background_error'),
+                'background error': self.interface_model('background_error'),
                 'observations': {
-                    'get values': self.interface_model('getvalues'),
-                    'observers': self.special_observations(),
+                    'observers': self.special_observations()
                 }
             },
             'variational': {
                 'minimizer': {
                     'algorithm': self.template_dict['minimizer']
                 },
-                'iterations': [{
-                    'geometry': self.interface_model('geometry_inner'),
-                    'gradient norm reduction': self.template_dict['gradient_norm_reduction'],
-                    'ninner': self.template_dict['number_of_iterations'],
-                    'diagnostics': {
-                        'departures': 'ombg'
-                    },
-                    'online diagnostics': self.interface_model('varincrement1')
-                }],
+                'iterations': [
+                    {'geometry': 'geometry_inner',
+                     'gradient norm reduction': self.template_dict['gradient_norm_reduction'],
+                     'ninner': self.template_dict['number_of_iterations'],
+                     'diagnostics': {'departures': 'ombg'},
+                     'online diagnostics': self.interface_model('varincrement1')}
+                ]
             },
             'final': {
-                'diagnostics': {
-                    'deparutures': 'oman'
-                },
-                'prints': {
-                    'frequency': 'PT3H'
-                }
+                'diagnostics': {'departures': 'oman'},
+                'prints': {'frequency': 'PT3H'},
             },
             'output': self.interface_model('analysis')
         }
