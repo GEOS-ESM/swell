@@ -182,7 +182,7 @@ class JediConfigRendering():
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to oops file and call rendering
-    def render_oops_file(self, config_name: str, window_type: str, obs: list, jedi_forecast_model: str) -> dict:
+    def render_oops_file(self, config_name: str, window_type: Optional[str]=None, obs: Optional[list]=None, jedi_forecast_model: Optional[str] = None) -> dict:
 
         oops_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'oops')
 
