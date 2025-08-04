@@ -53,6 +53,31 @@ class GetObservationsR2d2(taskBase):
         #       f"  cycling_varbc: {cycling_varbc}")
 
 
+         now = "2023-10-10T00:00:00Z"
+         
+         fetch_criteria = {
+             'item': 'observation',
+             'provider': 'gmao-test',
+             'observation_type': 'dummy_data',
+             'file_extension': 'txt',
+             'window_length': 'PT6H',
+             'window_start': '20250701T023120Z',#now, 20250701T023120Z
+         }
+
+         # move target file to current working directory
+         target_file_path = os.path.join(os.getcwd(), "fetched_file.txt")
+         fetch_criteria["target_file"] = target_file_path
+
+         print(f"Searching for file with criteria: {fetch_criteria}")
+         r2d2.fetch(**fetch_criteria)
+
+
+
+
+
+
+         exit()
+         ################################################
          # Use a unique timestamp for a clean test
          now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
          

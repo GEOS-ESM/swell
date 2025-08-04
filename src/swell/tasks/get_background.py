@@ -13,8 +13,8 @@ from swell.utilities.r2d2 import create_r2d2_config
 
 import isodate
 import os
-from r2d2 import fetch
-
+#from r2d2 import fetch
+import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -143,21 +143,55 @@ class GetBackground(taskBase):
                 # Set the datetime format for the output files
                 # --------------------------------------------
                 background_time = forecast_start_time + isodate.parse_duration(bkg_step)
-
+                
                 # Set the datetime templating in the target file name
                 # ---------------------------------------------------
                 target_file = background_time.strftime(target_file_template)
 
-                fetch(
-                    date=forecast_start_time,
-                    target_file=target_file,
-                    model=r2d2_model_dict[model_component],
-                    file_type=file_type,
-                    fc_date_rendering='analysis',
-                    step=bkg_step,
-                    resolution=horizontal_resolution,
-                    type='fc',
-                    experiment=background_experiment)
+#                fetch(
+#                    date=forecast_start_time,
+#                    target_file=target_file,
+#                    model=r2d2_model_dict[model_component],
+#                    file_type=file_type,
+#                    fc_date_rendering='analysis',
+#                    step=bkg_step,
+#                    resolution=horizontal_resolution,
+#                    type='fc',
+#                    experiment=background_experiment)
+
+
+
+
+                file_extension=file_type.split('.')[-1] if '.' in file_type else 'nc'
+#fc_date_rendering='analysis',
+#type='fc',
+#file_extension=file_extensio
+                print("\n\n************************************\n")
+                print(forecast_start_time)
+                print(type(forecast_start_time))
+                print(f'experiment is {background_experiment}')
+                print(f'file_extension is {file_extension}')
+                print(f'resolution is {horizontal_resolution}')
+                print(f'bkg_step is {bkg_step}')
+                print(f'file_type is {file_type}')
+                print(f'target_file is {target_file}')
+                print("\n************************************\n\n\n\n")
+                
+                r2d2.fetch(
+                       item='forecast',
+                       target_file=target_file,
+                       model='mom6', # need to register mom6 r2d2_model_dict[model_component],
+                       experiment=background_experiment,
+                       file_extension=file_extension,
+                       resolution=horizontal_resolution,
+                       step=bkg_step,
+                       date=forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                       #domain='',
+                       file_type=file_type,
+                       #tile=-9999,
+                       #member=-9999,
+                       #data_store=None
+                )
 
                 # Change permission
                 os.chmod(target_file, 0o644)
