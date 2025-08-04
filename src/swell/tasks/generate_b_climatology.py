@@ -37,12 +37,12 @@ class GenerateBClimatology(taskBase):
 
         # Render StaticBInit (no templates needed)
         # ----------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit')
-
+        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit', None, None, None)
+        '''
         # Read configs for the rest of the dictionary
         # -------------------------------------------
         self.jedi_dictionary_iterator(jedi_config_dict)
-
+        '''
         return jedi_config_dict
 
     # ----------------------------------------------------------------------------------------------
