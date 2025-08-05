@@ -1,0 +1,35 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names, state_variables
+
+# --------------------------------------------------------------------------------------------------
+
+def ensemble_block(template_dict: Mapping) -> Mapping:
+
+    ensemble_block = {
+        'members from template': {
+            'template': {
+                'datetime': template_dict['local_background_time_iso'],
+                'filetype': 'cube sphere history',
+                'provider': 'geos',
+                'datapath': template_dict['cycle_dir'],
+                'filename': 'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+                'state variables': state_variables,
+                'field io names': field_io_names
+            }
+        },
+        'pattern': '%mem%',
+        'nmembers': template_dict['ensemble_num_members'],
+        'zero padding': 3
+    }
+
+    return ensemble_block
+
+# --------------------------------------------------------------------------------------------------

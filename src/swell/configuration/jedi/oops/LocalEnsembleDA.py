@@ -10,7 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
-class hofx4D(OopsConfig):
+class LocalEnsembleDA(OopsConfig):
 
     def render_oops(self):
 

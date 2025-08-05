@@ -23,7 +23,7 @@ class variational4D(OopsConfig):
                     'bound to include': 'begin'
                 },
                 'geometry': self.interface_model('geometry'),
-                'model': self.interface_model('pseudo-model'),
+                'model': self.interface_model('pseudo_model'),
                 'variable change': {'variable change name': 'Analysis2Model'},
                 'forecast length': self.template_dict['window_length'],
                 'analysis variables': self.template_dict['analysis_variables'],

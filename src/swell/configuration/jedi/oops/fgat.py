@@ -25,7 +25,7 @@ class fgat(OopsConfig):
                 },
                 'geometry': self.interface_model('geometry'),
                 'analysis variables': self.template_dict['analysis_variables'],
-                'model': self.interface_model('pseudo-model'),
+                'model': self.interface_model('pseudo_model'),
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
                 'observations': {
