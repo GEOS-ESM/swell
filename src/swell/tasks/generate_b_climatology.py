@@ -37,12 +37,8 @@ class GenerateBClimatology(taskBase):
 
         # Render StaticBInit (no templates needed)
         # ----------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit', None, None, None)
-        '''
-        # Read configs for the rest of the dictionary
-        # -------------------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict)
-        '''
+        jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit')
+
         return jedi_config_dict
 
     # ----------------------------------------------------------------------------------------------
@@ -175,10 +171,6 @@ class GenerateBClimatology(taskBase):
         # Output log file
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering)
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)

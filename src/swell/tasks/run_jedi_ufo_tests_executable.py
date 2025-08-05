@@ -58,14 +58,10 @@ class RunJediUfoTestsExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D',
-                                 observations, self.cycle_time_dto())
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', '3D',
+                                                                observations)
 
         # Make modifications needed for testing
         # -------------------------------------

@@ -69,14 +69,12 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         output_log_file = os.path.join(self.cycle_dir(),
                                        f'jedi_{jedi_application}_log.log')
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                 observations, jedi_forecast_model)
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
+                                                                window_type,
+                                                                observations,
+                                                                jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

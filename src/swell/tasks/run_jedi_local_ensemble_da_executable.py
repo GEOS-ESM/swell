@@ -144,12 +144,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file('LocalEnsembleDA')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.cycle_time_dto(), jedi_forecast_model)
+        jedi_config_dict = self.jedi_rendering.render_oops_file('LocalEnsembleDA',
+                                                                window_type,
+                                                                observations,
+                                                                jedi_forecast_model)
 
         # Assemble localizations
         # ----------------------
