@@ -47,7 +47,7 @@ class variational3D(OopsConfig):
             },
             'final': {
                 'diagnostics': {
-                    'deparutures': 'oman'
+                    'departures': 'oman'
                 },
                 'prints': {
                     'frequency': 'PT3H'

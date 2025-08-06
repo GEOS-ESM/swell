@@ -19,7 +19,7 @@ class variational4D(OopsConfig):
                 'jb evaluation': False,
                 'time window': {
                     'begin': self.template_dict['window_begin_iso'],
-                    'end': self.template_dict['window_end_iso'],
+                    'length': self.template_dict['window_length'],
                     'bound to include': 'begin'
                 },
                 'geometry': self.interface_model('geometry'),
@@ -54,7 +54,7 @@ class variational4D(OopsConfig):
             },
             'final': {
                 'diagnostics': {
-                    'deparutures': 'oman'
+                    'departures': 'oman'
                 },
                 'prints': {
                     'frequency': 'PT3H'

@@ -75,8 +75,8 @@ def background_error(template_dict: Mapping) -> Mapping:
         ],
         'linear variable change': {
             'linear variable change name': 'Control2Analysis',
-            'input variable': state_variables_to_inverse,
-            'output': template_dict['analysis_variables']
+            'input variables': state_variables_to_inverse,
+            'output variables': template_dict['analysis_variables']
         }
     }
 

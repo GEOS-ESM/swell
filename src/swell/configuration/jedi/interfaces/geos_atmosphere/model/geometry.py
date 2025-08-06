@@ -24,9 +24,9 @@ def geometry(template_dict: Mapping) -> Mapping:
         },
         'akbk': f'./fv3-jedi/fv3files/akbk{vertical_resolution}.nc4',
         'layout': [npx_proc, npy_proc],
-        'npx': horizontal_resolution,
-        'npy': horizontal_resolution,
-        'npz': vertical_resolution
+        'npx': int(horizontal_resolution),
+        'npy': int(horizontal_resolution),
+        'npz': int(vertical_resolution)
     }
 
     return geometry
