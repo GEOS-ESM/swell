@@ -61,64 +61,6 @@ def check_obs(
 
     return use_observation
 
-# --------------------------------------------------------------------------------------------------
-
-
-def jedi_dictionary_iterator(
-    jedi_config_dict: dict,
-    jedi_rendering: JediConfigRendering,
-    window_type: Optional[str] = None,
-    obs: Optional[list[str]] = None,
-    cycle_time: Optional[datetime.datetime] = None,
-    jedi_forecast_model: Optional[str] = None
-) -> None:
-
-    # Assemble configuration YAML file
-    # --------------------------------
-    for key, value in jedi_config_dict.items():
-        if isinstance(value, dict):
-            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs,
-                                     jedi_forecast_model)
-
-        elif isinstance(value, bool):
-            continue
-
-        elif isinstance(value, list):
-            for item in value:
-                if isinstance(item, dict):
-                    jedi_dictionary_iterator(
-                        item, jedi_rendering, window_type, obs,
-                        jedi_forecast_model
-                    )
-
-        else:
-            if 'TASKFILL' in value:
-                value_file = value.replace('TASKFILL', '')
-                value_dict = jedi_rendering.render_interface_model(value_file)
-
-                jedi_config_dict[key] = value_dict
-
-            elif 'SPECIAL' in value:
-                value_special = value.replace('SPECIAL', '')
-                if value_special == 'observations':
-                    observations = []
-                    obs_list = obs.copy()
-                    for ob in obs_list:
-                        obs_dict = jedi_rendering.render_interface_observations(ob)
-                        use_observation = check_obs(jedi_rendering.observing_system_records_path,
-                                                    ob, obs_dict, cycle_time)
-                        if use_observation:
-                            observations.append(obs_dict)
-                        else:
-                            # Remove observation from obs list passed into function
-                            obs.remove(ob)
-                    jedi_config_dict[key] = observations
-
-                elif value_special == 'model' and window_type == '4D':
-                    model_dict = jedi_rendering.render_interface_model(jedi_forecast_model)
-                    jedi_config_dict[key] = model_dict
-
-
 # ----------------------------------------------------------------------------------------------
 
 def run_executable(

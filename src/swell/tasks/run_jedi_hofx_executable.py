@@ -15,7 +15,7 @@ from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------

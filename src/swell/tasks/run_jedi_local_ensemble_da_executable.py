@@ -13,7 +13,7 @@ import yaml
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
 
