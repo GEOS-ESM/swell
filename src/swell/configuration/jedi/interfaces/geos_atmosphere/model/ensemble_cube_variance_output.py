@@ -17,7 +17,7 @@ def ensemble_cube_mean_output(template_dict: Mapping) -> Mapping:
         'filetype': 'cube sphere history',
         'provider': 'geos',
         'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.ensemblemean.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'filename': 'geos.ensemblevariance.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'field io names': field_io_names_ensemble
     }
 

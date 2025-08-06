@@ -11,8 +11,7 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 def getvalues(template_dict: Mapping) -> Mapping:
-    getvalues = {
-    }
+    getvalues = None
 
     return getvalues
 
