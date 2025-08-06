@@ -7,13 +7,9 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-import yaml
-from collections.abc import Mapping, Callable
-from importlib import import_module
+from collections.abc import Mapping
 from abc import ABC, abstractmethod
 
-from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.get_channels import get_channels
 from swell.utilities.run_jedi_executables import check_obs
 from swell.swell_path import get_swell_path
 
@@ -44,6 +40,8 @@ class OopsConfig(ABC):
 
         self.jedi_config_path = os.path.join(get_swell_path(), 'configuration', 'jedi')
 
+    # --------------------------------------------------------------------------------------------------
+
     # Replicates the behavior of 'SPECIALobservations' in jedi_dictionary_iterator
     # Iterates through observations, render the files, and checks whether to use them
     def special_observations(self) -> Mapping:
@@ -66,11 +64,16 @@ class OopsConfig(ABC):
         
         return observations
 
+    # --------------------------------------------------------------------------------------------------
+
     def interface_model(self, config_name: str) -> Mapping:
+
         # Pass through to jedi rendering render method
         config_value = self.jedi_rendering.render_interface_model(config_name)
         
         return config_value
+
+    # --------------------------------------------------------------------------------------------------
     
     @abstractmethod
     def render_oops(self) -> Mapping:
