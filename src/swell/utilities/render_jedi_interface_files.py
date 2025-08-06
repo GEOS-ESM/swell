@@ -11,6 +11,7 @@ import os
 import yaml
 from typing import Union, Optional, Any
 from importlib import import_module
+from collections.abc import Mapping, Callable
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -198,9 +199,7 @@ class JediConfigRendering():
         
         config_class = getattr(module, config_name)
 
-        config_obj = config_class(self.logger,
-                                  self.jedi_interface,
-                                  self.__template_dict__,
+        config_obj = config_class(self,
                                   window_type,
                                   obs,
                                   self.cycle_time,
@@ -214,20 +213,25 @@ class JediConfigRendering():
 
     # ----------------------------------------------------------------------------------------------
 
-    # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name: str) -> dict[Any, Any]:
+    def render_interface_model(self, config_name: str) -> Mapping:
+        interface_model_path = os.path.join(get_swell_path(), 'configuration', 'jedi',
+                                            'interfaces', self.jedi_interface, 'model')
+        
+        config_file = os.path.join(interface_model_path, f'{config_name}.py')
 
-        # Assert that there is a jedi interface associated with the task
-        self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
-                                 f'jedi interface config file the task must have an associated' +
-                                 f'jedi interface.')
+        if not os.path.exists(config_file):
+            self.logger.abort(f'Interface model file {config_file} does not exist.')
+        
+        module = import_module(f'swell.configuration.jedi.interfaces.{self.jedi_interface}.model.{config_name}')
 
-        # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
-                                   'model', f'{config_name}.yaml')
-
-        # Render templates in file and return dictionary
-        return self.__open_file_render_to_dict__(config_file)
+        if hasattr(module, config_name):
+            config_func = getattr(module, config_name)
+            if isinstance(config_func, Callable):
+                config_value = config_func(self.__template_dict__)
+            else:
+                config_value = config_func
+        
+        return config_value
 
     # ----------------------------------------------------------------------------------------------
 
