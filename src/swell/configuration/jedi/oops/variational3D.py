@@ -22,6 +22,8 @@ class variational3D(OopsConfig):
                     'end': self.template_dict['window_end_iso'],
                     'bound to include': 'begin'
                 },
+                'geometry': self.interface_model('geometry'),
+                'analysis_variables': self.template_dict['analysis_variables'],
                 'background': self.interface_model('background'),
                 'background_error': self.interface_model('background_error'),
                 'observations': {
