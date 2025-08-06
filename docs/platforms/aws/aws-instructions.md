@@ -2,33 +2,58 @@
 
 ## General platform description
 
+### Compute
+
 We are running an instance of AWS ParallelCluster on AWS.
 This is just a `slurm` cluster very similar to Discover, with a login node and a compute node pool.
 
-The login node is always on and costs a fixed amount whether we use it or not.
+The login node pool (3 nodes, assigned randomly; similar to Discover) is always on and costs a fixed amount whether we use it or not.
+Each login node has 2 CPUs and 8 GB of RAM.
 
-Compute nodes only cost money when they are running jobs ($0.34/hour), and are destroyed when not in use.
+Compute nodes only cost money when they are running jobs and are destroyed when not in use.
+We have several compute queues available, which can be viewed via `sinfo`.
+Example output might look like this:
 
-There are no restrictions on network access.
-Unlike Discover, both login and compute nodes can download from the open internet.
-However, there is a small fee for network throughput to compute nodes --- $0.045/GB (because these nodes are on a private subnet that does internet requests through a NAT gateway) --- so avoid using compute nodes to download huge data files (>100 GB).
-There is _no_ such fee for the login node (because it is on a public subnet that can talk directly to the internet gateway) so this is a perfectly fine place to do large downloads.
+```
+PARTITION    AVAIL  TIMELIMIT  NODES  STATE NODELIST
+demand-8cpu*    up   infinite     19  idle~ demand-8cpu-dy-demand-8cpu-nodes-[2-20]
+demand-8cpu*    up   infinite      1    mix demand-8cpu-dy-demand-8cpu-nodes-1
+demand-16cpu    up   infinite     20  idle~ demand-16cpu-dy-demand-16cpu-nodes-[1-20]
+spot-8cpu       up   infinite     20  idle~ spot-8cpu-dy-spot-8cpu-nodes-[1-20]
+spot-16cpu      up   infinite     20  idle~ spot-16cpu-dy-spot-16cpu-nodes-[1-20]
+```
 
-All storage (home and shared) should be available at the same file paths to both login and compute nodes.
-The root file system (including home directories) is 100 GB total; there are no inode restrictions.
-Try to avoid storing huge files on your home directory --- it's a shared resource.
+The `demand` nodes are reserved and guaranteed to be available for the entire length of the job, but are also somewhat more expensive.
+The `spot` nodes are 3-4x cheaper per CPU-hour, but may fail unexpectedly (when other AWS users outbid us for them).
+For smaller, lower-priority, and failure-tolerant jobs, I recommend using the spot partitions (e.g., `sbatch -p spot-8cpu`) to save some costs...but if you need the `demand` nodes, use them!
 
-Another 200 GB of storage (total) is available on the drive mounted at `/shared`.
-This is a good place to put somewhat larger files that require more performant access.
+All nodes are in the [`c7i-flex` class](https://aws.amazon.com/ec2/instance-types/c7i/) --- x86_64, custom 4th Generation Intel Xeon Scalable processors ("Sapphire Rapids")
 
-Both the root volume (`/`) and `/shared` are pre-allocated storage (100 GB and 200 GB, respectively).
-Whether we use 1% or 99% of that storage, the price is identical.
+Nodes take around 7 minutes to launch from idle (shut down) state to active.
+After a job completes or fails, nodes will persist for 10 minutes before shutting down.
+Jobs submitted within that 10 minute window should start almost instantly.
+This should make it _much_ easier to run multi-job workflows (like Swell) and to debug issues.
 
-By contrast, `/efs` is slightly less performant pay-for-what-you-use storage.
-Here, we pay $0.30/GB-month (for reference: $3600/TB-year) for storage, but that scales up or down by the hour depending on how much storage we use.
-The maximum storage volume of `/efs` is theoretically ~8 EB (i.e.,8000 PB, or 8,000,000 TB; you will see this in the output of `df -h`), so this is practically unlimited storage...but again, pay-for-what-you-use, so don't go crazy.
+### Networking
 
-**NOTE:** This AWS resource is here to be used; do not be intimidated by the storage or compute costs.
+There are **no restrictions on network access**.
+Unlike Discover, both login and compute nodes can download from the open internet at no cost.
+Some network instability may be possible due to cost-saving network configurations.
+
+### Storage
+
+All storage locations should be available at the same file paths to both login and compute nodes.
+None of the storage locations have inode limits, but some storage types do have (small) costs per read/write operation, so pay some attention to this.
+
+* Home directories are mounted on AWS Elastic File System (EFS). This is a pay-for-what-you-use storage device with no practical upper limit. The price is $0.30/GB-month ($300/TB-month), plus a $0.03/GB charge for reads and a $0.06/GB charge for writes. Performance characteristics are average; decent, but not amazing and possibly inconsistent, throughput and latency.
+* There is also a shared `/efs` folder with the same pricing and performance characteristics.
+* `/fast1` is pre-allocated SSD storage, fixed (for now) to 200 GB. We pay for 200 GB whether this is 0% or 100% full. Note that although this is SSD, it is mounted to compute nodes via NFS (over the network), so the performance will likely be worse than advertised. There is no cost to read or write operations.
+* `/slow1` is pre-allocated HDD (spinning disk) storage, fixed to 1 TB (as above, but much cheaper and with worse performance). Since it's pre-allocated, this is a great place to store infrequently accessed data. Again, no cost to read or write operations.
+* `/s3` is a mounted S3 bucket. Like EFS, this is pay-for-what-you-use and infinitely expandable, but significantly cheaper -- $0.023/GB-month ($23/TB-month). However, this is not quite a true POSIX file system. It should work great for reading and writing files, but not very well for editing files. There is also a small fee for each read, write, and delete operation (~$0.005 per 1000 ops...but it can add up for certain access patterns).
+
+### Final thoughts
+
+This AWS resource is here to be used; do not be intimidated by the storage or compute costs.
 As long as you are reasonably prudent about storage (e.g., don't dump 100s of TB of output on EFS and leave them there for long stretches of time) and compute (e.g., don't accidentally leave compute nodes cycling a failed task for days at a time), cost shouldn't be a problem.
 We also get cost alerts when we spike or drift well above an average.
 
