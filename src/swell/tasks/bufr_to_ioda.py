@@ -8,16 +8,15 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import datetime
+import glob
 import os
 import subprocess
+import yaml
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
 
-import datetime
-
-import glob
-import yaml
 # --------------------------------------------------------------------------------------------------
 
 # Dictionary linking each obs type to the appropriate yaml template
@@ -123,17 +122,11 @@ def generate_iodaconv_yaml(bufr_file_source_path, ioda_file_target_path, path_to
     return yaml_file_target # returns the path of the yaml file the function generated
 
 # --------------------------------------------------------------------------------------------------
+
 class BufrToIoda(taskBase):
 
     def execute(self) -> None:
-        # 1. Task Configuration and directory setup & init
-        # ------------------------------------------------------------------------------------------
-        # experiment directory in SwellExperiments
-        swell_exp_path = self.experiment_path()
-        cycle_dir = self.cycle_dir()
 
-        # Get cycle dir and create if needed
-        # ----------------------------------
         # Set Bufr File Directory (Input)
         bufr_dir = os.path.join(self.cycle_dir(), 'bufr')
 
@@ -141,21 +134,19 @@ class BufrToIoda(taskBase):
         ioda_dir = os.path.join(self.cycle_dir(), 'ioda')
         os.makedirs(ioda_dir, 0o755, exist_ok=True)
 
-        # Set the Bufr2Ioda Yaml Template Directory 
+        # Set the Bufr2Ioda Yaml Template Directory
         path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(), 'configuration/jedi/iodaconv')
 
-        # 2. Find Bufr files to converter
-        # ------------------------------------------------------------------------------------------
-        # Get list of all files in cycle dir with .bufr_d suffix or *bufr* 
-        # ----------------------------------------------------------------
+        # Get list of all files in cycle dir with .bufr_d suffix or *bufr*
         bufr_path_files_pattern = os.path.join(bufr_dir, '*bufr*')
         bufr_path_files = glob.glob(bufr_path_files_pattern)
-        
+
+        print(f'Bufr files found: {bufr_path_files}'
+        )
         # Assert that some files were found
-        self.logger.assert_abort(len(bufr_path_files) != 0 is not None, f'No bufr ' +
+        self.logger.assert_abort(len(bufr_path_files) != 0, f'No bufr ' +
                                     f'files found in the source directory ' +
                                     f'\'{bufr_path_files_pattern}\'')
-        
 
         # 3. Convert Bufr Files (one by one)
         # ------------------------------------------------------------------------------------------
@@ -163,18 +154,17 @@ class BufrToIoda(taskBase):
 
             # find the obs type within the filename
             obs_type = find_obstype_match(bufr_path_file)
-            
-            # Source file ~ bufr file to be converted 
+
+            print(obs_type)
+            exit()
+            # Source file ~ bufr file to be converted
             bufr_file_source_path = os.path.basename(bufr_path_file)
-            
+
             # Target file ~ conversion output file name (should end in .nc4). Use the same name but replace the suffix.
             parts = bufr_file_source_path.rsplit('.', 2)
             ioda_file_target_name = parts[0] + '.{splits/satId}.tm00.nc4'
             ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
 
             bufr2ioda_conv_yaml = generate_iodaconv_yaml(bufr_path_file, ioda_file_target_path, path_to_ioda_conv_yaml_tmpl_dir,swell_exp_path,cycle_dir, ioda_dir)
-            
+
             subprocess.run(['bufr2ioda.x', bufr2ioda_conv_yaml])
-
-
-

@@ -30,7 +30,7 @@
             CloneJedi
 
             # Clone GMAO_perllib
-            CloneGMAOPerllib
+            CloneGmaoPerllib
 
             # Build JEDI source code by linking
             CloneJedi => BuildJediByLinking?
@@ -38,21 +38,30 @@
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
 
-            # CloneGeosMksi
-            CloneGeos => BuildGeosByLinking?
-
-            BuildGeosByLinking:fail? => BuildGeos
+            {% for model_component in model_components %}
+            # Clone location for generating observing system records
+            CloneGeosMksi-{{model_component}}
+            {% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
+        {% for model_component in model_components %}
         {{cycle_time.cycle_time}} = """
+        {% if cycle_time[model_component] %}
+
+            # Make sure GMAO_perllib, Mksi and JEDI are cloned and/or linked
+            CloneGmaoPerllib[^] => GetBufr-{{model_component}}
+            CloneGeosMksi-{{model_component}}[^] => GetBufr-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Convert BUFR to ioda
-            GetBufr => BufrToIoda
-            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda
+            GetBufr-{{model_component}} => BufrToIoda-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => BufrToIoda-{{model_component}}
 
             # Clean up
-            BufrToIoda => CleanCycle
+            BufrToIoda-{{model_component}} => CleanCycle-{{model_component}}
+        {% endif %}
+        {% endfor %}
         """
         {% endfor %}
 
@@ -74,7 +83,7 @@
     [[CloneJedi]]
         script = "swell task CloneJedi $config"
 
-    [[CloneGMAOPerllib]]
+    [[CloneGmaoPerllib]]
 	script = "swell task CloneGmaoPerllib $config"
 
     [[BuildJediByLinking]]
@@ -88,29 +97,21 @@
         {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
-        
-    [[CloneGeos]]
-        script = "swell task CloneGeos $config"
 
-    [[BuildGeosByLinking]]
-        script = "swell task BuildGeosByLinking $config"
+    {% for model_component in model_components %}
 
-    [[BuildGeos]]
-        script = "swell task BuildGeos $config"
-        platform = {{platform}}
-        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
+    [[CloneGeosMksi-{{model_component}}]]
+        script = "swell task CloneGeosMksi $config -m {{model_component}}"
 
-    [[GetBufr]]
-        script = "swell task GetBufr $config -d $datetime -m geos_atmosphere"
+    [[GetBufr-{{model_component}}]]
+        script = "swell task GetBufr $config -d $datetime -m {{model_component}}"
 
-    [[BufrToIoda]]
-        script = "swell task BufrToIoda $config -d $datetime -m geos_atmosphere"
+    [[BufrToIoda-{{model_component}}]]
+        script = "swell task BufrToIoda $config -d $datetime -m {{model_component}}"
 
-    [[CleanCycle]]
-        script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"
+    [[CleanCycle-{{model_component}}]]
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    {% endfor %}
 
 # --------------------------------------------------------------------------------------------------

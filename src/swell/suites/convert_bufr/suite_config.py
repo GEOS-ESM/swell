@@ -25,31 +25,22 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="convert_bufr",
         questions=[
             sq.common,
-            qd.start_cycle_point("2021-12-12T00:00:00Z"),
-            qd.final_cycle_point("2021-12-31T18:00:00Z"),
+            qd.start_cycle_point("2023-10-10T00:00:00Z"),
+            qd.final_cycle_point("2023-10-10T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
-            qd.bundles("REMOVE"),
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
-            qd.cycle_times(['T00', 'T06']),
+            qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
             qd.clean_patterns([
                 "gsi_bcs/*.nc4",
                 "gsi_bcs/*.txt",
-                "gsi_bcs/*.yaml",
-                "gsi_bcs",
-                "gsi_ncdiags/*.nc4",
-                "gsi_ncdiags/aircraft/*.nc4",
-                "gsi_ncdiags/aircraft",
-                "gsi_ncdiags"
             ]),
-            #qd.observations([
-            #    "ncep_1bamua_bufr"
-            #]),
-            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                    "ufo_testing/ncdiagv2/%Y%m%d%H"),
-
-        ]        
+            qd.bufr_obs_classes([
+               "ncep_1bamua_bufr",
+               "ncep_mtiasi_bufr",
+            ]),
+        ]
     )
 
 

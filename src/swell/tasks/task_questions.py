@@ -450,6 +450,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CloneGmaoPerllib = QuestionList(
+        list_name="CloneGmaoPerllib",
+        questions=[
+            qd.existing_perllib_path(),
+            qd.gmao_perllib_tag()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     BuildGeosByLinking = QuestionList(
         list_name="BuildGeosByLinking",
         questions=[
@@ -643,22 +653,14 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
-
     GetBufr= QuestionList(
         list_name="GetBufr",
         questions=[
-            window_questions,
             BuildJediByLinking,
-            #CleanCycle,
             CloneGeosMksi,
-            qd.observations()
-          
+            qd.bufr_obs_classes()
         ]
     )
-    
-    # --------------------------------------------------------------------------------------------------
-
 
     # --------------------------------------------------------------------------------------------------
 
@@ -670,9 +672,8 @@ class TaskQuestions(QuestionContainer, Enum):
             CleanCycle,
             CloneGeosMksi,
             #qd.observations()
-          
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
 
