@@ -60,7 +60,7 @@ def background_error(template_dict: Mapping) -> Mapping:
         'date': template_dict['local_background_time_iso'],
         'saber outer blocks': [
             {'saber block name': 'SOCABkgErrFilt',
-                'ocean depth min': 100,
+                'ocean_depth_min': 100,
                 'rescale_bkgerr': 1.0,
                 'efold_z': 2500.0},
                 {'saber block name': 'SOCAParametricOceanStdDev',
