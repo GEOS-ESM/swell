@@ -124,7 +124,8 @@ class RunJediFgatExecutable(taskBase):
 
         # Open the JEDI config file and fill templates
         # --------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', window_type, observations, jedi_forecast_model)
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', window_type,
+                                                                observations, jedi_forecast_model)
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

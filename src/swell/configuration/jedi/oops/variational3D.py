@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class variational3D(OopsConfig):
 
     def render_oops(self):

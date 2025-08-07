@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class convert_state_soca2cice(OopsConfig):
 
     def render_oops(self):

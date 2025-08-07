@@ -118,7 +118,8 @@ class RunJediVariationalExecutable(taskBase):
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
-                                                                window_type, observations, jedi_forecast_model)
+                                                                window_type, observations,
+                                                                jedi_forecast_model)
 
         def represent_ordereddict(dumper, data):
             # Serialize an OrderedDict as a YAML mapping

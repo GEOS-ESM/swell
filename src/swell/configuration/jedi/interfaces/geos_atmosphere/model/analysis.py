@@ -11,6 +11,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 # --------------------------------------------------------------------------------------------------
 
+
 def analysis(template_dict: Mapping) -> Mapping:
     analysis = {
         'filetype': 'cube sphere history',

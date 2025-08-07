@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def variable_change_soca2cice(template_dict: Mapping) -> Mapping:
     local_background_time = template_dict['local_background_time']
 

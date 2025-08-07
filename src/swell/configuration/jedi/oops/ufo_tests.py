@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class ufo_tests(OopsConfig):
 
     def render_oops(self):

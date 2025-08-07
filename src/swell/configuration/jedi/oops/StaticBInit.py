@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class StaticBInit(OopsConfig):
 
     def render_oops(self):

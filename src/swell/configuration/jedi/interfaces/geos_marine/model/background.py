@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def background(template_dict: Mapping) -> Mapping:
     background = {
         'date': template_dict['local_background_time_iso'],

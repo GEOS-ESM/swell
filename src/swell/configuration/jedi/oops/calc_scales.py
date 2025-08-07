@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class calc_scales(OopsConfig):
 
     def render_oops(self):

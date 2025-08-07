@@ -26,7 +26,7 @@ class OopsConfig(ABC):
                  cycle_time,
                  jedi_forecast_model: str,
                  observing_system_records_path: str) -> str:
-        
+
         self.jedi_rendering = jedi_rendering
         self.logger = jedi_rendering.logger
         self.jedi_interface = jedi_rendering.jedi_interface
@@ -56,12 +56,13 @@ class OopsConfig(ABC):
             obs_dict = self.jedi_rendering.render_interface_observations(ob)
 
             # Check whether to use the file
-            use_observation = check_obs(self.observing_system_records_path, ob, obs_dict, self.cycle_time)
+            use_observation = check_obs(self.observing_system_records_path, ob,
+                                        obs_dict, self.cycle_time)
             if use_observation:
                 observations.append(obs_dict)
             else:
                 self.obs.remove(ob)
-        
+
         return observations
 
     # --------------------------------------------------------------------------------------------------
@@ -70,11 +71,11 @@ class OopsConfig(ABC):
 
         # Pass through to jedi rendering render method
         config_value = self.jedi_rendering.render_interface_model(config_name)
-        
+
         return config_value
 
     # --------------------------------------------------------------------------------------------------
-    
+
     @abstractmethod
     def render_oops(self) -> Mapping:
         return {}

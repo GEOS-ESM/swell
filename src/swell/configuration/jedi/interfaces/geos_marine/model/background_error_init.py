@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def background_error_init(template_dict: Mapping) -> Mapping:
     background_error_init = {
         'covariance model': 'SocaError',

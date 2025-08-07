@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def geometry_inner(template_dict: Mapping) -> Mapping:
     geometry_inner = {
         'mom6_input_nml': 'soca/input.nml',

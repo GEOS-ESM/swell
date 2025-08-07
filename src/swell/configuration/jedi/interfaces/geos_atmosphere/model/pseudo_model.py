@@ -11,6 +11,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 # --------------------------------------------------------------------------------------------------
 
+
 def pseudo_model(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
 

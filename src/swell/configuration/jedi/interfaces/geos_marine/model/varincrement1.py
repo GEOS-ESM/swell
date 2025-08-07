@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def varincrement1(template_dict: Mapping) -> Mapping:
     varincrement1 = {
         'write increment': True,

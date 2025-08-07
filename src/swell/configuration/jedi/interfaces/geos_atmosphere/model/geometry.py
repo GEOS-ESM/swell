@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def geometry(template_dict: Mapping) -> Mapping:
 
     npx_proc = template_dict['npx_proc']

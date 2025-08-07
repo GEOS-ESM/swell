@@ -10,6 +10,7 @@ from swell.utilities.oops_config import OopsConfig
 
 # --------------------------------------------------------------------------------------------------
 
+
 class LocalEnsembleDA(OopsConfig):
 
     def render_oops(self):
@@ -20,7 +21,7 @@ class LocalEnsembleDA(OopsConfig):
                 'begin': self.template_dict['window_begin_iso'],
                 'end': self.template_dict['window_end_iso'],
                 'bound to include': 'begin'
-            }, 
+            },
             'increment variables': [
                 'eastward_wind',
                 'northward_wind',
@@ -40,10 +41,14 @@ class LocalEnsembleDA(OopsConfig):
             'driver': self.interface_model('ensemble_driver')
         }
 
-        local_ensemble_save_posterior_mean = self.template_dict['local_ensemble_save_posterior_mean']
-        local_ensemble_save_posterior_ensemble = self.template_dict['local_ensemble_save_posterior_ensemble']
-        local_ensemble_save_posterior_mean_increment = self.template_dict['local_ensemble_save_posterior_mean_increment']
-        local_ensemble_save_posterior_ensemble_increments = self.template_dict['local_ensemble_save_posterior_ensemble_increments']
+        local_ensemble_save_posterior_mean = self.template_dict[
+                'local_ensemble_save_posterior_mean']
+        local_ensemble_save_posterior_ensemble = self.template_dict[
+                'local_ensemble_save_posterior_ensemble']
+        local_ensemble_save_posterior_mean_increment = self.template_dict[
+                'local_ensemble_save_posterior_mean_increment']
+        local_ensemble_save_posterior_ensemble_increments = self.template_dict[
+                'local_ensemble_save_posterior_ensemble_increments']
 
         if local_ensemble_save_posterior_mean or local_ensemble_save_posterior_ensemble:
             if local_ensemble_save_posterior_mean and not local_ensemble_save_posterior_ensemble:
@@ -54,7 +59,8 @@ class LocalEnsembleDA(OopsConfig):
         if local_ensemble_save_posterior_mean_increment:
             oops['output increment'] = self.interface_model('ensemble_mean_increment_output')
         if local_ensemble_save_posterior_ensemble_increments:
-            oops['output ensemble increments'] = self.interface_model('ensemble_members_increment_output')
+            oops['output ensemble increments'] = self.interface_model(
+                    'ensemble_members_increment_output')
 
         return oops
 

@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def stage(template_dict: Mapping) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']

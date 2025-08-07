@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def ensemble_solver(template_dict: Mapping) -> Mapping:
 
     local_ensemble_solver = template_dict['local_ensemble_solver']

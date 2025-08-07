@@ -11,6 +11,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 # --------------------------------------------------------------------------------------------------
 
+
 def ensemble_cube_mean_output(template_dict: Mapping) -> Mapping:
 
     ensemble_cube_mean_output = {

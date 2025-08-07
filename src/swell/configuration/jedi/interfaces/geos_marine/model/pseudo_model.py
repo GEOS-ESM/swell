@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def pseudo_model(template_dict: Mapping) -> Mapping:
     pseudo_model = {
         'name': 'PseudoModel',

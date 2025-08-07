@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def analysis(template_dict: Mapping) -> Mapping:
     analysis = {
         'datadir': './',

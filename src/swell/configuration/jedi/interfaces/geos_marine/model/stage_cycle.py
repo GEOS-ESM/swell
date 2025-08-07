@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def stage_cycle(template_dict: Mapping) -> Mapping:
     swell_static_files = template_dict['swell_static_files']
     cycle_dir = template_dict['cycle_dir']

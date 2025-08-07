@@ -11,6 +11,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 # --------------------------------------------------------------------------------------------------
 
+
 def ensemble_members_increment_output(template_dict: Mapping) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']

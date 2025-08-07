@@ -30,6 +30,7 @@ state_variables_to_inverse = [
 
 # --------------------------------------------------------------------------------------------------
 
+
 def background_error(template_dict: Mapping) -> Mapping:
     vertical_resolution = template_dict['vertical_resolution']
     gsibec_nlons = template_dict['gsibec_nlons']

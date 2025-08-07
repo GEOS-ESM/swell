@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names, state_variables
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
+        field_io_names, state_variables
 
 # --------------------------------------------------------------------------------------------------
+
 
 def background(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']

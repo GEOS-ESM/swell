@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def background_error(template_dict: Mapping) -> Mapping:
 
     active_variables = []

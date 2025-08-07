@@ -10,6 +10,7 @@ from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
+
 def states(template_dict: Mapping) -> Mapping:
     experiment_id = template_dict['experiment_id']
     analysis_time_iso = template_dict['analysis_time_iso']
