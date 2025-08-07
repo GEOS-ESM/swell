@@ -38,7 +38,7 @@ class fgat(OopsConfig):
                     'algorithm': self.template_dict['minimizer']
                 },
                 'iterations': [
-                    {'geometry': 'geometry_inner',
+                    {'geometry': self.interface_model('geometry_inner'),
                      'gradient norm reduction': self.template_dict['gradient_norm_reduction'],
                      'ninner': str(self.template_dict['number_of_iterations']),
                      'diagnostics': {'departures': 'ombg'},
