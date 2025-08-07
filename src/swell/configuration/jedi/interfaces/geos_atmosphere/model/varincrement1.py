@@ -21,7 +21,7 @@ def varincrement1(template_dict: Mapping) -> Mapping:
                 'filetype': 'auxgrid',
                 'gridtype': 'latlon',
                 'datapath': './',
-                'filename': f'{experiment_id}.increment-tier1.',
+                'filename': f'{experiment_id}.increment-iter1.',
                 'field io names': {
                     'eastward_wind': 'ua',
                     'northward_wind': 'va',

@@ -16,7 +16,7 @@ def r2d2(template_dict: Mapping) -> Mapping:
     experiment_id = template_dict['experiment_id']
     analysis_time_iso = template_dict['analysis_time_iso']
 
-    fc_list = [{'file type': 'MOM.res',
+    fc_list = [{'file_type': 'MOM.res',
                  'filename': f'{cycle_dir}/MOM6.res.{local_background_time}.nc'}]
     
     if 'cice6' in template_dict['marine_models']:
