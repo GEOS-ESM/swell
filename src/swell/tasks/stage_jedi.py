@@ -10,6 +10,7 @@
 
 import os
 
+from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.filehandler import *
 from swell.utilities.exceptions import *
@@ -62,16 +63,16 @@ class StageJedi(taskBase):
         stage_file = 'stage'
         if self.is_datetime_dependent():
             stage_file = 'stage_cycle'
-
+        
         # Check for presence of stage file
         # --------------------------------
-        stage_pathfile = os.path.join(self.experiment_config_path(), 'jedi', 'interfaces',
-                                      self.get_model(), 'model', stage_file + '.yaml')
+        stage_pathfile = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces',
+                                      self.get_model(), 'model', stage_file + '.py')
 
         if not os.path.exists(stage_pathfile):
             self.logger.info('No stage dictionary was found for this configuration')
             return
-
+        
         # Open file and template it
         stage_dict = self.jedi_rendering.render_interface_model(stage_file)
 

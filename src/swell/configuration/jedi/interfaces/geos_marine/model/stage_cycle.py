@@ -15,7 +15,7 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
     swell_static_files = template_dict['swell_static_files']
     cycle_dir = template_dict['cycle_dir']
     horizontal_resolution = template_dict['horizontal_resolution']
-    vertical_resolution = template_dict['horizontal_resolution']
+    vertical_resolution = template_dict['vertical_resolution']
 
     stage_cycle = [
         {'copy_files': {
