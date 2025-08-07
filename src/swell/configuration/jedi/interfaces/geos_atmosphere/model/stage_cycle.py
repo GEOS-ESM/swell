@@ -21,8 +21,8 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
     gsibec_nlats = template_dict['gsibec_nlats']
     horizontal_resolution = template_dict['horizontal_resolution']
 
-    stage_cycle = {
-        'link_files': {
+    stage_cycle = [
+        {'link_files': {
             'directories': [
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/GEOS_CRTM_Surface/geos.crtmsrf.{horizontal_resolution}.nc4', f'{cycle_dir}/fv3-jedi/bkg/'],
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/fv3files/*', f'{cycle_dir}/fv3-jedi/fv3files/'],
@@ -30,8 +30,8 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/gsibec//1.0.1/{gsibec_configuration}_l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nml', f'{cycle_dir}/fv3-jedi/gsibec/'],
                 [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/rcov/1.0.0/*', f'{cycle_dir}/fv3-jedi/rcov/'],
             ]
-        }
-    }
+        }}
+    ]
 
     return stage_cycle
 
