@@ -40,7 +40,7 @@ class fgat(OopsConfig):
                 'iterations': [
                     {'geometry': 'geometry_inner',
                      'gradient norm reduction': self.template_dict['gradient_norm_reduction'],
-                     'ninner': self.template_dict['number_of_iterations'],
+                     'ninner': str(self.template_dict['number_of_iterations']),
                      'diagnostics': {'departures': 'ombg'},
                      'online diagnostics': self.interface_model('varincrement1')}
                 ]

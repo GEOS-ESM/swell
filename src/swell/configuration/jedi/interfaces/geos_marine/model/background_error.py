@@ -23,7 +23,7 @@ def background_error(template_dict: Mapping) -> Mapping:
     active_variables.extend([
         'sea_water_potential_temperature',
         'sea_water_salinity',
-        'sea_water_height_above_geoid'
+        'sea_surface_height_above_geoid'
     ])
 
     variables = ['sea_surface_height_above_geoid']
@@ -39,7 +39,7 @@ def background_error(template_dict: Mapping) -> Mapping:
         'covariance model': 'SABER',
         'saber central block': {
             'saber block name': 'diffusion',
-            'active_variables': active_variables,
+            'active variables': active_variables,
             'read': {
                 'groups': [
                     {'variables': [
@@ -48,7 +48,7 @@ def background_error(template_dict: Mapping) -> Mapping:
                         'filepath': 'background_error_model/hz_rossby'
                     },
                     'vertical': {
-                        'levels': template_dict['vertical_resolution'],
+                        'levels': int(template_dict['vertical_resolution']),
                         'filepath': 'background_error_model/vt.{local_background_time}'.format(**template_dict)
                     }},
                     {'variables': variables,
