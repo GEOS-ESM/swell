@@ -58,8 +58,8 @@ def background_error(template_dict: Mapping) -> Mapping:
                  'function space': 'StructuredColumns',
                  'custom grid matching gsi': {
                      'type': 'latlon',
-                     'lats': gsibec_nlats,
-                     'lons': gsibec_nlons,
+                     'lats': int(gsibec_nlats),
+                     'lons': int(gsibec_nlons),
                  },
                  'custom partitioner matching gsi': {
                      'bands': gsibec_npy_proc
