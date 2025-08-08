@@ -662,6 +662,8 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             swell_static_file_questions,
             qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
         ]
