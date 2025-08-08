@@ -22,7 +22,7 @@ def r2d2(template_dict: Mapping) -> Mapping:
     
     if 'cice6' in template_dict['marine_models']:
         fc_list.append({'file_type': 'cice.res',
-                        'filename': f'{cycle_dir}/cice.res.{{local_background_time}}.nc'})
+                        'filename': f'{cycle_dir}/cice.res.{local_background_time}.nc'})
         
     an_list = [{'file_type': 'ocn.incr',
                 'filename': f'{cycle_dir}/mom6_increment.nc'}]
