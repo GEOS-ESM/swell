@@ -39,7 +39,7 @@ def states(template_dict: Mapping) -> Mapping:
             'sea_ice_snow_thickness',
         ])
 
-    input_dict['state_variables'] = state_variables
+    input_dict['state variables'] = state_variables
 
     output_dict = {
         'datadir': './',

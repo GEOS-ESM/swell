@@ -34,7 +34,7 @@ def variable_change_soca2cice(template_dict: Mapping) -> Mapping:
                 'min hsno': 0.1,
             }
         },
-        'cice background states': {
+        'cice background state': {
             'restart': f'iced.res.{local_background_time}.nc',
             'ncat': 5,
             'ice_lev': 7,
