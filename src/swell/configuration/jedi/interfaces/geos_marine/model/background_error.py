@@ -35,6 +35,13 @@ def background_error(template_dict: Mapping) -> Mapping:
             'sea_ice_snow_thickness'
         ])
 
+    vertical_resolution = template_dict['vertical_resolution']
+
+    try:
+        vertical_resolution = int(vertical_resolution)
+    except ValueError:
+        pass
+
     background_error = {
         'covariance model': 'SABER',
         'saber central block': {
@@ -48,7 +55,7 @@ def background_error(template_dict: Mapping) -> Mapping:
                         'filepath': 'background_error_model/hz_rossby'
                     },
                     'vertical': {
-                        'levels': int(template_dict['vertical_resolution']),
+                        'levels': vertical_resolution,
                         'filepath': f'background_error_model/vt.{template_dict["local_background_time"]}'
                     }},
                     {'variables': variables,

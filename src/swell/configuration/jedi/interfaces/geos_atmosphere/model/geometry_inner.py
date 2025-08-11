@@ -18,6 +18,16 @@ def geometry_inner(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
     vertical_resolution = template_dict['vertical_resolution']
 
+    try:
+        horizontal_resolution = int(horizontal_resolution)
+    except ValueError:
+        pass
+
+    try:
+        vertical_resolution = int(vertical_resolution)
+    except ValueError:
+        pass
+
     geometry_inner = {
         'fms initialization': {
             'namelist filename': './fv3-jedi/fv3files/fmsmpp.nml',
@@ -25,9 +35,9 @@ def geometry_inner(template_dict: Mapping) -> Mapping:
         },
         'akbk': f'./fv3-jedi/fv3files/akbk{vertical_resolution}.nc4',
         'layout': [npx_proc, npy_proc],
-        'npx': int(horizontal_resolution),
-        'npy': int(horizontal_resolution),
-        'npz': int(vertical_resolution)
+        'npx': horizontal_resolution,
+        'npy': horizontal_resolution,
+        'npz': vertical_resolution
     }
 
     return geometry_inner
