@@ -220,11 +220,8 @@ class JediConfigRendering():
         # Get the function attribute
         config_func = getattr(module, config_name)
 
-        # If the object is a function, call it with the template dictionary, if not set directly
-        if isinstance(config_func, Callable):
-            config_value = config_func(self.__template_dict__)
-        else:
-            config_value = config_func
+        # Call the function with the template dict
+        config_value = config_func(self.__template_dict__)
 
         return config_value
 
