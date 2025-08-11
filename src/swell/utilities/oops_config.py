@@ -23,7 +23,7 @@ class OopsConfig(ABC):
                  jedi_rendering,
                  window_type: str,
                  obs: list,
-                 cycle_time,
+                 cycle_time: str,
                  jedi_forecast_model: str,
                  observing_system_records_path: str) -> str:
 

@@ -189,22 +189,8 @@ class JediConfigRendering():
                          obs: Optional[list] = None,
                          jedi_forecast_model: Optional[str] = None) -> dict:
 
-        # Filepath to oops configurations
-        oops_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'oops')
-
-        # OOPS file with full path
-        config_file = os.path.join(oops_path, f'{config_name}.py')
-
-        # Check that the file exists
-        if not os.path.exists(config_file):
-            self.logger.abort(f'Config file {config_file} does not exist.')
-
         # Import the module
         module = import_module(f'swell.configuration.jedi.oops.{config_name}')
-
-        # Check that the module has a proper attribute for configuration
-        if not hasattr(module, config_name):
-            self.logger.abort(f'Config file {config_file} has no attribute {config_file}.')
 
         # Get the config class
         config_class = getattr(module, config_name)
@@ -228,32 +214,18 @@ class JediConfigRendering():
     def render_interface_model(self, config_name: str) -> Mapping:
         # Get and call the interface model method in file
 
-        # Filepath to interface model files
-        interface_model_path = os.path.join(get_swell_path(), 'configuration', 'jedi',
-                                            'interfaces', self.jedi_interface, 'model')
-
-        # Full filepath
-        config_file = os.path.join(interface_model_path, f'{config_name}.py')
-
-        # Check that it exists
-        if not os.path.exists(config_file):
-            self.logger.abort(f'Interface model file {config_file} does not exist.')
-
+        # Import the module
         module = import_module(
                 f'swell.configuration.jedi.interfaces.{self.jedi_interface}.model.{config_name}')
 
-        # Check that the file has an appropriately name attribute
-        if hasattr(module, config_name):
-            config_func = getattr(module, config_name)
+        # Get the function attribute
+        config_func = getattr(module, config_name)
 
-            # If the object is a function, call it with the template dictionary, if not set directly
-            if isinstance(config_func, Callable):
-                config_value = config_func(self.__template_dict__)
-            else:
-                config_value = config_func
+        # If the object is a function, call it with the template dictionary, if not set directly
+        if isinstance(config_func, Callable):
+            config_value = config_func(self.__template_dict__)
         else:
-            self.logger.abort(
-                    f'Interface model file {config_file} does not have an attribute {config_name}.')
+            config_value = config_func
 
         return config_value
 

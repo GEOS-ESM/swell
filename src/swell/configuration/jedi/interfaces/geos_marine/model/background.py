@@ -16,10 +16,10 @@ def background(template_dict: Mapping) -> Mapping:
         'date': template_dict['local_background_time_iso'],
         'read_from_file': 1,
         'basename': './',
-        'ocn_filename': 'MOM6.res.{template_dict["local_background_time"]}.nc'
+        'ocn_filename': f'MOM6.res.{template_dict["local_background_time"]}.nc'
     }
     if 'cice6' in template_dict['marine_models']:
-        background['ice_filename'] = 'cice.res.{template_dict["local_background_time"}.nc'
+        background['ice_filename'] = f'cice.res.{template_dict["local_background_time"]}.nc'
 
     state_variables = []
     if 'cice6' in template_dict['marine_models']:
