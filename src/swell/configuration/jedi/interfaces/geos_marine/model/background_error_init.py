@@ -17,7 +17,7 @@ def background_error_init(template_dict: Mapping) -> Mapping:
         'analysis variables': template_dict['analysis_variables'],
         'date': template_dict['local_background_time_iso'],
         'bump': {
-            'io': {'data directory': '{cycle_dir}/background_error_mode'.format(**template_dict)},
+            'io': {'data directory': f'{template_dict["cycle_dir"]}/background_error_mode',
             'drivers': {
                 'multivariate strategy': 'univariate',
                 'compute nicas': True,

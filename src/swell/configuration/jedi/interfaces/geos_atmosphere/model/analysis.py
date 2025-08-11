@@ -17,7 +17,7 @@ def analysis(template_dict: Mapping) -> Mapping:
         'filetype': 'cube sphere history',
         'provider': 'geos',
         'datapath': template_dict['cycle_dir'],
-        'filename': '{experiment_id}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'.format(**template_dict),
+        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'first': 'PT0H',
         'frequency': 'PT1H',
         'field io names': field_io_names,

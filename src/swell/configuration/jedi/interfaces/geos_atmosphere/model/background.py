@@ -67,7 +67,7 @@ def background(template_dict: Mapping) -> Mapping:
         'provider': 'geos',
         'datapath': template_dict['cycle_dir'],
         'filenames': [
-            f'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
+            'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
             f'fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
         ],
         'state variables': state_variables,

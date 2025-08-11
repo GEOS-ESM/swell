@@ -6,12 +6,13 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from typing import Optional
 from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
 
-def getvalues(template_dict: Mapping) -> Mapping:
+def getvalues(template_dict: Mapping) -> Optional[Mapping]:
     getvalues = None
 
     return getvalues
