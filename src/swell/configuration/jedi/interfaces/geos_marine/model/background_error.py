@@ -49,7 +49,7 @@ def background_error(template_dict: Mapping) -> Mapping:
                     },
                     'vertical': {
                         'levels': int(template_dict['vertical_resolution']),
-                        'filepath': 'background_error_model/vt.{local_background_time}'.format(**template_dict)
+                        'filepath': 'background_error_model/vt.{template_dict["local_background_time"]}'
                     }},
                     {'variables': variables,
                         'horizontal': {
@@ -67,7 +67,7 @@ def background_error(template_dict: Mapping) -> Mapping:
                 {'saber block name': 'SOCAParametricOceanStdDev',
                 'temperature': {
                     'sst': {
-                        'filepath': '{cycle_dir}/soca/godas_sst_bgerr.nc'.format(**template_dict),
+                        'filepath': '{template_dict["cycle_dir"]}/soca/godas_sst_bgerr.nc',
                         'variable': 'sst_bgerr'
                     },
                 },
