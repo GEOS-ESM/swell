@@ -50,18 +50,22 @@ def background_error(template_dict: Mapping) -> Mapping:
             'read': {
                 'groups': [
                     {'variables': [
-                        'sea_water_potential_temperature', 'sea_water_salinity'],
-                    'horizontal': {
+                        'sea_water_potential_temperature', 'sea_water_salinity'
+                        ],
+                     'horizontal': {
                         'filepath': 'background_error_model/hz_rossby'
-                    },
-                    'vertical': {
-                        'levels': vertical_resolution,
-                        'filepath': f'background_error_model/vt.{template_dict["local_background_time"]}'
-                    }},
+                        },
+                     'vertical': {
+                         'levels': vertical_resolution,
+                         'filepath':
+                         f'background_error_model/vt.{template_dict["local_background_time"]}'
+                         }
+                     },
                     {'variables': variables,
                         'horizontal': {
                             'filepath': 'background_error_model/hz_rossby_1p5'
-                        }},
+                        }
+                     },
                 ]
                 }
             },
@@ -71,15 +75,15 @@ def background_error(template_dict: Mapping) -> Mapping:
                 'ocean_depth_min': 100,
                 'rescale_bkgerr': 1.0,
                 'efold_z': 2500.0},
-                {'saber block name': 'SOCAParametricOceanStdDev',
-                'temperature': {
-                    'sst': {
-                        'filepath': f'{template_dict["cycle_dir"]}/soca/godas_sst_bgerr.nc',
-                        'variable': 'sst_bgerr'
-                    },
-                },
-                'unbalanced salinity': {},
-                'unbalanced ssh': {}}
+            {'saber block name': 'SOCAParametricOceanStdDev',
+             'temperature': {
+                 'sst': {
+                     'filepath': f'{template_dict["cycle_dir"]}/soca/godas_sst_bgerr.nc',
+                     'variable': 'sst_bgerr'
+                     },
+                 },
+             'unbalanced salinity': {},
+             'unbalanced ssh': {}}
         ],
         'linear variable change': {
             'input variables': template_dict['analysis_variables'],

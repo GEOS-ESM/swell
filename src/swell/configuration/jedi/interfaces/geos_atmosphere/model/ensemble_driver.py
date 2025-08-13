@@ -16,8 +16,10 @@ def ensemble_driver(template_dict: Mapping) -> Mapping:
     ensemble_driver = {
         'save posterior mean': template_dict['local_ensemble_save_posterior_mean'],
         'save posterior ensemble': template_dict['local_ensemble_save_posterior_ensemble'],
-        'save posterior mean increment': template_dict['local_ensemble_save_posterior_mean_increment'],
-        'save posterior ensemble increments': template_dict['local_ensemble_save_posterior_ensemble_increments'],
+        'save posterior mean increment':
+        template_dict['local_ensemble_save_posterior_mean_increment'],
+        'save posterior ensemble increments':
+        template_dict['local_ensemble_save_posterior_ensemble_increments'],
     }
 
     return ensemble_driver

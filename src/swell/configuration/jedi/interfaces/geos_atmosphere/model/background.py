@@ -51,8 +51,8 @@ state_variables = [
     'soilm',
     'eastward_wind_at_surface',
     'northward_wind_at_surface',
-#   'sea_surface_temperature',
-#   'mole_fraction_of_carbon_dioxide_in_air',
+    # 'sea_surface_temperature',
+    # 'mole_fraction_of_carbon_dioxide_in_air',
 ]
 
 # --------------------------------------------------------------------------------------------------

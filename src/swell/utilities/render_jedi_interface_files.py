@@ -11,7 +11,7 @@ import os
 import yaml
 from typing import Union, Optional, Any
 from importlib import import_module
-from collections.abc import Mapping, Callable
+from collections.abc import Mapping
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels

@@ -18,32 +18,35 @@ def background_error_init(template_dict: Mapping) -> Mapping:
         'date': template_dict['local_background_time_iso'],
         'bump': {
             'io': {'data directory': f'{template_dict["cycle_dir"]}/background_error_mode',
-            'drivers': {
-                'multivariate strategy': 'univariate',
-                'compute nicas': True,
-                'write local nicas': True
-            },
-            'model': {'do not cross mask boundaries': True},
-            'nicas': {'resolution': 6.0},
-        },
-        'correlation': [
-            {'name': 'ocn',
-             'base value': 840336.134453782,
-             'rossby mult': 0.280112045,
-             'variables': [
-                'sea_water_salinity',
-                'sea_water_potential_temperature',
-                'sea_surface_height_above_geoid',
-                'sea_water_cell_thickness',
-             ]},
-             {'name': 'ice',
-              'base value': 560224.089635854,
-              'variables': [
-                  'sea_ice_area_fraction',
-                  'sea_ice_thickness',
-                  'sea_ice_snow_thickness'
-                  ]}
-        ]
+                   'drivers': {
+                       'multivariate strategy': 'univariate',
+                       'compute nicas': True,
+                       'write local nicas': True
+                    },
+                   'model': {'do not cross mask boundaries': True},
+                   'nicas': {'resolution': 6.0},
+                   },
+            'correlation': [
+                {'name': 'ocn',
+                 'base value': 840336.134453782,
+                 'rossby mult': 0.280112045,
+                 'variables': [
+                     'sea_water_salinity',
+                     'sea_water_potential_temperature',
+                     'sea_surface_height_above_geoid',
+                     'sea_water_cell_thickness',
+                     ]
+                 },
+                {'name': 'ice',
+                 'base value': 560224.089635854,
+                 'variables': [
+                     'sea_ice_area_fraction',
+                     'sea_ice_thickness',
+                     'sea_ice_snow_thickness'
+                     ]
+                 }
+            ]
+        }
     }
 
     return background_error_init

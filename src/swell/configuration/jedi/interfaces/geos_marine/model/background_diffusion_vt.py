@@ -19,9 +19,10 @@ def background_diffusion_vt(template_dict: Mapping) -> Mapping:
         'ocn_filename': f'MOM6.res.{template_dict["local_background_time"]}.nc'
     }
     if 'cice6' in template_dict['marine_models']:
-        background_diffusion_vt['ice_filename'] = f'cice.res.{template_dict["local_background_time"]}.nc'
+        background_diffusion_vt['ice_filename'] = \
+                f'cice.res.{template_dict["local_background_time"]}.nc'
     background_diffusion_vt['state variables'] = ['sea_water_potential_temperature']
-    
+
     return background_diffusion_vt
 
 # --------------------------------------------------------------------------------------------------

@@ -20,14 +20,14 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
     stage_cycle = [
         {'copy_files': {
             'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/common/*', f'{cycle_dir}/soca/'],
-                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/{horizontal_resolution}x{vertical_resolution}/socafiles/*', f'{cycle_dir}/soca/']
+                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/common/*', f'{cycle_dir}/soca/'],  # noqa
+                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/{horizontal_resolution}x{vertical_resolution}/socafiles/*', f'{cycle_dir}/soca/']  # noqa
             ]
         }},
         {'link_files': {
             'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/{horizontal_resolution}x{vertical_resolution}/INPUT/*', f'{cycle_dir}/INPUT'],
-                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/static_background_error/explicit_diffusion/{horizontal_resolution}x{vertical_resolution}/*', f'{cycle_dir}/background_error_model'],
+                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/geometry/{horizontal_resolution}x{vertical_resolution}/INPUT/*', f'{cycle_dir}/INPUT'],  # noqa
+                [f'{swell_static_files}/jedi/interfaces/geos_marine/model/static_background_error/explicit_diffusion/{horizontal_resolution}x{vertical_resolution}/*', f'{cycle_dir}/background_error_model'],  # noqa
             ]
         }}
     ]

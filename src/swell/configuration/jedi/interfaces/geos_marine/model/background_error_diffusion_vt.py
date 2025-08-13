@@ -32,7 +32,8 @@ def background_error_diffusion_vt(template_dict: Mapping) -> Mapping:
                          'model variable': 'sea_water_potential_temperature'
                      },
                      'write': {
-                         'filepath': f'background_error_model/vt.{template_dict["local_background_time"]}'
+                         'filepath':
+                         f'background_error_model/vt.{template_dict["local_background_time"]}'
                      }}
                 ]
             }

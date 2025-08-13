@@ -45,8 +45,12 @@ def background_error(template_dict: Mapping) -> Mapping:
             'saber block name': 'gsi hybrid covariance',
             'read': {
                 'gsi akbk': f'./fv3-jedi/fv3files/akbk{vertical_resolution}.nc4',
-                'gsi error covariance file': f'./fv3-jedi/gsibec/gsi-coeffs-gmao-global-l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nc4',
-                'gsi berror namelist file': f'./fv3-jedi/gsibec/{gsibec_configuration}_l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nml',
+                'gsi error covariance file':
+                f'./fv3-jedi/gsibec/gsi-coeffs-gmao-global-l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nc4',  # noqa
+
+                'gsi berror namelist file':
+                f'./fv3-jedi/gsibec/{gsibec_configuration}_l{vertical_resolution}x{gsibec_nlons}y{gsibec_nlats}.nml',  # noqa
+
                 'processor layout x direction': gsibec_npx_proc,
                 'processor layout y direction': gsibec_npy_proc,
                 'debugging mode': False

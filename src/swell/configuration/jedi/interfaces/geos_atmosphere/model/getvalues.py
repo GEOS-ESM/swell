@@ -17,7 +17,7 @@ def getvalues(template_dict: Mapping) -> Mapping:
         'variable change': {
             'variable change name': 'Model2GeoVaLs',
             'hydrometeor effective radii method': 'gsi',
-            'tropopause pressure method': 'gsi' 
+            'tropopause pressure method': 'gsi'
         }
     }
 
