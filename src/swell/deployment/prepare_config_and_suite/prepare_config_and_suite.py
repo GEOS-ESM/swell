@@ -11,6 +11,7 @@
 import copy
 import os
 import yaml
+from random import randint
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 
@@ -333,6 +334,15 @@ class PrepareExperimentConfigAndSuite:
 
             if key == 'experiment_id' and val['default_value'] == 'defer_to_code':
                 val['default_value'] = f'swell-{self.suite}'
+
+            if key == 'scratch_id' and val['default_value'] == 'defer_to_code':
+                experiment_id = self.question_dictionary_model_ind['experiment_id']['default_value']
+                if experiment_id == 'defer_to_code':
+                    experiment_id = f'swell-{self.suite}'
+                    self.question_dictionary_model_ind['experiment_id']['default_value'] = experiment_id
+
+                scratch_id = f'{experiment_id}-{randint(0, 99999999):08d}'
+                val['default_value'] = scratch_id
 
     # ----------------------------------------------------------------------------------------------
 

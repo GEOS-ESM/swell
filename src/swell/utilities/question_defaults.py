@@ -130,6 +130,36 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class run_in_scratch(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "run_in_scratch"
+        ask_question: bool = True
+        prompt: str = ("Should swell run certain tasks in a specified scratch directory?")
+        widget_type: WType = WType.BOOLEAN
+    
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class scratch_id(SuiteQuestion):
+        default_value: str = "defer_to_code"
+        question_name: str = "scratch_id"
+        ask_question: bool = True
+        prompt: str = ("Specify an id to place scratch files under the scratch root directory.")
+        widget_type: WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+    
+    @dataclass
+    class scratch_root(SuiteQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "scratch_root"
+        ask_question: bool = True
+        prompt: str = ("Specify a scratch directory to run tasks in.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class skip_ensemble_hofx(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "skip_ensemble_hofx"

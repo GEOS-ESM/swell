@@ -81,6 +81,12 @@ class taskBase(ABC):
         self.__platform__ = self.config.__platform__
         self.__suite_to_run__ = self.config.__suite_to_run__
 
+        # Scratch directory information
+        # -----------------------------
+        self.__run_in_scratch__ = self.config.__run_in_scratch__
+        self.__scratch_root__ = self.config.__scratch_root__
+        self.__scratch_id__ = self.config.__scratch_id__
+
         if datetime_input is not None:
             self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
 
@@ -143,8 +149,13 @@ class taskBase(ABC):
     # ----------------------------------------------------------------------------------------------
 
     # Method to get the experiment directory
-    def experiment_path(self) -> str:
-        return os.path.join(self.__experiment_root__, self.__experiment_id__)
+    def experiment_path(self, scratch: bool = True) -> str:
+        if self.__run_in_scratch__ and scratch:
+            experiment_path = os.path.join(self.__scratch_root__, self.__scratch_id__)
+        else:
+            experiment_path = os.path.join(self.__experiment_root__, self.__experiment_id__)
+            
+        return experiment_path
 
     # ----------------------------------------------------------------------------------------------
 
@@ -156,7 +167,7 @@ class taskBase(ABC):
 
     # Method to get the experiment configuration directory
     def experiment_config_path(self) -> str:
-        swell_exp_path = self.experiment_path()
+        swell_exp_path = self.experiment_path(scratch=False)
         return os.path.join(swell_exp_path, 'configuration')
 
     # ----------------------------------------------------------------------------------------------
