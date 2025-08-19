@@ -145,7 +145,7 @@ class QuestionDefaults():
         question_name: str = "scratch_id"
         ask_question: bool = True
         prompt: str = ("Specify an id to place scratch files under the scratch root directory.")
-        widget_type: WType.STRING
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
     

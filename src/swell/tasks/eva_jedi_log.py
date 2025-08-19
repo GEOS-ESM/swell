@@ -30,7 +30,7 @@ class EvaJediLog(taskBase):
 
         # Read Eva template file into dictionary
         # --------------------------------------
-        eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
+        eva_path = self.eva_config_path()
         eva_config_file = os.path.join(eva_path, f'jedi_log-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()

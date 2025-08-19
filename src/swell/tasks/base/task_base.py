@@ -172,6 +172,12 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def eva_config_path(self) -> str:
+        return os.path.join(self.experiment_path(scratch=False),
+                            self.experiment_id()+'-suite', 'eva')
+
+    # ----------------------------------------------------------------------------------------------
+
     def get_ensemble_packet(self) -> Optional[str]:
         return self.__ensemble_packet__
 
