@@ -271,10 +271,11 @@ class TaskRuntimes():
 
     @dataclass
     class sync_point(Task):
-        script = "true"
+        script: str = "true"
 
     @dataclass
     class ThinObs(Task):
+        script: str = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {model_component}"
         is_cycling: bool = True
         is_model: bool = True
         time_limit: bool = True
