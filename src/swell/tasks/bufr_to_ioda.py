@@ -16,7 +16,7 @@ import yaml
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
-
+#from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
 # --------------------------------------------------------------------------------------------------
 
 # Dictionary linking each obs type to the appropriate yaml template
@@ -24,8 +24,10 @@ bufr2ioda_obs_type_dict = {
     '1bmhs': 'bufr_ncep_1bmhs.yaml',
     'amsua': 'bufr_ncep_1bamua_ta.yaml',
     '1bamua': 'bufr_ncep_1bamua_ta.yaml',
+    'ncep_1bamua_bufr': 'bufr_ncep_1bamua_ta.yaml',
     'atms': 'bufr_ncep_atms.yaml',
     'mtiasi': 'bufr_ncep_mtiasi.yaml',
+    'ncep_mtiasi_bufr': 'bufr_ncep_mtiasi.yaml',
     'satwind': 'bufr_ncep_satwind_avhrr.yaml',
     'aircft': 'bufr_ncep_prepbufr_aircft.yaml',
     'sevcsr': 'bufr_ncep_sevcsr.yaml'
@@ -103,7 +105,7 @@ def generate_iodaconv_yaml(bufr_file_source_path, ioda_file_target_path, path_to
                 yaml_content = yaml.safe_load(file)
                 file.close()
 
-            print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
+            #print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
 
             # Apply the replacements for input and output file paths
             yaml_content['observations'][0]['obs space']['obsdatain'] = obsdatain # Source file ~ bufr file to be converted (must be a bufr or prepbufr file) 
@@ -112,8 +114,8 @@ def generate_iodaconv_yaml(bufr_file_source_path, ioda_file_target_path, path_to
             
             with open(yaml_file_target, 'w') as file:
                 yaml.dump(yaml_content, file, default_flow_style=False, sort_keys=False)
-                print('Updated YAML file content:')
-                print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
+                print(f'Updated YAML file content: {yaml_file_target}')
+                #print(yaml.dump(yaml_content, default_flow_style=False, sort_keys=False))  
 
     except FileNotFoundError:
         print(f'Error: File "{yaml_file_source}" not found.')
@@ -155,8 +157,6 @@ class BufrToIoda(taskBase):
             # find the obs type within the filename
             obs_type = find_obstype_match(bufr_path_file)
 
-            print(obs_type)
-            exit()
             # Source file ~ bufr file to be converted
             bufr_file_source_path = os.path.basename(bufr_path_file)
 
@@ -165,6 +165,26 @@ class BufrToIoda(taskBase):
             ioda_file_target_name = parts[0] + '.{splits/satId}.tm00.nc4'
             ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
 
-            bufr2ioda_conv_yaml = generate_iodaconv_yaml(bufr_path_file, ioda_file_target_path, path_to_ioda_conv_yaml_tmpl_dir,swell_exp_path,cycle_dir, ioda_dir)
+            # experiment_path = self.experiment_path()
+            # cycle_dir = self.cycle_dir()
 
-            subprocess.run(['bufr2ioda.x', bufr2ioda_conv_yaml])
+            bufr2ioda_conv_yaml = generate_iodaconv_yaml(bufr_path_file, ioda_file_target_path, path_to_ioda_conv_yaml_tmpl_dir, self.experiment_path(), self.cycle_dir(), ioda_dir)
+
+            # Jedi executable name (IODA Converter Name)
+            # --------------------
+            jedi_executable = 'bufr2ioda.x' 
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                                'build', 'bin', jedi_executable)
+
+            # Run the JEDI executable
+            # -----------------------
+            try:
+                self.logger.info('Running '+jedi_executable_path+' with '+bufr2ioda_conv_yaml+'.')
+                subprocess.run([jedi_executable_path, bufr2ioda_conv_yaml]) #, cwd=jedi_executable_path)
+            except FileNotFoundError:
+                print(f'Error: File "{bufr2ioda_conv_yaml}" not found.')
+            except yaml.YAMLError as e:
+                print(f'Error processing YAML file: {e}')
+            else:
+                self.logger.info('YAML generated, now exiting.')
+

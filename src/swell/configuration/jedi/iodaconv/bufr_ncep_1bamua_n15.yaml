@@ -7,6 +7,7 @@ observations:
   - obs space:
       name: bufr
       obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/obs/flk/ncep_g5obs/bufr/AMSUA/Y2021/M11/gdas1.211101.t00z.1bamua.tm00.bufr_d"
+
       exports:
         variables:
           # MetaData
@@ -59,7 +60,7 @@ observations:
               fieldOfViewNumber: "*/FOVN"
               scanStart: -48.333
               scanStep: 3.333 
-              sensor: amsua 
+              sensor: amsua
 
           sensorChannelNumber:
             query: "*/BRITCSTC/CHNM"
@@ -67,7 +68,7 @@ observations:
           # ObsValue
           # Note: BUFR Dump contains Antenna Temperature for all normal-feed AMSUAs except NOAA-15/16
           #       NOAA-15/16 contain Brightness Temperature
-          antennaTemperature:
+          brightnessTemperature:
             query: "*/BRITCSTC/TMBR"
 
         splits:
@@ -75,16 +76,12 @@ observations:
             category:
               variable: satelliteIdentifier
               map:
-                _3: metop-b
-                _4: metop-a
-                _5: metop-c
-                _208: n17
-                _209: n18
-                _223: n19
+                _206: n15
+                _207: n16
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/gdas.t00z.amsua_{splits/satId}_ta.tm00.nc"
+      obsdataout: "./testrun/gdas.t12z.amsua_{splits/satId}.tm00.nc"
 
       dimensions:
         - name: Channel
@@ -179,10 +176,9 @@ observations:
           longName: "Field of View Number"
 
         # ObsValue
-        # For now, store the antennaTemperature as brightnessTemperature
         - name: "ObsValue/brightnessTemperature"
-          source: variables/antennaTemperature
-          longName: "Antenna Temperature"
+          source: variables/brightnessTemperature
+          longName: "Brightness Temperature"
           units: "K"
           range: [90, 380]
           chunks: [1000, 15]
