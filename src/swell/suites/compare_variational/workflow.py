@@ -62,6 +62,7 @@ class Workflow_compare_variational(CylcWorkflow):
                     cycle_str = ''
 
                     cycle_str += f"EvaComparisonIncrement-{model}\n"
+                    cycle_str += f"EvaComparisonJediLog-{model}\n"
 
                     for i in range(len(config_list)):
                         cycle_str += f"JediOopsLogParser-{model}-{i}\n"
