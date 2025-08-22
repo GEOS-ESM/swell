@@ -275,7 +275,7 @@ class TaskRuntimes():
 
     @dataclass
     class ThinObs(Task):
-        script: str = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {model_component}"
+        script: str = "swell task RunJediObsfiltersExecutable $config -d $datetime -m geos_atmosphere"
         is_cycling: bool = True
         is_model: bool = True
         time_limit: bool = True
