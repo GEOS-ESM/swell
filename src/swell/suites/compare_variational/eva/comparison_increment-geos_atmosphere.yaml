@@ -1882,28 +1882,24 @@ transforms:
   new name: experiment_increment_1::increment::ps_diff
   transform: arithmetic
 
-transforms:
 - equals: experiment_increment_1::increment::t-experiment_increment_2::increment::t
   for:
     variable: t
   new name: experiment_increment_1::increment::t_diff
   transform: arithmetic
 
-transforms:
 - equals: experiment_increment_1::increment::ua-experiment_increment_2::increment::ua
   for:
     variable: ua
   new name: experiment_increment_1::increment::ua_diff
   transform: arithmetic
 
-transforms:
 - equals: experiment_increment_1::increment::va-experiment_increment_2::increment::va
   for:
     variable: va
   new name: experiment_increment_1::increment::va_diff
   transform: arithmetic
 
-transforms:
 - equals: experiment_increment_1::increment::q-experiment_increment_2::increment::q
   for:
     variable: q
