@@ -11,7 +11,6 @@
 import os
 import yaml
 import glob
-import datetime
 
 from eva.eva_driver import eva
 
@@ -102,9 +101,9 @@ class EvaComparisonIncrement(taskBase):
             incr_file_2 = f'ocn.*.incr.{ocn_cycle_time}.nc'
 
         cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                    self.cycle_time(), self.get_model())
+                                   self.__datetime__.string_directory(), self.get_model())
         cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                    self.cycle_time(), self.get_model())
+                                   self.__datetime__.string_directory(), self.get_model())
 
         # Files to fill the template in the config file
         increment_file_path_1 = glob.glob(os.path.join(cycle_dir_1, incr_file_1))[0]
@@ -127,7 +126,8 @@ class EvaComparisonIncrement(taskBase):
         # Write eva dictionary to file
         # ----------------------------
         conf_output = os.path.join(cycle_dir, 'eva', 'increment',
-                                    'comparison_increment_eva.yaml')
+                                   'comparison_increment_eva.yaml')
+
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
             yaml.dump(eva_dict, outfile, default_flow_style=False)

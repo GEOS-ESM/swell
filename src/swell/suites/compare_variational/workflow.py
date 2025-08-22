@@ -50,6 +50,10 @@ class Workflow_compare_variational(CylcWorkflow):
                         final_cycle_point,
                         cycle_times)
 
+                # Set the values in the config
+                self.experiment_dict['start_cycle_point'] = start_cycle_point
+                self.experiment_dict['final_cycle_point'] = final_cycle_point
+
                 scheduling_section = self.create_new_section(
                         'scheduling', {'initial cycle point': start_cycle_point,
                                        'final cycle point': final_cycle_point})

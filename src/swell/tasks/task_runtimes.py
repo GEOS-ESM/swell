@@ -71,6 +71,7 @@ class TaskRuntimes():
 
     @dataclass
     class EvaComparisonIncrement(Task):
+        is_cycling: bool = True
         is_model: bool = True
 
     @dataclass
@@ -275,7 +276,8 @@ class TaskRuntimes():
 
     @dataclass
     class ThinObs(Task):
-        script: str = "swell task RunJediObsfiltersExecutable $config -d $datetime -m geos_atmosphere"
+        script: str = ("swell task RunJediObsfiltersExecutable $config"
+                       " -d $datetime -m geos_atmosphere")
         is_cycling: bool = True
         is_model: bool = True
         time_limit: bool = True
