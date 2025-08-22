@@ -25,6 +25,7 @@ graphics:
     plots:
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Residual norm'
+        add_legend:
         layers:
         - type: LinePlot
           x:
@@ -43,6 +44,7 @@ graphics:
 
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Norm reduction'
+        add_legend:
         layers:
         - type: LinePlot
           x:
