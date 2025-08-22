@@ -93,7 +93,7 @@ def check_da_params(config_list: list,
 
     cycle_times_out = []
 
-    if cycle_times_in is None or cycle_times_in == 'None':
+    if cycle_times_in == [None] or cycle_times_in == 'None':
         if common_cycle_times is None:
             cycle_times_out = []
         else:
