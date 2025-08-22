@@ -20,7 +20,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 
-class EvaJediLog(taskBase):
+class EvaComparisonJediLog(taskBase):
 
     def execute(self) -> None:
 
@@ -31,7 +31,7 @@ class EvaJediLog(taskBase):
         # Read Eva template file into dictionary
         # --------------------------------------
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
-        eva_config_file = os.path.join(eva_path, f'jedi_log-{model}.yaml')
+        eva_config_file = os.path.join(eva_path, f'comparison_jedi_log-{model}.yaml')
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
@@ -64,7 +64,7 @@ class EvaJediLog(taskBase):
 
         # Write eva dictionary to file
         # ----------------------------
-        conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'jedi_log_eva.yaml')
+        conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'comparison_jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
             yaml.dump(eva_dict, outfile, default_flow_style=False)

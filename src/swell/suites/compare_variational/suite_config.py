@@ -28,6 +28,7 @@ class SuiteConfig(QuestionContainer, Enum):
             sq.compare,
             qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
             qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+            qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
             qd.model_components(),
             qd.runahead_limit(),
         ]
@@ -45,7 +46,7 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    compare_variational_marine = QuestionList(
+    compare_variational_atmosphere = QuestionList(
         list_name="compare_variational_atmosphere",
         questions=[
             compare_variational,

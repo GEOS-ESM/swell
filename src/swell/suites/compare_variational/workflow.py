@@ -41,6 +41,7 @@ class Workflow_compare_variational(CylcWorkflow):
 
         if 'models' in self.experiment_dict:
             for model in self.experiment_dict['models'].keys():
+                print(model)
                 cycle_times = self.experiment_dict['models'][model]['cycle_times']
 
                 start_cycle_point, final_cycle_point, cycle_times = check_da_params(
