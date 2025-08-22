@@ -56,9 +56,6 @@ class Task:
             if self.is_model and self.model is not None:
                 self.scheduling_name += f'-{self.model}'
 
-        elif self.is_model:
-            self.scheduling_name = self.scheduling_name.format(model=self.model)
-
         if self.script is None:
             self.script = f'swell task {self.base_name} $config'
 
@@ -66,7 +63,11 @@ class Task:
                 self.script += ' -d $datetime'
 
             if self.is_model and self.model is not None:
-                self.script += f' -m {self.model}'
+                self.script += ' -m {model}'
+
+        if self.is_model and self.model is not None:
+            self.script = self.script.format(model=self.model)
+            self.scheduling_name = self.scheduling_name.format(model=self.model)
 
     # --------------------------------------------------------------------------------------------------
 
