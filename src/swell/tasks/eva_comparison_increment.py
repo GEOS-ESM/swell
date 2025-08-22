@@ -24,17 +24,17 @@ from swell.utilities.data_assimilation_window_params import DataAssimilationWind
 
 class EvaComparisonIncrement(taskBase):
 
-    def cycles_in_experiment(self, path):
-        cycle_glob = os.path.join(os.path.dirname(path), '..', 'run', '*Z', self.get_model())
-        cycle_paths = glob.glob(cycle_glob)
+    def window_info_from_config(self, path: str):
 
-        cycle_times = []
+        config_file = os.path.join(os.path.dirname(path), 'experiment.yaml')
 
-        for cycle_path in cycle_paths:
-            cycle_time = cycle_path.split(f'/{self.get_model()}')[0].split('run/')[1]
-            cycle_times.append(cycle_time)
+        with open(config_file, 'r') as f:
+            config_dict = yaml.safe_load(f)
 
-        return cycle_times
+        window_type = config_dict['models'][self.get_model()]['window_type']
+        window_offset = config_dict['models'][self.get_model()]['window_offset']
+
+        return window_type, window_offset
 
     def execute(self) -> None:
 
@@ -52,98 +52,86 @@ class EvaComparisonIncrement(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
-        # Window information
-        window_offset = self.config.window_offset()
-        window_type = self.config.window_type()
+        window_type, window_offset = self.window_info_from_config(experiment_path_1)
 
-        # Cycle times in the run directory for each experiment
-        cycle_times_1 = self.cycles_in_experiment(experiment_path_1)
-        cycle_times_2 = self.cycles_in_experiment(experiment_path_2)
+        # Create the cycle dir for this experiment
+        cycle_dir = self.cycle_dir()
 
-        # Shared cycle times for each experiment
-        cycle_times = list(set(cycle_times_1) & set(cycle_times_2))
+        cycle_time_dto = self.cycle_time_dto()
 
-        for cycle_time in cycle_times:
+        da_window_params = DataAssimilationWindowParams(self.logger, cycle_time_dto.strftime(
+            '%Y-%m-%dT%H:%M:%SZ'))
 
-            # Create the cycle dir for this experiment
-            cycle_dir = os.path.join(self.experiment_path(), 'run', cycle_time, self.get_model())
-            os.makedirs(cycle_dir, exist_ok=True)
+        window_begin_dto = da_window_params.window_begin(window_offset, dto=True)
+        window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
-            cycle_time_dto = datetime.datetime.strptime(cycle_time, '%Y%m%dT%H%M%SZ')
+        # Info to task log
+        info_string = 'Running Eva to plot from the increment file'
+        self.logger.info('')
+        self.logger.info(info_string)
+        self.logger.info('-'*len(info_string))
 
-            da_window_params = DataAssimilationWindowParams(self.logger, cycle_time_dto.strftime(
-                '%Y-%m-%dT%H:%M:%SZ'))
+        # Create time strings for eva_override directory
+        cycle_time_reformat = cycle_time_dto.strftime('%Y%m%d_%H%M%Sz')
 
-            window_begin_dto = da_window_params.window_begin(window_offset, dto=True)
-            window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
+        # Define the increment filename and path
+        # For 3D-Var and 3D-FGAT, the increment file is in the middle of the DA window
+        # For 3D-FGAT atmos, the increment is at the beginning of the DA window. This
+        # is just a limited implementation of 4DVAR in SWELL by turning the linear operator off,
+        # where the cost-type is 4D-VAR in OOPS folder.
+        # TODO: This really complicates the increment file naming and path for now, this
+        # is a temporary solution (I'm refering to window type and atmos if statement)
+        # TODO: Increment iteration number may change according to outer iteration loops
+        # which is currenly manually set in varincrement1.yaml
+        # For now we are only plotting the first one
+        iter_no = 1
+        incr_file_1 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        incr_file_2 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
 
-            # Info to task log
-            info_string = 'Running Eva to plot from the increment file'
-            self.logger.info('')
-            self.logger.info(info_string)
-            self.logger.info('-'*len(info_string))
+        if window_type == '4D' and 'atmos' in self.suite_name():
+            incr_file_1 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
+            incr_file_2 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
 
-            # Create time strings for eva_override directory
-            cycle_time_reformat = cycle_time_dto.strftime('%Y%m%d_%H%M%Sz')
+        # Create dictionary used to override the eva config
+        eva_override = {}
 
-            # Define the increment filename and path
-            # For 3D-Var and 3D-FGAT, the increment file is in the middle of the DA window
-            # For 3D-FGAT atmos, the increment is at the beginning of the DA window. This
-            # is just a limited implementation of 4DVAR in SWELL by turning the linear operator off,
-            # where the cost-type is 4D-VAR in OOPS folder.
-            # TODO: This really complicates the increment file naming and path for now, this
-            # is a temporary solution (I'm refering to window type and atmos if statement)
-            # TODO: Increment iteration number may change according to outer iteration loops
-            # which is currenly manually set in varincrement1.yaml
-            # For now we are only plotting the first one
-            iter_no = 1
-            incr_file_1 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
-            incr_file_2 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        # Soca case
+        if model == 'geos_marine':
+            ocn_cycle_time = cycle_time_dto.strftime('%Y-%m-%dT%H:%M:%SZ')
+            incr_file_1 = f'ocn.*.incr.{ocn_cycle_time}.nc'
+            incr_file_2 = f'ocn.*.incr.{ocn_cycle_time}.nc'
 
-            if window_type == '4D' and 'atmos' in self.suite_name():
-                incr_file_1 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
-                incr_file_2 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
+        cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
+                                    self.cycle_time(), self.get_model())
+        cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
+                                    self.cycle_time(), self.get_model())
 
-            # Create dictionary used to override the eva config
-            eva_override = {}
+        # Files to fill the template in the config file
+        increment_file_path_1 = glob.glob(os.path.join(cycle_dir_1, incr_file_1))[0]
+        increment_file_path_2 = glob.glob(os.path.join(cycle_dir_2, incr_file_2))[0]
 
-            # Soca case
-            if model == 'geos_marine':
-                ocn_cycle_time = cycle_time_dto.strftime('%Y-%m-%dT%H:%M:%SZ')
-                incr_file_1 = f'ocn.*.incr.{ocn_cycle_time}.nc'
-                incr_file_2 = f'ocn.*.incr.{ocn_cycle_time}.nc'
+        eva_override['cycle_dir'] = cycle_dir
+        eva_override['window_begin'] = window_begin
 
-            cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                       cycle_time, self.get_model())
-            cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                       cycle_time, self.get_model())
+        eva_override['cycle_dir_1'] = cycle_dir_1
+        eva_override['cycle_dir_2'] = cycle_dir_2
 
-            # Files to fill the template in the config file
-            increment_file_path_1 = glob.glob(os.path.join(cycle_dir_1, incr_file_1))[0]
-            increment_file_path_2 = glob.glob(os.path.join(cycle_dir_2, incr_file_2))[0]
+        eva_override['cycle_time'] = cycle_time_reformat
+        eva_override['increment_file_path_1'] = increment_file_path_1
+        eva_override['increment_file_path_2'] = increment_file_path_2
 
-            eva_override['cycle_dir'] = cycle_dir
-            eva_override['window_begin'] = window_begin
+        # Override the eva dictionary
+        eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
+        eva_dict = yaml.safe_load(eva_str)
 
-            eva_override['cycle_dir_1'] = cycle_dir_1
-            eva_override['cycle_dir_2'] = cycle_dir_2
+        # Write eva dictionary to file
+        # ----------------------------
+        conf_output = os.path.join(cycle_dir, 'eva', 'increment',
+                                    'comparison_increment_eva.yaml')
+        os.makedirs(os.path.dirname(conf_output), exist_ok=True)
+        with open(conf_output, 'w') as outfile:
+            yaml.dump(eva_dict, outfile, default_flow_style=False)
 
-            eva_override['cycle_time'] = cycle_time_reformat
-            eva_override['increment_file_path_1'] = increment_file_path_1
-            eva_override['increment_file_path_2'] = increment_file_path_2
-
-            # Override the eva dictionary
-            eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-            eva_dict = yaml.safe_load(eva_str)
-
-            # Write eva dictionary to file
-            # ----------------------------
-            conf_output = os.path.join(cycle_dir, 'eva', 'increment',
-                                       'comparison_increment_eva.yaml')
-            os.makedirs(os.path.dirname(conf_output), exist_ok=True)
-            with open(conf_output, 'w') as outfile:
-                yaml.dump(eva_dict, outfile, default_flow_style=False)
-
-            # Call eva
-            # --------
-            eva(eva_dict)
+        # Call eva
+        # --------
+        eva(eva_dict)
