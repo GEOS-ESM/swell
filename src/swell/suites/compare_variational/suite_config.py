@@ -15,10 +15,6 @@ from swell.suites.suite_questions import SuiteQuestions as sq
 
 from enum import Enum
 
-_3dvar_container = importlib.import_module(f'swell.suites.3dvar.suite_config')
-_3dvar_config = getattr(_3dvar_container, 'SuiteConfig')
-_3dvar = getattr(_3dvar_config, '_3dvar')
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -39,14 +35,21 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    compare_3dvar = QuestionList(
-        list_name="compare_3dvar",
+    compare_variational_marine = QuestionList(
+        list_name="compare_variational_marine",
         questions=[
-            _3dvar,
             compare_variational,
             qd.model_components(['geos_marine']),
-            qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
-            qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    compare_variational_marine = QuestionList(
+        list_name="compare_variational_atmosphere",
+        questions=[
+            compare_variational,
+            qd.model_components(['geos_atmosphere']),
         ]
     )
 
