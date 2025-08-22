@@ -2,12 +2,12 @@ datasets:
 - group: increment
   type: LatLon
   filename: {{increment_file_path_1}}
-  name: experiment_increment
+  name: experiment_increment_1
   variables: [ps, ua, va, t, q, lat, lon]
 - group: increment
   type: LatLon
   filename: {{increment_file_path_2}}
-  name: experiment_increment
+  name: experiment_increment_2
   variables: [ps, ua, va, t, q, lat, lon]
 
 graphics:
