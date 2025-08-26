@@ -64,7 +64,8 @@ class EvaComparisonJediLog(taskBase):
 
         # Write eva dictionary to file
         # ----------------------------
-        conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'comparison_jedi_log_eva.yaml')
+        conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log',
+                                   'comparison_jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
             yaml.dump(eva_dict, outfile, default_flow_style=False)

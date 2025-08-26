@@ -73,7 +73,7 @@ class TaskRuntimes():
     class EvaComparisonIncrement(Task):
         is_cycling: bool = True
         is_model: bool = True
-    
+
     @dataclass
     class EvaComparisonJediLog(Task):
         is_cycling: bool = True

@@ -88,7 +88,7 @@ graphics:
           cmap: 'bwr'
           vmin: -100
           vmax: 100
-  
+
   #map plot for temperature increment (lowest level)
   - batch figure:
       variables: [t]
@@ -393,7 +393,7 @@ graphics:
           cmap: 'bwr'
           vmin: -1
           vmax: 1
-  
+
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -1540,7 +1540,7 @@ graphics:
           cmap: 'bwr'
           vmin: -0.001
           vmax: 0.001
-      # Experiment Diff 
+      # Experiment Diff
       - mapping:
           projection: plcarr
           domain: global
