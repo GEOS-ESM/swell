@@ -97,7 +97,7 @@ class GenerateBClimatologyByLinking(taskBase):
         source_paths = []
         # First, append with any user provided path
         # ------------------------------------------
-        if swell_static_files_user is not None:
+        if swell_static_files_user is not None and swell_static_files_user != 'None':
             source_paths.append(os.path.join(swell_static_files_user, source_path_base,
                                              res_path, correlation_files))
         # Second, append with centrally controlled path
