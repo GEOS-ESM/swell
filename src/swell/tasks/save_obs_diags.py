@@ -9,8 +9,6 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
-#from r2d2 import store
-import r2d2
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.run_jedi_executables import check_obs
 
@@ -24,7 +22,7 @@ class SaveObsDiags(taskBase):
     """
 
     def execute(self) -> None:
-        print('xxxxxx')
+
         # Parse config
         # ------------
         background_time_offset = self.config.background_time_offset()
@@ -38,10 +36,11 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        window_begin = self.da_window_params.window_begin_iso(window_offset)
+        #window_begin = self.da_window_params.window_begin(window_offset) #dto
+        window_begin = self.da_window_params.window_begin(window_offset) # dto
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
-
+ 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
@@ -54,63 +53,91 @@ class SaveObsDiags(taskBase):
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
-            print('YYYYYYYYY')
+
             # Load the observation dictionary
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Check if observation was used, here we don't care about the output
+            # Check if observation was used - this checks INPUT file exists and has data
+            input_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            self.logger.info(f'Checking input observation file: {input_obs_file}')
+            
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
                                 observation_dict, self.cycle_time_dto())
-            print(f"use obs is {use_obs}")
+            
+            self.logger.info(f'Checking observation {observation}: use_obs = {use_obs}')
+            
             if not use_obs:
+                self.logger.info(f'Input observation file analysis for {observation}:')
+                self.logger.info(f'  Expected file: {input_obs_file}')
+                if os.path.exists(input_obs_file):
+                    try:
+                        import netCDF4 as nc
+                        dataset = nc.Dataset(input_obs_file, 'r')
+                        dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
+                        self.logger.info(f'  File exists but dimensions: {dims}')
+                        dataset.close()
+                    except Exception as e:
+                        self.logger.info(f'  File exists but error reading: {str(e)}')
+                else:
+                    self.logger.info(f'  File does not exist!')
+                    
+                self.logger.info(f'  This suggests GetObservations task did not fetch this file successfully')
+                self.logger.info(f'  Skipping {observation}')
                 continue
 
-            #name = observation_dict['obs space']['name']
-            #input_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-            #self.logger.info(f"Checking observation: {name}")
-            #self.logger.info(f"  Input file: {input_file}")
-            #self.logger.info(f"  File exists: {os.path.exists(input_file)}")
-            #self.logger.info(f"  Use observation: {use_obs}")
-
-
-
-            # Store observation files
-            # -----------------------
+            # Store diagnostic observation files (OUTPUT from RunJediVariationalExecutable)
+            # ---------------------------------------------------------------------------
             name = observation_dict['obs space']['name']
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
+            
+            self.logger.info(f'Looking for diagnostic output file: {obs_path_file}')
 
             # Check for need to add 0000 to the file
             if not os.path.exists(obs_path_file):
                 obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
+                self.logger.info(f'Primary file not found, checking: {obs_path_file_0000}')
+                
                 if not os.path.exists(obs_path_file_0000):
-                    self.logger.abort(f'No observation file found for {obs_path_file} or ' +
-                                      f'{obs_path_file_0000}')
+                    self.logger.info(f'Diagnostic output files not found for {observation}:')
+                    self.logger.info(f'  Expected: {obs_path_file}')
+                    self.logger.info(f'  Expected: {obs_path_file_0000}')
+                    self.logger.info(f'  This suggests RunJediVariationalExecutable did not run successfully')
+                    self.logger.info(f'  Skipping storage of {observation} diagnostic file')
+                    continue
                 obs_path_file = obs_path_file_0000
-
-           # store(
-           #       date=window_begin,
-           #       provider='ncdiag',
-           #       source_file=obs_path_file,
-           #       obs_type=name,
-           #       type='ob',
-           #       experiment=self.experiment_id()
-           # )
             
-            print(f"window_begin type is {type(window_begin)} window_begin is {window_begin}")
+            self.logger.info(f'Found diagnostic output file: {obs_path_file}')
+
+            # store(date=window_begin,
+            #       provider='ncdiag',
+            #       source_file=obs_path_file,
+            #       obs_type=name,
+            #       type='ob',
+            #       experiment=self.experiment_id())
             
-            r2d2.store(
-                item='feedback',
-                experiment=self.experiment_id(),
-                observation_type=name,
-                file_extension=obs_path_file.split('.')[-1],
-                window_length='PT6H',
-                window_start=window_begin,
-                source_file=obs_path_file
-            )
-           
-
-
-
-
-
+            # Store diagnostic file using r2d2 v3 API
+            # ----------------------------------------
+            import r2d2
+            
+            self.logger.info(f'Storing feedback file {obs_path_file} to r2d2')
+            self.logger.info(f'  item=feedback, observation_type={name}')
+            self.logger.info(f'  experiment={self.experiment_id()}')
+            
+            try:
+                r2d2.store(
+                    item='feedback',
+                    experiment=self.experiment_id(),
+                    observation_type=name,
+                    file_extension=obs_path_file.split('.')[-1],
+                    window_length='PT6H',
+                    window_start=window_begin,
+                    source_file=obs_path_file,
+                    member=-9999,
+                )
+                self.logger.info(f'Successfully stored feedback file for {observation}')
+                
+            except Exception as e:
+                self.logger.info(f'Failed to store feedback file for {observation}: {str(e)}')
+                # Don't abort - continue with other observations
+                continue

@@ -176,20 +176,18 @@ class GetObservations(taskBase):
 ####################################
                     fetch_criteria = {
                     'item': 'observation',                    # Required for r2d2 v3
-                    'provider': obs_provider,                 #'gmao-atmosphere',            # What we registered with
-                    'observation_type': observation,          #'gmi_gpm',            # From filename
+                    'provider': obs_provider,                 #'ncdiag',                # What we registered with
+                    'observation_type': observation,          #'gmi_gpm',               # From filename
                     'file_extension': 'nc4',
-                    'window_start': obs_window_begin,         #'2023-10-09T21:00:00Z',   # From filename timestamp
+                    'window_start': obs_window_begin,         #'2023-10-09T21:00:00Z',  # From filename timestamp
                     'window_length': obs_window_length,       #'PT6H',                  # From filename
-                    'target_file': target_file                #'./fetched_gmi_gpm.nc4'    # Where to save
+                    'target_file': target_file                #'./fetched_gmi_gpm.nc4'  # Where to save
                     }
                 
                     print(f"Searching for file with criteria: {fetch_criteria}")
-                    try:            
-                        r2d2.fetch(**fetch_criteria)
-                        self.logger.info(f"Successfully fetched {target_file}")
-                    except Exceotion as e:
-                        self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+                    
+                    r2d2.fetch(**fetch_criteria)
+
 
 
 ###########################################
@@ -218,7 +216,10 @@ class GetObservations(taskBase):
                     # Observations were found for this provider, so we can break the provider loop
                     break
 
-
+            ########################
+            import sys
+            sys.exit()
+            ########################
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
             if 'obs bias' not in observation_dict:
@@ -262,26 +263,22 @@ class GetObservations(taskBase):
             if bias_file_type != 'null':
                 if bias_file_type != 'null' and fetch_required:
                     self.logger.info(f'Processing bias file {target_bccoef}')
-                    r2d2.fetch(
-                        item='bias_correction',
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=bias_file_type.split('.')[-1] if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccoef
-                    )
+                    fetch(date=background_time,
+                          target_file=target_bccoef,
+                          provider='gsi',
+                          obs_type=observation,
+                          type='bc',
+                          experiment=obs_experiment,
+                          file_type=bias_file_type)
 
                     self.logger.info(f'Processing bias file {target_bccovr}')
-                    r2d2.fetch(
-                        item='bias_correction',
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=(bias_file_type+'_cov').split('.')[-1] if '.' in bias_file_type else bias_file_type+'_cov',
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccovr
-                    )
+                    fetch(date=background_time,
+                          target_file=target_bccovr,
+                          provider='gsi',
+                          obs_type=observation,
+                          type='bc',
+                          experiment=obs_experiment,
+                          file_type=bias_file_type+'_cov')
 
                 # Change permission
                 os.chmod(target_bccoef, 0o644)
@@ -298,15 +295,13 @@ class GetObservations(taskBase):
 
                 self.logger.info(f'Processing satellite time lapse file {target_file}')
 
-                r2d2.fetch(
-                    item='bias_correction',
-                    provider='gsi',
-                    observation_type=observation,
-                    file_extension='tlapse',
-                    window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    window_length='PT6H',
-                    target_file=target_file
-                )
+                fetch(date=background_time,
+                      target_file=target_file,
+                      provider='gsi',
+                      obs_type=observation,
+                      type='bc',
+                      experiment=obs_experiment,
+                      file_type='tlapse')
 
                 # Change permission
                 os.chmod(target_file, 0o644)
