@@ -71,6 +71,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_configuration(),
             qd.jedi_forecast_model(),
             qd.minimizer(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
             qd.number_of_iterations(),
             qd.total_processors(),
         ]
