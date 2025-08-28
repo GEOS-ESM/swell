@@ -66,7 +66,7 @@ fi
 
 # Load eva and jedi_bundle
 # ------------------------
-module load eva/sles15_skylab9
+module load eva/sles15_milan_1.6.5
 module load jedi_bundle/sles15_skylab9
 
 

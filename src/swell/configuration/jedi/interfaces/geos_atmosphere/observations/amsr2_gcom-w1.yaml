@@ -4,10 +4,13 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/amsr2_gcom-w1.{{window_begin}}.nc4'
+      missing file action: warn
   obsdataout:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.amsr2_gcom-w1.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
   simulated variables: [brightnessTemperature]
   channels: &amsr2_gcom-w1_available_channels {{amsr2_gcomw1_avail_channels}}
 
@@ -16,6 +19,7 @@ obs operator:
   Absorbers: [H2O,O3,CO2]
   Clouds: [Water, Ice, Rain, Snow]
   Cloud_Fraction: 1.0
+  Cloud_Seeding: true  
   obs options:
     Sensor_ID: &Sensor_ID amsr2_gcom-w1
     EndianType: little_endian

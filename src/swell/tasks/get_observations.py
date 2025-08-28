@@ -233,7 +233,7 @@ class GetObservations(taskBase):
             fetch_required = True
 
             if cycling_varbc:
-                if self.cycle_time_dto() == self.first_cycle_time_dto():
+                if self.cycle_time_dto() == self.start_cycle_point_dto():
                     self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
                     self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
 
