@@ -168,6 +168,11 @@ minimizer:
   options:
   - DRPCG
 
+ncdiag_experiments:
+  default_value: x0050_fgat
+  options:
+  - x0050_fgat
+
 npx_proc:
   default_value: 4
 
