@@ -148,24 +148,8 @@ class GetBackground(taskBase):
                 # ---------------------------------------------------
                 target_file = background_time.strftime(target_file_template)
 
-#                fetch(
-#                    date=forecast_start_time,
-#                    target_file=target_file,
-#                    model=r2d2_model_dict[model_component],
-#                    file_type=file_type,
-#                    fc_date_rendering='analysis',
-#                    step=bkg_step,
-#                    resolution=horizontal_resolution,
-#                    type='fc',
-#                    experiment=background_experiment)
-
-
-
-
                 file_extension=file_type.split('.')[-1] if '.' in file_type else 'nc'
-#fc_date_rendering='analysis',
-#type='fc',
-#file_extension=file_extensio
+
                 print("\n\n************************************\n")
                 print(forecast_start_time)
                 print(type(forecast_start_time))
@@ -186,11 +170,7 @@ class GetBackground(taskBase):
                        resolution=horizontal_resolution,
                        step=bkg_step,
                        date=forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                       #domain='',
                        file_type=file_type,
-                       #tile=-9999,
-                       #member=-9999,
-                       #data_store=None
                 )
 
                 # Change permission

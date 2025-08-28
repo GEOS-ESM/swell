@@ -11,6 +11,7 @@ import os
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.run_jedi_executables import check_obs
+import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -81,7 +82,7 @@ class SaveObsDiags(taskBase):
                 else:
                     self.logger.info(f'  File does not exist!')
                     
-                self.logger.info(f'  This suggests GetObservations task did not fetch this file successfully')
+                self.logger.info(f'  GetObservations task did not fetch this file successfully')
                 self.logger.info(f'  Skipping {observation}')
                 continue
 
@@ -102,24 +103,15 @@ class SaveObsDiags(taskBase):
                     self.logger.info(f'Diagnostic output files not found for {observation}:')
                     self.logger.info(f'  Expected: {obs_path_file}')
                     self.logger.info(f'  Expected: {obs_path_file_0000}')
-                    self.logger.info(f'  This suggests RunJediVariationalExecutable did not run successfully')
+                    self.logger.info(f'  RunJediVariationalExecutable did not run successfully')
                     self.logger.info(f'  Skipping storage of {observation} diagnostic file')
                     continue
                 obs_path_file = obs_path_file_0000
             
             self.logger.info(f'Found diagnostic output file: {obs_path_file}')
-
-            # store(date=window_begin,
-            #       provider='ncdiag',
-            #       source_file=obs_path_file,
-            #       obs_type=name,
-            #       type='ob',
-            #       experiment=self.experiment_id())
             
-            # Store diagnostic file using r2d2 v3 API
-            # ----------------------------------------
-            import r2d2
-            
+            # Store to R2D2
+            # ---------------
             self.logger.info(f'Storing feedback file {obs_path_file} to r2d2')
             self.logger.info(f'  item=feedback, observation_type={name}')
             self.logger.info(f'  experiment={self.experiment_id()}')

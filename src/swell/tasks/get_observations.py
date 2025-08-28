@@ -155,33 +155,14 @@ class GetObservations(taskBase):
                     target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
                     combine_input_files.append(target_file)
                    
-                   
-                   
-                   
-                   
-                   
-               #ValueError: Unknown keyword(s) in fetch: window_length, observation_type, window_start, provider, item
-    
-                   
-                    #fetch(#date=obs_window_begin,
-                          #target_file=target_file,
-                          #provider=obs_provider,
-                          #ignore_missing=True,
-                          #obs_type=observation,
-                          #time_window=obs_window_length,
-                          #type='ob',
-                          #experiment=obs_experiment)
-
-                    #obs_
-####################################
                     fetch_criteria = {
-                    'item': 'observation',                    # Required for r2d2 v3
-                    'provider': obs_provider,                 #'gmao-atmosphere',            # What we registered with
-                    'observation_type': observation,          #'gmi_gpm',            # From filename
-                    'file_extension': 'nc4',
-                    'window_start': obs_window_begin,         #'2023-10-09T21:00:00Z',   # From filename timestamp
-                    'window_length': obs_window_length,       #'PT6H',                  # From filename
-                    'target_file': target_file                #'./fetched_gmi_gpm.nc4'    # Where to save
+                        'item': 'observation',                    # Required for r2d2 v3
+                        'provider': obs_provider,                 #'gmao-atmosphere',        # What we registered with
+                        'observation_type': observation,          #'gmi_gpm',                # From filename
+                        'file_extension': 'nc4',
+                        'window_start': obs_window_begin,         #'2023-10-09T21:00:00Z',   # From filename timestamp
+                        'window_length': obs_window_length,       #'PT6H',                   # From filename
+                        'target_file': target_file                #'./fetched_gmi_gpm.nc4'   # Where to save
                     }
                 
                     print(f"Searching for file with criteria: {fetch_criteria}")
@@ -192,7 +173,6 @@ class GetObservations(taskBase):
                         self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
 
 
-###########################################
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input
                 # file since bias correction files still need to be propagated to the next cycle
