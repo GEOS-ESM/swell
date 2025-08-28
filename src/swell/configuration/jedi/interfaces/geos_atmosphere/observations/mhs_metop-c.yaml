@@ -19,6 +19,7 @@ obs operator:
   Absorbers: [H2O,O3,CO2]
   Clouds: [Water, Ice, Rain, Snow]
   Cloud_Fraction: 1.0
+  Cloud_Seeding: true
   obs options:
     Sensor_ID: &Sensor_ID mhs_metop-c
     EndianType: little_endian
