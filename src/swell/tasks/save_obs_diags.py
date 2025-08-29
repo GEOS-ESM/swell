@@ -37,7 +37,6 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        #window_begin = self.da_window_params.window_begin(window_offset) #dto
         window_begin = self.da_window_params.window_begin(window_offset) # dto
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
@@ -61,12 +60,12 @@ class SaveObsDiags(taskBase):
             # Check if observation was used - this checks INPUT file exists and has data
             input_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             self.logger.info(f'Checking input observation file: {input_obs_file}')
-            
+
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
                                 observation_dict, self.cycle_time_dto())
-            
+
             self.logger.info(f'Checking observation {observation}: use_obs = {use_obs}')
-            
+
             if not use_obs:
                 self.logger.info(f'Input observation file analysis for {observation}:')
                 self.logger.info(f'  Expected file: {input_obs_file}')
@@ -81,7 +80,7 @@ class SaveObsDiags(taskBase):
                         self.logger.info(f'  File exists but error reading: {str(e)}')
                 else:
                     self.logger.info(f'  File does not exist!')
-                    
+
                 self.logger.info(f'  GetObservations task did not fetch this file successfully')
                 self.logger.info(f'  Skipping {observation}')
                 continue
@@ -98,7 +97,7 @@ class SaveObsDiags(taskBase):
                 obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
                 self.logger.info(f'Primary file not found, checking: {obs_path_file_0000}')
-                
+
                 if not os.path.exists(obs_path_file_0000):
                     self.logger.info(f'Diagnostic output files not found for {observation}:')
                     self.logger.info(f'  Expected: {obs_path_file}')
@@ -107,15 +106,15 @@ class SaveObsDiags(taskBase):
                     self.logger.info(f'  Skipping storage of {observation} diagnostic file')
                     continue
                 obs_path_file = obs_path_file_0000
-            
+
             self.logger.info(f'Found diagnostic output file: {obs_path_file}')
-            
+
             # Store to R2D2
             # ---------------
             self.logger.info(f'Storing feedback file {obs_path_file} to r2d2')
             self.logger.info(f'  item=feedback, observation_type={name}')
             self.logger.info(f'  experiment={self.experiment_id()}')
-            
+
             try:
                 r2d2.store(
                     item='feedback',
@@ -128,7 +127,7 @@ class SaveObsDiags(taskBase):
                     member=-9999,
                 )
                 self.logger.info(f'Successfully stored feedback file for {observation}')
-                
+
             except Exception as e:
                 self.logger.info(f'Failed to store feedback file for {observation}: {str(e)}')
                 # Don't abort - continue with other observations

@@ -17,10 +17,7 @@ RESET = "\033[0m"
 try:
     import r2d2
 except ImportError as e:
-    print(f"Failed to import r2d2: {e}")
-    print("Load module: module load r2d2-client/sles15_0604")
-    sys.exit(1)
-
+    raise ImportError(f"Failed to import r2d2: {e}\nLoad module: module load r2d2-client/sles15_0604")
 
 REGISTERED_FILE = "registered_files.txt"
 
@@ -30,9 +27,11 @@ def load_registered():
             return set(line.strip() for line in f)
     return set()
 
+
 def save_registered(filename):
     with open(REGISTERED_FILE, 'a') as f:
         f.write(filename + '\n')
+
 
 def guess_provider_from_path(file_path):
     """Find provider from file path"""
@@ -40,21 +39,22 @@ def guess_provider_from_path(file_path):
     if 'ncdiag' in path_lower:
         return 'ncdiag'
     elif 'odas' in path_lower:
-        return 'odas'  
+        return 'odas'
     elif 'gdas' in path_lower:
         return 'gdas_marine'
     else:
         return 'unknown'
 
+
 def register_observation(filename, file_path, parts, dry_run=True):
     """Register observation files using observation-specific parameters"""
-    
+
     file_ext = parts[-1]
     provider = guess_provider_from_path(file_path)
-    
+
     if len(parts) >= 6:
         obs_type = parts[-3]      # third from end (before timestamp and extension)
-        timestamp = parts[-2]     # second from end (before extension) 
+        timestamp = parts[-2]     # second from end (before extension)
         window_length = 'PT6H'    # default for all
     else:
         print(f"{file_path} can not be registered - not enough parts")
@@ -62,12 +62,12 @@ def register_observation(filename, file_path, parts, dry_run=True):
 
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}OBSERVATION:{RESET} provider={provider}, obs_type={obs_type}, time={timestamp}")
-    
+
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         print(f"timestamp is {timestamp}")
         return True
-        
+
     try:
         r2d2.store(
             item='observation',
@@ -88,9 +88,9 @@ def register_observation(filename, file_path, parts, dry_run=True):
 
 def register_background(filename, file_path, parts, dry_run=True):
     """Register background/forecast files using forecast specific parameters"""
-    
+
     file_ext = parts[-1]
-    
+
     # Guess model from filename/path
     name_lower = filename.lower()
     if 'mom6' in name_lower or 'ocean' in name_lower:
@@ -99,7 +99,7 @@ def register_background(filename, file_path, parts, dry_run=True):
         model = 'mom6_cice6_UFS'
     else:
         model = 'geos'  # default
-    
+
     # Extract timestamp - try different patterns
     timestamp = None
     for part in parts:
@@ -108,25 +108,23 @@ def register_background(filename, file_path, parts, dry_run=True):
             year, month, day = part[:4], part[4:6], part[6:8]
             timestamp = f"{year}-{month}-{day}T12:00:00Z"
             break
-        # Look for YYYYMMDDHH pattern  
+        # Look for YYYYMMDDHH pattern
         elif len(part) == 10 and part.isdigit():
             year, month, day, hour = part[:4], part[4:6], part[6:8], part[8:10]
             timestamp = f"{year}-{month}-{day}T{hour}:00:00Z"
             break
-    
+
     if not timestamp:
         timestamp = "2023-10-09T12:00:00Z"  # fallback
 
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BACKGROUND:{RESET} model={model}, time={timestamp}")
-    
+
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         return True
-        
+
     try:
-        print(timestamp)
-        print(file_path)
         r2d2.store(
             item='forecast',
             model='mom6', #model,
@@ -137,7 +135,7 @@ def register_background(filename, file_path, parts, dry_run=True):
             date=timestamp,
             file_type='MOM.res',
             source_file=file_path
-        ) 
+        )
         print(f"   {GREEN}SUCCESS{RESET}")
         save_registered(filename)
         return True
@@ -165,7 +163,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         return True
-        
+
     try:
         r2d2.store(
             item='bias_correction',
@@ -253,7 +251,7 @@ def main():
     register_files(args.path, args.item_type, dry_run=dry_run)
     
     if dry_run:
-        print(f"\n{YELLOW}This was a DRY RUN. Use --register to actually register files{RESET}") 
+        print(f"\n{YELLOW}This was a DRY RUN. Use --register to actually register files{RESET}")
 
 if __name__ == "__main__":
     main()
