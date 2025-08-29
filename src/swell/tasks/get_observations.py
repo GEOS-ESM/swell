@@ -169,7 +169,7 @@ class GetObservations(taskBase):
                     try:            
                         r2d2.fetch(**fetch_criteria)
                         self.logger.info(f"Successfully fetched {target_file}")
-                    except Exceotion as e:
+                    except Exception as e:
                         self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
 
 
