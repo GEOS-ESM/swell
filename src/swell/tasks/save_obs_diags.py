@@ -37,10 +37,10 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        window_begin = self.da_window_params.window_begin(window_offset) # dto
+        window_begin = self.da_window_params.window_begin(window_offset)  # dto
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
- 
+
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
@@ -89,7 +89,7 @@ class SaveObsDiags(taskBase):
             # ---------------------------------------------------------------------------
             name = observation_dict['obs space']['name']
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
-            
+
             self.logger.info(f'Looking for diagnostic output file: {obs_path_file}')
 
             # Check for need to add 0000 to the file

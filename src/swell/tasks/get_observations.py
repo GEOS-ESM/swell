@@ -92,7 +92,6 @@ class GetObservations(taskBase):
 
         # Parse config
         # ------------
-        obs_experiment = self.config.obs_experiment()
         obs_providers = self.config.obs_provider()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
@@ -154,23 +153,24 @@ class GetObservations(taskBase):
                     obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
                     target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
                     combine_input_files.append(target_file)
-                   
+
                     fetch_criteria = {
-                        'item': 'observation',                    # Required for r2d2 v3
-                        'provider': obs_provider,                 #'gmao-atmosphere',        # What we registered with
-                        'observation_type': observation,          #'gmi_gpm',                # From filename
+                        'item': 'observation',  # Required for r2d2 v3
+                        'provider': obs_provider,  # What we registered with
+                        'observation_type': observation,  # From filename
                         'file_extension': 'nc4',
-                        'window_start': obs_window_begin,         #'2023-10-09T21:00:00Z',   # From filename timestamp
-                        'window_length': obs_window_length,       #'PT6H',                   # From filename
-                        'target_file': target_file                #'./fetched_gmi_gpm.nc4'   # Where to save
+                        'window_start': obs_window_begin,  # From filename timestamp
+                        'window_length': obs_window_length,  # From filename
+                        'target_file': target_file  # Where to save
                     }
-                
+
                     print(f"Searching for file with criteria: {fetch_criteria}")
-                    try:            
+                    try:
                         r2d2.fetch(**fetch_criteria)
                         self.logger.info(f"Successfully fetched {target_file}")
                     except Exception as e:
                         self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+
 
 
                 # Check how many of the combine_input_files exist in the cycle directory.
@@ -180,23 +180,20 @@ class GetObservations(taskBase):
                 # -----------------------------------------------------------------------
                 if not any([os.path.exists(f) for f in combine_input_files]):
                     self.logger.info(f'None of the {observation} files exist for this cycle!')
-                    # continue
                 else:
                     jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
                     self.logger.info(f'Processing observation file {jedi_obs_file}')
-
                     # If obs_list_dto has one member, then just rename the file
                     # ---------------------------------------------------------
                     if len(obs_list_dto) == 1:
                         os.rename(combine_input_files[0], jedi_obs_file)
                     else:
                         self.read_and_combine(combine_input_files, jedi_obs_file)
-
                     # Change permission
                     os.chmod(jedi_obs_file, 0o644)
-
                     # Observations were found for this provider, so we can break the provider loop
                     break
+
 
 
             # Otherwise there is only work to do if the observation operator has bias correction
@@ -204,31 +201,32 @@ class GetObservations(taskBase):
             if 'obs bias' not in observation_dict:
                 continue
 
+
             # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
             target_bccoef = observation_dict['obs bias']['input file']
             target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
+
             # We assume fetch is required unless we are cycling VarBC
             fetch_required = True
+
 
             if cycling_varbc:
                 if self.cycle_time_dto() == self.start_cycle_point_dto():
                     self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
                     self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
-
                 else:
                     self.logger.info(f'Using bias files from the previous cycle')
                     previous_bias_coef = self.previous_cycle_bias(target_bccoef, window_length)
                     previous_bias_covr = self.previous_cycle_bias(target_bccovr, window_length)
-
                     # Link the previous bias file to the current cycle directory
                     self.logger.info(f'Linking {previous_bias_coef} to {target_bccoef}')
                     self.geos.linker(previous_bias_coef, target_bccoef, dst_dir=self.cycle_dir())
                     self.logger.info(f'Linking {previous_bias_covr} to {target_bccovr}')
                     self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
-
                     fetch_required = False
+
 
             # Determine the bias file type
             if observation == 'aircraft_temperature':
@@ -237,6 +235,7 @@ class GetObservations(taskBase):
                 bias_file_type = 'null'
             else:
                 bias_file_type = 'satbias'
+
 
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
@@ -251,7 +250,6 @@ class GetObservations(taskBase):
                         window_length='PT6H',
                         target_file=target_bccoef
                     )
-
                     self.logger.info(f'Processing bias file {target_bccovr}')
                     r2d2.fetch(
                         item='bias_correction',
@@ -262,7 +260,6 @@ class GetObservations(taskBase):
                         window_length='PT6H',
                         target_file=target_bccovr
                     )
-
                 # Change permission
                 os.chmod(target_bccoef, 0o644)
                 os.chmod(target_bccovr, 0o644)

@@ -13,7 +13,6 @@ from swell.utilities.r2d2 import create_r2d2_config
 
 import isodate
 import os
-#from r2d2 import fetch
 import r2d2
 
 # --------------------------------------------------------------------------------------------------
@@ -95,7 +94,7 @@ class GetBackground(taskBase):
 
             # Check for a sensible frequency
             # ------------------------------
-            if (window_length_dur/bkg_freq_dur) % 2:
+            if (window_length_dur / bkg_freq_dur) % 2:
                 self.logger.abort('Window length not divisible by background frequency')
 
             # Loop over window
@@ -164,7 +163,7 @@ class GetBackground(taskBase):
                 r2d2.fetch(
                        item='forecast',
                        target_file=target_file,
-                       model='mom6', # need to register mom6 r2d2_model_dict[model_component],
+                       model='mom6',  # need to register mom6 r2d2_model_dict[model_component],
                        experiment=background_experiment,
                        file_extension=file_extension,
                        resolution=horizontal_resolution,

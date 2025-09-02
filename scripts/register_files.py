@@ -16,10 +16,14 @@ RESET = "\033[0m"
 
 try:
     import r2d2
+
 except ImportError as e:
-    raise ImportError(f"Failed to import r2d2: {e}\nLoad module: module load r2d2-client/sles15_0604")
+    raise ImportError(
+        f"Failed to import r2d2: {e}\nLoad module: module load r2d2-client/sles15_0604"
+    )
 
 REGISTERED_FILE = "registered_files.txt"
+
 
 def load_registered():
     if os.path.exists(REGISTERED_FILE):
@@ -28,9 +32,11 @@ def load_registered():
     return set()
 
 
+
 def save_registered(filename):
     with open(REGISTERED_FILE, 'a') as f:
         f.write(filename + '\n')
+
 
 
 def guess_provider_from_path(file_path):
@@ -91,6 +97,7 @@ def register_background(filename, file_path, parts, dry_run=True):
 
     file_ext = parts[-1]
 
+
     # Guess model from filename/path
     name_lower = filename.lower()
     if 'mom6' in name_lower or 'ocean' in name_lower:
@@ -99,6 +106,7 @@ def register_background(filename, file_path, parts, dry_run=True):
         model = 'mom6_cice6_UFS'
     else:
         model = 'geos'  # default
+
 
     # Extract timestamp - try different patterns
     timestamp = None
@@ -114,23 +122,27 @@ def register_background(filename, file_path, parts, dry_run=True):
             timestamp = f"{year}-{month}-{day}T{hour}:00:00Z"
             break
 
+
     if not timestamp:
         timestamp = "2023-10-09T12:00:00Z"  # fallback
 
+
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BACKGROUND:{RESET} model={model}, time={timestamp}")
+
 
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         return True
 
+
     try:
         r2d2.store(
             item='forecast',
-            model='mom6', #model,
+            model='mom6',  # model,
             experiment='s2s',  # Use this for testing
-            file_extension='res', #file_ext,
-            resolution='72x36', #C180
+            file_extension='res',  # file_ext,
+            resolution='72x36',  # C180
             step='P1DT12H',
             date=timestamp,
             file_type='MOM.res',
