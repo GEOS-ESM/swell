@@ -9,6 +9,8 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.datetime_util import datetime_formats
+from datetime import datetime as dt
 import glob
 
 # --------------------------------------------------------------------------------------------------
@@ -85,6 +87,9 @@ class CleanCycle(taskBase):
 
                     os.remove(item_to_remove)
 
-        # Save cycle_done file to cycle_dir
-        with open(os.path.join(self.cycle_dir(), 'cycle_done'), 'w') as file:
-            file.write('cycle complete')
+        # Have date information for the cycle done file
+        time_short = dt.today().strftime(datetime_formats['directory_format'])
+
+        # Save cycle_done file to cycle_dir, add date and time information
+        with open(os.path.join(self.cycle_dir(), f'cycle_done_{time_short}'), 'w') as file:
+            file.write(f"cycle complete at {dt.today().strftime(datetime_formats['iso_format'])}")
