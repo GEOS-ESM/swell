@@ -76,7 +76,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfcship",
                 "sfc",
                 "sondes",
-                "ssmis_f17"
+                "ssmis_f17",
+                "tcp"
             ]),
             qd.gradient_norm_reduction("1e-3"),
             qd.number_of_iterations([10]),

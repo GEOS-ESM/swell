@@ -81,7 +81,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfcship",
                 "sfc",
                 "sondes",
-                "ssmis_f17"
+                "ssmis_f17",
+                "tcp"
             ]),
             qd.clean_patterns(['*.txt', '*.csv']),
         ]
