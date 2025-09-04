@@ -10,7 +10,7 @@
 
 import glob
 import os
-import yaml
+from ruamel.yaml import YAML
 from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
@@ -132,6 +132,8 @@ class RunJediHofxExecutable(taskBase):
             # ------------------------------------------------------------------
             if save_geovals:
                 self.append_gomsaver(observations, jedi_config_dict, window_begin)
+
+            yaml = YAML()
 
             # Write the expanded dictionary to YAML file
             # ------------------------------------------

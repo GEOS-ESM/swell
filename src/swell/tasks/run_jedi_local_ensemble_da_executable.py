@@ -9,7 +9,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
@@ -192,6 +192,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         if bypass_HofXs:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
+
+        yaml = YAML()
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

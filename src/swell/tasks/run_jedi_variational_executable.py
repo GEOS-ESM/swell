@@ -10,6 +10,7 @@
 from collections import OrderedDict
 import os
 import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
@@ -123,32 +124,11 @@ class RunJediVariationalExecutable(taskBase):
                                                                 jedi_forecast_model,
                                                                 check_for_obs)
 
-        def represent_ordereddict(dumper, data):
-            # Serialize an OrderedDict as a YAML mapping
-            return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
-
-        def construct_ordereddict(loader, node):
-            # Construct an OrderedDict from a YAML mapping
-            return OrderedDict(loader.construct_pairs(node))
-
-        # Recursive conversion, dictionary to an OrderedDict
-        def dict_to_ordereddict(d):
-            if isinstance(d, dict):
-                return OrderedDict((k, dict_to_ordereddict(v)) for k, v in d.items())
-            elif isinstance(d, list):
-                return [dict_to_ordereddict(v) for v in d]
-            else:
-                return d
-
-        yaml.add_representer(OrderedDict, represent_ordereddict)
-        yaml.add_constructor('tag:yaml.org,2002:map', construct_ordereddict)
-
-        # Assuming jedi_config_dict is your original dictionary
-        ordered_dict = dict_to_ordereddict(jedi_config_dict)
+        ruamel_yaml = YAML()
 
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(ordered_dict, jedi_config_file_open, default_flow_style=False)
+            ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------

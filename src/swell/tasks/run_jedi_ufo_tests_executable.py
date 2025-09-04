@@ -10,7 +10,7 @@
 
 import copy
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import update_dict
@@ -147,6 +147,8 @@ class RunJediUfoTestsExecutable(taskBase):
         # file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperatorTLAD_config.yaml')
         # with open(file, 'w') as jedi_config_file_open:
         #     yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
+
+        yaml = YAML()
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsFilters_config.yaml')
         with open(file, 'w') as jedi_config_file_open:

@@ -9,7 +9,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
@@ -91,6 +91,8 @@ class RunJediEnsembleMeanVariance(taskBase):
                                                                 observations,
                                                                 jedi_forecast_model,
                                                                 check_for_obs)
+
+        yaml = YAML()
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

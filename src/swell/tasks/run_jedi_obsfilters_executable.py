@@ -9,7 +9,7 @@
 
 import os
 import shutil
-import yaml
+from ruamel.yaml import YAML
 from typing import Optional
 import random
 from swell.tasks.base.task_base import taskBase
@@ -137,6 +137,8 @@ class RunJediObsfiltersExecutable(taskBase):
             new_dict['observations'].append(new_observer)
         del jedi_config_dict['observations']
         jedi_config_dict.update(new_dict)
+
+        yaml = YAML()
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

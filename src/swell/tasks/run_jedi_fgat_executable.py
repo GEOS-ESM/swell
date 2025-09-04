@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
@@ -128,6 +128,8 @@ class RunJediFgatExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', window_type,
                                                                 observations, jedi_forecast_model,
                                                                 check_for_obs)
+
+        yaml = YAML()
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

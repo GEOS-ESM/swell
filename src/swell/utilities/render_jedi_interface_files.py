@@ -8,7 +8,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 from typing import Union, Optional, Any
 from importlib import import_module
 from collections.abc import Mapping
@@ -176,8 +176,11 @@ class JediConfigRendering():
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
                                                  self.__template_dict__)
 
+        # Construct ruamel interpreter
+        yaml = YAML(typ='safe')
+
         # Convert string to dictionary
-        return yaml.safe_load(config_file_str)
+        return yaml.load(config_file_str)
 
     # ----------------------------------------------------------------------------------------------
 

@@ -284,7 +284,7 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             'all_models'
         ])
-        prompt: str = "Perform check for observations? Set to false if useful for debugging purposes."
+        prompt: str = "Perform check for observations? Set to false for debugging purposes."
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
