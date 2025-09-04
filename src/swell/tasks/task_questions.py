@@ -73,6 +73,7 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.analysis_variables(),
             qd.background_frequency(),
+            qd.check_for_obs(),
             qd.generate_yaml_and_exit(),
             qd.gradient_norm_reduction(),
             qd.gsibec_configuration(),
@@ -167,7 +168,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.observations(),
             qd.total_processors(),
             qd.window_offset(),
-            qd.window_type()
+            qd.window_type(),
+            qd.check_for_obs(),
         ]
     )
 
@@ -184,6 +186,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.jedi_forecast_model(),
             qd.observations(),
             qd.observing_system_records_path(),
+            qd.check_for_obs(),
         ]
     )
 
@@ -258,7 +261,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.ensemble_num_members(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
-            qd.total_processors()
+            qd.total_processors(),
+            qd.check_for_obs(),
         ]
     )
 
@@ -275,7 +279,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.jedi_forecast_model(),
             qd.observing_system_records_path(),
             qd.save_geovals(),
-            qd.total_processors()
+            qd.total_processors(),
+            qd.check_for_obs(),
         ]
     )
 
@@ -292,7 +297,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.jedi_forecast_model(),
             qd.observing_system_records_path(),
             qd.total_processors(),
-            qd.obs_thinning_rej_fraction()
+            qd.obs_thinning_rej_fraction(),
+            qd.check_for_obs(),
         ]
     )
 
@@ -395,7 +401,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_ioda_vertical_coord_group(),
             qd.vertical_localization_lengthscale(),
             qd.vertical_localization_method(),
-            qd.perhost()
+            qd.perhost(),
+            qd.check_for_obs()
         ]
     )
 
@@ -409,7 +416,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.observing_system_records_path(),
             qd.single_observations(),
             qd.window_length(),
-            qd.window_offset()
+            qd.window_offset(),
+            qd.check_for_obs(),
         ]
     )
 

@@ -277,6 +277,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class check_for_obs(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "check_for_obs"
+        options: List[bool] = mutable_field([True, False])
+        models: List[str] = mutable_field([
+            'all_models'
+        ])
+        prompt: str = "Perform check for observations? Set to false if useful for debugging purposes."
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class clean_patterns(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "clean_patterns"

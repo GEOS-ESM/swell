@@ -186,7 +186,8 @@ class JediConfigRendering():
                          config_name: str,
                          window_type: Optional[str] = None,
                          obs: Optional[list] = None,
-                         jedi_forecast_model: Optional[str] = None) -> dict:
+                         jedi_forecast_model: Optional[str] = None,
+                         check_for_obs: bool = True) -> dict:
 
         # Import the module
         module = import_module(f'swell.configuration.jedi.oops.{config_name}')
@@ -200,7 +201,8 @@ class JediConfigRendering():
                                   obs,
                                   self.cycle_time,
                                   jedi_forecast_model,
-                                  self.observing_system_records_path)
+                                  self.observing_system_records_path,
+                                  check_for_obs)
 
         # Call the config's custom oops method
         oops_dict = config_obj.render_oops()

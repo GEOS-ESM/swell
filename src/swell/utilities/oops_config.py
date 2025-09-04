@@ -25,7 +25,8 @@ class OopsConfig(ABC):
                  obs: list,
                  cycle_time: str,
                  jedi_forecast_model: str,
-                 observing_system_records_path: str) -> str:
+                 observing_system_records_path: str,
+                 check_for_obs: bool = True) -> str:
 
         self.jedi_rendering = jedi_rendering
         self.logger = jedi_rendering.logger
@@ -37,6 +38,7 @@ class OopsConfig(ABC):
         self.cycle_time = cycle_time
         self.jedi_forecast_model = jedi_forecast_model
         self.observing_system_records_path = observing_system_records_path
+        self.check_for_obs = check_for_obs
 
         self.jedi_config_path = os.path.join(get_swell_path(), 'configuration', 'jedi')
 
@@ -55,9 +57,13 @@ class OopsConfig(ABC):
             # Render the yaml file
             obs_dict = self.jedi_rendering.render_interface_observations(ob)
 
-            # Check whether to use the file
-            use_observation = check_obs(self.observing_system_records_path, ob,
-                                        obs_dict, self.cycle_time)
+            # Check whether to use the file, or skip if debugging config file
+            if self.check_for_obs:
+                use_observation = check_obs(self.observing_system_records_path, ob,
+                                            obs_dict, self.cycle_time)
+            else:
+                use_observation = True
+
             if use_observation:
                 observations.append(obs_dict)
             else:

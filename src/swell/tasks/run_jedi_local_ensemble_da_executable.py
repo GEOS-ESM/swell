@@ -40,6 +40,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         ensmean_only = self.config.ensmean_only()
         ensmeanvariance_only = self.config.ensmeanvariance_only()
+        check_for_obs = self.config.check_for_obs(True)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -147,7 +148,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file('LocalEnsembleDA',
                                                                 window_type,
                                                                 observations,
-                                                                jedi_forecast_model)
+                                                                jedi_forecast_model,
+                                                                check_for_obs)
 
         # Assemble localizations
         # ----------------------
