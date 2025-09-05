@@ -8,9 +8,7 @@
 
 
 import os
-import sys
 import textwrap
-import traceback
 import logging
 from typing import Optional
 
