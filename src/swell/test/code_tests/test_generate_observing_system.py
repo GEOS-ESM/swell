@@ -49,7 +49,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
 
-        with self.assertRaises(SystemExit) as abort, suppress_stdout():
+        with self.assertRaises(Exception) as abort, suppress_stdout():
             log_level = self.logger.level
             # Set logger priority to 60. This number sets the minimum level of message
             # that the logger can register (Where message criticality ascends from 0 to 50).

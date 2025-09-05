@@ -112,7 +112,7 @@ class Logger(logging.Logger):
 
     # ----------------------------------------------------------------------------------------------
 
-    def abort(self, msg: str, wrap: bool = True, exception: Exception = SwellError, *args, **kwargs) -> None:
+    def abort(self, msg: str, wrap: bool = True, exception: Exception = Exception, *args, **kwargs) -> None:
         formatted_msg = red + msg + end
         formatted_msg = self.format_message(formatted_msg, wrap, 'ABORT')
         super().critical(formatted_msg)
