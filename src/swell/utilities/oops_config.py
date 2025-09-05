@@ -62,6 +62,7 @@ class OopsConfig(ABC):
                 use_observation = check_obs(self.observing_system_records_path, ob,
                                             obs_dict, self.cycle_time)
             else:
+                self.logger.info(f'Not checking for obs {ob}')
                 use_observation = True
 
             if use_observation:
