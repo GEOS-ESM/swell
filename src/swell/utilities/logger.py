@@ -14,6 +14,7 @@ import traceback
 import logging
 from typing import Optional
 
+from swell.utilities.exceptions import ExceptionTypes
 
 # --------------------------------------------------------------------------------------------------
 #  @package logger
@@ -22,6 +23,8 @@ from typing import Optional
 #
 # --------------------------------------------------------------------------------------------------
 
+
+SwellError = ExceptionTypes.get_type('SwellError')
 
 red = '\033[91m'
 blue = '\033[94m'
@@ -111,20 +114,12 @@ class Logger(logging.Logger):
 
     # ----------------------------------------------------------------------------------------------
 
-    def abort(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
-        msg = red + msg + end
-        msg = self.format_message(msg, wrap, 'ABORT')
+    def abort(self, msg: str, wrap: bool = True, exception: Exception = SwellError, *args, **kwargs) -> None:
+        formatted_msg = red + msg + end
+        formatted_msg = self.format_message(formatted_msg, wrap, 'ABORT')
         super().critical(msg)
 
-        # Get traceback stack (without logger.py lines)
-        filtered_stack = [line for line in traceback.format_stack() if 'logger.py' not in line]
-
-        # Remove everything after 'logger.assert_abort' in last element of filtered_stack
-        filtered_stack[-1] = filtered_stack[-1].split('logger.assert_abort')[0]
-
-        traceback_str = '\n'.join(filtered_stack)
-
-        sys.exit('\nHERE IS THE TRACEBACK: \n----------------------\n\n' + traceback_str)
+        raise exception(msg)
 
     # ----------------------------------------------------------------------------------------------
 

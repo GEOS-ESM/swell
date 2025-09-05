@@ -5,36 +5,45 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
-from typing import Optional
-from logging import Logger as pyLogger
-
-
-class SWELLError(Exception):
-
-    def __init__(
-        self,
-        message: str,
-        logger: Optional[pyLogger] = None
-    ) -> None:
-
-        self.message = message
-        super().__init__(message)
-
-        if logger:
-            logger(message)
+from enum import Enum, member
 
 # -----------------------------------------------------------------------------
 
 
-class SWELLFileError(SWELLError):
+class ExceptionTypes(Enum):
 
-    pass
+    # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
+    @member
+    class SwellError(Exception):
+        pass
 
+    # -----------------------------------------------------------------------------
 
-class SWELLConfigError(SWELLError):
+    @member
+    class SwellFileError(SwellError):
+        pass
 
-    pass
+    # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
+    @member
+    class SwellConfigError(SwellError):
+        pass
+
+    # -----------------------------------------------------------------------------
+
+    @classmethod
+    def get_type(cls, name: str):
+        return cls.name.value
+
+    # -----------------------------------------------------------------------------
+
+    @classmethod
+    def get_all(cls) -> list:
+        member_list = []
+        for name in cls._member_names_:
+            member_list.append(cls.get_type(name))
+
+        return member_list
+
+    # -----------------------------------------------------------------------------
