@@ -20,13 +20,16 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
+    # Helper question lists used by multiple tasks (in order of use)
+    # --------------------------------------------------------------------------------------------------
 
-    window_questions = QuestionList(
-        list_name="window_questions",
+    background_crtm_obs = QuestionList(
+        list_name="background_crtm_obs",
         questions=[
-            qd.window_length(),
-            qd.window_offset(),
-            qd.window_type()
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path()
         ]
     )
 
@@ -44,6 +47,40 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    window_questions = QuestionList(
+        list_name="window_questions",
+        questions=[
+            qd.window_length(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    run_jedi_executable = QuestionList(
+        list_name="run_jedi_executable",
+        questions=[
+            background_crtm_obs,
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.background_frequency(),
+            qd.check_for_obs(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.jedi_forecast_model(),
+            qd.minimizer(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.number_of_iterations(),
+            qd.total_processors(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     swell_static_file_questions = QuestionList(
         list_name="swell_static_file_questions",
         questions=[
@@ -53,37 +90,173 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+    # Task-specific question lists (in alphabetical order)
+    # --------------------------------------------------------------------------------------------------
 
-    background_crtm_obs = QuestionList(
-        list_name="background_crtm_obs",
+    BuildGeos = QuestionList(
+        list_name="BuildGeos",
         questions=[
-            qd.background_time_offset(),
-            qd.crtm_coeff_dir(),
-            qd.observations()
+            qd.geos_build_method()
         ]
     )
 
     # --------------------------------------------------------------------------------------------------
 
-    run_jedi_executable = QuestionList(
-        list_name="run_jedi_executable",
+    BuildGeosByLinking = QuestionList(
+        list_name="BuildGeosByLinking",
+        questions=[
+            qd.existing_geos_gcm_build_path(),
+            qd.geos_build_method()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    BuildJedi = QuestionList(
+        list_name="BuildJedi",
+        questions=[
+            qd.bundles(),
+            qd.jedi_build_method()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    BuildJediByLinking = QuestionList(
+        list_name="BuildJediByLinking",
+        questions=[
+            qd.existing_jedi_build_directory(),
+            qd.existing_jedi_build_directory_pinned(),
+            qd.jedi_build_method()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CleanCycle = QuestionList(
+        list_name="CleanCycle",
+        questions=[
+            qd.clean_patterns()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CloneGeos = QuestionList(
+        list_name="CloneGeos",
+        questions=[
+            qd.existing_geos_gcm_source_path(),
+            qd.geos_build_method(),
+            qd.geos_gcm_tag()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CloneGeosMksi = QuestionList(
+        list_name="CloneGeosMksi",
+        questions=[
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_mksi_path_tag()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CloneJedi = QuestionList(
+        list_name="CloneJedi",
+        questions=[
+            qd.bundles(),
+            qd.existing_jedi_source_directory(),
+            qd.existing_jedi_source_directory_pinned(),
+            qd.jedi_build_method()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    EvaIncrement = QuestionList(
+        list_name="EvaIncrement",
+        questions=[
+            qd.marine_models(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    EvaObservations = QuestionList(
+        list_name="EvaObservations",
+        questions=[
+            background_crtm_obs,
+            qd.marine_models(),
+            qd.observing_system_records_path(),
+            qd.window_offset(),
+            qd.marine_models(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    EvaTimeseries = QuestionList(
+        list_name="EvaTimeseries",
+        questions=[
+            background_crtm_obs,
+            qd.window_length(),
+            qd.window_offset(),
+            qd.ncdiag_experiments(),
+            qd.marine_models(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GenerateBClimatology = QuestionList(
+        list_name="GenerateBClimatology",
         questions=[
             np_proc_resolution,
-            window_questions,
-            background_crtm_obs,
+            swell_static_file_questions,
             qd.analysis_variables(),
-            qd.background_frequency(),
-            qd.check_for_obs(),
+            qd.background_error_model(),
             qd.generate_yaml_and_exit(),
             qd.gradient_norm_reduction(),
             qd.gsibec_configuration(),
             qd.gsibec_nlats(),
             qd.gsibec_nlons(),
             qd.jedi_forecast_model(),
+            qd.marine_models(),
             qd.minimizer(),
             qd.number_of_iterations(),
             qd.observing_system_records_path(),
             qd.total_processors(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GenerateBClimatologyByLinking = QuestionList(
+        list_name="GenerateBClimatologyByLinking",
+        questions=[
+            swell_static_file_questions,
+            qd.background_error_model(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GenerateObservingSystemRecords = QuestionList(
+        list_name="GenerateObservingSystemRecords",
+        questions=[
+            qd.observations(),
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_path()
         ]
     )
 
@@ -104,128 +277,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    MoveDaRestart = QuestionList(
-        list_name="MoveDaRestart",
-        questions=[
-            qd.analysis_forecast_window_offset(),
-            qd.mom6_iau(),
-            qd.window_length()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    PrepareAnalysis = QuestionList(
-        list_name="PrepareAnalysis",
-        questions=[
-            qd.analysis_forecast_window_offset(),
-            qd.analysis_variables(),
-            qd.mom6_iau(),
-            qd.total_processors()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    StoreBackground = QuestionList(
-        list_name="StoreBackground",
-        questions=[
-            window_questions,
-            qd.analysis_forecast_window_offset(),
-            qd.background_experiment(),
-            qd.background_frequency(),
-            qd.horizontal_resolution(),
-            qd.r2d2_local_path(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GenerateBClimatology = QuestionList(
-        list_name="GenerateBClimatology",
-        questions=[
-            np_proc_resolution,
-            swell_static_file_questions,
-            qd.analysis_variables(),
-            qd.background_error_model(),
-            qd.generate_yaml_and_exit(),
-            qd.marine_models(),
-            qd.total_processors(),
-            qd.window_offset(),
-            qd.window_type()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediConvertStateSoca2ciceExecutable = QuestionList(
-        list_name="RunJediConvertStateSoca2ciceExecutable",
-        questions=[
-            qd.analysis_variables(),
-            qd.generate_yaml_and_exit(),
-            qd.jedi_forecast_model(),
-            qd.marine_models(),
-            qd.observations(),
-            qd.total_processors(),
-            qd.window_offset(),
-            qd.window_type(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediEnsembleMeanVariance = QuestionList(
-        list_name="RunJediEnsembleMeanVariance",
-        questions=[
-            np_proc_resolution,
-            window_questions,
-            qd.analysis_variables(),
-            qd.ensemble_num_members(),
-            qd.generate_yaml_and_exit(),
-            qd.jedi_forecast_model(),
-            qd.observations(),
-            qd.observing_system_records_path(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediFgatExecutable = QuestionList(
-        list_name="RunJediFgatExecutable",
-        questions=[
-            run_jedi_executable,
-            qd.marine_models()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediVariationalExecutable = QuestionList(
-        list_name="RunJediVariationalExecutable",
-        questions=[
-            run_jedi_executable,
-            qd.perhost()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GenerateBClimatologyByLinking = QuestionList(
-        list_name="GenerateBClimatologyByLinking",
-        questions=[
-            swell_static_file_questions,
-            qd.background_error_model(),
-            qd.horizontal_resolution(),
-            qd.vertical_resolution(),
-            qd.window_offset(),
-            qd.window_type()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     GetBackgroundGeosExperiment = QuestionList(
         list_name="GetBackgroundGeosExperiment",
         questions=[
@@ -233,366 +284,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_time_offset(),
             qd.geos_x_background_directory()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    LinkGeosOutput = QuestionList(
-        list_name="LinkGeosOutput",
-        questions=[
-            window_questions,
-            qd.background_frequency(),
-            qd.marine_models()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediHofxEnsembleExecutable = QuestionList(
-        list_name="RunJediHofxEnsembleExecutable",
-        questions=[
-            np_proc_resolution,
-            window_questions,
-            background_crtm_obs,
-            qd.background_frequency(),
-            qd.ensemble_hofx_packets(),
-            qd.ensemble_hofx_strategy(),
-            qd.ensemble_num_members(),
-            qd.generate_yaml_and_exit(),
-            qd.jedi_forecast_model(),
-            qd.total_processors(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediHofxExecutable = QuestionList(
-        list_name="RunJediHofxExecutable",
-        questions=[
-            np_proc_resolution,
-            window_questions,
-            background_crtm_obs,
-            qd.background_frequency(),
-            qd.generate_yaml_and_exit(),
-            qd.jedi_forecast_model(),
-            qd.observing_system_records_path(),
-            qd.save_geovals(),
-            qd.total_processors(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediObsfiltersExecutable = QuestionList(
-        list_name="RunJediObsfiltersExecutable",
-        questions=[
-            np_proc_resolution,
-            window_questions,
-            background_crtm_obs,
-            qd.background_frequency(),
-            qd.generate_yaml_and_exit(),
-            qd.jedi_forecast_model(),
-            qd.observing_system_records_path(),
-            qd.total_processors(),
-            qd.obs_thinning_rej_fraction(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    EvaObservations = QuestionList(
-        list_name="EvaObservations",
-        questions=[
-            background_crtm_obs,
-            qd.marine_models(),
-            qd.observing_system_records_path(),
-            qd.window_offset(),
-            qd.marine_models()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetObsNotInR2d2 = QuestionList(
-        list_name="GetExistingObservations",
-        questions=[
-            qd.ioda_locations_not_in_r2d2(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetGeovals = QuestionList(
-        list_name="GetGeovals",
-        questions=[
-            background_crtm_obs,
-            qd.geovals_experiment(),
-            qd.geovals_provider(),
-            qd.r2d2_local_path(),
-            qd.window_length(),
-            qd.window_offset()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetObservations = QuestionList(
-        list_name="GetObservations",
-        questions=[
-            background_crtm_obs,
-            qd.cycling_varbc(),
-            qd.obs_experiment(),
-            qd.obs_provider(),
-            qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
-            qd.window_length(),
-            qd.window_offset(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GsiBcToIoda = QuestionList(
-        list_name="GsiBcToIoda",
-        questions=[
-            background_crtm_obs,
-            qd.observing_system_records_path(),
-            qd.window_offset()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediLocalEnsembleDaExecutable = QuestionList(
-        list_name="RunJediLocalEnsembleDaExecutable",
-        questions=[
-            np_proc_resolution,
-            window_questions,
-            background_crtm_obs,
-            qd.ensemble_hofx_packets(),
-            qd.ensemble_hofx_strategy(),
-            qd.ensemble_num_members(),
-            qd.ensmean_only(),
-            qd.ensmeanvariance_only(),
-            qd.generate_yaml_and_exit(),
-            qd.horizontal_localization_lengthscale(),
-            qd.horizontal_localization_max_nobs(),
-            qd.horizontal_localization_method(),
-            qd.jedi_forecast_model(),
-            qd.local_ensemble_inflation_mult(),
-            qd.local_ensemble_inflation_rtpp(),
-            qd.local_ensemble_inflation_rtps(),
-            qd.local_ensemble_save_posterior_ensemble(),
-            qd.local_ensemble_save_posterior_ensemble_increments(),
-            qd.local_ensemble_save_posterior_mean(),
-            qd.local_ensemble_save_posterior_mean_increment(),
-            qd.local_ensemble_solver(),
-            qd.local_ensemble_use_linear_observer(),
-            qd.observing_system_records_path(),
-            qd.skip_ensemble_hofx(),
-            qd.total_processors(),
-            qd.vertical_localization_apply_log_transform(),
-            qd.vertical_localization_function(),
-            qd.vertical_localization_ioda_vertical_coord(),
-            qd.vertical_localization_ioda_vertical_coord_group(),
-            qd.vertical_localization_lengthscale(),
-            qd.vertical_localization_method(),
-            qd.perhost(),
-            qd.check_for_obs()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    RunJediUfoTestsExecutable = QuestionList(
-        list_name="RunJediUfoTestsExecutable",
-        questions=[
-            background_crtm_obs,
-            qd.generate_yaml_and_exit(),
-            qd.observing_system_records_path(),
-            qd.single_observations(),
-            qd.window_length(),
-            qd.window_offset(),
-            qd.check_for_obs(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    SaveObsDiags = QuestionList(
-        list_name="SaveObsDiags",
-        questions=[
-            background_crtm_obs,
-            qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
-            qd.window_offset(),
-            qd.marine_models()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    BuildJedi = QuestionList(
-        list_name="BuildJedi",
-        questions=[
-            qd.bundles(),
-            qd.jedi_build_method()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    CloneJedi = QuestionList(
-        list_name="CloneJedi",
-        questions=[
-            qd.bundles(),
-            qd.existing_jedi_source_directory(),
-            qd.existing_jedi_source_directory_pinned(),
-            qd.jedi_build_method()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    CleanCycle = QuestionList(
-        list_name="CleanCycle",
-        questions=[
-            qd.clean_patterns()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    BuildGeosByLinking = QuestionList(
-        list_name="BuildGeosByLinking",
-        questions=[
-            qd.existing_geos_gcm_build_path(),
-            qd.geos_build_method()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    PrepGeosRunDir = QuestionList(
-        list_name="PrepGeosRunDir",
-        questions=[
-            swell_static_file_questions,
-            qd.existing_geos_gcm_build_path(),
-            qd.forecast_duration(),
-            qd.geos_experiment_directory(),
-            qd.mom6_iau_nhours()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    CloneGeos = QuestionList(
-        list_name="CloneGeos",
-        questions=[
-            qd.existing_geos_gcm_source_path(),
-            qd.geos_build_method(),
-            qd.geos_gcm_tag()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    BuildJediByLinking = QuestionList(
-        list_name="BuildJediByLinking",
-        questions=[
-            qd.existing_jedi_build_directory(),
-            qd.existing_jedi_build_directory_pinned(),
-            qd.jedi_build_method()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    MoveForecastRestart = QuestionList(
-        list_name="MoveForecastRestart",
-        questions=[
-            qd.forecast_duration()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    BuildGeos = QuestionList(
-        list_name="BuildGeos",
-        questions=[
-            qd.geos_build_method()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetGeosRestart = QuestionList(
-        list_name="GetGeosRestart",
-        questions=[
-            swell_static_file_questions,
-            qd.geos_restarts_directory()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    StageJedi = QuestionList(
-        list_name="StageJedi",
-        questions=[
-            swell_static_file_questions,
-            qd.gsibec_configuration(),
-            qd.gsibec_nlats(),
-            qd.gsibec_nlons(),
-            qd.horizontal_resolution(),
-            qd.vertical_resolution()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    EvaIncrement = QuestionList(
-        list_name="EvaIncrement",
-        questions=[
-            qd.marine_models(),
-            qd.window_offset(),
-            qd.window_type()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GenerateObservingSystemRecords = QuestionList(
-        list_name="GenerateObservingSystemRecords",
-        questions=[
-            qd.observations(),
-            qd.observing_system_records_mksi_path(),
-            qd.observing_system_records_path()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GsiNcdiagToIoda = QuestionList(
-        list_name="GsiNcdiagToIoda",
-        questions=[
-            qd.observations(),
-            qd.produce_geovals(),
-            qd.single_observations(),
-            qd.window_offset()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    CloneGeosMksi = QuestionList(
-        list_name="CloneGeosMksi",
-        questions=[
-            qd.observing_system_records_mksi_path(),
-            qd.observing_system_records_mksi_path_tag()
         ]
     )
 
@@ -618,10 +309,34 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetGeovals = QuestionList(
+        list_name="GetGeovals",
+        questions=[
+            background_crtm_obs,
+            qd.geovals_experiment(),
+            qd.geovals_provider(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetGeosAdasBackground = QuestionList(
         list_name="GetGeosAdasBackground",
         questions=[
             qd.path_to_geos_adas_background()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetGeosRestart = QuestionList(
+        list_name="GetGeosRestart",
+        questions=[
+            swell_static_file_questions,
+            qd.geos_restarts_directory()
         ]
     )
 
@@ -646,6 +361,298 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetNcdiags = QuestionList(
+        list_name="GetNcdiags",
+        questions=[
+            background_crtm_obs,
+            qd.ncdiag_experiments(),
+            qd.marine_models(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetObservations = QuestionList(
+        list_name="GetObservations",
+        questions=[
+            background_crtm_obs,
+            qd.cycling_varbc(),
+            qd.obs_experiment(),
+            qd.obs_provider(),
+            qd.observing_system_records_path(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetObsNotInR2d2 = QuestionList(
+        list_name="GetExistingObservations",
+        questions=[
+            qd.ioda_locations_not_in_r2d2(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GsiBcToIoda = QuestionList(
+        list_name="GsiBcToIoda",
+        questions=[
+            background_crtm_obs,
+            qd.observing_system_records_path(),
+            qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GsiNcdiagToIoda = QuestionList(
+        list_name="GsiNcdiagToIoda",
+        questions=[
+            qd.observations(),
+            qd.produce_geovals(),
+            qd.single_observations(),
+            qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    LinkGeosOutput = QuestionList(
+        list_name="LinkGeosOutput",
+        questions=[
+            window_questions,
+            qd.background_frequency(),
+            qd.marine_models()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    MoveDaRestart = QuestionList(
+        list_name="MoveDaRestart",
+        questions=[
+            qd.analysis_forecast_window_offset(),
+            qd.mom6_iau(),
+            qd.window_length()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    MoveForecastRestart = QuestionList(
+        list_name="MoveForecastRestart",
+        questions=[
+            qd.forecast_duration()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    PrepareAnalysis = QuestionList(
+        list_name="PrepareAnalysis",
+        questions=[
+            qd.analysis_forecast_window_offset(),
+            qd.analysis_variables(),
+            qd.mom6_iau(),
+            qd.total_processors()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    PrepGeosRunDir = QuestionList(
+        list_name="PrepGeosRunDir",
+        questions=[
+            swell_static_file_questions,
+            qd.existing_geos_gcm_build_path(),
+            qd.forecast_duration(),
+            qd.geos_experiment_directory(),
+            qd.mom6_iau_nhours()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediConvertStateSoca2ciceExecutable = QuestionList(
+        list_name="RunJediConvertStateSoca2ciceExecutable",
+        questions=[
+            qd.analysis_variables(),
+            qd.check_for_obs(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_offset(),
+            qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEnsembleMeanVariance = QuestionList(
+        list_name="RunJediEnsembleMeanVariance",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.check_for_obs(),
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediFgatExecutable = QuestionList(
+        list_name="RunJediFgatExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.marine_models()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediHofxEnsembleExecutable = QuestionList(
+        list_name="RunJediHofxEnsembleExecutable",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.background_frequency(),
+            qd.check_for_obs(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.total_processors()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediHofxExecutable = QuestionList(
+        list_name="RunJediHofxExecutable",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.background_frequency(),
+            qd.check_for_obs(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.save_geovals(),
+            qd.total_processors()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediLocalEnsembleDaExecutable = QuestionList(
+        list_name="RunJediLocalEnsembleDaExecutable",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.check_for_obs(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.ensmean_only(),
+            qd.ensmeanvariance_only(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_method(),
+            qd.perhost()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediObsfiltersExecutable = QuestionList(
+        list_name="RunJediObsfiltersExecutable",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.background_frequency(),
+            qd.check_for_obs(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.observing_system_records_path(),
+            qd.total_processors(),
+            qd.obs_thinning_rej_fraction()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediUfoTestsExecutable = QuestionList(
+        list_name="RunJediUfoTestsExecutable",
+        questions=[
+            background_crtm_obs,
+            qd.check_for_obs(),
+            qd.generate_yaml_and_exit(),
+            qd.single_observations(),
+            qd.window_length(),
+            qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediVariationalExecutable = QuestionList(
+        list_name="RunJediVariationalExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.perhost()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveObsDiags = QuestionList(
+        list_name="SaveObsDiags",
+        questions=[
+            background_crtm_obs,
+            qd.r2d2_local_path(),
+            qd.window_offset(),
+            qd.marine_models()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveRestart = QuestionList(
         list_name="SaveRestart",
         questions=[
@@ -655,6 +662,34 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.horizontal_resolution(),
             qd.marine_models(),
             qd.r2d2_local_path()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    StageJedi = QuestionList(
+        list_name="StageJedi",
+        questions=[
+            swell_static_file_questions,
+            qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    StoreBackground = QuestionList(
+        list_name="StoreBackground",
+        questions=[
+            window_questions,
+            qd.analysis_forecast_window_offset(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.r2d2_local_path(),
         ]
     )
 
