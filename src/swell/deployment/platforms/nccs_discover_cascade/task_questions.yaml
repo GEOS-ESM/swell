@@ -33,3 +33,6 @@ swell_static_files:
 
 ioda_locations_not_in_r2d2:
   default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
+
+scratch_root:
+  default_value: /discover/nobackup/projects/gmao/advda/TSE_staging
