@@ -34,7 +34,7 @@ class ExceptionTypes(Enum):
 
     @classmethod
     def get_type(cls, name: str):
-        return cls.name.value
+        return cls[name].value
 
     # -----------------------------------------------------------------------------
 
