@@ -7,9 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from collections import OrderedDict
 import os
-import yaml
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
