@@ -2,6 +2,7 @@ import os
 import unittest
 import subprocess
 from swell.utilities.logger import get_logger
+from swell.utilities.exceptions import SwellError
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.pinned_versions.check_hashes import check_hashes
 
@@ -26,7 +27,7 @@ class PinnedVersionsTest(unittest.TestCase):
                        stdout=subprocess.DEVNULL)
         abort_message = "Wrong commit hashes found for these repositories in jedi_bundle: [oops]"
         # Run check hash (expect abort)
-        with self.assertRaises(Exception) as abort, suppress_stdout():
+        with self.assertRaises(SwellError) as abort, suppress_stdout():
             log_level = logger.level
             # Set logger priority to 60. This number sets the minimum level of message
             # that the logger can register (Where message criticality ascends from 0 to 50).

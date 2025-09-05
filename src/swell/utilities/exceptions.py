@@ -5,30 +5,34 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 # -----------------------------------------------------------------------------
 
-from enum import Enum, member
+from enum import Enum
+
+# -----------------------------------------------------------------------------
+
+
+class SwellError(Exception):
+    pass
+
+# -----------------------------------------------------------------------------
+
+
+class SwellFileError(SwellError):
+    pass
+
+# -----------------------------------------------------------------------------
+
+
+class SwellConfigError(SwellError):
+    pass
 
 # -----------------------------------------------------------------------------
 
 
 class ExceptionTypes(Enum):
 
-    # -----------------------------------------------------------------------------
-
-    @member
-    class SwellError(Exception):
-        pass
-
-    # -----------------------------------------------------------------------------
-
-    @member
-    class SwellFileError(SwellError):
-        pass
-
-    # -----------------------------------------------------------------------------
-
-    @member
-    class SwellConfigError(SwellError):
-        pass
+    SwellError = SwellError
+    SwellFileError = SwellFileError
+    SwellConfigError = SwellConfigError
 
     # -----------------------------------------------------------------------------
 
@@ -46,4 +50,4 @@ class ExceptionTypes(Enum):
 
         return member_list
 
-    # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------

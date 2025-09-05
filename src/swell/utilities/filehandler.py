@@ -65,10 +65,8 @@ import datetime as dt
 from shutil import copyfile
 from typing import Union, Optional, Any
 
-from swell.utilities.exceptions import ExceptionTypes
+from swell.utilities.exceptions import SwellFileError, SwellConfigError
 
-SwellFileError = ExceptionTypes.SwellFileError.value
-SwellConfigError = ExceptionTypes.SwellConfigError.value
 
 def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
     """Factory for determining the file handler type for retrieving data.

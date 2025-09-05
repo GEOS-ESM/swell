@@ -121,7 +121,7 @@ class taskBase(ABC):
             # Object for computing data assimilation window parameters
             self.da_window_params = DataAssimilationWindowParams(self.logger,
                                                                  self.__datetime__.string_iso())
-            
+
         # Set Swell exception types
         for exception_type in ExceptionTypes.get_all():
             setattr(self, exception_type.__name__, exception_type)
@@ -194,7 +194,7 @@ class taskBase(ABC):
 
         # Check that model is set
         self.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
-                                 'should not be called if the task does not receive model.')
+                          'should not be called if the task does not receive model.')
 
         # Combine datetime string (directory format) with the model
         cycle_dir = os.path.join(self.experiment_path(), 'run',

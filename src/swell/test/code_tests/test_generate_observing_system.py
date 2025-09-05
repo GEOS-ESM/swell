@@ -3,6 +3,7 @@ import unittest
 import subprocess
 from datetime import datetime as dt
 from swell.utilities.logger import get_logger
+from swell.utilities.exceptions import SwellError
 from swell.utilities.get_channels import get_channels
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.observing_system_records import ObservingSystemRecords
@@ -49,7 +50,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
                         "Missing active channels for cris-fsr_npp, " + \
                         "Confirm that you are using the right version of GEOSmksi"
 
-        with self.assertRaises(Exception) as abort, suppress_stdout():
+        with self.assertRaises(SwellError) as abort, suppress_stdout():
             log_level = self.logger.level
             # Set logger priority to 60. This number sets the minimum level of message
             # that the logger can register (Where message criticality ascends from 0 to 50).
