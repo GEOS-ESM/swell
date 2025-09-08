@@ -21,7 +21,7 @@
         R1 = """
            CloneJedi => BuildJediByLinking?
 
-           BuildJediByLinking:fail? => BuildJedi
+           BuildJediByLinking:fail? => BuildJedi => CleanScratch
         """
 
 # --------------------------------------------------------------------------------------------------
@@ -52,5 +52,8 @@
         {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
 
 # --------------------------------------------------------------------------------------------------

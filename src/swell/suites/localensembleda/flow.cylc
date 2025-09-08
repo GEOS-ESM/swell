@@ -99,6 +99,12 @@
         """
         {% endfor %}
 
+        {% for model_component in model_components %}
+        R1/$ = """
+            CleanCycle-{{model_component}} => CleanScratch
+        """
+        {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -225,4 +231,8 @@
 
     [[sync_point]]
         script = true
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
+
 # --------------------------------------------------------------------------------------------------

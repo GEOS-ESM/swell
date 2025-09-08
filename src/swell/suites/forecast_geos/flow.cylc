@@ -59,6 +59,12 @@
         """
         {% endfor %}
 
+        {% for model_component in model_components %}
+        R1/$ = """
+            CleanCycle-{{model_component}} => CleanScratch
+        """
+        {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -112,5 +118,8 @@
         {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
 
 # --------------------------------------------------------------------------------------------------

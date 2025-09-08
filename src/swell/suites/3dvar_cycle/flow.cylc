@@ -120,6 +120,12 @@
         {% endfor %}
         """
         {% endfor %}
+        {% for model_component in model_components %}
+        R1/$ = """
+            CleanCycle-{{model_component}} => CleanScratch
+        """
+        {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -265,5 +271,8 @@
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
     {% endfor %}
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
 
 # --------------------------------------------------------------------------------------------------

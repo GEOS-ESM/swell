@@ -21,7 +21,7 @@
         R1 = """
            CloneGeos => BuildGeosByLinking?
 
-           BuildGeosByLinking:fail? => BuildGeos
+           BuildGeosByLinking:fail? => BuildGeos => CleanScratch
         """
 
 # --------------------------------------------------------------------------------------------------
@@ -52,5 +52,8 @@
         {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
 
 # --------------------------------------------------------------------------------------------------

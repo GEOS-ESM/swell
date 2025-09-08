@@ -15,7 +15,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 # --------------------------------------------------------------------------------------------------
 
 
-class CleanCycle(taskBase):
+class CleanScratch(taskBase):
 
     """Cleans current cycle based on list defined in the configuration file
 
@@ -32,7 +32,7 @@ class CleanCycle(taskBase):
             scratch_path = self.experiment_path(scratch=True)
             experiment_path = self.experiment_path(scratch=False)
 
-            files = glob.glob(os.path.join(scratch_path), '*')
+            files = glob.glob(os.path.join(scratch_path, '*'))
 
             command = ['cp', '-r'] + files + [experiment_path]
 

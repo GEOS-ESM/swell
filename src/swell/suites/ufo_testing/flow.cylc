@@ -72,6 +72,12 @@
         """
         {% endfor %}
 
+        {% for model_component in model_components %}
+        R1/$ = """
+            CleanCycle-{{model_component}} => CleanScratch
+        """
+        {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -143,5 +149,8 @@
 
     [[CleanCycle]]
         script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"
+
+    [[CleanScratch]]
+        script = "swell task CleanScratch $config"
 
 # --------------------------------------------------------------------------------------------------
