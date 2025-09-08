@@ -65,8 +65,6 @@ import datetime as dt
 from shutil import copyfile
 from typing import Union, Optional, Any
 
-from swell.utilities.exceptions import SwellFileError, SwellConfigError
-
 
 def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
     """Factory for determining the file handler type for retrieving data.
@@ -90,7 +88,7 @@ def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataF
 
     strict = kwargs.get('strict', True)
     if not isinstance(config, list):
-        raise SwellConfigError(config)
+        raise TypeError(config)
 
     group = config[0]
     collection = group.get('copy_files', {}).get('directories', [])
@@ -177,10 +175,7 @@ class FileHandler(object):
 
             dir = os.path.dirname(dstfile)
 
-            try:
-                os.makedirs(dir, 0o755, exist_ok=True)
-            except Exception as e:
-                raise SwellFileError(str(e))
+            os.makedirs(dir, 0o755, exist_ok=True)
 
             if fc.link:
                 self.link(srcfile, dstfile)
@@ -202,12 +197,9 @@ class FileHandler(object):
         """
 
         if not os.path.isfile(src):
-            raise SwellFileError('Source file does not exist: "' + src + '"')
+            raise FileNotFoundError('Source file does not exist: "' + src + '"')
 
-        try:
-            copyfile(src, dst)
-        except Exception as e:
-            raise SwellFileError(str(e))
+        copyfile(src, dst)
 
 # ---------------------------------------------------------------------------
 
@@ -224,17 +216,14 @@ class FileHandler(object):
         """
 
         if not os.path.isfile(src):
-            raise SwellFileError('Source file does not exist: "' + src + '"')
+            raise FileNotFoundError('Source file does not exist: "' + src + '"')
 
-        try:
-            if os.path.islink(dst):
-                os.remove(dst)
-            if os.path.isfile(dst):
-                raise SwellFileError('File exists where link expected: "' + dst + '"')
-            if not os.path.isfile(dst):
-                os.symlink(src, dst)
-        except Exception as e:
-            raise SwellFileError(str(e))
+        if os.path.islink(dst):
+            os.remove(dst)
+        if os.path.isfile(dst):
+            raise Exception('File exists where link expected: "' + dst + '"')
+        if not os.path.isfile(dst):
+            os.symlink(src, dst)
 
 # ---------------------------------------------------------------------------
 
@@ -282,8 +271,8 @@ class StageFileHandler(FileHandler):
                     filelist = glob.glob(src)
 
                     if not filelist and self.strict:
-                        raise SwellConfigError('Source inputs not found "'
-                                               + src + '"')
+                        raise Exception('Source inputs not found "'
+                                        + src + '"')
 
                     for srcfile in filelist:
                         bname = os.path.basename(srcfile)
@@ -371,8 +360,8 @@ class GetDataFileHandler(FileHandler):
                         fc.update(srcfile, dstfile)
 
                 if not found and self.strict:
-                    raise SwellConfigError('Source inputs not found "' +
-                                           srcfile + '"')
+                    raise FileNotFoundError('Source inputs not found "' +
+                                            srcfile + '"')
 
             listing.append(fc)
 

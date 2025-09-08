@@ -27,7 +27,6 @@ from swell.utilities.datetime_util import Datetime
 from swell.utilities.logger import get_logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 from swell.utilities.geos import Geos
-from swell.utilities.exceptions import ExceptionTypes
 
 
 # --------------------------------------------------------------------------------------------------
@@ -121,10 +120,6 @@ class taskBase(ABC):
             # Object for computing data assimilation window parameters
             self.da_window_params = DataAssimilationWindowParams(self.logger,
                                                                  self.__datetime__.string_iso())
-
-        # Set Swell exception types
-        for exception_type in ExceptionTypes.get_all():
-            setattr(self, exception_type.__name__, exception_type)
 
     # ----------------------------------------------------------------------------------------------
 

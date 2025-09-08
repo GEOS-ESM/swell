@@ -3,51 +3,11 @@
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
-# -----------------------------------------------------------------------------
 
-from enum import Enum
 
-# -----------------------------------------------------------------------------
-
+# --------------------------------------------------------------------------------------------------
 
 class SwellError(Exception):
     pass
 
-# -----------------------------------------------------------------------------
-
-
-class SwellFileError(SwellError):
-    pass
-
-# -----------------------------------------------------------------------------
-
-
-class SwellConfigError(SwellError):
-    pass
-
-# -----------------------------------------------------------------------------
-
-
-class ExceptionTypes(Enum):
-
-    SwellError = SwellError
-    SwellFileError = SwellFileError
-    SwellConfigError = SwellConfigError
-
-    # -----------------------------------------------------------------------------
-
-    @classmethod
-    def get_type(cls, name: str):
-        return cls[name].value
-
-    # -----------------------------------------------------------------------------
-
-    @classmethod
-    def get_all(cls) -> list:
-        member_list = []
-        for name in cls._member_names_:
-            member_list.append(cls.get_type(name))
-
-        return member_list
-
-# -----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------

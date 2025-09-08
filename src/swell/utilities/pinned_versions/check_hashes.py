@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 import importlib.resources
 from swell.utilities.logger import Logger
+from swell.utilities.exceptions import SwellError
 
 
 def get_pinned_vers_path() -> Path:
@@ -40,4 +41,4 @@ def check_hashes(jedi_bundle_loc: str, logger: Logger) -> None:
     # If there are incorrect hashes, logger abort
     if incorrect_hash:
         logger.abort("Wrong commit hashes found for these repositories "
-                     f"in jedi_bundle: {incorrect_hash}")
+                     f"in jedi_bundle: {incorrect_hash}", exception=SwellError)
