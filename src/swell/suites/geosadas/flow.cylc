@@ -58,14 +58,8 @@
             GetGeosAdasBackground => RunJediVariationalExecutable
 
             # Clean cycle
-            RunJediVariationalExecutable => CleanCycle
+            RunJediVariationalExecutable => CleanCycle => CleanScratch
         """
-
-        {% for model_component in model_components %}
-        R1/$ = """
-            CleanCycle-{{model_component}} => CleanScratch
-        """
-        {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
 

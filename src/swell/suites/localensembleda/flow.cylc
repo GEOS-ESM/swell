@@ -92,16 +92,10 @@
 
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            CleanCycle-{{model_component}} => CleanScratch
 
         {% endif %}
         {% endfor %}
-        """
-        {% endfor %}
-
-        {% for model_component in model_components %}
-        R1/$ = """
-            CleanCycle-{{model_component}} => CleanScratch
         """
         {% endfor %}
 
