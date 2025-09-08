@@ -136,7 +136,7 @@ class QuestionDefaults():
         ask_question: bool = True
         prompt: str = ("Should swell run certain tasks in a specified scratch directory?")
         widget_type: WType = WType.BOOLEAN
-    
+
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -148,7 +148,7 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
-    
+
     @dataclass
     class scratch_root(SuiteQuestion):
         default_value: str = "defer_to_platform"

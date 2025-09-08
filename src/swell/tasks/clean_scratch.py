@@ -39,4 +39,3 @@ class CleanScratch(taskBase):
             run_track_log_subprocess(self.logger, command)
 
 # --------------------------------------------------------------------------------------------------
-

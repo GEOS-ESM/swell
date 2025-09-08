@@ -154,7 +154,7 @@ class taskBase(ABC):
             experiment_path = os.path.join(self.__scratch_root__, self.__scratch_id__)
         else:
             experiment_path = os.path.join(self.__experiment_root__, self.__experiment_id__)
-            
+
         return experiment_path
 
     # ----------------------------------------------------------------------------------------------

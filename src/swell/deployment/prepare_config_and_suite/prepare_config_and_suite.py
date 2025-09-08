@@ -339,7 +339,8 @@ class PrepareExperimentConfigAndSuite:
                 experiment_id = self.question_dictionary_model_ind['experiment_id']['default_value']
                 if experiment_id == 'defer_to_code':
                     experiment_id = f'swell-{self.suite}'
-                    self.question_dictionary_model_ind['experiment_id']['default_value'] = experiment_id
+                    self.question_dictionary_model_ind['experiment_id'][
+                            'default_value'] = experiment_id
 
                 scratch_id = f'{experiment_id}-{randint(0, 99999999):08d}'
                 val['default_value'] = scratch_id
