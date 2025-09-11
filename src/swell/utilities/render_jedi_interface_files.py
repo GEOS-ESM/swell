@@ -207,6 +207,7 @@ class JediConfigRendering():
                                   window_type,
                                   obs,
                                   self.cycle_time,
+                                  self.cycle_dir,
                                   jedi_forecast_model,
                                   self.observing_system_records_path,
                                   check_for_obs)

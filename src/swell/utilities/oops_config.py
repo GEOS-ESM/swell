@@ -9,6 +9,7 @@
 import os
 from collections.abc import Mapping
 from abc import ABC, abstractmethod
+from ruamel.yaml import YAML
 
 from swell.utilities.run_jedi_executables import check_obs
 from swell.swell_path import get_swell_path
@@ -24,6 +25,7 @@ class OopsConfig(ABC):
                  window_type: str,
                  obs: list,
                  cycle_time: str,
+                 cycle_dir: str,
                  jedi_forecast_model: str,
                  observing_system_records_path: str,
                  check_for_obs: bool = True) -> str:
@@ -36,6 +38,7 @@ class OopsConfig(ABC):
         self.window_type = window_type
         self.obs = obs
         self.cycle_time = cycle_time
+        self.cycle_dir = cycle_dir
         self.jedi_forecast_model = jedi_forecast_model
         self.observing_system_records_path = observing_system_records_path
         self.check_for_obs = check_for_obs
@@ -46,7 +49,7 @@ class OopsConfig(ABC):
 
     def special_observations(self) -> Mapping:
 
-        jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
+        jedi_observations_file = os.path.join(self.cycle_dir, 'obs.yaml')
 
         yaml = YAML(typ='safe')
 
