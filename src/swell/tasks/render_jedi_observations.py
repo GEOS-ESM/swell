@@ -9,75 +9,75 @@
 
 
 import os
+from typing import Mapping
+from ruamel.yaml import YAML
 
-from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
-
-from swell.utilities.build import link_path
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.pinned_versions.check_hashes import check_hashes
-from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
-
+from swell.utilities.get_channels import get_channels
+from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
-
-class CloneJedi(taskBase):
+class RenderJediObservations(taskBase):
 
     def execute(self) -> None:
 
-        # Get the experiment/jedi_bundle directory
-        # ----------------------------------------
-        swell_exp_path = self.experiment_path()
-        jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
+        # List of observations
+        obs_list = self.config.observations()
 
-        # Get paths to build and source
-        # -----------------------------
-        jedi_bundle_build_path, jedi_bundle_source_path = build_and_source_dirs(jedi_bundle_path)
+        # Whether to run get_channels for obs
+        check_for_obs = self.config.check_for_obs(True)
 
-        # Choice to link to existing build or build JEDI using jedi_bundle
-        # ----------------------------------------------------------------
-        if self.config.jedi_build_method() == 'use_existing':
-            # Link the source code directory
-            link_path(self.config.existing_jedi_source_directory(), jedi_bundle_source_path)
+        # Observing system records paths
+        observing_system_records_path = self.config.observing_system_records_path(None)
+        self.jedi_rendering.set_obs_records_path(observing_system_records_path)
 
-        elif self.config.jedi_build_method() == 'use_pinned_existing':
-            # Check hashes before proceeding
-            check_hashes(self.config.existing_jedi_source_directory_pinned(), self.logger)
-            # Link the pinned source code directory
-            link_path(self.config.existing_jedi_source_directory_pinned(), jedi_bundle_source_path)
+        # Window parameters
+        window_offset = self.config.window_offset()
+        background_time_offset = self.config.background_time_offset()
 
-        elif self.config.jedi_build_method() in ('create', 'pinned_create'):
-            # Determine which bundles need to be build
-            model_components = self.get_model_components()
-            if model_components is not None:
-                bundles = []
-                for model_component in model_components:
-                    # Open the metadata config for interface
-                    self.jedi_rendering.add_key('npx_proc', '1')
-                    self.jedi_rendering.add_key('npy_proc', '1')
-                    self.jedi_rendering.add_key('total_processors', '1')
-                    meta = self.jedi_rendering.render_interface_meta(model_component)
-                    bundles.append(meta['jedi_interface'])
+        # Window parameters for observations
+        window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+        crtm_coeff_dir = self.config.crtm_coeff_dir(None)
+
+        # Set fields for obs files
+        self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+
+        # Replace cycle_dir with './' if specified
+        if self.config.set_obs_as_local(False):
+            self.jedi_rendering.add_key('cycle_dir', '.')
+
+        observations = []
+
+        # Iterate through list
+        for ob in obs_list:
+            # Render the yaml file
+            obs_dict = self.jedi_rendering.render_interface_observations(ob)
+
+            # Check whether to use the file, or skip if debugging config file
+            if check_for_obs:
+                use_observation = check_obs(observing_system_records_path, ob,
+                                            obs_dict, self.cycle_time)
             else:
-                bundles = get_bundles()
+                self.logger.info(f'Not checking for obs {ob}')
+                use_observation = True
 
-            # Determine whether to use pinned versions or not
-            use_pinned = False
-            if self.config.jedi_build_method() == 'pinned_create':
-                use_pinned = True
+            if use_observation:
+                observations.append(obs_dict)
+            else:
+                obs_list.remove(ob)
 
-            # Generate the build dictionary
-            jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
-                                                      jedi_bundle_source_path,
-                                                      jedi_bundle_build_path,
-                                                      self.platform(),
-                                                      use_pinned)
+        # Create the output file
+        jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
 
-            # Perform the clone of JEDI repos
-            try:
-                execute_tasks(['clone'], jedi_bundle_dict)
-            except Exception:
-                self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
+        yaml = YAML()
+
+        with open(jedi_observations_file, 'w') as f:
+            yaml.dump(f, obs_list)
 
 
 # --------------------------------------------------------------------------------------------------
