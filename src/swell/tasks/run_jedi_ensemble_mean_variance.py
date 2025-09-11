@@ -31,7 +31,6 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Parse configuration
         # -------------------
         jedi_forecast_model = self.config.jedi_forecast_model(None)
-        observations = self.config.observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)

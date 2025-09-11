@@ -152,7 +152,7 @@
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
     [[RenderJediObservations-{{model_component}}]]
-        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"

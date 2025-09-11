@@ -35,7 +35,6 @@ class RunJediFgatExecutable(taskBase):
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         number_of_iterations = self.config.number_of_iterations()
-        observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 

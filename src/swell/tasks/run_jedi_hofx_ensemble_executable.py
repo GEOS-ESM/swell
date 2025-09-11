@@ -39,7 +39,6 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 

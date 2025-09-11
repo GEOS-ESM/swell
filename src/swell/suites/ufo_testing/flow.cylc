@@ -126,7 +126,7 @@
     [[ GetGeovals ]]
         script = "swell task GetGeovals $config -d $datetime -m geos_atmosphere"
 
-    [[RenderJediObservations-{{model_component}}]]
+    [[RenderJediObservations]]
         script = "swell task RenderJediObservations $config -d $datetime -m geos_atmosphere"
 
     [[RunJediUfoTestsExecutable]]

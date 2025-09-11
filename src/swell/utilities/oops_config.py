@@ -11,7 +11,6 @@ from collections.abc import Mapping
 from abc import ABC, abstractmethod
 from ruamel.yaml import YAML
 
-from swell.utilities.run_jedi_executables import check_obs
 from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------

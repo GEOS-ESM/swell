@@ -9,14 +9,13 @@
 
 
 import os
-from typing import Mapping
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.get_channels import get_channels
 from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
+
 
 class RenderJediObservations(taskBase):
 
