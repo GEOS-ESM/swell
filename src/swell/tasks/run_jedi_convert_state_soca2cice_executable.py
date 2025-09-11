@@ -34,8 +34,6 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         window_type = self.config.window_type()
         window_offset = self.config.window_offset()
 
-        check_for_obs = self.config.check_for_obs(True)
-
         # Compute data assimilation window parameters
         # --------------------------------------------
         analysis_time = self.da_window_params.analysis_time(window_type, self.suite_name())
@@ -75,9 +73,7 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         # --------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
                                                                 window_type,
-                                                                observations,
-                                                                jedi_forecast_model,
-                                                                check_for_obs)
+                                                                jedi_forecast_model)
 
         yaml = YAML()
 

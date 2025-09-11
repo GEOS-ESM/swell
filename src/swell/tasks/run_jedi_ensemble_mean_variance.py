@@ -73,9 +73,6 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
 
-        # Key whether to run check_obs
-        check_for_obs = self.config.check_for_obs(True)
-
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
@@ -88,9 +85,7 @@ class RunJediEnsembleMeanVariance(taskBase):
         # --------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
                                                                 window_type,
-                                                                observations,
-                                                                jedi_forecast_model,
-                                                                check_for_obs)
+                                                                jedi_forecast_model)
 
         yaml = YAML()
 

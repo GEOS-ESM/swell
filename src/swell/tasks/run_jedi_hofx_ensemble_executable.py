@@ -42,7 +42,6 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        check_for_obs = self.config.check_for_obs(True)
 
         # Compute data assimilation window parameters
         background_time = self.da_window_params.background_time(window_offset,
@@ -126,9 +125,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # --------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                                 window_type,
-                                                                observations,
-                                                                jedi_forecast_model,
-                                                                check_for_obs)
+                                                                jedi_forecast_model)
 
         yaml = YAML()
 

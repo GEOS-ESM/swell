@@ -38,7 +38,6 @@ class RunJediUfoTestsExecutable(taskBase):
         observations = self.config.observations()
         single_observations = self.config.single_observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        check_for_obs = self.config.check_for_obs(True)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -61,9 +60,7 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Open the JEDI config file and fill templates
         # --------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', '3D',
-                                                                observations,
-                                                                check_for_obs=check_for_obs)
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', '3D')
 
         # Make modifications needed for testing
         # -------------------------------------

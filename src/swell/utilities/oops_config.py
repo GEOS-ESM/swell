@@ -23,12 +23,10 @@ class OopsConfig(ABC):
     def __init__(self,
                  jedi_rendering,
                  window_type: str,
-                 obs: list,
                  cycle_time: str,
                  cycle_dir: str,
                  jedi_forecast_model: str,
-                 observing_system_records_path: str,
-                 check_for_obs: bool = True) -> str:
+                 observing_system_records_path: str) -> str:
 
         self.jedi_rendering = jedi_rendering
         self.logger = jedi_rendering.logger
@@ -36,12 +34,10 @@ class OopsConfig(ABC):
         self.template_dict = jedi_rendering.__template_dict__
 
         self.window_type = window_type
-        self.obs = obs
         self.cycle_time = cycle_time
         self.cycle_dir = cycle_dir
         self.jedi_forecast_model = jedi_forecast_model
         self.observing_system_records_path = observing_system_records_path
-        self.check_for_obs = check_for_obs
 
         self.jedi_config_path = os.path.join(get_swell_path(), 'configuration', 'jedi')
 

@@ -41,7 +41,6 @@ class RunJediHofxExecutable(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         save_geovals = self.config.save_geovals(False)
-        check_for_obs = self.config.check_for_obs(True)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -114,9 +113,7 @@ class RunJediHofxExecutable(taskBase):
             jedi_config_dict = \
                 self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                      window_type,
-                                                     observations,
-                                                     jedi_forecast_model,
-                                                     check_for_obs)
+                                                     jedi_forecast_model)
 
             # If window type is 4D add time interpolation to each observer
             # ------------------------------------------------------------

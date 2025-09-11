@@ -38,7 +38,6 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         obs_thinning_rej_fraction = self.config.obs_thinning_rej_fraction()
-        check_for_obs = self.config.check_for_obs(True)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -104,8 +103,7 @@ class RunJediObsfiltersExecutable(taskBase):
         # Open the JEDI config file and fill templates
         # --------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning', window_type,
-                                                                observations, jedi_forecast_model,
-                                                                check_for_obs)
+                                                                jedi_forecast_model)
 
         # Include filter_thinning into {observations: obs sapce: obs filters:}
         # -------------------------------------------------------------------

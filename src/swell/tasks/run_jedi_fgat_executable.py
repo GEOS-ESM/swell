@@ -38,7 +38,6 @@ class RunJediFgatExecutable(taskBase):
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        check_for_obs = self.config.check_for_obs(True)
 
         # Atmosphere specific settings
         # ----------------------------
@@ -126,8 +125,7 @@ class RunJediFgatExecutable(taskBase):
         # Open the JEDI config file and fill templates
         # --------------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', window_type,
-                                                                observations, jedi_forecast_model,
-                                                                check_for_obs)
+                                                                jedi_forecast_model)
 
         yaml = YAML()
 
