@@ -1174,6 +1174,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class set_obs_as_local(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "set_obs_as_local"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Treat observations as 'local' to the directory?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class single_observations(TaskQuestion):
         default_value: bool = False
         question_name: str = "single_observations"

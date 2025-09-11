@@ -44,31 +44,14 @@ class OopsConfig(ABC):
 
     # --------------------------------------------------------------------------------------------------
 
-    # Replicates the behavior of 'SPECIALobservations' in jedi_dictionary_iterator
-    # Iterates through observations, render the files, and checks whether to use them
     def special_observations(self) -> Mapping:
 
-        # Output list of observations
-        observations = []
-        obs_list = self.obs.copy()
+        jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
 
-        # Iterate through list
-        for ob in obs_list:
-            # Render the yaml file
-            obs_dict = self.jedi_rendering.render_interface_observations(ob)
+        yaml = YAML(typ='safe')
 
-            # Check whether to use the file, or skip if debugging config file
-            if self.check_for_obs:
-                use_observation = check_obs(self.observing_system_records_path, ob,
-                                            obs_dict, self.cycle_time)
-            else:
-                self.logger.info(f'Not checking for obs {ob}')
-                use_observation = True
-
-            if use_observation:
-                observations.append(obs_dict)
-            else:
-                self.obs.remove(ob)
+        with open(jedi_observations_file, 'r') as f:
+            observations = yaml.load(f)
 
         return observations
 
