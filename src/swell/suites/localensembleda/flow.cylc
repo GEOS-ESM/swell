@@ -53,7 +53,9 @@
 
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
 
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => sync_point
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            
+            RenderJediObservations-{{model_component}} => sync_point
 
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
 

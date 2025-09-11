@@ -57,7 +57,10 @@
 
             GetGeovals
 
+            GsiNcdiagToIoda => RenderJediObservations
+
             # Run Jedi hofx executable
+            RenderJediObservations => RunJediUfoTestsExecutable
             GenerateObservingSystemRecords => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
@@ -122,6 +125,9 @@
 
     [[ GetGeovals ]]
         script = "swell task GetGeovals $config -d $datetime -m geos_atmosphere"
+
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m geos_atmosphere"
 
     [[RunJediUfoTestsExecutable]]
         script = "swell task RunJediUfoTestsExecutable $config -d $datetime -m geos_atmosphere"
