@@ -1181,6 +1181,9 @@ class QuestionDefaults():
             True,
             False
         ])
+        models: List[str] = mutable_field([
+            'all_models'
+        ])
         prompt: str = "Treat observations as 'local' to the directory?"
         widget_type: WType = WType.BOOLEAN
 
