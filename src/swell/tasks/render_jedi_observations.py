@@ -32,6 +32,9 @@ class RenderJediObservations(taskBase):
         observing_system_records_path = self.config.observing_system_records_path(None)
         self.jedi_rendering.set_obs_records_path(observing_system_records_path)
 
+        # Marine models
+        marine_models = self.config.marine_models(None)
+
         # Window parameters
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
@@ -46,10 +49,14 @@ class RenderJediObservations(taskBase):
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('marine_models', marine_models)
+
+        cwd = os.getcwd()
 
         # Replace cycle_dir with './' if specified
         if self.config.set_obs_as_local(False):
             self.jedi_rendering.add_key('cycle_dir', '.')
+            os.chdir(self.cycle_dir())
 
         observations = []
 
@@ -72,12 +79,14 @@ class RenderJediObservations(taskBase):
                 obs_list.remove(ob)
 
         # Create the output file
+        os.chdir(cwd)
+
         jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
 
         yaml = YAML()
 
         with open(jedi_observations_file, 'w') as f:
-            yaml.dump(f, obs_list)
+            yaml.dump(observations, f)
 
 
 # --------------------------------------------------------------------------------------------------

@@ -75,6 +75,7 @@ class JediConfigRendering():
             'background_time',
             'cice6_domain',
             'crtm_coeff_dir',
+            'cycle_dir',
             'cycling_varbc',
             'ensemble_members',
             'ensemble_hofx_packets',
