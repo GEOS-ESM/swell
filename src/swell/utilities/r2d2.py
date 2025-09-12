@@ -8,6 +8,7 @@
 
 
 import os
+import yaml
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
@@ -53,6 +54,50 @@ def create_r2d2_config(
     # Write the config file
     with open(r2d2_config_file, 'w') as f:
         f.write(r2d2_config_file_template_str)
+
+
+def load_r2d2_credentials(
+    logger: Logger,
+    yaml_path: str = "~/.swell/r2d2_credentials.yaml"
+) -> None:
+    """
+    Load R2D2 v3 credentials from YAML file and set environment variables.
+    
+    Args:
+        logger: SWELL logger instance
+        yaml_path: Path to R2D2 credentials YAML file
+    """
+    yaml_path = os.path.expanduser(yaml_path)
+    
+    if not os.path.exists(yaml_path):
+        logger.info(f"R2D2 credentials file not found at {yaml_path}")
+        logger.info("R2D2 v3 will use existing environment variables if set")
+        return
+    
+    logger.info(f"Loading R2D2 v3 credentials from {yaml_path}")
+    
+    try:
+        with open(yaml_path, 'r') as yaml_file:
+            credentials = yaml.safe_load(yaml_file)
+        
+        # Set R2D2 v3 environment variables from config file
+        if 'user' in credentials and 'R2D2_USER' not in os.environ:
+            os.environ['R2D2_USER'] = credentials['user']
+            
+        if 'api_key' in credentials and 'R2D2_API_KEY' not in os.environ:
+            os.environ['R2D2_API_KEY'] = credentials['api_key']
+            
+        if 'host' in credentials and 'R2D2_HOST' not in os.environ:
+            os.environ['R2D2_HOST'] = credentials['host']
+            
+        if 'compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+            os.environ['R2D2_COMPILER'] = credentials['compiler']
+            
+        logger.info("R2D2 v3 credentials loaded successfully")
+        
+    except Exception as e:
+        logger.error(f"Error loading R2D2 credentials from {yaml_path}: {e}")
+        logger.info("Continuing with existing environment variables...")
 
 
 # ----------------------------------------------------------------------------------------------

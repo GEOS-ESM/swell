@@ -42,23 +42,7 @@ module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
 module unload r2d2 2>/dev/null || true
 module load r2d2-client/sles15_0604
 
-# R2D2 v3 Environment Variables
-# -----------------------------
-# Source credentials from file if it exists
-if [ -f ~/.swell_r2d2_credentials.sh ]; then
-    source ~/.swell_r2d2_credentials.sh
-fi
 
-# Check if required variables are set and provide helpful error if not
-if [ -z "$R2D2_USER" ] || [ -z "$R2D2_API_KEY" ]; then
-    echo "ERROR: R2D2 v3 credentials not found!"
-    echo "Please create ~/.swell_r2d2_credentials.sh with your credentials:"
-    echo "  export R2D2_USER=your_username"
-    echo "  export R2D2_API_KEY=your_api_key"
-    echo "Then run: chmod 600 ~/.swell_r2d2_credentials.sh"
-    exit 1
-fi
-####################################################
 
 # Load eva and jedi_bundle
 # ------------------------
