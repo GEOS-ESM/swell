@@ -170,9 +170,7 @@ class GetObservations(taskBase):
                         self.logger.info(f"Successfully fetched {target_file}")
                     except Exception as e:
                         self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
-
-
-
+        
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input
                 # file since bias correction files still need to be propagated to the next cycle
@@ -194,23 +192,18 @@ class GetObservations(taskBase):
                     # Observations were found for this provider, so we can break the provider loop
                     break
 
-
-
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
             if 'obs bias' not in observation_dict:
                 continue
-
 
             # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
             target_bccoef = observation_dict['obs bias']['input file']
             target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
-
             # We assume fetch is required unless we are cycling VarBC
             fetch_required = True
-
 
             if cycling_varbc:
                 if self.cycle_time_dto() == self.start_cycle_point_dto():
@@ -227,7 +220,6 @@ class GetObservations(taskBase):
                     self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
                     fetch_required = False
 
-
             # Determine the bias file type
             if observation == 'aircraft_temperature':
                 bias_file_type = 'acftbias'
@@ -235,7 +227,6 @@ class GetObservations(taskBase):
                 bias_file_type = 'null'
             else:
                 bias_file_type = 'satbias'
-
 
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
@@ -245,7 +236,8 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=bias_file_type.split('.')[-1] if '.' in bias_file_type else bias_file_type,
+                        file_extension=bias_file_type.split('.')[-1] \
+                            if '.' in bias_file_type else bias_file_type,
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                         window_length='PT6H',
                         target_file=target_bccoef
@@ -255,7 +247,8 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=(bias_file_type+'_cov').split('.')[-1] if '.' in bias_file_type else bias_file_type+'_cov',
+                        file_extension=(bias_file_type+'_cov').split('.')[-1] \
+                            if '.' in bias_file_type else bias_file_type+'_cov',
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                         window_length='PT6H',
                         target_file=target_bccovr
@@ -485,15 +478,18 @@ class GetObservations(taskBase):
 
                         # Fill value needs to be assigned while creating variables
                         # --------------------------------------------------------
-                        subset_var = out_group.createVariable(var_name,
-                                                              variable_data.dtype,
-                                                              var_dims,
-                                                              fill_value=group[var_name].
-                                                              getncattr('_FillValue'))
+                        subset_var = out_group.createVariable(
+                            var_name,
+                            variable_data.dtype,
+                            var_dims,
+                            fill_value=group[var_name].getncattr('_FillValue')
+                        )
                         for attr_name in group[var_name].ncattrs():
                             if attr_name == '_FillValue':
                                 continue
-                            subset_var.setncattr(attr_name, group[var_name].getncattr(attr_name))
+                            subset_var.setncattr(
+                                attr_name, group[var_name].getncattr(attr_name)
+                            )
 
                         # Write subset data to the new file
                         # --------------------------------

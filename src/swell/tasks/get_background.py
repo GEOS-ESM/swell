@@ -142,24 +142,13 @@ class GetBackground(taskBase):
                 # Set the datetime format for the output files
                 # --------------------------------------------
                 background_time = forecast_start_time + isodate.parse_duration(bkg_step)
-                
+
                 # Set the datetime templating in the target file name
                 # ---------------------------------------------------
                 target_file = background_time.strftime(target_file_template)
 
                 file_extension=file_type.split('.')[-1] if '.' in file_type else 'nc'
 
-                print("\n\n************************************\n")
-                print(forecast_start_time)
-                print(type(forecast_start_time))
-                print(f'experiment is {background_experiment}')
-                print(f'file_extension is {file_extension}')
-                print(f'resolution is {horizontal_resolution}')
-                print(f'bkg_step is {bkg_step}')
-                print(f'file_type is {file_type}')
-                print(f'target_file is {target_file}')
-                print("\n************************************\n\n\n\n")
-                
                 r2d2.fetch(
                        item='forecast',
                        target_file=target_file,

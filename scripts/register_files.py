@@ -158,9 +158,9 @@ def register_background(filename, file_path, parts, dry_run=True):
 
 def register_bias_correction(filename, file_path, parts, dry_run=True):
     """Register bias correction files"""
-    
+
     file_ext = parts[-1]
-    
+
     if len(parts) >= 6:
         obs_type = parts[-3]
         timestamp = parts[-2]
@@ -171,7 +171,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
 
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BIAS CORRECTION:{RESET} obs_type={obs_type}, time={timestamp}")
-    
+
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         return True
@@ -195,7 +195,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
 
 def register_files(file_path, item_type, dry_run=True):
     """Register files found recursively from file_path"""
-    
+
     # Load already registered files
     registered = load_registered()
 
@@ -210,15 +210,15 @@ def register_files(file_path, item_type, dry_run=True):
             files.extend(glob.glob(os.path.join(file_path, "**/*.txt"), recursive=True))
             files.extend(glob.glob(os.path.join(file_path, "**/*.nc"), recursive=True))
         else:
-            print(f"❌ Path not found: {file_path}")
+            print(f"{RED}Path not found: {file_path} {RESET}")
             return
-    
+
     print(f"{YELLOW}Found {len(files)} files{RESET}")
-    
+
     success_count = 0
     for file_path in files:
         filename = os.path.basename(file_path)
-        
+
         # Check if already registered
         if filename in registered:
             print(f"{YELLOW}**** {filename} -  already registered{RESET}")
@@ -226,11 +226,11 @@ def register_files(file_path, item_type, dry_run=True):
 
         # Split filename by "."
         parts = filename.split(".")
-        
+
         if len(parts) < 4:
             print(f"{YELLOW}Skip {filename} - not enough parts{RESET}")
             continue
-        
+
         # Call appropriate registration function based on item type
         if item_type == "observation":
             success = register_observation(filename, file_path, parts, dry_run)
@@ -241,7 +241,7 @@ def register_files(file_path, item_type, dry_run=True):
         else:
             print(f"{RED}Unknown item type: {item_type}{RESET}")
             continue
-            
+
         if success:
             success_count += 1
 
@@ -254,16 +254,18 @@ def main():
     parser.add_argument('path', help="File or directory path to register")
     parser.add_argument('item_type', help="Item type: observation, background, bias_correction")
     parser.add_argument('--register', action='store_true', help="Actually register (default is dry run)")
-    
+
     args = parser.parse_args()
-    
+
     dry_run = not args.register
-    
-    print(f"{YELLOW}{'DRY RUN' if dry_run else 'REGISTERING'} {args.item_type} files from: {args.path}{RESET}")
+
+    print(f"{YELLOW}{'DRY RUN' if dry_run else 'REGISTERING'} {args.item_type} files from: " \
+          f"{args.path}{RESET}")
     register_files(args.path, args.item_type, dry_run=dry_run)
-    
+
     if dry_run:
         print(f"\n{YELLOW}This was a DRY RUN. Use --register to actually register files{RESET}")
 
 if __name__ == "__main__":
     main()
+

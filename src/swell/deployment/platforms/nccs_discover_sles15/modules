@@ -37,15 +37,11 @@ module load other/mepo
 # Load r2d2 modules
 # -----------------
 module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load solo/sles15_skylab9
-module load py-boto3
+
 # Ensure to unload old r2d2 v2 modules
 module unload r2d2 2>/dev/null || true
 module load r2d2-client/sles15_0604
 
-#module load r2d2/sles15_spack19
-
-###################################################
 # R2D2 v3 Environment Variables
 # -----------------------------
 # Source credentials from file if it exists
