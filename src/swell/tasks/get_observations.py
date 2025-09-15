@@ -26,7 +26,6 @@ import r2d2
 class GetObservations(taskBase):
 
     def execute(self) -> None:
-
         """
         Acquires observation files for a given experiment and cycle.
 
@@ -170,7 +169,7 @@ class GetObservations(taskBase):
                         self.logger.info(f"Successfully fetched {target_file}")
                     except Exception as e:
                         self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
-        
+
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input
                 # file since bias correction files still need to be propagated to the next cycle
@@ -236,8 +235,8 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=bias_file_type.split('.')[-1] \
-                            if '.' in bias_file_type else bias_file_type,
+                        file_extension=bias_file_type.split('.')[-1]
+                        if '.' in bias_file_type else bias_file_type,
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                         window_length='PT6H',
                         target_file=target_bccoef
@@ -247,8 +246,8 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=(bias_file_type+'_cov').split('.')[-1] \
-                            if '.' in bias_file_type else bias_file_type+'_cov',
+                        file_extension=(bias_file_type + '_cov').split('.')[-1]
+                        if '.' in bias_file_type else bias_file_type + '_cov',
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                         window_length='PT6H',
                         target_file=target_bccovr
@@ -345,8 +344,8 @@ class GetObservations(taskBase):
         window_end_dto: dt
     ) -> list:
 
-        day_before_dto = window_begin_dto-timedelta(days=1)
-        day_after_dto = window_end_dto+timedelta(days=1)
+        day_before_dto = window_begin_dto - timedelta(days=1)
+        day_after_dto = window_end_dto + timedelta(days=1)
 
         # Create a full list of all the observation times that starts from day_before_dto
         # and ends at day_after_dto using obs_times

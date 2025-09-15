@@ -32,11 +32,9 @@ def load_registered():
     return set()
 
 
-
 def save_registered(filename):
     with open(REGISTERED_FILE, 'a') as f:
         f.write(filename + '\n')
-
 
 
 def guess_provider_from_path(file_path):
@@ -92,11 +90,11 @@ def register_observation(filename, file_path, parts, dry_run=True):
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
+
 def register_background(filename, file_path, parts, dry_run=True):
     """Register background/forecast files using forecast specific parameters"""
 
     file_ext = parts[-1]
-
 
     # Guess model from filename/path
     name_lower = filename.lower()
@@ -106,7 +104,6 @@ def register_background(filename, file_path, parts, dry_run=True):
         model = 'mom6_cice6_UFS'
     else:
         model = 'geos'  # default
-
 
     # Extract timestamp - try different patterns
     timestamp = None
@@ -122,19 +119,15 @@ def register_background(filename, file_path, parts, dry_run=True):
             timestamp = f"{year}-{month}-{day}T{hour}:00:00Z"
             break
 
-
     if not timestamp:
         timestamp = "2023-10-09T12:00:00Z"  # fallback
-
 
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BACKGROUND:{RESET} model={model}, time={timestamp}")
 
-
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
         return True
-
 
     try:
         r2d2.store(
@@ -193,6 +186,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
+
 def register_files(file_path, item_type, dry_run=True):
     """Register files found recursively from file_path"""
 
@@ -247,25 +241,29 @@ def register_files(file_path, item_type, dry_run=True):
 
     print(f"\n{GREEN}Successfully processed {success_count}/{len(files)} files{RESET}")
 
+
 def main():
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Register files to r2d2 v3")
     parser.add_argument('path', help="File or directory path to register")
     parser.add_argument('item_type', help="Item type: observation, background, bias_correction")
-    parser.add_argument('--register', action='store_true', help="Actually register (default is dry run)")
+    parser.add_argument(
+        '--register',
+        action='store_true',
+        help="Actually register (default is dry run)")
 
     args = parser.parse_args()
 
     dry_run = not args.register
 
-    print(f"{YELLOW}{'DRY RUN' if dry_run else 'REGISTERING'} {args.item_type} files from: " \
+    print(f"{YELLOW}{'DRY RUN' if dry_run else 'REGISTERING'} {args.item_type} files from: "
           f"{args.path}{RESET}")
     register_files(args.path, args.item_type, dry_run=dry_run)
 
     if dry_run:
         print(f"\n{YELLOW}This was a DRY RUN. Use --register to actually register files{RESET}")
 
+
 if __name__ == "__main__":
     main()
-

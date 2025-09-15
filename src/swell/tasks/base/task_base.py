@@ -27,7 +27,6 @@ from swell.utilities.datetime_util import Datetime
 from swell.utilities.logger import get_logger
 from swell.utilities.render_jedi_interface_files import JediConfigRendering
 from swell.utilities.geos import Geos
-from swell.utilities.r2d2 import load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------
@@ -74,10 +73,6 @@ class taskBase(ABC):
         # Create a configuration object
         # -----------------------------
         self.config = Config(config_input, self.logger, task_name, self.__model__)
-
-        # Load R2D2 v3 credentials from ~/.swell/r2d2_credentials.yaml
-        # -----------------------------------------------------------
-        load_r2d2_credentials(self.logger)
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
