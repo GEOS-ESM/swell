@@ -58,9 +58,8 @@
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
 
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
-   
-            sync_point => ThinObs
 
+            sync_point => ThinObs
             {% if skip_ensemble_hofx %}
                sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
@@ -83,6 +82,9 @@
                {% endif %}
             {% endif %}
 
+
+            # EvaIncrement
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
             # EvaObservations
             RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -203,6 +205,9 @@
         {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
         script = true
