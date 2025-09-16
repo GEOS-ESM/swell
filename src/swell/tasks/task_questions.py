@@ -653,7 +653,7 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    GetBufr= QuestionList(
+    GetBufr = QuestionList(
         list_name="GetBufr",
         questions=[
             BuildJediByLinking,
@@ -671,9 +671,7 @@ class TaskQuestions(QuestionContainer, Enum):
             BuildJediByLinking,
             CleanCycle,
             CloneGeosMksi,
-            #qd.observations()
         ]
     )
 
     # --------------------------------------------------------------------------------------------------
-
