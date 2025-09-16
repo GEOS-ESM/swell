@@ -137,3 +137,7 @@ dmypy.json
 .pyre/
 *.egg-info
 
+# R2D2 credentials
+r2d2_credentials.yaml
+**/r2d2_credentials.yaml
+.swell/r2d2_credentials.yaml
