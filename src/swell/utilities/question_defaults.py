@@ -719,6 +719,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ioda_locations_not_in_r2d2(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "ioda_locations_not_in_r2d2"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = ("Provide a path that contains observation files not in r2d2.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class jedi_build_method(TaskQuestion):
         default_value: str = "create"
         question_name: str = "jedi_build_method"
@@ -925,6 +938,19 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?"
         widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ncdiag_experiments(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ncdiag_experiments"
+        options: List[str] = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which previously run experiments do you wish to use for the NCdiag?"
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
