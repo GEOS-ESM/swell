@@ -15,7 +15,7 @@ import datetime
 
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.logger import Logger
-from swell.tasks.base.task_base import JediConfigRendering
+from swell.utilities.render_jedi_interface_files import JediConfigRendering
 
 # --------------------------------------------------------------------------------------------------
 
