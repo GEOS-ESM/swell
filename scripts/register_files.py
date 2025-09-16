@@ -65,7 +65,8 @@ def register_observation(filename, file_path, parts, dry_run=True):
         return False
 
     print(f"\n{BLUE}{filename}{RESET}")
-    print(f"   {YELLOW}OBSERVATION:{RESET} provider={provider}, obs_type={obs_type}, time={timestamp}")
+    print(f"   {YELLOW}OBSERVATION:{RESET} provider={provider}, \
+            obs_type={obs_type}, time={timestamp}")
 
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
