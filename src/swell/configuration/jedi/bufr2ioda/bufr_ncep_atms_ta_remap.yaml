@@ -6,7 +6,7 @@
 observations:
   - obs space:
       name: bufr
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/obs/flk/ncep_g5obs/bufr/ATMS/Y2022/M11/gdas1.20221112.t00z.atms.tm00.bufr_d"
+      obsdatain: "{{obsdatain}}"
 
       exports:
         variables:
@@ -67,7 +67,7 @@ observations:
             remappedBrightnessTemperature:
               fieldOfViewNumber: "*/FOVN"
               sensorChannelNumber: "*/ATMSCH/CHNM"
-              brightnessTemperature: "*/ATMSCH/TMBR"
+              brightnessTemperature: "*/ATMSCH/TMANT"
               obsTime:
                 year: "*/YEAR"
                 month: "*/MNTH"
@@ -87,7 +87,7 @@ observations:
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/gdas.t00z.atms_{splits/satId}_tb_remap.tm00.nc"
+      obsdataout: "{{obsdataout}}"
 
       dimensions:
         - name: Channel
@@ -172,10 +172,11 @@ observations:
           longName: "Sensor Channel Number"
 
         # ObsValue
-        # Remapped Brightness Temperature (Tb)
+        # Remapped Antenna Temperature (Ta)
+        # For now, Ta is stored as brightnessTemperature 
         - name: "ObsValue/brightnessTemperature"
           source: variables/remappedBT
-          longName: "3-by-3 Averaged Brightness Temperature"
+          longName: "3-by-3 Averaged Antenna Temperature"
           units: "K"
           range: [120, 500]
           chunks: [10000, 22]

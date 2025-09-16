@@ -6,8 +6,7 @@
 observations:
   - obs space:
       name: bufr
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/ops/flk/ncep_g5obs/bufr/MTIASI/Y2020/M01/gdas1.200101.t00z.mtiasi.tm00.bufr_d"
-      #obsdatain: "./testinput/gdas.t12z.mtiasi.tm00.bufr_d" 
+      obsdatain: "{{obsdatain}}"
 
       exports:
         variables:
@@ -100,8 +99,7 @@ observations:
 
     ioda:
       backend: netcdf
-      obsdataout: "testrun/gdas1.200101.t00z.mtiasi_{splits/satId}.tm00.nc"
-      #obsdataout: "./testrun/gdas.t12z.mtiasi_{splits/satId}.tm00.nc"
+      obsdataout: "{{obsdataout}}"
 
       dimensions:
         - name: Channel

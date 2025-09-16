@@ -1,4 +1,4 @@
-# (C) Copyright 2021 NOAA/NWS/NCEP/EMC
+# (C) Copyright 2022 NOAA/NWS/NCEP/EMC
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
@@ -6,7 +6,7 @@
 observations:
   - obs space:
       name: bufr
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/obs/flk/ncep_g5obs/bufr/1BMHS/Y2022/M11/gdas1.221101.t00z.1bmhs.tm00.bufr_d"
+      obsdatain: "{{obsdatain}}"
 
       exports:
         variables:
@@ -18,12 +18,13 @@ observations:
               day: "*/DAYS"
               hour: "*/HOUR"
               minute: "*/MINU"
+              second: "*/SECO"
 
           latitude:
-            query: "*/CLAT"
+            query: "*/CLATH"
 
           longitude:
-            query: "*/CLON"
+            query: "*/CLONH"
 
           satelliteIdentifier:
             query: "*/SAID"
@@ -33,12 +34,6 @@ observations:
 
           fieldOfViewNumber:
             query: "*/FOVN"
-
-          landOrSeaQualifier:
-            query: "*/LSQL"
-
-          heightOfLandSurface:
-            query: "*/HOLS"
 
           heightOfStation:
             query: "*/HMSL"
@@ -55,48 +50,65 @@ observations:
           sensorAzimuthAngle:
             query: "*/BEARAZ"
 
+          sensorScanAngle:
+            sensorScanAngle:
+              fieldOfViewNumber: "*/FOVN"
+              scanStart: -52.725
+              scanStep: 1.110 
+              sensor: atms
+
           sensorChannelNumber:
-            query: "*/BRITCSTC/CHNM"
+            query: "*/ATMSCH/CHNM"
 
-          # ObsValue 
-          antennaTemperature:
-            query: "*/BRITCSTC/TMBR"
-
+          # ObsValue
+          # Remapped Brightness Temperature (TMBR)
+          # Remapped Antenna Temperature (TMANT)
+          remappedBT:
+            remappedBrightnessTemperature:
+              fieldOfViewNumber: "*/FOVN"
+              sensorChannelNumber: "*/ATMSCH/CHNM"
+              brightnessTemperature: "*/ATMSCH/TMBR"
+              obsTime:
+                year: "*/YEAR"
+                month: "*/MNTH"
+                day: "*/DAYS"
+                hour: "*/HOUR"
+                minute: "*/MINU"
+                second: "*/SECO"
+ 
         splits:
           satId:
             category:
               variable: satelliteIdentifier
               map:
-                _3: metop-b
-                _4: metop-a
-                _5: metop-c
-                _209: noaa-18
-                _223: noaa-19
+                _224: npp 
+                _225: n20 
+                _226: n21 
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/1bmhs.{splits/satId}.tm00.nc"
+      obsdataout: "{{obsdataout}}"
 
       dimensions:
-        - name: Channel 
-          path: "*/BRITCSTC"
+        - name: Channel
+          source: variables/sensorChannelNumber  
+          path: "*/ATMSCH"
 
       globals:
         - name: "platformCommonName"
           type: string
-          value: "MHS"
+          value: "ATMS"
 
         - name: "platformLongDescription"
           type: string
-          value: "MTYP 021-027 PROCESSED MHS Tb (NOAA-18-19, METOP-1,2,3)"
+          value: "MTYP 021-203 ATMS ATENNA/BRIGHTNESS TEMPERATURE DATA"
 
       variables:
-
         # MetaData
         - name: "MetaData/dateTime"
           source: variables/timestamp
           longName: "Datetime"
-          units: "seconds since 1970-01-01T00:00:00Z"
+          units: "seconds since 1970-01-01T00:00:00Z" 
 
         - name: "MetaData/latitude"
           source: variables/latitude
@@ -108,28 +120,23 @@ observations:
           source: variables/longitude
           longName: "Longitude"
           units: "degree_east"
-          range: [-180, 180]
 
         - name: "MetaData/satelliteIdentifier"
           source: variables/satelliteIdentifier
-          longName: "SatelliteIdentifier"
+          longName: "Satellite Identifier"
 
         - name: "MetaData/satelliteInstrument"
           source: variables/satelliteInstrument
           longName: "Satellite Instrument"
 
-        - name: "MetaData/fieldOfViewNumber"
+        - name: "MetaData/sensorScanPosition"
           source: variables/fieldOfViewNumber
           longName: "Field of View Number"
 
-        - name: "MetaData/landOrSeaQualifier"
-          source: variables/landOrSeaQualifier
-          longName: "Land/Sea Qualifier"
-
-        - name: "MetaData/heightOfLandSurface"
-          source: variables/heightOfLandSurface
-          longName: "Height of Land Surface"
-          units: "m"
+        - name: "MetaData/sensorViewAngle"
+          source: variables/sensorScanAngle
+          longName: "Sensor View Angle"
+          units: "degree"
 
         - name: "MetaData/heightOfStation"
           source: variables/heightOfStation
@@ -165,11 +172,10 @@ observations:
           longName: "Sensor Channel Number"
 
         # ObsValue
-        - name: "ObsValue/antennaTemperature"
-          coordinates: "longitude latitude Channel"
-          source: variables/antennaTemperature
-          longName: "Antenna Temperature"
+        # Remapped Brightness Temperature (Tb)
+        - name: "ObsValue/brightnessTemperature"
+          source: variables/remappedBT
+          longName: "3-by-3 Averaged Brightness Temperature"
           units: "K"
-          range: [100, 500]
-          chunks: [1000, 15]
-          compressionLevel: 4
+          range: [120, 500]
+          chunks: [10000, 22]

@@ -154,7 +154,7 @@ class BufrToIoda(taskBase):
 
         # Set the Bufr2Ioda Yaml Template Directory
         path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(),
-                                                       'configuration/jedi/iodaconv')
+                                                       'configuration/jedi/bufr2ioda')
 
         # Get list of all files in cycle dir with .bufr_d suffix or *bufr*
         bufr_path_files_pattern = os.path.join(bufr_dir, '*bufr*')
