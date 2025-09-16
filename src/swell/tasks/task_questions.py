@@ -92,18 +92,6 @@ class TaskQuestions(QuestionContainer, Enum):
     # Task-specific question lists (in alphabetical order)
     # --------------------------------------------------------------------------------------------------
 
-    BufrToIoda = QuestionList(
-        list_name="BufrToIoda",
-        questions=[
-            window_questions,
-            BuildJediByLinking,
-            CleanCycle,
-            CloneGeosMksi,
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     BuildGeos = QuestionList(
         list_name="BuildGeos",
         questions=[
@@ -310,11 +298,9 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    GetBufr= QuestionList(
+    GetBufr = QuestionList(
         list_name="GetBufr",
         questions=[
-            BuildJediByLinking,
-            CloneGeosMksi,
             qd.bufr_obs_classes()
         ]
     )
