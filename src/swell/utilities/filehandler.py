@@ -221,7 +221,7 @@ class FileHandler(object):
         if os.path.islink(dst):
             os.remove(dst)
         if os.path.isfile(dst):
-            raise Exception('File exists where link expected: "' + dst + '"')
+            raise ValueError('File exists where link expected: "' + dst + '"')
         if not os.path.isfile(dst):
             os.symlink(src, dst)
 
