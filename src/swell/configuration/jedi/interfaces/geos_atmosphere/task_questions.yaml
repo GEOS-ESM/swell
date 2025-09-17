@@ -100,7 +100,7 @@ gsibec_configuration:
   default_value: cli_gsibec_configuration
 
 gsibec_nlats:
-  default_value: 181
+  default_value: 91
   options:
   - '46'
   - '91'
@@ -109,7 +109,7 @@ gsibec_nlats:
   - '721'
 
 gsibec_nlons:
-  default_value: 288
+  default_value: 144
   options:
   - '72'
   - '144'
