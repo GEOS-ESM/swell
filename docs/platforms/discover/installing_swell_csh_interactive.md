@@ -22,12 +22,15 @@ ln -s $NOBACKUP/.cache ~/.cache
 alias mod_swell 'module purge; source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_intel'
 ```
 
+After creating this alias, reload your shell or run `source ~/.cshrc` for it to be available.
+
 ### First time installing swell
 Clone Swell to wherever you want it to live, for example:
 ```csh
 cd $NOBACKUP
 mkdir swell-project
-git clone git@github.com:geos-esm/swell swell-develop
+cd swell-project
+git clone https://github.com/GEOS-ESM/swell.git swell-develop
 ```
 
 1) Switch to your folder where Swell is cloned: `cd $NOBACKUP/swell-project/swell-develop`.
