@@ -271,7 +271,7 @@ class StageFileHandler(FileHandler):
                     filelist = glob.glob(src)
 
                     if not filelist and self.strict:
-                        raise Exception('Source inputs not found "'
+                        raise FileNotFound('Source inputs not found "'
                                         + src + '"')
 
                     for srcfile in filelist:
