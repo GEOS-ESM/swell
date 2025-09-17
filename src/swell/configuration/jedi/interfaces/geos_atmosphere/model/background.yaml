@@ -4,7 +4,6 @@ provider: geos
 datapath: '{{cycle_dir}}'
 filenames: ['bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
             'fv3-jedi/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
-max allowable geometry difference:    1.e15
 state variables: &statevars
 - eastward_wind
 - northward_wind

@@ -5,7 +5,6 @@ provider: geos
 datapath: '{{cycle_dir}}'
 filenames: ['bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
             'fv3-jedi/bkg/geos.crtmsrf.{{horizontal_resolution}}.nc4']
-max allowable geometry difference:    1.e15
 #field io names: *field_io_names
 field io names:
   eastward_wind: ua
