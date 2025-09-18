@@ -10,6 +10,7 @@ analysis_variables:
   - air_temperature
   - water_vapor_mixing_ratio_wrt_moist_air
   - air_pressure_at_surface
+  - air_pressure_levels
   - cloud_liquid_ice
   - cloud_liquid_water
   - rain_water
@@ -24,8 +25,9 @@ analysis_variables:
   - eastward_wind
   - northward_wind
   - air_temperature
-  - water_vapor_mixing_ratio_wrt_moist_air
   - air_pressure_at_surface
+  - air_pressure_levels
+  - water_vapor_mixing_ratio_wrt_moist_air
   - cloud_liquid_ice
   - cloud_liquid_water
   - rain_water
@@ -100,7 +102,7 @@ gsibec_configuration:
   default_value: cli_gsibec_configuration
 
 gsibec_nlats:
-  default_value: 181
+  default_value: 91
   options:
   - '46'
   - '91'
@@ -109,7 +111,7 @@ gsibec_nlats:
   - '721'
 
 gsibec_nlons:
-  default_value: 288
+  default_value: 144
   options:
   - '72'
   - '144'
@@ -152,10 +154,10 @@ local_ensemble_inflation_rtps:
   default_value: 0.5
 
 local_ensemble_solver:
-  default_value: LETKF
+  default_value: Deterministic LETKF
   options:
-  - LETKF
-  - GETKF
+  - Deterministic LETKF
+  - Deterministic GETKF
 
 local_ensemble_use_linear_observer:
   default_value: true
