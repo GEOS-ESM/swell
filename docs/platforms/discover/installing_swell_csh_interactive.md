@@ -34,12 +34,12 @@ git clone https://github.com/GEOS-ESM/swell.git swell-develop
 ```
 
 1) Switch to your folder where Swell is cloned: `cd $NOBACKUP/swell-project/swell-develop`.
-2) (Optional) Checkout a new branch in a new git worktree: e.g., `git worktree add ../mybranch -b mybranch` will create a folder specifically for the `mybranch` branch.
+2) (Optional) Checkout a new branch in a new git worktree: e.g., `git worktree add ../mybranch -b mybranch` will create a folder specifically for the `mybranch` branch (to create a workspace for an existing branch, leave out the `-b` flag).
 3) (Optional) `cd ../mybranch'
 4) Load all the modules that Swell needs: `mod_swell` (this is the `csh` alias function created in the preliminary steps)
 5) Create a Python virtual environment: `python3 -m venv .venv`
-6) Install Swell dependencies: `pip install -r requirements.txt`
-7) Activate the virtual environment: `source .venv/bin/activate`
+6) Install Swell dependencies: `pip install -r --ignore-installed requirements.txt`
+7) Activate the virtual environment: `source .venv/bin/activate.csh`
 8) Install swell in editable mode: `pip install -e .` (note: make sure you run this while the `venv` is active)
 
 9) Now, work on SWELL. Any changes you make to the SWELL source code will be automatically applied to the install (because it's an editable install); no need to manually reinstall.
@@ -47,5 +47,5 @@ git clone https://github.com/GEOS-ESM/swell.git swell-develop
 #### Resuming work from a previous SWELL installation:
 1) Switch to your folder where SWELL is installed: `cd $NOBACKUP/swell-project/mybranch`.
 2) Load all the modules that SWELL needs: `mod_swell`
-3) Activate the virtual environment: `source .venv/bin/activate`. You may also use the full path: `source $NOBACKUP/swell-project/mybranch/.venv/bin/activate`. You may consider adding this command to your `mod_swell` alias for future use.
+3) Activate the virtual environment: `source .venv/bin/activate.csh`. You may also use the full path: `source $NOBACKUP/swell-project/mybranch/.venv/bin/activate`. You may consider adding this command to your `mod_swell` alias for future use.
 4) SWELL is ready! See [examples here](../../examples/description.md) on how to run SWELL.
