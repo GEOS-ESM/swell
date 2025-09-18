@@ -7,7 +7,7 @@
 observations:
   - obs space:
       name: bufr_sevcsr
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/ops/flk/ncep_g5obs/bufr/SEVCSR/Y2020/M01/gdas1.20200111.t00z.sevcsr.tm00.bufr_d"
+      obsdatain: "{{obsdatain}}"
 
       exports:
         variables:
@@ -40,7 +40,7 @@ observations:
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/gdas1.20200111.t00z.sevcsr.tm00.nc"
+      obsdataout: "{{obsdataout}}"
 
       dimensions:
         - name: "Channel"

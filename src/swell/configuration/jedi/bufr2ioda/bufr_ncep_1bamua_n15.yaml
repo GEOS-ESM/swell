@@ -6,7 +6,7 @@
 observations:
   - obs space:
       name: bufr
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/obs/flk/ncep_g5obs/bufr/AMSUA/Y2021/M11/gdas1.211101.t00z.1bamua.tm00.bufr_d"
+      obsdatain: "{{obsdatain}}"
 
       exports:
         variables:
@@ -81,7 +81,7 @@ observations:
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/gdas.t12z.amsua_{splits/satId}.tm00.nc"
+      obsdataout: "{{obsdataout}}"
 
       dimensions:
         - name: Channel

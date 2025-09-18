@@ -7,8 +7,7 @@ observations:
   - obs space:
       name: bufr
 
-      #obsdatain: "./testinput/gdas.t12z.acft_profiles.prepbufr"
-      obsdatain: "/discover/nobackup/projects/gmao/input/dao_ops/ops/flk/ncep_g5obs/bufr/AIRCFT/Y2020/M01/gdas1.20200121.t18z.prepbufr.acft_profiles"
+      obsdatain: "{{obsdatain}}"
 
       exports:
         group_by: prepbufrDataLevelCategory
@@ -96,7 +95,7 @@ observations:
 
     ioda:
       backend: netcdf
-      obsdataout: "./testrun/gdas1.20200121.t18z.prepbufr.acft_profiles.nc" 
+      obsdataout: "{{obsdataout}}" 
 
       dimensions:
         - name: PressureEvent
