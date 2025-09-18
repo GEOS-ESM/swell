@@ -92,6 +92,13 @@ class TaskRuntimes():
         slurm: dict = mutable_field({})
 
     @dataclass
+    class EvaTimeseries(Task):
+        time_limit: bool = True
+        is_cycling: bool = True
+        is_model: bool = True
+        slurm: dict = mutable_field({})
+
+    @dataclass
     class JediOopsLogParser(Task):
         is_cycling: bool = True
         is_model: bool = True
@@ -280,7 +287,7 @@ class TaskRuntimes():
         script: str = "true"
 
     @dataclass
-    class ThinObs(Task):
+    class RunJediObsfiltersExecutable(Task):
         script: str = ("swell task RunJediObsfiltersExecutable $config"
                        " -d $datetime -m geos_atmosphere")
         is_cycling: bool = True

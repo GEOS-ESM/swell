@@ -11,8 +11,8 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.filehandler import *
-from swell.utilities.exceptions import *
+from swell.utilities.filehandler import get_file_handler
+from swell.utilities.exceptions import SwellError
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 
@@ -38,7 +38,7 @@ class StageJedi(taskBase):
 
         # Use static_files_user if present in config and contains files
         # -------------------------------------------------------------
-        if swell_static_files_user is not None:
+        if swell_static_files_user is not None and swell_static_files_user != 'None':
             self.logger.info('swell_static_files_user specified, checking for files')
             if check_if_files_exist_in_path(self.logger, swell_static_files_user):
                 self.logger.info(f'Using swell static files in {swell_static_files_user}')
@@ -83,5 +83,5 @@ class StageJedi(taskBase):
                 self.logger.abort('One or more files not ready')
             else:
                 fh.get()
-        except SWELLError as e:
+        except SwellError as e:
             self.logger.abort(str(e))

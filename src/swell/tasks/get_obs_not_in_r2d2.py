@@ -75,7 +75,7 @@ class GetObsNotInR2d2(taskBase):
             command = ['ln', '-s', existing_path_file, existing_path_file_target]
 
             self.logger.info(f'Linking {existing_path_file} '
-                             f'to {existing_path_file_target}', wrap=False)
+                             f'to {existing_path_file_target}')
 
             # Copy the file
             # -------------

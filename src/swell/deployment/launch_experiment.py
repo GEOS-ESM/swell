@@ -72,20 +72,20 @@ class DeployWorkflow():
             run_subprocess(self.logger, ['cylc', 'play', self.experiment_name])
 
             # Pre TUI messages
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('Workflow is now running... ')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('Use \'\u001b[32mcylc scan\033[0m\' to see running workflows.')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('If the workflow needs to be stopped, close the TUI (if open)')
             self.logger.info('by pressing \'q\' and issue either:')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('  \u001b[32mcylc stop ' + self.experiment_name + '\033[0m')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('or to kill running tasks and stop:')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name + '\033[0m')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
 
             send_messages = os.environ.get('SWELL_SEND_MESSAGES')
             if send_messages == '1':
@@ -96,11 +96,11 @@ class DeployWorkflow():
             # Launch the job monitor
             self.logger.critical('Launching the TUI, press \'q\' at any time to exit the TUI')
             input()
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('TUI can be relaunched with:')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name + '\033[0m')
-            self.logger.info(' ', False)
+            self.logger.info(' ')
             run_subprocess(self.logger, ['cylc', 'tui', self.experiment_name])
 
 # --------------------------------------------------------------------------------------------------
@@ -131,8 +131,7 @@ def launch_experiment(
 
     # Write some info for the user
     # ----------------------------
-    deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.',
-                                False)
+    deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.')
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
 
     # Set environment variable allowing for cylc email messaging

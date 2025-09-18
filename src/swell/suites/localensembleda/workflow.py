@@ -43,11 +43,11 @@ CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_comp
 
 GetEnsembleGeosExperiment-{model_component} => sync_point
 
-sync_point => ThinObs
+sync_point => RunJediObsfiltersExecutable-{{model_component}}
 """
 
 cycle_template_2 = """
-sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{model_component}
+sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_3 = """
@@ -77,15 +77,19 @@ RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_5 = """
+# EvaIncrement
+RunJediLocalEnsembleDaExecutable-{model_component} => EvaIncrement-{model_component}
+
 # EvaObservations
-RunJediLocalEnsembleDaExecutable-{model_component} => EvaObservations-{model_component}
+# RunJediLocalEnsembleDaExecutable-{model_component} => EvaObservations-{model_component}
 
 # Save observations
-RunJediLocalEnsembleDaExecutable-{model_component} => SaveObsDiags-{model_component}
+# RunJediLocalEnsembleDaExecutable-{model_component} => SaveObsDiags-{model_component}
 
 # Clean up large files
-EvaObservations-{model_component} & SaveObsDiags-{model_component} =>
-CleanCycle-{model_component}
+# EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
+EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+
 """
 
 # --------------------------------------------------------------------------------------------------

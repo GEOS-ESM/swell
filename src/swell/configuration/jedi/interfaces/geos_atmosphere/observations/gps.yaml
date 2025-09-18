@@ -21,10 +21,11 @@ obs operator:
   name: GnssroBndNBAM
   obs options:
     use_compress: 1
-    vertlayer: mass
+#   vertlayer: mass
+    vertlayer: full
     sr_steps: 2
     super_ref_qc: NBAM
-    GSI_version: GEOS
+#   GSI_version: GEOS
 obs filters:
 #---
 #0 Blacklist data from some satellites

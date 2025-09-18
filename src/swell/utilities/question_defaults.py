@@ -932,6 +932,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ncdiag_experiments(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ncdiag_experiments"
+        options: List[str] = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which previously run experiments do you wish to use for the NCdiag?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class npx_proc(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "npx_proc"
