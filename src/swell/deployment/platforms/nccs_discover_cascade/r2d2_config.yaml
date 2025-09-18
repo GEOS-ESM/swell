@@ -1,22 +1,21 @@
 databases:
-
   ${USER}:
     class: LocalDB
     root: {{r2d2_local_path}}
     cache_fetch: false
 
-  gmao-shared:
-    class: LocalDB
-    root: /discover/nobackup/projects/gmao/advda/R2D2DataStore/Shared
-    cache_fetch: false
+# v3 API configuration (for centralized nccs-gmao data)
+data_hub: nccs-gmao
+data_store: r2d2-experiments-nccs-gmao
+compute_host: discover-gmao-intel
 
-# when fetching data, in which order should the databases accessed?
+# Fetch order: try local first, then API
 fetch_order:
   - ${USER}
-  - gmao-shared
 
-# when storing data, in which order should the databases accessed?
-store_order:
-  - ${USER}
+# Optional: credentials file for v3 API authentication
+# credentials_file: ~/.swell/swell-r2d2-credentials.yaml
 
+# Cache settings
 cache_name: ${USER}
+cache_fetch: false
