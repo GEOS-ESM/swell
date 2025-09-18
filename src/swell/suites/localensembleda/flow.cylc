@@ -58,11 +58,10 @@
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
 
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
-   
-            sync_point => ThinObs
 
+            sync_point => RunJediObsfiltersExecutable-{{model_component}}
             {% if skip_ensemble_hofx %}
-               sync_point => ThinObs => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
@@ -84,15 +83,18 @@
             {% endif %}
 
 
+            # EvaIncrement
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
             # EvaObservations
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            # RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # Save observations
-            RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            # RunJediLocalEnsembleDaExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
-            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            # EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} &
+            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -146,7 +148,7 @@
     [[GetEnsembleGeosExperiment-{{model_component}}]]
         script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
 
-    [[ThinObs]]
+    [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediObsfiltersExecutable"]["execution_time_limit"]}}
@@ -203,6 +205,9 @@
         {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
         script = true
