@@ -47,5 +47,5 @@ git clone https://github.com/GEOS-ESM/swell.git swell-develop
 #### Resuming work from a previous SWELL installation:
 1) Switch to your folder where SWELL is installed: `cd $NOBACKUP/swell-project/mybranch`.
 2) Load all the modules that SWELL needs: `mod_swell`
-3) Activate the virtual environment: `source .venv/bin/activate.csh`. You may also use the full path: `source $NOBACKUP/swell-project/mybranch/.venv/bin/activate`. You may consider adding this command to your `mod_swell` alias for future use.
+3) Activate the virtual environment: `source .venv/bin/activate.csh`. You may also use the full path: `source $NOBACKUP/swell-project/mybranch/.venv/bin/activate.csh`. You may consider adding this command to your `mod_swell` alias for future use.
 4) SWELL is ready! See [examples here](../../examples/description.md) on how to run SWELL.
