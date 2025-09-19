@@ -44,6 +44,8 @@ class Workflow_eva_capabilities(CylcWorkflow):
         # Define the string of the graph section
         graph_str = ''
 
+        r1 = ''
+
         # Define the string for the R1 (first non-cycling) section
         for model in self.experiment_dict['models'].keys():
             r1 += r1_model.format(model_component=model)
@@ -55,7 +57,7 @@ class Workflow_eva_capabilities(CylcWorkflow):
         for model in self.experiment_dict['models'].keys():
             if 'cycle_times' in self.experiment_dict['models'][model].keys():
                 for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
-                    cycle_str = cycle_template.format(model_component = model)
+                    cycle_str = cycle_template.format(model_component=model)
                     graph_str += self.format_cycle(cycle_time, cycle_str)
 
         cycle_str = ''

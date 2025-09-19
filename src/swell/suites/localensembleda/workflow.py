@@ -47,7 +47,8 @@ sync_point => RunJediObsfiltersExecutable-{{model_component}}
 """
 
 cycle_template_2 = """
-sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{model_component}
+sync_point => RunJediObsfiltersExecutable-{{model_component}} =>
+RunJediLocalEnsembleDaExecutable-{model_component}
 """
 
 cycle_template_3 = """

@@ -174,21 +174,21 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    EvaComparisonIncrement = QuestionList(
-        list_name="EvaIncrement",
-        questions=[
-            EvaIncrement
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     EvaIncrement = QuestionList(
         list_name="EvaIncrement",
         questions=[
             qd.marine_models(),
             qd.window_offset(),
             qd.window_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    EvaComparisonIncrement = QuestionList(
+        list_name="EvaIncrement",
+        questions=[
+            EvaIncrement
         ]
     )
 
