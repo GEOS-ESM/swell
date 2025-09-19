@@ -691,6 +691,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    StageJediCycle = QuestionList(
+        list_name="StageJediCycle",
+        questions=[
+            StageJedi
+        ]
+    )       
+    
+    # --------------------------------------------------------------------------------------------------
+
     StoreBackground = QuestionList(
         list_name="StoreBackground",
         questions=[
