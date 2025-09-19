@@ -696,8 +696,8 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             StageJedi
         ]
-    )       
-    
+    )
+
     # --------------------------------------------------------------------------------------------------
 
     StoreBackground = QuestionList(
