@@ -28,7 +28,7 @@ Clone Swell to wherever you want to live, for example:
 cd $NOBACKUP
 mkdir swell-project
 cd swell-project
-git clone git@github.com:geos-esm/swell swell-develop
+git clone https://github.com/GEOS-ESM/swell.git swell-develop
 ```
 1) Switch to your folder where SWELL is cloned: `cd $NOBACKUP/swell-project/swell-develop`.
 2) (Optional) Checkout a new branch in a new git worktree: e.g., `git worktree add ../mybranch -b mybranch` will create a folder specifically for the `mybranch` branch.
