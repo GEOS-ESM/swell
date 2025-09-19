@@ -257,7 +257,8 @@ class PrepareExperimentConfigAndSuite:
             if question['question_type'] == suite_task:
                 if question_name in platform_defaults.keys():
                     for platform_key, platform_val in platform_defaults[question_name].items():
-                        if platform_key not in question.keys() or question[platform_key] == 'defer_to_platform':
+                        if platform_key not in question.keys() or \
+                                question[platform_key] == 'defer_to_platform':
                             question[platform_key] = platform_val
 
         # Perform a model override on the model_dep dictionary
@@ -295,7 +296,8 @@ class PrepareExperimentConfigAndSuite:
                                             question_name][key]
 
                         if question_name in platform_defaults.keys():
-                            for platform_key, platform_val in platform_defaults[question_name].items():
+                            for platform_key, platform_val in \
+                                    platform_defaults[question_name].items():
                                 if question[platform_key] == 'defer_to_platform':
                                     model_dict[question_name][platform_key] = platform_val
 
