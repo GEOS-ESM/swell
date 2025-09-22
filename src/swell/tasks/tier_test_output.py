@@ -103,6 +103,11 @@ class TierTestOutput(taskBase):
                     output_string += item + add_len * ' '
                 output_string += '\n'
 
+        output_file = os.path.join(self.experiment_path(), 'jedi_log_comparison.txt')
+
+        with open(output_file, 'w') as f:
+            f.write(output_string)
+
         print(output_string)
 
 # --------------------------------------------------------------------------------------------------
