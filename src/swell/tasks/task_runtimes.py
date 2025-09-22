@@ -287,6 +287,10 @@ class TaskRuntimes():
         script: str = "true"
 
     @dataclass
+    class TierTestOutput(Task):
+        is_model: bool = True
+
+    @dataclass
     class RunJediObsfiltersExecutable(Task):
         script: str = ("swell task RunJediObsfiltersExecutable $config"
                        " -d $datetime -m geos_atmosphere")

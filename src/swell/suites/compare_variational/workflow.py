@@ -65,7 +65,7 @@ class Workflow_compare_variational(CylcWorkflow):
                     cycle_str += f"EvaComparisonJediLog-{model}\n"
 
                     for i in range(len(config_list)):
-                        cycle_str += f"JediOopsLogParser-{model}-{i}\n"
+                        cycle_str += f"JediOopsLogParser-{model}-{i} => TierTestOutput-{model}\n"
 
                     graph_str += self.format_cycle(cycle_time, cycle_str)
 

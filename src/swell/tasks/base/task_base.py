@@ -324,7 +324,7 @@ def task_wrapper(
     constrc_start = time.perf_counter()
     creator = taskFactory()
     task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
-    
+
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 
