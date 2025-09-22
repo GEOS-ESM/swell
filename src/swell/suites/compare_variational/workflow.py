@@ -83,11 +83,6 @@ class Workflow_compare_variational(CylcWorkflow):
     def define_runtime_task_overrides(self):
         overrides = {}
 
-        exp_root = os.path.expandvars(self.experiment_dict['experiment_root'])
-        exp_id = self.experiment_dict['experiment_id']
-
-        output_dir = os.path.join(exp_root, exp_id)
-
         paths = self.experiment_dict['comparison_experiment_paths']
 
         for i, path in enumerate(paths):
@@ -100,7 +95,7 @@ class Workflow_compare_variational(CylcWorkflow):
                         base_name='JediOopsLogParser',
                         scheduling_name=(f'JediOopsLogParser-{model}-{i}'),
                         script=(f'swell task JediOopsLogParser {config_file} -d $datetime'
-                                f' -m {model} -i {i} -o {output_dir}'))
+                                f' -m {model}'))
 
         return overrides
 

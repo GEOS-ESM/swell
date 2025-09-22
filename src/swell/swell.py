@@ -195,16 +195,12 @@ def launch(
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
-@click.option('-i', '--testIteration', 'testIteration', default=None, help=test_iteration_help)
-@click.option('-o', '--testOutput', 'testOutput', default=None, help=test_output_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
     ensemblePacket: Optional[str],
-    testIteration: Optional[int],
-    testOutput: Optional[str]
 ) -> None:
     """
     Run a workflow task
@@ -216,7 +212,7 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket, testIteration, testOutput)
+    task_wrapper(task, config, datetime, model, ensemblePacket)
 
 
 # --------------------------------------------------------------------------------------------------
