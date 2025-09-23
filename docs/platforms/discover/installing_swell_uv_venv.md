@@ -28,15 +28,15 @@ Clone Swell to wherever you want to live, for example:
 cd $NOBACKUP
 mkdir swell-project
 cd swell-project
-git clone git@github.com:geos-esm/swell swell-develop
+git clone https://github.com/GEOS-ESM/swell.git swell-develop
 ```
 1) Switch to your folder where SWELL is cloned: `cd $NOBACKUP/swell-project/swell-develop`.
 2) (Optional) Checkout a new branch in a new git worktree: e.g., `git worktree add ../mybranch -b mybranch` will create a folder specifically for the `mybranch` branch.
 3) (Optional) `cd ../mybranch`
 4) Load all the modules that SWELL needs: `mod_swell` (this is the `bash` function created in the preliminary steps)
 5) Create a Python virtual environment: `uv venv`
-6) Install SWELL dependencies `uv pip install -r requirements.txt`
-7) Activate the virtual environment: `source .venv/bin/activate`
+6) Activate the virtual environment: `source .venv/bin/activate`
+7) Install SWELL dependencies `uv pip install -r requirements.txt`
 8) Install SWELL in editable mode: `python -m pip install -e .`. (note: make sure you run this while the `venv` is active)
 9) Now, work on SWELL. Any changes you make to the SWELL source code will be automatically applied to the install (because it's an editable install); no need to manually reinstall.
 
