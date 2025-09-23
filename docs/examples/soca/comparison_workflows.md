@@ -1,21 +1,14 @@
-# Running comparison workflows in Swell
+# Running comparison experiments within Swell
 
-Comparison workflows are run on two experiments to compare their output. Current experiments available for comparison include `3dvar` and `3dvar_atmos`
+Swell currently supports comparing variational experiments.
 
-### Example workflow: 3dvar
-
-With two completed experiments, create a comparison workflow suite using an override yaml. This should contain the paths to the two experiments to be compared:
+Creating a comparison experiment within swell requires an override yaml with two experiments to be compared (default paths are not set automatically). These filepaths should point to the experiment.yaml for each suite.
 
 ```yaml
 comparison_experiment_paths:
   - /path/to/experiment1/experiment.yaml
   - /path/to/experiment2/experiment.yaml
 ```
+These experiments should have matching assimilation window parameters. By default in this suite, start and end cycle points are not specified, in which case Swell will parse the two experiments to find the matching cycle times between the two. Alternatively, start and end cycle points can be set manually.
 
-This will create a workflow properly configured to run tests on the two experiments. Launching the comparison experiment will run three tasks. One will generate plots using eva consisting of plots of the jedi output, and all increments avalailable for that suite. Each plot will contain the output from experiment 1, experiment 2, and the relative difference between the two. The other two tasks parse the jedi log output and retrieve information such as the residual norms.
-
-The output from these tasks are placed the the directory of the comparison suite. For the jedi log comparison, the information will be placed under `experiment_root/comparison_tests/`
-
-Comparison increment and jedi output plots are place under the cycle directory:
-`experiment_root/run/<cycle_time>/<model>/eva`
-
+The experiment can then be created using `swell create compare_variational_marine -o override.yaml` or `swell create compare_variational_atmosphere -o override`, depending on the type of experiments being compared. Launching the experiment will run tasks analyzing the jedi log and generating plots using Eva for increments. Comparison of the log analysis will be placed under the comparison suite's directory in a file named `jedi_log_comparison.txt`, while the eva plots will be located under the cycle directory for each cycle.
