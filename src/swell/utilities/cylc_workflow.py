@@ -71,7 +71,7 @@ class CylcWorkflow():
                 start = True
 
             if start:
-                out_string += line
+                out_string += line + '\n'
 
         return out_string
 

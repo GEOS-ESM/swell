@@ -118,12 +118,7 @@ def validate_directives(directive_dict: dict) -> None:
         if isinstance(item, Mapping):
             validate_directives(item)
         else:
-            # Make sure that everything in `directive_dict` is in `directive_list`;
-            # i.e., that all entries are valid slurm directives.
-            invalid_directives = set(directive_dict.keys()).difference(directive_list)
-            assert \
-                len(invalid_directives) == 0, \
-                f"The following are invalid SLURM directives: {invalid_directives}"
+            assert key in directive_list
 
 # --------------------------------------------------------------------------------------------------
 

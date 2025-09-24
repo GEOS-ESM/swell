@@ -61,10 +61,6 @@ class TaskRuntimes():
         is_model: bool = True
 
     @dataclass
-    class CompareJediCTestOutput(Task):
-        pass
-
-    @dataclass
     class EvaJediLog(Task):
         is_cycling: bool = True
         is_model: bool = True

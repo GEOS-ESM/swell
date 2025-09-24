@@ -236,34 +236,6 @@ def utility(utility: str) -> None:
 # --------------------------------------------------------------------------------------------------
 
 @swell_driver.command()
-@click.argument('comparison_type', type=click.Choice(['variational', 'jedi']))
-@click.argument('experiments', type=click.Path(), nargs=-1)
-@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
-              type=click.Choice(get_platforms()), help=platform_help)
-@click.option('-o', '--override', 'override', default=None, help=override_help)
-@click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
-@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
-def compare(comparison_type, experiments: Tuple[str], platform, override, advanced, slurm) -> None:
-    if override is not None:
-        if isinstance(override, str):
-            with open(override, 'r') as f:
-                override = yaml.safe_load(f)
-    else:
-        override = {}
-
-    if 'comparison_experiment_paths' in override.keys():
-        override['comparison_experiment_paths'] = (
-               override['comparison_experiment_paths'].extend(list(experiments)))
-    else:
-        override['comparison_experiment_paths'] = list(experiments)
-
-    create_experiment_directory(f'compare_{comparison_type}', 'defaults',
-                                platform, override, advanced, slurm)
-
-
-# --------------------------------------------------------------------------------------------------
-
-@swell_driver.command()
 @click.argument('test', type=click.Choice(valid_tests))
 def test(test: str) -> None:
     """
