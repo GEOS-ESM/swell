@@ -287,7 +287,7 @@ class TaskRuntimes():
         script: str = "true"
 
     @dataclass
-    class TierTestOutput(Task):
+    class JediLogComparison(Task):
         is_model: bool = True
 
     @dataclass
