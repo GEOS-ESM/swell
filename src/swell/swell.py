@@ -9,7 +9,7 @@
 
 
 import click
-from typing import Union, Optional, Literal, Tuple
+from typing import Union, Optional, Literal
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
