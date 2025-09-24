@@ -19,7 +19,7 @@ import r2d2
 
 r2d2_model_dict = {
     'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6_cice6_UFS',
+    'geos_marine': 'mom6', #'mom6_cice6_UFS'
 }
 
 
@@ -151,7 +151,7 @@ class GetBackground(taskBase):
                 r2d2.fetch(
                     item='forecast',
                     target_file=target_file,
-                    model='mom6',  # need to register mom6 r2d2_model_dict[model_component],
+                    model=r2d2_model_dict[model_component], #'mom6' need to be registered mom6
                     experiment=background_experiment,
                     file_extension=file_extension,
                     resolution=horizontal_resolution,

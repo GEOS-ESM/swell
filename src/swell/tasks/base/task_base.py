@@ -73,6 +73,10 @@ class taskBase(ABC):
         # Create a configuration object
         # -----------------------------
         self.config = Config(config_input, self.logger, task_name, self.__model__)
+        
+        # Load R2D2 v3
+        #from swell.utilities.r2d2 import load_r2d2_credentials
+        #load_r2d2_credentials(self.logger, self.config.__platform__)
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
@@ -277,6 +281,17 @@ class taskFactory():
         model: str,
         ensemblePacket: Optional[str]
     ) -> taskBase:
+
+        # Load R2D2 credentials before importing any task modules
+        # -------------------------------------------------------
+        from swell.utilities.config import Config
+        from swell.utilities.r2d2 import load_r2d2_credentials
+        from swell.utilities.logger import get_logger
+
+        # Get platform info from config to load credentials
+        temp_logger = get_logger('R2D2Setup')
+        temp_config = Config(config, temp_logger, task, model)
+        load_r2d2_credentials(temp_logger, temp_config.__platform__)
 
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
