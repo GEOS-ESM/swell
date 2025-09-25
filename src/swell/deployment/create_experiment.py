@@ -237,9 +237,9 @@ def create_experiment_directory(
     # ----------------------------------------
     logger.info(' ')
     logger.info('Experiment successfully installed. To launch experiment use: ')
-    logger.info(' ', False)
-    logger.info('  swell launch ' + exp_suite_path, False)
-    logger.info(' ', False)
+    logger.info(' ')
+    logger.info('  swell launch ' + exp_suite_path)
+    logger.info(' ')
 
 
 # --------------------------------------------------------------------------------------------------

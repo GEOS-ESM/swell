@@ -58,7 +58,7 @@ def run_track_log_subprocess(
     if rc != 0:
         command_string = ' '.join(command)
         msg = (f"In run_and_track_subprocess command '{command_string}' failed to execute.")
-        logger.abort(msg, False)
+        logger.abort(msg)
 
 # --------------------------------------------------------------------------------------------------
 
