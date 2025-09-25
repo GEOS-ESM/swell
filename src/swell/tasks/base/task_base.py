@@ -73,10 +73,6 @@ class taskBase(ABC):
         # Create a configuration object
         # -----------------------------
         self.config = Config(config_input, self.logger, task_name, self.__model__)
-        
-        # Load R2D2 v3
-        #from swell.utilities.r2d2 import load_r2d2_credentials
-        #load_r2d2_credentials(self.logger, self.config.__platform__)
 
         # All experiment have the experiment root and id and suite
         # --------------------------------------------------------
@@ -297,7 +293,7 @@ class taskFactory():
         task_lower = camel_case_to_snake_case(task)
 
         # Import class based on user selected task
-        task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
+        task_class = getattr(importlib.import_module('swell.tasks.' + task_lower), task)
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket, task)
