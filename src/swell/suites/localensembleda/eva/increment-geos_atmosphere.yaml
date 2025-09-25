@@ -4,70 +4,13 @@ datasets:
   type: LatLon
   filename: {{increment_file_path}}
   name: experiment_increment
-  variables: [ps, ts, ua, va, t, q, lat, lon]
+  variables: [ua, va, t, q, lat, lon]
 
 graphics:
 
   plotting_backend: Emcpy
   figure_list:
 
-  #map plot for surface pressure increment
-  - batch figure:
-      variables: [ps]
-    figure:
-      figure size: [20,10]
-      layout: [1,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
-    plots:
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Surface Pressure Increment
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment::increment::lon
-          latitude:
-            variable: experiment_increment::increment::lat
-          data:
-            variable: experiment_increment::increment::ps
-          label: PS increment
-          colorbar: true
-          cmap: 'bwr'
-          vmin: -100
-          vmax: 100
-  - batch figure:
-      variables: [ts]
-    figure:
-      figure size: [20,10]
-      layout: [1,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
-    plots:
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Tskin Increment
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment::increment::lon
-          latitude:
-            variable: experiment_increment::increment::lat
-          data:
-            variable: experiment_increment::increment::ts
-          label: TS increment
-          colorbar: true
-          cmap: 'bwr'
-          vmin: -2
-          vmax: 2
   #map plot for temperature increment (lowest level)
   - batch figure:
       variables: [t]

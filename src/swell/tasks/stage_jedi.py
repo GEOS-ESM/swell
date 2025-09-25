@@ -12,8 +12,8 @@ import os
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.filehandler import *
-from swell.utilities.exceptions import *
+from swell.utilities.filehandler import get_file_handler
+from swell.utilities.exceptions import SwellError
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 
@@ -84,5 +84,5 @@ class StageJedi(taskBase):
                 self.logger.abort('One or more files not ready')
             else:
                 fh.get()
-        except SWELLError as e:
+        except SwellError as e:
             self.logger.abort(str(e))
