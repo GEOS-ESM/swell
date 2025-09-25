@@ -8,7 +8,6 @@
 
 
 from swell import __version__
-from swell.utilities.logger import get_logger
 
 
 # --------------------------------------------------------------------------------------------------
@@ -16,12 +15,10 @@ from swell.utilities.logger import get_logger
 
 def write_welcome_message() -> None:
 
-    logger = get_logger('')
-
-    logger.blank(f"                  _ _ ", False)  # noqa
-    logger.blank(f" _____      _____| | |  Swell workflow deployment manager", False)  # noqa
-    logger.blank(f"/ __\ \ /\ / / _ \ | |  NASA Global Modeling and Assimilation Office", False)  # noqa
-    logger.blank(f"\__ \\\ V  V /  __/ | |  Version {__version__}", False)  # noqa
-    logger.blank(f"|___/ \_/\_/ \___|_|_|  \x1B[4m\x1B[34mhttps://geos-esm.github.io/swell\033[0m", False)  # noqa
-    logger.blank(f"                                         ", False)  # noqa
-    logger.blank('', False)  # noqa
+    print("                  _ _ ")
+    print(" _____      _____| | |  Swell workflow deployment manager")
+    print("/ __\ \ /\ / / _ \ | |  NASA Global Modeling and Assimilation Office")  # noqa
+    print("\__ \\\ V  V /  __/ | |  Version {__version__}".format(__version__=__version__))  # noqa
+    print("|___/ \_/\_/ \___|_|_|  Source code located at: https://geos-esm.github.io/swell")  # noqa
+    print()
+    print()
