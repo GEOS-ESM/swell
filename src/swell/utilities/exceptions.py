@@ -3,38 +3,11 @@
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
-# -----------------------------------------------------------------------------
-
-from typing import Optional
-from logging import Logger as pyLogger
 
 
-class SWELLError(Exception):
+# --------------------------------------------------------------------------------------------------
 
-    def __init__(
-        self,
-        message: str,
-        logger: Optional[pyLogger] = None
-    ) -> None:
-
-        self.message = message
-        super().__init__(message)
-
-        if logger:
-            logger(message)
-
-# -----------------------------------------------------------------------------
-
-
-class SWELLFileError(SWELLError):
-
+class SwellError(Exception):
     pass
 
-# -----------------------------------------------------------------------------
-
-
-class SWELLConfigError(SWELLError):
-
-    pass
-
-# -----------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------

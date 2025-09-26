@@ -28,7 +28,7 @@ def combine_files_without_groups(
     # Write some information
     logger.info('Combining the following netCDF files (using no-group combine): ')
     for f in list_of_input_files:
-        logger.info(f' - {f}', False)
+        logger.info(f' - {f}')
     logger.info(f'Writing to file {output_file}')
 
     # Load the files as Xarray datasets
