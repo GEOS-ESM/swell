@@ -53,7 +53,7 @@ cycle_template_1 = """
 # Run the forecast through two windows (need to output restarts at the end of the
 # first window and backgrounds for the second window)
 # MoveDaRestart-{model_component}[-P1D] => PrepGeosRunDir
-MoveDaRestart-{model_component}[-PT6H] => PrepGeosRunDir
+MoveDaRestart-{model_component}[-{models[model_component]["window_length"]}] => PrepGeosRunDir
 PrepGeosRunDir => RunGeosExecutable
 
 # Run the analysis
@@ -146,7 +146,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
                 for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
                     cycle_str = cycle_template_1.format(model_component=model_component)
 
-                    if 'cice6' in self.experiment_dict['models']['geos_marine']['marine_models']:
+                    if 'cice6' in self.experiment_dict['models'][model_component]['marine_models']:
                         cycle_str += cycle_template_2.format(model_component=model_component)
                     else:
                         cycle_str += cycle_template_3.format(model_component=model_component)
