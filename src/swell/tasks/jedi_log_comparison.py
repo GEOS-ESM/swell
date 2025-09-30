@@ -18,19 +18,16 @@ from swell.tasks.base.task_base import taskBase
 
 comparison_fields = {'Residual norm': {'delimiter': '=', 'dtype': float}}
 
-tolerances = {'Residual norm ( 0)': 0.01,
-              'Residual norm ( 1)': 0.01,
-              'Residual norm ( 2)': 0.01,
-              'Residual norm ( 3)': 0.01,
-              'Residual norm ( 4)': 0.01,
-              'Residual norm ( 5)': 0.01}
-
 # --------------------------------------------------------------------------------------------------
 
 
 class JediLogComparison(taskBase):
 
     def execute(self):
+
+        tolerances = {}
+        for number in range(self.config.number_of_iterations()):
+            tolerances['Residual norm ( {number})'] = 0.01
 
         # Construct dictionary for all results from log file
         all_results = {}
