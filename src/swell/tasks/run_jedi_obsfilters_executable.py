@@ -143,7 +143,7 @@ class RunJediObsfiltersExecutable(taskBase):
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Jedi executable name
         # --------------------
