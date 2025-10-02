@@ -21,6 +21,8 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                 'datetime': template_dict['local_background_time_iso'],
                 'filetype': 'cube sphere history',
                 'provider': 'geos',
+                'compute edge pressure from surface pressure': True,
+                'max allowable geometry difference': 1e-3
                 'datapath': template_dict['cycle_dir'],
                 'filename': 'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
                 'state variables': state_variables,

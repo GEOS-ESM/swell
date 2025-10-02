@@ -92,7 +92,7 @@ def main() -> None:
         for template in templates:
             logger.info(template)
         if config_type != config_types[-1]:
-            logger.info(' ', False)
+            logger.info(' ')
 
 
 # --------------------------------------------------------------------------------------------------

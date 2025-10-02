@@ -20,6 +20,8 @@ def pseudo_model(template_dict: Mapping) -> Mapping:
         'tstep': template_dict['background_frequency'],
         'filetype': 'cube sphere history',
         'provider': 'geos',
+        'compute edge pressure from surface pressure': True,
+        'max allowable geometry difference': 1e-3,
         'datapath': template_dict['cycle_dir'],
         'filenames': [
             'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
