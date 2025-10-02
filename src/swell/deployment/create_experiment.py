@@ -24,6 +24,7 @@ from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_scheduling_dict
+from swell.utilities.check_da_params import check_da_params
 
 
 # --------------------------------------------------------------------------------------------------
@@ -115,6 +116,24 @@ def prepare_config(
     if 'models' in experiment_dict:
         experiment_dict['model_components'] = list(experiment_dict['models'].keys())
         comment_dict['model_components'] = 'List of models in this experiment'
+
+    # Overrides for comparison suites
+    start_cycle_point = experiment_dict['start_cycle_point']
+    final_cycle_point = experiment_dict['final_cycle_point']
+    if experiment_dict['start_cycle_point'] is None:
+        config_list = experiment_dict['comparison_experiment_paths']
+        for model in experiment_dict['model_components']:
+            cycle_times = experiment_dict['models'][model]['cycle_times']
+            start_cycle_point, final_cycle_point, cycle_times = check_da_params(
+                    config_list,
+                    model,
+                    start_cycle_point,
+                    final_cycle_point,
+                    cycle_times)
+
+            experiment_dict['start_cycle_point'] = start_cycle_point
+            experiment_dict['final_cycle_point'] = final_cycle_point
+            experiment_dict['models'][model]['cycle_times'] = cycle_times
 
     # Expand experiment dict with SLURM overrides.
     # NOTE: This is a bit of a hack. We should really either commit to using a
