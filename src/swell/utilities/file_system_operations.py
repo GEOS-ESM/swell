@@ -28,8 +28,8 @@ def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
             logger.info(' Copying file: '+src)
             shutil.copy(src, dst_dir)
 
-    except Exception:
-        logger.abort('Copying failed, see if source files exists')
+    except Exception as e:
+        logger.abort(f'Copying failed: {e}')
 
 # --------------------------------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ def move_files(logger: Logger, src_dir: str, dst_dir: str) -> None:
         logger.info(' Moving file(s) from: '+src_dir)
         shutil.move(src_dir, dst_dir)
 
-    except Exception:
-        logger.abort('Moving failed, see if source files exist')
+    except Exception as e:
+        logger.abort(f'Moving failed: {e}')
 
 # ----------------------------------------------------------------------------------------------
