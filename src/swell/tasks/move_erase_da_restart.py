@@ -8,8 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 import glob
+import isodate
 import os
 import re
+import shutil
 from typing import Union
 
 from swell.tasks.base.task_base import taskBase
@@ -18,7 +20,7 @@ from swell.utilities.file_system_operations import move_files
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveDaRestart(taskBase):
+class MoveEraseDaRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -40,33 +42,24 @@ class MoveDaRestart(taskBase):
         # ----------------------
         self.mom6_iau = self.config.mom6_iau()
 
-        # Next forecast directory
-        # -----------------------
-        self.next_forecast_dir = self.geos.adjacent_cycle(self.config.window_length())
-
-        # Create cycle_dir and INPUT
+        # Create cycle_dir and RESTART
         # ----------------------------
-        if not os.path.exists(self.at_next_fcst_dir('INPUT')):
-            os.makedirs(self.at_next_fcst_dir('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.next_forecast_dir('RESTART')):
+            os.makedirs(self.next_forecast_dir('RESTART'), 0o755, exist_ok=True)
 
-        # Move and rename files
-        # ----------------------
+        # Move and rename files in the next forecast directory
+        # ----------------------------------------------
         self.cycling_restarts()
-        self.geos.rename_checkpoints(self.next_forecast_dir)
+        self.geos.rename_checkpoints(self.next_forecast_dir())
 
-    # ----------------------------------------------------------------------------------------------
-
-    def at_next_fcst_dir(self, paths: Union[str, list]) -> str:
-
-        # Ensure what we have is a list (paths should be a list)
-        # ------------------------------------------------------
-        if isinstance(paths, str):
-            paths = [paths]
-
-        # Combining list of paths with cycle dir for script brevity
-        # ---------------------------------------------------------
-        full_path = os.path.join(self.next_forecast_dir, *paths)
-        return full_path
+        # Remove forecast_dir and rename next_forecast_dir to forecast_dir
+        self.logger.info('Erasing current forecast dir and renaming next forecast dir to it')
+        try:
+            if os.path.exists(self.forecast_dir()):
+                shutil.rmtree(self.forecast_dir())
+            os.rename(self.next_forecast_dir(), self.forecast_dir())
+        except Exception as e:
+            self.logger.abort(f'Failed to move directory: {e}')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -76,7 +69,7 @@ class MoveDaRestart(taskBase):
         # ------------------------------------------------------
         self.logger.info('GEOS restarts are being moved to the next forecast dir')
 
-        src = self.forecast_dir('*_checkpoint')
+        src = self.forecast_dir(['scratch', '*_checkpoint'])
 
         # This alternate source format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
@@ -84,25 +77,26 @@ class MoveDaRestart(taskBase):
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
+            # We want to use rst_dto at the beginning of the DA window (window offset is negative)
+            # ---------------------------------------------------------
             an_fcst_offset = self.config.analysis_forecast_window_offset()
-            rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
-
+            rst_dto = self.cycle_time_dto() + isodate.parse_duration(an_fcst_offset)
             self.logger.info('Using _checkpoint restarts with timestamps')
-            src = self.forecast_dir(rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4'))
+            src = self.forecast_dir(['scratch', rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4')])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            move_files(self.logger, filepath, self.at_next_fcst_dir(filename))
+            move_files(self.logger, filepath, self.next_forecast_dir(filename))
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
-        src_dst = {'tile.bin': '',
-                   'RESTART/iced.nc': 'INPUT',
+        src_dst = {'scratch/tile.bin': '',
+                   'scratch/RESTART/iced.nc': 'RESTART',
                    }
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, os.path.basename(src))
-            move_files(self.logger, self.forecast_dir(src), self.at_next_fcst_dir(dst))
+            move_files(self.logger, self.forecast_dir(src), self.next_forecast_dir(dst))
 
         # Having multiple restart outputs in MOM6 is hard coded and inevitable for high res
         # simulations. MOM restart for the next cycle should be at the beginning of the
@@ -115,33 +109,37 @@ class MoveDaRestart(taskBase):
 
         if 'RECORD_FREQUENCY' in agcm_dict:
 
+            # We want to use rst_dto at the beginning of the DA window (window offset is negative)
+            # ---------------------------------------------------------
             an_fcst_offset = self.config.analysis_forecast_window_offset()
-            rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+            rst_dto = self.cycle_time_dto() + isodate.parse_duration(an_fcst_offset)
             seconds = rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second
 
             # Ensure seconds is a string with 5 digits
             seconds_str = f"{seconds:05d}"
-            rst_files = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
-                                           + seconds_str + '*.nc'])
+            rst_pattern = rst_dto.strftime('MOM.res_Y%Y_D%j_S') + seconds_str + '*.nc'
+            rst_files = os.path.join(self.forecast_dir('scratch/RESTART'), rst_pattern)
 
             for filepath in list(glob.glob(rst_files)):
                 filename = os.path.basename(filepath)
 
                 # Use re.sub to remove the time pattern from the string
                 # -----------------------------------------------------
-                filenext = re.sub(rst_dto.strftime('_Y%Y_D%j_S') + seconds_str, "", filename)
+                time_pattern = rst_dto.strftime('_Y%Y_D%j_S') + seconds_str
+                filenext = re.sub(time_pattern, "", filename)
 
+                dst_path = os.path.join(self.next_forecast_dir('RESTART'), filenext)
                 src_dst_dict.update({
-                        filepath: self.at_next_fcst_dir(['INPUT', filenext]),
+                        filepath: dst_path,
                 })
 
         else:
-            rst_files = self.forecast_dir(['RESTART', 'MOM.res*nc'])
+            rst_files = self.forecast_dir(['scratch', 'RESTART', 'MOM.res*nc'])
 
             for filepath in list(glob.glob(rst_files)):
                 filename = os.path.basename(filepath)
                 src_dst_dict.update({
-                        filepath: self.at_next_fcst_dir(['INPUT', filename]),
+                        filepath: self.next_forecast_dir(['RESTART', filename]),
                 })
 
         # If the src/dst dict is empty, abort run as something is messed up
@@ -155,7 +153,7 @@ class MoveDaRestart(taskBase):
         if (self.mom6_iau):
             src_dst_dict.update({
                 os.path.join(self.cycle_dir(), 'mom6_increment.nc'):
-                    self.at_next_fcst_dir(['INPUT', 'mom6_increment.nc'])
+                    self.next_forecast_dir(['RESTART', 'mom6_increment.nc'])
             })
 
         for src, dst in src_dst_dict.items():
