@@ -93,7 +93,7 @@ class SaveRestart(taskBase):
         dst_date = dt.strftime(forecast_start_time, datetime_formats['iso_format'])
 
         # Oceanstats is produced at the end of the forecast
-        src_stats = os.path.join(self.forecast_dir(), 'ocean.stats.nc')
+        src_stats = self.forecast_dir(['scratch', 'ocean.stats.nc'])
         dst_stats = os.path.join(mainf, forecast_start_time.strftime('%Y-%m-%d'),
                                  f'mom6_cice6_UFS.{self.experiment_id()}.fc.global.MOM.oceanstats.'
                                  + dst_date + '.' + forecast_duration + '.nc')
