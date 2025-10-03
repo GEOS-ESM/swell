@@ -227,6 +227,7 @@
         script = "swell task RunJediFgatExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediFgatExecutable"]["execution_time_limit"]}}
+        execution retry delays = 1*PT5M
         [[[directives]]]
         {%- for key, value in scheduling["RunJediFgatExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}

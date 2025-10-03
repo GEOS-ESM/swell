@@ -209,9 +209,6 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
-
     {% if 'cice6' in models["geos_marine"]["marine_models"] %}
 
     [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
@@ -228,6 +225,7 @@
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
+        execution retry delays = 1*PT5M
         execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
