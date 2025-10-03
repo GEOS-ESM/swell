@@ -441,6 +441,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    JediLogComparison = QuestionList(
+        list_name="JediComparisonLog",
+        questions=[
+            qd.comparison_log_type(),
+            qd.number_of_iterations()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     LinkGeosOutput = QuestionList(
         list_name="LinkGeosOutput",
         questions=[
