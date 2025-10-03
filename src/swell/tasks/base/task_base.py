@@ -90,14 +90,17 @@ class taskBase(ABC):
         self.__model_components__ = self.config.__model_components__
 
         # Create cycle and forecast directories
+        # Forecast directories (forecast and next_forecast) are now on the experiment level. This 
+        # allows time independent templating in flow.cylc.
         # -------------------------------------
         cycle_dir = None
-        self.cycle_forecast_dir = None
+        self.str_forecast_dir = None
+        self.str_next_forecast_dir = None
 
         if datetime_input is not None:
-            # Name of directory where cycle forecast files will be staged
-            self.cycle_forecast_dir = os.path.join(self.experiment_path(), 'run',
-                                                   self.__datetime__.string_directory(), 'forecast')
+            # Name of directory where forecast files are staged
+            self.str_forecast_dir = os.path.join(self.experiment_path(), 'forecast')
+            self.str_next_forecast_dir = os.path.join(self.experiment_path(), 'next_forecast')
 
             if model is not None:
                 cycle_dir = self.cycle_dir()
@@ -109,9 +112,9 @@ class taskBase(ABC):
                                                   self.__experiment_id__, cycle_dir,
                                                   self.__datetime__, self.__model__)
 
-        # Add GEOS utils
+        # Add methods to GEOS utils
         # --------------
-        self.geos = Geos(self.logger, self.cycle_forecast_dir)
+        self.geos = Geos(self.logger, self.str_forecast_dir)
 
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------
@@ -202,13 +205,14 @@ class taskBase(ABC):
 
     def forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
 
+        '''
+        Method to provide "forecast" directory to geos class
+        If paths are provided, it is combined with the forecast directory and returned
+        '''
+
         # Make sure forecast directory exists
         # -----------------------------------
-        os.makedirs(self.cycle_forecast_dir, 0o755, exist_ok=True)
-
-        # Combine datetime string (directory format) with the model
-        # ------------------------------------------------------
-        forecast_dir = self.cycle_forecast_dir
+        os.makedirs(self.str_forecast_dir, 0o755, exist_ok=True)
 
         if len(paths) > 0:
             # If paths (which should be a list) is not empty, combine with forecast_dir
@@ -216,11 +220,30 @@ class taskBase(ABC):
             if isinstance(paths, str):
                 paths = [paths]
 
-            # Combining list of paths with forecast dir for code brevity
-            # ---------------------------------------------------------
-            forecast_dir = os.path.join(forecast_dir, *paths)
+        # Combine list of paths with forecast dir for code brevity
+        return os.path.join(self.str_forecast_dir, *paths)
 
-        return forecast_dir
+    # ----------------------------------------------------------------------------------------------
+
+    def next_forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
+
+        '''
+        Method to provide "next forecast" directory to geos class
+        If paths are provided, it is combined with the next forecast directory and returned
+        '''
+
+        # Make sure forecast directory exists
+        # -----------------------------------
+        os.makedirs(self.str_next_forecast_dir, 0o755, exist_ok=True)
+
+        if len(paths) > 0:
+            # If paths (which should be a list) is not empty, combine with str_next_forecast_dir
+            # -------------------------------------------------------------------------
+            if isinstance(paths, str):
+                paths = [paths]
+
+        # Combine list of paths with str_next_forecast_dir for code brevity
+        return os.path.join(self.str_next_forecast_dir, *paths)
 
     # ----------------------------------------------------------------------------------------------
 

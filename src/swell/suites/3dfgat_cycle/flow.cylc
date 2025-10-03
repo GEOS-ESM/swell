@@ -78,11 +78,10 @@
 
             # Data assimilation preperation
             GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
             LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             # Run analysis diagnostics
@@ -213,9 +212,6 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
-
     {% if 'cice6' in models["geos_marine"]["marine_models"] %}
 
     [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
@@ -233,6 +229,7 @@
         script = "swell task RunJediFgatExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediFgatExecutable"]["execution_time_limit"]}}
+        execution retry delays = 1*PT5M
         [[[directives]]]
         {%- for key, value in scheduling["RunJediFgatExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
