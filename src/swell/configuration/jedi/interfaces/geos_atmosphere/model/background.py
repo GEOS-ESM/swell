@@ -17,6 +17,7 @@ state_variables = [
     'northward_wind',
     'air_temperature',
     'air_pressure_at_surface',
+    'air_pressure_levels',
     'water_vapor_mixing_ratio_wrt_moist_air',
     'cloud_liquid_ice',
     'cloud_liquid_water',
@@ -65,6 +66,8 @@ def background(template_dict: Mapping) -> Mapping:
         'datetime': template_dict['local_background_time_iso'],
         'filetype': 'cube sphere history',
         'provider': 'geos',
+        'compute edge pressure from surface pressure': True,
+        'max allowable geometry difference': 1e-3,
         'datapath': template_dict['cycle_dir'],
         'filenames': [
             'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
