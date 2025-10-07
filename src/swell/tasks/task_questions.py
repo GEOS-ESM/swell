@@ -56,6 +56,16 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.window_type()
         ]
     )
+    # --------------------------------------------------------------------------------------------------
+
+    geos_gcm_questions = QuestionList(
+        list_name="geos_gcm_questions",
+        questions=[
+            qd.geos_homdir(),
+            qd.geos_expdir_different(),
+            qd.geos_expdir(),
+        ]
+    )
 
     # --------------------------------------------------------------------------------------------------
 
@@ -356,6 +366,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetCoupledGeosRestart = QuestionList(
+        list_name="GetCoupledGeosRestart",
+        questions=[
+            geos_gcm_questions,
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetGeosRestart = QuestionList(
         list_name="GetGeosRestart",
         questions=[
@@ -463,12 +482,33 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    LinkCoupledGeosOutput = QuestionList(
+        list_name="LinkCoupledGeosOutput",
+        questions=[
+            window_questions,
+            qd.background_frequency(),
+            qd.marine_models()
+        ]
+    )
+    # --------------------------------------------------------------------------------------------------
+
     LinkGeosOutput = QuestionList(
         list_name="LinkGeosOutput",
         questions=[
             window_questions,
             qd.background_frequency(),
             qd.marine_models()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    MoveEraseDaRestart = QuestionList(
+        list_name="MoveEraseDaRestart",
+        questions=[
+            qd.analysis_forecast_window_offset(),
+            qd.mom6_iau(),
+            qd.window_length()
         ]
     )
 
@@ -505,13 +545,26 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    PrepCoupledGeosRunDir = QuestionList(
+        list_name="PrepCoupledGeosRunDir",
+        questions=[
+            # swell_static_file_questions,
+            qd.existing_geos_gcm_build_path(),
+            qd.forecast_duration(),
+            # qd.geos_experiment_directory(),
+            qd.mom6_iau_nhours()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     PrepGeosRunDir = QuestionList(
         list_name="PrepGeosRunDir",
         questions=[
             swell_static_file_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_experiment_directory(),
+            # qd.geos_experiment_directory(),
             qd.mom6_iau_nhours()
         ]
     )
