@@ -61,6 +61,7 @@ class RenderJediObservations(taskBase):
 
         # Iterate through list
         for ob in obs_list:
+
             # Render the yaml file
             obs_dict = self.jedi_rendering.render_interface_observations(ob)
 
@@ -74,8 +75,6 @@ class RenderJediObservations(taskBase):
 
             if use_observation:
                 observations.append(obs_dict)
-            else:
-                obs_list.remove(ob)
 
         # Create the output file
         os.chdir(cwd)

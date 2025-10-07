@@ -27,6 +27,7 @@ def varincrement1(template_dict: Mapping) -> Mapping:
                     'eastward_wind': 'ua',
                     'northward_wind': 'va',
                     'air_temperature': 't',
+                    'air_pressure_levels': 'pe',
                     'water_vapor_mixing_ratio_wrt_moist_air': 'q',
                     'cloud_liquid_ice': 'qi',
                     'cloud_liquid_water': 'ql',

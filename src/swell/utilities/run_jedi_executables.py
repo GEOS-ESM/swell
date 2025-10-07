@@ -43,6 +43,7 @@ def check_obs(
                 use_observation = True
 
     if input_and_output:
+
         # Check if observations in output file exists
         # ------------------------------------------
         filename = obs_dict['obs space']['obsdataout']['engine']['obsfile']
