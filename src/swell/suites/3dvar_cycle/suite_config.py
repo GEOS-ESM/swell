@@ -83,4 +83,25 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
+    # -------------------------------------------------------------------------------------------------
+
+    _3dvar_cycle_tier2 = QuestionList(
+        list_name="3dvar_cycle",
+        questions=[
+            sq.marine,
+            qd.start_cycle_point("2021-07-02T06:00:00Z"),
+            qd.final_cycle_point("2021-07-02T12:00:00Z"),
+            qd.runahead_limit("P2"),
+            qd.jedi_build_method("use_existing"),
+            qd.geos_build_method("use_existing"),
+            qd.model_components(['geos_marine']),
+            qd.forecast_duration("P2D")
+        ],
+        geos_marine=[
+            qd.window_length("P1D")
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     # --------------------------------------------------------------------------------------------------
