@@ -12,9 +12,12 @@ saber central block:
     - sea_surface_height_above_geoid
   read:
     groups:
-    - variables: [sea_water_potential_temperature, sea_water_salinity]
+    - variables:
+      - sea_water_potential_temperature
+      - sea_water_salinity
       horizontal:
-        filepath: 'background_error_model/hz_rossby'
+        filepath: 'background_error_model/new_corr_1p0'
+        # filepath: 'background_error_model/hz_rossby'
       vertical:
         levels: {{vertical_resolution}}
         filepath: 'background_error_model/vt.{{local_background_time}}'
@@ -26,7 +29,8 @@ saber central block:
       - sea_ice_snow_thickness
     {% endif %}
       horizontal:
-        filepath: 'background_error_model/hz_rossby_1p5'
+        # filepath: 'background_error_model/hz_rossby_1p5'
+        filepath: 'background_error_model/new_corr_1p5'
 
 date: '{{local_background_time_iso}}'
 
@@ -43,6 +47,8 @@ saber outer blocks:
         variable: sst_bgerr
     unbalanced salinity: {} # use default values
     unbalanced ssh: {} # use default values
+    # save diagnostics:
+    #   filepath: parametric_ocean_stddev_diags
 
 linear variable change:
   input variables: {{analysis_variables}}

@@ -123,8 +123,8 @@ class QuestionDefaults():
         default_value: str = "P4"
         question_name: str = "runahead_limit"
         ask_question: bool = True
-        prompt: str = ("Since this suite is non-cycling choose how "
-                       "many hours the workflow can run ahead?")
+        prompt: str = ("How many additional cycles can be run"
+                       "simultaneously? (P1: one, P3: three)")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -498,12 +498,49 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
+    # @dataclass
+    # class geos_experiment_directory(TaskQuestion):
+    #     default_value: str = "defer_to_platform"
+    #     question_name: str = "geos_experiment_directory"
+    #     ask_question: bool = True
+    #     prompt: str = "What is the path to the GEOS restarts directory?"
+    #     widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
-    class geos_experiment_directory(TaskQuestion):
+    class geos_homdir(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "geos_experiment_directory"
+        question_name: str = "geos_homdir"
         ask_question: bool = True
-        prompt: str = "What is the path to the GEOS restarts directory?"
+        prompt: str = "What is the path to the GEOS experiment directory (HOMDIR)?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_expdir_different(TaskQuestion):
+        default_value: str = False
+        question_name: str = "geos_expdir_different"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Is your GEOS EXPDIR (where restarts and scratch is located) different than your HOMDIR?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_expdir(TaskQuestion):
+        default_value: str = "/dev/null/"
+        question_name: str = "geos_expdir"
+        depends: Dict = mutable_field({
+            "geos_expdir_different": True
+        })
+        prompt: str = ("What is the path to the GEOS experiment directory (EXPDIR), where restarts are located"
+                       " if it is different than HOMDIR?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -512,7 +549,9 @@ class QuestionDefaults():
     class geos_gcm_tag(TaskQuestion):
         default_value: str = "v11.6.0"
         question_name: str = "geos_gcm_tag"
-        ask_question: bool = True
+        depends: Dict = mutable_field({
+            "geos_build_method": "create"
+        })
         prompt: str = "Which GEOS tag do you wish to clone?"
         widget_type: WType = WType.STRING
 
