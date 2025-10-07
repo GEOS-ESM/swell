@@ -46,16 +46,11 @@
 
             # Run Geos Executable
             PrepGeosRunDir => RunGeosExecutable
-            MoveForecastRestart[-PT6H] => PrepGeosRunDir
+            MoveEraseForecastRestart[-PT6H] => PrepGeosRunDir
 
             # Move restart to next cycle
-            RunGeosExecutable => MoveForecastRestart
+            RunGeosExecutable => MoveEraseForecastRestart
 
-            # Save restarts if requested
-            # MoveForecastRestart[-PT6H] => SaveRestart
-
-            # Remove Run Directory
-            MoveForecastRestart => RemoveForecastDir
         """
         {% endfor %}
 
@@ -92,20 +87,17 @@
     [[PrepGeosRunDir]]
         script = "swell task PrepGeosRunDir $config -d $datetime"
 
-    [[RemoveForecastDir]]
-        script = "swell task RemoveForecastDir $config -d $datetime"
-
     [[GetGeosRestart]]
         script = "swell task GetGeosRestart $config -d $datetime"
 
-    [[MoveForecastRestart]]
-        script = "swell task MoveForecastRestart $config -d $datetime"
+    [[MoveEraseForecastRestart]]
+        script = "swell task MoveEraseForecastRestart $config -d $datetime"
 
     [[SaveRestart]]
         script = "swell task SaveRestart $config -d $datetime"
 
     [[RunGeosExecutable]]
-        script = "swell task RunGeosExecutable $config -d $datetime"
+        script = "{{experiment_path}}/forecast/gcm_run.j"
         platform = {{platform}}
         execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
         [[[directives]]]
