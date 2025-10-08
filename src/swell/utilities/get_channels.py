@@ -13,6 +13,7 @@ from datetime import datetime as dt
 from itertools import groupby
 from typing import Tuple, Optional
 
+from swell.utilities.exceptions import SwellError
 from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
@@ -96,11 +97,13 @@ def get_channels(
 
         if available_channels is None:
             logger.abort(f'Missing available channels for {observation}, '
-                         'Confirm that you are using the right version of GEOSmksi')
+                         'Confirm that you are using the right version of GEOSmksi',
+                         exception=SwellError)
 
         if active_channels is None:
             logger.abort(f'Missing active channels for {observation}, '
-                         'Confirm that you are using the right version of GEOSmksi')
+                         'Confirm that you are using the right version of GEOSmksi',
+                         exception=SwellError)
 
         available_channels_list = process_channel_lists(available_channels)
         available_range_string = create_range_string(available_channels_list)

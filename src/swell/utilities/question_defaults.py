@@ -25,6 +25,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class comparison_experiment_paths(SuiteQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "comparison_experiment_paths"
+        ask_question: bool = True
+        prompt: str = "Provide paths to two experiments to run comparison tests on."
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class cycle_times(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "cycle_times"
@@ -35,6 +45,19 @@ class QuestionDefaults():
         ])
         prompt: str = "Enter the cycle times for this model."
         widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class cycling_varbc(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "cycling_varbc"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Do you want to use cycling VarBC option?"
+        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -115,6 +138,17 @@ class QuestionDefaults():
         options: str = "defer_to_code"
         prompt: str = "Enter the model components for this model."
         widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class parser_options(SuiteQuestion):
+        default_value: list = mutable_field(['fgrep_residual_norm'])
+        question_name: str = "parser_options"
+        ask_question: bool = True
+        options: list = mutable_field(['fgrep_residual_norm'])
+        prompt: str = "List the test types to run on the JEDI oops log."
+        widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -248,6 +282,19 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class bufr_obs_classes(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "bufr_obs_classes"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What BUFR observation classes will be used?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class bundles(TaskQuestion):
@@ -290,6 +337,22 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class comparison_log_type(TaskQuestion):
+        default_value: str = "variational"
+        question_name: str = "comparison_log_type"
+        options: List[str] = mutable_field([
+            'variational',
+            'fgat',
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Provide the log naming convention (e.g. 'variational', 'fgat')."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class crtm_coeff_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "crtm_coeff_dir"
@@ -298,19 +361,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class cycling_varbc(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "cycling_varbc"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Do you want to use cycling VarBC option?"
-        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -461,6 +511,24 @@ class QuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class existing_perllib_path(TaskQuestion):
+        default_value: str = 'defer_to_platform'
+        question_name: str = 'existing_perllib_path'
+        prompt: str = "Provide a path to an existing location for GMAO_perllib."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class gmao_perllib_tag(TaskQuestion):
+        default_value: str = 'g1.0.1'
+        question_name: str = 'gmao_perllib_tag'
+        prompt: str = "Specify the tag at which GMAO_perllib should be cloned."
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1028,6 +1096,18 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class obs_thinning_rej_fraction(TaskQuestion):
+        default_value: float = 0.75
+        question_name: str = "obs_thinning_rej_fraction"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the rejection fraction for obs thinning?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class observations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observations"
@@ -1074,18 +1154,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class obs_thinning_rej_fraction(TaskQuestion):
-        default_value: float = 0.75
-        question_name: str = "obs_thinning_rej_fraction"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "What is the rejection fraction for obs thinning?"
-        widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1211,20 +1279,6 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class skip_ensemble_hofx(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "skip_ensemble_hofx"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Which local ensemble solver type should be implemented?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
