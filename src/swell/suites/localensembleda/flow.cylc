@@ -150,6 +150,9 @@
     [[GetEnsembleGeosExperiment-{{model_component}}]]
         script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
 
+    [[RenderJediObservations-geos_atmosphere]]
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
+
     [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}

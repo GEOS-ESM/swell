@@ -135,7 +135,7 @@ class RunJediHofxExecutable(taskBase):
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
             with open(jedi_config_file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+                yaml.dump(jedi_config_dict, jedi_config_file_open)
 
             # Jedi executable name
             # --------------------
@@ -159,7 +159,8 @@ class RunJediHofxExecutable(taskBase):
 
                 # Combine the GeoVaLs
                 # -------------------
-                for observation in observations:
+                for observer in jedi_config_dict['observations']['observers']:
+                    observation = observer['observation_name']
 
                     self.logger.info(f'Combining GeoVaLs files for {observation}')
 
@@ -216,10 +217,9 @@ class RunJediHofxExecutable(taskBase):
                 # For each observation, add the ensemble member to the output
                 # filename to create seperate files for each ensemble member
                 # ------------------------------------------------------------
-                for index, observation in enumerate(observations):
+                for observer in jedi_config_dict['observations']['observers']:
 
-                    # Get pointer to observer
-                    observer = jedi_config_dict['observations']['observers'][index]
+                    observation = observer['observations_name']
 
                     # Get the output file string
                     outfile = observer['obs space']['obsdataout']['engine']['obsfile']
@@ -238,7 +238,7 @@ class RunJediHofxExecutable(taskBase):
                 # Write the expanded dictionary to YAML file
                 # ------------------------------------------
                 with open(jedi_config_file, 'w') as jedi_config_file_open:
-                    yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+                    yaml.dump(jedi_config_dict, jedi_config_file_open)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -257,7 +257,9 @@ class RunJediHofxExecutable(taskBase):
         # Add mem to the filename if it is not None
         mem_str = f'_mem{mem}' if mem is not None else ''
 
-        for index, observation in enumerate(observations):
+        for observer in jedi_config_dict['observations']['observers']:
+
+            observation = observer['observation_name']
 
             # Define the GeoVaLs saver dictionary
             gom_saver_dict = {
@@ -265,9 +267,6 @@ class RunJediHofxExecutable(taskBase):
                 'filename': os.path.join(self.cycle_dir(),
                                          f'{observation}-geovals.{window_begin}{mem_str}.nc4')
             }
-
-            # Get pointer to observer
-            observer = jedi_config_dict['observations']['observers'][index]
 
             # Check if observer has obs filters and if so add them to the jedi_config_dict
             if 'obs filters' in observer:

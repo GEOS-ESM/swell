@@ -65,6 +65,8 @@ class RenderJediObservations(taskBase):
             # Render the yaml file
             obs_dict = self.jedi_rendering.render_interface_observations(ob)
 
+            obs_dict['observation_name'] = ob
+
             # Check whether to use the file, or skip if debugging config file
             if check_for_obs:
                 use_observation = check_obs(observing_system_records_path, ob,

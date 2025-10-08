@@ -35,7 +35,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         window_length = self.config.window_length()
         window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
+
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         ensmean_only = self.config.ensmean_only()
@@ -169,12 +169,15 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         localization_path = os.path.join(swell_path,
                                          f'configuration/jedi/interfaces/geos_atmosphere'
                                          f'/observations/localization')
-        for index, observation in enumerate(observations):
-            # Get pointer to observer (ref to list)
-            observer = jedi_config_dict['observations']['observers'][index]
+
+        in_yaml = YAML(typ="safe")
+        for observer in jedi_config_dict['observations']['observers']:
+
+            # Get observation name
+            observation = observer['observation_name']
             config_file = os.path.join(localization_path, f'{observation}.yaml')
             with open(config_file, 'r') as f:
-                loc_list = yaml.safe_load(f)
+                loc_list = in_yaml.load(f)
                 horizLoc = loc_list['obs localizations']
             localization = [horizLoc]
             observer.update({'obs localizations': localization})
@@ -193,7 +196,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------

@@ -16,7 +16,7 @@ class LocalEnsembleDA(OopsConfig):
     def render_oops(self):
 
         oops = {
-            'geometry': self.template_dict('geometry'),
+            'geometry': self.interface_model('geometry'),
             'time window': {
                 'begin': self.template_dict['window_begin_iso'],
                 'end': self.template_dict['window_end_iso'],
