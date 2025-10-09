@@ -50,10 +50,10 @@ template_str = '''
             {% endfor %}
         """
 
-        {% for cycle_time in cycle_times %}
-        {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
-        {% if cycle_time[model_component] %}
+        {% if models[model_component]['cycle_times'] %}
+        {% for cycle_time in models[model_component]['cycle_times'] %}
+        {{cycle_time}} = """
             # Task triggers for: {{model_component}}
             # ------------------
             # Get background
@@ -92,9 +92,8 @@ template_str = '''
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
-
-        {% endif %}
         {% endfor %}
+        {% endif %}
         """
         {% endfor %}
 
@@ -108,7 +107,6 @@ class Workflow_3dvar(CylcWorkflow):
 
     def define_initial_workflow(self):
         workflow_str = self.default_header()
-
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from typing import Union, Optional, Tuple
-from collections.abc import abstractmethod
+from abc import abstractmethod
 import os
 import yaml
 
@@ -50,6 +50,7 @@ class CylcWorkflow():
         self.logger = get_logger(self.__class__.__name__)
 
         self.initial_workflow_str = self.define_initial_workflow()
+        self.tasks = self.parse_graph_for_tasks()
 
     # --------------------------------------------------------------------------------------------------
 
@@ -186,7 +187,6 @@ class CylcWorkflow():
 
     def define_runtime(self) -> str:
         # Handle adding runtime sections for all tasks
-
         runtime_section = self.create_new_section('runtime', '\n# Task defaults\n# -------------\n')
 
         # Grab any overrides for certain tasks
@@ -227,12 +227,12 @@ class CylcWorkflow():
         # Get the whole string to go into the flow.cylc file
 
         workflow_str = self.initial_workflow_str
-        workflow_str += self.define_runtime()
-
         workflow_str = template_string_jinja2(logger=self.logger,
                                               templated_string=workflow_str,
                                               dictionary_of_templates=self.experiment_dict,
                                               allow_unresolved=False)
+
+        workflow_str += '\n\n' + self.define_runtime()
 
         return workflow_str
 
