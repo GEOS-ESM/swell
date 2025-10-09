@@ -18,7 +18,7 @@ def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
     ensemble_mean_increment_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.mean-inc',
+        'filename': f'{cycle_dir}/geos.mean-inc.',
         'field io names': {
             'eastward_wind': 'ua',
             'northward_wind': 'va',

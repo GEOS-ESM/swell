@@ -23,6 +23,8 @@ def background_ensemble(template_dict: Mapping) -> Mapping:
                 'datetime': template_dict['local_background_time_iso'],
                 'filetype': 'cube sphere history',
                 'provider': 'geos',
+                'compute edge pressure from surface pressure': True,
+                'max allowable geometry difference': 1e-3,
                 'datapath': '.',
                 'filenames': [
                     f'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
