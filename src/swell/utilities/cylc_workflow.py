@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from typing import Union, Optional, Tuple
+from collections.abc import abstractmethod
 import os
 import yaml
 
@@ -15,9 +16,22 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.tasks.task_runtimes import TaskRuntimes
 from swell.utilities.dictionary import update_dict
 from swell.utilities.logger import get_logger
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
+
+header_str = '''
+#jinja2
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 class CylcWorkflow():
 
@@ -35,7 +49,12 @@ class CylcWorkflow():
 
         self.logger = get_logger(self.__class__.__name__)
 
-        self.setup_workflow()
+        self.initial_workflow_str = self.define_initial_workflow()
+
+    # --------------------------------------------------------------------------------------------------
+
+    def default_header(self) -> str:
+        return header_str
 
     # --------------------------------------------------------------------------------------------------
 
@@ -77,122 +96,9 @@ class CylcWorkflow():
 
     # --------------------------------------------------------------------------------------------------
 
-    def setup_workflow(self) -> None:
-        # Initial setup for the workflow, includes everything but the runtime section
-
-        self.header = self.define_header()
-        self.description = self.define_description()
-        self.scheduler = self.define_scheduler()
-        self.scheduling = self.define_scheduling()
-
-        self.tasks = self.parse_graph_for_tasks()
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_header(self) -> str:
-        # Define a 'header', usually this includes any copyright information
-
-        header = '#!jinja2\n'
-        header += self.comment_block(string="""
-        # (C) Copyright 2021- United States Government as represented by the Administrator of the
-        # National Aeronautics and Space Administration. All Rights Reserved.
-        #
-        # This software is licensed under the terms of the Apache Licence Version 2.0
-        # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.""")
-
-        return header
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_description(self) -> str:
-        description = self.comment_block(
-                """# Cylc workflow auto-generated for suite {suite_to_run} by Swell."""
-                .format(**self.experiment_dict))
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def comment_block(self, string, level: int = 0, section_break: bool = True):
-        # Format a comment block with proper indentation
-
-        out_string = ''
-
-        string = indent_lines(string, level, reset=True)
-
-        start = False
-        for line in string.split('\n'):
-            if len(line.strip()) > 0:
-                start = True
-
-            if start:
-                out_string += f'{line}\n'
-
-        if section_break:
-            out_string += f'\n# {"-" * 98}\n\n'
-
-        return out_string
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduler(self) -> str:
-        # Define a scheduler section that includes email infrastructure
-
-        scheduler_str = 'UTC mode = True\nallow implicit tasks = False\n'
-
-        settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
-        if os.path.exists(settings_file):
-            with open(settings_file, 'r') as f:
-                settings_dict = yaml.safe_load(f)
-            if 'email_address' in settings_dict.keys():
-                email_address = settings_dict['email_address']
-
-                message_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
-                message_str += '[[events]]\n'
-                message_str += indent_lines('mail events = startup, shutdown\n', 1)
-                message_str += '[[mail]]\n'
-                message_str += indent_lines(f'to = {email_address}\n', 1)
-                message_str += '{% endif %}\n'
-
-                scheduler_str += message_str
-
-        scheduler = self.create_new_section('scheduler', scheduler_str)
-
-        return scheduler.get_section_str()
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduling(self) -> str:
-        # Get the string for the entire scheduling section
-
-        scheduling = self.define_scheduling_section()
-        graph = self.define_graph_section()
-
-        scheduling.add_subsection(graph)
-
-        return scheduling.get_section_str()
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduling_section(self) -> CylcSection:
-        # Define a CylcSection object that comprises the initial contents of the scheduling section
-        # This will be appended to the graph section to create the overall section
-        scheduling_dict = {'initial cycle point': self.experiment_dict['start_cycle_point'],
-                           'final cycle point': self.experiment_dict['final_cycle_point']}
-
-        if 'runahead_limit' in self.experiment_dict:
-            scheduling_dict = update_dict(
-                    scheduling_dict,
-                    {'runahead limit': self.experiment_dict['runahead_limit']})
-
-        scheduling_section = self.create_new_section('scheduling', scheduling_dict)
-
-        return scheduling_section
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self) -> CylcSection:
-        # Define a CylcSection object that will be used to build the scheduling section
-        return self.create_new_section('graph')
+    @abstractmethod
+    def define_initial_workflow(self) -> str:
+        return ''
 
     # --------------------------------------------------------------------------------------------------
 
@@ -206,7 +112,7 @@ class CylcWorkflow():
         in_graph = False
         in_cycle = False
 
-        for line in self.scheduling.split('\n'):
+        for line in self.initial_workflow_str.split('\n'):
             comment = False
             sub_strings = line.split(' ')
 
@@ -320,15 +226,13 @@ class CylcWorkflow():
     def get_workflow_str(self) -> str:
         # Get the whole string to go into the flow.cylc file
 
-        workflow_str = ''
+        workflow_str = self.initial_workflow_str
+        workflow_str += self.define_runtime()
 
-        workflow_str += self.header
-        workflow_str += self.description
-        workflow_str += self.scheduler
-        workflow_str += self.scheduling
-
-        runtime = self.define_runtime()
-        workflow_str += runtime
+        workflow_str = template_string_jinja2(logger=self.logger,
+                                              templated_string=workflow_str,
+                                              dictionary_of_templates=self.experiment_dict,
+                                              allow_unresolved=False)
 
         return workflow_str
 
