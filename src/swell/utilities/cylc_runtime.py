@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
 from swell.utilities.dictionary import update_dict
+from swell.utilities.dataclass_utils import mutable_field
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,8 +44,8 @@ class Task:
     is_cycling: bool = False
     is_model: bool = False
 
-    additional_sections: list = []
-    mail_events: list = ['failed', 'submit-failed']
+    additional_sections: list = mutable_field([])
+    mail_events: list = mutable_field(['failed', 'submit-failed'])
 
     # --------------------------------------------------------------------------------------------------
 
@@ -219,7 +220,7 @@ class Task:
         if 'task_email_parameters' in experiment_dict.keys():
             if experiment_dict['task_email_parameters'] == 'auto':
                 # Set message status to fail or event fail
-                events = self.message_events
+                events = self.mail_events
             elif self.scheduling_name in experiment_dict['task_email_parameters'].keys():
                 events = experiment_dict['task_email_parameters'][self.scheduling_name]
             elif self.base_name in experiment_dict['task_email_parameters'].keys():
