@@ -43,6 +43,9 @@ class Task:
     is_cycling: bool = False
     is_model: bool = False
 
+    additional_sections: list = []
+    mail_events: list = ['failed', 'submit-failed']
+
     # --------------------------------------------------------------------------------------------------
 
     def __post_init__(self):
@@ -207,12 +210,16 @@ class Task:
 
             runtime_section.add_subsection(directive_section)
 
+        # Append additional sections to runtime
+        for section in self.additional_sections:
+            runtime_section.add_subsection(section)
+
         # Check slurm messaging parameters
         events = []
         if 'task_email_parameters' in experiment_dict.keys():
             if experiment_dict['task_email_parameters'] == 'auto':
                 # Set message status to fail or event fail
-                events = ['failed', 'submit-failed']
+                events = self.message_events
             elif self.scheduling_name in experiment_dict['task_email_parameters'].keys():
                 events = experiment_dict['task_email_parameters'][self.scheduling_name]
             elif self.base_name in experiment_dict['task_email_parameters'].keys():
