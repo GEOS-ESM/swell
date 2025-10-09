@@ -1,0 +1,267 @@
+datasets:
+
+  - name: experiment_increment_1
+    type: SocaRestart
+    soca_filenames: {{increment_file_path_1}}
+    geometry_file: {{cycle_dir_1}}/INPUT/soca_gridspec.nc
+
+    variables: [Temp, Salt, ave_ssh]
+    coordinate variables: [lon, lat]
+
+  - name: experiment_increment_2
+    type: SocaRestart
+    soca_filenames: {{increment_file_path_2}}
+    geometry_file: {{cycle_dir_2}}/INPUT/soca_gridspec.nc
+
+    variables: [Temp, Salt, ave_ssh]
+    coordinate variables: [lon, lat]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  - batch figure:
+      variables: [ave_ssh]
+    figure:
+      figure size: [60,10]
+      layout: [3,1]
+      title: 'SOCA Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    
+    # ave_ssh plot 1
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSH Increment 1
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::ave_ssh
+          label: ave_ssh increment 1
+          colorbar: true
+          cmap: 'bwr'
+          vmin: &vmin_ave_ssh -0.25
+          vmax: &vmax_ave_ssh 0.25
+      
+      # ave_ssh plot 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSH Increment 2
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_2::SOCAgrid::lat
+          data:
+            variable: experiment_increment_2::SOCAVars::ave_ssh
+          label: ave_ssh increment 2
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ave_ssh
+          vmax: *vmax_ave_ssh
+
+      # ave_ssh diff plot
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSH Increment (1-2) Diff
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::ave_ssh_diff
+          label: ave_ssh increment
+          colorbar: true
+          cmap: 'bwr'
+
+  - batch figure:
+      variables: [Temp]
+    figure:
+      figure size: [60,10]
+      layout: [3,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      # Temp plot 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SST Increment 1
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::Temp
+            slices: '[0,...]'
+          label: SST increment 1
+          colorbar: true
+          cmap: 'bwr'
+          vmin: &vmin_temp -3
+          vmax: &vmax_temp 3
+
+      # Temp plot 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SST Increment 2
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_2::SOCAgrid::lat
+          data:
+            variable: experiment_increment_2::SOCAVars::Temp
+            slices: '[0,...]'
+          label: SST increment 2
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_temp
+          vmax: *vmax_temp
+      
+      # Temp diff plot
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SST Increment (1-2) Diff
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::Temp_diff
+            slices: '[0,...]'
+          label: SST increment (1-2) Diff
+          colorbar: true
+          cmap: 'bwr'
+
+  - batch figure:
+      variables: [Salt]
+    figure:
+      figure size: [60,10]
+      layout: [3,1]
+      title: 'Soca Increment'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
+    plots:
+      # Salt plot 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSS Increment 1
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::Salt
+            slices: '[0,...]'
+          label: SSS increment 1
+          colorbar: true
+          cmap: 'bwr'
+          vmin: &vmin_salt -1
+          vmax: &vmax_salt 1
+
+      # Salt plot 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSS Increment 2
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_2::SOCAgrid::lat
+          data:
+            variable: experiment_increment_2::SOCAVars::Salt
+            slices: '[0,...]'
+          label: SSS increment 2
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_salt
+          vmax: *vmax_salt
+
+      # Salt Diff plot
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: SSS Increment (1-2) Diff
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::SOCAgrid::lon
+          latitude:
+            variable: experiment_increment_1::SOCAgrid::lat
+          data:
+            variable: experiment_increment_1::SOCAVars::Salt_diff
+            slices: '[0,...]'
+          label: SSS increment (1-2) Diff
+          colorbar: true
+          cmap: 'bwr'
+
+# ssh diff
+transforms:
+- equals: experiment_increment_1::SOCAVars::ave_ssh-experiment_increment_2::SOCAVars::ave_ssh
+  for:
+    variable: ave_ssh
+  new name: experiment_increment_1::SOCAVars::ave_ssh_diff
+  transform: arithmetic
+
+# Temp diff
+- equals: experiment_increment_1::SOCAVars::Temp-experiment_increment_2::SOCAVars::Temp
+  for:
+    variable: Temp
+  new name: experiment_increment_1::SOCAVars::Temp_diff
+  transform: arithmetic
+
+# Salt diff
+- equals: experiment_increment_1::SOCAVars::Salt-experiment_increment_2::SOCAVars::Salt
+  for:
+    variable: Salt
+  new name: experiment_increment_1::SOCAVars::Salt_diff
+  transform: arithmetic

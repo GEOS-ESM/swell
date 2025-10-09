@@ -20,6 +20,8 @@ datetime_formats = {
     'gsi_nc_diag_format': '%Y%m%d_%Hz',     # yyyymmdd_hhz Format for GSI netcdf diagnostic files
     'iso_format': '%Y-%m-%dT%H:%M:%SZ',     # yyyy-mm-ddThh:MM:ssZ ISO format
     'short_date': '%Y%m%d%H',               # yyyymmddhh Short format
+    'ymd_format': '%Y%m%d',                 # yyyymmdd for acquire_obsys bymd
+    'hms_format': '%H%M%S',                 # HHmmss for acquire_obsys bhms
 }
 
 # --------------------------------------------------------------------------------------------------
