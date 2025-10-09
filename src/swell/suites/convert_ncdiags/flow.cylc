@@ -1,0 +1,102 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing geos_atmosphere ObsFilters tests
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+
+            # Convert bias correction to ioda
+            GetGsiBc
+            GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+
+            # Convert ncdiags to ioda
+            GetGsiNcdiag
+            GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+            # Clean up
+            GsiNcdiagToIoda => CleanCycle
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[ GetGsiBc ]]
+        script = "swell task GetGsiBc $config -d $datetime -m geos_atmosphere"
+
+    [[ GsiBcToIoda ]]
+        script = "swell task GsiBcToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[ GetGsiNcdiag ]]
+        script = "swell task GetGsiNcdiag $config -d $datetime -m geos_atmosphere"
+
+    [[ GsiNcdiagToIoda ]]
+        script = "swell task GsiNcdiagToIoda $config -d $datetime -m geos_atmosphere"
+
+    [[CleanCycle]]
+        script = "swell task CleanCycle $config -d $datetime -m geos_atmosphere"
+
+# --------------------------------------------------------------------------------------------------
