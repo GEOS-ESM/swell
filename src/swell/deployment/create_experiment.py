@@ -95,6 +95,40 @@ def prepare_config(
     # --------------------------------------
     suite_dict = prepare_config_and_suite.get_experiment_dict()
 
+    # Resolve cycle times for models
+    # ------------------------------
+    if 'model_components' in suite_dict:
+        model_components = suite_dict['model_components']
+
+        # Since cycle times are used, the render_dictionary will need to include cycle_times
+        # If there are different model components then process each to gather cycle times
+        if len(model_components) > 0 and all('cycle_times' in suite_dict['models'][model]
+                                             for model in model_components):
+            cycle_times = []
+            for model_component in model_components:
+                cycle_times_mc = suite_dict['models'][model_component]['cycle_times']
+                cycle_times = list(set(cycle_times + cycle_times_mc))
+            cycle_times.sort()
+
+            cycle_times_dict_list = []
+            for cycle_time in cycle_times:
+                cycle_time_dict = {}
+                cycle_time_dict['cycle_time'] = cycle_time
+                for model_component in model_components:
+                    cycle_time_dict[model_component] = False
+                    if cycle_time in suite_dict['models'][model_component]['cycle_times']:
+                        cycle_time_dict[model_component] = True
+                cycle_times_dict_list.append(cycle_time_dict)
+
+            suite_dict['cycle_times'] = cycle_times_dict_list
+
+        # Otherwise check that experiment_dict has cycle_times
+        elif 'cycle_times' in suite_dict:
+
+            cycle_times = list(set(suite_dict['cycle_times']))
+            cycle_times.sort()
+            suite_dict['cycle_times'] = cycle_times
+
     # Get the slurm defaults from the user and platform
     # -------------------------------------------------
     slurm_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
@@ -117,51 +151,13 @@ def prepare_config(
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 
-    # Finalize the workflow by adding the runtime section, and get the contents
-    # -------------------------------------------------------------------------
-    workflow_string = workflow.get_workflow_str()
-
     # Separate dictionary for rendering
     # ---------------------------------
     render_template = experiment_dict.copy()
 
-    # Resolve cycle times for models
-    # ------------------------------
-    if 'model_components' in experiment_dict:
-        model_components = experiment_dict['model_components']
-
-        # Since cycle times are used, the render_dictionary will need to include cycle_times
-        # If there are different model components then process each to gather cycle times
-        if len(model_components) > 0 and all('cycle_times' in experiment_dict['models'][model]
-                                             for model in model_components):
-            cycle_times = []
-            for model_component in model_components:
-                cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
-                cycle_times = list(set(cycle_times + cycle_times_mc))
-            cycle_times.sort()
-
-            cycle_times_dict_list = []
-            for cycle_time in cycle_times:
-                cycle_time_dict = {}
-                cycle_time_dict['cycle_time'] = cycle_time
-                for model_component in model_components:
-                    cycle_time_dict[model_component] = False
-                    if cycle_time in experiment_dict['models'][model_component]['cycle_times']:
-                        cycle_time_dict[model_component] = True
-                cycle_times_dict_list.append(cycle_time_dict)
-
-            render_template['cycle_times'] = cycle_times_dict_list
-
-        # Otherwise check that experiment_dict has cycle_times
-        elif 'cycle_times' in experiment_dict:
-
-            cycle_times = list(set(experiment_dict['cycle_times']))
-            cycle_times.sort()
-            render_template['cycle_times'] = cycle_times
-
-    # Update the workflow with the answered task questions
-    # ----------------------------------------------------
-    workflow.experiment_dict = render_template
+    # Finalize the workflow by adding the runtime section, and get the contents
+    # -------------------------------------------------------------------------
+    workflow_string = workflow.get_workflow_str()
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------

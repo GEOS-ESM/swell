@@ -134,6 +134,8 @@ class CylcWorkflow():
             if '[graph]' in line:
                 in_graph = True
 
+        tasks = list(set(tasks) - set(['fail']))
+
         return tasks
 
     # --------------------------------------------------------------------------------------------------
@@ -220,7 +222,6 @@ class CylcWorkflow():
 
     def get_workflow_str(self) -> str:
         # Get the whole string to go into the flow.cylc file
-
         workflow_str = self.initial_workflow_str
         workflow_str = template_string_jinja2(logger=self.logger,
                                               templated_string=workflow_str,
