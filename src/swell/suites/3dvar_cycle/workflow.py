@@ -69,10 +69,10 @@ template_str = '''
             {% endfor %}
         """
 
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
-        {% if models[model_component]['cycle_times'] %}
-        {% for cycle_time in models[model_component]['cycle_times'] %}
-        {{cycle_time}} = """
+
             # Model things
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
@@ -127,7 +127,6 @@ template_str = '''
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}}  & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
-        {% endif %}
         """
         {% endfor %}
 # --------------------------------------------------------------------------------------------------
