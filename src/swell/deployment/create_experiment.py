@@ -121,6 +121,12 @@ def prepare_config(
     # -------------------------------------------------------------------------
     workflow_string = workflow.get_workflow_str()
 
+    # Separate dictionary for rendering
+    # ---------------------------------
+    render_template = experiment_dict.copy()
+
+    # Resolve cycle times for models
+    # ------------------------------
     if 'model_components' in experiment_dict:
         model_components = experiment_dict['model_components']
 
@@ -144,14 +150,14 @@ def prepare_config(
                         cycle_time_dict[model_component] = True
                 cycle_times_dict_list.append(cycle_time_dict)
 
-            experiment_dict['cycle_times'] = cycle_times_dict_list
+            render_template['cycle_times'] = cycle_times_dict_list
 
         # Otherwise check that experiment_dict has cycle_times
         elif 'cycle_times' in experiment_dict:
 
             cycle_times = list(set(experiment_dict['cycle_times']))
             cycle_times.sort()
-            experiment_dict['cycle_times'] = cycle_times
+            render_template['cycle_times'] = cycle_times
 
         else:
 
@@ -162,7 +168,7 @@ def prepare_config(
             
     # Update the workflow with the answered task questions
     # ----------------------------------------------------
-    workflow.experiment_dict = experiment_dict
+    workflow.experiment_dict = render_template
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
