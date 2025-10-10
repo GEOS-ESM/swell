@@ -159,13 +159,6 @@ def prepare_config(
             cycle_times.sort()
             render_template['cycle_times'] = cycle_times
 
-        else:
-
-            # Otherwise use logger to abort
-            logger.abort('The suite file required cycle_times but there are no model components ' +
-                         'to gather them from or they are not provided in the experiment ' +
-                         'dictionary.')
-            
     # Update the workflow with the answered task questions
     # ----------------------------------------------------
     workflow.experiment_dict = render_template

@@ -144,6 +144,11 @@ class TaskRuntimes():
         is_model: bool = True
 
     @dataclass
+    class GetNcdiags(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+
+    @dataclass
     class GetGeosAdasBackground(Task):
         is_cycling: bool = True
         is_model: bool = True
