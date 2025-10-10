@@ -7,96 +7,95 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
-r1_template = """
-# Triggers for non cycle time dependent tasks
-# -------------------------------------------
-# Clone JEDI source code
-CloneJedi
+template_str = '''
+# --------------------------------------------------------------------------------------------------
 
-# Build JEDI source code by linking
-CloneJedi => BuildJediByLinking?
+# Cylc suite for executing geos_atmosphere ObsFilters tests
 
-# If not able to link to build create the build
-BuildJediByLinking:fail? => BuildJedi
-"""
+# --------------------------------------------------------------------------------------------------
 
-r1_model = """
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
 
-# Clone geos ana for generating observing system records
-CloneGeosMksi-{model_component}
-"""
+# --------------------------------------------------------------------------------------------------
 
-cycle_template_1 = """
-# Generate satellite channel records
-CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_component}
+[scheduling]
 
-# Convert bias correction to ioda
-GetGsiBc-{model_component}
-GetGsiBc-{model_component} => GsiBcToIoda-{model_component}
-BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda-{model_component}
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
 
-# Convert ncdiags to ioda
-GetGsiNcdiag-{model_component}
-GetGsiNcdiag-{model_component} => GsiNcdiagToIoda-{model_component}
-BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda-{model_component}
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
 
-GetGeovals-{model_component}
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
 
-# Run Jedi hofx executable
-GenerateObservingSystemRecords-{model_component} => RunJediUfoTestsExecutable-{model_component}
-GsiNcdiagToIoda-{model_component} => RunJediUfoTestsExecutable-{model_component}
-GsiBcToIoda-{model_component} => RunJediUfoTestsExecutable-{model_component}
-GetGeovals-{model_component} => RunJediUfoTestsExecutable-{model_component}
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
 
-# EvaObservations
-RunJediUfoTestsExecutable-{model_component} => EvaObservations-{model_component}
+            # Clone geos ana for generating observing system records
+            CloneGeosMksi
+        """
 
-# Clean up large files
-EvaObservations-{model_component} => CleanCycle-{model_component}
-"""
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+
+            # Generate satellite channel records
+            CloneGeosMksi[^] => GenerateObservingSystemRecords
+
+            # Convert bias correction to ioda
+            GetGsiBc
+            GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+
+            # Convert ncdiags to ioda
+            GetGsiNcdiag
+            GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+            GetGeovals
+
+            # Run Jedi hofx executable
+            GenerateObservingSystemRecords => RunJediUfoTestsExecutable
+            GsiNcdiagToIoda => RunJediUfoTestsExecutable
+            GsiBcToIoda => RunJediUfoTestsExecutable
+            GetGeovals => RunJediUfoTestsExecutable
+
+            # EvaObservations
+            RunJediUfoTestsExecutable => EvaObservations
+
+            # Clean up large files
+            EvaObservations => CleanCycle
+
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_ufo_testing(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for executing geos_atmosphere ObsFilters tests
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = r1_template
-
-        for model_component in self.experiment_dict['models']:
-            r1 += r1_model.format(model_component=model_component)
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Format the string for each cycle
-        for model_component in self.experiment_dict['models']:
-            if 'cycle_times' in self.experiment_dict['models'][model_component].keys():
-                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                    cycle_str = cycle_template_1.format(model_component=model_component)
-
-                    # Add the cycle string to the graph string
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

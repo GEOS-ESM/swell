@@ -7,128 +7,119 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
-r1_template = """
-# Triggers for non cycle time dependent tasks
-# -------------------------------------------
-# Clone JEDI source code
-CloneJedi
+template_str = '''
+# --------------------------------------------------------------------------------------------------
 
-# Build JEDI source code by linking
-CloneJedi => BuildJediByLinking?
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
 
-# If not able to link to build create the build
-BuildJediByLinking:fail? => BuildJedi
-"""
+# --------------------------------------------------------------------------------------------------
 
-r1_model = """
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
 
-# Stage JEDI static files
-CloneGeosMksi-{model_component}
-"""
+# --------------------------------------------------------------------------------------------------
 
-cycle_template_1 = """
-# Task triggers for: {model_component}
-# ------------------
-# Generate satellite channel records
-CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_component}
+[scheduling]
 
-# Get background, provide a way to get background directly from GEOS experiment
-GetBackgroundGeosExperiment-{model_component} :fail? => GetBackground-{model_component}
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
 
-# Get observations
-"""
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
 
-cycle_template_2 = """
-# Cycling VarBC is active, biases from the previous cycle will be used
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
 
-RunJediVariationalExecutable-{model_component}[-PT6H] => GetObservations-{model_component}
-"""
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
 
-cycle_template_3 = """
-# Cycling VarBC is inactive, static bias files will be used
-GetObservations-{model_component}
-"""
+            {% for model_component in model_components %}
+            # Clone geos ana for generating observing system records
+            CloneGeosMksi-{{model_component}}
+            {% endfor %}
+        """
 
-cycle_template_4 = """
-# Perform staging that is cycle dependent
-StageJediCycle-{model_component}
+        {% for model_component in model_components %}
+        {% if models[model_component]['cycle_times'] %}
+        {% for cycle_time in models[model_component]['cycle_times'] %}
+        {{cycle_time}} = """
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-# Run Jedi variational executable
-BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{model_component}
-CloneJedi[^] => StageJediCycle-{model_component}
-StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} =>
-RunJediVariationalExecutable-{model_component}
+            # Get background, provide a way to get background directly from GEOS experiment
+            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
-GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
-GenerateObservingSystemRecords-{model_component} => RunJediVariationalExecutable-{model_component}
+            # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
 
-# EvaObservations
-RunJediVariationalExecutable-{model_component} => EvaObservations-{model_component}
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% else %}
 
-# EvaJediLog
-RunJediVariationalExecutable-{model_component} => EvaJediLog-{model_component}
+            # Cycling VarBC is inactive, static bias files will be used
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            {% endif %}
 
-# EvaIncrement
-RunJediVariationalExecutable-{model_component} => EvaIncrement-{model_component}
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
 
-# Save observations
-RunJediVariationalExecutable-{model_component} => SaveObsDiags-{model_component}
+            # Run Jedi variational executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-# Clean up large files
-EvaObservations-{model_component} & SaveObsDiags-{model_component} =>
-CleanCycle-{model_component}
-"""
+            # EvaObservations
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # EvaIncrement
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
+            # Save observations
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
+        {% endfor %}
+        {% endif %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_3dvar_atmos(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for executing JEDI-based non-cycling variational data assimilation
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = r1_template
-
-        for model_component in self.experiment_dict['model_components']:
-            r1 += r1_model.format(model_component=model_component)
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Format the string for each cycle
-        for model_component in self.experiment_dict['model_components']:
-            if 'cycle_times' in self.experiment_dict['models'][model_component]:
-                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                    cycle_str = cycle_template_1.format(model_component=model_component)
-
-                    if self.experiment_dict['models'][model_component]['cycling_varbc']:
-                        cycle_str += cycle_template_2.format(model_component=model_component)
-                    else:
-                        cycle_str += cycle_template_3.format(model_component=model_component)
-
-                    cycle_str += cycle_template_4.format(model_component=model_component)
-
-                    # Add the cycle string to the graph string
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

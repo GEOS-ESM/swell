@@ -7,103 +7,106 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
-r1_template = """
-# Triggers for non cycle time dependent tasks
-# -------------------------------------------
-# Clone JEDI source code
-CloneJedi
+template_str = '''
+# --------------------------------------------------------------------------------------------------
 
-# Build JEDI source code by linking
-CloneJedi => BuildJediByLinking?
+# Cylc suite for executing JEDI-based h(x)
 
-# If not able to link to build create the build
-BuildJediByLinking:fail? => BuildJedi
-"""
+# --------------------------------------------------------------------------------------------------
 
-r1_model = """
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
 
-# Clone geos ana for generating observing system records
-CloneGeosMksi-{model_component}
-"""
+# --------------------------------------------------------------------------------------------------
 
-cycle_template_1 = """
-# Task triggers for: {model_component}
-# ------------------
-# Generate satellite channel records
-CloneGeosMksi-{model_component}[^] => GenerateObservingSystemRecords-{model_component}
+[scheduling]
 
-# Get background, provide a way to get background directly from GEOS experiment
-GetBackgroundGeosExperiment-{model_component} :fail? => GetBackground-{model_component}
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
 
-# Get observations
-GetObservations-{model_component}
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
 
-# Perform staging that is cycle dependent
-StageJediCycle-{model_component}
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
 
-# Run Jedi hofx executable
-BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{model_component}
-CloneJedi[^] => StageJediCycle-{model_component}
-StageJediCycle-{model_component} => RunJediHofxExecutable-{model_component}
-GetBackgroundGeosExperiment-{model_component}? | GetBackground-{model_component} =>
-RunJediHofxExecutable-{model_component}
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
 
-GetObservations-{model_component} => RunJediHofxExecutable-{model_component}
-GenerateObservingSystemRecords-{model_component} => RunJediHofxExecutable-{model_component}
+            {% for model_component in model_components %}
+            # Clone geos ana for generating observing system records
+            CloneGeosMksi-{{model_component}}
+            {% endfor %}
+        """
 
-# EvaObservations
-RunJediHofxExecutable-{model_component} => EvaObservations-{model_component}
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
 
-# Save observations
-RunJediHofxExecutable-{model_component} => SaveObsDiags-{model_component}
+            # Task triggers for: {{model_component}}
+            # ------------------
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-# Clean up large files
-EvaObservations-{model_component} & SaveObsDiags-{model_component} =>
-CleanCycle-{model_component}
-"""
+            # Get background, provide a way to get background directly from GEOS experiment
+            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
+
+            # Get observations
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+
+            # EvaObservations
+            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # Save observations
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_hofx(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for executing JEDI-based h(x)
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = r1_template
-
-        for model_component in self.experiment_dict['model_components']:
-            r1 += r1_model.format(model_component=model_component)
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Format the string for each cycle
-        for model_component in self.experiment_dict['model_components']:
-            if 'cycle_times' in self.experiment_dict['models'][model_component]:
-                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                    cycle_str = cycle_template_1.format(model_component=model_component)
-
-                    # Add the cycle string to the graph string
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

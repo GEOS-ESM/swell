@@ -7,158 +7,144 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
-r1_template = """
-# Triggers for non cycle time dependent tasks
-# -------------------------------------------
-# Clone Geos source code
-CloneGeos
+template_str = '''
+# --------------------------------------------------------------------------------------------------
 
-# Clone JEDI source code
-CloneJedi
+# Cylc suite for executing Geos forecast
 
-# Build Geos source code by linking
-CloneGeos => BuildGeosByLinking?
+# --------------------------------------------------------------------------------------------------
 
-# Build JEDI source code by linking
-CloneJedi => BuildJediByLinking?
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
 
-# If not able to link to build create the build
-BuildGeosByLinking:fail? => BuildGeos
+# --------------------------------------------------------------------------------------------------
 
-# If not able to link to build create the build
-BuildJediByLinking:fail? => BuildJedi
+[scheduling]
 
-# Need first set of restarts to run model
-GetGeosRestart => PrepGeosRunDir
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
 
-# Model cannot run without code
-BuildGeosByLinking? | BuildGeos => RunGeosExecutable
-"""
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
 
-r1_model = """
+            # Clone JEDI source code
+            CloneJedi
 
-# JEDI cannot run without code
-BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{model_component}
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
 
-# Stage JEDI static files
-CloneJedi => StageJedi-{model_component} => RunJediVariationalExecutable-{model_component}
-"""
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
 
-cycle_template_1 = """
-# Model things
-# Run the forecast through two windows (need to output restarts at the end of the
-# first window and backgrounds for the second window)
-# MoveDaRestart-{model_component}[-P1D] => PrepGeosRunDir
-MoveDaRestart-{model_component}[-{models[model_component]["window_length"]}] => PrepGeosRunDir
-PrepGeosRunDir => RunGeosExecutable
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
 
-# Run the analysis
-# RunGeosExecutable => StageJediCycle-{model_component}
-RunGeosExecutable => LinkGeosOutput-{model_component}
-LinkGeosOutput-{model_component} => GenerateBClimatology-{model_component}
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
 
-# Data assimilation things
-GetObservations-{model_component}
-GenerateBClimatologyByLinking-{model_component} :fail? => GenerateBClimatology-{model_component}
+            # Need first set of restarts to run model
+            GetGeosRestart => PrepGeosRunDir
 
-LinkGeosOutput-{model_component} => RunJediVariationalExecutable-{model_component}
-StageJediCycle-{model_component} => RunJediVariationalExecutable-{model_component}
-GenerateBClimatologyByLinking-{model_component}? | GenerateBClimatology-{model_component} =>
-RunJediVariationalExecutable-{model_component}
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
 
-GetObservations-{model_component} => RunJediVariationalExecutable-{model_component}
+            {% for model_component in model_components %}
 
-# Run analysis diagnostics
-RunJediVariationalExecutable-{model_component} => EvaObservations-{model_component}
-RunJediVariationalExecutable-{model_component} => EvaJediLog-{model_component}
-RunJediVariationalExecutable-{model_component} => EvaIncrement-{model_component}
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{{model_component}}
 
-# Prepare analysis for next forecast
-EvaIncrement-{model_component} => PrepareAnalysis-{model_component}
-"""
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-cycle_template_2 = """
-PrepareAnalysis-{model_component} => RunJediConvertStateSoca2ciceExecutable-{model_component}
-RunJediConvertStateSoca2ciceExecutable-{model_component} => SaveRestart-{model_component}
-RunJediConvertStateSoca2ciceExecutable-{model_component} => CleanCycle-{model_component}
-"""
+            {% endfor %}
+        """
 
-cycle_template_3 = """
-PrepareAnalysis-{model_component} => SaveRestart-{model_component}
-"""
+        {% for model_component in model_components %}
+        {% if models[model_component]['cycle_times'] %}
+        {% for cycle_time in models[model_component]['cycle_times'] %}
+        {{cycle_time}} = """
+            # Model things
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepGeosRunDir
+            PrepGeosRunDir => RunGeosExecutable
 
-cycle_template_4 = """
-# Move restart to next cycle
-SaveRestart-{model_component} => MoveDaRestart-{model_component}
+            # Run the analysis
+            # RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable => LinkGeosOutput-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
-# Save analysis output
-# RunJediVariationalExecutable-{model_component} => SaveAnalysis-{model_component}
-RunJediVariationalExecutable-{model_component} => SaveObsDiags-{model_component}
+            # Data assimilation things
+            GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
 
-# Save model output
-# MoveBackground-{model_component} => StoreBackground-{model_component}
+            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-# Remove Run Directory
-# MoveDaRestart-{model_component} & MoveBackground-{model_component} => RemoveForecastDir
-MoveDaRestart-{model_component} => RemoveForecastDir
+            # Run analysis diagnostics
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
-# Clean up large files
-# EvaObservations-{model_component} & EvaJediLog-{model_component} &
-# SaveObsDiags-{model_component} & RemoveForecastDir =>
-EvaObservations-{model_component} & EvaJediLog-{model_component} &
-EvaIncrement-{model_component}  & SaveObsDiags-{model_component} =>
-CleanCycle-{model_component}
-"""
+            # Prepare analysis for next forecast
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+            {% if 'cice6' in models[model_component]["marine_models"] %}
+            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
+            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            {% endif %}
+
+            # Move restart to next cycle
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+
+            # Save analysis output
+            # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Save model output
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+
+            # Remove Run Directory
+            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
+            MoveDaRestart-{{model_component}} => RemoveForecastDir
+
+            # Clean up large files
+            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}}  & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+        {% endfor %}
+        {% endif %}
+        """
+        {% endfor %}
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_3dvar_cycle(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for executing JEDI-based non-cycling variational data assimilation
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = r1_template
-
-        for model_component in self.experiment_dict['model_components']:
-            r1 += r1_model.format(model_component=model_component)
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Format the string for each cycle
-        for model_component in self.experiment_dict['model_components']:
-            if 'cycle_times' in self.experiment_dict['models'][model_component]:
-                for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                    cycle_str = cycle_template_1.format(model_component=model_component)
-
-                    if 'cice6' in self.experiment_dict['models'][model_component]['marine_models']:
-                        cycle_str += cycle_template_2.format(model_component=model_component)
-                    else:
-                        cycle_str += cycle_template_3.format(model_component=model_component)
-
-                    cycle_str += cycle_template_4.format(model_component=model_component)
-
-                    # Add the cycle string to the graph string
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

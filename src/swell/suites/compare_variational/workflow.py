@@ -7,96 +7,80 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import yaml
-import os
-
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.utilities.cylc_runtime import Task
 from swell.utilities.check_da_params import check_da_params
+
+# --------------------------------------------------------------------------------------------------
+
+template_str = '''
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for running comparison tests on completed experiments
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            EvaComparisonIncrement-{{model_component}}
+            EvaComparisonJediLog-{{model_component}}
+            {% for path in comparison_experiment_paths %}
+            JediOopsLogParser-{{model_component}}-{{ loop.index0 }} => JediLogComparison-{{model_component}}
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_compare_variational(CylcWorkflow):
 
-    # --------------------------------------------------------------------------------------------------
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
 
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for running comparison tests on completed experiments
-        """)
-
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduling(self):
-
-        config_list = self.experiment_dict['comparison_experiment_paths']
-
+        # Overrides for comparison suites
         start_cycle_point = self.experiment_dict['start_cycle_point']
         final_cycle_point = self.experiment_dict['final_cycle_point']
-
-        graph_str = ''
-
-        if 'models' in self.experiment_dict:
-            for model in self.experiment_dict['models'].keys():
+        if self.experiment_dict['start_cycle_point'] is None:
+            config_list = self.experiment_dict['comparison_experiment_paths']
+            for model in self.experiment_dict['model_components']:
                 cycle_times = self.experiment_dict['models'][model]['cycle_times']
-
                 start_cycle_point, final_cycle_point, cycle_times = check_da_params(
                         config_list,
                         model,
                         start_cycle_point,
                         final_cycle_point,
                         cycle_times)
-
-                # Set the values in the config
+        
                 self.experiment_dict['start_cycle_point'] = start_cycle_point
                 self.experiment_dict['final_cycle_point'] = final_cycle_point
+                self.experiment_dict['models'][model]['cycle_times'] = cycle_times
 
-                scheduling_section = self.create_new_section(
-                        'scheduling', {'initial cycle point': start_cycle_point,
-                                       'final cycle point': final_cycle_point})
-
-                for cycle_time in cycle_times:
-                    cycle_str = ''
-
-                    cycle_str += f"EvaComparisonIncrement-{model}\n"
-                    cycle_str += f"EvaComparisonJediLog-{model}\n"
-
-                    for i in range(len(config_list)):
-                        cycle_str += f"JediOopsLogParser-{model}-{i} => JediLogComparison-{model}\n"
-
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        else:
-            scheduling_section = self.create_new_section('scheduling', {})
-
-        graph_section = self.create_new_section('graph', graph_str)
-
-        scheduling_section.add_subsection(graph_section)
-
-        return scheduling_section.get_section_str()
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_runtime_task_overrides(self):
-        overrides = {}
-
-        paths = self.experiment_dict['comparison_experiment_paths']
-
-        for i, path in enumerate(paths):
-            config_file = os.path.join(os.path.dirname(path), 'experiment.yaml')
-            with open(config_file, 'r') as f:
-                exp_dict = yaml.safe_load(f)
-
-            for model in exp_dict['model_components']:
-                overrides[f'JediOopsLogParser-{model}-{i}'] = Task(
-                        base_name='JediOopsLogParser',
-                        scheduling_name=(f'JediOopsLogParser-{model}-{i}'),
-                        script=(f'swell task JediOopsLogParser {config_file} -d $datetime'
-                                f' -m {model}'))
-
-        return overrides
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

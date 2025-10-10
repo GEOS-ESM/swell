@@ -7,71 +7,77 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 
 # --------------------------------------------------------------------------------------------------
 
-r1_template = """
-# Triggers for non cycle time dependent tasks
-# -------------------------------------------
-# Clone JEDI source code
-CloneJedi
+template_str = '''
+# --------------------------------------------------------------------------------------------------
 
-# Build JEDI source code by linking
-CloneJedi => BuildJediByLinking?
+# Cylc suite for executing geos_atmosphere ObsFilters tests
 
-# If not able to link to build create the build
-BuildJediByLinking:fail? => BuildJedi
-"""
+# --------------------------------------------------------------------------------------------------
 
-cycle_template = """
-# Convert bias correction to ioda
-GetGsiBc
-GetGsiBc => GsiBcToIoda
-BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
 
-# Convert ncdiags to ioda
-GetGsiNcdiag
-GetGsiNcdiag => GsiNcdiagToIoda
-BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+# --------------------------------------------------------------------------------------------------
 
-# Clean up
-GsiNcdiagToIoda => CleanCycle
-"""
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+
+            # Convert bias correction to ioda
+            GetGsiBc
+            GetGsiBc => GsiBcToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiBcToIoda
+
+            # Convert ncdiags to ioda
+            GetGsiNcdiag
+            GetGsiNcdiag => GsiNcdiagToIoda
+            BuildJediByLinking[^]? | BuildJedi[^]  => GsiNcdiagToIoda
+
+            # Clean up
+            GsiNcdiagToIoda => CleanCycle
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_convert_ncdiags(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for executing geos_atmosphere ObsFilters tests
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = r1_template
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Format the string for each cycle
-        for model in self.experiment_dict['models'].keys():
-            if 'cycle_times' in self.experiment_dict['models'][model].keys():
-                for cycle_time in self.experiment_dict['models'][model]['cycle_times']:
-                    cycle_str = cycle_template
-                    graph_str += self.format_cycle(cycle_time, cycle_str)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------

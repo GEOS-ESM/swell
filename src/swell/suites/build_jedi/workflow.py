@@ -7,74 +7,47 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
-import yaml
-
+from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.utilities.cylc_formatting import indent_lines
+
+# --------------------------------------------------------------------------------------------------
+
+template_str = '''
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for building the JEDI code
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    [[graph]]
+        R1 = """
+           CloneJedi => BuildJediByLinking?
+
+           BuildJediByLinking:fail? => BuildJedi
+        """
+
+# --------------------------------------------------------------------------------------------------
+'''
 
 # --------------------------------------------------------------------------------------------------
 
 
 class Workflow_build_jedi(CylcWorkflow):
-    def define_description(self):
-        description = self.comment_block("""
-        # Cylc suite for building the JEDI code
-        """)
 
-        return description
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduler(self) -> str:
-        scheduler_str = 'allow implicit tasks = False\n'
-
-        settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
-        if os.path.exists(settings_file):
-            with open(settings_file, 'r') as f:
-                settings_dict = yaml.safe_load(f)
-            if 'email_address' in settings_dict.keys():
-                email_address = settings_dict['email_address']
-
-                message_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
-                message_str += '[[events]]\n'
-                message_str += indent_lines('mail events = startup, shutdown\n', 1)
-                message_str += '[[mail]]\n'
-                message_str += indent_lines(f'to = {email_address}\n', 1)
-                message_str += '{% endif %}\n'
-
-                scheduler_str += message_str
-
-        scheduler = self.create_new_section('scheduler', scheduler_str)
-
-        return scheduler.get_section_str()
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_scheduling_section(self):
-        scheduling_section = self.create_new_section('scheduling', '')
-
-        return scheduling_section
-
-    # --------------------------------------------------------------------------------------------------
-
-    def define_graph_section(self):
-        # Define the string of the graph section
-        graph_str = ''
-
-        # Define the string for the R1 (first non-cycling) section
-        r1 = """
-            CloneJedi => BuildJediByLinking?
-
-            BuildJediByLinking:fail? => BuildJedi
-            """
-
-        # Format the R1 cycle and add it to the graph
-        graph_str += self.format_cycle('R1', r1)
-
-        # Create the graph section
-        graph_section = self.create_new_section('graph', graph_str)
-
-        return graph_section
+    def define_initial_workflow(self):
+        workflow_str = self.default_header()
+        workflow_str += template_string_jinja2(logger=self.logger,
+                                               templated_string=template_str,
+                                               dictionary_of_templates=self.experiment_dict,
+                                               allow_unresolved=True)
+        
+        return workflow_str
 
 # --------------------------------------------------------------------------------------------------
