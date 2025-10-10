@@ -32,11 +32,11 @@ class TaskRuntimes():
 
     @dataclass
     class BuildGeosByLinking(Task):
-        pass
+        mail_events: list = mutable_field(['submit-failed'])
 
     @dataclass
     class BuildJediByLinking(Task):
-        pass
+        mail_events: list = mutable_field(['submit-failed'])
 
     @dataclass
     class BuildJedi(Task):
@@ -59,6 +59,10 @@ class TaskRuntimes():
     @dataclass
     class CloneGeosMksi(Task):
         is_model: bool = True
+
+    @dataclass
+    class CloneGmaoPerllib(Task):
+        pass
 
     @dataclass
     class EvaJediLog(Task):
@@ -106,6 +110,17 @@ class TaskRuntimes():
 
     @dataclass
     class GetBackgroundGeosExperiment(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+        mail_events: list = mutable_field(['submit-failed'])
+
+    @dataclass
+    class GetBufr(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+
+    @dataclass
+    class BufrToIoda(Task):
         is_cycling: bool = True
         is_model: bool = True
 
@@ -157,6 +172,12 @@ class TaskRuntimes():
     class GetObservations(Task):
         is_cycling: bool = True
         is_model: bool = True
+
+    @dataclass
+    class GetObsNotInR2d2(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+        mail_events: list = mutable_field(['submit-failed'])
 
     @dataclass
     class GenerateBClimatology(Task):

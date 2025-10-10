@@ -56,6 +56,49 @@ background_frequency:
 background_time_offset:
   default_value: PT9H
 
+bufr_obs_classes:
+  default_value:
+  - disc_airs_bufr
+  - disc_amsua_bufr
+  - gmao_amsr2_bufr
+  - gmao_gmi_bufr
+  - mls_nrt_nc
+  - ncep_1bamua_bufr
+  - ncep_acftpfl_bufr
+  - ncep_atms_bufr
+  - ncep_aura_omi_bufr
+  - ncep_avcsam_bufr
+  - ncep_avcspm_bufr
+  - ncep_crisfsr_bufr
+  - ncep_goesfv_bufr
+  - ncep_gpsro_bufr
+  - ncep_mhs_bufr
+  - ncep_mtiasi_bufr
+  - ncep_prep_bufr
+  - ncep_satwnd_bufr
+  - ncep_ssmis_bufr
+  - npp_ompsnm_bufr
+  options:
+  - disc_airs_bufr
+  - disc_amsua_bufr
+  - gmao_amsr2_bufr
+  - gmao_gmi_bufr
+  - mls_nrt_nc
+  - ncep_1bamua_bufr
+  - ncep_acftpfl_bufr
+  - ncep_atms_bufr
+  - ncep_aura_omi_bufr
+  - ncep_avcsam_bufr
+  - ncep_avcspm_bufr
+  - ncep_crisfsr_bufr
+  - ncep_goesfv_bufr
+  - ncep_gpsro_bufr
+  - ncep_mhs_bufr
+  - ncep_mtiasi_bufr
+  - ncep_prep_bufr
+  - ncep_satwnd_bufr
+  - ncep_ssmis_bufr
+
 clean_patterns:
   default_value:
   - '*.nc4'

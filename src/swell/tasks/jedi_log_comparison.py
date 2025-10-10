@@ -26,8 +26,8 @@ class JediLogComparison(taskBase):
     def execute(self):
 
         tolerances = {}
-        for number in range(self.config.number_of_iterations()):
-            tolerances['Residual norm ( {number})'] = 0.01
+        for number in range(int(self.config.number_of_iterations()[0])):
+            tolerances[f'Residual norm ( {number})'] = 0.01
 
         # Construct dictionary for all results from log file
         all_results = {}
@@ -36,6 +36,7 @@ class JediLogComparison(taskBase):
         passed = True
 
         experiment_paths = self.config.comparison_experiment_paths()
+        log_type = self.config.comparison_log_type()
 
         for exp_num, experiment_path in enumerate(experiment_paths):
 
@@ -50,7 +51,7 @@ class JediLogComparison(taskBase):
                     cycle_results = all_results[cycle] = {}
 
                 cycle_log_file = os.path.join(cycles_path, cycle, self.get_model(),
-                                              'jedi_variational_log.log')
+                                              f'jedi_{log_type}_log.log')
                 with open(cycle_log_file, 'r') as f:
                     lines = f.readlines()
 
@@ -83,6 +84,7 @@ class JediLogComparison(taskBase):
                                         key_passed = np.abs(diff) < tolerances[key]
                                         cycle_results[key]['pass'] = key_passed
                                     else:
+                                        key_passed = True
                                         cycle_results[key]['pass'] = ''
 
                                     if not key_passed:

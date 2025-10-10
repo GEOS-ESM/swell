@@ -282,6 +282,19 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class bufr_obs_classes(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "bufr_obs_classes"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What BUFR observation classes will be used?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class bundles(TaskQuestion):
@@ -320,6 +333,22 @@ class QuestionDefaults():
         ])
         prompt: str = "Provide a list of patterns that you wish to remove from the cycle directory."
         widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class comparison_log_type(TaskQuestion):
+        default_value: str = "variational"
+        question_name: str = "comparison_log_type"
+        options: List[str] = mutable_field([
+            'variational',
+            'fgat',
+        ])
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Provide the log naming convention (e.g. 'variational', 'fgat')."
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -487,6 +516,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class existing_perllib_path(TaskQuestion):
+        default_value: str = 'defer_to_platform'
+        question_name: str = 'existing_perllib_path'
+        prompt: str = "Provide a path to an existing location for GMAO_perllib."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class forecast_duration(TaskQuestion):
         default_value: str = "PT12H"
         question_name: str = "forecast_duration"
@@ -604,6 +642,15 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 database providing the GeoVaLs?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class gmao_perllib_tag(TaskQuestion):
+        default_value: str = 'g1.0.1'
+        question_name: str = 'gmao_perllib_tag'
+        prompt: str = "Specify the tag at which GMAO_perllib should be cloned."
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

@@ -23,7 +23,8 @@ class SuiteConfig(QuestionContainer, Enum):
     compare_variational = QuestionList(
         list_name="compare",
         questions=[
-            sq.compare,
+            sq.all_suites,
+            qd.comparison_experiment_paths(),
             qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
             qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
             qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
@@ -38,6 +39,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="compare_variational_marine",
         questions=[
             compare_variational,
+            qd.comparison_log_type('variational'),
             qd.model_components(['geos_marine']),
         ]
     )
@@ -48,7 +50,19 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="compare_variational_atmosphere",
         questions=[
             compare_variational,
+            qd.comparison_log_type('variational'),
             qd.model_components(['geos_atmosphere']),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    compare_fgat_marine = QuestionList(
+        list_name="compare_fgat_marine",
+        questions=[
+            compare_variational,
+            qd.comparison_log_type('fgat'),
+            qd.model_components(['geos_marine']),
         ]
     )
 
