@@ -95,6 +95,8 @@ def prepare_config(
     # --------------------------------------
     suite_dict = prepare_config_and_suite.get_experiment_dict()
 
+    suite_dict = suite_dict.copy()
+
     # Resolve cycle times for models
     # ------------------------------
     if 'model_components' in suite_dict:
@@ -122,7 +124,7 @@ def prepare_config(
 
             suite_dict['cycle_times'] = cycle_times_dict_list
 
-        # Otherwise check that experiment_dict has cycle_times
+        # Otherwise check that suite_dict has cycle_times
         elif 'cycle_times' in suite_dict:
 
             cycle_times = list(set(suite_dict['cycle_times']))
@@ -150,10 +152,6 @@ def prepare_config(
     # Ask the task questions
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
-
-    # Separate dictionary for rendering
-    # ---------------------------------
-    render_template = experiment_dict.copy()
 
     # Finalize the workflow by adding the runtime section, and get the contents
     # -------------------------------------------------------------------------
