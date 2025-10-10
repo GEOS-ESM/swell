@@ -81,10 +81,15 @@ template_str = '''
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} =>
+            RunJediVariationalExecutable-{{model_component}}
+
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} =>
+            RunJediVariationalExecutable-{{model_component}}
+
+            GenerateObservingSystemRecords-{{model_component}} =>
+            RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -108,7 +113,7 @@ template_str = '''
         {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
-'''
+'''  # noqa
 
 # --------------------------------------------------------------------------------------------------
 
@@ -121,7 +126,7 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         return workflow_str
 
 # --------------------------------------------------------------------------------------------------

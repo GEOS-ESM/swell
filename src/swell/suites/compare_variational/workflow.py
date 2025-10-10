@@ -48,7 +48,7 @@ template_str = '''
         {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
-'''
+'''  # noqa
 
 # --------------------------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ class Workflow_compare_variational(CylcWorkflow):
                         start_cycle_point,
                         final_cycle_point,
                         cycle_times)
-        
+
                 self.experiment_dict['start_cycle_point'] = start_cycle_point
                 self.experiment_dict['final_cycle_point'] = final_cycle_point
                 self.experiment_dict['models'][model]['cycle_times'] = cycle_times
@@ -80,7 +80,7 @@ class Workflow_compare_variational(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         return workflow_str
 
 # --------------------------------------------------------------------------------------------------

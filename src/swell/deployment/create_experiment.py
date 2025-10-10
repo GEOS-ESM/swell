@@ -132,7 +132,7 @@ def prepare_config(
 
         # Since cycle times are used, the render_dictionary will need to include cycle_times
         # If there are different model components then process each to gather cycle times
-        if len(model_components) > 0 and all('cycle_times' in experiment_dict['models'][model] \
+        if len(model_components) > 0 and all('cycle_times' in experiment_dict['models'][model]
                                              for model in model_components):
             cycle_times = []
             for model_component in model_components:

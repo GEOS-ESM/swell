@@ -66,7 +66,7 @@ def get_scheduling(suite: str):
 
     workflow_obj = get_workflow(suite)
 
-    scheduling_section = workflow_obj.define_scheduling()
+    scheduling_section = workflow_obj.define_initial_workflow()
 
     return scheduling_section
 

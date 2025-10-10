@@ -80,7 +80,7 @@ class Workflow_geosadas(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         return workflow_str
 
 # --------------------------------------------------------------------------------------------------
