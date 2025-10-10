@@ -15,7 +15,7 @@ from swell.utilities.cylc_workflow import CylcWorkflow
 template_str = '''
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based non-cycling variational data assimilation
+# Cylc suite for executing Geos forecast
 
 # --------------------------------------------------------------------------------------------------
 
@@ -35,78 +35,100 @@ template_str = '''
         R1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
             # Clone JEDI source code
             CloneJedi
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
 
             # Build JEDI source code by linking
             CloneJedi => BuildJediByLinking?
 
             # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+
+            # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
 
+            # Need first set of restarts to run model
+            GetGeosRestart => PrepGeosRunDir
+
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+
             {% for model_component in model_components %}
-            # Clone geos ana for generating observing system records
-            CloneGeosMksi-{{model_component}}
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediFgatExecutable-{{model_component}}
+
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+
             {% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
-        {% if cycle_time[model_component] %}
 
-            # Task triggers for: {{model_component}}
-            # ------------------
-            # Generate satellite channel records
-            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
+            # Model preperation
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepGeosRunDir
+            PrepGeosRunDir => RunGeosExecutable
 
-            # Get background, provide a way to get background directly from GEOS experiment
-            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
+            # Run the analysis
+            # RunGeosExecutable => StageJediCycle-{{model_component}}
+            RunGeosExecutable => LinkGeosOutput-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
-            # Get observations
-            {% if cycling_varbc %}
-            # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
-            {% else %}
-
-            # Cycling VarBC is inactive, static bias files will be used
+            # Data assimilation preperation
             GetObservations-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
+
+            LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+
+            # Run analysis diagnostics
+            RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+
+            # Prepare analysis for next forecast
+            RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            {% if 'cice6' in models[model_component]["marine_models"] %}
+            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
+            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
             {% endif %}
 
-            # Perform staging that is cycle dependent
-            StageJediCycle-{{model_component}}
+            # Move restart to next cycle
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
-            # Run Jedi variational executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
-            CloneJedi[^] => StageJediCycle-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            # Save analysis output
+            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
-            # EvaObservations
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            # Save model output
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
-            # EvaJediLog
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
-
-            # EvaIncrement
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
-
-            # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            # Remove Run Directory
+            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
+            MoveDaRestart-{{model_component}} => RemoveForecastDir
 
             # Clean up large files
-            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
-
-        {% endif %}
         {% endfor %}
         """
         {% endfor %}
-
 # --------------------------------------------------------------------------------------------------
 '''
 
