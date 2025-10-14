@@ -162,23 +162,19 @@ def load_r2d2_credentials(
 
 
 def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
-    
+    """
+    Map R2D2 v3 parameters to R2D2 v1 parameters for fallback.
+    """
+
     v1_params = {}
     
-    # Map item types
-    item_mapping = {
-        'observation': 'observation',
-        'forecast': 'forecast', 
-        'analysis': 'analysis',
-        'diagnostic': 'diagnostic',
-        'feedback': 'observation',  # feedback files are stored as observations in v1
-        'bias_correction': 'bias_correction'
-    }
-    
+    # Map item types - only feedback needs special handling
     if 'item' in v3_params:
-        v1_params['type'] = item_mapping.get(v3_params['item'], v3_params['item'])
+        if v3_params['item'] == 'feedback':
+            v1_params['type'] = 'ob'  # v1 uses 'ob' for observations
+        else:
+            v1_params['type'] = v3_params['item']
     
-    # Map observation parameters
     if 'observation_type' in v3_params:
         v1_params['obs_type'] = v3_params['observation_type']
     
@@ -187,10 +183,18 @@ def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
     elif 'date' in v3_params:
         v1_params['date'] = v3_params['date']
     
+    if 'window_length' in v3_params:
+        v1_params['time_window'] = v3_params['window_length']
+    
+    # Map other parameters 
     direct_mapping = ['provider', 'experiment', 'model', 'resolution', 'step', 'member']
     for param in direct_mapping:
         if param in v3_params:
             v1_params[param] = v3_params[param]
+    
+    # Add required v1 parameters that might be missing
+    if 'ignore_missing' not in v1_params:
+        v1_params['ignore_missing'] = True
     
     return v1_params
 
@@ -215,12 +219,24 @@ def _load_r2d2_v1_modules():
             print(f"Warning: Error loading R2D2 v1 modules: {e}")
 
 
-def r2d2_fetch_with_fallback(logger: Logger, target_file: str, **kwargs) -> bool:
+def r2d2_fetch_with_fallback(logger: Logger, **kwargs) -> bool:
+    """
+    Fetch data using R2D2 v3 first, fallback to v1 if needed.
+    """
+    
+    # Extract target_file from kwargs
+    target_file = kwargs.pop('target_file', None)
+    if not target_file:
+        logger.error("target_file parameter is required")
+        return False
+    
     # Try R2D2 v3 first
     try:
         logger.info(f"Attempting R2D2 v3 fetch for {target_file}")
         import r2d2
-        r2d2.fetch(target_file=target_file, **kwargs)
+        
+        r2d2.fetch(**kwargs)
+
         logger.info(f"Successfully fetched {target_file} using R2D2 v3")
         return True
         

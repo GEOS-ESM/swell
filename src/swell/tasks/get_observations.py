@@ -166,7 +166,6 @@ class GetObservations(taskBase):
                     print(f"Searching for file with criteria: {fetch_criteria}")
                     success = r2d2_fetch_with_fallback(
                         self.logger,
-                        target_file=target_file,
                         **fetch_criteria
                     )
                     if success:

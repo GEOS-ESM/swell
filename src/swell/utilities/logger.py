@@ -88,7 +88,7 @@ class Logger(logging.Logger):
 
     def error(self, msg: str, wrap: bool = True, *args, **kwargs) -> None:
         msg = self.format_message(msg, wrap)
-        super().error(msg, **args, **kwargs)
+        super().error(msg, *args, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
 
