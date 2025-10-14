@@ -161,4 +161,137 @@ def load_r2d2_credentials(
     logger.info("R2D2 v3 credentials loaded successfully")
 
 
+def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
+    
+    v1_params = {}
+    
+    # Map item types
+    item_mapping = {
+        'observation': 'observation',
+        'forecast': 'forecast', 
+        'analysis': 'analysis',
+        'diagnostic': 'diagnostic',
+        'feedback': 'observation',  # feedback files are stored as observations in v1
+        'bias_correction': 'bias_correction'
+    }
+    
+    if 'item' in v3_params:
+        v1_params['type'] = item_mapping.get(v3_params['item'], v3_params['item'])
+    
+    # Map observation parameters
+    if 'observation_type' in v3_params:
+        v1_params['obs_type'] = v3_params['observation_type']
+    
+    if 'window_start' in v3_params:
+        v1_params['date'] = v3_params['window_start']
+    elif 'date' in v3_params:
+        v1_params['date'] = v3_params['date']
+    
+    direct_mapping = ['provider', 'experiment', 'model', 'resolution', 'step', 'member']
+    for param in direct_mapping:
+        if param in v3_params:
+            v1_params[param] = v3_params[param]
+    
+    return v1_params
+
+
+def _load_r2d2_v1_modules():
+    import subprocess
+    import sys
+    
+    module_commands = [
+        "module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core",
+        "module load r2d2/sles15_spack19"
+    ]
+    
+    # Execute module commands
+    for cmd in module_commands:
+        try:
+            result = subprocess.run(f"bash -c 'source /usr/share/lmod/lmod/init/bash && {cmd}'", 
+                                  shell=True, capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"Warning: Failed to execute {cmd}: {result.stderr}")
+        except Exception as e:
+            print(f"Warning: Error loading R2D2 v1 modules: {e}")
+
+
+def r2d2_fetch_with_fallback(logger: Logger, target_file: str, **kwargs) -> bool:
+    # Try R2D2 v3 first
+    try:
+        logger.info(f"Attempting R2D2 v3 fetch for {target_file}")
+        import r2d2
+        r2d2.fetch(target_file=target_file, **kwargs)
+        logger.info(f"Successfully fetched {target_file} using R2D2 v3")
+        return True
+        
+    except Exception as e:
+        logger.warning(f"R2D2 v3 fetch failed: {str(e)}")
+        logger.info("Attempting fallback to R2D2 v1...")
+        
+        # Try R2D2 v1 fallback
+        try:
+            # Map v3 parameters to v1
+            v1_params = map_r2d2_v3_to_v1_params(kwargs)
+            
+            # Load R2D2 v1 modules dynamically
+            _load_r2d2_v1_modules()
+            
+            import sys
+            if 'r2d2' in sys.modules:
+                del sys.modules['r2d2']
+            
+            # Import R2D2 v1 functions
+            from r2d2 import fetch as fetch_v1
+            
+            logger.info(f"Attempting R2D2 v1 fetch with parameters: {v1_params}")
+            fetch_v1(target_file=target_file, **v1_params)
+            logger.info(f"Successfully fetched {target_file} using R2D2 v1 fallback")
+            return True
+            
+        except Exception as e2:
+            logger.error(f"R2D2 v1 fallback also failed: {str(e2)}")
+            logger.error(f"Failed to fetch {target_file} using both R2D2 v3 and v1")
+            return False
+
+
+def r2d2_store_with_fallback(logger: Logger, source_file: str, **kwargs) -> bool:
+    # Try R2D2 v3 first
+    try:
+        logger.info(f"Attempting R2D2 v3 store for {source_file}")
+        import r2d2
+        r2d2.store(source_file=source_file, **kwargs)
+        logger.info(f"Successfully stored {source_file} using R2D2 v3")
+        return True
+        
+    except Exception as e:
+        logger.warning(f"R2D2 v3 store failed: {str(e)}")
+        logger.info("Attempting fallback to R2D2 v1...")
+        
+        # Try R2D2 v1 fallback
+        try:
+            # Map v3 parameters to v1
+            v1_params = map_r2d2_v3_to_v1_params(kwargs)
+            
+            # Load R2D2 v1 modules dynamically
+            _load_r2d2_v1_modules()
+            
+            # Clear Python module cache to force reload
+            import sys
+            if 'r2d2' in sys.modules:
+                del sys.modules['r2d2']
+            
+            # Import R2D2 v1 functions
+            from r2d2 import store as store_v1
+            
+            logger.info(f"Attempting R2D2 v1 store with parameters: {v1_params}")
+            store_v1(source_file=source_file, **v1_params)
+            logger.info(f"Successfully stored {source_file} using R2D2 v1 fallback")
+            return True
+            
+        except Exception as e2:
+            logger.error(f"R2D2 v1 fallback also failed: {str(e2)}")
+            logger.error(f"Failed to store {source_file} using both R2D2 v3 and v1")
+            return False
+
+
 # ----------------------------------------------------------------------------------------------

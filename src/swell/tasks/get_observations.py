@@ -15,7 +15,7 @@ from typing import Union
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, r2d2_fetch_with_fallback
 from swell.utilities.datetime_util import datetime_formats
 import r2d2
 
@@ -164,11 +164,15 @@ class GetObservations(taskBase):
                     }
 
                     print(f"Searching for file with criteria: {fetch_criteria}")
-                    try:
-                        r2d2.fetch(**fetch_criteria)
+                    success = r2d2_fetch_with_fallback(
+                        self.logger,
+                        target_file=target_file,
+                        **fetch_criteria
+                    )
+                    if success:
                         self.logger.info(f"Successfully fetched {target_file}")
-                    except Exception as e:
-                        self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+                    else:
+                        self.logger.error(f"Failed to fetch {target_file} using both R2D2 v3 and v1")
 
                 # Check how many of the combine_input_files exist in the cycle directory.
                 # If all of them are missing proceed without creating an observation input
@@ -231,27 +235,33 @@ class GetObservations(taskBase):
             if bias_file_type != 'null':
                 if bias_file_type != 'null' and fetch_required:
                     self.logger.info(f'Processing bias file {target_bccoef}')
-                    r2d2.fetch(
+                    success_coef = r2d2_fetch_with_fallback(
+                        self.logger,
+                        target_file=target_bccoef,
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
                         if '.' in bias_file_type else bias_file_type,
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccoef
+                        window_length='PT6H'
                     )
+                    
                     self.logger.info(f'Processing bias file {target_bccovr}')
-                    r2d2.fetch(
+                    success_covr = r2d2_fetch_with_fallback(
+                        self.logger,
+                        target_file=target_bccovr,
                         item='bias_correction',
                         provider='gsi',
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
                         if '.' in bias_file_type else bias_file_type + '_cov',
                         window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccovr
+                        window_length='PT6H'
                     )
+                    
+                    if not success_coef or not success_covr:
+                        self.logger.error(f"Failed to fetch bias correction files for {observation}")
                 # Change permission
                 os.chmod(target_bccoef, 0o644)
                 os.chmod(target_bccovr, 0o644)
@@ -267,15 +277,19 @@ class GetObservations(taskBase):
 
                 self.logger.info(f'Processing satellite time lapse file {target_file}')
 
-                r2d2.fetch(
+                success = r2d2_fetch_with_fallback(
+                    self.logger,
+                    target_file=target_file,
                     item='bias_correction',
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
                     window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    window_length='PT6H',
-                    target_file=target_file
+                    window_length='PT6H'
                 )
+                
+                if not success:
+                    self.logger.error(f"Failed to fetch time lapse file {target_file}")
 
                 # Change permission
                 os.chmod(target_file, 0o644)
