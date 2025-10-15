@@ -91,6 +91,7 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         obs_providers = self.config.obs_provider()
+        obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
@@ -238,7 +239,7 @@ class GetObservations(taskBase):
                         target_file=target_bccoef,
                         item='bias_correction',
                         model='geos',
-                        experiment='gsi',
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
@@ -252,7 +253,7 @@ class GetObservations(taskBase):
                         target_file=target_bccovr,
                         item='bias_correction',
                         model='geos',
-                        experiment='gsi',
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
@@ -284,7 +285,7 @@ class GetObservations(taskBase):
                     target_file=target_file,
                     item='bias_correction',
                     model='geos',
-                    experiment='gsi',
+                    experiment=obs_experiment,
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',

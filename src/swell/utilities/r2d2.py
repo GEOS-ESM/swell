@@ -171,11 +171,6 @@ def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
     # Keep item parameter for v1
     if 'item' in v3_params:
         v1_params['item'] = v3_params['item']
-
-        if v3_params['item'] == 'feedback':
-            v1_params['type'] = 'ob'  # v1 uses 'ob' for observations
-        else:
-            v1_params['type'] = v3_params['item']
     
     if 'observation_type' in v3_params:
         v1_params['obs_type'] = v3_params['observation_type']
