@@ -1,0 +1,75 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for running comparison tests on completed experiments
+
+
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            EvaComparisonIncrement-{{model_component}}
+            EvaComparisonJediLog-{{model_component}}
+            {% for path in comparison_experiment_paths %}
+            JediOopsLogParser-{{model_component}}-{{ loop.index0 }} => JediLogComparison-{{model_component}}
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+
+    [[root]]
+        pre-script = """
+            source $CYLC_SUITE_DEF_PATH/modules
+        """
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    {% for model_component in model_components %}
+    [[EvaComparisonIncrement-{{model_component}}]]
+        script = "swell task EvaComparisonIncrement $config -d $datetime -m {{model_component}}"
+
+    [[EvaComparisonJediLog-{{model_component}}]]
+        script = "swell task EvaComparisonJediLog $config -d $datetime -m {{model_component}}"
+
+    {% for path in comparison_experiment_paths %}
+    [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
+        script = "swell task JediOopsLogParser {{path}} -d $datetime -m {{model_component}}"
+    {% endfor %}
+
+    [[JediLogComparison-{{model_component}}]]
+        script = "swell task JediLogComparison $config -m {{model_component}}"
+    {% endfor %}
+
+# --------------------------------------------------------------------------------------------------

@@ -162,6 +162,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CloneGmaoPerllib = QuestionList(
+        list_name="CloneGmaoPerllib",
+        questions=[
+            qd.existing_perllib_path(),
+            qd.gmao_perllib_tag()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     CloneJedi = QuestionList(
         list_name="CloneJedi",
         questions=[
@@ -283,6 +293,15 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_time_offset(),
             qd.geos_x_background_directory()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetBufr = QuestionList(
+        list_name="GetBufr",
+        questions=[
+            qd.bufr_obs_classes()
         ]
     )
 
@@ -417,6 +436,16 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.produce_geovals(),
             qd.single_observations(),
             qd.window_offset()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    JediLogComparison = QuestionList(
+        list_name="JediComparisonLog",
+        questions=[
+            qd.comparison_log_type(),
+            qd.number_of_iterations()
         ]
     )
 
