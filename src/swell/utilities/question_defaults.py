@@ -282,6 +282,19 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class bufr_obs_classes(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "bufr_obs_classes"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What BUFR observation classes will be used?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
 
     @dataclass
     class bundles(TaskQuestion):
@@ -498,6 +511,24 @@ class QuestionDefaults():
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class existing_perllib_path(TaskQuestion):
+        default_value: str = 'defer_to_platform'
+        question_name: str = 'existing_perllib_path'
+        prompt: str = "Provide a path to an existing location for GMAO_perllib."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class gmao_perllib_tag(TaskQuestion):
+        default_value: str = 'g1.0.1'
+        question_name: str = 'gmao_perllib_tag'
+        prompt: str = "Specify the tag at which GMAO_perllib should be cloned."
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
