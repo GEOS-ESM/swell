@@ -168,8 +168,10 @@ def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
 
     v1_params = {}
     
-    # Map item types - only feedback needs special handling
+    # Keep item parameter for v1
     if 'item' in v3_params:
+        v1_params['item'] = v3_params['item']
+
         if v3_params['item'] == 'feedback':
             v1_params['type'] = 'ob'  # v1 uses 'ob' for observations
         else:
@@ -187,7 +189,7 @@ def map_r2d2_v3_to_v1_params(v3_params: dict) -> dict:
         v1_params['time_window'] = v3_params['window_length']
     
     # Map other parameters 
-    direct_mapping = ['provider', 'experiment', 'model', 'resolution', 'step', 'member']
+    direct_mapping = ['provider', 'experiment', 'model', 'resolution', 'step', 'member', 'file_type']
     for param in direct_mapping:
         if param in v3_params:
             v1_params[param] = v3_params[param]
@@ -240,7 +242,6 @@ def r2d2_fetch_with_fallback(logger: Logger, **kwargs) -> bool:
         logger.info(f"R2D2 has fetch function: {hasattr(r2d2, 'fetch')}")
         logger.info(f"R2D2 has R2D2Client: {hasattr(r2d2, 'R2D2Client')}")
         
-        # R2D2 v3 needs all parameters including target_file
         r2d2.fetch(**kwargs)
 
         logger.info(f"Successfully fetched {target_file} using R2D2 v3")

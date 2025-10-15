@@ -237,12 +237,13 @@ class GetObservations(taskBase):
                         self.logger,
                         target_file=target_bccoef,
                         item='bias_correction',
+                        model='geos',
+                        experiment='gsi',
                         provider='gsi',
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
                         if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time,
-                        window_length='PT6H'
+                        date=background_time
                     )
                     
                     self.logger.info(f'Processing bias file {target_bccovr}')
@@ -250,19 +251,22 @@ class GetObservations(taskBase):
                         self.logger,
                         target_file=target_bccovr,
                         item='bias_correction',
+                        model='geos',
+                        experiment='gsi',
                         provider='gsi',
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
                         if '.' in bias_file_type else bias_file_type + '_cov',
-                        window_start=background_time,
-                        window_length='PT6H'
+                        date=background_time
                     )
                     
                     if not success_coef or not success_covr:
                         self.logger.error(f"Failed to fetch bias correction files for {observation}")
-                # Change permission
-                os.chmod(target_bccoef, 0o644)
-                os.chmod(target_bccovr, 0o644)
+                # Change permission 
+                if os.path.exists(target_bccoef):
+                    os.chmod(target_bccoef, 0o644)
+                if os.path.exists(target_bccovr):
+                    os.chmod(target_bccovr, 0o644)
 
             # Skip time lapse part for aircraft observations
             # ----------------------------------------------
@@ -279,18 +283,21 @@ class GetObservations(taskBase):
                     self.logger,
                     target_file=target_file,
                     item='bias_correction',
+                    model='geos',
+                    experiment='gsi',
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
-                    window_start=background_time,
-                    window_length='PT6H'
+                    file_type='tlapse',
+                    date=background_time
                 )
                 
                 if not success:
                     self.logger.error(f"Failed to fetch time lapse file {target_file}")
 
                 # Change permission
-                os.chmod(target_file, 0o644)
+                if os.path.exists(target_file):
+                    os.chmod(target_file, 0o644)
 
     # ----------------------------------------------------------------------------------------------
 
