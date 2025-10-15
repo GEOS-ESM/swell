@@ -224,7 +224,6 @@ def r2d2_fetch_with_fallback(logger: Logger, **kwargs) -> bool:
     Fetch data using R2D2 v3 first, fallback to v1 if needed.
     """
     
-    # Keep target_file in kwargs for v3
     target_file = kwargs.get('target_file', None)
     if not target_file:
         logger.error("target_file parameter is required")
@@ -233,7 +232,13 @@ def r2d2_fetch_with_fallback(logger: Logger, **kwargs) -> bool:
     # Try R2D2 v3 first
     try:
         logger.info(f"Attempting R2D2 v3 fetch for {target_file}")
+        logger.info(f"Fetch parameters: {kwargs}")
+        
         import r2d2
+        
+        logger.info(f"R2D2 module path: {r2d2.__file__}")
+        logger.info(f"R2D2 has fetch function: {hasattr(r2d2, 'fetch')}")
+        logger.info(f"R2D2 has R2D2Client: {hasattr(r2d2, 'R2D2Client')}")
         
         # R2D2 v3 needs all parameters including target_file
         r2d2.fetch(**kwargs)
