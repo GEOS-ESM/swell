@@ -243,7 +243,7 @@ class Task:
                 event_section = self.create_new_section('events', event_str)
                 runtime_section.add_subsection(event_section)
 
-        runtime_string = runtime_section.get_section_str()
+        runtime_string = runtime_section.get_section_str(1)
 
         return runtime_string
 

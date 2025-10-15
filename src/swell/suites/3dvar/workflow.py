@@ -120,7 +120,7 @@ class Workflow_3dvar(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
         
-        for task in self.tasks():
+        for task_name, task in self.tasks().items():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
