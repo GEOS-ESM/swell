@@ -17,7 +17,6 @@ from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config, r2d2_fetch_with_fallback
 from swell.utilities.datetime_util import datetime_formats
-import r2d2
 
 
 # --------------------------------------------------------------------------------------------------
@@ -242,7 +241,7 @@ class GetObservations(taskBase):
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
                         if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        window_start=background_time,
                         window_length='PT6H'
                     )
                     
@@ -255,7 +254,7 @@ class GetObservations(taskBase):
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
                         if '.' in bias_file_type else bias_file_type + '_cov',
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        window_start=background_time,
                         window_length='PT6H'
                     )
                     
@@ -283,7 +282,7 @@ class GetObservations(taskBase):
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
-                    window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    window_start=background_time,
                     window_length='PT6H'
                 )
                 
