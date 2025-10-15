@@ -9,6 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
+from swell.tasks.task_runtimes import TaskRuntimes as tr
 
 # --------------------------------------------------------------------------------------------------
 
@@ -99,6 +100,12 @@ template_str = '''
         {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
@@ -106,13 +113,41 @@ template_str = '''
 
 class Workflow_3dvar(CylcWorkflow):
 
-    def define_initial_workflow(self):
+    def get_workflow_string(self):
         workflow_str = self.default_header()
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
+        
+        for task in self.tasks():
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
 
         return workflow_str
+    
+    def tasks(self) -> list:
+        tasks = {}
+        tasks['root'] = tr.root()
+        tasks['CloneJedi'] = tr.CloneJedi()
+        tasks['BuildJediByLinking'] = tr.BuildJediByLinking()
+        tasks['BuildJedi'] = tr.BuildJedi()
+
+        for model in self.experiment_dict['model_components']:
+            tasks[f'StageJedi-{model}'] = tr.StageJedi(model=model)
+            tasks[f'GetBackground-{model}'] = tr.GetBackground(model=model)
+            tasks[f'GetObservations-{model}'] = tr.GetObservations(model=model)
+            tasks[f'GenerateBClimatologyByLinking-{model}'] = tr.GenerateBClimatologyByLinking(model=model)
+            tasks[f'GenerateBClimatology-{model}'] = tr.GenerateBClimatology(model=model)
+            tasks[f'StageJediCycle-{model}'] = tr.StageJedi(model=model)
+            tasks[f'GetBackground-{model}'] = tr.GetBackground(model=model)
+            tasks[f'RunJediVariational-{model}'] = tr.RunJediVariationalExecutable(model=model)
+            tasks[f'EvaObservations-{model}'] = tr.EvaObservations(model=model)
+            tasks[f'EvaJediLog-{model}'] = tr.EvaJediLog(model=model)
+            tasks[f'EvaIncrement-{model}'] = tr.EvaIncrement(model=model)
+            tasks[f'SaveObsDiags-{model}'] = tr.SaveObsDiags(model=model)
+            tasks[f'CleanCycle-{model}'] = tr.CleanCycle(model=model)
+        
+        return tasks
 
 # --------------------------------------------------------------------------------------------------

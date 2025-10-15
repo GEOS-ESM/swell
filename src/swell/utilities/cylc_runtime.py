@@ -150,7 +150,7 @@ class Task:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_section(self, experiment_dict: Mapping, slurm_external: Mapping):
+    def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping):
         ''' Return the runtime section for the given task. '''
 
         platform = experiment_dict['platform']
@@ -243,6 +243,8 @@ class Task:
                 event_section = self.create_new_section('events', event_str)
                 runtime_section.add_subsection(event_section)
 
-        return runtime_section
+        runtime_string = runtime_section.get_section_str()
+
+        return runtime_string
 
 # --------------------------------------------------------------------------------------------------

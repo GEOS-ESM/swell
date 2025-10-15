@@ -155,7 +155,7 @@ def prepare_config(
 
     # Finalize the workflow by adding the runtime section, and get the contents
     # -------------------------------------------------------------------------
-    workflow_string = workflow.get_workflow_str()
+    workflow_string = workflow.get_workflow_string()
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
