@@ -139,7 +139,7 @@ class Workflow_3dvar(CylcWorkflow):
             tasks[f'GetObservations-{model}'] = tr.GetObservations(model=model)
             tasks[f'GenerateBClimatologyByLinking-{model}'] = tr.GenerateBClimatologyByLinking(model=model)
             tasks[f'GenerateBClimatology-{model}'] = tr.GenerateBClimatology(model=model)
-            tasks[f'StageJediCycle-{model}'] = tr.StageJedi(model=model)
+            tasks[f'StageJediCycle-{model}'] = tr.StageJediCycle(model=model)
             tasks[f'GetBackground-{model}'] = tr.GetBackground(model=model)
             tasks[f'RunJediVariational-{model}'] = tr.RunJediVariationalExecutable(model=model)
             tasks[f'EvaObservations-{model}'] = tr.EvaObservations(model=model)

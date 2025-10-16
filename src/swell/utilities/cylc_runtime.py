@@ -192,7 +192,7 @@ class Task:
             runtime_dict['execution retry delays'] = retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
-
+        print(self.scheduling_name)
         # Set the environment dictionary
         if self.environment is not None:
             environment_section = self.create_new_section('environment', self.environment)
@@ -217,14 +217,7 @@ class Task:
 
         # Check slurm messaging parameters
         events = []
-        if 'task_email_parameters' in experiment_dict.keys():
-            if experiment_dict['task_email_parameters'] == 'auto':
-                # Set message status to fail or event fail
-                events = self.mail_events
-            elif self.scheduling_name in experiment_dict['task_email_parameters'].keys():
-                events = experiment_dict['task_email_parameters'][self.scheduling_name]
-            elif self.base_name in experiment_dict['task_email_parameters'].keys():
-                events = experiment_dict['task_email_parameters'][self.base_name]
+        events = self.mail_events
 
         # Add messaging section
         settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
