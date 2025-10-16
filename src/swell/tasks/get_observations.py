@@ -99,8 +99,8 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         obs_providers = self.config.obs_provider()
+        obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
-        background_experiment = self.config.background_experiment()
         observations = self.config.observations()
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
@@ -249,7 +249,7 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         target_file=target_bccoef,
                         model=r2d2_model,
-                        experiment=background_experiment,
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
@@ -261,7 +261,7 @@ class GetObservations(taskBase):
                         item='bias_correction',
                         target_file=target_bccovr,
                         model=r2d2_model,
-                        experiment=background_experiment,
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
@@ -287,7 +287,7 @@ class GetObservations(taskBase):
                     item='bias_correction',
                     target_file=target_file,
                     model=r2d2_model,
-                    experiment=background_experiment,
+                    experiment=obs_experiment,
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
