@@ -1,0 +1,95 @@
+datasets:
+
+- type: JediLog
+  collection_name: jedi_log_test_1
+  jedi_log_to_parse: '{{cycle_dir_1}}/jedi_variational_log.log'
+  data_to_parse:
+    convergence: true
+
+- type: JediLog
+  collection_name: jedi_log_test_2
+  jedi_log_to_parse: '{{cycle_dir_2}}/jedi_variational_log.log'
+  data_to_parse:
+    convergence: true
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  - figure:
+      layout: [3,1]
+      figure size: [12,10]
+      title: 'Residual Norm and Norm Reduction Plots'
+      output name: '{{cycle_dir}}/eva/jedi_log/convergence/residual_norm_reduction.png'
+    plots:
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Residual norm'
+        add_legend:
+        layers:
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_1::convergence::total_iteration
+          y:
+            variable: jedi_log_test_1::convergence::residual_norm
+          color: 'red'
+          label: 'Experiment 1'
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_2::convergence::total_iteration
+          y:
+            variable: jedi_log_test_2::convergence::residual_norm
+          color: 'blue'
+          label: 'Experiment 2'
+
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Norm reduction'
+        add_legend:
+        layers:
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_1::convergence::total_iteration
+          y:
+            variable: jedi_log_test_1::convergence::norm_reduction
+          color: 'red'
+          label: 'Experiment 1'
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_2::convergence::total_iteration
+          y:
+            variable: jedi_log_test_2::convergence::norm_reduction
+          color: 'blue'
+          label: 'Experiment 2'
+
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Normalized Value'
+        add_legend:
+        layers:
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_1::convergence::total_iteration
+          y:
+            variable: jedi_log_test_1::convergence::residual_norm_normalized
+          color: 'red'
+          label: 'Normalized residual norm 1'
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_2::convergence::total_iteration
+          y:
+            variable: jedi_log_test_2::convergence::residual_norm_normalized
+          color: 'blue'
+          label: 'Normalized residual norm 2'
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_1::convergence::total_iteration
+          y:
+            variable: jedi_log_test_1::convergence::norm_reduction_normalized
+          color: 'yellow'
+          label: 'Normalized norm reduction 1'
+        - type: LinePlot
+          x:
+            variable: jedi_log_test_2::convergence::total_iteration
+          y:
+            variable: jedi_log_test_2::convergence::norm_reduction_normalized
+          color: 'green'
+          label: 'Normalized norm reduction 2'
