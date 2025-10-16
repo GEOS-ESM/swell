@@ -10,9 +10,9 @@ obs space:
       obsfile: '{{cycle_dir}}/{{experiment_id}}.tcp.{{window_begin}}.nc4'
   simulated variables: [stationPressure]
 
-# Surface pressure is handled using the correction scheme
 obs operator:
 
+  # Surface pressure is handled using the correction scheme
   name: SfcCorrected
   variables:
   - name: stationPressure
@@ -20,6 +20,13 @@ obs operator:
   geovar_geomz: geopotential_height
   geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   station_altitude: height
+
+linear obs operator:
+
+  #  station pressure is using the lowest model level (identity)
+  name: Identity
+  variables:
+  - name: stationPressure
 
 
 obs prior filters:
