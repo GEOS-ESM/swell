@@ -4,7 +4,6 @@ Works for ncdiag, odas, gdas_marine, etc.
 """
 
 import os
-import sys
 import glob
 
 # Color codes for printing
@@ -94,8 +93,6 @@ def register_observation(filename, file_path, parts, dry_run=True):
 
 def register_background(filename, file_path, parts, dry_run=True):
     """Register background/forecast files using forecast specific parameters"""
-
-    file_ext = parts[-1]
 
     # Guess model from filename/path
     name_lower = filename.lower()
