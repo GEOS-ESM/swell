@@ -19,6 +19,13 @@ from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
 import r2d2
 
+# --------------------------------------------------------------------------------------------------
+
+# R2D2 model name mapping
+r2d2_model_dict = {
+    'geos_atmosphere': 'geos',
+    'geos_marine': 'mom6',
+}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -93,12 +100,17 @@ class GetObservations(taskBase):
         # ------------
         obs_providers = self.config.obs_provider()
         background_time_offset = self.config.background_time_offset()
+        background_experiment = self.config.background_experiment()
         observations = self.config.observations()
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_offset = self.config.window_offset()
         r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
+        
+        # Get model component
+        model_component = self.get_model()
+        r2d2_model = r2d2_model_dict.get(model_component, model_component)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -229,33 +241,32 @@ class GetObservations(taskBase):
             else:
                 bias_file_type = 'satbias'
 
-
-            self.logger.info(f'Searching for bias file {target_bccoef} with criteria: {fetch_criteria}')
-
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
                 if bias_file_type != 'null' and fetch_required:
                     self.logger.info(f'Processing bias file {target_bccoef}')
                     r2d2.fetch(
                         item='bias_correction',
+                        target_file=target_bccoef,
+                        model=r2d2_model,
+                        experiment=background_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
                         if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time_iso,
-                        window_length='PT6H',
-                        target_file=target_bccoef
+                        date=background_time_iso
                     )
                     self.logger.info(f'Processing bias file {target_bccovr}')
                     r2d2.fetch(
                         item='bias_correction',
+                        target_file=target_bccovr,
+                        model=r2d2_model,
+                        experiment=background_experiment,
                         provider='gsi',
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
                         if '.' in bias_file_type else bias_file_type + '_cov',
-                        window_start=background_time_iso,
-                        window_length='PT6H',
-                        target_file=target_bccovr
+                        date=background_time_iso
                     )
                 # Change permission
                 os.chmod(target_bccoef, 0o644)
@@ -274,12 +285,13 @@ class GetObservations(taskBase):
 
                 r2d2.fetch(
                     item='bias_correction',
+                    target_file=target_file,
+                    model=r2d2_model,
+                    experiment=background_experiment,
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
-                    window_start=background_time_iso,
-                    window_length='PT6H',
-                    target_file=target_file
+                    date=background_time_iso
                 )
 
                 # Change permission
