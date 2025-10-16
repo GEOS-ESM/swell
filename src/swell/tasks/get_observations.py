@@ -110,6 +110,8 @@ class GetObservations(taskBase):
                                                               dto=True)
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
+        background_time_iso = self.da_window_params.background_time_iso(window_offset,
+                                                                        background_time_offset)
 
         # Determine the input observation files to be fetched, this mainly depends on
         # the observation file organization in R2D2. In other words, they could be
@@ -154,13 +156,13 @@ class GetObservations(taskBase):
                     combine_input_files.append(target_file)
 
                     fetch_criteria = {
-                        'item': 'observation',  # Required for r2d2 v3
-                        'provider': obs_provider,  # What we registered with
-                        'observation_type': observation,  # From filename
+                        'item': 'observation',               # Required for r2d2 v3
+                        'provider': obs_provider,            # What we registered with
+                        'observation_type': observation,     # From filename
                         'file_extension': 'nc4',
-                        'window_start': obs_window_begin,  # From filename timestamp
+                        'window_start': obs_window_begin,    # From filename timestamp
                         'window_length': obs_window_length,  # From filename
-                        'target_file': target_file  # Where to save
+                        'target_file': target_file,          # Where to save
                     }
 
                     print(f"Searching for file with criteria: {fetch_criteria}")
@@ -227,6 +229,9 @@ class GetObservations(taskBase):
             else:
                 bias_file_type = 'satbias'
 
+
+            self.logger.info(f'Searching for bias file {target_bccoef} with criteria: {fetch_criteria}')
+
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
                 if bias_file_type != 'null' and fetch_required:
@@ -237,7 +242,7 @@ class GetObservations(taskBase):
                         observation_type=observation,
                         file_extension=bias_file_type.split('.')[-1]
                         if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        window_start=background_time_iso,
                         window_length='PT6H',
                         target_file=target_bccoef
                     )
@@ -248,7 +253,7 @@ class GetObservations(taskBase):
                         observation_type=observation,
                         file_extension=(bias_file_type + '_cov').split('.')[-1]
                         if '.' in bias_file_type else bias_file_type + '_cov',
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                        window_start=background_time_iso,
                         window_length='PT6H',
                         target_file=target_bccovr
                     )
@@ -272,7 +277,7 @@ class GetObservations(taskBase):
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
-                    window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                    window_start=background_time_iso,
                     window_length='PT6H',
                     target_file=target_file
                 )
