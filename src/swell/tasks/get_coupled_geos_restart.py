@@ -48,6 +48,9 @@ class GetCoupledGeosRestart(taskBase):
         self.geos_homdir = self.config.geos_homdir()
         self.geos_expdir = self.geos_homdir
 
+        # Create GEOSgcm directory in the experiment folder if it does not exist yet
+        os.makedirs(os.path.join(swell_exp_path, 'GEOSgcm'), 0o755, exist_ok=True)
+
         expdir_different = self.config.geos_expdir_different()
 
         geos_homdir_path = os.path.join(swell_exp_path, 'GEOSgcm', 'GEOS_homdir')

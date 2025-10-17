@@ -174,7 +174,6 @@
 
     [[GetCoupledGeosRestart]]
         script = "swell task GetCoupledGeosRestart $config -d $datetime"
-        execution retry delays = 2*PT10S
 
     {% for model_component in model_components %}
 
