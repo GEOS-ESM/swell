@@ -538,9 +538,9 @@ class TaskQuestions(QuestionContainer, Enum):
     PrepCoupledGeosRunDir = QuestionList(
         list_name="PrepCoupledGeosRunDir",
         questions=[
-            # swell_static_file_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
+            geos_gcm_questions,
             # qd.geos_experiment_directory(),
             qd.mom6_iau_nhours()
         ]

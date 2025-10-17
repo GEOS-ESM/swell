@@ -588,14 +588,14 @@ class QuestionDefaults():
 
     @dataclass
     class geos_expdir_different(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "geos_expdir_different"
         ask_question: bool = True
         options: List[bool] = mutable_field([
             True,
             False
         ])
-        prompt: str = "Is your GEOS EXPDIR (where restarts and scratch is located) different than your HOMDIR?"
+        prompt: str = "Is your GEOS EXPDIR (where restarts, linkbcs, RC, and scratch is located) different than your HOMDIR?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

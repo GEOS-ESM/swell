@@ -45,8 +45,13 @@ class PrepCoupledGeosRunDir(taskBase):
 
         # These links were created in get_*_geos_restart task. This step will copy experiment
         # config.s to the cycle forecast directory
+        # In some cases geos_homdir and geos_expdir are different, so we need to address that
         self.geos_homdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_homdir')
-        self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
+        self.geos_expdir = self.geos_homdir
+
+        expdir_different = self.config.geos_expdir_different()
+        if expdir_different:
+            self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
 
         self.geos_build = self.config.existing_geos_gcm_build_path()
 
