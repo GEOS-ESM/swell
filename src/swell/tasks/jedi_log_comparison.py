@@ -49,6 +49,8 @@ class JediLogComparison(taskBase):
             for cycle in experiment_cycles:
                 if cycle not in all_results.keys():
                     cycle_results = all_results[cycle] = {}
+                else:
+                    cycle_results = all_results[cycle]
 
                 cycle_log_file = os.path.join(cycles_path, cycle, self.get_model(),
                                               f'jedi_{log_type}_log.log')
