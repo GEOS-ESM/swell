@@ -118,22 +118,23 @@ def prepare_config(
         comment_dict['model_components'] = 'List of models in this experiment'
 
     # Overrides for comparison suites
-    start_cycle_point = experiment_dict['start_cycle_point']
-    final_cycle_point = experiment_dict['final_cycle_point']
-    if experiment_dict['start_cycle_point'] is None:
-        config_list = experiment_dict['comparison_experiment_paths']
-        for model in experiment_dict['model_components']:
-            cycle_times = experiment_dict['models'][model]['cycle_times']
-            start_cycle_point, final_cycle_point, cycle_times = check_da_params(
-                    config_list,
-                    model,
-                    start_cycle_point,
-                    final_cycle_point,
-                    cycle_times)
+    if 'start_cycle_point' in experiment_dict:
+        start_cycle_point = experiment_dict['start_cycle_point']
+        final_cycle_point = experiment_dict['final_cycle_point']
+        if experiment_dict['start_cycle_point'] is None:
+            config_list = experiment_dict['comparison_experiment_paths']
+            for model in experiment_dict['model_components']:
+                cycle_times = experiment_dict['models'][model]['cycle_times']
+                start_cycle_point, final_cycle_point, cycle_times = check_da_params(
+                        config_list,
+                        model,
+                        start_cycle_point,
+                        final_cycle_point,
+                        cycle_times)
 
-            experiment_dict['start_cycle_point'] = start_cycle_point
-            experiment_dict['final_cycle_point'] = final_cycle_point
-            experiment_dict['models'][model]['cycle_times'] = cycle_times
+                experiment_dict['start_cycle_point'] = start_cycle_point
+                experiment_dict['final_cycle_point'] = final_cycle_point
+                experiment_dict['models'][model]['cycle_times'] = cycle_times
 
     # Expand experiment dict with SLURM overrides.
     # NOTE: This is a bit of a hack. We should really either commit to using a
