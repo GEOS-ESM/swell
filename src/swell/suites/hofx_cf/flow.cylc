@@ -35,12 +35,12 @@
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
 
-            {% for model_component in model_components %}
+            #{% for model_component in model_components %}
             # Clone geos ana for generating observing system records
             # CloneGeosMksi-{{model_component}}
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}}
-            {% endfor %}
+            #CloneJedi => StageJedi-{{model_component}}
+            #{% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
@@ -50,11 +50,6 @@
 
             # Task triggers for: {{model_component}}
             # ------------------
-            # Generate satellite channel records
-            #CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
-
-            # Get background, provide a way to get background directly from GEOS experiment
-            #GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
             # Get background
             GetBackground-{{model_component}}
@@ -62,28 +57,19 @@
             # Get observations
             GetObservations-{{model_component}}
 
-            # Get observations
-            #GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
             # Run Jedi hofx executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
-            #CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-
-            #GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            #GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-
-            #GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
-            # Save observations
+            # Save feedback
             RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files

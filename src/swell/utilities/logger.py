@@ -38,7 +38,7 @@ under = '\033[4m'
 class Logger(logging.Logger):
 
     def __init__(self, name: Optional[str] = None, **kwargs) -> None:
-        self.__maxlen__ = 100
+        self.__maxlen__ = 1000
         super().__init__(name, **kwargs)
 
     # ----------------------------------------------------------------------------------------------

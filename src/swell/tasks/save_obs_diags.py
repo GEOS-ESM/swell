@@ -66,24 +66,24 @@ class SaveObsDiags(taskBase):
 
             self.logger.info(f'Checking observation {observation}: use_obs = {use_obs}')
 
-            if not use_obs:
-                self.logger.info(f'Input observation file analysis for {observation}:')
-                self.logger.info(f'  Expected file: {input_obs_file}')
-                if os.path.exists(input_obs_file):
-                    try:
-                        import netCDF4 as nc
-                        dataset = nc.Dataset(input_obs_file, 'r')
-                        dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
-                        self.logger.info(f'  File exists but dimensions: {dims}')
-                        dataset.close()
-                    except Exception as e:
-                        self.logger.info(f'  File exists but error reading: {str(e)}')
-                else:
-                    self.logger.info(f'  File does not exist!')
+            #if not use_obs:
+            #    self.logger.info(f'Input observation file analysis for {observation}:')
+            #    self.logger.info(f'  Expected file: {input_obs_file}')
+            #    if os.path.exists(input_obs_file):
+            #        try:
+            #            import netCDF4 as nc
+            #            dataset = nc.Dataset(input_obs_file, 'r')
+            #            dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
+            #            self.logger.info(f'  File exists but dimensions: {dims}')
+            #            dataset.close()
+            #        except Exception as e:
+            #            self.logger.info(f'  File exists but error reading: {str(e)}')
+            #    else:
+            #        self.logger.info(f'  File does not exist!')
 
-                self.logger.info(f'  GetObservations task did not fetch this file successfully')
-                self.logger.info(f'  Skipping {observation}')
-                continue
+            #    self.logger.info(f'  GetObservations task did not fetch this file successfully')
+            #    self.logger.info(f'  Skipping {observation}')
+            #    continue
 
             # Store diagnostic observation files (OUTPUT from RunJediVariationalExecutable)
             # ---------------------------------------------------------------------------
