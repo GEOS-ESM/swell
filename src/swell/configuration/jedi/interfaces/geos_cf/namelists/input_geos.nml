@@ -1,0 +1,75 @@
+&fms_io_nml
+  checksum_required       = F
+/
+
+&fms_nml
+  print_memory_usage=.false.
+  domains_stack_size = 24000000
+/
+
+&mpp_io_nml
+  header_buffer_val       = 16384
+  global_field_on_root_pe = T
+  io_clocks_on            = F
+  shuffle                 = 0
+  deflate_level           = -1
+  cf_compliance           = F
+/
+
+&fv_core_nml
+  layout = LAYOUT
+  io_layout = 1,1
+  npx = NPX
+  npy = NPY
+  npz = NLEVS
+  ntiles = 6
+  fv_debug = .F.
+  n_sponge = 9
+  n_zfilter = 25
+  tau = 0.
+  rf_cutoff = 7.5e2
+  d2_bg_k1 = 0.20
+  d2_bg_k2 = 0.06
+  fv_sg_adj = -1
+  remap_option = 2
+  kord_tm =  9
+  kord_mt =  9
+  kord_wz =  9
+  kord_tr =  9
+  hydrostatic = .T.
+  make_nh = .T.
+  beta = 0.
+  a_imp = 1.
+  p_fac = 0.1
+  k_split = 2
+  n_split = 0
+  nwat = 0
+  nord = 2
+  dddmp = 0.1
+  d4_bg = 0.12
+  d2_bg = 0.0
+  d_ext = 0.0
+  vtdm4 = 0.06
+  delt_max = 0.002
+  ke_bg = 0.0
+  do_vort_damp = .T.
+  d_con = 1.
+  hord_mt =  5
+  hord_vt =  6
+  hord_tm =  6
+  hord_dp = -6
+  hord_tr =  8
+  adjust_dry_mass = .F.
+  consv_te = 1.
+  consv_am = .F.
+  fill = .T.
+  dwind_2d = .F.
+  z_tracer = .T.
+/
+
+&main_nml
+/
+
+&test_case_nml
+  test_case = 13
+/

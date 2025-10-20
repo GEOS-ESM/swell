@@ -1,0 +1,24 @@
+datetime: '{{local_background_time_iso}}'
+filetype: cube sphere history
+provider: geos
+datapath: '{{cycle_dir}}'
+filename: 'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4'
+max allowable geometry difference: 0.1 #needed after PR 1356 in fv3-jedi 
+state variables: &statevars
+- air_pressure_thickness
+- volume_mixing_ratio_of_no2
+- volume_mixing_ratio_of_no
+- volume_mixing_ratio_of_o3
+- volume_mixing_ratio_of_co
+- air_pressure_at_surface
+
+field io names: &field_io_names
+  volume_mixing_ratio_of_no2: NO2
+  volume_mixing_ratio_of_no: 'NO'
+  volume_mixing_ratio_of_o3: O3
+  volume_mixing_ratio_of_co: CO
+  eastward_wind: ua
+  northward_wind: va
+  air_temperature: T
+  air_pressure_thickness: DELP
+  air_pressure_at_surface: PS

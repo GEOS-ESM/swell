@@ -1,0 +1,12 @@
+fms initialization:
+  namelist filename: '{{cycle_dir}}/fmsmpp.nml'
+  field table filename: '{{cycle_dir}}/field_table_gmao'
+akbk: '{{cycle_dir}}/akbk{{vertical_resolution}}.nc4'
+
+layout: [{{npx_proc}},{{npy_proc}}]
+
+#npx: {{horizontal_resolution}}
+#npy: {{horizontal_resolution}}
+npx: 361
+npy: 361
+npz: {{vertical_resolution}}

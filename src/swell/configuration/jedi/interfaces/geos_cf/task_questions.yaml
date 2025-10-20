@@ -1,0 +1,251 @@
+# What is the duration from the middle of the window when forecasts start?
+analysis_forecast_window_offset:
+  default_value: -PT3H
+  options:
+  - -PT3H
+
+analysis_variables:
+  default_value:
+  - volume_mixing_ratio_of_no2
+  options:
+  - volume_mixing_ratio_of_no2
+
+background_experiment:
+#  default_value: x0050
+  default_value: 54bbb4
+  options:
+  - 54bbb4
+  #- x0048
+  #- x0050
+
+background_frequency:
+  default_value: PT1H
+
+
+# How long before the middle of the analysis window did
+# the background providing forecast begin?
+
+background_time_offset:
+  default_value: PT9H
+
+clean_patterns:
+  default_value:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+  options:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+
+#cycling_varbc:
+#  default_value: false
+#  options:
+#  - true
+#  - false
+
+#ensemble_hofx_packets:
+#  default_value: 2
+#  options: None
+
+#ensemble_hofx_strategy:
+#  default_value: parallel
+#  options:
+#  - serial
+#  - parallel
+
+#ensemble_num_members:
+#  default_value: 10
+#  options: None
+
+#geovals_experiment:
+#  default_value: x0050-geovals
+#  options:
+#  - x0048v3-geovals
+#  - x0050-geovals
+
+#geovals_provider:
+#  default_value: ncdiag
+
+#gradient_norm_reduction:
+#  default_value: 10e-5
+
+#gsibec_configuration:
+#  default_value: cli_gsibec_configuration
+#
+#gsibec_nlats:
+#  default_value: 181
+#  options:
+#  - '46'
+#  - '91'
+#  - '181'
+#  - '361'
+#  - '721'
+#
+#gsibec_nlons:
+#  default_value: 288
+#  options:
+#  - '72'
+#  - '144'
+#  - '288'
+#  - '576'
+#  - '1152'
+#
+#horizontal_localization_lengthscale:
+#  default_value: 10000e3
+#
+#horizontal_localization_max_nobs:
+#  default_value: 1000
+#
+#horizontal_localization_method:
+#  default_value: Horizontal Gaspari-Cohn
+#  options:
+#  - Horizontal Gaspari-Cohn
+#  - Horizontal SOAR
+#  - Horizontal Box car
+
+horizontal_resolution:
+  default_value: 'c360'
+  options:
+  - 'c90'
+  - 'c360'
+
+jedi_forecast_model:
+  default_value: pseudo-model
+  options:
+  - pseudo-model
+
+#local_ensemble_inflation_mult:
+#  default_value: 1.1
+#
+#local_ensemble_inflation_rtpp:
+#  default_value: 0.6
+#
+#local_ensemble_inflation_rtps:
+#  default_value: 0.5
+#
+#local_ensemble_solver:
+#  default_value: LETKF
+#  options:
+#  - LETKF
+#  - GETKF
+#
+#local_ensemble_use_linear_observer:
+#  default_value: true
+#  options:
+#  - true
+#  - false
+
+#minimizer:
+#  default_value: DRPCG
+#  options:
+#  - DRPCG
+#
+#ncdiag_experiments:
+#  default_value: x0050_fgat
+#  options:
+#  - x0050_fgat
+#
+
+npx_proc:
+  default_value: 2
+
+npy_proc:
+  default_value: 2
+
+number_of_iterations:
+  default_value:
+  - 5
+
+#obs_experiment:
+#  default_value: x0050
+#  options:
+#  - x0048v3
+#  - x0050
+
+obs_provider:
+  default_value: 
+  - nasa_VCD
+  options:
+  - nasa_VCD
+  - tempo_demo
+
+observations:
+  default_value: 
+  - tempo_no2_tropo
+  - tempo_no2_total
+  options: 
+  - tempo_no2_tropo
+  - tropomi_s5p_no2_tropo
+  - tempo_no2_total
+
+#observing_system_records_mksi_path:
+#  default_value: None
+
+#observing_system_records_mksi_path_tag:
+#  default_value: v5.42.7
+
+observing_system_records_path:
+  default_value: None
+
+#path_to_ensemble:
+#  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/Y%Y/M%m/D%d/H%H/geos*%Y%m%d_%H%M%Sz.nc4
+
+#path_to_geos_adas_background:
+#  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/geosadas/bkg/*bkg_clcv_rst*
+
+#path_to_gsi_bc_coefficients:
+#  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/bc/Y%Y/M%m/*bias*%Y%m%d_%Hz.txt
+
+#path_to_gsi_nc_diags:
+#  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/ufo_testing/ncdiag/%Y%m%d%H
+
+#produce_geovals:
+#  default_value: true
+#  options:
+#  - true
+#  - false
+#
+#skip_ensemble_hofx:
+#  default_value: true
+#  options:
+#  - true
+#  - false
+#
+#vertical_localization_function:
+#  default_value: Gaspari Cohn
+#  options:
+#  - Gaspari Cohn
+#
+#vertical_localization_ioda_vertical_coord:
+#  default_value: pressure
+#  options:
+#  - pressure
+#
+#vertical_localization_ioda_vertical_coord_group:
+#  default_value: MetaData
+#  options:
+#  - MetaData
+#
+#vertical_localization_lengthscale:
+#  default_value: 4
+#
+#vertical_localization_method:
+#  default_value: Vertical localization
+#  options:
+#  - Vertical localization
+
+vertical_resolution:
+  default_value: '72'
+  options:
+  - '72'
+
+window_length:
+  default_value: PT6H
+
+window_offset:
+  default_value: PT3H
+
+window_type:
+  default_value: 3D
+
