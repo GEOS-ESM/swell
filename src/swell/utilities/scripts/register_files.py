@@ -147,21 +147,38 @@ def register_background(filename, file_path, parts, dry_run=True):
         return False
 
 
+
 def register_bias_correction(filename, file_path, parts, dry_run=True):
     """Register bias correction files"""
-
-    file_ext = parts[-1]
-
-    if len(parts) >= 6:
-        obs_type = parts[-3]
-        timestamp = parts[-2]
-        window_length = 'PT6H'
-    else:
+    
+    # Parse filename: gsi.x0050.bc.aircraft_temperature.2023-10-09T15:00:00Z.acftbias
+    # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature', '2023-10-09T15:00:00Z', 'acftbias']
+    
+    if len(parts) < 6:
         print(f"{file_path} can not be registered - not enough parts")
         return False
-
+    
+    provider = parts[0]          # 'gsi'
+    experiment = parts[1]        # 'x0050'
+    obs_type = parts[3]          # 'aircraft_temperature'
+    timestamp = parts[4]         # '2023-10-09T15:00:00Z'
+    file_ext = parts[-1]         # 'acftbias'
+    
+    # Determine file_type from extension
+    file_type_map = {
+        'acftbias': 'obsbias_coefficients',      # Aircraft bias coefficients
+        'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias errors
+        'satbias': 'satbias',                     # Satellite bias
+        'tlapse': 'obsbias_tlapse'                # Time lapse (radiances)
+    }
+    
+    file_type = file_type_map.get(file_ext, file_ext)
+    
     print(f"\n{BLUE}{filename}{RESET}")
-    print(f"   {YELLOW}BIAS CORRECTION:{RESET} obs_type={obs_type}, time={timestamp}")
+    print(f"   {YELLOW}BIAS CORRECTION:{RESET}")
+    print(f"      provider={provider}, experiment={experiment}")
+    print(f"      obs_type={obs_type}, file_type={file_type}")
+    print(f"      time={timestamp}")
 
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")
@@ -170,11 +187,12 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     try:
         r2d2.store(
             item='bias_correction',
-            provider='gsi',
+            provider=provider,             # From filename
+            experiment=experiment,         # CRITICAL: experiment-specific
             observation_type=obs_type,
-            file_extension=file_ext,
+            file_type=file_type,           # Map extension to R2D2 enum
             window_start=timestamp,
-            window_length=window_length,
+            window_length='PT6H',
             source_file=file_path
         )
         print(f"   {GREEN}SUCCESS{RESET}")
