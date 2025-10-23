@@ -244,6 +244,16 @@ class GetObservations(taskBase):
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
                 if bias_file_type != 'null' and fetch_required:
+                   
+                    self.logger.info(f'fetching obs_experiment: {obs_experiment}')
+                    self.logger.info(f'fetching model: {r2d2_model}')
+                    self.logger.info(f'fetching provider: gs')
+                    self.logger.info(f'fetching observation_type: {observation}')
+                    self.logger.info(f'fetching file_extension: {bias_file_type.split(".")[-1] if "." in bias_file_type else bias_file_type}')
+                    self.logger.info(f'fetching file_type: {bias_file_type}')
+                    self.logger.info(f'fetching date: {background_time_iso}')
+                    self.logger.info(f'fetching target_file: {target_bccoef}')
+                    
                     self.logger.info(f'Processing bias file {target_bccoef}')
                     r2d2.fetch(
                         item='bias_correction',
@@ -257,16 +267,6 @@ class GetObservations(taskBase):
                         file_type=bias_file_type,
                         date=background_time_iso
                     )
-                    self.logger.info(f'fetching obs_experiment: {obs_experiment}')
-                    self.logger.info(f'fetching model: {r2d2_model}')
-                    self.logger.info(f'fetching provider: gs')
-                    self.logger.info(f'fetching observation_type: {observation}')
-                    self.logger.info(f'fetching file_extension: {bias_file_type.split('.')[-1]
-                        if '.' in bias_file_type else bias_file_type}')
-                    self.logger.info(f'fetching file_type: {bias_file_type}')
-                    self.logger.info(f'fetching date: {background_time_iso}')
-                    self.logger.info(f'fetching target_file: {target_bccoef}')
-                    
                     self.logger.info(f'Processing bias file {target_bccovr}')
                     r2d2.fetch(
                         item='bias_correction',
