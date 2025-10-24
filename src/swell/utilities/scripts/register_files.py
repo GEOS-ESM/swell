@@ -166,26 +166,26 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     
     # Determine file_type from file_extension
     # Map file_extension -> file_type (R2D2 enum)
-    # Following SkyLab/JCSDA conventions
+    # Using file extension as file_type since R2D2 instance accepts these
+    # TODO: Follow official JCSDA enum: satbias, tlapse, obsbias_tlapse, 
+    # Official JCSDA enum: satbias, tlapse, obsbias_tlapse, 
+    #                      obsbias_coeff_errors, obsbias_coefficients
+
     file_ext_to_type = {
         # Aircraft bias corrections
-        'acftbias': 'acftbias', #'obsbias_coefficients',      # Aircraft bias coefficients
+        'acftbias': 'acftbias',         #'obsbias_coefficients',  # Aircraft bias coefficients
         'acftbias_cov': 'acftbias_cov', #'obsbias_coeff_errors',  # Aircraft bias coefficient errors
         
         # Satellite bias corrections
-        'satbias': 'satbias',                    # Special case: kept for GSI compatibility
-        'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
+        'satbias': 'satbias',                                    # Special case: kept for GSI compatibility
+        'satbias_cov': 'satbias_cov', #'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
         
         # Timelapse 
-        'tlapse': 'obsbias_tlapse',              # TODO: Check if this is correct / can also be just 'tlapse'
-        
-        # Alternative mappings for different naming conventions
-        'obsbias_coefficients': 'obsbias_coefficients',
-        'obsbias_coeff_errors': 'obsbias_coeff_errors',
-        'obsbias_tlapse': 'obsbias_tlapse',
+        'tlapse': 'tlapse', #'obsbias_tlapse',
     }
     
     file_type = file_ext_to_type.get(file_ext, file_ext)
+
 
     # TODO: Add model determination
     # Determine model from observation type or path
@@ -202,8 +202,9 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BIAS CORRECTION:{RESET}")
     print(f"      provider={provider}, experiment={experiment}")
-    print(f"      obs_type={obs_type}, file_type={file_type}")
-    print(f"      time={timestamp}")
+    print(f"      model={model}, obs_type={obs_type}")
+    print(f"      file_extension={file_ext}, file_type={file_type}")
+    print(f"      date={timestamp}")
 
     if dry_run:
         print(f"   {YELLOW}DRY RUN{RESET}")

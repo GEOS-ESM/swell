@@ -243,8 +243,7 @@ class GetObservations(taskBase):
 
             # This will skip the fetch if we are cycling VarBC
             if bias_file_type != 'null':
-                if bias_file_type != 'null' and fetch_required:
-                   
+                if fetch_required:
                     self.logger.info(f'fetching obs_experiment: {obs_experiment}')
                     self.logger.info(f'fetching model: {r2d2_model}')
                     self.logger.info(f'fetching provider: gs')
