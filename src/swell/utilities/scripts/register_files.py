@@ -78,7 +78,7 @@ def register_observation(filename, file_path, parts, dry_run=True):
             provider=provider,
             observation_type=obs_type,
             file_extension=file_ext,
-            data_store='r2d2-experiments-nccs-gmao',
+            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
             window_start=timestamp,
             window_length=window_length,
             source_file=file_path
@@ -164,15 +164,40 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     timestamp = parts[4]         # '2023-10-09T15:00:00Z'
     file_ext = parts[-1]         # 'acftbias'
     
-    # Determine file_type from extension
-    file_type_map = {
-        'acftbias': 'obsbias_coefficients',      # Aircraft bias coefficients
-        'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias errors
-        'satbias': 'satbias',                     # Satellite bias
-        'tlapse': 'obsbias_tlapse'                # Time lapse (radiances)
+    # Determine file_type from file_extension
+    # Map file_extension -> file_type (R2D2 enum)
+    # Following SkyLab/JCSDA conventions
+    file_ext_to_type = {
+        # Aircraft bias corrections
+        'acftbias': 'acftbias', #'obsbias_coefficients',      # Aircraft bias coefficients
+        'acftbias_cov': 'acftbias_cov', #'obsbias_coeff_errors',  # Aircraft bias coefficient errors
+        
+        # Satellite bias corrections
+        'satbias': 'satbias',                    # Special case: kept for GSI compatibility
+        'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
+        
+        # Timelapse 
+        'tlapse': 'obsbias_tlapse',              # TODO: Check if this is correct / can also be just 'tlapse'
+        
+        # Alternative mappings for different naming conventions
+        'obsbias_coefficients': 'obsbias_coefficients',
+        'obsbias_coeff_errors': 'obsbias_coeff_errors',
+        'obsbias_tlapse': 'obsbias_tlapse',
     }
     
-    file_type = file_type_map.get(file_ext, file_ext)
+    file_type = file_ext_to_type.get(file_ext, file_ext)
+
+    # TODO: Add model determination
+    # Determine model from observation type or path
+    # Aircraft and most conventional obs - geos
+    # Satellite radiances -> could be geos or gfs, default to geos
+    # path_lower = file_path.lower()
+    # if 'gfs' in path_lower:
+    #     model = 'gfs'
+    # elif 'fv3' in path_lower:
+    #     model = 'fv3'
+    # else:
+    model = 'geos'  # default
     
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BIAS CORRECTION:{RESET}")
@@ -187,14 +212,18 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     try:
         r2d2.store(
             item='bias_correction',
-            provider=provider,             # From filename
+            source_file=file_path,
+            model=model,
             experiment=experiment,         # CRITICAL: experiment-specific
+            provider=provider,             # From filename
             observation_type=obs_type,
+            file_extension = file_ext,
+            date=timestamp,
             file_type=file_type,           # Map extension to R2D2 enum
-            window_start=timestamp,
-            window_length='PT6H',
-            source_file=file_path
+            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
+            # window_length='PT6H', # not required for bias correction
         )
+
         print(f"   {GREEN}SUCCESS{RESET}")
         save_registered(filename)
         return True
