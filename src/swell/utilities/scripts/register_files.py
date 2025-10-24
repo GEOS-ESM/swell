@@ -167,21 +167,21 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     # Determine file_type from file_extension
     # Map file_extension -> file_type (R2D2 enum)
     # Using file extension as file_type since R2D2 instance accepts these
-    # TODO: Follow official JCSDA enum: satbias, tlapse, obsbias_tlapse, 
-    # Official JCSDA enum: satbias, tlapse, obsbias_tlapse, 
+    # Following official JCSDA enums: 
+    #                      satbias, tlapse, obsbias_tlapse,
     #                      obsbias_coeff_errors, obsbias_coefficients
 
     file_ext_to_type = {
         # Aircraft bias corrections
-        'acftbias': 'acftbias',         #'obsbias_coefficients',  # Aircraft bias coefficients
-        'acftbias_cov': 'acftbias_cov', #'obsbias_coeff_errors',  # Aircraft bias coefficient errors
+        'acftbias': 'obsbias_coefficients',  # Aircraft bias coefficients
+        'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias coefficient errors
         
         # Satellite bias corrections
         'satbias': 'satbias',                                    # Special case: kept for GSI compatibility
-        'satbias_cov': 'satbias_cov', #'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
+        'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
         
         # Timelapse 
-        'tlapse': 'tlapse', #'obsbias_tlapse',
+        'tlapse': 'obsbias_tlapse',
     }
     
     file_type = file_ext_to_type.get(file_ext, file_ext)

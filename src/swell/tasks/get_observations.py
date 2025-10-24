@@ -233,16 +233,27 @@ class GetObservations(taskBase):
                     self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
                     fetch_required = False
 
-            # Determine the bias file type
+            # Determine the bias file extension and map to R2D2 file_type enum
             if observation == 'aircraft_temperature':
-                bias_file_type = 'acftbias'
+                bias_file_ext = 'acftbias'
+                bias_file_type = 'obsbias_coefficients'  # Official JCSDA enum
+                bias_err_type = 'obsbias_coeff_errors'   # Official JCSDA enum
+            # TODO: Do we want to use bias corrections for winds?
+            # TODO: Confirm for extension and err_type. Bias files exist for aircraft_wind 
             elif observation == 'aircraft_wind':
-                bias_file_type = 'null'
+                bias_file_type = None  # Option A: Skip
+                # Option B: Enable (if bias files should be used for aircraft_wind)
+                # bias_file_ext = 'acftbias'
+                # bias_coef_type = 'obsbias_coefficients'
+                # bias_err_type = 'obsbias_coeff_errors'
             else:
-                bias_file_type = 'satbias'
+                # Satellite observations
+                bias_file_ext = 'satbias'
+                bias_file_type = 'satbias'              # Official JCSDA enum
+                bias_err_type = 'obsbias_coeff_errors'  # Official JCSDA enum
 
             # This will skip the fetch if we are cycling VarBC
-            if bias_file_type != 'null':
+            if bias_file_type is not None:
                 if fetch_required:
                     self.logger.info(f'fetching obs_experiment: {obs_experiment}')
                     self.logger.info(f'fetching model: {r2d2_model}')
@@ -253,6 +264,7 @@ class GetObservations(taskBase):
                     self.logger.info(f'fetching date: {background_time_iso}')
                     self.logger.info(f'fetching target_file: {target_bccoef}')
                     
+                    # Fetch coefficients file (.acftbias or .satbias)
                     self.logger.info(f'Processing bias file {target_bccoef}')
                     r2d2.fetch(
                         item='bias_correction',
@@ -261,8 +273,7 @@ class GetObservations(taskBase):
                         experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=bias_file_type.split('.')[-1]
-                        if '.' in bias_file_type else bias_file_type,
+                        file_extension=bias_file_ext,
                         file_type=bias_file_type,
                         date=background_time_iso
                     )
@@ -277,6 +288,7 @@ class GetObservations(taskBase):
                     self.logger.info(f'fetching date: {background_time_iso}') # 2023-10-09T15:00:00Z
                     self.logger.info(f'fetching target_file: {target_bccoef}') #/path/to/bias_coef.nc
 
+                    # Fetch covariance/error file (.acftbias_cov or .satbias_cov)
                     self.logger.info(f'Processing bias file {target_bccovr}')
                     r2d2.fetch(
                         item='bias_correction',
@@ -285,9 +297,8 @@ class GetObservations(taskBase):
                         experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=(bias_file_type + '_cov').split('.')[-1]
-                        if '.' in bias_file_type else bias_file_type + '_cov',
-                        file_type=bias_file_type + '_cov',
+                        file_extension=bias_file_ext + '_cov',
+                        file_type=bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
                         date=background_time_iso
                     )
                 # Change permission
@@ -312,7 +323,8 @@ class GetObservations(taskBase):
                     experiment=obs_experiment,
                     provider='gsi',
                     observation_type=observation,
-                    file_extension='tlapse',
+                    file_extension='tlapse',    
+                    file_type='obsbias_tlapse', # Official JCSDA enum
                     date=background_time_iso
                 )
 
