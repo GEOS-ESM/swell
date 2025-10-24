@@ -192,7 +192,7 @@ class Task:
             runtime_dict['execution retry delays'] = retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
-        print(self.scheduling_name)
+
         # Set the environment dictionary
         if self.environment is not None:
             environment_section = self.create_new_section('environment', self.environment)

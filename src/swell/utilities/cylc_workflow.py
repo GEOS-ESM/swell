@@ -66,13 +66,11 @@ class CylcWorkflow():
         for model in models:
             model_tasks[model] = []
 
-        task_dict = self.tasks()
-
-        for task_name, task in task_dict.items():
+        for task in self.tasks():
             if task.model is not None:
-                model_tasks[task.model] = task_name
+                model_tasks[task.model].append(task.base_name)
             else:
-                ind_tasks.append(task_name)
+                ind_tasks.append(task.base_name)
 
         return ind_tasks, model_tasks
 

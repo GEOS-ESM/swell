@@ -120,33 +120,33 @@ class Workflow_3dvar(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
         
-        for task_name, task in self.tasks().items():
+        for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
     
     def tasks(self) -> list:
-        tasks = {}
-        tasks['root'] = tr.root()
-        tasks['CloneJedi'] = tr.CloneJedi()
-        tasks['BuildJediByLinking'] = tr.BuildJediByLinking()
-        tasks['BuildJedi'] = tr.BuildJedi()
+        tasks = []
+        tasks.append(tr.root())
+        tasks.append(tr.CloneJedi())
+        tasks.append(tr.BuildJediByLinking())
+        tasks.append(tr.BuildJedi())
 
         for model in self.experiment_dict['model_components']:
-            tasks[f'StageJedi-{model}'] = tr.StageJedi(model=model)
-            tasks[f'GetBackground-{model}'] = tr.GetBackground(model=model)
-            tasks[f'GetObservations-{model}'] = tr.GetObservations(model=model)
-            tasks[f'GenerateBClimatologyByLinking-{model}'] = tr.GenerateBClimatologyByLinking(model=model)
-            tasks[f'GenerateBClimatology-{model}'] = tr.GenerateBClimatology(model=model)
-            tasks[f'StageJediCycle-{model}'] = tr.StageJediCycle(model=model)
-            tasks[f'GetBackground-{model}'] = tr.GetBackground(model=model)
-            tasks[f'RunJediVariational-{model}'] = tr.RunJediVariationalExecutable(model=model)
-            tasks[f'EvaObservations-{model}'] = tr.EvaObservations(model=model)
-            tasks[f'EvaJediLog-{model}'] = tr.EvaJediLog(model=model)
-            tasks[f'EvaIncrement-{model}'] = tr.EvaIncrement(model=model)
-            tasks[f'SaveObsDiags-{model}'] = tr.SaveObsDiags(model=model)
-            tasks[f'CleanCycle-{model}'] = tr.CleanCycle(model=model)
+            tasks.append(tr.StageJedi(model=model))
+            tasks.append(tr.GetBackground(model=model))
+            tasks.append(tr.GetObservations(model=model))
+            tasks.append(tr.GenerateBClimatologyByLinking(model=model))
+            tasks.append(tr.GenerateBClimatology(model=model))
+            tasks.append(tr.StageJediCycle(model=model))
+            tasks.append(tr.GetBackground(model=model))
+            tasks.append(tr.RunJediVariationalExecutable(model=model))
+            tasks.append(tr.EvaObservations(model=model))
+            tasks.append(tr.EvaJediLog(model=model))
+            tasks.append(tr.EvaIncrement(model=model))
+            tasks.append(tr.SaveObsDiags(model=model))
+            tasks.append(tr.CleanCycle(model=model))
         
         return tasks
 
