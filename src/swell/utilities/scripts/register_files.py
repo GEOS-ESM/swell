@@ -273,12 +273,16 @@ def register_files(file_path, item_type, dry_run=True):
     print(f"{YELLOW}Found {len(files)} files{RESET}")
 
     success_count = 0
+    failed_files = []
+    skipped_files = []
+
     for file_path in files:
         filename = os.path.basename(file_path)
 
         # Check if already registered
         if filename in registered:
             print(f"{YELLOW}**** {filename} -  already registered{RESET}")
+            skipped_files.append(filename)
             continue
 
         # Split filename by "."
@@ -286,6 +290,7 @@ def register_files(file_path, item_type, dry_run=True):
 
         if len(parts) < 4:
             print(f"{YELLOW}Skip {filename} - not enough parts{RESET}")
+            skipped_files.append(filename)
             continue
 
         # Call appropriate registration function based on item type
@@ -297,13 +302,24 @@ def register_files(file_path, item_type, dry_run=True):
             success = register_bias_correction(filename, file_path, parts, dry_run)
         else:
             print(f"{RED}Unknown item type: {item_type}{RESET}")
+            failed_files.append((filename, "Unknown item type"))
             continue
 
         if success:
             success_count += 1
+        else:
+            failed_files.append((filename, "Registration failed"))
 
+    # Print summary
     print(f"\n{GREEN}Successfully processed {success_count}/{len(files)} files{RESET}")
 
+    if skipped_files:
+        print(f"{YELLOW}Skipped {len(skipped_files)} files (already registered or invalid format){RESET}")
+
+    if failed_files:
+        print(f"\n{RED}Failed to register {len(failed_files)} file(s):{RESET}")
+        for filename, reason in failed_files:
+            print(f"  {RED}{RESET} {filename}: {reason}")
 
 def main():
     import argparse
