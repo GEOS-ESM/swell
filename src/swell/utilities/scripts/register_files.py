@@ -147,27 +147,26 @@ def register_background(filename, file_path, parts, dry_run=True):
         return False
 
 
-
 def register_bias_correction(filename, file_path, parts, dry_run=True):
     """Register bias correction files"""
-    
+
     # Parse filename: gsi.x0050.bc.aircraft_temperature.2023-10-09T15:00:00Z.acftbias
     # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature', '2023-10-09T15:00:00Z', 'acftbias']
-    
+
     if len(parts) < 6:
         print(f"{file_path} can not be registered - not enough parts")
         return False
-    
+
     provider = parts[0]          # 'gsi'
     experiment = parts[1]        # 'x0050'
     obs_type = parts[3]          # 'aircraft_temperature'
     timestamp = parts[4]         # '2023-10-09T15:00:00Z'
     file_ext = parts[-1]         # 'acftbias'
-    
+
     # Determine file_type from file_extension
     # Map file_extension -> file_type (R2D2 enum)
     # Using file extension as file_type since R2D2 instance accepts these
-    # Following official JCSDA enums: 
+    # Following official JCSDA enums:
     #                      satbias, tlapse, obsbias_tlapse,
     #                      obsbias_coeff_errors, obsbias_coefficients
 
@@ -175,17 +174,16 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
         # Aircraft bias corrections
         'acftbias': 'obsbias_coefficients',  # Aircraft bias coefficients
         'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias coefficient errors
-        
+
         # Satellite bias corrections
         'satbias': 'satbias',                                    # Special case: kept for GSI compatibility
         'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
-        
-        # Timelapse 
+
+        # Timelapse
         'tlapse': 'obsbias_tlapse',
     }
-    
-    file_type = file_ext_to_type.get(file_ext, file_ext)
 
+    file_type = file_ext_to_type.get(file_ext, file_ext)
 
     # TODO: Add model determination
     # Determine model from observation type or path
@@ -198,7 +196,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
     #     model = 'fv3'
     # else:
     model = 'geos'  # default
-    
+
     print(f"\n{BLUE}{filename}{RESET}")
     print(f"   {YELLOW}BIAS CORRECTION:{RESET}")
     print(f"      provider={provider}, experiment={experiment}")
@@ -218,7 +216,7 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
             experiment=experiment,         # CRITICAL: experiment-specific
             provider=provider,             # From filename
             observation_type=obs_type,
-            file_extension = file_ext,
+            file_extension=file_ext,
             date=timestamp,
             file_type=file_type,           # Map extension to R2D2 enum
             # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
@@ -320,6 +318,7 @@ def register_files(file_path, item_type, dry_run=True):
         print(f"\n{RED}Failed to register {len(failed_files)} file(s):{RESET}")
         for filename, reason in failed_files:
             print(f"  {RED}{RESET} {filename}: {reason}")
+
 
 def main():
     import argparse

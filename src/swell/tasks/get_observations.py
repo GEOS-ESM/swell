@@ -107,7 +107,7 @@ class GetObservations(taskBase):
         window_offset = self.config.window_offset()
         r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
-        
+
         # Get model component
         model_component = self.get_model()
         r2d2_model = r2d2_model_dict.get(model_component, model_component)
@@ -239,7 +239,7 @@ class GetObservations(taskBase):
                 bias_file_type = 'obsbias_coefficients'  # Official JCSDA enum
                 bias_err_type = 'obsbias_coeff_errors'   # Official JCSDA enum
             # TODO: Do we want to use bias corrections for winds?
-            # TODO: Confirm for extension and err_type. Bias files exist for aircraft_wind 
+            # TODO: Confirm for extension and err_type. Bias files exist for aircraft_wind
             elif observation == 'aircraft_wind':
                 bias_file_type = None  # Option A: Skip
                 # Option B: Enable (if bias files should be used for aircraft_wind)
@@ -259,11 +259,12 @@ class GetObservations(taskBase):
                     self.logger.info(f'fetching model: {r2d2_model}')
                     self.logger.info(f'fetching provider: gs')
                     self.logger.info(f'fetching observation_type: {observation}')
-                    self.logger.info(f'fetching file_extension: {bias_file_type.split(".")[-1] if "." in bias_file_type else bias_file_type}')
+                    self.logger.info(
+                        f'fetching file_extension: {bias_file_type.split(".")[-1] if "." in bias_file_type else bias_file_type}')
                     self.logger.info(f'fetching file_type: {bias_file_type}')
                     self.logger.info(f'fetching date: {background_time_iso}')
                     self.logger.info(f'fetching target_file: {target_bccoef}')
-                    
+
                     # Fetch coefficients file (.acftbias or .satbias)
                     self.logger.info(f'Processing bias file {target_bccoef}')
                     r2d2.fetch(
@@ -278,15 +279,18 @@ class GetObservations(taskBase):
                         date=background_time_iso
                     )
 
-                    self.logger.info(f'fetching obs_experiment: {obs_experiment}') #x0050
-                    self.logger.info(f'fetching model: {r2d2_model}') #geos
-                    self.logger.info(f'fetching provider: gsi') #gsi
-                    self.logger.info(f'fetching observation_type: {observation}') # aircraft_temperature
-                    self.logger.info(f'fetching file_extension: {(bias_file_type.split(".")[-1] #acftbias
-                        if "." in bias_file_type else bias_file_type)}')
-                    self.logger.info(f'fetching file_type: {bias_file_type}') # acftbias
-                    self.logger.info(f'fetching date: {background_time_iso}') # 2023-10-09T15:00:00Z
-                    self.logger.info(f'fetching target_file: {target_bccoef}') #/path/to/bias_coef.nc
+                    self.logger.info(f'fetching obs_experiment: {obs_experiment}')  # x0050
+                    self.logger.info(f'fetching model: {r2d2_model}')  # geos
+                    self.logger.info(f'fetching provider: gsi')  # gsi
+                    # aircraft_temperature
+                    self.logger.info(f'fetching observation_type: {observation}')
+                    self.logger.info(f'fetching file_extension: {(bias_file_type.split(".")[-1]  # acftbias
+                                                                  if "." in bias_file_type else bias_file_type)}')
+                    self.logger.info(f'fetching file_type: {bias_file_type}')  # acftbias
+                    # 2023-10-09T15:00:00Z
+                    self.logger.info(f'fetching date: {background_time_iso}')
+                    # /path/to/bias_coef.nc
+                    self.logger.info(f'fetching target_file: {target_bccoef}')
 
                     # Fetch covariance/error file (.acftbias_cov or .satbias_cov)
                     self.logger.info(f'Processing bias file {target_bccovr}')
@@ -323,8 +327,8 @@ class GetObservations(taskBase):
                     experiment=obs_experiment,
                     provider='gsi',
                     observation_type=observation,
-                    file_extension='tlapse',    
-                    file_type='obsbias_tlapse', # Official JCSDA enum
+                    file_extension='tlapse',
+                    file_type='obsbias_tlapse',  # Official JCSDA enum
                     date=background_time_iso
                 )
 
