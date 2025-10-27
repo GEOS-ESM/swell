@@ -1,5 +1,5 @@
 """
-Simple generic script to register observation files to r2d2 v3
+Simple generic script to ingest observation files to r2d2 v3
 Works for ncdiag, odas, gdas_marine, etc.
 """
 
@@ -21,18 +21,18 @@ except ImportError as e:
         f"Failed to import r2d2: {e}\nLoad module: module load r2d2-client/sles15_0604"
     )
 
-REGISTERED_FILE = "registered_files.txt"
+ingestED_FILE = "ingested_files.txt"
 
 
-def load_registered():
-    if os.path.exists(REGISTERED_FILE):
-        with open(REGISTERED_FILE, 'r') as f:
+def load_ingested():
+    if os.path.exists(ingestED_FILE):
+        with open(ingestED_FILE, 'r') as f:
             return set(line.strip() for line in f)
     return set()
 
 
-def save_registered(filename):
-    with open(REGISTERED_FILE, 'a') as f:
+def save_ingested(filename):
+    with open(ingestED_FILE, 'a') as f:
         f.write(filename + '\n')
 
 
@@ -49,8 +49,8 @@ def guess_provider_from_path(file_path):
         return 'unknown'
 
 
-def register_observation(filename, file_path, parts, dry_run=True):
-    """Register observation files using observation-specific parameters"""
+def ingest_observation(filename, file_path, parts, dry_run=True):
+    """ingest observation files using observation-specific parameters"""
 
     file_ext = parts[-1]
     provider = guess_provider_from_path(file_path)
@@ -60,7 +60,7 @@ def register_observation(filename, file_path, parts, dry_run=True):
         timestamp = parts[-2]     # second from end (before extension)
         window_length = 'PT6H'    # default for all
     else:
-        print(f"{file_path} can not be registered - not enough parts")
+        print(f"{file_path} can not be ingested - not enough parts")
         return False
 
     print(f"\n{BLUE}{filename}{RESET}")
@@ -84,15 +84,15 @@ def register_observation(filename, file_path, parts, dry_run=True):
             source_file=file_path
         )
         print(f"   {GREEN}SUCCESS{RESET}")
-        save_registered(filename)
+        save_ingested(filename)
         return True
     except Exception as e:
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
 
-def register_background(filename, file_path, parts, dry_run=True):
-    """Register background/forecast files using forecast specific parameters"""
+def ingest_background(filename, file_path, parts, dry_run=True):
+    """ingest background/forecast files using forecast specific parameters"""
 
     # Guess model from filename/path
     name_lower = filename.lower()
@@ -140,21 +140,21 @@ def register_background(filename, file_path, parts, dry_run=True):
             source_file=file_path
         )
         print(f"   {GREEN}SUCCESS{RESET}")
-        save_registered(filename)
+        save_ingested(filename)
         return True
     except Exception as e:
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
 
-def register_bias_correction(filename, file_path, parts, dry_run=True):
-    """Register bias correction files"""
+def ingest_bias_correction(filename, file_path, parts, dry_run=True):
+    """ingest bias correction files"""
 
     # Parse filename: gsi.x0050.bc.aircraft_temperature.2023-10-09T15:00:00Z.acftbias
     # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature', '2023-10-09T15:00:00Z', 'acftbias']
 
     if len(parts) < 6:
-        print(f"{file_path} can not be registered - not enough parts")
+        print(f"{file_path} can not be ingested - not enough parts")
         return False
 
     provider = parts[0]          # 'gsi'
@@ -224,18 +224,18 @@ def register_bias_correction(filename, file_path, parts, dry_run=True):
         )
 
         print(f"   {GREEN}SUCCESS{RESET}")
-        save_registered(filename)
+        save_ingested(filename)
         return True
     except Exception as e:
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
 
-def register_files(file_path, item_type, dry_run=True):
-    """Register files found recursively from file_path"""
+def ingest_files(file_path, item_type, dry_run=True):
+    """ingest files found recursively from file_path"""
 
-    # Load already registered files
-    registered = load_registered()
+    # Load already ingested files
+    ingested = load_ingested()
 
     # Define valid extensions based on item type
     valid_extensions = {
@@ -277,9 +277,9 @@ def register_files(file_path, item_type, dry_run=True):
     for file_path in files:
         filename = os.path.basename(file_path)
 
-        # Check if already registered
-        if filename in registered:
-            print(f"{YELLOW}**** {filename} -  already registered{RESET}")
+        # Check if already ingested
+        if filename in ingested:
+            print(f"{YELLOW}**** {filename} -  already ingested{RESET}")
             skipped_files.append(filename)
             continue
 
@@ -291,13 +291,13 @@ def register_files(file_path, item_type, dry_run=True):
             skipped_files.append(filename)
             continue
 
-        # Call appropriate registration function based on item type
+        # Call appropriate ingestion function based on item type
         if item_type == "observation":
-            success = register_observation(filename, file_path, parts, dry_run)
+            success = ingest_observation(filename, file_path, parts, dry_run)
         elif item_type in ["background", "forecast"]:
-            success = register_background(filename, file_path, parts, dry_run)
+            success = ingest_background(filename, file_path, parts, dry_run)
         elif item_type in ["bias_coefficient", "bias_correction"]:
-            success = register_bias_correction(filename, file_path, parts, dry_run)
+            success = ingest_bias_correction(filename, file_path, parts, dry_run)
         else:
             print(f"{RED}Unknown item type: {item_type}{RESET}")
             failed_files.append((filename, "Unknown item type"))
@@ -306,16 +306,16 @@ def register_files(file_path, item_type, dry_run=True):
         if success:
             success_count += 1
         else:
-            failed_files.append((filename, "Registration failed"))
+            failed_files.append((filename, "Ingestion failed"))
 
     # Print summary
     print(f"\n{GREEN}Successfully processed {success_count}/{len(files)} files{RESET}")
 
     if skipped_files:
-        print(f"{YELLOW}Skipped {len(skipped_files)} files (already registered or invalid format){RESET}")
+        print(f"{YELLOW}Skipped {len(skipped_files)} files (already ingested or invalid format){RESET}")
 
     if failed_files:
-        print(f"\n{RED}Failed to register {len(failed_files)} file(s):{RESET}")
+        print(f"\n{RED}Failed to ingest {len(failed_files)} file(s):{RESET}")
         for filename, reason in failed_files:
             print(f"  {RED}{RESET} {filename}: {reason}")
 
@@ -323,24 +323,24 @@ def register_files(file_path, item_type, dry_run=True):
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Register files to r2d2 v3")
-    parser.add_argument('path', help="File or directory path to register")
+    parser = argparse.ArgumentParser(description="ingest files to r2d2 v3")
+    parser.add_argument('path', help="File or directory path to ingest")
     parser.add_argument('item_type', help="Item type: observation, background, bias_correction")
     parser.add_argument(
-        '--register',
+        '--ingest',
         action='store_true',
-        help="Actually register (default is dry run)")
+        help="Actually ingest (default is dry run)")
 
     args = parser.parse_args()
 
-    dry_run = not args.register
+    dry_run = not args.ingest
 
-    print(f"{YELLOW}{'DRY RUN' if dry_run else 'REGISTERING'} {args.item_type} files from: "
+    print(f"{YELLOW}{'DRY RUN' if dry_run else 'INGESTING'} {args.item_type} files from: "
           f"{args.path}{RESET}")
-    register_files(args.path, args.item_type, dry_run=dry_run)
+    ingest_files(args.path, args.item_type, dry_run=dry_run)
 
     if dry_run:
-        print(f"\n{YELLOW}This was a DRY RUN. Use --register to actually register files{RESET}")
+        print(f"\n{YELLOW}This was a DRY RUN. Use --ingest to actually ingest files{RESET}")
 
 
 if __name__ == "__main__":
