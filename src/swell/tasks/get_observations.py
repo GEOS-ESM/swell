@@ -278,14 +278,17 @@ class GetObservations(taskBase):
                         date=background_time_iso
                     )
 
-                    self.logger.info(f'fetching obs_experiment: {obs_experiment}') #x0050
-                    self.logger.info(f'fetching model: {r2d2_model}') #geos
-                    self.logger.info(f'fetching provider: gsi') #gsi
-                    self.logger.info(f'fetching observation_type: {observation}') # aircraft_temperature 
+                    self.logger.info(f'fetching obs_experiment: {obs_experiment}')  # x0050
+                    self.logger.info(f'fetching model: {r2d2_model}')  # geos
+                    self.logger.info(f'fetching provider: gsi')  # gsi
+                    # aircraft_temperature
+                    self.logger.info(f'fetching observation_type: {observation}')
                     self.logger.info(f'fetching file_extension: {bias_file_ext}')
-                    self.logger.info(f'fetching file_type: {bias_file_type}') # acftbias
-                    self.logger.info(f'fetching date: {background_time_iso}') # 2023-10-09T15:00:00Z
-                    self.logger.info(f'fetching target_file: {target_bccoef}') #/path/to/bias_coef.nc
+                    self.logger.info(f'fetching file_type: {bias_file_type}')  # acftbias
+                    # 2023-10-09T15:00:00Z
+                    self.logger.info(f'fetching date: {background_time_iso}')
+                    # /path/to/bias_coef.nc
+                    self.logger.info(f'fetching target_file: {target_bccoef}')
 
                     # Fetch covariance/error file (.acftbias_cov or .satbias_cov)
                     self.logger.info(f'Processing bias file {target_bccovr}')

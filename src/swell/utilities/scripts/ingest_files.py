@@ -78,11 +78,13 @@ def ingest_observation(filename, file_path, parts, dry_run=True):
             provider=provider,
             observation_type=obs_type,
             file_extension=file_ext,
-            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
             window_start=timestamp,
             window_length=window_length,
             source_file=file_path
         )
+        # no need to specify data_store='r2d2-experiments-nccs-gmao'
+        # this will be set by credentials
+
         print(f"   {GREEN}SUCCESS{RESET}")
         save_ingested(filename)
         return True
@@ -151,7 +153,8 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
     """ingest bias correction files"""
 
     # Parse filename: gsi.x0050.bc.aircraft_temperature.2023-10-09T15:00:00Z.acftbias
-    # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature', '2023-10-09T15:00:00Z', 'acftbias']
+    # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature',
+    #                  '2023-10-09T15:00:00Z', 'acftbias']
 
     if len(parts) < 6:
         print(f"{file_path} can not be ingested - not enough parts")
@@ -176,7 +179,7 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
         'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias coefficient errors
 
         # Satellite bias corrections
-        'satbias': 'satbias',                                    # Special case: kept for GSI compatibility
+        'satbias': 'satbias',
         'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
 
         # Timelapse
@@ -219,9 +222,9 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
             file_extension=file_ext,
             date=timestamp,
             file_type=file_type,           # Map extension to R2D2 enum
-            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
-            # window_length='PT6H', # not required for bias correction
         )
+
+        # window_length='PT6H' is not required for bias correction
 
         print(f"   {GREEN}SUCCESS{RESET}")
         save_ingested(filename)
@@ -312,7 +315,8 @@ def ingest_files(file_path, item_type, dry_run=True):
     print(f"\n{GREEN}Successfully processed {success_count}/{len(files)} files{RESET}")
 
     if skipped_files:
-        print(f"{YELLOW}Skipped {len(skipped_files)} files (already ingested or invalid format){RESET}")
+        print(f"{YELLOW}Skipped {len(skipped_files)} "
+              f"files (already ingested or invalid format){RESET}")
 
     if failed_files:
         print(f"\n{RED}Failed to ingest {len(failed_files)} file(s):{RESET}")
