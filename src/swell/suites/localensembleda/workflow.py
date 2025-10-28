@@ -9,6 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
+from swell.tasks.task_runtimes import TaskRuntimes as tr
 
 # --------------------------------------------------------------------------------------------------
 
@@ -117,13 +118,43 @@ template_str = '''
 
 class Workflow_localensembleda(CylcWorkflow):
 
-    def define_initial_workflow(self):
+    def get_workflow_string(self):
         workflow_str = self.default_header()
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
+        
+        for task in self.tasks():
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
 
         return workflow_str
+    
+    def tasks(self) -> list:
+        tasks = []
+        tasks.append(tr.root())
+        tasks.append(tr.CloneJedi())
+        tasks.append(tr.BuildJedi())
+        tasks.append(tr.BuildJediByLinking())
+
+        for model in self.experiment_dict['model_components']:
+            tasks.append(tr.CloneGeosMksi(model=model))
+            tasks.append(tr.StageJediCycle(model=model))
+            tasks.append(tr.GetObsNotInR2d2(model=model))
+            tasks.append(tr.GetObservations(model=model))
+            tasks.append(tr.GenerateObservingSystemRecords(model=model))
+            tasks.append(tr.GetEnsembleGeosExperiment(model=model))
+            tasks.append(tr.sync_point(model=model))
+            tasks.append(tr.RunJediObsfiltersExecutable(model=model))
+            tasks.append(tr.RunJediLocalEnsembleDaExecutable(model=model))
+            tasks.append(tr.RunJediHofxEnsembleMeanVariance(model=model))
+            tasks.append(tr.RunJediHofxEnsembleExecutable(model=model))
+            tasks.append(tr.EvaIncrement(model=model))
+            tasks.append(tr.EvaObservations(model=model))
+            tasks.append(tr.SaveObsDiags(model=model))
+            tasks.append(tr.CleanCycle(model=model))
+        
+        return tasks
 
 # --------------------------------------------------------------------------------------------------

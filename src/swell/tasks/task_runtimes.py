@@ -227,6 +227,20 @@ class TaskRuntimes():
         slurm: dict = mutable_field({})
 
     @dataclass
+    class RunJediHofxEnsembleMeanVariance(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+        time_limit: bool = True
+        slurm: dict = mutable_field({})
+
+    @dataclass
+    class RunJediHofxEnsembleExecutable(Task):
+        is_cycling: bool = True
+        is_model: bool = True
+        time_limit: bool = True
+        slurm: dict = mutable_field({})
+
+    @dataclass
     class RunJediHofxExecutable(Task):
         is_cycling: bool = True
         is_model: bool = True

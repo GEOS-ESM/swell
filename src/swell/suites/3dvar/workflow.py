@@ -135,7 +135,6 @@ class Workflow_3dvar(CylcWorkflow):
 
         for model in self.experiment_dict['model_components']:
             tasks.append(tr.StageJedi(model=model))
-            tasks.append(tr.GetBackground(model=model))
             tasks.append(tr.GetObservations(model=model))
             tasks.append(tr.GenerateBClimatologyByLinking(model=model))
             tasks.append(tr.GenerateBClimatology(model=model))

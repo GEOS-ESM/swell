@@ -10,6 +10,7 @@
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 from swell.utilities.check_da_params import check_da_params
+from swell.tasks.task_runtimes import TaskRuntimes as tr
 
 # --------------------------------------------------------------------------------------------------
 
@@ -55,32 +56,27 @@ template_str = '''
 
 class Workflow_compare_variational(CylcWorkflow):
 
-    def define_initial_workflow(self):
+    def get_workflow_string(self):
         workflow_str = self.default_header()
-
-        # Overrides for comparison suites
-        start_cycle_point = self.experiment_dict['start_cycle_point']
-        final_cycle_point = self.experiment_dict['final_cycle_point']
-        if self.experiment_dict['start_cycle_point'] is None:
-            config_list = self.experiment_dict['comparison_experiment_paths']
-            for model in self.experiment_dict['model_components']:
-                cycle_times = self.experiment_dict['models'][model]['cycle_times']
-                start_cycle_point, final_cycle_point, cycle_times = check_da_params(
-                        config_list,
-                        model,
-                        start_cycle_point,
-                        final_cycle_point,
-                        cycle_times)
-
-                self.experiment_dict['start_cycle_point'] = start_cycle_point
-                self.experiment_dict['final_cycle_point'] = final_cycle_point
-                self.experiment_dict['models'][model]['cycle_times'] = cycle_times
-
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
+        
+        for task in self.tasks():
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
 
         return workflow_str
+    
+    def tasks(self) -> list:
+        tasks = []
+
+        for model in self.experiment_dict['model_components']:
+            tasks.append(tr.EvaComparisonIncrement(model=model))
+            tasks.append(tr.EvaComparisonJediLog(model=model))
+            tasks.append(tr.JediOopsLogParser(model=model))
+        
+        return tasks
 
 # --------------------------------------------------------------------------------------------------
