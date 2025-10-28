@@ -112,9 +112,6 @@ class SaveObsDiags(taskBase):
 
             # Store to R2D2
             # ---------------
-            self.logger.info(f'Storing feedback file {obs_path_file} to r2d2')
-            self.logger.info(f'  item=feedback, observation_type={name}')
-            self.logger.info(f'  experiment={self.experiment_id()}')
 
             try:
                 r2d2.store(
