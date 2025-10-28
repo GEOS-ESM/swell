@@ -69,17 +69,16 @@ class SaveObsDiags(taskBase):
             if not use_obs:
                 self.logger.info(f'Input observation file analysis for {observation}:')
                 self.logger.info(f'  Expected file: {input_obs_file}')
-                if os.path.exists(input_obs_file):
-                    try:
-                        import netCDF4 as nc
-                        dataset = nc.Dataset(input_obs_file, 'r')
-                        dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
-                        self.logger.info(f'  File exists but dimensions: {dims}')
-                        dataset.close()
-                    except Exception as e:
-                        self.logger.info(f'  File exists but error reading: {str(e)}')
-                else:
-                    self.logger.info(f'  File does not exist!')
+                # Check if file exists and is readable
+                # ---------------------------------------
+                try:
+                    import netCDF4 as nc
+                    dataset = nc.Dataset(input_obs_file, 'r')
+                    dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
+                    self.logger.info(f'  File exists but dimensions: {dims}')
+                    dataset.close()
+                except Exception as e:
+                    self.logger.info(f'  File exists but error reading: {str(e)}')
 
                 self.logger.info(f'  Skipping {observation}')
                 continue
