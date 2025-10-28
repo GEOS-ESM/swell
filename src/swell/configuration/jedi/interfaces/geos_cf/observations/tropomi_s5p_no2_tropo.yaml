@@ -9,9 +9,6 @@ obs space:
       type: H5File
       allow overwrite: true
       obsfile: '{{cycle_dir}}/{{experiment_id}}.tropomi_s5p_no2_tropo.{{window_begin}}.nc4'
-  #_source: esa
-  #_source: compo_exp
-  #_source: tempo_demo
   simulated variables: [nitrogendioxideColumn]
   observed variables: [nitrogendioxideColumn]
 

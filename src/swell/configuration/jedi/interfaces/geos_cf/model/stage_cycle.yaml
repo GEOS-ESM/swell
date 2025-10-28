@@ -1,4 +1,3 @@
 - copy_files:
     directories:
-      #- ['/discover/nobackup/mabdiosk/SWELL_uv/swell-develop/src/swell/configuration/jedi/interfaces/geos_cf/namelists/*', '{{experiment_root}}/{{experiment_id}}/stage/fv3-jedi/']
       - ['/discover/nobackup/mabdiosk/SWELL_uv/swell-develop/src/swell/configuration/jedi/interfaces/geos_cf/namelists/*', '{{cycle_dir}}/']

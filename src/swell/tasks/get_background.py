@@ -148,7 +148,6 @@ class GetBackground(taskBase):
                 target_file = background_time.strftime(target_file_template)
 
                 file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
-        
                 r2d2.fetch(
                     item='forecast',
                     target_file=target_file,

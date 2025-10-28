@@ -7,6 +7,8 @@ databases:
 # v3 API configuration (for centralized nccs-gmao data)
 #data_hub: nccs-gmao
 #data_store: r2d2-experiments-nccs-gmao
+
+# JCSDA config for testing
 data_hub: discover-mil
 data_store: r2d2-experiments-nccs
 compute_host: discover-gmao-intel

@@ -9,10 +9,6 @@ obs space:
       type: H5File
       allow overwrite: true
       obsfile: '{{cycle_dir}}/{{experiment_id}}.tempo_no2_total.{{window_begin}}.nc4'
-  #_source: nasa
-  #_source: tempo_demo
-  #_source: nasa_VCD
-  #_source: tempo_slant_col
   simulated variables: [nitrogendioxideTotal]
   observed variables: [nitrogendioxideTotal]
 monitoring only: false
@@ -37,4 +33,3 @@ obs operator:
   isApriori: false
   isAveragingKernel: true
   stretchVertices: topbottom #options: top, bottom, topbottom, none
-  #tropopause pressure: 30000.0 #Pa #remove for no ufo hack?
