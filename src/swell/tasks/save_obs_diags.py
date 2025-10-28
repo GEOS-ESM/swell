@@ -84,8 +84,10 @@ class SaveObsDiags(taskBase):
                 self.logger.info(f'  Skipping {observation}')
                 continue
 
-            # Store diagnostic observation files (OUTPUT from RunJediVariationalExecutable)
-            # ---------------------------------------------------------------------------
+            # Store diagnostic/feedback files produced by JEDI executables
+            # (e.g., variational, hofx, localensembleda).
+            # --------------------------------------------------------------
+
             name = observation_dict['obs space']['name']
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
 
