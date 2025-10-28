@@ -177,7 +177,6 @@ class GetObservations(taskBase):
                         'target_file': target_file,          # Where to save
                     }
 
-                    print(f"Searching for file with criteria: {fetch_criteria}")
                     try:
                         r2d2.fetch(**fetch_criteria)
                         self.logger.info(f"Successfully fetched {target_file}")

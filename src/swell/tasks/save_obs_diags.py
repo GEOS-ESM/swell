@@ -81,7 +81,6 @@ class SaveObsDiags(taskBase):
                 else:
                     self.logger.info(f'  File does not exist!')
 
-                self.logger.info(f'  GetObservations task did not fetch this file successfully')
                 self.logger.info(f'  Skipping {observation}')
                 continue
 
