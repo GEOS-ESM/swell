@@ -5,6 +5,7 @@ akbk: '{{cycle_dir}}/akbk{{vertical_resolution}}.nc4'
 
 layout: [{{npx_proc}},{{npy_proc}}]
 
-npx: {{horizontal_resolution}}
-npy: {{horizontal_resolution}}
+npx: {{npx}}
+npy: {{npy}}
+
 npz: {{vertical_resolution}}

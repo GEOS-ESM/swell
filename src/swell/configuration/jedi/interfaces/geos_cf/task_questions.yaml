@@ -35,6 +35,25 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+horizontal_resolution:
+  default_value: 'c360'
+  options:
+  - 'c90'
+  - 'c360'
+
+npx:
+  default_value: 361
+  options:
+  - 91
+  - 361
+
+npy:
+  default_value: 361
+  options:
+  - 91
+  - 361
+
+
 npx_proc:
   default_value: 2
 
