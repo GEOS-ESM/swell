@@ -79,7 +79,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.analysis_forecast_window_offset("-PT3H"),
             qd.background_time_offset("PT9H"),
             qd.clean_patterns([
-                "*.nc4",
                 "*.txt",
                 "*.rc",
                 "*.bin"

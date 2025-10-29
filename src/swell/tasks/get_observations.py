@@ -19,6 +19,13 @@ from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
 import r2d2
 
+# --------------------------------------------------------------------------------------------------
+
+# R2D2 model name mapping
+r2d2_model_dict = {
+    'geos_atmosphere': 'geos',
+    'geos_marine': 'mom6',
+}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -92,6 +99,7 @@ class GetObservations(taskBase):
         # Parse config
         # ------------
         obs_providers = self.config.obs_provider()
+        obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
@@ -99,6 +107,10 @@ class GetObservations(taskBase):
         window_offset = self.config.window_offset()
         r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
+
+        # Get model component
+        model_component = self.get_model()
+        r2d2_model = r2d2_model_dict.get(model_component, model_component)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -110,6 +122,8 @@ class GetObservations(taskBase):
                                                               dto=True)
         background_time = self.da_window_params.background_time(window_offset,
                                                                 background_time_offset)
+        background_time_iso = self.da_window_params.background_time_iso(window_offset,
+                                                                        background_time_offset)
 
         # Determine the input observation files to be fetched, this mainly depends on
         # the observation file organization in R2D2. In other words, they could be
@@ -154,16 +168,15 @@ class GetObservations(taskBase):
                     combine_input_files.append(target_file)
 
                     fetch_criteria = {
-                        'item': 'observation',  # Required for r2d2 v3
-                        'provider': obs_provider,  # What we registered with
-                        'observation_type': observation,  # From filename
+                        'item': 'observation',               # Required for r2d2 v3
+                        'provider': obs_provider,            # What we registered with
+                        'observation_type': observation,     # From filename
                         'file_extension': 'nc4',
-                        'window_start': obs_window_begin,  # From filename timestamp
+                        'window_start': obs_window_begin,    # From filename timestamp
                         'window_length': obs_window_length,  # From filename
-                        'target_file': target_file  # Where to save
+                        'target_file': target_file,          # Where to save
                     }
 
-                    print(f"Searching for file with criteria: {fetch_criteria}")
                     try:
                         r2d2.fetch(**fetch_criteria)
                         self.logger.info(f"Successfully fetched {target_file}")
@@ -219,38 +232,52 @@ class GetObservations(taskBase):
                     self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
                     fetch_required = False
 
-            # Determine the bias file type
+            # Determine the bias file extension and map to R2D2 file_type enum
             if observation == 'aircraft_temperature':
-                bias_file_type = 'acftbias'
+                bias_file_ext = 'acftbias'
+                bias_file_type = 'obsbias_coefficients'  # Official JCSDA enum
+                bias_err_type = 'obsbias_coeff_errors'   # Official JCSDA enum
+            # TODO: Do we want to use bias corrections for winds?
+            # TODO: Confirm for extension and err_type. Bias files exist for aircraft_wind
             elif observation == 'aircraft_wind':
-                bias_file_type = 'null'
+                bias_file_type = None  # Option A: Skip
+                # Option B: Enable (if bias files should be used for aircraft_wind)
+                # bias_file_ext = 'acftbias'
+                # bias_coef_type = 'obsbias_coefficients'
+                # bias_err_type = 'obsbias_coeff_errors'
             else:
-                bias_file_type = 'satbias'
+                # Satellite observations
+                bias_file_ext = 'satbias'
+                bias_file_type = 'satbias'              # Official JCSDA enum
+                bias_err_type = 'obsbias_coeff_errors'  # Official JCSDA enum
 
             # This will skip the fetch if we are cycling VarBC
-            if bias_file_type != 'null':
-                if bias_file_type != 'null' and fetch_required:
+            if bias_file_type is not None:
+                if fetch_required:
+                    # Fetch coefficients file (.acftbias or .satbias)
                     self.logger.info(f'Processing bias file {target_bccoef}')
                     r2d2.fetch(
                         item='bias_correction',
+                        target_file=target_bccoef,
+                        model=r2d2_model,
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=bias_file_type.split('.')[-1]
-                        if '.' in bias_file_type else bias_file_type,
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccoef
+                        file_extension=bias_file_ext,
+                        file_type=bias_file_type,
+                        date=background_time_iso
                     )
-                    self.logger.info(f'Processing bias file {target_bccovr}')
+
                     r2d2.fetch(
                         item='bias_correction',
+                        target_file=target_bccovr,
+                        model=r2d2_model,
+                        experiment=obs_experiment,
                         provider='gsi',
                         observation_type=observation,
-                        file_extension=(bias_file_type + '_cov').split('.')[-1]
-                        if '.' in bias_file_type else bias_file_type + '_cov',
-                        window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                        window_length='PT6H',
-                        target_file=target_bccovr
+                        file_extension=bias_file_ext + '_cov',
+                        file_type=bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
+                        date=background_time_iso
                     )
                 # Change permission
                 os.chmod(target_bccoef, 0o644)
@@ -269,12 +296,14 @@ class GetObservations(taskBase):
 
                 r2d2.fetch(
                     item='bias_correction',
+                    target_file=target_file,
+                    model=r2d2_model,
+                    experiment=obs_experiment,
                     provider='gsi',
                     observation_type=observation,
                     file_extension='tlapse',
-                    window_start=background_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    window_length='PT6H',
-                    target_file=target_file
+                    file_type='obsbias_tlapse',  # Official JCSDA enum
+                    date=background_time_iso
                 )
 
                 # Change permission
