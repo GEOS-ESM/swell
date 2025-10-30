@@ -10,7 +10,7 @@
 from typing import Union, Optional, Self
 from collections.abc import Mapping
 
-from swell.utilities.task_spec import Task
+from swell.utilities.task_specification import Task
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.question_defaults import QuestionDefaults as qd
 
@@ -139,10 +139,8 @@ class TaskAttributes():
 
     class CleanCycle(Task):
         def set_attributes(self):
-
             self.is_cycling = True
             self.is_model = True
-
             self.question_list = QuestionList([
                 qd.clean_patterns()
             ])
