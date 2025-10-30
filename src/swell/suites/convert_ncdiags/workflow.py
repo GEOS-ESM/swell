@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -93,15 +93,15 @@ class Workflow_convert_ncdiags(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.BuildJediByLinking())
-        tasks.append(tr.BuildJedi())
-        tasks.append(tr.GetGsiBc())
-        tasks.append(tr.GsiBcToIoda())
-        tasks.append(tr.GetGsiNcdiag())
-        tasks.append(tr.GsiNcdiagToIoda())
-        tasks.append(tr.CleanCycle())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.BuildJediByLinking())
+        tasks.append(ta.BuildJedi())
+        tasks.append(ta.GetGsiBc())
+        tasks.append(ta.GsiBcToIoda())
+        tasks.append(ta.GetGsiNcdiag())
+        tasks.append(ta.GsiNcdiagToIoda())
+        tasks.append(ta.CleanCycle())
         
         return tasks
 

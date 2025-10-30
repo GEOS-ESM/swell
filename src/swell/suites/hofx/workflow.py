@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -122,24 +122,24 @@ class Workflow_hofx(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.BuildJedi())
-        tasks.append(tr.BuildJediByLinking())
-        tasks.append(tr.CloneGeosMksi())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.BuildJedi())
+        tasks.append(ta.BuildJediByLinking())
+        tasks.append(ta.CloneGeosMksi())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.CloneGeosMksi(model=model))
-            tasks.append(tr.GenerateObservingSystemRecords(model=model))
-            tasks.append(tr.GetBackgroundGeosExperiment(model=model))
-            tasks.append(tr.GetBackground(model=model))
-            tasks.append(tr.GetObservations(model=model))
-            tasks.append(tr.GetObsNotInR2d2(model=model))
-            tasks.append(tr.StageJediCycle(model=model))
-            tasks.append(tr.RunJediHofxExecutable(model=model))
-            tasks.append(tr.EvaObservations(model=model))
-            tasks.append(tr.SaveObsDiags(model=model))
-            tasks.append(tr.CleanCycle(model=model))
+            tasks.append(ta.CloneGeosMksi(model=model))
+            tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            tasks.append(ta.GetBackgroundGeosExperiment(model=model))
+            tasks.append(ta.GetBackground(model=model))
+            tasks.append(ta.GetObservations(model=model))
+            tasks.append(ta.GetObsNotInR2d2(model=model))
+            tasks.append(ta.StageJediCycle(model=model))
+            tasks.append(ta.RunJediHofxExecutable(model=model))
+            tasks.append(ta.EvaObservations(model=model))
+            tasks.append(ta.SaveObsDiags(model=model))
+            tasks.append(ta.CleanCycle(model=model))
         
         return tasks
 

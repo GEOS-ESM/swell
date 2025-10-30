@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -159,37 +159,37 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.CloneGeos())
-        tasks.append(tr.BuildJediByLinking())
-        tasks.append(tr.BuildJedi())
-        tasks.append(tr.BuildGeos())
-        tasks.append(tr.BuildGeosByLinking())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.CloneGeos())
+        tasks.append(ta.BuildJediByLinking())
+        tasks.append(ta.BuildJedi())
+        tasks.append(ta.BuildGeos())
+        tasks.append(ta.BuildGeosByLinking())
 
-        tasks.append(tr.GetGeosRestart())
-        tasks.append(tr.PrepGeosRunDir())
-        tasks.append(tr.RunGeosExecutable())
+        tasks.append(ta.GetGeosRestart())
+        tasks.append(ta.PrepGeosRunDir())
+        tasks.append(ta.RunGeosExecutable())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.RunJediFgatExecutable(model=model))
-            tasks.append(tr.StageJedi(model=model))
-            tasks.append(tr.StageJediCycle(model=model))
-            tasks.append(tr.MoveDaRestart(model=model))
-            tasks.append(tr.LinkGeosOutput(model=model))
-            tasks.append(tr.GenerateBClimatology(model=model))
-            tasks.append(tr.GenerateBClimatologyByLinking(model=model))
-            tasks.append(tr.GetObservations(model=model))
-            tasks.append(tr.EvaObservations(model=model))
-            tasks.append(tr.EvaJediLog(model=model))
-            tasks.append(tr.EvaIncrement(model=model))
-            tasks.append(tr.PrepareAnalysis(model=model))
-            tasks.append(tr.RunJediConvertStateSoca2ciceExecutable(model=model))
-            tasks.append(tr.SaveRestart(model=model))
-            tasks.append(tr.CleanCycle(model=model))
-            tasks.append(tr.PrepareAnalysis(model=model))
-            tasks.append(tr.RemoveForecastDir(model=model))
-            tasks.append(tr.SaveObsDiags(model=model))
+            tasks.append(ta.RunJediFgatExecutable(model=model))
+            tasks.append(ta.StageJedi(model=model))
+            tasks.append(ta.StageJediCycle(model=model))
+            tasks.append(ta.MoveDaRestart(model=model))
+            tasks.append(ta.LinkGeosOutput(model=model))
+            tasks.append(ta.GenerateBClimatology(model=model))
+            tasks.append(ta.GenerateBClimatologyByLinking(model=model))
+            tasks.append(ta.GetObservations(model=model))
+            tasks.append(ta.EvaObservations(model=model))
+            tasks.append(ta.EvaJediLog(model=model))
+            tasks.append(ta.EvaIncrement(model=model))
+            tasks.append(ta.PrepareAnalysis(model=model))
+            tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+            tasks.append(ta.SaveRestart(model=model))
+            tasks.append(ta.CleanCycle(model=model))
+            tasks.append(ta.PrepareAnalysis(model=model))
+            tasks.append(ta.RemoveForecastDir(model=model))
+            tasks.append(ta.SaveObsDiags(model=model))
 
         return tasks
 

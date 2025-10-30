@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -96,21 +96,21 @@ class Workflow_geosadas(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.BuildJediByLinking())
-        tasks.append(tr.CloneGeosMksi)
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.BuildJediByLinking())
+        tasks.append(ta.CloneGeosMksi)
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.GenerateObservingSystemRecords(model=model))
-            tasks.append(tr.StageJedi(model=model))
-            tasks.append(tr.GetGsiBc(model=model))
-            tasks.append(tr.GsiBcToIoda(model=model))
-            tasks.append(tr.GetGsiNcdiag(model=model))
-            tasks.append(tr.GsiNcdiagToIoda(model=model))
-            tasks.append(tr.GetGeosAdasBackground(model=model))
-            tasks.append(tr.RunJediVariationalExecutable(model=model))
-            tasks.append(tr.CleanCycle(model=model))
+            tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            tasks.append(ta.StageJedi(model=model))
+            tasks.append(ta.GetGsiBc(model=model))
+            tasks.append(ta.GsiBcToIoda(model=model))
+            tasks.append(ta.GetGsiNcdiag(model=model))
+            tasks.append(ta.GsiNcdiagToIoda(model=model))
+            tasks.append(ta.GetGeosAdasBackground(model=model))
+            tasks.append(ta.RunJediVariationalExecutable(model=model))
+            tasks.append(ta.CleanCycle(model=model))
         
         return tasks
 

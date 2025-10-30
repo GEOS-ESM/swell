@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -104,18 +104,18 @@ class Workflow_convert_bufr(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.BuildJediByLinking())
-        tasks.append(tr.BuildJedi())
-        tasks.append(tr.CloneGmaoPerllib())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.BuildJediByLinking())
+        tasks.append(ta.BuildJedi())
+        tasks.append(ta.CloneGmaoPerllib())
 
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.CloneGeosMksi(model=model))
-            tasks.append(tr.GetBufr(model=model))
-            tasks.append(tr.BufrToIoda(model=model))
-            tasks.append(tr.CleanCycle(model=model))
+            tasks.append(ta.CloneGeosMksi(model=model))
+            tasks.append(ta.GetBufr(model=model))
+            tasks.append(ta.BufrToIoda(model=model))
+            tasks.append(ta.CleanCycle(model=model))
         
         return tasks
 

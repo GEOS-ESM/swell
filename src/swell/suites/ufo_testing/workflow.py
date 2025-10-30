@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -111,22 +111,22 @@ class Workflow_ufo_testing(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneJedi())
-        tasks.append(tr.BuildJedi())
-        tasks.append(tr.BuildJediByLinking())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneJedi())
+        tasks.append(ta.BuildJedi())
+        tasks.append(ta.BuildJediByLinking())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.CloneGeosMksi(model=model))
-            tasks.append(tr.GenerateObservingSystemRecords(model=model))
-            tasks.append(tr.GetGsiBc(model=model))
-            tasks.append(tr.GsiBcToIoda(model=model))
-            tasks.append(tr.GetGsiNcdiag(model=model))
-            tasks.append(tr.GsiNcdiagToIoda(model=model))
-            tasks.append(tr.RunJediUfoTestsExecutable(model=model))
-            tasks.append(tr.GetGeovals(model=model))
-            tasks.append(tr.EvaObservations(model=model))
-            tasks.append(tr.CleanCycle(model=model))
+            tasks.append(ta.CloneGeosMksi(model=model))
+            tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            tasks.append(ta.GetGsiBc(model=model))
+            tasks.append(ta.GsiBcToIoda(model=model))
+            tasks.append(ta.GetGsiNcdiag(model=model))
+            tasks.append(ta.GsiNcdiagToIoda(model=model))
+            tasks.append(ta.RunJediUfoTestsExecutable(model=model))
+            tasks.append(ta.GetGeovals(model=model))
+            tasks.append(ta.EvaObservations(model=model))
+            tasks.append(ta.CleanCycle(model=model))
         
         return tasks
 

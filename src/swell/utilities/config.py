@@ -10,7 +10,7 @@
 import yaml
 from typing import Callable
 
-from swell.tasks.task_questions import TaskQuestions as task_questions
+from swell.tasks.task_attributes import TaskAttributes as task_attributes
 from swell.utilities.logger import Logger
 from swell.suites.all_suites import suite_configs
 
@@ -122,8 +122,8 @@ class Config():
                 question_list.append(question)
 
         # Find the questions associated with the task
-        if task_name in task_questions.get_all():
-            question_list.extend(task_questions[task_name].value.get_all_question_names())
+        task_class = getattr(task_attributes, task_name)
+        question_list.extend(task_class().question_list.get_all_question_names())
 
         # Loop through the experiment dictionary
         for exp_key, exp_val in experiment_dict.items():

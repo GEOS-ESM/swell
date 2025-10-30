@@ -15,6 +15,7 @@ from enum import Enum, StrEnum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
 from swell.swell_path import get_swell_path
+from swell.utilities.dataclass_utils import mutable_field
 
 # --------------------------------------------------------------------------------------------------
 
@@ -132,11 +133,11 @@ class QuestionContainer:
 @dataclass
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
-    list_name: str
-    questions: List[Union[SwellQuestion, Self]]
+    questions: List[Union[SwellQuestion, Self]] = mutable_field([])
+    list_name: str = ''
 
-    geos_atmosphere: list = field(default_factory=lambda: [])
-    geos_marine: list = field(default_factory=lambda: [])
+    geos_atmosphere: list = mutable_field([])
+    geos_marine: list = mutable_field([])
 
     # --------------------------------------------------------------------------------------------------
 
@@ -170,7 +171,7 @@ class QuestionList:
             question = asdict(question_obj)
 
             # If the item is a question list, expand its contents
-            if 'list_name' in question.keys():
+            if 'questions' in question.keys():
                 question_list.extend(question_obj.expand_question_list(model))
             elif model is None:
                 # Add to the model_independent question list
@@ -184,7 +185,7 @@ class QuestionList:
                     question_obj = question_obj.value
                 question = asdict(question_obj)
 
-                if 'list_name' in question.keys():
+                if 'questions' in question.keys():
                     question_list.extend(question_obj.expand_question_list(model))
                 else:
                     question_list.append(question)

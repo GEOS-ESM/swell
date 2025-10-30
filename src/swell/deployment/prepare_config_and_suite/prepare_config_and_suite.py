@@ -22,7 +22,7 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_defaults impo
 from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
 from swell.utilities.dictionary import update_dict, add_dict
-from swell.tasks.task_questions import TaskQuestions as task_questions
+from swell.tasks.task_attributes import TaskAttributes as task_attributes
 from swell.suites.all_suites import suite_configs
 from swell.utilities.swell_questions import QuestionType
 from swell.utilities.question_defaults import QuestionDefaults as qd
@@ -186,43 +186,46 @@ class PrepareExperimentConfigAndSuite:
         # Iterate through model independent tasks and update with defaults if not already set
         for task in self.model_independent_tasks:
             task_options.append(task)
-            if task in task_questions.get_all():
-                question_list = task_questions[task].value.expand_question_list()
-                for question in question_list:
-                    question_dict = {question['question_name']: question}
 
-                    if question['models'] is not None:
-                        model_dict = {}
+            task_class = getattr(task_attributes, task)
 
-                        for question_model in question['models']:
-                            if question_model == 'all_models':
-                                for model in model_components:
-                                    model_dict[model] = question_dict
-                            elif question_model in model_components:
-                                model_dict[question_model] = question_dict
+            question_list = task_class().question_list.expand_question_list()
+            for question in question_list:
+                question_dict = {question['question_name']: question}
 
-                        self.question_dictionary_model_dep = add_dict(
-                                self.question_dictionary_model_dep, model_dict)
+                if question['models'] is not None:
+                    model_dict = {}
 
-                    else:
-                        self.question_dictionary_model_ind = add_dict(
-                                self.question_dictionary_model_ind, question_dict)
+                    for question_model in question['models']:
+                        if question_model == 'all_models':
+                            for model in model_components:
+                                model_dict[model] = question_dict
+                        elif question_model in model_components:
+                            model_dict[question_model] = question_dict
+
+                    self.question_dictionary_model_dep = add_dict(
+                            self.question_dictionary_model_dep, model_dict)
+
+                else:
+                    self.question_dictionary_model_ind = add_dict(
+                            self.question_dictionary_model_ind, question_dict)
 
         # Iterate through model dependent tasks and update if not already set
         for model, task_list in self.model_dependent_tasks.items():
             for task in task_list:
                 task_options.append(task)
-                if task in task_questions.get_all():
-                    question_list = task_questions[task].value.expand_question_list()
 
-                    for question in question_list:
-                        question_dict = {question['question_name']: question}
-                        if question['models'] is None:
-                            self.question_dictionary_model_ind = add_dict(
-                                    self.question_dictionary_model_ind, question_dict)
-                        elif model in question['models'] or 'all_models' in question['models']:
-                            self.question_dictionary_model_dep = add_dict(
-                                    self.question_dictionary_model_dep, {model: question_dict})
+                task_class = getattr(task_attributes, task)
+                question_list = task_class(model=model).question_list.expand_question_list()
+
+                for question in question_list:
+                    question_dict = {question['question_name']: question}
+                    if question['models'] is None:
+                        self.question_dictionary_model_ind = add_dict(
+                                self.question_dictionary_model_ind, question_dict)
+                    elif model in question['models'] or 'all_models' in question['models']:
+                        self.question_dictionary_model_dep = add_dict(
+                                self.question_dictionary_model_dep, {model: question_dict})
 
         # Set options for task email parameters
         message_question_dict = {'task_email_parameters':

@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -89,14 +89,14 @@ class Workflow_eva_capabilities(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
+        tasks.append(ta.root())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(tr.CloneGeosMksi(model=model))
-            tasks.append(tr.GetNcdiags(model=model))
-            tasks.append(tr.GenerateObservingSystemRecords(model=model))
-            tasks.append(tr.EvaTimeseries(model=model))
-            tasks.append(tr.CleanCycle(model=model))
+            tasks.append(ta.CloneGeosMksi(model=model))
+            tasks.append(ta.GetNcdiags(model=model))
+            tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            tasks.append(ta.EvaTimeseries(model=model))
+            tasks.append(ta.CleanCycle(model=model))
         
         return tasks
 

@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -35,6 +35,12 @@ template_str = '''
         """
 
 # --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+
 '''
 
 # --------------------------------------------------------------------------------------------------
@@ -57,10 +63,10 @@ class Workflow_build_geos(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneGeos())
-        tasks.append(tr.BuildGeos())
-        tasks.append(tr.BuildGeosByLinking())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneGeos())
+        tasks.append(ta.BuildGeos())
+        tasks.append(ta.BuildGeosByLinking())
 
         return tasks
 

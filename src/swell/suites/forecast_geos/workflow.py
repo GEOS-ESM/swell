@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.tasks.task_runtimes import TaskRuntimes as tr
+from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
 
@@ -98,16 +98,16 @@ class Workflow_forecast_geos(CylcWorkflow):
     
     def tasks(self) -> list:
         tasks = []
-        tasks.append(tr.root())
-        tasks.append(tr.CloneGeos())
-        tasks.append(tr.BuildGeosByLinking())
-        tasks.append(tr.BuildGeos())
-        tasks.append(tr.GetGeosRestart())
-        tasks.append(tr.PrepGeosRunDir())
-        tasks.append(tr.RunGeosExecutable())
-        tasks.append(tr.MoveForecastRestart())
-        tasks.append(tr.SaveRestart())
-        tasks.append(tr.RemoveForecastDir())
+        tasks.append(ta.root())
+        tasks.append(ta.CloneGeos())
+        tasks.append(ta.BuildGeosByLinking())
+        tasks.append(ta.BuildGeos())
+        tasks.append(ta.GetGeosRestart())
+        tasks.append(ta.PrepGeosRunDir())
+        tasks.append(ta.RunGeosExecutable())
+        tasks.append(ta.MoveForecastRestart())
+        tasks.append(ta.SaveRestart())
+        tasks.append(ta.RemoveForecastDir())
         
         return tasks
 
