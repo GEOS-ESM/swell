@@ -167,7 +167,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
         tasks.append(ta.BuildJedi())
         tasks.append(ta.BuildGeos())
         tasks.append(ta.GetGeosRestart())
-        tasks.append(ta.PrepGeosRunDir)
+        tasks.append(ta.PrepGeosRunDir())
         tasks.append(ta.RunGeosExecutable())
 
         for model in self.experiment_dict['model_components']:

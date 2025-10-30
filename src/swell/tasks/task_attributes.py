@@ -92,7 +92,7 @@ class TaskAttributes():
         def set_attributes(self):
             self.script = False
             self.pre_script = "source $CYLC_SUITE_DEF_PATH/modules"
-            self.addional_sections = [self.create_new_section('environment', {'datetime': '$CYLC_TASK_CYCLE_POINT',
+            self.additional_sections = [self.create_new_section('environment', {'datetime': '$CYLC_TASK_CYCLE_POINT',
                                                                               'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})]
 
     # --------------------------------------------------------------------------------------------------            
@@ -161,7 +161,7 @@ class TaskAttributes():
     
     class CloneJedi(Task):
         def set_attributes(self):
-            self.self.question_list = QuestionList([
+            self.question_list = QuestionList([
                 qd.bundles(),
                 qd.existing_jedi_source_directory(),
                 qd.existing_jedi_source_directory_pinned(),
@@ -809,7 +809,7 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.base_name = "StageJedi"
-            self.scheduling_name = "StageJediCycle-{self.model}"
+            self.scheduling_name = "StageJediCycle-{model}"
             self.question_list = QuestionList([
                 swell_static_file_questions,
                 qd.gsibec_configuration(),

@@ -99,7 +99,7 @@ class Workflow_geosadas(CylcWorkflow):
         tasks.append(ta.root())
         tasks.append(ta.CloneJedi())
         tasks.append(ta.BuildJediByLinking())
-        tasks.append(ta.CloneGeosMksi)
+        tasks.append(ta.CloneGeosMksi())
 
         for model in self.experiment_dict['model_components']:
             tasks.append(ta.GenerateObservingSystemRecords(model=model))

@@ -47,7 +47,8 @@ class Task:
         self.subsections = []
         self.mail_events = ['failed', 'submit-failed']
 
-        self.questions = QuestionList([])
+        self.question_list = QuestionList([])
+        self.additional_sections = []
 
         self.set_attributes()
         self.post_init()
@@ -203,11 +204,6 @@ class Task:
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
 
-        # Set the environment dictionary
-        if self.environment is not None:
-            environment_section = self.create_new_section('environment', self.environment)
-            runtime_section.add_subsection(environment_section)
-
         # Specify the slurm dictionary with defaults from user and global settings
         if self.slurm is not None:
 
@@ -247,6 +243,8 @@ class Task:
                 runtime_section.add_subsection(event_section)
 
         runtime_string = runtime_section.get_section_str(1)
+
+        runtime_string += '    # ' + '-' * 96 + '\n\n'
 
         return runtime_string
 

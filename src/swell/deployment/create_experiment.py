@@ -96,11 +96,11 @@ def prepare_config(
     suite_dict = prepare_config_and_suite.get_experiment_dict()
 
     suite_dict = suite_dict.copy()
-
+    print(suite_dict)
     # Resolve cycle times for models
     # ------------------------------
-    if 'model_components' in suite_dict:
-        model_components = suite_dict['model_components']
+    if 'models' in suite_dict:
+        model_components = suite_dict['models']
 
         # Since cycle times are used, the render_dictionary will need to include cycle_times
         # If there are different model components then process each to gather cycle times
