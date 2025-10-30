@@ -16,6 +16,7 @@
 
 ## Quick Start
 - [Installation](#installation)
+- [Register Your Experiment](#register-your-experiment)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
 - [Examples](#examples)
@@ -90,6 +91,69 @@ source load_r2d2.sh
 
 # Run the script
 python ingest_files.py /path/to/files/ bias_correction --ingest
+```
+
+---
+
+## Register Your Experiment
+
+**Before ingesting files**, you must register your experiment in R2D2 v3.
+
+### Quick Registration Script
+
+```python
+import r2d2
+import os
+
+# Set your details
+experiment_name = 'my-experiment'  # Change this
+user = os.environ.get('R2D2_USER', 'your_username')
+host = os.environ.get('R2D2_HOST', 'discover-gmao')
+compiler = os.environ.get('R2D2_COMPILER', 'intel')
+
+# Register experiment
+r2d2.R2D2Client.register_experiment(
+    name=experiment_name,
+    compute_host=f'{host}-{compiler}',
+    user=user,
+    lifetime='science'  # Options: debug, science, publication, release
+)
+
+print(f"Registered experiment: {experiment_name}")
+```
+
+### Lifetime Options
+
+| Lifetime | Duration | 
+|----------|----------|
+| `debug`   | Days/weeks | 
+| `science` | Months    |
+| `publication` | Years | 
+| `release` | Permanent | 
+
+### Check if Experiment Exists
+
+```python
+import r2d2
+import os
+
+user = os.environ.get('R2D2_USER')
+results = r2d2.R2D2Client.search_experiment(user=user)
+
+for exp in results:
+    print(f"{exp['name']}: {exp['lifetime']}")
+```
+
+### Update Experiment Lifetime
+
+```python
+import r2d2
+
+r2d2.R2D2Client.update_experiment(
+    name='my-experiment',
+    key='lifetime',
+    value='publication'  # Change to a different lifetime
+)
 ```
 
 ---
