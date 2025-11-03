@@ -1216,6 +1216,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ingest_items(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "ingest_items"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "List of items to ingest to R2D2 (observations, bias corrections, forecasts)"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"

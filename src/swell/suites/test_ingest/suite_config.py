@@ -12,15 +12,14 @@ class SuiteConfig(QuestionContainer, Enum):
             sq.common,
             qd.start_cycle_point("2023-10-09T15:00:00Z"),
             qd.final_cycle_point("2023-10-09T15:00:00Z"),
-            qd.cycling(False),
-            qd.window_length("PT6H"),
-            qd.window_offset("PT3H"),
+            qd.runahead_limit("P1"),
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
             qd.cycle_times(["T15"]),
-            # Ingestion configuration
-            qd.custom_dict('ingest_items', [
+            qd.window_length("PT6H"),
+            qd.window_offset("PT3H"),
+            qd.ingest_items([
                 {
                     'item_type': 'observation',
                     'source_directory': '/discover/nobackup/projects/gmao/obs/archive/',
