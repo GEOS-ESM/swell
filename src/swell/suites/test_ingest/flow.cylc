@@ -22,12 +22,3 @@
     [[TestIngestObs-geos_atmosphere]]
         script = "swell task TestIngestObs $config -d $datetime -m geos_atmosphere"
         execution time limit = PT10M
-        [[[directives]]]
-            --nodes = 1
-            --ntasks-per-node = 1
-            --cpus-per-task = 1
-            --mem = 2GB
-            --qos = {{slurm_qos}}
-            --account = {{slurm_account}}
-            --constraint = {{slurm_constraint}}
-
