@@ -184,6 +184,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    EvaComparisonJediLog = QuestionList(
+        list_name="EvaJediLog",
+        questions=[
+            qd.comparison_log_type()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+
     EvaIncrement = QuestionList(
         list_name="EvaIncrement",
         questions=[
