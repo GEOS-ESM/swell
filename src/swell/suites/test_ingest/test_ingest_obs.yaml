@@ -1,0 +1,38 @@
+# Suite and Platform
+suite_to_run: test_ingest
+platform: nccs_discover_sles15
+
+# Timing (single cycle for testing)
+start_cycle_point: 2023-10-09T15:00:00Z
+final_cycle_point: 2023-10-09T15:00:00Z
+runahead_limit: P1
+
+# Model Components
+model_components:
+  - geos_atmosphere
+
+# R2D2 Configuration # TODO: Add this back in
+# r2d2_local_path: /discover/nobackup/projects/gmao/swell/r2d2-local
+
+# ============================================================================
+# Model-Specific Configuration: geos_atmosphere
+# ============================================================================
+models:
+  geos_atmosphere:
+    cycle_times:
+      - T15
+    
+    # Items to ingest to R2D2
+    ingest_items:
+      - item_type: observation
+        source_directory: /discover/nobackup/projects/gmao/obs/archive/
+        provider: gdas
+        create_empty_if_missing: true
+        
+        observation_types:
+          - name: aircraft_temperature
+            file_extension: nc4
+          - name: amsua_n19
+            file_extension: nc4
+          - name: radiosonde
+            file_extension: nc4
