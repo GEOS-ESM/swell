@@ -3,8 +3,8 @@ suite_to_run: test_ingest
 platform: nccs_discover_sles15
 
 # Timing (single cycle for testing)
-start_cycle_point: 2023-10-09T15:00:00Z
-final_cycle_point: 2023-10-09T15:00:00Z
+start_cycle_point: "2023-10-09T15:00:00Z"
+final_cycle_point: "2023-10-09T15:00:00Z"
 runahead_limit: P1
 
 # Model Components
