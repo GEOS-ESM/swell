@@ -387,8 +387,8 @@ class GetObservations(taskBase):
         subset_list = [dt for dt in obs_time_list if start_date <= dt < end_date]
 
         return subset_list
-    # ----------------------------------------------------------------------------------------------
 
+    # ----------------------------------------------------------------------------------------------
 
     # Get the target data from the netcdf file
     # ----------------------------------------
