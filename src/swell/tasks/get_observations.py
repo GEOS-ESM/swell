@@ -12,10 +12,8 @@ import numpy as np
 import os
 import netCDF4 as nc
 from typing import Union
-import yaml
 
 from datetime import timedelta, datetime as dt
-from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
