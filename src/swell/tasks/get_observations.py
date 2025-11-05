@@ -19,6 +19,7 @@ from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
+from swell.utilities.observations import get_ioda_names_list, get_providers_for_observation
 from r2d2 import fetch
 
 
@@ -138,7 +139,7 @@ class GetObservations(taskBase):
         create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Read observation ioda names
-        ioda_names_list = self.get_ioda_names_list()
+        ioda_names_list = get_ioda_names_list()
 
         # Loop over observation operators
         # -------------------------------
@@ -150,7 +151,7 @@ class GetObservations(taskBase):
 
             # Get the set obs providers for individual observation
             # ----------------------------------------------------
-            providers_for_obs = self.get_obs_providers(observation, ioda_names_list)
+            providers_for_obs = get_providers_for_observation(observation, ioda_names_list)
 
             if providers_for_obs is not None:
                 providers_for_obs = list(set(providers_for_obs) & set(obs_providers))
@@ -390,28 +391,6 @@ class GetObservations(taskBase):
         return subset_list
     # ----------------------------------------------------------------------------------------------
 
-    def get_ioda_names_list(self) -> list:
-
-        # Read observation_ioda_names.yaml
-        with open(os.path.join(get_swell_path(), 'configuration', 'jedi',
-                               'observation_ioda_names.yaml'), 'r') as f:
-            ioda_dict = yaml.safe_load(f)
-
-        ioda_names_list = ioda_dict['ioda instrument names']
-
-        return ioda_names_list
-
-    # ---------------------------------------------------------------------------------------------
-
-    # Gets obs providers from observation_ioda_names.yaml
-    def get_obs_providers(self, observation: str, ioda_names_list: list) -> list:
-        for sub_dict in ioda_names_list:
-            if sub_dict['ioda name'] == observation:
-                if 'providers' in sub_dict.keys():
-                    return sub_dict['providers']
-                return None
-
-    # ---------------------------------------------------------------------------------------------
 
     # Get the target data from the netcdf file
     # ----------------------------------------
