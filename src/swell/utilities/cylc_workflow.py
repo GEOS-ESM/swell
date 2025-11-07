@@ -48,9 +48,9 @@ class CylcWorkflow():
 
     def default_header(self) -> str:
         return header_str
-    
+
     # --------------------------------------------------------------------------------------------------
-    
+
     @abstractmethod
     def set_tasks(self) -> None:
         pass
