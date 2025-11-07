@@ -5,12 +5,12 @@
 `ingest_files.py` is a command-line utility for batch ingesting data files to R2D2 v3. It automatically parses filenames, extracts metadata, and stores files with proper R2D2 indexing.
 
 **Features**:
-- ✅ Batch processing (entire directories)
-- ✅ Automatic metadata extraction from filenames
+- ✅ Batch processing (can ingest entire directories)
+- ✅ Metadata extraction from filenames
 - ✅ Dry-run mode (test before actual ingestion)
-- ✅ Duplicate detection (tracks ingested files)
-- ✅ Support for observations, bias corrections, and backgrounds
-- ✅ Detailed error reporting/handling
+- ✅ Duplicate file detection (tracks ingested files)
+- ✅ Ingests observations, bias corrections, and backgrounds
+- ✅ Error logging
 
 ---
 
@@ -124,12 +124,12 @@ print(f"Registered experiment: {experiment_name}")
 
 ### Lifetime Options
 
-| Lifetime | Duration | 
-|----------|----------|
-| `debug`   | Days/weeks | 
-| `science` | Months    |
-| `publication` | Years | 
-| `release` | Permanent | 
+| Lifetime | Duration | Use Case |
+|----------|----------|----------|
+| `debug` | Days/weeks | Testing, development |
+| `science` | Months | Research experiments |
+| `publication` | Years | Published results |
+| `release` | Permanent | Operational/reference data |
 
 ### Check if Experiment Exists
 
@@ -152,7 +152,7 @@ import r2d2
 r2d2.R2D2Client.update_experiment(
     name='my-experiment',
     key='lifetime',
-    value='publication'  # Change to a different lifetime
+    value='publication'  # Change to new lifetime
 )
 ```
 
