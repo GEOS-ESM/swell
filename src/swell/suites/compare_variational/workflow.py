@@ -68,20 +68,17 @@ class Workflow_compare_variational(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
+    def set_tasks(self) -> list:
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.EvaComparisonIncrement(model=model))
-            tasks.append(ta.EvaComparisonJediLog(model=model))
-            tasks.append(ta.JediOopsLogParser(model=model))
-
-        return tasks
+            self.tasks.append(ta.EvaComparisonIncrement(model=model))
+            self.tasks.append(ta.EvaComparisonJediLog(model=model))
+            self.tasks.append(ta.JediOopsLogParser(model=model))
 
 # --------------------------------------------------------------------------------------------------

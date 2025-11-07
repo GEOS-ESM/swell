@@ -55,19 +55,17 @@ class Workflow_build_geos(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneGeos())
-        tasks.append(ta.BuildGeos())
-        tasks.append(ta.BuildGeosByLinking())
+    def set_tasks(self) -> list:
 
-        return tasks
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneGeos())
+        self.tasks.append(ta.BuildGeos())
+        self.tasks.append(ta.BuildGeosByLinking())
 
 # --------------------------------------------------------------------------------------------------

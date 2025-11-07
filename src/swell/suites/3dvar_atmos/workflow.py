@@ -128,35 +128,33 @@ class Workflow_3dvar_atmos(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJediByLinking())
-        tasks.append(ta.BuildJedi())
+    def set_tasks(self) -> list:
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.BuildJedi())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.CloneGeosMksi(model=model))
-            tasks.append(ta.StageJedi(model=model))
-            tasks.append(ta.GetObservations(model=model))
-            tasks.append(ta.GenerateBClimatologyByLinking(model=model))
-            tasks.append(ta.GenerateBClimatology(model=model))
-            tasks.append(ta.GenerateObservingSystemRecords(model=model))
-            tasks.append(ta.GetObsNotInR2d2(model=model))
-            tasks.append(ta.StageJediCycle(model=model))
-            tasks.append(ta.RunJediVariationalExecutable(model=model))
-            tasks.append(ta.EvaObservations(model=model))
-            tasks.append(ta.EvaJediLog(model=model))
-            tasks.append(ta.EvaIncrement(model=model))
-            tasks.append(ta.SaveObsDiags(model=model))
-            tasks.append(ta.CleanCycle(model=model))
-
-        return tasks
+            self.tasks.append(ta.CloneGeosMksi(model=model))
+            self.tasks.append(ta.StageJedi(model=model))
+            self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
+            self.tasks.append(ta.GenerateBClimatology(model=model))
+            self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            self.tasks.append(ta.GetObsNotInR2d2(model=model))
+            self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.EvaJediLog(model=model))
+            self.tasks.append(ta.EvaIncrement(model=model))
+            self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

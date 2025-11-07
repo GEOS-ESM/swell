@@ -88,30 +88,28 @@ class Workflow_geosadas(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
     def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJediByLinking())
-        tasks.append(ta.CloneGeosMksi())
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.CloneGeosMksi())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.GenerateObservingSystemRecords(model=model))
-            tasks.append(ta.StageJedi(model=model))
-            tasks.append(ta.GetGsiBc(model=model))
-            tasks.append(ta.GsiBcToIoda(model=model))
-            tasks.append(ta.GetGsiNcdiag(model=model))
-            tasks.append(ta.GsiNcdiagToIoda(model=model))
-            tasks.append(ta.GetGeosAdasBackground(model=model))
-            tasks.append(ta.RunJediVariationalExecutable(model=model))
-            tasks.append(ta.CleanCycle(model=model))
-
-        return tasks
+            self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            self.tasks.append(ta.StageJedi(model=model))
+            self.tasks.append(ta.GetGsiBc(model=model))
+            self.tasks.append(ta.GsiBcToIoda(model=model))
+            self.tasks.append(ta.GetGsiNcdiag(model=model))
+            self.tasks.append(ta.GsiNcdiagToIoda(model=model))
+            self.tasks.append(ta.GetGeosAdasBackground(model=model))
+            self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

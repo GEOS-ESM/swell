@@ -85,24 +85,22 @@ class Workflow_convert_ncdiags(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJediByLinking())
-        tasks.append(ta.BuildJedi())
-        tasks.append(ta.GetGsiBc())
-        tasks.append(ta.GsiBcToIoda())
-        tasks.append(ta.GetGsiNcdiag())
-        tasks.append(ta.GsiNcdiagToIoda())
-        tasks.append(ta.CleanCycle())
+    def set_tasks(self) -> list:
 
-        return tasks
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.BuildJedi())
+        self.tasks.append(ta.GetGsiBc())
+        self.tasks.append(ta.GsiBcToIoda())
+        self.tasks.append(ta.GetGsiNcdiag())
+        self.tasks.append(ta.GsiNcdiagToIoda())
+        self.tasks.append(ta.CleanCycle())
 
 # --------------------------------------------------------------------------------------------------

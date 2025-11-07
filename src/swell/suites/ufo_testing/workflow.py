@@ -103,31 +103,29 @@ class Workflow_ufo_testing(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJedi())
-        tasks.append(ta.BuildJediByLinking())
+    def set_tasks(self) -> list:
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJedi())
+        self.tasks.append(ta.BuildJediByLinking())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.CloneGeosMksi(model=model))
-            tasks.append(ta.GenerateObservingSystemRecords(model=model))
-            tasks.append(ta.GetGsiBc(model=model))
-            tasks.append(ta.GsiBcToIoda(model=model))
-            tasks.append(ta.GetGsiNcdiag(model=model))
-            tasks.append(ta.GsiNcdiagToIoda(model=model))
-            tasks.append(ta.RunJediUfoTestsExecutable(model=model))
-            tasks.append(ta.GetGeovals(model=model))
-            tasks.append(ta.EvaObservations(model=model))
-            tasks.append(ta.CleanCycle(model=model))
-
-        return tasks
+            self.tasks.append(ta.CloneGeosMksi(model=model))
+            self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            self.tasks.append(ta.GetGsiBc(model=model))
+            self.tasks.append(ta.GsiBcToIoda(model=model))
+            self.tasks.append(ta.GetGsiNcdiag(model=model))
+            self.tasks.append(ta.GsiNcdiagToIoda(model=model))
+            self.tasks.append(ta.RunJediUfoTestsExecutable(model=model))
+            self.tasks.append(ta.GetGeovals(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

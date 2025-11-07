@@ -131,36 +131,34 @@ class Workflow_localensembleda(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJedi())
-        tasks.append(ta.BuildJediByLinking())
+    def set_tasks(self) -> list:
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJedi())
+        self.tasks.append(ta.BuildJediByLinking())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.CloneGeosMksi(model=model))
-            tasks.append(ta.StageJediCycle(model=model))
-            tasks.append(ta.GetObsNotInR2d2(model=model))
-            tasks.append(ta.GetObservations(model=model))
-            tasks.append(ta.GenerateObservingSystemRecords(model=model))
-            tasks.append(ta.GetEnsembleGeosExperiment(model=model))
-            tasks.append(ta.sync_point(model=model))
-            tasks.append(ta.RunJediObsfiltersExecutable(model=model))
-            tasks.append(ta.RunJediLocalEnsembleDaExecutable(model=model))
-            tasks.append(ta.RunJediEnsembleMeanVariance(model=model))
-            tasks.append(ta.RunJediHofxEnsembleExecutable(model=model))
-            tasks.append(ta.EvaIncrement(model=model))
-            tasks.append(ta.EvaObservations(model=model))
-            tasks.append(ta.SaveObsDiags(model=model))
-            tasks.append(ta.CleanCycle(model=model))
-
-        return tasks
+            self.tasks.append(ta.CloneGeosMksi(model=model))
+            self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.GetObsNotInR2d2(model=model))
+            self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            self.tasks.append(ta.GetEnsembleGeosExperiment(model=model))
+            self.tasks.append(ta.sync_point(model=model))
+            self.tasks.append(ta.RunJediObsfiltersExecutable(model=model))
+            self.tasks.append(ta.RunJediLocalEnsembleDaExecutable(model=model))
+            self.tasks.append(ta.RunJediEnsembleMeanVariance(model=model))
+            self.tasks.append(ta.RunJediHofxEnsembleExecutable(model=model))
+            self.tasks.append(ta.EvaIncrement(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

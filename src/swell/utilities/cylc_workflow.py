@@ -41,10 +41,19 @@ class CylcWorkflow():
 
         self.logger = get_logger(self.__class__.__name__)
 
+        self.tasks = []
+        self.set_tasks()
+
     # --------------------------------------------------------------------------------------------------
 
     def default_header(self) -> str:
         return header_str
+    
+    # --------------------------------------------------------------------------------------------------
+    
+    @abstractmethod
+    def set_tasks(self) -> None:
+        pass
 
     # --------------------------------------------------------------------------------------------------
 
@@ -63,7 +72,7 @@ class CylcWorkflow():
         for model in models:
             model_tasks[model] = []
 
-        for task in self.tasks():
+        for task in self.tasks:
             if task.model is not None:
                 model_tasks[task.model].append(task.base_name)
             else:

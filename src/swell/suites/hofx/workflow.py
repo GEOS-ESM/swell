@@ -114,33 +114,31 @@ class Workflow_hofx(CylcWorkflow):
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
 
-        for task in self.tasks():
+        for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
 
-    def tasks(self) -> list:
-        tasks = []
-        tasks.append(ta.root())
-        tasks.append(ta.CloneJedi())
-        tasks.append(ta.BuildJedi())
-        tasks.append(ta.BuildJediByLinking())
-        tasks.append(ta.CloneGeosMksi())
+    def set_tasks(self) -> list:
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.CloneGeosMksi())
 
         for model in self.experiment_dict['model_components']:
-            tasks.append(ta.CloneGeosMksi(model=model))
-            tasks.append(ta.GenerateObservingSystemRecords(model=model))
-            tasks.append(ta.GetBackgroundGeosExperiment(model=model))
-            tasks.append(ta.GetBackground(model=model))
-            tasks.append(ta.GetObservations(model=model))
-            tasks.append(ta.GetObsNotInR2d2(model=model))
-            tasks.append(ta.StageJediCycle(model=model))
-            tasks.append(ta.RunJediHofxExecutable(model=model))
-            tasks.append(ta.EvaObservations(model=model))
-            tasks.append(ta.SaveObsDiags(model=model))
-            tasks.append(ta.CleanCycle(model=model))
-
-        return tasks
+            self.tasks.append(ta.CloneGeosMksi(model=model))
+            self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
+            self.tasks.append(ta.GetBackgroundGeosExperiment(model=model))
+            self.tasks.append(ta.GetBackground(model=model))
+            self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.GetObsNotInR2d2(model=model))
+            self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.RunJediHofxExecutable(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------
