@@ -84,13 +84,13 @@ class Workflow_convert_ncdiags(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
-    
+
     def tasks(self) -> list:
         tasks = []
         tasks.append(ta.root())
@@ -102,7 +102,7 @@ class Workflow_convert_ncdiags(CylcWorkflow):
         tasks.append(ta.GetGsiNcdiag())
         tasks.append(ta.GsiNcdiagToIoda())
         tasks.append(ta.CleanCycle())
-        
+
         return tasks
 
 # --------------------------------------------------------------------------------------------------

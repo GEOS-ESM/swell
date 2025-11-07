@@ -7,9 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from typing import Union, Optional, Self
-from collections.abc import Mapping
-
 from swell.utilities.task_specification import Task
 from swell.utilities.swell_questions import QuestionList
 from swell.utilities.question_defaults import QuestionDefaults as qd
@@ -83,6 +80,7 @@ swell_static_file_questions = QuestionList(
 
 # --------------------------------------------------------------------------------------------------
 
+
 class TaskAttributes():
 
     # --------------------------------------------------------------------------------------------------
@@ -92,10 +90,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.script = False
             self.pre_script = "source $CYLC_SUITE_DEF_PATH/modules"
-            self.additional_sections = [self.create_new_section('environment', {'datetime': '$CYLC_TASK_CYCLE_POINT',
-                                                                              'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})]
+            self.additional_sections = [self.create_new_section('environment',
+                                             {'datetime': '$CYLC_TASK_CYCLE_POINT',
+                                              'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})]  # noqa
 
-    # --------------------------------------------------------------------------------------------------            
+    # --------------------------------------------------------------------------------------------------
 
     class BuildGeos(Task):
         def set_attributes(self):
@@ -104,7 +103,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class BuildGeosByLinking(Task):
         def set_attributes(self):
             self.mail_events = ['submit-failed']
@@ -114,7 +113,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class BuildJediByLinking(Task):
         def set_attributes(self):
             self.mail_events = ['submit-failed']
@@ -146,7 +145,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class CloneGeos(Task):
         def set_attributes(self):
             self.question_list = QuestionList([
@@ -156,7 +155,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class CloneJedi(Task):
         def set_attributes(self):
             self.question_list = QuestionList([
@@ -167,7 +166,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class CloneGeosMksi(Task):
         def set_attributes(self):
             self.is_model = True
@@ -175,7 +174,7 @@ class TaskAttributes():
                 qd.observing_system_records_mksi_path(),
                 qd.observing_system_records_mksi_path_tag()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class CloneGmaoPerllib(Task):
@@ -184,7 +183,7 @@ class TaskAttributes():
                 qd.existing_perllib_path(),
                 qd.gmao_perllib_tag()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class EvaJediLog(Task):
@@ -193,7 +192,7 @@ class TaskAttributes():
             self.is_model = True
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class EvaComparisonIncrement(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -205,14 +204,14 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class EvaComparisonJediLog(Task):
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class EvaIncrement(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -222,7 +221,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.window_type()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class EvaObservations(Task):
@@ -238,7 +237,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.marine_models(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class EvaTimeseries(Task):
@@ -254,7 +253,7 @@ class TaskAttributes():
                 qd.ncdiag_experiments(),
                 qd.marine_models(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class JediOopsLogParser(Task):
@@ -266,7 +265,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class GetBackground(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -280,7 +279,7 @@ class TaskAttributes():
                 qd.marine_models(),
                 qd.r2d2_local_path(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetBackgroundGeosExperiment(Task):
@@ -294,7 +293,7 @@ class TaskAttributes():
                 qd.background_time_offset(),
                 qd.geos_x_background_directory()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetBufr(Task):
@@ -304,7 +303,7 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 qd.bufr_obs_classes()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class BufrToIoda(Task):
@@ -313,7 +312,7 @@ class TaskAttributes():
             self.is_model = True
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class GetEnsembleGeosExperiment(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -325,7 +324,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class GetGeosRestart(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -333,7 +332,7 @@ class TaskAttributes():
                 swell_static_file_questions,
                 qd.geos_restarts_directory()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetGeovals(Task):
@@ -359,7 +358,7 @@ class TaskAttributes():
                 qd.path_to_gsi_bc_coefficients(),
                 qd.window_length()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GsiBcToIoda(Task):
@@ -371,7 +370,7 @@ class TaskAttributes():
                 qd.observing_system_records_path(),
                 qd.window_offset()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetGsiNcdiag(Task):
@@ -383,7 +382,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class GsiNcdiagToIoda(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -394,7 +393,7 @@ class TaskAttributes():
                 qd.single_observations(),
                 qd.window_offset()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetNcdiags(Task):
@@ -411,7 +410,7 @@ class TaskAttributes():
             ])
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class GetGeosAdasBackground(Task):
         def set_attributes(self):
             self.is_cycling = True
@@ -436,7 +435,7 @@ class TaskAttributes():
                 qd.window_length(),
                 qd.window_offset(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GetObsNotInR2d2(Task):
@@ -447,7 +446,7 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 qd.ioda_locations_not_in_r2d2(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GenerateBClimatology(Task):
@@ -475,7 +474,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.window_type()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GenerateBClimatologyByLinking(Task):
@@ -490,7 +489,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.window_type()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class GenerateObservingSystemRecords(Task):
@@ -502,7 +501,7 @@ class TaskAttributes():
                 qd.observing_system_records_mksi_path(),
                 qd.observing_system_records_path()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class LinkGeosOutput(Task):
@@ -514,7 +513,7 @@ class TaskAttributes():
                 qd.background_frequency(),
                 qd.marine_models()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class MoveDaRestart(Task):
@@ -526,7 +525,7 @@ class TaskAttributes():
                 qd.mom6_iau(),
                 qd.window_length()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class MoveForecastRestart(Task):
@@ -535,7 +534,7 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 qd.forecast_duration()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class PrepGeosRunDir(Task):
@@ -548,7 +547,7 @@ class TaskAttributes():
                 qd.geos_experiment_directory(),
                 qd.mom6_iau_nhours()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class PrepareAnalysis(Task):
@@ -561,7 +560,7 @@ class TaskAttributes():
                 qd.mom6_iau(),
                 qd.total_processors()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediFgatExecutable(Task):
@@ -574,7 +573,7 @@ class TaskAttributes():
                 run_jedi_executable,
                 qd.marine_models()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediEnsembleMeanVariance(Task):
@@ -593,7 +592,7 @@ class TaskAttributes():
                 qd.observations(),
                 qd.observing_system_records_path(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediHofxEnsembleExecutable(Task):
@@ -614,7 +613,7 @@ class TaskAttributes():
                 qd.jedi_forecast_model(),
                 qd.total_processors()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediHofxExecutable(Task):
@@ -633,7 +632,7 @@ class TaskAttributes():
                 qd.save_geovals(),
                 qd.total_processors()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediLocalEnsembleDaExecutable(Task):
@@ -675,7 +674,7 @@ class TaskAttributes():
                 qd.vertical_localization_method(),
                 qd.perhost()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediVariationalExecutable(Task):
@@ -688,7 +687,7 @@ class TaskAttributes():
                 run_jedi_executable,
                 qd.perhost()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RemoveForecastDir(Task):
@@ -696,11 +695,11 @@ class TaskAttributes():
             self.is_cycling = True
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class RunGeosExecutable(Task):
         def set_attributes(self):
             self.is_cycling = True
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediUfoExecutable(Task):
@@ -711,7 +710,7 @@ class TaskAttributes():
             self.time_limit = True
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class RunJediUfoTestsExecutable(Task):
         def set_attributes(self):
             self.time_limit = True
@@ -725,7 +724,7 @@ class TaskAttributes():
                 qd.window_length(),
                 qd.window_offset()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediConvertStateSoca2ciceExecutable(Task):
@@ -744,7 +743,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.window_type()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediFgatExecutable(Task):
@@ -757,7 +756,7 @@ class TaskAttributes():
                 run_jedi_executable,
                 qd.marine_models()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class SaveObsDiags(Task):
@@ -770,7 +769,7 @@ class TaskAttributes():
                 qd.window_offset(),
                 qd.marine_models()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class SaveRestart(Task):
@@ -785,7 +784,7 @@ class TaskAttributes():
                 qd.marine_models(),
                 qd.r2d2_local_path()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class StageJedi(Task):
@@ -799,7 +798,7 @@ class TaskAttributes():
                 qd.horizontal_resolution(),
                 qd.vertical_resolution()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class StageJediCycle(Task):
@@ -816,7 +815,7 @@ class TaskAttributes():
                 qd.horizontal_resolution(),
                 qd.vertical_resolution()
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class sync_point(Task):
@@ -824,7 +823,7 @@ class TaskAttributes():
             self.script = "true"
 
     # --------------------------------------------------------------------------------------------------
-    
+
     class JediLogComparison(Task):
         def set_attributes(self):
             self.is_model = True
@@ -832,13 +831,13 @@ class TaskAttributes():
                 qd.number_of_iterations(),
                 qd.comparison_log_type(),
             ])
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediObsfiltersExecutable(Task):
         def set_attributes(self):
             self.script = ("swell task RunJediObsfiltersExecutable $config"
-                        " -d $datetime -m geos_atmosphere")
+                           " -d $datetime -m geos_atmosphere")
             self.is_cycling = True
             self.is_model = True
             self.time_limit = True

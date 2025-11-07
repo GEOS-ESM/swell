@@ -95,13 +95,13 @@ class Workflow_convert_bufr(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
-    
+
     def tasks(self) -> list:
         tasks = []
         tasks.append(ta.root())
@@ -110,13 +110,12 @@ class Workflow_convert_bufr(CylcWorkflow):
         tasks.append(ta.BuildJedi())
         tasks.append(ta.CloneGmaoPerllib())
 
-
         for model in self.experiment_dict['model_components']:
             tasks.append(ta.CloneGeosMksi(model=model))
             tasks.append(ta.GetBufr(model=model))
             tasks.append(ta.BufrToIoda(model=model))
             tasks.append(ta.CleanCycle(model=model))
-        
+
         return tasks
 
 # --------------------------------------------------------------------------------------------------

@@ -150,13 +150,13 @@ class Workflow_3dvar_cycle(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
-    
+
     def tasks(self) -> list:
         tasks = []
         tasks.append(ta.root())
@@ -188,7 +188,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             tasks.append(ta.EvaIncrement(model=model))
             tasks.append(ta.SaveObsDiags(model=model))
             tasks.append(ta.CleanCycle(model=model))
-        
+
         return tasks
 
 # --------------------------------------------------------------------------------------------------

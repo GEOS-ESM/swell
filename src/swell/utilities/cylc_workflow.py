@@ -7,12 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from typing import Union, Optional, Tuple
+from typing import Tuple
 from abc import abstractmethod
 
-from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.logger import get_logger
-from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 

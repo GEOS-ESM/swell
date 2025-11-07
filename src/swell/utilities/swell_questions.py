@@ -9,7 +9,7 @@
 
 
 import os
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 from typing import List, Optional, Self, Union, Literal
 from enum import Enum, StrEnum
 from isodate import parse_datetime, parse_duration, ISO8601Error

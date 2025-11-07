@@ -9,7 +9,6 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
-from swell.utilities.check_da_params import check_da_params
 from swell.tasks.task_attributes import TaskAttributes as ta
 
 # --------------------------------------------------------------------------------------------------
@@ -68,13 +67,13 @@ class Workflow_compare_variational(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
-    
+
     def tasks(self) -> list:
         tasks = []
 
@@ -82,7 +81,7 @@ class Workflow_compare_variational(CylcWorkflow):
             tasks.append(ta.EvaComparisonIncrement(model=model))
             tasks.append(ta.EvaComparisonJediLog(model=model))
             tasks.append(ta.JediOopsLogParser(model=model))
-        
+
         return tasks
 
 # --------------------------------------------------------------------------------------------------

@@ -96,7 +96,7 @@ def prepare_config(
     suite_dict = prepare_config_and_suite.get_experiment_dict()
 
     suite_dict = suite_dict.copy()
-    print(suite_dict)
+
     # Resolve cycle times for models
     # ------------------------------
     if 'models' in suite_dict:

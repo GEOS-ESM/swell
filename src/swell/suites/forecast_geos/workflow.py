@@ -89,13 +89,13 @@ class Workflow_forecast_geos(CylcWorkflow):
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
                                                allow_unresolved=True)
-        
+
         for task in self.tasks():
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         return workflow_str
-    
+
     def tasks(self) -> list:
         tasks = []
         tasks.append(ta.root())
@@ -108,7 +108,7 @@ class Workflow_forecast_geos(CylcWorkflow):
         tasks.append(ta.MoveForecastRestart())
         tasks.append(ta.SaveRestart())
         tasks.append(ta.RemoveForecastDir())
-        
+
         return tasks
 
 # --------------------------------------------------------------------------------------------------
