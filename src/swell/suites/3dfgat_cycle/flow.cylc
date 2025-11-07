@@ -77,12 +77,8 @@
             LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Data assimilation preperation
-            GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
-
-            LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             # Run analysis diagnostics
@@ -94,14 +90,17 @@
             RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
             {% else %}
-            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
+            # Temporarily disable saving restarts
             # Move restart to next cycle
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -192,9 +191,6 @@
     [[MoveDaRestart-{{model_component}}]]
         script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
-
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 
@@ -212,9 +208,6 @@
         {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
-
-    [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
 
     {% if 'cice6' in models["geos_marine"]["marine_models"] %}
 
@@ -253,8 +246,8 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+    # [[SaveRestart-{{model_component}}]]
+    #     script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
