@@ -234,6 +234,7 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
         print(f"   {RED}ERROR:{RESET} {e}")
         return False
 
+
 def ingest_files(file_path, item_type, dry_run=True):
     """ingest files found recursively from file_path"""
 
@@ -280,7 +281,7 @@ def ingest_files(file_path, item_type, dry_run=True):
     for link_path in files:
         # Use the link name for parsing metadata
         filename = os.path.basename(link_path)
-        
+
         # Resolve to the actual file for source_file parameter
         if os.path.islink(link_path):
             actual_file_path = os.path.realpath(link_path)
@@ -332,6 +333,7 @@ def ingest_files(file_path, item_type, dry_run=True):
         print(f"\n{RED}Failed to ingest {len(failed_files)} file(s):{RESET}")
         for filename, reason in failed_files:
             print(f"  {RED}{RESET} {filename}: {reason}")
+
 
 def main():
     import argparse
