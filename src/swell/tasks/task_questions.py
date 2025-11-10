@@ -193,7 +193,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-
     EvaIncrement = QuestionList(
         list_name="EvaIncrement",
         questions=[
