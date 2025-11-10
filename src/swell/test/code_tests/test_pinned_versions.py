@@ -19,6 +19,9 @@ class PinnedVersionsTest(unittest.TestCase):
         if test_cache:
             jedi_bundle_dir = os.path.join(test_cache, jedi_bundle_dir)
 
+        if not os.path.exists(jedi_bundle_dir):
+            os.makedirs(jedi_bundle_dir)
+
         # Clone oops repository in jedi_bundle (develop hash)
         if not os.path.exists(jedi_bundle_dir + "oops"):
             cmd = ["git", "clone", "https://github.com/JCSDA/oops.git"]
