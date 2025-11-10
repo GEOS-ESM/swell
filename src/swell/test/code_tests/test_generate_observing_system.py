@@ -42,7 +42,7 @@ class GenerateObservingSystemTest(unittest.TestCase):
         if test_cache:
             observing_system_records_path = os.path.join(test_cache, observing_system_records_path)
         else:
-            observing_system_records_path = os.path.join('./', observing_sytem_records_path)
+            observing_system_records_path = os.path.join('./', observing_system_records_path)
         cls.observing_system_records_path = observing_system_records_path
         cls.dt_cycle_time = dt.strptime("20211212T000000Z", "%Y%m%dT%H%M%SZ")
         geos_mksi_path = 'GEOS_mksi/'
