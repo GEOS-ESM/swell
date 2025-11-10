@@ -28,6 +28,10 @@ class EvaComparisonJediLog(taskBase):
         # -------------
         model = self.get_model()
 
+        # Get the log type
+        # ----------------
+        log_type = self.config.comparison_log_type()
+
         # Read Eva template file into dictionary
         # --------------------------------------
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
@@ -57,6 +61,8 @@ class EvaComparisonJediLog(taskBase):
         eva_override['cycle_dir'] = self.cycle_dir()
         eva_override['cycle_dir_1'] = cycle_dir_1
         eva_override['cycle_dir_2'] = cycle_dir_2
+
+        eva_override['log_type'] = log_type
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
