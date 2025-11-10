@@ -76,12 +76,8 @@
             LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Data assimilation things
-            GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
-
-            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Run analysis diagnostics
@@ -93,14 +89,16 @@
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
             {% else %}
-            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
             # Move restart to next cycle
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -192,9 +190,6 @@
     [[MoveDaRestart-{{model_component}}]]
         script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
-
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 
@@ -253,8 +248,8 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+    # [[SaveRestart-{{model_component}}]]
+    #     script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
