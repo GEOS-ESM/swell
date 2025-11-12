@@ -43,17 +43,15 @@ class GetBackground(taskBase):
         # Parse config
         background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency(None)
-        forecast_offset = self.config.analysis_forecast_window_offset()
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
         window_type = self.config.window_type()
         r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window parameters
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        analysis_time_iso = self.da_window_params.analysis_time_iso(window_type, self.suite_name())
+        analysis_time_iso = self.da_window_params.analysis_time_iso()
 
         # Add to jedi config rendering dictionary
         self.jedi_rendering.add_key('local_background_time', local_background_time)
@@ -67,7 +65,7 @@ class GetBackground(taskBase):
         # Convert to datetime durations
         # -----------------------------
         window_length_dur = isodate.parse_duration(window_length)
-        forecast_offset_dur = isodate.parse_duration(forecast_offset)
+        forecast_offset_dur = self.da_window_params.analysis_forecast_window_offset(window_length, dto=True)
 
         # Duration between the start of the forecast that generated the background
         # and the middle of the current window
@@ -78,7 +76,7 @@ class GetBackground(taskBase):
         # occurs at the beginning of the window
         # -------------------------------------------------------------------------------
         if window_type == "4D":
-            window_offset_dur = isodate.parse_duration(window_offset)
+            window_offset_dur = self.da_window_params.window_offset(window_length, dto=True)
             forecast_duration_for_background = forecast_duration_for_background - window_offset_dur
 
         # Append the list of backgrounds to get with the first background

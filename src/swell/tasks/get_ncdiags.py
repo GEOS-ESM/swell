@@ -27,15 +27,14 @@ class GetNcdiags(taskBase):
         # ------------
         ncdiag_experiments = self.config.ncdiag_experiments()
         observations = self.config.observations()
-        window_offset = self.config.window_offset()
         window_length = self.config.window_length()
         r2d2_local_path = self.config.r2d2_local_path()
         background_time_offset = self.config.background_time_offset()
 
         # Compute data assimilation window parameters
         # --------------------------------------------
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(window_offset,
+        window_begin = self.da_window_params.window_begin(window_length)
+        background_time = self.da_window_params.background_time(window_length,
                                                                 background_time_offset)
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('background_time', background_time)

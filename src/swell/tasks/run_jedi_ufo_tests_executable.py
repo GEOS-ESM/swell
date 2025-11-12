@@ -32,7 +32,6 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Parse configuration
         # -------------------
-        window_offset = self.config.window_offset()
         window_length = self.config.window_length()
         bkg_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
@@ -43,13 +42,13 @@ class RunJediUfoTestsExecutable(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Compute data assimilation window parameters
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
-        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_length)
+        window_end_iso = self.da_window_params.window_end_iso(window_length)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
-        background_time = self.da_window_params.background_time(window_offset, bkg_time_offset)
+        background_time = self.da_window_params.background_time(window_length, bkg_time_offset)
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
 

@@ -27,13 +27,13 @@ class GsiBcToIoda(taskBase):
         # Parse configuration
         # -------------------
         observations = self.config.observations()
-        window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
+        window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
 
         # Get window beginning time
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(window_offset,
+        window_begin = self.da_window_params.window_begin(window_length)
+        background_time = self.da_window_params.background_time(window_length,
                                                                 background_time_offset)
 
         # Prepare dictionary for rendering jedi interface files

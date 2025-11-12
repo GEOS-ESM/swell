@@ -32,15 +32,15 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         observations = self.config.observations(None)
         window_type = self.config.window_type()
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
 
         # Compute data assimilation window parameters
         # --------------------------------------------
         analysis_time = self.da_window_params.analysis_time(window_type, self.suite_name())
         analysis_time_iso = self.da_window_params.analysis_time_iso(window_type, self.suite_name())
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
 
         # Populate jedi interface templates dictionary

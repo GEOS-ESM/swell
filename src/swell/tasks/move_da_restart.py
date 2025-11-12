@@ -84,7 +84,8 @@ class MoveDaRestart(taskBase):
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
-            an_fcst_offset = self.config.analysis_forecast_window_offset()
+            window_length = self.config.window_length()
+            an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
             rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
 
             self.logger.info('Using _checkpoint restarts with timestamps')
@@ -115,7 +116,9 @@ class MoveDaRestart(taskBase):
 
         if 'RECORD_FREQUENCY' in agcm_dict:
 
-            an_fcst_offset = self.config.analysis_forecast_window_offset()
+            window_length = self.config.window_length()
+
+            an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
             rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
             seconds = rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second
 

@@ -29,7 +29,7 @@ class SaveObsDiags(taskBase):
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observations = self.config.observations()
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         r2d2_local_path = self.config.r2d2_local_path()
 
         # Set the observing system records path
@@ -37,8 +37,8 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        window_begin = self.da_window_params.window_begin(window_offset)  # dto
-        background_time = self.da_window_params.background_time(window_offset,
+        window_begin = self.da_window_params.window_begin(window_length)  # dto
+        background_time = self.da_window_params.background_time(window_length,
                                                                 background_time_offset)
 
         # Create templates dictionary
