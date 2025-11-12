@@ -1,7 +1,5 @@
 """
-Suite for testing R2D2 observation ingestion.
-
-Usage: swell create test_ingest -o test_ingest_obs.yaml
+Use: swell create test_ingest -o test_ingest_obs.yaml
 """
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
@@ -16,11 +14,12 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="test_ingest",
         questions=[
             sq.common,
+            # qd.r2d2_local_path(),  # in the task
         ],
         geos_atmosphere=[
             qd.window_length("PT6H"),
             qd.window_offset("PT3H"),
-            qd.ingest_items([]),           # Configure via YAML override
+            qd.ingest_items([]),   # Configure via YAML
             # qd.ingest_items([
             #     {
             #         'item_type': 'observation',
