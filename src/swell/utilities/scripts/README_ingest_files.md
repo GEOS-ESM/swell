@@ -5,17 +5,18 @@
 `ingest_files.py` is a command-line utility for batch ingesting data files to R2D2 v3. It automatically parses filenames, extracts metadata, and stores files with proper R2D2 indexing.
 
 **Features**:
-- ✅ Batch processing (entire directories)
-- ✅ Automatic metadata extraction from filenames
+- ✅ Batch processing (can ingest entire directories)
+- ✅ Metadata extraction from filenames
 - ✅ Dry-run mode (test before actual ingestion)
-- ✅ Duplicate detection (tracks ingested files)
-- ✅ Support for observations, bias corrections, and backgrounds
-- ✅ Detailed error reporting/handling
+- ✅ Duplicate file detection (tracks ingested files)
+- ✅ Ingests observations, bias corrections, and backgrounds
+- ✅ Error logging
 
 ---
 
 ## Quick Start
 - [Installation](#installation)
+- [Register Your Experiment](#register-your-experiment)
 - [Quick Start](#quick-start)
 - [Usage](#usage)
 - [Examples](#examples)
@@ -90,6 +91,69 @@ source load_r2d2.sh
 
 # Run the script
 python ingest_files.py /path/to/files/ bias_correction --ingest
+```
+
+---
+
+## Register Your Experiment
+
+**Before ingesting files**, you must register your experiment in R2D2 v3.
+
+### Quick Registration Script
+
+```python
+import r2d2
+import os
+
+# Set your details
+experiment_name = 'my-experiment'  # Change this
+user = os.environ.get('R2D2_USER', 'your_username')
+host = os.environ.get('R2D2_HOST', 'discover-gmao')
+compiler = os.environ.get('R2D2_COMPILER', 'intel')
+
+# Register experiment
+r2d2.R2D2Client.register_experiment(
+    name=experiment_name,
+    compute_host=f'{host}-{compiler}',
+    user=user,
+    lifetime='science'  # Options: debug, science, publication, release
+)
+
+print(f"Registered experiment: {experiment_name}")
+```
+
+### Lifetime Options
+
+| Lifetime | Duration | Use Case |
+|----------|----------|----------|
+| `debug` | Days/weeks | Testing, development |
+| `science` | Months | Research experiments |
+| `publication` | Years | Published results |
+| `release` | Permanent | Operational/reference data |
+
+### Check if Experiment Exists
+
+```python
+import r2d2
+import os
+
+user = os.environ.get('R2D2_USER')
+results = r2d2.R2D2Client.search_experiment(user=user)
+
+for exp in results:
+    print(f"{exp['name']}: {exp['lifetime']}")
+```
+
+### Update Experiment Lifetime
+
+```python
+import r2d2
+
+r2d2.R2D2Client.update_experiment(
+    name='my-experiment',
+    key='lifetime',
+    value='publication'  # Change to new lifetime
+)
 ```
 
 ---

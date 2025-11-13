@@ -46,6 +46,12 @@ class JediLogComparison(taskBase):
             experiment_cycles = [dirname for dirname in os.listdir(cycles_path)
                                  if re.match('[0-9]*T[0-9]*Z', dirname)]
 
+            experiment_cycles = sorted(experiment_cycles)
+
+            # Don't look for logs from forecasting suites
+            if log_type == 'fgat':
+                experiment_cycles = experiment_cycles[:-1]
+
             for cycle in experiment_cycles:
                 if cycle not in all_results.keys():
                     cycle_results = all_results[cycle] = {}
