@@ -12,7 +12,7 @@ import os
 
 # local imports
 from swell.utilities.logger import get_logger
-from swell.utilities.shell_commands import run_subprocess_simple_output
+from swell.utilities.shell_commands import run_subprocess_simple_output, run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ class DeployWorkflow():
             self.logger.info(' ')
             self.logger.info('  \u001b[32mcylc tui ' + self.experiment_name + '\033[0m')
             self.logger.info(' ')
-            run_subprocess_simple_output(self.logger, ['cylc', 'tui', self.experiment_name])
+            run_subprocess(self.logger, ['cylc', 'tui', self.experiment_name])
 
 # --------------------------------------------------------------------------------------------------
 
