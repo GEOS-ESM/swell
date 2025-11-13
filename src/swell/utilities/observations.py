@@ -16,6 +16,29 @@ from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
+# Read observation_ioda_names.yaml
+def get_ioda_names_list() -> list:
+    with open(os.path.join(get_swell_path(), 'configuration', 'jedi',
+                           'observation_ioda_names.yaml'), 'r') as f:
+        ioda_dict = yaml.safe_load(f)
+
+    ioda_names_list = ioda_dict['ioda instrument names']
+
+    return ioda_names_list
+
+# -------------------------------------------------------------------------------------------------
+
+
+# Gets obs providers for each observation from observation_ioda_names.yaml
+def get_providers_for_observation(observation: str, ioda_names_list: list) -> list:
+    for sub_dict in ioda_names_list:
+        if sub_dict['ioda name'] == observation:
+            if 'providers' in sub_dict.keys():
+                return sub_dict['providers']
+            return None
+
+# ------------------------------------------------------------------------------------------------
+
 
 def ioda_name_to_long_name(ioda_name: str, logger: Logger) -> str:
 

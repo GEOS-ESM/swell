@@ -18,6 +18,7 @@ from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
 import r2d2
+from swell.utilities.observations import get_ioda_names_list, get_providers_for_observation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -111,6 +112,7 @@ class GetObservations(taskBase):
         # Get model component
         model_component = self.get_model()
         r2d2_model = r2d2_model_dict.get(model_component, model_component)
+        obs_providers = obs_providers if isinstance(obs_providers, list) else [obs_providers]
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -145,6 +147,9 @@ class GetObservations(taskBase):
         # --------------------
         create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
+        # Read observation ioda names
+        ioda_names_list = get_ioda_names_list()
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -153,11 +158,18 @@ class GetObservations(taskBase):
             # ----------------------------------------
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
+            # Get the set obs providers for individual observation
+            # ----------------------------------------------------
+            providers_for_obs = get_providers_for_observation(observation, ioda_names_list)
+
+            if providers_for_obs is not None:
+                providers_for_obs = list(set(providers_for_obs) & set(obs_providers))
+            else:
+                providers_for_obs = obs_providers
             # Until R2D2v3 is fully implemented we will assume there could be multiple
             # observation providers for a given observation type.
             # We have to ensure obs_providers is a list for this loop to work
-            for obs_provider in (obs_providers if isinstance(obs_providers, list)
-                                 else [obs_providers]):
+            for obs_provider in providers_for_obs:
                 # Fetch observation files
                 # -----------------------
                 combine_input_files = []
@@ -407,6 +419,7 @@ class GetObservations(taskBase):
         subset_list = [dt for dt in obs_time_list if start_date <= dt < end_date]
 
         return subset_list
+
     # ----------------------------------------------------------------------------------------------
 
     # Get the target data from the netcdf file

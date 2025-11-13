@@ -37,7 +37,7 @@ module load other/mepo
 # Load r2d2 modules
 # -----------------
 module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load r2d2-client/sles15_0604
+module load r2d2-client/112025
 
 # Load eva and jedi_bundle
 # ------------------------
