@@ -25,9 +25,11 @@ class JediOopsLogParser(taskBase):
         cycle_time = self.__datetime__.string_directory()
         model = self.get_model()
 
+        log_type = self.config.comparison_log_type()
+
         # Build the command
         command = ['fgrep', '"Residual norm"'] + [
-                os.path.join(cycle_dir, 'jedi_variational_log.log')]
+                os.path.join(cycle_dir, f'jedi_{log_type}_log.log')]
         command = ' '.join(command)
 
         # Run the fgrep command

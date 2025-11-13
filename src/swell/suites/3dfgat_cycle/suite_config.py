@@ -31,6 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
             qd.model_components(['geos_marine']),
+            qd.comparison_log_type('fgat'),
         ],
         geos_marine=[
             qd.cycle_times([
@@ -79,7 +80,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.analysis_forecast_window_offset("-PT3H"),
             qd.background_time_offset("PT9H"),
             qd.clean_patterns([
-                "*.nc4",
                 "*.txt",
                 "*.rc",
                 "*.bin"

@@ -87,7 +87,7 @@ class EvaComparisonIncrement(taskBase):
         incr_file_1 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
         incr_file_2 = f'*.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
 
-        if window_type == '4D' and 'atmos' in self.suite_name():
+        if window_type == '4D' and self.get_model() == 'geos_atmosphere':
             incr_file_1 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
             incr_file_2 = f'*.increment-iter{iter_no}.{window_begin}.nc4'
 
