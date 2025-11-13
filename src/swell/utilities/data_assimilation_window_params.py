@@ -40,7 +40,7 @@ class DataAssimilationWindowParams():
         window_offset_dur = isodate.parse_duration(window_length) / 2
 
         return window_offset_dur
-    
+
     # ----------------------------------------------------------------------------------------------
 
     def window_offset(self, window_length: str, dto: bool = False) -> str:
@@ -50,7 +50,7 @@ class DataAssimilationWindowParams():
             return window_offset_dur
         else:
             return isodate.duration_isoformat(window_offset_dur)
-        
+
     # ----------------------------------------------------------------------------------------------
 
     def analysis_forecast_window_offset(self, window_length, dto: bool = False) -> str:
@@ -66,7 +66,7 @@ class DataAssimilationWindowParams():
     # ----------------------------------------------------------------------------------------------
 
     def __get_window_begin_dto__(self, window_length: str) -> datetime.datetime:
-        window_offset_dur = self.__get_window_offset_dur__(self, window_length)
+        window_offset_dur = self.__get_window_offset_dur__(window_length)
 
         return self.__current_cycle_dto__ - window_offset_dur
 

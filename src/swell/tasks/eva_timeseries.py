@@ -43,9 +43,8 @@ class EvaTimeseries(taskBase):
         # Compute window beginning time
         # -----------------------------
         window_begin = self.da_window_params.window_begin(window_length)
-        background_time = self.da_window_params.background_time(window_length,
-                                                                self.config.background_time_offset()
-                                                                )
+        background_time = self.da_window_params.background_time(
+                self.config.background_time_offset())
 
         ncdiag_experiments = self.config.ncdiag_experiments()
 

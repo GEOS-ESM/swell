@@ -38,8 +38,7 @@ class SaveObsDiags(taskBase):
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_length)  # dto
-        background_time = self.da_window_params.background_time(window_length,
-                                                                background_time_offset)
+        background_time = self.da_window_params.background_time(background_time_offset)
 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)

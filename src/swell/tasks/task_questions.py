@@ -684,6 +684,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="SaveObsDiags",
         questions=[
             background_crtm_obs,
+            qd.window_length(),
             qd.r2d2_local_path(),
             qd.marine_models()
         ]

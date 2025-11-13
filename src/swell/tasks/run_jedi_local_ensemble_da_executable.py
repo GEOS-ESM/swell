@@ -44,8 +44,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Compute data assimilation window parameters
-        background_time = self.da_window_params.background_time(window_length,
-                                                                background_time_offset)
+        background_time = self.da_window_params.background_time(background_time_offset)
         local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
         local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,

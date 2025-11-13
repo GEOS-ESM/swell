@@ -48,7 +48,7 @@ class RunJediUfoTestsExecutable(taskBase):
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
-        background_time = self.da_window_params.background_time(window_length, bkg_time_offset)
+        background_time = self.da_window_params.background_time(bkg_time_offset)
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
 

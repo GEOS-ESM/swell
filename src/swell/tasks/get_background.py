@@ -65,7 +65,8 @@ class GetBackground(taskBase):
         # Convert to datetime durations
         # -----------------------------
         window_length_dur = isodate.parse_duration(window_length)
-        forecast_offset_dur = self.da_window_params.analysis_forecast_window_offset(window_length, dto=True)
+        forecast_offset_dur = self.da_window_params.analysis_forecast_window_offset(window_length,
+                                                                                    dto=True)
 
         # Duration between the start of the forecast that generated the background
         # and the middle of the current window

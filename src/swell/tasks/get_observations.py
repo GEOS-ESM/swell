@@ -120,10 +120,8 @@ class GetObservations(taskBase):
         window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
         window_end_dto = self.da_window_params.window_end_iso(window_length,
                                                               dto=True)
-        background_time = self.da_window_params.background_time(window_length,
-                                                                background_time_offset)
-        background_time_iso = self.da_window_params.background_time_iso(window_length,
-                                                                        background_time_offset)
+        background_time = self.da_window_params.background_time(background_time_offset)
+        background_time_iso = self.da_window_params.background_time_iso(background_time_offset)
 
         # Determine the input observation files to be fetched, this mainly depends on
         # the observation file organization in R2D2. In other words, they could be
