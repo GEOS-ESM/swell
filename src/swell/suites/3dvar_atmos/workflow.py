@@ -145,6 +145,8 @@ class Workflow_3dvar_atmos(CylcWorkflow):
             self.tasks.append(ta.CloneGeosMksi(model=model))
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.GetBackground(model=model))
+            self.tasks.append(ta.GetBackgroundGeosExperiment(model=model))
             self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))

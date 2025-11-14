@@ -177,6 +177,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+            self.tasks.append(ta.MoveDaRestart(model=model))
             self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))

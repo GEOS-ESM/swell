@@ -87,8 +87,6 @@ template_str = '''
             LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Data assimilation preperation
-            GetObservations-{{model_component}}
-            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
@@ -102,14 +100,17 @@ template_str = '''
             RunJediFgatExecutable-{{model_component}} => EvaIncrement-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
             {% else %}
-            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
+            # Temporarily disable saving restarts
             # Move restart to next cycle
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -128,6 +129,7 @@ template_str = '''
         {% endfor %}
         """
         {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
