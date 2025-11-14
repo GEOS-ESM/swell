@@ -104,7 +104,6 @@ class SaveObsDiags(taskBase):
                 self.logger.info(f'  Skipping {observation}')
                 continue
 
->>>>>>> develop
             # Store diagnostic/feedback files produced by JEDI executables
             # (e.g., variational, hofx, localensembleda).
             # --------------------------------------------------------------

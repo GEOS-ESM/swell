@@ -67,7 +67,7 @@ number_of_iterations:
 obs_provider:
   default_value: 
   - nasa_VCD
-#  - tempo_demo
+  - tempo_demo
   options:
   - nasa_VCD
   - tempo_demo
@@ -75,7 +75,7 @@ obs_provider:
 observations:
   default_value: 
   - tempo_no2_tropo
-#  - tropomi_s5p_no2_tropo
+  - tropomi_s5p_no2_tropo
 #  - tempo_no2_total
   options: 
   - tempo_no2_tropo

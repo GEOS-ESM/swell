@@ -212,7 +212,8 @@ class GetObservations(taskBase):
                     else:
                         self.read_and_combine(combine_input_files, jedi_obs_file)
                     # Change permission
-                    os.chmod(jedi_obs_file, 0o644)
+                    # why do we need to write to obs file?
+                    #os.chmod(jedi_obs_file, 0o644)
                     # Observations were found for this provider, so we can break the provider loop
                     break
 
