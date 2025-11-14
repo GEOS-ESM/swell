@@ -86,12 +86,8 @@ template_str = '''
             LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Data assimilation things
-            GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
-
-            LinkGeosOutput-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Run analysis diagnostics
@@ -103,14 +99,16 @@ template_str = '''
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
             PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
             RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
             {% else %}
-            PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
             # Move restart to next cycle
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -174,14 +172,11 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
-            self.tasks.append(ta.MoveDaRestart(model=model))
             self.tasks.append(ta.LinkGeosOutput(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
-            self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
-            self.tasks.append(ta.SaveRestart(model=model))
             self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))

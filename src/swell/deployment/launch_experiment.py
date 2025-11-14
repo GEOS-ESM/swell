@@ -12,7 +12,7 @@ import os
 
 # local imports
 from swell.utilities.logger import get_logger
-from swell.utilities.shell_commands import run_subprocess
+from swell.utilities.shell_commands import run_subprocess_simple_output, run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -55,21 +55,22 @@ class DeployWorkflow():
             # Add optional path for workflow engine logging.
             option = '--symlink-dirs=run=' + self.log_path
             print(['cylc', 'install', option])
-            run_subprocess(self.logger, ['cylc', 'install', option])
+            run_subprocess_simple_output(self.logger, ['cylc', 'install', option])
         else:
-            run_subprocess(self.logger, ['cylc', 'install'])
+            run_subprocess_simple_output(self.logger, ['cylc', 'install'])
 
         # Start the workflow
 
         if self.no_detach:
 
             # Start the suite and wait for the workflow to complete.
-            run_subprocess(self.logger, ['cylc', 'play', '--no-detach', self.experiment_name])
+            run_subprocess_simple_output(self.logger,
+                                         ['cylc', 'play', '--no-detach', self.experiment_name])
 
         else:
 
             # Start the suite and return
-            run_subprocess(self.logger, ['cylc', 'play', self.experiment_name])
+            run_subprocess_simple_output(self.logger, ['cylc', 'play', self.experiment_name])
 
             # Pre TUI messages
             self.logger.info(' ')

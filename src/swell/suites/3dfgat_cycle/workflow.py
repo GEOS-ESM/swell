@@ -88,11 +88,9 @@ template_str = '''
 
             # Data assimilation preperation
             GetObservations-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
-
-            LinkGeosOutput-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             # Run analysis diagnostics
@@ -178,7 +176,6 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             self.tasks.append(ta.MoveDaRestart(model=model))
             self.tasks.append(ta.LinkGeosOutput(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
-            self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))

@@ -59,7 +59,7 @@ template_str = '''
 # --------------------------------------------------------------------------------------------------
 
 
-class Workflow_compare_variational(CylcWorkflow):
+class Workflow_compare(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()

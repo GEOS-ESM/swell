@@ -99,7 +99,7 @@ def prepare_config(
 
     # Resolve cycle times for models
     # ------------------------------
-    if 'models' in suite_dict:
+    if 'models' in suite_dict and 'start_cycle_point' in suite_dict:
         model_components = suite_dict['models']
 
         # Since cycle times are used, the render_dictionary will need to include cycle_times

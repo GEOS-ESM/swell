@@ -94,7 +94,7 @@ class Workflow_geosadas(CylcWorkflow):
 
         return workflow_str
 
-    def tasks(self) -> list:
+    def set_tasks(self) -> list:
 
         self.tasks.append(ta.root())
         self.tasks.append(ta.CloneJedi())

@@ -454,6 +454,7 @@ class TaskAttributes():
             self.time_limit = True
             self.is_cycling = True
             self.is_model = True
+            self.retry = '2*PT1M'
             self.slurm = {}
             self.question_list = QuestionList([
                 np_proc_resolution,
@@ -571,7 +572,8 @@ class TaskAttributes():
             self.slurm = {}
             self.question_list = QuestionList([
                 run_jedi_executable,
-                qd.marine_models()
+                qd.marine_models(),
+                qd.comparison_log_type('fgat'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -591,6 +593,7 @@ class TaskAttributes():
                 qd.jedi_forecast_model(),
                 qd.observations(),
                 qd.observing_system_records_path(),
+                qd.comparison_log_type('ensmeanvariance'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -611,7 +614,8 @@ class TaskAttributes():
                 qd.ensemble_num_members(),
                 qd.generate_yaml_and_exit(),
                 qd.jedi_forecast_model(),
-                qd.total_processors()
+                qd.total_processors(),
+                qd.comparison_log_type('hofx'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -630,7 +634,8 @@ class TaskAttributes():
                 qd.generate_yaml_and_exit(),
                 qd.jedi_forecast_model(),
                 qd.save_geovals(),
-                qd.total_processors()
+                qd.total_processors(),
+                qd.comparison_log_type('ensemblehofx'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -672,7 +677,8 @@ class TaskAttributes():
                 qd.vertical_localization_ioda_vertical_coord_group(),
                 qd.vertical_localization_lengthscale(),
                 qd.vertical_localization_method(),
-                qd.perhost()
+                qd.perhost(),
+                qd.comparison_log_type('localensembleda'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -685,7 +691,8 @@ class TaskAttributes():
             self.slurm = {'nodes': 3}
             self.question_list = QuestionList([
                 run_jedi_executable,
-                qd.perhost()
+                qd.perhost(),
+                qd.comparison_log_type('variational'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -702,15 +709,6 @@ class TaskAttributes():
 
     # --------------------------------------------------------------------------------------------------
 
-    class RunJediUfoExecutable(Task):
-        def set_attributes(self):
-            self.is_cycling = True
-            self.is_model = True
-            self.slurm = {}
-            self.time_limit = True
-
-    # --------------------------------------------------------------------------------------------------
-
     class RunJediUfoTestsExecutable(Task):
         def set_attributes(self):
             self.time_limit = True
@@ -722,7 +720,8 @@ class TaskAttributes():
                 qd.generate_yaml_and_exit(),
                 qd.single_observations(),
                 qd.window_length(),
-                qd.window_offset()
+                qd.window_offset(),
+                qd.comparison_log_type('ufo_tests'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -741,7 +740,8 @@ class TaskAttributes():
                 qd.observations(),
                 qd.total_processors(),
                 qd.window_offset(),
-                qd.window_type()
+                qd.window_type(),
+                qd.comparison_log_type('convert_state_soca2cice'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -754,7 +754,8 @@ class TaskAttributes():
             self.slurm = {}
             self.question_list = QuestionList([
                 run_jedi_executable,
-                qd.marine_models()
+                qd.marine_models(),
+                qd.comparison_log_type('fgat'),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -851,7 +852,8 @@ class TaskAttributes():
                 qd.jedi_forecast_model(),
                 qd.observing_system_records_path(),
                 qd.total_processors(),
-                qd.obs_thinning_rej_fraction()
+                qd.obs_thinning_rej_fraction(),
+                qd.comparison_log_type('obsfilters')
             ])
 
     # --------------------------------------------------------------------------------------------------

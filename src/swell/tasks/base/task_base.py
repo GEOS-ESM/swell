@@ -278,11 +278,22 @@ class taskFactory():
         ensemblePacket: Optional[str],
     ) -> taskBase:
 
+        # Load R2D2 credentials before importing any task modules
+        # -------------------------------------------------------
+        from swell.utilities.config import Config
+        from swell.utilities.r2d2 import load_r2d2_credentials
+        from swell.utilities.logger import get_logger
+
+        # Get platform info from config to load credentials
+        temp_logger = get_logger('R2D2Setup')
+        temp_config = Config(config, temp_logger, task, model)
+        load_r2d2_credentials(temp_logger, temp_config.__platform__)
+
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
         # Import class based on user selected task
-        task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
+        task_class = getattr(importlib.import_module('swell.tasks.' + task_lower), task)
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket,

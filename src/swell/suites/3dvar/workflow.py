@@ -55,16 +55,10 @@ template_str = '''
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
+
             # Task triggers for: {{model_component}}
             # ------------------
-            # Get background
-            GetBackground-{{model_component}}
-
-            # Get observations
-            GetObservations-{{model_component}}
-
             # GenerateBClimatology, for ocean it is cycle dependent
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
             GetBackground-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Perform staging that is cycle dependent
@@ -75,7 +69,7 @@ template_str = '''
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -93,7 +87,6 @@ template_str = '''
             # Clean up large files
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
-
         {% endif %}
         {% endfor %}
         """
@@ -136,7 +129,6 @@ class Workflow_3dvar(CylcWorkflow):
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.GetObservations(model=model))
-            self.tasks.append(ta.GenerateBClimatologyByLinking(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.GetBackground(model=model))
