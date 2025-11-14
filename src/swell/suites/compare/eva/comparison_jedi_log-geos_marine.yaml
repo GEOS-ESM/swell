@@ -2,13 +2,13 @@ datasets:
 
 - type: JediLog
   collection_name: jedi_log_test_1
-  jedi_log_to_parse: '{{cycle_dir_1}}/jedi_variational_log.log'
+  jedi_log_to_parse: '{{cycle_dir_1}}/jedi_{{log_type}}_log.log'
   data_to_parse:
     convergence: true
 
 - type: JediLog
   collection_name: jedi_log_test_2
-  jedi_log_to_parse: '{{cycle_dir_2}}/jedi_variational_log.log'
+  jedi_log_to_parse: '{{cycle_dir_2}}/jedi_{{log_type}}_log.log'
   data_to_parse:
     convergence: true
 

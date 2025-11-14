@@ -37,14 +37,15 @@ module load other/mepo
 # Load r2d2 modules
 # -----------------
 module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load solo/sles15_skylab9
-module load py-boto3
-module load r2d2/sles15_spack19
+module load r2d2-client/112025
 
 # Load eva and jedi_bundle
 # ------------------------
 module load eva/sles15_milan_1.6.5
 module load jedi_bundle/sles15_skylab9
+
+# Remove any r2d2 v2 paths from PYTHONPATH to prevent conflicts
+export PYTHONPATH=$(echo $PYTHONPATH | tr ':' '\n' | grep -v "/r2d2/sles15_spack19/" | tr '\n' ':' | sed 's/:$//')
 
 # Set the swell paths
 # -------------------
@@ -56,4 +57,5 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
+
 

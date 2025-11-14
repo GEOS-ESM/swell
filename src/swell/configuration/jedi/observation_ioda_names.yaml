@@ -156,87 +156,115 @@ ioda instrument names:
   # Ocean
   - ioda name: adt_sentinel3a
     full name: ADT Sentinel-3A
+    provider : odas
     inst type: altimeter
   - ioda name: adt_sentinel3b
     full name: ADT Sentinel-3B
+    provider : odas
     inst type: altimeter
   - ioda name: adt_sentinel6a
     full name: ADT Sentinel-6A
+    provider : odas
     inst type: altimeter
   - ioda name: adt_coperl4
     full name: ADT Copernicus Level-4
+    provider : gdas_marine
     inst type: altimeter
   - ioda name: adt_cryosat2n
     full name: ADT Cryosat-2N
+    provider : odas
     inst type: altimeter
   - ioda name: adt_jason3
     full name: ADT Jason-3
+    provider : odas
     inst type: altimeter
   - ioda name: adt_jason3n
     full name: ADT Jason-3N
+    provider : odas
     inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
+    provider : odas
     inst type: altimeter
   - ioda name: adt_swot_nadir
     full name: ADT SWOT Nadir
+    provider : odas
     inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_ctd
     full name: CTD (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_pirata
     full name: PIRATA (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_rama
     full name: RAMA (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_tao
     full name: TAO (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: sss_smapv5
     full name: SMAP V5 (SSS)
+    provider : odas
     inst type: conventional
   - ioda name: sss_smos
     full name: SMOS (SSS)
+    provider : odas
     inst type: conventional
   - ioda name: sst_abi_g16_l3c
     full name: GOES-16 EAST (SST)
+    provider : gdas_marine
     inst type: abi (IR)
   - ioda name: sst_abi_g17_l3c
     full name: GOES-17 WEST (SST)
+    provider : gdas_marine
     inst type: abi (IR)
   - ioda name: sst_ahi_h08_l3c
     full name: Himawari-08 (SST)
+    provider : gdas_marine
     inst type: ahi (IR)
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
+    provider : gdas_marine
     inst type: conventional
   - ioda name: sst_avhrr_ma_l3u
     full name: Metop-A (SST)
+    provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_avhrr_mb_l3u
     full name: Metop-B (SST)
+    provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
     full name: GPM (GMI) (SST)
+    provider : gdas_marine
     inst type: gmi (MW)
   - ioda name: sst_merra2
     full name: MERRA2 (SST)
+    provider : odas
     inst type: conventional
   - ioda name: sst_ostia
     full name: OSTIA (SST)
+    provider : gdas_marine
     inst type: conventional
   - ioda name: sst_viirs_n20_l3u
     full name: NOAA-20 (SST)
+    provider : gdas_marine
     inst type: viirs (IR)
   - ioda name: sst_viirs_npp_l3u
     full name: Suomi-NPP (SST)
+    provider : gdas_marine
     inst type: viirs (IR)
   - ioda name: temp_profile_xbt
     full name: XBT (In-situ Temperature)
+    provider : odas
     inst type: conventional
   # Sea-ice
   - ioda name : icec_amsr2_north
@@ -250,18 +278,6 @@ ioda instrument names:
     inst type: radiance
   - ioda name : icec_nsidc_sh
     full name: NSIDC South (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f17_north
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f17_south
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f18_north
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f18_south
-    full name: SSMIS (Ice Concentration)
     inst type: radiance
   - ioda name: icec_merra2
     full name: MERRA2 (Ice Concentration)

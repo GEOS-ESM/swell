@@ -97,6 +97,14 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
+    def background_time_iso(self, window_offset: str, background_time_offset: str) -> str:
+
+        background_time_offset_dur = isodate.parse_duration(background_time_offset)
+        background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
+        return background_time_dto.strftime(datetime_formats['iso_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
     def local_background_time_iso(self, window_offset: str, window_type: str) -> str:
 
         local_background_time = self.__get_local_background_time__(window_type, window_offset)
