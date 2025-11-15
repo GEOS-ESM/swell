@@ -1,0 +1,3 @@
+- copy_files:
+    directories:
+      - ['/discover/nobackup/mabdiosk/SWELL_uv/swell-develop/src/swell/configuration/jedi/interfaces/geos_cf/namelists/*', '{{cycle_dir}}/']

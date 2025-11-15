@@ -5,8 +5,13 @@ databases:
     cache_fetch: false
 
 # v3 API configuration (for centralized nccs-gmao data)
-data_hub: nccs-gmao
-data_store: r2d2-experiments-nccs-gmao
+#data_hub: nccs-gmao
+#data_store: r2d2-experiments-nccs-gmao
+#compute_host: discover-gmao-intel
+
+# JCSDA config for testing CF
+data_hub: discover-mil
+data_store: r2d2-experiments-nccs
 compute_host: discover-gmao-intel
 
 # Fetch order: try local first, then API

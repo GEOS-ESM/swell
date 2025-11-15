@@ -266,3 +266,29 @@ ioda instrument names:
   - ioda name: icec_merra2
     full name: MERRA2 (Ice Concentration)
     inst type: conventional
+  # Compo
+  - ioda name: tempo_no2_tropo
+    full name: TEMPO tropospheric column NO2
+    inst type: no2
+    providers: 
+    - nasa_VCD
+  - ioda name: tempo_no2_total
+    full name: TEMPO total column NO2
+    inst type: no2
+    providers: 
+    - nasa_VCD
+  - ioda name: tropomi_s5p_no2_tropo
+    full name: TROPOMI tropospheric column NO2
+    inst type: no2
+    providers: 
+    - tempo_demo
+  - ioda name: tropomi_s5p_no2_total
+    full name: TROPOMI total column NO2
+    inst type: no2
+    providers: 
+    - tempo_demo
+  - ioda name: tropomi_s5p_co_total
+    full name: TROPOMI total column CO
+    inst type: co
+
+
