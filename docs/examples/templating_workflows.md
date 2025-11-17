@@ -3,67 +3,40 @@ The `flow.cylc` file informs the `Cylc` workflow engine on how to run an experim
 
 ## Cylc sections
 
-The `flow.cylc` that is generated under this method is not much different from the one generated before, and users shouldn't notice a difference when it comes to creating an experiment, using overrides, etc. When creating an experiment, `swell` consults a file `src/swell/suites/<suite>/workflow.py` on how to construct the suite. This file should be an extension of the `CylcWorkflow` class (defined in `src/swell/utilities/cylc_workflow.py`). The method `get_workflow_str` is called to return a string which fills the contents of the `flow.cylc` file. Overriding this method can be used to manually specify the contents of the file, but the intended method of using this class is to override methods which comprise the individual sections of the file. Since every suite within Swell contains roughly the same sections, some of which share the same content, it is only necessary to override a few of the methods, most notably the graph section.
+The `flow.cylc` that is generated under this method is not much different from the one generated before, and users shouldn't notice a difference when it comes to creating an experiment, using overrides, etc. When creating an experiment, `swell` consults a file `src/swell/suites/<suite>/workflow.py` on how to construct the suite. This file should be an extension of the `CylcWorkflow` class (defined in `src/swell/utilities/cylc_workflow.py`). The method `get_workflow_str` is called to return a string which fills the contents of the `flow.cylc` file. Overriding this method is used to manually specify the contents of the file. Typically, the graph section is templated in `jinja2`, and the runtime sections for each task are generated using swell's `TaskAttribute` class. However, the entire `flow.cylc` file can be templated in `jinja`, if necessary.
 
-```python
-def define_graph_section(self):
-    # Define the string of the graph section
-    graph_str = ''
-
-    # Define the string for the R1 (first non-cycling) section
-    r1 = r1_template
-
-    for model_component in self.experiment_dict['model_components']:
-        r1 += r1_model.format(model_component=model_component)
-
-    # Format the R1 cycle and add it to the graph
-    graph_str += self.format_cycle('R1', r1)
-
-    # Format the string for each cycle
-    for model_component in self.experiment_dict['model_components']:
-        if 'cycle_times' in self.experiment_dict['models'][model_component]:
-            for cycle_time in self.experiment_dict['models'][model_component]['cycle_times']:
-                cycle_str = cycle_template.format(model_component=model_component)
-
-                # Add the cycle string to the graph string
-                graph_str += self.format_cycle(cycle_time, cycle_str)
-
-    # Create the graph section
-    graph_section = self.create_new_section('graph', graph_str)
-
-    return graph_section
-```
-
-The `define_graph_section` task is used to set the graph. There are a few built-in methods used to format the strings into cylc syntax. The `format_cycle` method is used to construct properly indented blocks for cycling intervals. `create_new_section` creates a section object that tracks indentation levels, and can be added to other sections, with properly handled indentation and spacing. Here the `graph` is constructed as one of the sections, since it itself is a sub-member of the `scheduling` block in a cylc graph. Any suite questions in the config can be referenced from `self.experiment_dict`. For example, this is often used to format the model component.
 
 ## Tasks and the runtime section
 
-Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting `src/swell/tasks/task_runtimes.py`. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `Task` class.
+Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting `src/swell/tasks/task_attributes.py`. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `Task` class. This class will dynamically set attributes such as messaging parameters and slurm settings.
 
 ```python
-@dataclass
 class CloneJedi(Task):
-    pass
+    def set_attributes(self):
+        self.question_list = QuestionList([
+            qd.bundles(),
+            qd.existing_jedi_source_directory(),
+            qd.existing_jedi_source_directory_pinned(),
+            qd.jedi_build_method()
+        ])
 
-@dataclass
-class CloneGeosMksi(Task):
-    is_model: bool = True
 
-@dataclass
-class EvaJediLog(Task):
-    is_cycling: bool = True
-    is_model: bool = True
-
-@dataclass
 class EvaObservations(Task):
-    time_limit: bool = True
-    is_cycling: bool = True
-    is_model: bool = True
-    slurm: dict = mutable_field({})
-
+    def set_attributes(self):
+        self.time_limit = True
+        self.is_cycling = True
+        self.is_model = True
+        self.slurm = {}
+        self.question_list = QuestionList([
+            background_crtm_obs,
+            qd.marine_models(),
+            qd.observing_system_records_path(),
+            qd.window_offset(),
+            qd.marine_models(),
+        ])
 ```
 
-Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section.
+Attributes are set by override the `set_attributes` method in `Task`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section.
 
 ```
 [[EvaObservations-geos_marine]]
@@ -80,27 +53,27 @@ Here, the tags `is_cycling` and `is_model` are used to specify what tags the tas
         --account = <account>
 ```
 
-This can be used to set task-specific defaults in `task_runtimes.py`, rather than being set in `slurm.py`:
+This can be used to set task-specific defaults in `task_attributes.py`, rather than being set in `slurm.py`:
 
 ```python
-@dataclass
 class RunJediConvertStateSoca2ciceExecutable(Task):
-    is_cycling: bool = True
-    is_model: bool = True
-    time_limit: bool = True
-    slurm: dict = mutable_field({'nodes': 1})
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True 
+        self.time_limit = True
+        self.slurm = {'nodes': 1}
 ```
 
 This supports setting platform-specific overrides, for example:
 
 ```python
-@dataclass
 class RunJediConvertStateSoca2ciceExecutable(Task):
-    is_cycling: bool = True
-    is_model: bool = True
-    time_limit: bool = True
-    slurm: dict = mutable_field({'nodes': {'all': 1,
-                                           'nccs_discover_cascade': 2}})
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True 
+        self.time_limit = True
+        self.slurm = {'all': 1,
+                      'nccs_discover_cascade': 2}
 ```
 
 On the `nccs_discover_cascade` platform, `nodes` will be set as 2, but on any other platform it will be 1. User overrides will still work as they did previously.
