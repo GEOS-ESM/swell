@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Simple generic script to ingest observation files to r2d2 v3
 Works for ncdiag, odas, gdas_marine, etc.
@@ -78,11 +79,13 @@ def ingest_observation(filename, file_path, parts, dry_run=True):
             provider=provider,
             observation_type=obs_type,
             file_extension=file_ext,
-            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
             window_start=timestamp,
             window_length=window_length,
             source_file=file_path
         )
+        # no need to specify data_store='r2d2-experiments-nccs-gmao'
+        # this will be set by credentials
+
         print(f"   {GREEN}SUCCESS{RESET}")
         save_ingested(filename)
         return True
@@ -151,7 +154,8 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
     """ingest bias correction files"""
 
     # Parse filename: gsi.x0050.bc.aircraft_temperature.2023-10-09T15:00:00Z.acftbias
-    # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature', '2023-10-09T15:00:00Z', 'acftbias']
+    # Parts would be: ['gsi', 'x0050', 'bc', 'aircraft_temperature',
+    #                  '2023-10-09T15:00:00Z', 'acftbias']
 
     if len(parts) < 6:
         print(f"{file_path} can not be ingested - not enough parts")
@@ -176,7 +180,7 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
         'acftbias_cov': 'obsbias_coeff_errors',  # Aircraft bias coefficient errors
 
         # Satellite bias corrections
-        'satbias': 'satbias',                                    # Special case: kept for GSI compatibility
+        'satbias': 'satbias',
         'satbias_cov': 'obsbias_coeff_errors',   # Coefficient errors (same as aircraft)
 
         # Timelapse
@@ -219,9 +223,9 @@ def ingest_bias_correction(filename, file_path, parts, dry_run=True):
             file_extension=file_ext,
             date=timestamp,
             file_type=file_type,           # Map extension to R2D2 enum
-            # data_store='r2d2-experiments-nccs-gmao', # no need to specify, will be set by credentials
-            # window_length='PT6H', # not required for bias correction
         )
+
+        # window_length='PT6H' is not required for bias correction
 
         print(f"   {GREEN}SUCCESS{RESET}")
         save_ingested(filename)
@@ -248,7 +252,7 @@ def ingest_files(file_path, item_type, dry_run=True):
     extensions = valid_extensions.get(item_type, ['.nc4', '.nc'])
 
     # If it's a file, just process that file
-    if os.path.isfile(file_path):
+    if os.path.isfile(file_path) or os.path.islink(file_path):
         # Check if file has valid extension for this item type
         if any(file_path.endswith(ext) for ext in extensions):
             # If it has a valid extension, process it
@@ -274,8 +278,17 @@ def ingest_files(file_path, item_type, dry_run=True):
     failed_files = []
     skipped_files = []
 
-    for file_path in files:
-        filename = os.path.basename(file_path)
+    for link_path in files:
+        # Use the link name for parsing metadata
+        filename = os.path.basename(link_path)
+
+        # Resolve to the actual file for source_file parameter
+        if os.path.islink(link_path):
+            actual_file_path = os.path.realpath(link_path)
+            print(f"{BLUE}Link: {filename}{RESET}")
+            print(f"   -> {actual_file_path}")
+        else:
+            actual_file_path = link_path
 
         # Check if already ingested
         if filename in ingested:
@@ -283,7 +296,7 @@ def ingest_files(file_path, item_type, dry_run=True):
             skipped_files.append(filename)
             continue
 
-        # Split filename by "."
+        # Split filename by "." - parse the LINK name, not the original
         parts = filename.split(".")
 
         if len(parts) < 4:
@@ -292,12 +305,13 @@ def ingest_files(file_path, item_type, dry_run=True):
             continue
 
         # Call appropriate ingestion function based on item type
+        # Pass both the link filename (for parsing) and actual file path (for r2d2.store)
         if item_type == "observation":
-            success = ingest_observation(filename, file_path, parts, dry_run)
+            success = ingest_observation(filename, actual_file_path, parts, dry_run)
         elif item_type in ["background", "forecast"]:
-            success = ingest_background(filename, file_path, parts, dry_run)
+            success = ingest_background(filename, actual_file_path, parts, dry_run)
         elif item_type in ["bias_coefficient", "bias_correction"]:
-            success = ingest_bias_correction(filename, file_path, parts, dry_run)
+            success = ingest_bias_correction(filename, actual_file_path, parts, dry_run)
         else:
             print(f"{RED}Unknown item type: {item_type}{RESET}")
             failed_files.append((filename, "Unknown item type"))
@@ -312,7 +326,8 @@ def ingest_files(file_path, item_type, dry_run=True):
     print(f"\n{GREEN}Successfully processed {success_count}/{len(files)} files{RESET}")
 
     if skipped_files:
-        print(f"{YELLOW}Skipped {len(skipped_files)} files (already ingested or invalid format){RESET}")
+        print(f"{YELLOW}Skipped {len(skipped_files)} "
+              f"files (already ingested or invalid format){RESET}")
 
     if failed_files:
         print(f"\n{RED}Failed to ingest {len(failed_files)} file(s):{RESET}")

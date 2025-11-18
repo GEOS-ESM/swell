@@ -126,7 +126,7 @@ class PrepareAnalysis(taskBase):
         # -----------------------------------------------------------------------
         command = f'ncks -O -v h {f_ana} {h_ana} \n' + \
             f'ncks -A -v h {h_ana} {f_incr} \n' + \
-            f'mv {f_incr} {mom6_incr}'
+            f'cp {f_incr} {mom6_incr}'
 
         # Containerized run of NCO tools via CLI
         # --------------------------------------
