@@ -8,7 +8,9 @@
     
     [[graph]]
         R1 = """
-            TestIngestObs-geos_atmosphere
+            {% for model_component in model_components %}
+		TestIngestObs-{{model_component}}
+	    {% endfor %} 
         """
 
 [runtime]
@@ -19,6 +21,9 @@
             datetime = $CYLC_TASK_CYCLE_POINT
             config = $CYLC_SUITE_DEF_PATH/experiment.yaml
 
-    [[TestIngestObs-geos_atmosphere]]
-        script = "swell task TestIngestObs $config -d $datetime -m geos_atmosphere"
+    {% for model_component in model_components %}
+    [[TestIngestObs-{{model_component}}]]
+        script = "swell task TestIngestObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT10M
+
+    {% endfor %}

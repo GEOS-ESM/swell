@@ -18,7 +18,7 @@ class SuiteConfig(QuestionContainer, Enum):
             sq.common,
         ],
         geos_atmosphere=[
-            qd.window_length("PT6H"),
+            qd.window_length("PT61111111H"),
             qd.window_offset("PT3H"),
             qd.ingest_items([]),           # Configure via YAML override
             # qd.ingest_items([

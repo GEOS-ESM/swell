@@ -715,3 +715,16 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    TestIngestObs = QuestionList(
+        list_name="TestIngestObs",
+        questions=[
+            qd.dry_run(),
+            qd.ingest_items(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------

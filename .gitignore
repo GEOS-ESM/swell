@@ -141,3 +141,9 @@ dmypy.json
 r2d2_credentials.yaml
 **/r2d2_credentials.yaml
 .swell/r2d2_credentials.yaml
+
+
+# Miscellaneous
+GEOS_mksi/
+jedi_bundle/
+output/
