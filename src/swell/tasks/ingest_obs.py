@@ -20,7 +20,7 @@ from swell.utilities.r2d2 import create_r2d2_config
 import r2d2
 
 
-class TestIngestObs(taskBase):
+class IngestObs(taskBase):
     """
     Task to ingest data to R2D2 v3 (observations, bias corrections, backgrounds/forecasts).
     
@@ -320,4 +320,3 @@ class TestIngestObs(taskBase):
         ds.setncattr('_ioda_layout_version', 0)
         ds.setncattr('description', f'Empty placeholder for {obs_type}')
         ds.close()
-

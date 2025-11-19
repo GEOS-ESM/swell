@@ -441,6 +441,19 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    IngestObs = QuestionList(
+        list_name="IngestObs",
+        questions=[
+            qd.dry_run(),
+            qd.ingest_items(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     JediLogComparison = QuestionList(
         list_name="JediComparisonLog",
         questions=[
@@ -711,19 +724,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.horizontal_resolution(),
             qd.r2d2_local_path(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    TestIngestObs = QuestionList(
-        list_name="TestIngestObs",
-        questions=[
-            qd.dry_run(),
-            qd.ingest_items(),
-            qd.r2d2_local_path(),
-            qd.window_length(),
-            qd.window_offset(),
         ]
     )
 

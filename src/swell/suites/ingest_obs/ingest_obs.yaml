@@ -49,7 +49,7 @@ models:
             file_extension: nc4
       
       # ----------------------------------------------------------------------
-      # BIAS CORRECTIONS (optional - uncomment to use)
+      # BIAS CORRECTIONS
       # ----------------------------------------------------------------------
       # - item_type: bias_correction
       #   source_directory: /discover/nobackup/projects/gmao/bias/archive/
@@ -66,7 +66,7 @@ models:
       #       file_type: satbias
       
       # ----------------------------------------------------------------------
-      # BACKGROUNDS/FORECASTS (optional - uncomment to use)
+      # BACKGROUNDS/FORECASTS
       # ----------------------------------------------------------------------
       # - item_type: forecast
       #   source_directory: /discover/nobackup/projects/gmao/forecast/archive/
