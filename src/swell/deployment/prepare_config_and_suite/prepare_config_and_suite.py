@@ -185,11 +185,9 @@ class PrepareExperimentConfigAndSuite:
 
         # Iterate through model independent tasks and update with defaults if not already set
         for task in self.model_independent_tasks:
-            task_options.append(task)
+            task_options.append(task.task_name)
+            question_list = task.question_list.expand_question_list()
 
-            task_class = getattr(task_attributes, task)
-
-            question_list = task_class().question_list.expand_question_list()
             for question in question_list:
                 question_dict = {question['question_name']: question}
 
@@ -213,10 +211,9 @@ class PrepareExperimentConfigAndSuite:
         # Iterate through model dependent tasks and update if not already set
         for model, task_list in self.model_dependent_tasks.items():
             for task in task_list:
-                task_options.append(task)
+                task_options.append(task.task_name)
 
-                task_class = getattr(task_attributes, task)
-                question_list = task_class(model=model).question_list.expand_question_list()
+                question_list = task.question_list.expand_question_list()
 
                 for question in question_list:
                     question_dict = {question['question_name']: question}

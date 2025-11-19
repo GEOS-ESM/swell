@@ -20,6 +20,7 @@ from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import suite_configs
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.deployment.create_task_config import task_config_wrapper
 
 
 # --------------------------------------------------------------------------------------------------
@@ -122,6 +123,35 @@ def create(
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
+@swell_driver.command()
+@click.argument('task', type=click.Choice(get_tasks()))
+@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
+              type=click.Choice(get_platforms()), help=platform_help)
+@click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
+@click.option('-m', '--model', 'model', default=None, help=model_help)
+@click.option('-m', '--input_method', 'input_method', default='defaults',
+              type=click.Choice(['defaults', 'cli']), help=input_method_help)
+@click.option('-o', '--override', 'override', default=None, help=override_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+def create_task_config(
+    task: str,
+    platform: str,
+    datetime: Optional[str],
+    model: Optional[str],
+    input_method: str,
+    override: Optional[str],
+    slurm: Optional[str],
+) -> None:
+    """
+    Create a config for a single task
+
+    This command generates a config to be used to run a single task.
+
+    Arguments:\n
+        task (str): Name of the task to execute.\n
+
+    """
+    task_config_wrapper(task, platform, datetime, model, input_method, override, slurm)
 
 # --------------------------------------------------------------------------------------------------
 

@@ -74,9 +74,9 @@ class CylcWorkflow():
 
         for task in self.tasks:
             if task.model is not None:
-                model_tasks[task.model].append(task.base_name)
+                model_tasks[task.model].append(task)
             else:
-                ind_tasks.append(task.base_name)
+                ind_tasks.append(task)
 
         return ind_tasks, model_tasks
 

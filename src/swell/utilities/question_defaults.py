@@ -186,6 +186,17 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class use_cycle_dir(SuiteQuestion):
+        default_value: bool = True
+        question_name: str = "use_cycle_dir"
+        ask_question: bool = False
+        prompt: str = ("For cycling tasks, send results to the experiment cycle directory? If false, "
+                       "results will be stored in the current working directory.")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class window_type(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_type"

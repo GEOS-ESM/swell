@@ -153,6 +153,8 @@ def prepare_config(
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 
+    workflow.experiment_dict = experiment_dict
+
     # Finalize the workflow by adding the runtime section, and get the contents
     # -------------------------------------------------------------------------
     workflow_string = workflow.get_workflow_string()
@@ -360,7 +362,6 @@ def template_modules_file(
         # ------------------
         with open(modules_file, 'w') as modules_file_open:
             modules_file_open.write(modules_file_str)
-
 
 # --------------------------------------------------------------------------------------------------
 

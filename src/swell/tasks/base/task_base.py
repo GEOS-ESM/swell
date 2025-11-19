@@ -191,9 +191,14 @@ class taskBase(ABC):
         self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
                                  'should not be called if the task does not receive model.')
 
-        # Combine datetime string (directory format) with the model
-        cycle_dir = os.path.join(self.experiment_path(), 'run',
-                                 self.__datetime__.string_directory(), self.__model__)
+        # Check whether to send to cycle dir
+        if self.config.use_cycle_dir(True):
+
+            # Combine datetime string (directory format) with the model
+            cycle_dir = os.path.join(self.experiment_path(), 'run',
+                                    self.__datetime__.string_directory(), self.__model__)
+        else:
+            return self.experiment_path()
 
         # Return
         return cycle_dir

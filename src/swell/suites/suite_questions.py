@@ -65,3 +65,16 @@ class SuiteQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    task_minimum = QuestionList(
+        list_name="task_minimum",
+        questions=[
+            qd.experiment_id(),
+            qd.experiment_root(),
+            qd.model_components(),
+            qd.marine_models(),
+            qd.use_cycle_dir(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
