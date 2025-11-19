@@ -377,23 +377,22 @@ class GetObservations(taskBase):
     # Get the target data from the netcdf file
     # ----------------------------------------
     def get_data(self, input_file: str, group: str, var_name: str) -> object:
-        with nc.Dataset(input_file, 'r') as ds:
-            return ds[group][var_name][:]
+        """Returns None if group or variable doesn't exist"""
+        try:
+            with nc.Dataset(input_file, 'r') as ds:
+                if group in ds.groups and var_name in ds[group].variables:
+                    return ds[group][var_name][:]
+                return None
+        except Exception as e:
+            self.logger.warning(f"Error reading {var_name} from {group} in {input_file}: {e}")
+            return None
 
     # ----------------------------------------------------------------------------------------------
 
     def read_and_combine(self, input_filenames: list, output_filename: str) -> None:
         '''
         Combines multiple IODA v3 netcdf input files into a single output.
-        Combining multiple files require final (total) location dimension size to be
-        calculated in advance.
-
-        Basically, this function creates an output file that duplicates the first
-        input file's attributes and then fills with appended data from the input files.
-
-        Channel dimension shows up as a second dimension and sometimes as a single
-        dimension. Both cases require special handling and introduces additional
-        exceptions to the code. Final channel dimension size remains the same.
+        Handles missing variables gracefully by only combining variables present in at least one file.
         '''
 
         # Create a new file for writing, remove the file if it already exists
@@ -406,10 +405,24 @@ class GetObservations(taskBase):
         # -------------------------------------------------------------
         existing_files = [f for f in input_filenames if os.path.exists(f)]
         input_filenames = existing_files
+        
+        if not input_filenames:
+            self.logger.error("No valid input files found")
+            return
 
-        # Loop through the input files and get the total dimension size for each dimension
-        # Location requires special handling to get the cumulative sum of the dimension size
-        # ---------------------------------------------------------------------------------
+        # Collect all unique variables across all files
+        # ----------------------------------------------
+        all_variables = {}  # {group_name: set of variable names}
+        
+        for input_filename in input_filenames:
+            with nc.Dataset(input_filename, 'r') as ds:
+                for group_name in ds.groups.keys():
+                    if group_name not in all_variables:
+                        all_variables[group_name] = set()
+                    all_variables[group_name].update(ds[group_name].variables.keys())
+
+        # Loop through the input files and get the total dimension size
+        # --------------------------------------------------------------
         out_dim_size = {'Location': 0}
         for input_filename in input_filenames:
             with nc.Dataset(input_filename, 'r') as ds:
@@ -420,15 +433,13 @@ class GetObservations(taskBase):
                         out_dim_size[dim_name] = dim.size
 
         with nc.Dataset(output_filename, 'w') as out_ds:
-            # Open the input NetCDF files for reading
-            # ---------------------------------------
-            self.logger.info(f"Combining files {input_filenames} ")
+            self.logger.info(f"Combining files {input_filenames}")
 
             # Create an output file template based on the first input file
             # ------------------------------------------------------------
             with nc.Dataset(input_filenames[0], 'r') as ds:
-                # Access groups and create dimensions
-                # -----------------------------------
+                # Create dimensions
+                # ----------------
                 input_groups = ds.groups.keys()
 
                 for dim_name, dim in ds.dimensions.items():
@@ -437,52 +448,90 @@ class GetObservations(taskBase):
                 # Loop through groups and process variables
                 # -----------------------------------------
                 for group_name in input_groups:
-                    group = ds[group_name]
-
                     # Create the groups in output file
                     # --------------------------------
                     out_group = out_ds.createGroup(group_name)
 
-                    # Access variables within a group
-                    # -------------------------------
-                    variables_in_group = group.variables.keys()
-
-                    # Loop over variables from input files, combine, and write to the new file
-                    # ------------------------------------------------------------------------
-                    for var_name in variables_in_group:
+                    # Process all variables that exist in ANY file for this group
+                    # -----------------------------------------------------------
+                    for var_name in all_variables.get(group_name, []):
                         list_data = []
+                        var_dims = None
+                        var_dtype = None
+                        fill_value = None
+                        attributes = {}
 
-                        # Get the dimensions of the variable
-                        # ----------------------------------
-                        var_dims = group[var_name].dimensions
-
-                        # Loop over all the files and combine the variable data into a list
-                        # Channel dimensions remain the same, so we can break the loop
-                        # ----------------------------------------------------------------
+                        # Find the first file that has this variable to get metadata
+                        # ----------------------------------------------------------
+                        reference_file = None
                         for input_file in input_filenames:
-                            list_data.append(self.get_data(input_file, group_name, var_name))
+                            with nc.Dataset(input_file, 'r') as check_ds:
+                                if group_name in check_ds.groups and var_name in check_ds[group_name].variables:
+                                    reference_file = input_file
+                                    ref_var = check_ds[group_name][var_name]
+                                    var_dims = ref_var.dimensions
+                                    var_dtype = ref_var.dtype
+                                    if hasattr(ref_var, '_FillValue'):
+                                        fill_value = ref_var.getncattr('_FillValue')
+                                    for attr_name in ref_var.ncattrs():
+                                        if attr_name != '_FillValue':
+                                            attributes[attr_name] = ref_var.getncattr(attr_name)
+                                    break
+
+                        if reference_file is None:
+                            self.logger.warning(f"Variable {var_name} not found in any file for group {group_name}")
+                            continue
+
+                        # Collect data from all files
+                        # ---------------------------
+                        for input_file in input_filenames:
+                            data = self.get_data(input_file, group_name, var_name)
+
+                            if data is not None:
+                                list_data.append(data)
+                            else:
+                                # Create masked array of appropriate size with all values masked
+                                with nc.Dataset(input_file, 'r') as ds:
+                                    if 'Location' in ds.dimensions:
+                                        loc_size = ds.dimensions['Location'].size
+                                        # Create appropriately shaped masked array
+                                        if len(var_dims) == 1:
+                                            masked_data = np.ma.masked_all(loc_size, dtype=var_dtype)
+                                        else:
+                                            # Handle multi-dimensional variables
+                                            shape = [loc_size] + [ds.dimensions[d].size for d in var_dims[1:]]
+                                            masked_data = np.ma.masked_all(shape, dtype=var_dtype)
+                                        list_data.append(masked_data)
+
                             # Only break if the first dimension is Channel
                             if var_dims[0] == 'Channel':
                                 break
 
-                        # Concatenate the masked arrays along the first dimension
-                        # --------------------------------------------------------
-                        variable_data = np.ma.concatenate(list_data, axis=0)
+                        if not list_data:
+                            self.logger.warning(f"No data collected for {var_name} in {group_name}")
+                            continue
 
-                        # Fill value needs to be assigned while creating variables
-                        # --------------------------------------------------------
+                        # Concatenate the masked arrays
+                        # -----------------------------
+                        try:
+                            variable_data = np.ma.concatenate(list_data, axis=0)
+                        except Exception as e:
+                            self.logger.error(f"Error concatenating {var_name}: {e}")
+                            continue
+
+                        # Create variable in output file
+                        # ------------------------------
                         subset_var = out_group.createVariable(var_name,
-                                                              variable_data.dtype,
-                                                              var_dims,
-                                                              fill_value=group[var_name].
-                                                              getncattr('_FillValue'))
-                        for attr_name in group[var_name].ncattrs():
-                            if attr_name == '_FillValue':
-                                continue
-                            subset_var.setncattr(attr_name, group[var_name].getncattr(attr_name))
+                                                            variable_data.dtype,
+                                                            var_dims,
+                                                            fill_value=fill_value)
 
-                        # Write subset data to the new file
-                        # --------------------------------
+                        # Set attributes
+                        for attr_name, attr_value in attributes.items():
+                            subset_var.setncattr(attr_name, attr_value)
+
+                        # Write data to the new file
+                        # --------------------------
                         subset_var[:] = variable_data
-
+                        self.logger.info(f"Combined {var_name} from {len(list_data)} files")
 # ----------------------------------------------------------------------------------------------

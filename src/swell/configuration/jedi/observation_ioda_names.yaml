@@ -214,11 +214,11 @@ ioda instrument names:
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
     inst type: conventional
-  - ioda name: sst_avhrr_ma_l3u
-    full name: Metop-A (SST)
-    inst type: avhrr (IR)
-  - ioda name: sst_avhrr_mb_l3u
+  - ioda name: sst_avhrrf_mb_l3u
     full name: Metop-B (SST)
+    inst type: avhrr (IR)
+  - ioda name: sst_avhrrf_mc_l3u
+    full name: Metop-C (SST)
     inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
     full name: GPM (GMI) (SST)
