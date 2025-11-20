@@ -100,7 +100,7 @@ created in default experiment_root."""
 
 @swell_driver.command()
 @click.argument('suite', type=click.Choice(suite_configs.all_configs()))
-@click.option('-i', '--input_method', 'input_method', default='defaults',
+@click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
               type=click.Choice(get_platforms()), help=platform_help)
