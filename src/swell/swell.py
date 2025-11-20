@@ -91,6 +91,10 @@ test_output_help = """
 (For diagnostic tasks only) - Define the output directory that diagnostics tests will send
 their results. Used in comparison suites. """
 
+cwd_help = """
+For task configs, set flag to create directory at the user's cwd, otherwise directory will be 
+created in default experiment_root."""
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -136,6 +140,7 @@ def create(
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-c', '--cwd', 'cwd', is_flag=True, help=cwd_help)
 def create_task_config(
     task: str,
     platform: str,
@@ -144,6 +149,7 @@ def create_task_config(
     input_method: str,
     override: Optional[str],
     slurm: Optional[str],
+    cwd: bool,
 ) -> None:
     """
     Create a config for a single task
@@ -154,7 +160,7 @@ def create_task_config(
         task (str): Name of the task to execute.\n
 
     """
-    task_config_wrapper(task, platform, datetime, model, input_method, override, slurm)
+    task_config_wrapper(task, platform, datetime, model, input_method, override, slurm, cwd)
 
 # --------------------------------------------------------------------------------------------------
 
