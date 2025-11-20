@@ -18,7 +18,7 @@ from typing import Union, Optional
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
-from swell.utilities.dictionary import add_comments_to_dictionary, dict_get
+from swell.utilities.dictionary import add_comments_to_dictionary, dict_get, update_dict
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
@@ -153,7 +153,10 @@ def prepare_config(
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 
-    workflow.experiment_dict = experiment_dict
+    # Update dict with cycle times
+    # ----------------------------
+    workflow_dict = update_dict(suite_dict, experiment_dict)
+    workflow.experiment_dict = workflow_dict
 
     # Finalize the workflow by adding the runtime section, and get the contents
     # -------------------------------------------------------------------------
