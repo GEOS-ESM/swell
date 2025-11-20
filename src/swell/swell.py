@@ -92,7 +92,7 @@ test_output_help = """
 their results. Used in comparison suites. """
 
 cwd_help = """
-For task configs, set flag to create directory at the user's cwd, otherwise directory will be 
+For task configs, set flag to create directory at the user's cwd, otherwise directory will be
 created in default experiment_root."""
 
 # --------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ created in default experiment_root."""
 
 @swell_driver.command()
 @click.argument('suite', type=click.Choice(suite_configs.all_configs()))
-@click.option('-m', '--input_method', 'input_method', default='defaults',
+@click.option('-i', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
               type=click.Choice(get_platforms()), help=platform_help)
@@ -136,7 +136,7 @@ def create(
               type=click.Choice(get_platforms()), help=platform_help)
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
-@click.option('-m', '--input_method', 'input_method', default='defaults',
+@click.option('-i', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)

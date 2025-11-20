@@ -25,7 +25,7 @@ from swell.utilities.shell_commands import create_executable_file
 
 script_template = '''
 #!{{shell}}
-{%- for key, value in task_slurm_dict %}
+{%- for key, value in task_slurm_dict.items() %}
 #SBATCH --{{key}} = {{value}}
 {%- endfor %}
 
@@ -45,8 +45,8 @@ source {{modules_file}}
 
 def task_config_wrapper(task_name: str,
                         platform: str,
-                        model: Optional[str],
                         datetime: Optional[str],
+                        model: Optional[str],
                         input_method: str,
                         override: str,
                         slurm: str,
@@ -114,7 +114,7 @@ def task_config_wrapper(task_name: str,
     if model is None:
         model_independent_tasks.append(task)
     else:
-        model_dependent_tasks[model] = task
+        model_dependent_tasks[model] = [task]
 
     prepare_config_and_suite.model_independent_tasks = model_independent_tasks
     prepare_config_and_suite.model_dependent_tasks = model_dependent_tasks
@@ -206,16 +206,16 @@ def task_config_wrapper(task_name: str,
                                             dictionary_of_templates=script_dict)
 
     # Create the shell script file
-    script_file = os.path.join(task_path, f'{task_id}.{shell_type}')
+    script_file = os.path.join(task_path, f'{task_id}.{file_ext}')
     create_executable_file(logger, script_file, script_content)
 
-    logger.info('\nTask config successfully generated.')
+    logger.info('Task config successfully generated.')
     logger.info('To run the task by itself, run: ')
     print(f'\n  {script}\n')
     logger.info('Or, to use auto-generated script, run: ')
     if len(task_slurm_dict) > 0:
         print(f'\n  sbatch {script_file}\n')
     else:
-        print(f'  {script_file}\n')
+        print(f'\n  {script_file}\n')
 
 # --------------------------------------------------------------------------------------------------
