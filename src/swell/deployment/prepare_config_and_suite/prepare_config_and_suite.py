@@ -185,7 +185,7 @@ class PrepareExperimentConfigAndSuite:
 
         # Iterate through model independent tasks and update with defaults if not already set
         for task in self.model_independent_tasks:
-            task_options.append(task.task_name)
+            task_options.append(task.base_name)
             question_list = task.question_list.expand_question_list()
 
             for question in question_list:
@@ -211,7 +211,7 @@ class PrepareExperimentConfigAndSuite:
         # Iterate through model dependent tasks and update if not already set
         for model, task_list in self.model_dependent_tasks.items():
             for task in task_list:
-                task_options.append(task.task_name)
+                task_options.append(task.base_name)
 
                 question_list = task.question_list.expand_question_list()
 
@@ -225,18 +225,12 @@ class PrepareExperimentConfigAndSuite:
                                 self.question_dictionary_model_dep, {model: question_dict})
 
         # Set options for task email parameters
-        message_question_dict = {'task_email_parameters':
-                                 asdict(qd.task_email_parameters(options=task_options))}
-
-        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind,
-                                                      message_question_dict)
+        if 'task_email_parameters' in self.question_dictionary_model_ind:
+            self.question_dictionary_model_ind['task_email_parameters']['options'] = task_options
 
         # Set options for workflow pause
-        pause_question_dict = {'pause_on_tasks':
-                               asdict(qd.pause_on_tasks(options=task_options))}
-
-        self.question_dictionary_model_ind = add_dict(self.question_dictionary_model_ind,
-                                                      pause_question_dict)
+        if 'pause_on_tasks' in self.question_dictionary_model_ind:
+            self.question_dictionary_model_ind['pause_on_tasks']['options'] = task_options
 
     # ----------------------------------------------------------------------------------------------
 

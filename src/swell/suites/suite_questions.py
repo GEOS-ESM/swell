@@ -26,7 +26,9 @@ class SuiteQuestions(QuestionContainer, Enum):
         list_name="all_suites",
         questions=[
             qd.experiment_id(),
-            qd.experiment_root()
+            qd.experiment_root(),
+            qd.pause_on_tasks(),
+            qd.task_email_parameters()
         ]
     )
 

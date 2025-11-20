@@ -75,8 +75,11 @@ class SuiteConfigs():
                     config_dict[format_suite_name(config)] = getattr(suite_container, config)
                     config_map[format_suite_name(config)] = suite
             else:
-                config_dict[suite] = SuiteQuestions.all_suites.value
+                config_dict[suite] = SuiteQuestions.all_suites
                 config_map[suite] = suite
+
+        config_dict['task_minimum'] = SuiteQuestions.task_minimum
+        config_map['task_minimum'] = 'task_minimum'
 
         self.config_dict = config_dict
         self.__config_map__ = config_map

@@ -123,6 +123,9 @@ def create(
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
+# --------------------------------------------------------------------------------------------------
+
+
 @swell_driver.command()
 @click.argument('task', type=click.Choice(get_tasks()))
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',

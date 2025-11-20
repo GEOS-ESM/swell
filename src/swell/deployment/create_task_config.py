@@ -67,13 +67,13 @@ def task_config_wrapper(task_name: str,
         logger.abort('Task requires datetime (e.g. 20231010T000000Z)'
                      ' but none was specified at the command line.')
 
-    task_minimum = SuiteQuestions.task_minimum
-
     if override is None:
         override = {}
 
     if model is not None:
         override['model_components'] = [model]
+    else:
+        override['model_components'] = []
 
     if 'experiment_root' not in override:
         override['experiment_root'] = os.getcwd()
@@ -92,8 +92,8 @@ def task_config_wrapper(task_name: str,
         override['use_cycle_dir'] = False
 
     prepare_config_and_suite = PrepareExperimentConfigAndSuite(logger=logger,
-                                                               suite=task_name,
-                                                               suite_config=task_minimum,
+                                                               suite='task_minimum',
+                                                               suite_config='task_minimum',
                                                                platform=platform,
                                                                config_client=input_method,
                                                                override=override)
@@ -132,7 +132,7 @@ def task_config_wrapper(task_name: str,
     if task.slurm is not None:
         task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict, platform)
     else:
-        task_slurm_dict = None
+        task_slurm_dict = {}
 
     experiment_root = experiment_dict['experiment_root']
     experiment_id = experiment_dict['experiment_id']
