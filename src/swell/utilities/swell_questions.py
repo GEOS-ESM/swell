@@ -31,6 +31,7 @@ class WidgetType(Enum):
     STRING = "string"
     STRING_CHECK_LIST = "string-check-list"
     STRING_DROP_LIST = "string-drop-list"
+    STRING_LIST = "string-list"
     BOOLEAN = "boolean"
     ISO_DURATION = "iso-duration"
     ISO_DATETIME = "iso-datetime"

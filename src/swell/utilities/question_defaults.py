@@ -30,7 +30,7 @@ class QuestionDefaults():
         question_name: str = "comparison_experiment_paths"
         ask_question: bool = True
         prompt: str = "Provide paths to two experiments to run comparison tests on."
-        widget_type: WType = WType.STRING_CHECK_LIST
+        widget_type: WType = WType.STRING_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: list = mutable_field(['fgrep_residual_norm'])
         prompt: str = "List the test types to run on the JEDI oops log."
-        widget_type: WType = WType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 

@@ -27,6 +27,9 @@ class GetAnswerCli:
         widget_type = val['widget_type']
         options = val['options']
 
+        if options is None:
+            options = []
+
         if model is not None:
             prompt = f'[{model}] {prompt}'
 

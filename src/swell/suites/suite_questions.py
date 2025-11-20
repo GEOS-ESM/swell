@@ -73,6 +73,7 @@ class SuiteQuestions(QuestionContainer, Enum):
         questions=[
             qd.experiment_id(),
             qd.experiment_root(),
+            qd.comparison_experiment_paths(),
             qd.model_components(),
             qd.marine_models(),
             qd.use_cycle_dir(),
