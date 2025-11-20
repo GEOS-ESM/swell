@@ -196,7 +196,7 @@ class taskBase(ABC):
 
             # Combine datetime string (directory format) with the model
             cycle_dir = os.path.join(self.experiment_path(), 'run',
-                                    self.__datetime__.string_directory(), self.__model__)
+                                     self.__datetime__.string_directory(), self.__model__)
         else:
             return self.experiment_path()
 

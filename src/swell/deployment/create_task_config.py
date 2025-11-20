@@ -9,11 +9,9 @@
 
 import os
 from typing import Optional
-from importlib import import_module
 import yaml
 
 from swell.tasks.task_attributes import TaskAttributes
-from swell.suites.suite_questions import SuiteQuestions
 from swell.utilities.logger import get_logger
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
     PrepareExperimentConfigAndSuite
@@ -52,9 +50,9 @@ def task_config_wrapper(task_name: str,
                         input_method: str,
                         override: str,
                         slurm: str) -> None:
-    
+
     logger = get_logger('SwellTaskConfig')
-    
+
     task_attr_class = getattr(TaskAttributes, task_name)
 
     task = task_attr_class(model=model, platform=platform)
@@ -81,7 +79,7 @@ def task_config_wrapper(task_name: str,
     task_id = f'swell-{task_name}'
     if model is not None:
         task_id = task_id + f'-{model}'
-    
+
     if datetime is not None:
         task_id = task_id + f'-{datetime}'
 
@@ -181,7 +179,7 @@ def task_config_wrapper(task_name: str,
     script_content = template_string_jinja2(logger,
                                             templated_string=script_template,
                                             dictionary_of_templates=script_dict)
-    
+
     script_file = os.path.join(task_path, f'{task_id}.{shell_type}')
     create_executable_file(logger, script_file, script_content)
 

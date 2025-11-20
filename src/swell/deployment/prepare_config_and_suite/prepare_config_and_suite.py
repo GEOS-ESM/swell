@@ -13,7 +13,6 @@ import yaml
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 import datetime
-from dataclasses import asdict
 
 from swell.swell_path import get_swell_path
 from swell.utilities.suite_utils import get_model_components
@@ -22,10 +21,8 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_defaults impo
 from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
 from swell.utilities.dictionary import update_dict, add_dict
-from swell.tasks.task_attributes import TaskAttributes as task_attributes
 from swell.suites.all_suites import suite_configs
 from swell.utilities.swell_questions import QuestionType
-from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------

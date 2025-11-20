@@ -190,8 +190,8 @@ class QuestionDefaults():
         default_value: bool = True
         question_name: str = "use_cycle_dir"
         ask_question: bool = False
-        prompt: str = ("For cycling tasks, send results to the experiment cycle directory? If false, "
-                       "results will be stored in the current working directory.")
+        prompt: str = ("For cycling tasks, send results to the experiment cycle directory?"
+                       " If false, results will be stored in the current working directory.")
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
