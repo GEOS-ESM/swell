@@ -23,6 +23,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
 from swell.suites.all_suites import suite_configs, workflows
+from swell.utilities.check_da_params import check_da_params
 
 
 # --------------------------------------------------------------------------------------------------
@@ -97,6 +98,25 @@ def prepare_config(
 
     suite_dict = suite_dict.copy()
 
+    # Overrides for comparison suites
+    if 'start_cycle_point' in suite_dict:
+        start_cycle_point = suite_dict['start_cycle_point']
+        final_cycle_point = suite_dict['final_cycle_point']
+        if suite_dict['start_cycle_point'] is None:
+            config_list = suite_dict['comparison_experiment_paths']
+            for model in suite_dict['model_components']:
+                cycle_times = suite_dict['models'][model]['cycle_times']
+                start_cycle_point, final_cycle_point, cycle_times = check_da_params(
+                        config_list,
+                        model,
+                        start_cycle_point,
+                        final_cycle_point,
+                        cycle_times)
+
+                suite_dict['start_cycle_point'] = start_cycle_point
+                suite_dict['final_cycle_point'] = final_cycle_point
+                suite_dict['models'][model]['cycle_times'] = cycle_times
+
     # Resolve cycle times for models
     # ------------------------------
     if 'models' in suite_dict and 'start_cycle_point' in suite_dict:
@@ -155,7 +175,7 @@ def prepare_config(
 
     # Update dict with cycle times
     # ----------------------------
-    workflow_dict = update_dict(suite_dict, experiment_dict)
+    workflow_dict = update_dict(experiment_dict, suite_dict)
     workflow.experiment_dict = workflow_dict
 
     # Finalize the workflow by adding the runtime section, and get the contents

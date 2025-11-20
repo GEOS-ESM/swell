@@ -7,6 +7,8 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import yaml
+
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.cylc_workflow import CylcWorkflow
 from swell.tasks.task_attributes import TaskAttributes as ta
@@ -71,14 +73,22 @@ class Workflow_compare(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
-
         return workflow_str
 
     def set_tasks(self) -> list:
+
+        for path in self.experiment_dict['comparison_experiment_paths']:
+            with open(path, 'r') as f:
+                config_dict = yaml.safe_load(f)
+            for model in self.experiment_dict['model_components']:
+                num_of_iterations = config_dict['models'][model]['number_of_iterations']
+
+                self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.EvaComparisonIncrement(model=model))
             self.tasks.append(ta.EvaComparisonJediLog(model=model))
             self.tasks.append(ta.JediOopsLogParser(model=model))
+            self.tasks.append(ta.JediLogComparison(model=model))
 
 # --------------------------------------------------------------------------------------------------
