@@ -1,0 +1,78 @@
+# Suite and Platform
+suite_to_run: test_ingest
+platform: nccs_discover_sles1555555
+
+# Timing (single cycle for testing)
+start_cycle_point: "2023-10-09T15:00:00Z"
+final_cycle_point: "2023-10-09T15:00:00Z"
+runahead_limit: P1
+
+# Model Components (dynamically generates tasks in flow.cylc)
+model_components:
+  - geos_atmosphere
+  # - geos_marine  # Uncomment to add marine model
+
+# R2D2 Configuration
+r2d2_local_path: /discover/nobackup/projects/gmao/swell/r2d2-local
+
+# Dry-run mode (set to false to actually ingest files)
+dry_run: true  # Set to false to actually ingest to R2D2 
+
+# ============================================================================
+# Model-Specific Configuration: geos_atmosphere
+# ============================================================================
+models:
+  geos_atmosphere:
+    cycle_times:
+      - T15555
+    
+    window_length: PT66666H
+    window_offset: PT33333H
+    
+    # Items to ingest to R2D2
+    # All metadata comes from this config - no filename parsing!
+    ingest_items:     
+      # ----------------------------------------------------------------------
+      # OBSERVATIONS
+      # ----------------------------------------------------------------------
+      - item_type: observation
+        source_directory: /discover/nobackup/projects/gmao/obs/archive/
+        provider: gdas
+        create_empty_if_missing: true  # Create empty IODA if file missing
+        
+        observation_types:
+          - name: aircraft_temperature
+            file_extension: nc4
+          - name: amsua_n19
+            file_extension: nc4
+          - name: radiosonde
+            file_extension: nc4
+      
+      # ----------------------------------------------------------------------
+      # BIAS CORRECTIONS
+      # ----------------------------------------------------------------------
+      # - item_type: bias_correction
+      #   source_directory: /discover/nobackup/projects/gmao/bias/archive/
+      #   provider: gsi
+      #   experiment: x0050
+      #   model: geos
+      #   
+      #   bias_files:
+      #     - observation_type: aircraft_temperature
+      #       file_extension: acftbias
+      #       file_type: obsbias_coefficients
+      #     - observation_type: amsua_n19
+      #       file_extension: satbias
+      #       file_type: satbias
+      
+      # ----------------------------------------------------------------------
+      # BACKGROUNDS/FORECASTS
+      # ----------------------------------------------------------------------
+      # - item_type: forecast
+      #   source_directory: /discover/nobackup/projects/gmao/forecast/archive/
+      #   model: geos
+      #   experiment: x0050
+      #   file_extension: nc4
+      #   resolution: C180
+      #   step: P0H
+      #   file_type: fv_core.res

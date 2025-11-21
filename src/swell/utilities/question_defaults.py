@@ -753,6 +753,33 @@ class QuestionDefaults():
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
         widget_type: WType = WType.STRING_DROP_LIST
 
+
+    # ------------------------------------------------------------------------------------------------      
+
+    @dataclass
+    class dry_run(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "dry_run"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Dry-run mode: preview what would be ingested without actually storing to R2D2"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ingest_items(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "ingest_items"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "List of items to ingest to R2D2 (observations, bias corrections, forecasts)"
+        widget_type: WType = WType.STRING
+
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -1211,19 +1238,6 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "r2d2_local_path"
         prompt: str = "What is the path to the R2D2 local directory?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ingest_items(TaskQuestion):
-        default_value: list = mutable_field([])
-        question_name: str = "ingest_items"
-        ask_question: bool = False
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "List of items to ingest to R2D2 (observations, bias corrections, forecasts)"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
