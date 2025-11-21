@@ -8,10 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import r2d2
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.run_jedi_executables import check_obs
-import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -69,24 +69,24 @@ class SaveObsDiags(taskBase):
             if not use_obs:
                 self.logger.info(f'Input observation file analysis for {observation}:')
                 self.logger.info(f'  Expected file: {input_obs_file}')
-                if os.path.exists(input_obs_file):
-                    try:
-                        import netCDF4 as nc
-                        dataset = nc.Dataset(input_obs_file, 'r')
-                        dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
-                        self.logger.info(f'  File exists but dimensions: {dims}')
-                        dataset.close()
-                    except Exception as e:
-                        self.logger.info(f'  File exists but error reading: {str(e)}')
-                else:
-                    self.logger.info(f'  File does not exist!')
+                # Check if file exists and is readable
+                # ---------------------------------------
+                try:
+                    import netCDF4 as nc
+                    dataset = nc.Dataset(input_obs_file, 'r')
+                    dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
+                    self.logger.info(f'  File exists but dimensions: {dims}')
+                    dataset.close()
+                except Exception as e:
+                    self.logger.info(f'  File exists but error reading: {str(e)}')
 
-                self.logger.info(f'  GetObservations task did not fetch this file successfully')
                 self.logger.info(f'  Skipping {observation}')
                 continue
 
-            # Store diagnostic observation files (OUTPUT from RunJediVariationalExecutable)
-            # ---------------------------------------------------------------------------
+            # Store diagnostic/feedback files produced by JEDI executables
+            # (e.g., variational, hofx, localensembleda).
+            # --------------------------------------------------------------
+
             name = observation_dict['obs space']['name']
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
 
@@ -111,9 +111,6 @@ class SaveObsDiags(taskBase):
 
             # Store to R2D2
             # ---------------
-            self.logger.info(f'Storing feedback file {obs_path_file} to r2d2')
-            self.logger.info(f'  item=feedback, observation_type={name}')
-            self.logger.info(f'  experiment={self.experiment_id()}')
 
             try:
                 r2d2.store(

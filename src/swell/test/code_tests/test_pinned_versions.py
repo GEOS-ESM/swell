@@ -5,13 +5,20 @@ from swell.utilities.logger import get_logger
 from swell.utilities.exceptions import SwellError
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.pinned_versions.check_hashes import check_hashes
+from swell.utilities.test_cache import get_test_cache
 
 
 class PinnedVersionsTest(unittest.TestCase):
 
     def test_wrong_hash(self) -> None:
         logger = get_logger("PinnedVersionsTest")
+
         jedi_bundle_dir = "jedi_bundle/"
+        test_cache = get_test_cache()
+
+        if test_cache:
+            jedi_bundle_dir = os.path.join(test_cache, jedi_bundle_dir)
+
         if not os.path.exists(jedi_bundle_dir):
             os.makedirs(jedi_bundle_dir)
 
