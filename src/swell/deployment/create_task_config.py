@@ -10,6 +10,7 @@
 import os
 from typing import Optional
 import yaml
+import isodate
 
 from swell.tasks.task_attributes import TaskAttributes
 from swell.utilities.logger import get_logger
@@ -139,6 +140,12 @@ def task_config_wrapper(task_name: str,
     # Construct the slurm dict for the task
     if task.slurm is not None:
         task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict, platform)
+
+        time_limit = task.get_time_limit()
+        if time_limit is not None:
+            time_limit_dto = isodate.parse_duration(time_limit)
+            task_slurm_dict['time'] = isodate.strftime(time_limit_dto, '%H:%M:%S')
+
     else:
         task_slurm_dict = {}
 

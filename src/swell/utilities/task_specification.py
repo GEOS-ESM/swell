@@ -161,6 +161,20 @@ class Task:
 
     # --------------------------------------------------------------------------------------------------
 
+    def get_time_limit(self) -> str:
+
+        # Set the time limit, default is 1 hour
+        if self.time_limit is True:
+            time_limit = 'PT1H'
+        elif self.time_limit:
+            time_limit = self.match_platform(self.time_limit, platform)
+        else:
+            time_limit = None
+
+        return time_limit
+
+    # --------------------------------------------------------------------------------------------------
+
     def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping):
         ''' Return the runtime section for the given task. '''
 
@@ -186,11 +200,9 @@ class Task:
         if self.slurm is not None:
             runtime_dict['platform'] = platform
 
-        # Set the time limit, default is 1 hour
-        if self.time_limit is True:
-            runtime_dict['execution time limit'] = 'PT1H'
-        elif self.time_limit:
-            time_limit = self.match_platform(self.time_limit, platform)
+        time_limit = self.get_time_limit()
+
+        if time_limit is not None:
             runtime_dict['execution time limit'] = time_limit
 
         # Set the retry if this task needs it
