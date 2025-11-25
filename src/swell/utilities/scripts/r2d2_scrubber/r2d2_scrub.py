@@ -49,9 +49,13 @@ def main(args):
     print(experiments)
     for experiment in experiments:
         lifetime = experiment["lifetime"]
-        start_date = experiment["start_date"]
-        lifetime_days = LIFETIME_DAYS["lifetime"]
+        start_date_str = experiment["start_date"]
 
+        # Parse into datetime and make it UTC
+        start_date = datetime.strptime(start_date_str, '%Y%m%dT%H%M%SZ')
+        start_date = start_date.replace(tzinfo=timezone.utc)
+
+        lifetime_days = LIFETIME_DAYS[lifetime]
         if lifetime_days is None:
             continue  # skipping "release" (indefinite storage)
 
