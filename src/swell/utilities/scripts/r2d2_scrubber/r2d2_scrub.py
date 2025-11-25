@@ -4,7 +4,7 @@
 import os
 import yaml
 from datetime import datetime, timezone
-from r2d2 import R2D2Index
+import r2d2
 
 # Lifetimes (days)
 LIFETIME_DAYS = {
@@ -41,19 +41,19 @@ def main(args):
         # Search for experiments belonging to users to scrub
         print(f"Searching experiments for users: {', '.join(users_to_scrub)}")
         for user in users_to_scrub:
-            user_experiments = R2D2Index.search(item="experiment", user=user)
+            user_experiments = r2d2.search(item="experiment", user=user)
             experiments.extend(user_experiments)
     
     deleted = 0
     skipped = 0
-
+    print(experiments)
     for experiment in experiments:
         lifetime = experiment["lifetime"]
         start_date = experiment["start_date"]
         lifetime_days = LIFETIME_DAYS["lifetime"]
 
         if lifetime_days is None:
-            continue  # skipping "release"
+            continue  # skipping "release" (indefinite storage)
 
         age_days = (now - start_date).days
         
@@ -63,7 +63,8 @@ def main(args):
             if scrub:
                 print(f"Deleting {name} (user={exp_user}, lifetime={lifetime}, age={age_days}d)")
                 try:
-                    R2D2Index.delete_experiment_by_name(name=name, attributes={})
+                    # R2D2Index.delete_experiment_by_name(name=name, attributes={})
+                    r2d2.deregister(item='experiment', name=name)
                     deleted += 1
                 except Exception as exc:
                     print(f"  Failed to delete {name}: {exc}")
