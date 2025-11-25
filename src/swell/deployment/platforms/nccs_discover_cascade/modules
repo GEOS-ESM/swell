@@ -44,6 +44,10 @@ module load r2d2-client/112025
 module load eva/sles15_skylab9
 module load jedi_bundle/sles15_skylab9
 
+# Load sp
+# -------
+module load sp/2.5.0
+
 # Set the swell paths
 # -------------------
 PATH={{swell_bin_path}}:$PATH
