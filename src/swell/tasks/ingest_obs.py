@@ -5,10 +5,10 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
-Task for R2D2 v3 Data Ingestion (Test Suite)
+Task for R2D2 v3 Data Ingestion
 
 Supports observations, bias corrections, and backgrounds/forecasts.
-All metadata comes from experiment.yaml configuration, not filename parsing.
+All metadata comes from experiment.yaml configuration.
 """
 
 import glob

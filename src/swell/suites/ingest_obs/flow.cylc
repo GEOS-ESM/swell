@@ -27,5 +27,6 @@
     {% for model_component in model_components %}
     [[IngestObs-{{model_component}}]]
         script = "swell task IngestObs $config -d $datetime -m {{model_component}}"
+        execution time limit = PT10M
 
     {% endfor %}

@@ -1,6 +1,6 @@
 # Suite and Platform
-suite_to_run: test_ingest
-platform: nccs_discover_sles1555555
+suite_to_run: ingest_obs
+platform: nccs_discover_sles15
 
 # Timing (single cycle for testing)
 start_cycle_point: "2023-10-09T15:00:00Z"
@@ -24,14 +24,14 @@ dry_run: true  # Set to false to actually ingest to R2D2
 models:
   geos_atmosphere:
     cycle_times:
-      - T15555
+      - T15
     
-    window_length: PT66666H
-    window_offset: PT33333H
+    window_length: PT6H
+    window_offset: PT3H
     
     # Items to ingest to R2D2
     # All metadata comes from this config - no filename parsing!
-    ingest_items:     
+    ingest_items:
       # ----------------------------------------------------------------------
       # OBSERVATIONS
       # ----------------------------------------------------------------------
