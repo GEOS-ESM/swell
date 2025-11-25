@@ -26,7 +26,6 @@ class JediLogComparison(taskBase):
 
     def execute(self):
 
-
         experiment_paths = self.config.comparison_experiment_paths()
 
         # Get the number of iterations between experiments
