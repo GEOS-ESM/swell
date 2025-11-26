@@ -94,25 +94,6 @@ def run_subprocess(
 # --------------------------------------------------------------------------------------------------
 
 
-def run_subprocess_simple_output(
-    logger: Logger,
-    command: Union[list[str], str],
-    stdout: Union[int, IO[Any], None] = None,
-    stderr: Union[int, IO[Any], None] = None,
-    **kwargs
-) -> None:
-
-    # Run subprocess
-    try:
-        result = subprocess.run(command, check=True, text=True, capture_output=True)
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(e.stderr)
-        sys.exit(e.stderr)
-
-# --------------------------------------------------------------------------------------------------
-
-
 def create_executable_file(logger: Logger, file_name: str, file_contents: str) -> None:
 
     # Write contents to file
