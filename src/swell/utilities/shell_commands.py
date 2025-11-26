@@ -8,7 +8,6 @@
 
 
 import os
-import sys
 import stat
 import subprocess
 from typing import Any, Optional, IO, Union
