@@ -10,6 +10,7 @@
 import isodate
 import numpy as np
 import os
+import r2d2
 import netCDF4 as nc
 from typing import Union
 
@@ -18,7 +19,6 @@ from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -525,13 +525,3 @@ class GetObservations(taskBase):
                         subset_var[:] = variable_data
 
 # ----------------------------------------------------------------------------------------------
-
-
-import r2d2
-import os
-
-user = os.environ.get('R2D2_USER')
-results = r2d2.R2D2Client.search_experiment(user=user)
-
-for exp in results:
-    print(f"{exp['name']}: {exp['lifetime']}")
