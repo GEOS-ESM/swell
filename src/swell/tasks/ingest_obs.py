@@ -14,6 +14,7 @@ All metadata comes from experiment.yaml configuration.
 import glob
 import netCDF4 as nc
 import os
+from datetime import datetime
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
@@ -106,6 +107,7 @@ class IngestObs(taskBase):
         source_dir = config.get('source_directory')
         obs_types = config.get('observation_types', [])
         create_empty = config.get('create_empty_if_missing', True)
+        filename_pattern = config.get('filename_pattern')
         
         self.logger.info(f"Ingesting observations from {provider}")
         
@@ -121,7 +123,28 @@ class IngestObs(taskBase):
             self.logger.info(f"Processing observation: {obs_name}")
             
             # Build expected filename from metadata
-            expected_file = f"{provider}.{obs_name}.{window_start}.{file_ext}"
+            # -------------------------------------
+            dt = datetime.strptime(window_start, "%Y-%m-%dT%H:%M:%SZ")
+
+            if filename_pattern:
+                # Use user-provided pattern ("{obs_name}/%Y/%m/%d/ioda-obs-%Y%m%d%H-{obs_name}.nc")
+                # First replace placeholders
+                pattern = filename_pattern.format(
+                    provider=provider,
+                    obs_name=obs_name,
+                    file_extension=file_ext
+                )
+                # Then format datetime
+                expected_file = dt.strftime(pattern)
+
+            elif provider in ['soca', 'geos_marine']:
+                # Marine pattern: ioda-obs-YYYYMMDDHH-obsname.nc
+                date_str = dt.strftime("%Y%m%d%H")
+                expected_file = f"ioda-obs-{date_str}-{obs_name}.{file_ext}"
+
+            else:
+                # Standard/Default pattern: provider.obs.date.nc
+                expected_file = f"{provider}.{obs_name}.{window_start}.{file_ext}"
             
             # Find file
             file_path = self.find_file(source_dir, expected_file)

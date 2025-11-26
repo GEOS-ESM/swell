@@ -9,8 +9,9 @@ runahead_limit: P1
 
 # Model Components (dynamically generates tasks in flow.cylc)
 model_components:
-  - geos_atmosphere
-  # - geos_marine  # Uncomment to add marine model
+  - geos_marine  # Added marine model
+  # - geos_atmosphere
+
 
 # R2D2 Configuration
 r2d2_local_path: /discover/nobackup/projects/gmao/swell/r2d2-local
@@ -19,60 +20,54 @@ r2d2_local_path: /discover/nobackup/projects/gmao/swell/r2d2-local
 dry_run: true  # Set to false to actually ingest to R2D2 
 
 # ============================================================================
-# Model-Specific Configuration: geos_atmosphere
+# Model-Specific Configuration
 # ============================================================================
 models:
-  geos_atmosphere:
+
+  # Marine (SOCA) model
+  # ==========================
+  geos_marine:
     cycle_times:
-      - T15
+      - T00
+      - T06
+      - T12
+      - T18
     
     window_length: PT6H
     window_offset: PT3H
     
-    # Items to ingest to R2D2
-    # All metadata comes from this config - no filename parsing!
     ingest_items:
-      # ----------------------------------------------------------------------
-      # OBSERVATIONS
-      # ----------------------------------------------------------------------
       - item_type: observation
-        source_directory: /discover/nobackup/projects/gmao/obs/archive/
-        provider: gdas
-        create_empty_if_missing: true  # Create empty IODA if file missing
+        source_directory: /discover/nobackup/projects/gmao/soca/obs/ioda/ocean
+        provider: soca  # Triggers automatic pattern: ioda-obs-YYYYMMDDHH-obsname.nc
         
+        # OPTIONAL: Can also use explicit filename_pattern for custom file naming
+        # filename_pattern: "{obs_name}/%Y/%m/%d/ioda-obs-%Y%m%d%H-{obs_name}.nc"
+        
+        create_empty_if_missing: false
         observation_types:
-          - name: aircraft_temperature
-            file_extension: nc4
-          - name: amsua_n19
-            file_extension: nc4
-          - name: radiosonde
-            file_extension: nc4
+          - name: adt_cryosat2n
+          - name: adt_jason3
+          - name: insitu_profile_argo
+
+    # Atmospheric (GDAS) model
+    # ==========================
+    # geos_atmosphere:
+    #   cycle_times:
+    #     - T15
       
-      # ----------------------------------------------------------------------
-      # BIAS CORRECTIONS
-      # ----------------------------------------------------------------------
-      # - item_type: bias_correction
-      #   source_directory: /discover/nobackup/projects/gmao/bias/archive/
-      #   provider: gsi
-      #   experiment: x0050
-      #   model: geos
-      #   
-      #   bias_files:
-      #     - observation_type: aircraft_temperature
-      #       file_extension: acftbias
-      #       file_type: obsbias_coefficients
-      #     - observation_type: amsua_n19
-      #       file_extension: satbias
-      #       file_type: satbias
+    #   window_length: PT6H
+    #   window_offset: PT3H
       
-      # ----------------------------------------------------------------------
-      # BACKGROUNDS/FORECASTS
-      # ----------------------------------------------------------------------
-      # - item_type: forecast
-      #   source_directory: /discover/nobackup/projects/gmao/forecast/archive/
-      #   model: geos
-      #   experiment: x0050
-      #   file_extension: nc4
-      #   resolution: C180
-      #   step: P0H
-      #   file_type: fv_core.res
+    #   ingest_items:
+    #     - item_type: observation
+    #       source_directory: /discover/nobackup/projects/gmao/obs/archive/
+    #       provider: gdas
+    #       create_empty_if_missing: true
+    #       observation_types:
+    #         - name: aircraft_temperature
+    #           file_extension: nc4
+    #         - name: amsua_n19
+    #           file_extension: nc4
+    #         - name: radiosonde
+    #           file_extension: nc4
