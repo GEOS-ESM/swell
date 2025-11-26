@@ -234,11 +234,6 @@ obs_experiment:
   - x0048v3
   - x0050
 
-obs_provider:
-  default_value: ncdiag
-  options:
-  - ncdiag
-
 observations:
   default_value:
   - aircraft_temperature

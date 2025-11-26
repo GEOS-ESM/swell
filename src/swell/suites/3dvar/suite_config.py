@@ -54,7 +54,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sst_viirs_n20_l3u",
                 "temp_profile_xbt"
             ]),
-            qd.obs_provider(['odas', 'gdas_marine']),
             qd.analysis_forecast_window_offset("-PT12H"),
             qd.background_time_offset("PT18H"),
             qd.clean_patterns(['*.nc4', '*.txt']),

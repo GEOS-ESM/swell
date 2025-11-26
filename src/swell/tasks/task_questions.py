@@ -408,7 +408,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.cycling_varbc(),
             qd.obs_experiment(),
-            qd.obs_provider(),
             qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_length(),

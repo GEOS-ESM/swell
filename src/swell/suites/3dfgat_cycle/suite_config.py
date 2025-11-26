@@ -75,7 +75,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "temp_profile_xbt"
             ]),
             qd.number_of_iterations([10]),
-            qd.obs_provider(['odas', 'gdas_marine']),
             qd.mom6_iau(True),
             qd.analysis_forecast_window_offset("-PT3H"),
             qd.background_time_offset("PT9H"),
