@@ -58,6 +58,18 @@ horizontal_resolution:
   - 360x320
   - 1440x1080
 
+ingest_observations:
+  default_value:
+  - adt_cryosat2n
+  - adt_sentinel6a
+  options:
+  - adt_cryosat2n
+  - adt_jason3
+  - adt_saral
+  - adt_sentinel3a
+  - adt_sentinel3b
+  - adt_sentinel6a
+
 jedi_forecast_model:
   default_value: NA
   options:
