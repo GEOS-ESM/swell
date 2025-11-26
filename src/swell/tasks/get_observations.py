@@ -169,13 +169,6 @@ class GetObservations(taskBase):
                 target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
                 combine_input_files.append(target_file)
 
-                print(obs_list_dto)
-                print(obs_provider)
-                print(observation)
-                print(obs_window_begin)
-                print(obs_window_length)
-                print(target_file)
-                # exit()
                 fetch_criteria = {
                     'item': 'observation',               # Required for r2d2 v3
                     'provider': obs_provider,            # What we registered with
@@ -210,8 +203,6 @@ class GetObservations(taskBase):
                     self.read_and_combine(combine_input_files, jedi_obs_file)
                 # Change permission
                 os.chmod(jedi_obs_file, 0o644)
-                # Observations were found for this provider, so we can break the provider loop
-                break
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
