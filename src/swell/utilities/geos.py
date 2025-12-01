@@ -388,18 +388,36 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def rename_checkpoints(self, next_geosdir):
+    def rename_checkpoints(self, forecast_dir: str) -> None:
 
-        # Rename _checkpoint files to _rst
-        # Move to the next geos cycle directory
-        # -------------------------------------
-        os.chdir(next_geosdir)
+        """
+        Rename _checkpoint files to _rst in the forecast_dir directory.
+        """
+        # Validate directory exists
+        if not os.path.exists(forecast_dir):
+            self.logger.abort(f'Directory does not exist: {forecast_dir}')
 
-        self.logger.info('Renaming *_checkpoint files to *_rst')
-        try:
-            os.system('rename -v _checkpoint _rst *_checkpoint')
-        except Exception:
-            self.logger.abort('Renaming failed, see if checkpoint files exists')
+        self.logger.info(f'Renaming *_checkpoint files to *_rst in {forecast_dir}')
+
+        # Use glob to find checkpoint files instead of relying on shell commands
+        checkpoint_pattern = os.path.join(forecast_dir, '*_checkpoint')
+        checkpoint_files = glob.glob(checkpoint_pattern)
+
+        if not checkpoint_files:
+            self.logger.abort(f'No _checkpoint files found in {forecast_dir}')
+
+        # Rename each file individually for better error handling
+        for checkpoint_file in checkpoint_files:
+            try:
+                # Generate the new filename by replacing _checkpoint with _rst
+                rst_file = checkpoint_file.replace('_checkpoint', '_rst')
+                # Rename the file
+                os.rename(checkpoint_file, rst_file)
+                self.logger.info(f'Renamed {os.path.basename(checkpoint_file)}')
+                self.logger.info(f'    to {os.path.basename(rst_file)}')
+
+            except OSError as e:
+                self.logger.abort(f'Failed to rename {checkpoint_file}: {e}')
 
     # --------------------------------------------------------------------------------------------------
 

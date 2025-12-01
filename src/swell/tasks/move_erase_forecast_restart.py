@@ -35,27 +35,19 @@ class MoveEraseForecastRestart(taskBase):
 
         # Create cycle_dir and RESTART
         # ----------------------------
-        if not os.path.exists(self.next_forecast_dir('RESTART')):
-            os.makedirs(self.next_forecast_dir('RESTART'), 0o755, exist_ok=True)
+        if not os.path.exists(self.forecast_dir('RESTART')):
+            os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
 
-        # Move and rename files
-        # ----------------------
-        self.cycling_restarts()
-        self.geos.rename_checkpoints(self.next_forecast_dir())
+        # Move and rename files in the next forecast directory
+        # ----------------------------------------------
+        self.move_restarts()
+        self.move_marine_restarts()
+        self.geos.rename_checkpoints(self.forecast_dir())
 
-        # Remove forecast_dir and rename next_forecast_dir to forecast_dir
-        # --------------------------------------------------------------
-        self.logger.info('Erasing current forecast dir and renaming next forecast dir to it')
-        try:
-            if os.path.exists(self.forecast_dir()):
-                shutil.rmtree(self.forecast_dir())
-            os.rename(self.next_forecast_dir(), self.forecast_dir())
-        except Exception as e:
-            self.logger.abort(f'Failed to move directory: {e}')
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycling_restarts(self) -> None:
+    def move_restarts(self) -> None:
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
@@ -66,7 +58,11 @@ class MoveEraseForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            move_files(self.logger, filepath, self.next_forecast_dir(filename))
+            move_files(self.logger, filepath, self.forecast_dir(filename))
+
+
+    def move_marine_restarts(self) -> None:
+        ''' Moving marine model restart files to the next forecast directory. '''
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
@@ -76,7 +72,7 @@ class MoveEraseForecastRestart(taskBase):
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, os.path.basename(src))
-            move_files(self.logger, self.forecast_dir(src), self.next_forecast_dir(dst))
+            move_files(self.logger, self.forecast_dir(src), self.forecast_dir(dst))
 
         # Consider the case of multiple MOM restarts
         # -----------------------------------------------------------------
@@ -84,6 +80,6 @@ class MoveEraseForecastRestart(taskBase):
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            move_files(self.logger, filepath, self.next_forecast_dir(['FORECAST', filename]))
+            move_files(self.logger, filepath, self.forecast_dir(['RESTART', filename]))
 
 # --------------------------------------------------------------------------------------------------

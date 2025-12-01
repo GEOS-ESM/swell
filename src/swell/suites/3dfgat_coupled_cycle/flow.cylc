@@ -160,7 +160,7 @@
         {%- endfor %}
 
     [[RunGeos]]
-        script = "{{experiment_path}}/forecast/gcm_run.j"
+        script = "{{experiment_path}}/GEOSgcm/forecast/gcm_run.j"
         platform = {{platform}}
         [[[job]]]
             shell = /bin/csh

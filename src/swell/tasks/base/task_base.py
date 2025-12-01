@@ -90,17 +90,15 @@ class taskBase(ABC):
         self.__model_components__ = self.config.__model_components__
 
         # Create cycle and forecast directories
-        # Forecast directories (forecast and next_forecast) are now on the experiment level. This 
-        # allows time independent templating in flow.cylc.
+        # Forecast directory is in the experiment/GEOSgcm level. This allows time independent
+        # templating in flow.cylc.
         # -------------------------------------
         cycle_dir = None
         self.str_forecast_dir = None
-        self.str_next_forecast_dir = None
 
         if datetime_input is not None:
             # Name of directory where forecast files are staged
-            self.str_forecast_dir = os.path.join(self.experiment_path(), 'forecast')
-            self.str_next_forecast_dir = os.path.join(self.experiment_path(), 'next_forecast')
+            self.str_forecast_dir = os.path.join(self.experiment_path(), 'GEOSgcm', 'forecast')
 
             if model is not None:
                 cycle_dir = self.cycle_dir()
@@ -222,28 +220,6 @@ class taskBase(ABC):
 
         # Combine list of paths with forecast dir for code brevity
         return os.path.join(self.str_forecast_dir, *paths)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def next_forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
-
-        '''
-        Method to provide "next forecast" directory to geos class
-        If paths are provided, it is combined with the next forecast directory and returned
-        '''
-
-        # Make sure forecast directory exists
-        # -----------------------------------
-        os.makedirs(self.str_next_forecast_dir, 0o755, exist_ok=True)
-
-        if len(paths) > 0:
-            # If paths (which should be a list) is not empty, combine with str_next_forecast_dir
-            # -------------------------------------------------------------------------
-            if isinstance(paths, str):
-                paths = [paths]
-
-        # Combine list of paths with str_next_forecast_dir for code brevity
-        return os.path.join(self.str_next_forecast_dir, *paths)
 
     # ----------------------------------------------------------------------------------------------
 

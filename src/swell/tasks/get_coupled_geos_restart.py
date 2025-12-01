@@ -23,12 +23,18 @@ class GetCoupledGeosRestart(taskBase):
     def execute(self) -> None:
 
         """
-        Copies GEOS restart files from geos_expdir to the cycle forecast directory, which are:
+        Copies coupled GEOS restart files to the cycle forecast directory, which are:
 
         - *_rst files (including the atmosphere restart file)
         - iced.nc (CICE6 restart, mandatory)
         - MOM.res.nc (MOM6 restart, mandatory)
         - mom6_increment.nc (optional)
+
+        Restart files can be obtained by three different ways:
+
+        1) From a previous GEOS forecast experiment (geos_homdir or geos_expdir)
+        2) R2D2 retrieval (not implemented yet)
+        3) External folder (user is expected to copy them manually before running the experiment)
 
         geos_expdir can be different from geos_homdir, in which case must be specified in the config
         file. Not it can be absolute path, however MOM6 and CICE6 restarts are expected to be in
