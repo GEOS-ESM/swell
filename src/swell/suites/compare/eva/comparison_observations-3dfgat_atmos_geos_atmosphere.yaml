@@ -24,10 +24,10 @@ datasets:
   type: IodaObsSpace
   filenames:
     - {{obs_path_file_2}}
-  channels: &channels {{channels}}
+  channels: *channels
   groups:
     - name: ObsValue
-      variables: &variables {{simulated_variables}}
+      variables: *variables
     - name: GsiHofXBc
     - name: GsiEffectiveQC
     - name: hofx0

@@ -85,6 +85,7 @@ class EvaComparisonObservations(taskBase):
         model = self.get_model()
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
         eva_config_file = os.path.join(eva_path, f'observations-{model}.yaml')
+        eva_config_file = '/home/manstett/swell-main/src/swell/suites/compare/eva/comparison_observations-3dfgat_atmos_geos_atmosphere.yaml'
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
@@ -114,13 +115,14 @@ class EvaComparisonObservations(taskBase):
         for observation in self.config.observations():
 
             observation_dict_1 = None
-            for key, value in obs_config_1.items():
-                if value['name'] == observation:
+            for value in obs_config_1:
+                print(value.keys())
+                if value['obs space']['name'] == observation:
                     observation_dict_1 = value
 
             observation_dict_2 = None
-            for key, value in obs_config_2.items():
-                if value['name'] == observation:
+            for value in obs_config_2:
+                if value['obs space']['name'] == observation:
                     observation_dict_2 = value
 
             if observation_dict_1 is None or observation_dict_2 is None:
@@ -139,11 +141,11 @@ class EvaComparisonObservations(taskBase):
                 continue
 
             # Split the full path into path and filename
-            obs_path_file_1 = observation_dict_1['obsdataout']['engine']['obsfile']
+            obs_path_file_1 = observation_dict_1['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir_1, obs_file_1 = os.path.split(obs_path_file_1)
 
             # Split the full path into path and filename
-            obs_path_file_2 = observation_dict_2['obsdataout']['engine']['obsfile']
+            obs_path_file_2 = observation_dict_2['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir_2, obs_file_2 = os.path.split(obs_path_file_2)
 
             # Check for need to add 0000 to the file

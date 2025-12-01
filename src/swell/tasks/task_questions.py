@@ -197,6 +197,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="EvaComparisonObservations",
         questions=[
             qd.comparison_log_type(),
+            qd.observations(),
         ]
     )
 
