@@ -9,7 +9,7 @@
 
 
 from multiprocessing import Pool
-import osq
+import os
 import yaml
 
 from eva.eva_driver import eva
@@ -32,16 +32,10 @@ def run_eva(eva_dict: dict) -> eva:
 # --------------------------------------------------------------------------------------------------
 
 
-class EvaObservations(taskBase):
+class EvaComparisonObservations(taskBase):
 
     def execute(self) -> None:
 
-        # Compute window beginning time
-        # -----------------------------
-        window_begin = self.da_window_params.window_begin(self.config.window_offset())
-        background_time = self.da_window_params.background_time(self.config.window_offset(),
-                                                                self.config.background_time_offset()
-                                                                )
 
         # Comparison log type
         # -------------------
@@ -55,19 +49,25 @@ class EvaObservations(taskBase):
 
         with open(experiment_path_1, 'r') as f:
             experiment_config_1 = yaml.safe_load(f)
+            window_offset = experiment_config_1['models'][self.get_model()]['window_offset']
+            background_time_offset = experiment_config_1['models'][self.get_model()]['background_time_offset']
 
         with open(experiment_path_2, 'r') as f:
             experiment_config_2 = yaml.safe_load(f)
 
+        window_begin = self.da_window_params.window_begin(window_offset)
+        background_time = self.da_window_params.background_time(window_offset,
+                                                                background_time_offset)
+
         jedi_config_file_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                          self.cycle_time(), self.get_model(), f'jedi_{log_type}_config.yaml')
+                                          self.__datetime__.string_directory(), self.get_model(), f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_1, 'r') as f:
             jedi_config = yaml.safe_load(f)
             obs_config_1 = jedi_config['cost function']['observations']['observers']
 
         jedi_config_file_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                          self.cycle_time(), self.get_model(), f'jedi_{log_type}_config.yaml')
+                                          self.__datetime__.string_directory(), self.get_model(), f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_2, 'r') as f:
             jedi_config = yaml.safe_load(f)
