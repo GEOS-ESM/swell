@@ -32,7 +32,6 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_marine=[
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
             qd.window_length("PT6H"),
-            qd.window_offset("PT3H"),
             qd.observations([
                 "adt_cryosat2n",
                 "adt_jason3",
