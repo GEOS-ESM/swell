@@ -75,11 +75,11 @@ observations:
             category:
               variable: satelliteIdentifier
               map:
-                _3: metop-b
-                _4: metop-a
-                _5: metop-c
-                _208: n17
-                _209: n18
+#                _3: metop-b
+#                _4: metop-a
+#                _5: metop-c
+#                _208: n17
+#                _209: n18
                 _223: n19
 
     ioda:

@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="convert_bufr",
         questions=[
             sq.common,
-            qd.start_cycle_point("2023-10-10T00:00:00Z"),
-            qd.final_cycle_point("2023-10-10T06:00:00Z"),
+            qd.start_cycle_point("2020-12-15T00:00:00Z"),
+            qd.final_cycle_point("2020-12-15T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
         ],
@@ -38,7 +38,7 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.bufr_obs_classes([
                "ncep_1bamua_bufr",
-               "ncep_mtiasi_bufr",
+#               "ncep_mtiasi_bufr",
             ]),
         ]
     )
