@@ -20,6 +20,7 @@ from swell.utilities.dictionary import remove_matching_keys, replace_string_in_d
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 from swell.utilities.run_jedi_executables import check_obs
+from swell.utilities.observations import ioda_name_to_long_name
 
 # --------------------------------------------------------------------------------------------------
 
@@ -113,17 +114,17 @@ class EvaComparisonObservations(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         for observation in self.config.observations():
-
+            obs_long_name = ioda_name_to_long_name(observation, self.logger)
             observation_dict_1 = None
+
             for value in obs_config_1:
-                print(value.keys())
-                if value['obs space']['name'] == observation:
-                    observation_dict_1 = value
+                if value['obs space']['name'] == obs_long_name:
+                    observation_dict_1 = value.copy()
 
             observation_dict_2 = None
             for value in obs_config_2:
-                if value['obs space']['name'] == observation:
-                    observation_dict_2 = value
+                if value['obs space']['name'] == obs_long_name:
+                    observation_dict_2 = value.copy()
 
             if observation_dict_1 is None or observation_dict_2 is None:
                 continue
@@ -133,8 +134,8 @@ class EvaComparisonObservations(taskBase):
                                   observation_dict_1, self.cycle_time_dto(), input_and_output=True)
 
             use_obs_2 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                  observation_dict_1, self.cycle_time_dto(), input_and_output=True)
-            
+                                  observation_dict_2, self.cycle_time_dto(), input_and_output=True)
+
             use_obs = use_obs_1 and use_obs_2
 
             if not use_obs:
