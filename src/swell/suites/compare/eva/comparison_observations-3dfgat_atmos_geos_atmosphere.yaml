@@ -415,7 +415,6 @@ graphics:
           color: 'red'
           label: 'GSI h(x) versus obs (passed QC in JEDI)'
 
-    plots:
       - add_xlabel: 'Observation Value 2'
         add_ylabel: 'GSI h(x) 2'
         add_grid:
@@ -808,7 +807,7 @@ graphics:
           latitude:
             variable: experiment_1::MetaData::latitude
           data:
-            variable: experiment+1::ObsValue::${variable}
+            variable: experiment_1::ObsValue::${variable}
             channel: ${channel}
           markersize: 2
           label: ObsValue 1
@@ -1146,7 +1145,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: histogram_bins
-        data variable: experiment::omanPassedQc::${variable}
+        data variable: experiment_1::omanPassedQc::${variable}
         number of bins rule: 'rice'
     figure:
       layout: [2,1]
