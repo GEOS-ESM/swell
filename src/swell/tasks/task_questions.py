@@ -454,7 +454,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="IngestObs",
         questions=[
             qd.dry_run(),
-            qd.ingest_items(),
+            qd.obs_to_ingest(),
             qd.r2d2_local_path(),
             qd.window_length(),
             qd.window_offset(),

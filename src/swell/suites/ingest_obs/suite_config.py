@@ -1,7 +1,7 @@
 """
 Suite for testing R2D2 observation ingestion.
 
-Usage: swell create test_ingest -o test_ingest_obs.yaml
+Usage: swell create ingest_obs -o <filename>.yaml
 """
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
@@ -33,15 +33,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_length("PT6H"),
             qd.window_offset("PT3H"),
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
-            qd.ingest_items([
-                {
-                    'item_type': 'observation',
-                    'source_directory': '',
-                    'provider': 'gdas',
-                    'observation_types': [
-                        {'name': 'adt_cryosat2n', 'file_extension': 'nc4'}
-                    ]
-                }
-            ]),
+            qd.obs_to_ingest(['adt_cryosat2n']),  # List of obs names
+            qd.dry_run(True),
         ]
     )

@@ -768,17 +768,18 @@ class QuestionDefaults():
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
-
+    
     @dataclass
-    class ingest_items(TaskQuestion):
+    class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
-        question_name: str = "ingest_items"
-        ask_question: bool = False
+        question_name: str = "obs_to_ingest"
+        ask_question: bool = True
+        options: str = "defer_to_model"
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = "List of items to ingest to R2D2 (observations, bias corrections, forecasts)"
-        widget_type: WType = WType.STRING
+        prompt: str = "Which observations do you want to ingest to R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
