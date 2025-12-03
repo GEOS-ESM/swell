@@ -324,7 +324,14 @@ transforms:
 # Arithmetic transforms for differences
 - transform: arithmetic
   new name: experiment_2::ObsValue::${variable}_diff
-  equals: (experiment_1::ObsValue::${variable} - experiment::ObsValue::${variable})
+  equals: (experiment_1::ObsValue::${variable} - experiment_2::ObsValue::${variable})
+  for:
+    variable: *variables
+
+# Arithmetic transforms for differences
+- transform: arithmetic
+  new name: experiment_2::hofx0::${variable}_diff
+  equals: (experiment_1::hofx0::${variable} - experiment_2::hofx0::${variable})
   for:
     variable: *variables
 
