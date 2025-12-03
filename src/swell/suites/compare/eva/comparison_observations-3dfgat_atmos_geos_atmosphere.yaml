@@ -102,6 +102,13 @@ transforms:
   for:
     variable: *variables
 
+# Generate hofx that passed QC for JEDI diff
+- transform: arithmetic
+  new name: experiment_2::hofx0PassedQc::${variable}_diff
+  equals: (experiment_1::hofx0PassedQc::${variable} - experiment_2::hofx0PassedQc::${variable})
+  for:
+    variable: *variables
+
 # Generate GSI hofx that passed JEDI QC 1
 - transform: accept where
   new name: experiment_1::GsiHofXBcPassedQc::${variable}
@@ -314,6 +321,13 @@ transforms:
   for:
     variable: *variables
 
+# Arithmetic transforms for differences
+- transform: arithmetic
+  new name: experiment_2::ObsValue::${variable}_diff
+  equals: (experiment_1::ObsValue::${variable} - experiment::ObsValue::${variable})
+  for:
+    variable: *variables
+
 graphics:
 
   plotting_backend: Emcpy
@@ -327,7 +341,7 @@ graphics:
       variables: *variables
       channels: *channels
     figure:
-      layout: [2,1]
+      layout: [3,1]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -380,6 +394,32 @@ graphics:
           markersize: 5
           color: 'red'
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+
+
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'JEDI h(x) diff (1-2)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment_2::ObsValue::${variable}
+          y:
+            variable: experiment_2::hofx0::${variable}_diff
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+          label: 'JEDI h(x) versus obs (all obs)'
+        - type: Scatter
+          x:
+            variable: experiment_2::ObsValue::${variable}
+          y:
+            variable: experiment_2::hofx0PassedQc::${variable}_diff
+          channel: ${channel}
+          markersize: 5
+          color: 'red'
+          label: 'JEDI h(x) versus obs (passed QC in JEDI) diff (1-2)'
 
   # GSI h(x) vs Observations
   - batch figure:
