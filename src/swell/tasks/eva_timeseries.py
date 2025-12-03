@@ -38,13 +38,14 @@ class EvaTimeseries(taskBase):
 
     def execute(self) -> None:
 
+        window_length = self.config.window_length()
+
         # Compute window beginning time
         # -----------------------------
-        window_begin = self.da_window_params.window_begin(self.config.window_offset())
-        background_time = self.da_window_params.background_time(self.config.window_offset(),
-                                                                self.config.background_time_offset()
-                                                                )
-        window_length = self.config.window_length()
+        window_begin = self.da_window_params.window_begin(window_length)
+        background_time = self.da_window_params.background_time(
+                self.config.background_time_offset())
+
         ncdiag_experiments = self.config.ncdiag_experiments()
 
         # Use built-in methods to get the start and end cycle points
@@ -54,7 +55,7 @@ class EvaTimeseries(taskBase):
 
         # Parse window length and offset
         window_duration = isodate.parse_duration(window_length)
-        window_offset = isodate.parse_duration(self.config.window_offset())
+        window_offset = self.da_window_params.window_offset(window_length, dto=True)
 
         # Create a list of cycles beginning with the start cycle point
         # and ending with the final cycle point using the window length

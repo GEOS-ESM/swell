@@ -35,7 +35,6 @@ class RunJediHofxExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
@@ -47,15 +46,14 @@ class RunJediHofxExecutable(taskBase):
 
         # Compute data assimilation window parameters
         # --------------------------------------------
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        background_time = self.da_window_params.background_time(background_time_offset)
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
-        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_length)
+        window_end_iso = self.da_window_params.window_end_iso(window_length)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------

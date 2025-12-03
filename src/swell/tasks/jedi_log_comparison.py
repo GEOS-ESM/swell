@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import yaml
 import os
 import re
 import numpy as np
@@ -25,8 +26,20 @@ class JediLogComparison(taskBase):
 
     def execute(self):
 
+        experiment_paths = self.config.comparison_experiment_paths()
+
+        # Get the number of iterations between experiments
+        iterations_list = []
+        for path in experiment_paths:
+            with open(path, 'r') as f:
+                exp_dict = yaml.safe_load(f)
+                num_iters = int(exp_dict['models'][self.get_model()]['number_of_iterations'][0])
+                iterations_list.append(num_iters)
+
+        number_of_iterations = min(iterations_list)
+
         tolerances = {}
-        for number in range(int(self.config.number_of_iterations()[0])):
+        for number in range(number_of_iterations):
             tolerances[f'Residual norm ( {number})'] = 0.01
 
         # Construct dictionary for all results from log file
@@ -35,7 +48,6 @@ class JediLogComparison(taskBase):
         # Boolean for whether fields fall within tolerances
         passed = True
 
-        experiment_paths = self.config.comparison_experiment_paths()
         log_type = self.config.comparison_log_type()
 
         for exp_num, experiment_path in enumerate(experiment_paths):
@@ -46,9 +58,17 @@ class JediLogComparison(taskBase):
             experiment_cycles = [dirname for dirname in os.listdir(cycles_path)
                                  if re.match('[0-9]*T[0-9]*Z', dirname)]
 
+            experiment_cycles = sorted(experiment_cycles)
+
+            # Don't look for logs from forecasting suites
+            if log_type == 'fgat':
+                experiment_cycles = experiment_cycles[:-1]
+
             for cycle in experiment_cycles:
                 if cycle not in all_results.keys():
                     cycle_results = all_results[cycle] = {}
+                else:
+                    cycle_results = all_results[cycle]
 
                 cycle_log_file = os.path.join(cycles_path, cycle, self.get_model(),
                                               f'jedi_{log_type}_log.log')

@@ -34,7 +34,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(['T12']),
             qd.marine_models(['mom6']),
             qd.window_length("P1D"),
-            qd.window_offset("PT12H"),
             qd.horizontal_resolution("72x36"),
             qd.vertical_resolution("50"),
             qd.total_processors(6),
@@ -55,7 +54,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "temp_profile_xbt"
             ]),
             qd.obs_provider(['odas', 'gdas_marine']),
-            qd.analysis_forecast_window_offset("-PT12H"),
             qd.background_time_offset("PT18H"),
             qd.clean_patterns(['*.nc4', '*.txt']),
         ]

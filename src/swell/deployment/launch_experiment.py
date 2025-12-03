@@ -64,7 +64,8 @@ class DeployWorkflow():
         if self.no_detach:
 
             # Start the suite and wait for the workflow to complete.
-            run_subprocess(self.logger, ['cylc', 'play', '--no-detach', self.experiment_name])
+            run_subprocess(self.logger,
+                           ['cylc', 'play', '--no-detach', self.experiment_name])
 
         else:
 
