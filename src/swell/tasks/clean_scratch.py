@@ -8,9 +8,10 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-from swell.tasks.base.task_base import taskBase
+import shutil
 import glob
-from swell.utilities.shell_commands import run_track_log_subprocess
+
+from swell.tasks.base.task_base import taskBase
 
 # --------------------------------------------------------------------------------------------------
 
@@ -33,9 +34,8 @@ class CleanScratch(taskBase):
             experiment_path = self.experiment_path(scratch=False)
 
             files = glob.glob(os.path.join(scratch_path, '*'))
-
-            command = ['cp', '-r'] + files + [experiment_path]
-
-            run_track_log_subprocess(self.logger, command)
+            
+            for file in files:
+                shutil.copy(file, experiment_path)
 
 # --------------------------------------------------------------------------------------------------
