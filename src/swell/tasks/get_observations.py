@@ -104,7 +104,7 @@ class GetObservations(taskBase):
         observations = self.config.observations()
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
 
@@ -116,14 +116,12 @@ class GetObservations(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Get window begin time
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_dto = self.da_window_params.window_begin_iso(window_offset, dto=True)
-        window_end_dto = self.da_window_params.window_end_iso(window_offset, window_length,
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
+        window_end_dto = self.da_window_params.window_end_iso(window_length,
                                                               dto=True)
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
-        background_time_iso = self.da_window_params.background_time_iso(window_offset,
-                                                                        background_time_offset)
+        background_time = self.da_window_params.background_time(background_time_offset)
+        background_time_iso = self.da_window_params.background_time_iso(background_time_offset)
 
         # Determine the input observation files to be fetched, this mainly depends on
         # the observation file organization in R2D2. In other words, they could be

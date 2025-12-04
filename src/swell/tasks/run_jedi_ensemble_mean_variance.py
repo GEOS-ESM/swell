@@ -39,13 +39,12 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Compute data assimilation window parameters
         window_type = self.config.window_type()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
-        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
-        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_length)
+        window_end_iso = self.da_window_params.window_end_iso(window_length)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
