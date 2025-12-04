@@ -34,7 +34,7 @@ class CleanScratch(taskBase):
             experiment_path = self.experiment_path(scratch=False)
 
             files = glob.glob(os.path.join(scratch_path, '*'))
-            
+
             for file in files:
                 shutil.copy(file, experiment_path)
 
