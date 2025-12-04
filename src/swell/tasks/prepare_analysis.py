@@ -44,9 +44,11 @@ class PrepareAnalysis(taskBase):
         self.current_cycle = os.path.basename(self.forecast_dir())
         self.cc_dto = self.cycle_time_dto()
 
+        window_length = self.config.window_length()
+
         # GEOS restarts have seconds in their filename
         # --------------------------------------------
-        an_fcst_offset = self.config.analysis_forecast_window_offset()
+        an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
         rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 

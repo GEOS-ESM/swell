@@ -10,6 +10,7 @@
 import isodate
 import numpy as np
 import os
+import r2d2
 import netCDF4 as nc
 from typing import Union
 
@@ -17,8 +18,7 @@ from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
-import r2d2
-from swell.utilities.observations import get_ioda_names_list, get_providers_for_observation
+from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -99,33 +99,29 @@ class GetObservations(taskBase):
 
         # Parse config
         # ------------
-        obs_providers = self.config.obs_provider()
         obs_experiment = self.config.obs_experiment()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
 
         # Get model component
         model_component = self.get_model()
         r2d2_model = r2d2_model_dict.get(model_component, model_component)
-        obs_providers = obs_providers if isinstance(obs_providers, list) else [obs_providers]
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Get window begin time
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_dto = self.da_window_params.window_begin_iso(window_offset, dto=True)
-        window_end_dto = self.da_window_params.window_end_iso(window_offset, window_length,
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
+        window_end_dto = self.da_window_params.window_end_iso(window_length,
                                                               dto=True)
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
-        background_time_iso = self.da_window_params.background_time_iso(window_offset,
-                                                                        background_time_offset)
+        background_time = self.da_window_params.background_time(background_time_offset)
+        background_time_iso = self.da_window_params.background_time_iso(background_time_offset)
 
         # Determine the input observation files to be fetched, this mainly depends on
         # the observation file organization in R2D2. In other words, they could be
@@ -158,64 +154,53 @@ class GetObservations(taskBase):
             # ----------------------------------------
             observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
-            # Get the set obs providers for individual observation
-            # ----------------------------------------------------
-            providers_for_obs = get_providers_for_observation(observation, ioda_names_list)
+            # Get the set obs providers for each observation
+            # ----------------------------------------------
+            obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
 
-            if providers_for_obs is not None:
-                providers_for_obs = list(set(providers_for_obs) & set(obs_providers))
+            # Fetch observation files
+            # -----------------------
+            combine_input_files = []
+            # Here, we are fetching
+            for obs_num, obs_time in enumerate(obs_list_dto):
+                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                combine_input_files.append(target_file)
+
+                fetch_criteria = {
+                    'item': 'observation',               # Required for r2d2 v3
+                    'provider': obs_provider,            # What we registered with
+                    'observation_type': observation,     # From filename
+                    'file_extension': 'nc4',
+                    'window_start': obs_window_begin,    # From filename timestamp
+                    'window_length': obs_window_length,  # From filename
+                    'target_file': target_file,          # Where to save
+                }
+
+                try:
+                    r2d2.fetch(**fetch_criteria)
+                    self.logger.info(f"Successfully fetched {target_file}")
+                except Exception as e:
+                    self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+
+            # Check how many of the combine_input_files exist in the cycle directory.
+            # If all of them are missing proceed without creating an observation input
+            # file since bias correction files still need to be propagated to the next cycle
+            # for cycling VarBC.
+            # -----------------------------------------------------------------------
+            if not any([os.path.exists(f) for f in combine_input_files]):
+                self.logger.info(f'None of the {observation} files exist for this cycle!')
             else:
-                providers_for_obs = obs_providers
-            # Until R2D2v3 is fully implemented we will assume there could be multiple
-            # observation providers for a given observation type.
-            # We have to ensure obs_providers is a list for this loop to work
-            for obs_provider in providers_for_obs:
-                # Fetch observation files
-                # -----------------------
-                combine_input_files = []
-                # Here, we are fetching
-                for obs_num, obs_time in enumerate(obs_list_dto):
-                    obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                    target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
-                    combine_input_files.append(target_file)
-
-                    fetch_criteria = {
-                        'item': 'observation',               # Required for r2d2 v3
-                        'provider': obs_provider,            # What we registered with
-                        'observation_type': observation,     # From filename
-                        'file_extension': 'nc4',
-                        'window_start': obs_window_begin,    # From filename timestamp
-                        'window_length': obs_window_length,  # From filename
-                        'target_file': target_file,          # Where to save
-                    }
-
-                    try:
-                        r2d2.fetch(**fetch_criteria)
-                        self.logger.info(f"Successfully fetched {target_file}")
-                    except Exception as e:
-                        self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
-
-                # Check how many of the combine_input_files exist in the cycle directory.
-                # If all of them are missing proceed without creating an observation input
-                # file since bias correction files still need to be propagated to the next cycle
-                # for cycling VarBC.
-                # -----------------------------------------------------------------------
-                if not any([os.path.exists(f) for f in combine_input_files]):
-                    self.logger.info(f'None of the {observation} files exist for this cycle!')
+                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                self.logger.info(f'Processing observation file {jedi_obs_file}')
+                # If obs_list_dto has one member, then just rename the file
+                # ---------------------------------------------------------
+                if len(obs_list_dto) == 1:
+                    os.rename(combine_input_files[0], jedi_obs_file)
                 else:
-                    jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-                    self.logger.info(f'Processing observation file {jedi_obs_file}')
-                    # If obs_list_dto has one member, then just rename the file
-                    # ---------------------------------------------------------
-                    if len(obs_list_dto) == 1:
-                        os.rename(combine_input_files[0], jedi_obs_file)
-                    else:
-                        self.read_and_combine(combine_input_files, jedi_obs_file)
-                    # Change permission
-                    # why do we need to write to obs file?
-                    #os.chmod(jedi_obs_file, 0o644)
-                    # Observations were found for this provider, so we can break the provider loop
-                    break
+                   self.read_and_combine(combine_input_files, jedi_obs_file)
+                # Change permission
+                os.chmod(jedi_obs_file, 0o644)
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------

@@ -33,7 +33,6 @@ class SaveRestart(taskBase):
         # Parse config
         window_type = self.config.window_type()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
         forecast_duration = self.config.forecast_duration()
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         r2d2_local_path = self.config.r2d2_local_path()
@@ -43,11 +42,11 @@ class SaveRestart(taskBase):
         forecast_start_time = self.cycle_time_dto() - isodate.parse_duration(background_time_offset)
 
         # Convert to datetime durations
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
-        analysis_time_iso = self.da_window_params.analysis_time_iso(window_type, self.suite_name())
+        analysis_time_iso = self.da_window_params.analysis_time_iso()
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)

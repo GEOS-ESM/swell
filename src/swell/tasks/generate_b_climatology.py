@@ -235,7 +235,7 @@ class GenerateBClimatology(taskBase):
 
         # Parse configuration
         # -------------------
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         window_type = self.config.window_type()
         background_error_model = self.config.background_error_model()
 
@@ -264,9 +264,9 @@ class GenerateBClimatology(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         # Compute data assimilation window parameters
         # -------------------------------------------
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
 
         # Background
