@@ -11,9 +11,9 @@ analysis_variables:
   - volume_mixing_ratio_of_no2
 
 background_experiment:
-  default_value: 54bbb4
+  default_value: swell_test
   options:
-  - 54bbb4
+  - swell_test
 
 background_frequency:
   default_value: PT1H
@@ -36,29 +36,29 @@ clean_patterns:
   - logfile.*.out
 
 horizontal_resolution:
-  default_value: 'c360'
+  default_value: 'c90'
   options:
   - 'c90'
   - 'c360'
 
 npx:
-  default_value: 361
+  default_value: 91
   options:
   - 91
   - 361
 
 npy:
-  default_value: 361
+  default_value: 91
   options:
   - 91
   - 361
 
 
 npx_proc:
-  default_value: 2
+  default_value: 1
 
 npy_proc:
-  default_value: 2
+  default_value: 1
 
 number_of_iterations:
   default_value:
@@ -67,10 +67,10 @@ number_of_iterations:
 obs_provider:
   default_value: 
   - nasa_VCD
-  - tempo_demo
+  - esa
   options:
   - nasa_VCD
-  - tempo_demo
+  - esa
 
 observations:
   default_value: 
