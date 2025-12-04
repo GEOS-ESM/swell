@@ -83,9 +83,9 @@ class taskBase(ABC):
 
         # Scratch directory information
         # -----------------------------
-        self.__run_in_scratch__ = self.config.__run_in_scratch__
-        self.__scratch_root__ = self.config.__scratch_root__
-        self.__scratch_id__ = self.config.__scratch_id__
+        self.__run_in_scratch__ = self.config.__run_in_scratch__(False)
+        self.__scratch_root__ = self.config.__scratch_root__(None)
+        self.__scratch_id__ = self.config.__scratch_id__(None)
 
         if datetime_input is not None:
             self.__start_cycle_point__ = Datetime(self.config.__start_cycle_point__)
@@ -152,6 +152,8 @@ class taskBase(ABC):
     # Method to get the experiment directory
     def experiment_path(self, scratch: bool = True) -> str:
         if self.__run_in_scratch__ and scratch:
+            print(self.__scratch_root__)
+            print(self.__scratch_id__)
             experiment_path = os.path.join(self.__scratch_root__, self.__scratch_id__)
         else:
             experiment_path = os.path.join(self.__experiment_root__, self.__experiment_id__)
