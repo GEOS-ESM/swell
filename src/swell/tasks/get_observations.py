@@ -156,7 +156,7 @@ class GetObservations(taskBase):
 
             # Get the set obs providers for each observation
             # ----------------------------------------------
-            obs_provider = get_provider_for_observation(observation, ioda_names_list)
+            obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
 
             # Fetch observation files
             # -----------------------

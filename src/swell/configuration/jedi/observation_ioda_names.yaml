@@ -328,9 +328,11 @@ ioda instrument names:
     inst type: radiance
   - ioda name: icec_nsidc_nh
     full name: NSIDC North (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
   - ioda name: icec_nsidc_sh
     full name: NSIDC South (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
   - ioda name: icec_merra2
     full name: MERRA2 (Ice Concentration)

@@ -30,14 +30,17 @@ def get_ioda_names_list() -> list:
 
 
 # Gets obs providers for each observation from observation_ioda_names.yaml
-def get_provider_for_observation(observation: str, ioda_names_list: list) -> list:
+def get_provider_for_observation(observation: str,
+                                 ioda_names_list: list,
+                                 logger: Logger
+                                 ) -> list:
     for sub_dict in ioda_names_list:
         if sub_dict['ioda name'] == observation:
             if 'provider' in sub_dict.keys():
                 return str(sub_dict['provider'])
             else:
-                self.logger.abort(f'No provider found for observation {observation} in ' +
-                                  'observation_ioda_names.yaml')
+                logger.abort(f'No provider found for observation {observation} in ' +
+                             'observation_ioda_names.yaml')
 
 # ------------------------------------------------------------------------------------------------
 
