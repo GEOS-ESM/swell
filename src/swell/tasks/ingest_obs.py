@@ -52,8 +52,9 @@ class IngestObs(taskBase):
             self.logger.info(f"Preparing to ingest: {obs_name}")
             
             # Locate the configuration file
-            # Look in the suite directory of the source code first
-            config_path = os.path.join(get_swell_path(), 'suites', 'ingest_obs', f'{obs_name}.yaml')
+            # Look in the JEDI config directory
+            config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
+                                      'geos_marine', 'ingest_observations', f'{obs_name}.yaml')
             
             if not os.path.exists(config_path):
                 self.logger.error(f"Config file not found for {obs_name} at {config_path}")
@@ -102,6 +103,7 @@ class IngestObs(taskBase):
             self.logger.error(f"No source pattern found for method '{retrieval_method}' in {obs_name}.yaml")
             return ingested, [(obs_name, "Missing source pattern")]
         
+        # TODO: This will need to be handled different for s3_source and cp_source
         # Handle simple YYYY/MM replacements
         dt = datetime.strptime(window_start, "%Y-%m-%dT%H:%M:%SZ")
         
