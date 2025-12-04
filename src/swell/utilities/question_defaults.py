@@ -1031,19 +1031,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class obs_provider(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "obs_provider"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which group(s) provide the observations?"
-        widget_type: WType = WType.STRING_CHECK_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class obs_thinning_rej_fraction(TaskQuestion):
         default_value: float = 0.75
         question_name: str = "obs_thinning_rej_fraction"

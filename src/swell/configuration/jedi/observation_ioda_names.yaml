@@ -1,268 +1,340 @@
 ioda instrument names:
   - ioda name: abi_g16
     full name: ABI (GOES-16)
+    provider : ncdiag
     inst type: radiance
   - ioda name: ahi_himawari8
     full name: AHI (Himawari-8)
+    provider : ncdiag
     inst type: radiance
   - ioda name: aircraft
     full name: Aircraft
+    provider : ncdiag
     inst type: conventional
   - ioda name: aircraft_temperature
     full name: Aircraft Temperature
+    provider : ncdiag
     inst type: conventional
   - ioda name: aircraft_wind
     full name: Aircraft Wind
+    provider : ncdiag
     inst type: conventional
   - ioda name: airs_aqua
     full name: AIRS (AQUA)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_aqua
     full name: AMSU-A (AQUA)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_metop-a
     full name: AMSU-A (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_metop-b
     full name: AMSU-A (METOP-B)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_metop-c
     full name: AMSU-A (METOP-C)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_n15
     full name: AMSU-A (NOAA-15)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_n18
     full name: AMSU-A (NOAA-18)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsua_n19
     full name: AMSU-A (NOAA-19)
+    provider : ncdiag
     inst type: radiance
   - ioda name: atms_n20
     full name: ATMS (NOAA-20)
+    provider : ncdiag
     inst type: radiance
   - ioda name: atms_npp
     full name: ATMS (NPP)
+    provider : ncdiag
     inst type: radiance
   - ioda name: amsr2_gcom-w1
     full name: AMSR2 (GCOM-W1)
+    provider : ncdiag
     inst type: radiance
   - ioda name: avhrr3_metop-a
     full name: AVHRR-3 (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: avhrr3_n18
     full name: AVHRR-3 (NOAA-18)
+    provider : ncdiag
     inst type: radiance
   - ioda name: avhrr3_n19
     full name: AVHRR-3 (NOAA-19)
+    provider : ncdiag
     inst type: radiance
   - ioda name: avhrr3_metop-b
     full name: AVHRR-3 (METOP-B)
+    provider : ncdiag
     inst type: radiance
   - ioda name: avhrr3_metop-c
     full name: AVHRR-3 (METOP-C)
+    provider : ncdiag
     inst type: radiance
   - ioda name: cris-fsr_n20
     full name: CRIS-FSR (NOAA-20)
+    provider : ncdiag
     inst type: radiance
   - ioda name: cris-fsr_npp
     full name: CRIS-FSR (NPP)
+    provider : ncdiag
     inst type: radiance
   - ioda name: gmi_gpm
     full name: GMI (GPM)
+    provider : ncdiag
     inst type: radiance
   - ioda name: gps
     full name: GNSSRO
-    inst type: radiance
+    provider : ncdiag
+    inst type: conventional
   - ioda name: gome_metop-a
     full name: GOME (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: hirs4_metop-a
     full name: HIRS-4 (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: hirs4_metop-b
     full name: HIRS-4 (METOP-B)
+    provider : ncdiag
     inst type: radiance
   - ioda name: iasi_metop-a
     full name: IASI (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: iasi_metop-b
     full name: IASI (METOP-B)
+    provider : ncdiag
     inst type: radiance
   - ioda name: iasi_metop-c
     full name: IASI (METOP-C)
+    provider : ncdiag
     inst type: radiance
   - ioda name: mhs_metop-a
     full name: MHS (METOP-A)
+    provider : ncdiag
     inst type: radiance
   - ioda name: mhs_metop-b
     full name: MHS (METOP-B)
+    provider : ncdiag
     inst type: radiance
   - ioda name: mhs_metop-c
     full name: MHS (METOP-C)
+    provider : ncdiag
     inst type: radiance
   - ioda name: mhs_n19
     full name: MHS (NOAA-19)
+    provider : ncdiag
     inst type: radiance
   - ioda name: mls55_aura
     full name: MLS (AURA)
+    provider : ncdiag
     inst type: ozone
   - ioda name: omi_aura
     full name: OMI (AURA)
+    provider : ncdiag
     inst type: ozone
   - ioda name: ompsnp_npp
     full name: OMPS Nadir Profile (NPP)
+    provider : ncdiag
     inst type: ozone
   - ioda name: ompsnm_npp
     full name: OMPS Nadir Mapper (NPP)
+    provider : ncdiag
     inst type: ozone
   - ioda name: ompslpnc_n21
     full name: OMPS Limb Profiler (N21)
+    provider : ncdiag
     inst type: ozone
   - ioda name: ompslpnc_npp
     full name: OMPS Limb Profiler (NPP)
+    provider : ncdiag
     inst type: ozone
   - ioda name: pibal
     full name: Pilot Balloon Data (PIBAL)
+    provider : ncdiag
     inst type: conventional
   - ioda name: rass_tv
     full name: RASS Virtual Temperature
+    provider : ncdiag
     inst type: conventional
   - ioda name: satwind
     full name: Satellite Winds
+    provider : ncdiag
     inst type: conventional
   - ioda name: scatwind
     full name: Scatterometer Winds
+    provider : ncdiag
     inst type: conventional
   - ioda name: seviri_m11
     full name: SEVIRI (Meteosat-11)
+    provider : ncdiag
     inst type: radiance
   - ioda name: sfcship
     full name: Surface Marine Stations
+    provider : ncdiag
     inst type: conventional
   - ioda name: sfc
     full name: Surface Land Stations
+    provider : ncdiag
     inst type: conventional
   - ioda name: sondes
     full name: Radiosondes
+    provider : ncdiag
     inst type: conventional
   - ioda name: ssmis_f17
     full name: SSMIS (DMSP-F17)
+    provider : ncdiag
     inst type: radiance
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
+    provider : ncdiag
     inst type: conventional
 # Marine
   # Ocean
   - ioda name: adt_sentinel3a
     full name: ADT Sentinel-3A
+    provider : odas
     inst type: altimeter
   - ioda name: adt_sentinel3b
     full name: ADT Sentinel-3B
+    provider : odas
     inst type: altimeter
   - ioda name: adt_sentinel6a
     full name: ADT Sentinel-6A
+    provider : odas
     inst type: altimeter
   - ioda name: adt_coperl4
     full name: ADT Copernicus Level-4
+    provider : gdas_marine
     inst type: altimeter
   - ioda name: adt_cryosat2n
     full name: ADT Cryosat-2N
+    provider : odas
     inst type: altimeter
   - ioda name: adt_jason3
     full name: ADT Jason-3
+    provider : odas
     inst type: altimeter
   - ioda name: adt_jason3n
     full name: ADT Jason-3N
+    provider : odas
     inst type: altimeter
   - ioda name: adt_saral
     full name: ADT SARAL
+    provider : odas
     inst type: altimeter
   - ioda name: adt_swot_nadir
     full name: ADT SWOT Nadir
+    provider : odas
     inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_ctd
     full name: CTD (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_pirata
     full name: PIRATA (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_rama
     full name: RAMA (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: insitu_profile_tao
     full name: TAO (In-situ)
+    provider : odas
     inst type: conventional
   - ioda name: sss_smapv5
     full name: SMAP V5 (SSS)
+    provider : odas
     inst type: conventional
   - ioda name: sss_smos
     full name: SMOS (SSS)
+    provider : odas
     inst type: conventional
   - ioda name: sst_abi_g16_l3c
     full name: GOES-16 EAST (SST)
+    provider : gdas_marine
     inst type: abi (IR)
   - ioda name: sst_abi_g17_l3c
     full name: GOES-17 WEST (SST)
+    provider : gdas_marine
     inst type: abi (IR)
   - ioda name: sst_ahi_h08_l3c
     full name: Himawari-08 (SST)
+    provider : gdas_marine
     inst type: ahi (IR)
   - ioda name: sst_amsr2_l3u
     full name: AMSR2 (SST)
+    provider : gdas_marine
     inst type: conventional
   - ioda name: sst_avhrr_ma_l3u
     full name: Metop-A (SST)
+    provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_avhrr_mb_l3u
     full name: Metop-B (SST)
+    provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
     full name: GPM (GMI) (SST)
+    provider : gdas_marine
     inst type: gmi (MW)
   - ioda name: sst_merra2
     full name: MERRA2 (SST)
+    provider : odas
     inst type: conventional
   - ioda name: sst_ostia
     full name: OSTIA (SST)
+    provider : gdas_marine
     inst type: conventional
   - ioda name: sst_viirs_n20_l3u
     full name: NOAA-20 (SST)
+    provider : gdas_marine
     inst type: viirs (IR)
   - ioda name: sst_viirs_npp_l3u
     full name: Suomi-NPP (SST)
+    provider : gdas_marine
     inst type: viirs (IR)
   - ioda name: temp_profile_xbt
     full name: XBT (In-situ Temperature)
+    provider : odas
     inst type: conventional
   # Sea-ice
-  - ioda name : icec_amsr2_north
+  - ioda name: icec_amsr2_north
     full name: AMSR2 North (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
-  - ioda name : icec_amsr2_south
+  - ioda name: icec_amsr2_south
     full name: AMSR2 South (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
-  - ioda name : icec_nsidc_nh
+  - ioda name: icec_nsidc_nh
     full name: NSIDC North (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
-  - ioda name : icec_nsidc_sh
+  - ioda name: icec_nsidc_sh
     full name: NSIDC South (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f17_north
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f17_south
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f18_north
-    full name: SSMIS (Ice Concentration)
-    inst type: radiance
-  - ioda name : icec_ssmis_f18_south
-    full name: SSMIS (Ice Concentration)
+    provider : gdas_marine
     inst type: radiance
   - ioda name: icec_merra2
     full name: MERRA2 (Ice Concentration)
+    provider : odas
     inst type: conventional
