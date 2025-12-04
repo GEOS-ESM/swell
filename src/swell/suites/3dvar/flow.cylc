@@ -47,14 +47,7 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
-            # Get background
-            GetBackground-{{model_component}}
-
-            # Get observations
-            GetObservations-{{model_component}}
-
             # GenerateBClimatology, for ocean it is cycle dependent
-            GenerateBClimatologyByLinking-{{model_component}} :fail? => GenerateBClimatology-{{model_component}}
             GetBackground-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Perform staging that is cycle dependent
@@ -65,7 +58,7 @@
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateBClimatologyByLinking-{{model_component}}? | GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -138,13 +131,11 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[GenerateBClimatologyByLinking-{{model_component}}]]
-        script = "swell task GenerateBClimatologyByLinking $config -d $datetime -m {{model_component}}"
-
     [[GenerateBClimatology-{{model_component}}]]
         script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
+        execution retry delays = 2*PT1M
         [[[directives]]]
         {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
             --{{key}} = {{value}}

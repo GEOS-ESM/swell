@@ -9,6 +9,8 @@ field io names:
   eastward_wind: ua
   northward_wind: va
   air_temperature: t
+  air_pressure_at_surface: ps
+  air_pressure_levels: pe
   water_vapor_mixing_ratio_wrt_moist_air: q
   cloud_liquid_ice: qi
   cloud_liquid_water: ql
@@ -37,6 +39,5 @@ field io names:
   skin_temperature_at_surface: ts
   eastward_wind_at_surface: u10m
   northward_wind_at_surface: v10m
-  air_pressure_at_surface: ps
 # sea_surface_temperature: ts_found
 # mole_fraction_of_carbon_dioxide_in_air: co2

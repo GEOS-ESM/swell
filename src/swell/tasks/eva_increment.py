@@ -46,7 +46,7 @@ class EvaIncrement(taskBase):
 
         # Create time strings for eva_override directory
         cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
-        window_begin_dto = self.da_window_params.window_begin(self.config.window_offset(),
+        window_begin_dto = self.da_window_params.window_begin(self.config.window_length(),
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
@@ -62,6 +62,8 @@ class EvaIncrement(taskBase):
         # For now we are only plotting the first one
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+        if self.suite_name() == 'localensembleda':
+            incr_file = f'geos.mean-inc.{window_begin}.nc4'
         if window_type == '4D' and 'atmos' in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 
