@@ -186,6 +186,7 @@ graphics:
       variables: *variables
     figure:
       layout: [3,1]
+      figure size: [10, 30]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
     plots:
