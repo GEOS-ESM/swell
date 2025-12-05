@@ -101,6 +101,13 @@ transforms:
   for:
     variable: *variables
 
+# Generate ombg that passed QC for JEDI diff
+- transform: arithmetic
+  new name: experiment_2::ombgPassedQc::${variable}_diff
+  equals: experiment_1::ombgPassedQc::${variable} - experiment_2::ombgPassedQc::${variable}
+  for:
+    variable: *variables
+
 # Generate oman that passed QC for JEDI 1
 - transform: accept where
   new name: experiment_1::omanPassedQc::${variable}
@@ -116,6 +123,13 @@ transforms:
   starting field: experiment_2::oman::${variable}
   where:
     - experiment_2::EffectiveQC1::${variable} == 0
+  for:
+    variable: *variables
+
+# Generate oman that passed QC for JEDI diff
+- transform: arithmetic
+  new name: experiment_2::omanPassedQc::${variable}_diff
+  equals: experiment_1::omanPassedQc::${variable} - experiment_2::omanPassedQc::${variable}
   for:
     variable: *variables
 
@@ -504,7 +518,7 @@ graphics:
       - type: vminvmaxcmap
         data variable: experiment_1::ombgPassedQc::${variable}
     figure:
-      figure size: [20,10]
+      figure size: [20,40]
       layout: [4,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/ombg_oman_{{instrument}}_${variable}.png'
@@ -516,7 +530,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '{{experiment_id_1}} (1) ombg'
         layers:
         - type: MapScatter
           longitude:
@@ -539,7 +553,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '{{experiment_id_1}} (1) oman'
         layers:
         - type: MapScatter
           longitude:
@@ -562,7 +576,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '{{experiment_id_2}} (2) ombg'
         layers:
         - type: MapScatter
           longitude:
@@ -585,7 +599,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '{{experiment_id_2}} (2) oman'
         layers:
         - type: MapScatter
           longitude:
@@ -723,7 +737,7 @@ graphics:
       - type: vminvmaxcmap
         data variable: experiment_1::PassiveombgPassedQc::${variable}
     figure:
-      figure size: [20,10]
+      figure size: [20,20]
       layout: [4,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/passive_ombg_oman_{{instrument}}_${variable}.png'
