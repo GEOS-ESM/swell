@@ -190,7 +190,8 @@ graphics:
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
     plots:
       - add_xlabel: 'Observation Value'
-        add_ylabel: 'JEDI h(x) 1'
+        add_ylabel: 'JEDI h(x)'
+        add_title: '{experiment_id_1} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -213,8 +214,9 @@ graphics:
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
       - add_xlabel: 'Observation Value'
-        add_ylabel: 'JEDI h(x) 2'
+        add_ylabel: 'JEDI h(x)'
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         add_legend:
           loc: 'upper left'
         layers:
@@ -224,7 +226,7 @@ graphics:
           y:
             variable: experiment_2::hofx0PassedQc::${variable}
           markersize: 5
-          color: 'black'
+          color: 'green'
           label: 'JEDI h(x) versus obs (all obs)'
         - type: Scatter
           x:
@@ -232,8 +234,50 @@ graphics:
           y:
             variable: experiment_2::hofx1::${variable}
           markersize: 5
-          color: 'red'
+          color: 'blue'
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
+
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'JEDI h(x)'
+        add_grid:
+        add_title: 'Combined'
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment_1::ObsValue::${variable}
+          y:
+            variable: experiment_1::hofx0PassedQc::${variable}
+          markersize: 2
+          color: 'black'
+          label: 'JEDI h(x) versus obs (all obs) 1'
+
+        - type: Scatter
+          x:
+            variable: experiment_1::ObsValue::${variable}
+          y:
+            variable: experiment_1::hofx1::${variable}
+          markersize: 2
+          color: 'red'
+          label: 'JEDI h(x) versus obs (passed QC in JEDI) 1'
+
+        - type: Scatter
+          x:
+            variable: experiment_2::ObsValue::${variable}
+          y:
+            variable: experiment_2::hofx0PassedQc::${variable}
+          markersize: 2
+          color: 'green'
+          label: 'JEDI h(x) versus obs (all obs) 2'
+        - type: Scatter
+          x:
+            variable: experiment_2::ObsValue::${variable}
+          y:
+            variable: experiment_2::hofx1::${variable}
+          markersize: 2
+          color: 'blue'
+          label: 'JEDI h(x) versus obs (passed QC in JEDI) 2'
 
   # Histogram plots
   # ---------------
@@ -252,6 +296,7 @@ graphics:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
+        add_title: '{experiment_id_1} (1)'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -298,6 +343,7 @@ graphics:
 
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
+        add_title: '{experiment_id_2} (2)'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -355,7 +401,8 @@ graphics:
       output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/pass_ombg_oman_{{instrument}}_${variable}.png'
     plots:
       - add_xlabel: 'Difference'
-        add_ylabel: 'Count 1'
+        add_ylabel: 'Count'
+        add_title: '{experiment_id_1} (1)'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -401,7 +448,8 @@ graphics:
           density: true
 
       - add_xlabel: 'Difference'
-        add_ylabel: 'Count 2'
+        add_ylabel: 'Count'
+        add_title: '{experiment_id_2} (2)'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -467,6 +515,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -489,6 +538,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -511,6 +561,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -533,6 +584,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -566,6 +618,7 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -588,6 +641,7 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -622,6 +676,7 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -644,6 +699,7 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -678,6 +734,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -700,6 +757,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_1} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -722,6 +780,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -744,6 +803,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{experiment_id_2} (2)'
         layers:
         - type: MapScatter
           longitude:
