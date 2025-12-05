@@ -86,7 +86,7 @@ class EvaComparisonObservations(taskBase):
         model = self.get_model()
         eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
         eva_config_file = os.path.join(eva_path, f'observations-{model}.yaml')
-        eva_config_file = '/home/manstett/swell-main/src/swell/suites/compare/eva/comparison_observations-3dfgat_atmos_geos_atmosphere.yaml'
+        eva_config_file = '/home/manstett/swell-main/src/swell/suites/compare/eva/comparison_observations-3dfgat_cycle_geos_marine.yaml'
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
