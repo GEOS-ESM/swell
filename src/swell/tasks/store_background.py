@@ -45,17 +45,16 @@ class StoreBackground(taskBase):
         # Parse config
         window_type = self.config.window_type()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
         background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency()
         r2d2_local_path = self.config.r2d2_local_path()
 
         # Position relative to center of the window where forecast starts
-        forecast_offset = self.config.analysis_forecast_window_offset()
+        forecast_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
 
         # Convert to datetime durations
         window_length_dur = isodate.parse_duration(window_length)
-        window_offset_dur = isodate.parse_duration(window_offset)
+        window_offset_dur = self.da_window_params.window_offset(window_length, dto=True)
         forecast_offset_dur = isodate.parse_duration(forecast_offset)
 
         # Set R2D2 config file

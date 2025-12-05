@@ -50,7 +50,6 @@ def check_da_params(config_list: list,
         final_cycle_point = config_dict['final_cycle_point']
 
         window_length = config_dict['models'][model_component]['window_length']
-        window_offset = config_dict['models'][model_component]['window_offset']
         cycle_times = config_dict['models'][model_component]['cycle_times']
 
         # Save the information
@@ -60,14 +59,12 @@ def check_da_params(config_list: list,
                                                           datetime_formats['iso_format'])
 
         cycle_dict['window_length'] = window_length
-        cycle_dict['window_offset'] = window_offset
         cycle_dict['cycle_times'] = cycle_times
 
     start_cycle_dtos = []
     final_cycle_dtos = []
 
     window_lengths = []
-    window_offsets = []
 
     # Gather all the window params into a list
     for value in cycle_dicts.values():
@@ -75,10 +72,9 @@ def check_da_params(config_list: list,
         final_cycle_dtos.append(value['final_cycle_dto'])
 
         window_lengths.append(value['window_length'])
-        window_offsets.append(value['window_offset'])
 
     # Check to make sure the window params match
-    if len(set(window_lengths)) > 1 or len(set(window_offsets)) > 1:
+    if len(set(window_lengths)) > 1:
         logger.abort('The experiments specified have mismatched window parameters.')
 
     # Iterate through all the cycle times and find the common ones.

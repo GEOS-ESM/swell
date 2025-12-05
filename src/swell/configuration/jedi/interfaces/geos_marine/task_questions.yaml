@@ -1,8 +1,3 @@
-analysis_forecast_window_offset:
-  default_value: -PT6H
-  options:
-  - -PT12H
-  - -PT6H
 
 analysis_variables:
   default_value:
@@ -99,12 +94,6 @@ number_of_iterations:
 obs_experiment:
   default_value: s2s_v1
 
-obs_provider:
-  default_value: odas
-  options:
-  - gdas_marine
-  - odas
-
 observations:
   default_value:
   - adt_sentinel3a
@@ -140,9 +129,6 @@ vertical_resolution:
 
 window_length:
   default_value: PT12H
-
-window_offset:
-  default_value: PT6H
 
 window_type:
   default_value: 3D
