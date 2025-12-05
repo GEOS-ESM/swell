@@ -112,11 +112,15 @@ class EvaComparisonObservations(taskBase):
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
-
+        print(self.config.observations())
         for observation in self.config.observations():
-            obs_long_name = ioda_name_to_long_name(observation, self.logger)
-            observation_dict_1 = None
+            if self.get_model() == 'geos_atmosphere':
+                obs_long_name = ioda_name_to_long_name(observation, self.logger)
+            else:
+                obs_long_name = observation
 
+            observation_dict_1 = None
+            print(obs_long_name)
             for value in obs_config_1:
                 if value['obs space']['name'] == obs_long_name:
                     observation_dict_1 = value.copy()
@@ -137,14 +141,14 @@ class EvaComparisonObservations(taskBase):
                                   observation_dict_2, self.cycle_time_dto(), input_and_output=True)
 
             use_obs = use_obs_1 and use_obs_2
-
+            print(observation_dict_1)
             if not use_obs:
                 continue
 
             # Split the full path into path and filename
             obs_path_file_1 = observation_dict_1['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir_1, obs_file_1 = os.path.split(obs_path_file_1)
-
+            print(obs_path_file_1)
             # Split the full path into path and filename
             obs_path_file_2 = observation_dict_2['obs space']['obsdataout']['engine']['obsfile']
             cycle_dir_2, obs_file_2 = os.path.split(obs_path_file_2)

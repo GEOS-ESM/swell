@@ -3,7 +3,7 @@ datasets:
 - name: experiment_1
   type: IodaObsSpace
   filenames:
-    - {{obs_path_file}}
+    - {{obs_path_file_1}}
   groups:
     - name: ObsValue
       variables: &variables {{simulated_variables}}
@@ -18,10 +18,10 @@ datasets:
 - name: experiment_2
   type: IodaObsSpace
   filenames:
-    - {{obs_path_file}}
+    - {{obs_path_file_2}}
   groups:
     - name: ObsValue
-      variables: &variables {{simulated_variables}}
+      variables: *variables
     - name: hofx0
     - name: hofx1
     - name: ombg
@@ -243,7 +243,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: histogram_bins
-        data variable: experiment::omanPassedQc::${variable}
+        data variable: experiment_1::omanPassedQc::${variable}
         number of bins rule: 'rice'
     figure:
       layout: [2,1]
@@ -453,7 +453,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::ombgPassedQc::${variable}
+        data variable: experiment_1::ombgPassedQc::${variable}
     figure:
       figure size: [20,10]
       layout: [4,1]
@@ -555,7 +555,7 @@ graphics:
         data variable: experiment_1::EffectiveQC1::${variable}
     figure:
       figure size: [20,10]
-      layout: [1,1]
+      layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/effectiveQC_{{instrument}}_${variable}.png'
     plots:
@@ -581,17 +581,62 @@ graphics:
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
 
+      - mapping:
+          projection: {{map_projection}}
+          domain: {{domain}}
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: EffectiveQC1
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment_2::MetaData::longitude
+          latitude:
+            variable: experiment_2::MetaData::latitude
+          data:
+            variable: experiment_2::EffectiveQC1::${variable}
+          markersize: 2
+          label: OmAn
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
   - batch figure:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment_2::increment::${variable}
+        data variable: experiment_1::increment::${variable}
     figure:
       figure size: [20,10]
-      layout: [1,1]
+      layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/increment_{{instrument}}_${variable}.png'
     plots:
+
+      - mapping:
+          projection: {{map_projection}}
+          domain: {{domain}}
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Increment (OmBg - OmAn)
+        add_grid:
+        layers:
+        - type: MapScatter
+          longitude:
+            variable: experiment_1::MetaData::longitude
+          latitude:
+            variable: experiment_1::MetaData::latitude
+          data:
+            variable: experiment_1::increment::${variable}
+          markersize: 2
+          label: OmAn
+          colorbar: true
+          cmap: ${dynamic_cmap}
+          vmin: ${dynamic_vmin}
+          vmax: ${dynamic_vmax}
+
       - mapping:
           projection: {{map_projection}}
           domain: {{domain}}
@@ -622,7 +667,7 @@ graphics:
         data variable: experiment_1::PassiveombgPassedQc::${variable}
     figure:
       figure size: [20,10]
-      layout: [2,1]
+      layout: [4,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/passive_ombg_oman_{{instrument}}_${variable}.png'
     plots:
