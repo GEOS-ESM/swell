@@ -14,6 +14,7 @@ import yaml
 
 from eva.eva_driver import eva
 
+from swell.swell_path import get_swell_path
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
@@ -54,6 +55,7 @@ class EvaComparisonObservations(taskBase):
             window_offset = self.da_window_params.window_offset(window_length)
             background_time_offset = experiment_config_1['models'][self.get_model()]['background_time_offset']
             experiment_id_1 = experiment_config_1['experiment_id']
+            comparison_suite = experiment_config_1['suite_to_run']
 
         with open(experiment_path_2, 'r') as f:
             experiment_config_2 = yaml.safe_load(f)
@@ -86,9 +88,11 @@ class EvaComparisonObservations(taskBase):
         # Read Eva template file into dictionary
         # --------------------------------------
         model = self.get_model()
-        eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
-        eva_config_file = os.path.join(eva_path, f'observations-{model}.yaml')
-        eva_config_file = '/home/manstett/swell-main/src/swell/suites/compare/eva/comparison_observations-3dfgat_cycle-geos_marine.yaml'
+        # eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
+        eva_path = os.path.join(get_swell_path(), 'suites', 'compare', 'eva')
+        eva_config_file = os.path.join(eva_path,
+                                       f'comparison_observations-{comparison_suite}-{model}.yaml')
+
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
