@@ -102,13 +102,6 @@ transforms:
   for:
     variable: *variables
 
-# Generate hofx that passed QC for JEDI diff
-- transform: arithmetic
-  new name: experiment_2::hofx0PassedQc::${variable}_diff
-  equals: (experiment_1::hofx0PassedQc::${variable} - experiment_2::hofx0PassedQc::${variable})
-  for:
-    variable: *variables
-
 # Generate GSI hofx that passed JEDI QC 1
 - transform: accept where
   new name: experiment_1::GsiHofXBcPassedQc::${variable}
@@ -321,20 +314,6 @@ transforms:
   for:
     variable: *variables
 
-# Arithmetic transforms for differences
-- transform: arithmetic
-  new name: experiment_2::ObsValue::${variable}_diff
-  equals: (experiment_1::ObsValue::${variable} - experiment_2::ObsValue::${variable})
-  for:
-    variable: *variables
-
-# Arithmetic transforms for differences
-- transform: arithmetic
-  new name: experiment_2::hofx0::${variable}_diff
-  equals: (experiment_1::hofx0::${variable} - experiment_2::hofx0::${variable})
-  for:
-    variable: *variables
-
 graphics:
 
   plotting_backend: Emcpy
@@ -352,8 +331,9 @@ graphics:
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'Observation Value 1'
-        add_ylabel: 'JEDI h(x) 1'
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'JEDI h(x)'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -377,8 +357,9 @@ graphics:
           color: 'red'
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
-      - add_xlabel: 'Observation Value 2'
-        add_ylabel: 'JEDI h(x) 2'
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'JEDI h(x)'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -402,32 +383,6 @@ graphics:
           color: 'red'
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
 
-
-      - add_xlabel: 'Observation Value'
-        add_ylabel: 'JEDI h(x) diff (1-2)'
-        add_grid:
-        add_legend:
-          loc: 'upper left'
-        layers:
-        - type: Scatter
-          x:
-            variable: experiment_2::ObsValue::${variable}
-          y:
-            variable: experiment_2::hofx0::${variable}_diff
-          channel: ${channel}
-          markersize: 5
-          color: 'black'
-          label: 'JEDI h(x) versus obs (all obs)'
-        - type: Scatter
-          x:
-            variable: experiment_2::ObsValue::${variable}
-          y:
-            variable: experiment_2::hofx0PassedQc::${variable}_diff
-          channel: ${channel}
-          markersize: 5
-          color: 'red'
-          label: 'JEDI h(x) versus obs (passed QC in JEDI) diff (1-2)'
-
   # GSI h(x) vs Observations
   - batch figure:
       variables: *variables
@@ -437,8 +392,9 @@ graphics:
       title: 'Observations vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'Observation Value 1'
-        add_ylabel: 'GSI h(x) 1'
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'GSI h(x)'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -462,8 +418,9 @@ graphics:
           color: 'red'
           label: 'GSI h(x) versus obs (passed QC in JEDI)'
 
-      - add_xlabel: 'Observation Value 2'
-        add_ylabel: 'GSI h(x) 2'
+      - add_xlabel: 'Observation Value'
+        add_ylabel: 'GSI h(x)'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -496,8 +453,9 @@ graphics:
       title: 'JEDI h(x) vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi0_hofx_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'GSI h(x) 1'
-        add_ylabel: 'JEDI h(x) 1'
+      - add_xlabel: 'GSI h(x)'
+        add_ylabel: 'JEDI h(x)'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -521,8 +479,9 @@ graphics:
           color: 'red'
           label: 'JEDI h(x) versus GSI h(x) (passed QC in JEDI)'
 
-      - add_xlabel: 'GSI h(x) 2'
-        add_ylabel: 'JEDI h(x) 2'
+      - add_xlabel: 'GSI h(x)'
+        add_ylabel: 'JEDI h(x)'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -555,8 +514,9 @@ graphics:
       title: 'JEDI hofx0 vs. GSI hofx0 | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'GSI observation minus h(x) 1'
-        add_ylabel: 'JEDI observation minus h(x) 1'
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI observation minus h(x)'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -580,8 +540,9 @@ graphics:
           color: 'red'
           label: 'GSI hofx0 vs JEDI hofx0 (passed QC in JEDI)'
 
-      - add_xlabel: 'GSI observation minus h(x) 2'
-        add_ylabel: 'JEDI observation minus h(x) 2'
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI observation minus h(x)'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -614,8 +575,9 @@ graphics:
       title: 'hofx0 difference vs. GSI Obs-hofx0 | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_diff_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'GSI observation minus h(x) 1'
-        add_ylabel: 'JEDI h(x) minus GSI h(x) 1'
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI h(x) minus GSI h(x)'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -630,8 +592,9 @@ graphics:
           color: 'red'
           label: '(JEDI hofx0 - GSI hofx0) vs GSI Obs-hofx0 (passed GSI QC)'
 
-      - add_xlabel: 'GSI observation minus h(x) 2'
-        add_ylabel: 'JEDI h(x) minus GSI h(x) 2'
+      - add_xlabel: 'GSI observation minus h(x)'
+        add_ylabel: 'JEDI h(x) minus GSI h(x)'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -655,8 +618,9 @@ graphics:
       title: 'OmA vs. OmB | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_oma_vs_omb_{{instrument}}_${variable}${channel}.png'
     plots:
-      - add_xlabel: 'OmA 1'
-        add_ylabel: 'OmB 1'
+      - add_xlabel: 'OmA'
+        add_ylabel: 'OmB'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -669,7 +633,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'OmA versus OmB (all residuals) 1'
+          label: 'OmA versus OmB (all residuals)'
         - type: Scatter
           x:
             variable: experiment_1::omanPassedQc::${variable}
@@ -678,10 +642,11 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'red'
-          label: 'OmA versus OmB (passed QC) 1'
+          label: 'OmA versus OmB (passed QC)'
 
-      - add_xlabel: 'OmA 1'
-        add_ylabel: 'OmB 1'
+      - add_xlabel: 'OmA'
+        add_ylabel: 'OmB'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -694,7 +659,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'OmA versus OmB (all residuals) 2'
+          label: 'OmA versus OmB (all residuals)'
         - type: Scatter
           x:
             variable: experiment_2::omanPassedQc::${variable}
@@ -703,7 +668,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'red'
-          label: 'OmA versus OmB (passed QC) 2'
+          label: 'OmA versus OmB (passed QC)'
 
   # JediFinalObsError vs GsiObsFinalObsError
   - batch figure:
@@ -716,6 +681,7 @@ graphics:
     plots:
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -728,7 +694,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'JediObsError versus GsiObsError (all residuals) 1'
+          label: 'JediObsError versus GsiObsError (all residuals)'
         - type: Scatter
           x:
             variable: experiment_1::GsiFinalObsErrorPassedQc::${variable}
@@ -737,10 +703,11 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'red'
-          label: 'JediObsError versus GsiObsError (passed Jedi QC) 1'
+          label: 'JediObsError versus GsiObsError (passed Jedi QC)'
 
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -753,7 +720,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'JediObsError versus GsiObsError (all residuals) 2'
+          label: 'JediObsError versus GsiObsError (all residuals)'
         - type: Scatter
           x:
             variable: experiment_2::GsiFinalObsErrorPassedQc::${variable}
@@ -762,7 +729,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'red'
-          label: 'JediObsError versus GsiObsError (passed Jedi QC) 2'
+          label: 'JediObsError versus GsiObsError (passed Jedi QC)'
 
   # JediFinalObsError vs GsiObsFinalObsError (all & passed GSI QC)
   - batch figure:
@@ -775,6 +742,7 @@ graphics:
     plots:
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
+        add_title: '{{experiment_id_1}} (1)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -787,7 +755,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'JediObsError versus GsiObsError (all residuals) 1'
+          label: 'JediObsError versus GsiObsError (all residuals)'
         - type: Scatter
           x:
             variable: experiment_1::GsiFinalObsErrorPassedGsiQc::${variable}
@@ -796,10 +764,11 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'blue'
-          label: 'JediObsError versus GsiObsError (Passed GSI QC) 1'
+          label: 'JediObsError versus GsiObsError (Passed GSI QC)'
 
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
+        add_title: '{{experiment_id_2}} (2)'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -812,7 +781,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'black'
-          label: 'JediObsError versus GsiObsError (all residuals) 2'
+          label: 'JediObsError versus GsiObsError (all residuals)'
         - type: Scatter
           x:
             variable: experiment_2::GsiFinalObsErrorPassedGsiQc::${variable}
@@ -821,7 +790,7 @@ graphics:
           channel: ${channel}
           markersize: 5
           color: 'blue'
-          label: 'JediObsError versus GsiObsError (Passed GSI QC) 2'
+          label: 'JediObsError versus GsiObsError (Passed GSI QC)'
 
 # Map plots
 # ---------
@@ -847,6 +816,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{{experiment_id_1}} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -857,7 +827,7 @@ graphics:
             variable: experiment_1::ObsValue::${variable}
             channel: ${channel}
           markersize: 2
-          label: ObsValue 1
+          label: ObsValue
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -870,6 +840,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
+        add_title: '{{experiment_id_2}} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -880,7 +851,7 @@ graphics:
             variable: experiment_2::ObsValue::${variable}
             channel: ${channel}
           markersize: 2
-          label: ObsValue 2
+          label: ObsValue
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -907,6 +878,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_1}} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -917,7 +889,7 @@ graphics:
             variable: experiment_1::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 1'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -930,6 +902,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_2}} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -940,7 +913,7 @@ graphics:
             variable: experiment_2::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 2'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -967,6 +940,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_1}} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -977,7 +951,7 @@ graphics:
             variable: experiment_1::ObsValueMinusGsiHofXBc::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 1'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -990,6 +964,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_2}} (2)'
         layers:
         - type: MapScatter
           longitude:
@@ -1000,7 +975,7 @@ graphics:
             variable: experiment_2::ObsValueMinusGsiHofXBc::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 2'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -1027,6 +1002,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_1}} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -1037,7 +1013,7 @@ graphics:
             variable: experiment_1::Hofx0MinusGsiHofXBc::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 1'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -1060,7 +1036,7 @@ graphics:
             variable: experiment_2::Hofx0MinusGsiHofXBc::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 2'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -1087,6 +1063,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
+        add_title: '{{experiment_id_1}} (1)'
         layers:
         - type: MapScatter
           longitude:
@@ -1097,7 +1074,7 @@ graphics:
             variable: experiment_1::ResidualRMSdiff::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 1'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -1120,7 +1097,7 @@ graphics:
             variable: experiment_2::ResidualRMSdiff::${variable}
             channel: ${channel}
           markersize: 2
-          label: '${variable} 2'
+          label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
@@ -1145,6 +1122,7 @@ graphics:
     plots:
       - add_xlabel: 'Observation minus h(x)'
         add_ylabel: 'Count'
+        add_title: '{{experiment_id_1}} (1)'
         add_legend:
           loc: 'upper left'
         layers:
@@ -1153,7 +1131,7 @@ graphics:
             variable: experiment_1::ObsValueMinusGsiHofXBc::${variable}
             channel: ${channel}
           color: 'blue'
-          label: 'GSI hofx0 (all obs) 1'
+          label: 'GSI hofx0 (all obs)'
           bins: ${dynamic_bins}
           alpha: 0.5
         - type: Histogram
@@ -1161,7 +1139,7 @@ graphics:
             variable: experiment_1::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           color: 'red'
-          label: 'JEDI hofx0 (all obs) 1'
+          label: 'JEDI hofx0 (all obs)'
           bins: ${dynamic_bins}
           alpha: 0.5
 
@@ -1175,7 +1153,7 @@ graphics:
             variable: experiment_2::ObsValueMinusGsiHofXBc::${variable}
             channel: ${channel}
           color: 'blue'
-          label: 'GSI hofx0 (all obs) 2'
+          label: 'GSI hofx0 (all obs)'
           bins: ${dynamic_bins}
           alpha: 0.5
         - type: Histogram
@@ -1183,7 +1161,7 @@ graphics:
             variable: experiment_2::ObsValueMinusHofx0::${variable}
             channel: ${channel}
           color: 'red'
-          label: 'JEDI hofx0 (all obs) 2'
+          label: 'JEDI hofx0 (all obs)'
           bins: ${dynamic_bins}
           alpha: 0.5
 
@@ -1201,6 +1179,7 @@ graphics:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
+        add_title: '{{experiment_id_1}} (1)'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -1231,7 +1210,7 @@ graphics:
           data:
             variable: experiment_1::ombgPassedQc::${variable}
           color: 'red'
-          label: 'observations minus background 1'
+          label: 'observations minus background'
           bins: ${dynamic_bins}
           alpha: 0.5
           density: true
@@ -1239,7 +1218,7 @@ graphics:
           data:
             variable: experiment_1::omanPassedQc::${variable}
           color: 'blue'
-          label: 'observations minus analysis 1'
+          label: 'observations minus analysis'
           bins: ${dynamic_bins}
           alpha: 0.5
           density: true
@@ -1276,7 +1255,7 @@ graphics:
           data:
             variable: experiment_2::ombgPassedQc::${variable}
           color: 'red'
-          label: 'observations minus background 2'
+          label: 'observations minus background'
           bins: ${dynamic_bins}
           alpha: 0.5
           density: true
@@ -1284,7 +1263,7 @@ graphics:
           data:
             variable: experiment_2::omanPassedQc::${variable}
           color: 'blue'
-          label: 'observations minus analysis 2'
+          label: 'observations minus analysis'
           bins: ${dynamic_bins}
           alpha: 0.5
           density: true
