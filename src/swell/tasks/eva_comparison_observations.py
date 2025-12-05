@@ -53,9 +53,11 @@ class EvaComparisonObservations(taskBase):
             window_length = experiment_config_1['models'][self.get_model()]['window_length']
             window_offset = self.da_window_params.window_offset(window_length)
             background_time_offset = experiment_config_1['models'][self.get_model()]['background_time_offset']
+            experiment_id_1 = experiment_config_1['experiment_id']
 
         with open(experiment_path_2, 'r') as f:
             experiment_config_2 = yaml.safe_load(f)
+            experiment_id_2 = experiment_config_2['experiment_id']
 
         window_begin = self.da_window_params.window_begin(window_offset)
         background_time = self.da_window_params.background_time(background_time_offset)
@@ -190,6 +192,8 @@ class EvaComparisonObservations(taskBase):
                 observation_dict_1['obs space']['simulated variables']
             eva_override['map_projection'] = 'plcarr'
             eva_override['domain'] = 'global'
+            eva_override['experiment_id_1'] = experiment_id_1
+            eva_override['experiment_id_2'] = experiment_id_2
 
             # If filename contains icec_ change map projection to polar stereographic
             # -----------------------------------------------------------------------
