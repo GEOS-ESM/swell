@@ -185,7 +185,7 @@ class GetObservations(taskBase):
                     self.logger.info("Fetch empty observation instead")
 
                     # fetch empty obs
-                    r2d2.fetch (
+                    r2d2.fetch(
                         item='observation',
                         provider='empty_provider',
                         observation_type='empty_type',

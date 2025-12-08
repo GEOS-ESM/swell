@@ -7,7 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
 import r2d2
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config

@@ -21,7 +21,7 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _hofx_cf = QuestionList(
+    hofx_cf = QuestionList(
         list_name="hofx_cf",
         questions=[
             sq.common,
@@ -33,5 +33,3 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_cf=[
         ]
     )
-
-

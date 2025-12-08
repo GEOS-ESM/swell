@@ -1017,7 +1017,6 @@ class QuestionDefaults():
         prompt: str = "What is the number of grid points in the x-direction on each cube face?"
         widget_type: WType = WType.INTEGER
 
-
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -1030,7 +1029,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the number of grid points in the y-direction on each cube face?"
         widget_type: WType = WType.INTEGER
-
 
     # --------------------------------------------------------------------------------------------------
 
