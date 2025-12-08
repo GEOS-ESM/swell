@@ -32,6 +32,7 @@
         {% if cycle_time[model_component] %}
             EvaComparisonIncrement-{{model_component}}
             EvaComparisonJediLog-{{model_component}}
+	    EvaComparisonObservations-{{model_component}}
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }} => JediLogComparison-{{model_component}}
             {% endfor %}
@@ -62,6 +63,15 @@
 
     [[EvaComparisonJediLog-{{model_component}}]]
         script = "swell task EvaComparisonJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaComparisonObservations-{{model_component}}]]
+        script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaComparisonObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["EvaComparisonObservations"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     {% for path in comparison_experiment_paths %}
     [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]

@@ -327,7 +327,8 @@ graphics:
       variables: *variables
       channels: *channels
     figure:
-      layout: [3,1]
+      layout: [2,1]
+      figure size: [20, 10]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -389,6 +390,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'Observations vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_obs_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -450,6 +452,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'JEDI h(x) vs. GSI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx_vs_jedi0_hofx_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -511,6 +514,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'JEDI hofx0 vs. GSI hofx0 | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -572,6 +576,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'hofx0 difference vs. GSI Obs-hofx0 | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_diff_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -615,6 +620,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'OmA vs. OmB | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_oma_vs_omb_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -676,6 +682,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'Jedi ObsError vs. GSI ObsError | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/JediObsError_vs_GsiObsError_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -737,6 +744,7 @@ graphics:
       channels: *channels
     figure:
       layout: [2,1]
+      figure size: [20, 10]
       title: 'Jedi ObsError vs. GSI ObsError | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/JediObsError_vs_GsiObsError_{{instrument}}_${variable}${channel}_b.png'
     plots:
@@ -1116,6 +1124,7 @@ graphics:
         number of bins rule: sturges
         data variable: experiment_1::ObsValueMinusHofx0::${variable}
     figure:
+      figure size: [20, 10]
       layout: [2,1]
       title: 'JEDI hofx0 vs. GSI hofx0 | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}${channel}/gsi_hofx0_vs_jedi_hofx0_{{instrument}}_${variable}${channel}.png'
@@ -1173,6 +1182,7 @@ graphics:
         data variable: experiment_1::omanPassedQc::${variable}
         number of bins rule: 'rice'
     figure:
+      figure size: [20, 10]
       layout: [2,1]
       title: 'OmB vs. OmA | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/histograms/${variable}/ombg_oman_{{instrument}}_${variable}.png'

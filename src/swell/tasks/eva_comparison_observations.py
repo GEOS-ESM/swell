@@ -38,7 +38,6 @@ class EvaComparisonObservations(taskBase):
 
     def execute(self) -> None:
 
-
         # Comparison log type
         # -------------------
         log_type = self.config.comparison_log_type()
@@ -49,30 +48,33 @@ class EvaComparisonObservations(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
+        model = self.get_model()
+
+        # Take parameters from first file
         with open(experiment_path_1, 'r') as f:
             experiment_config_1 = yaml.safe_load(f)
-            window_length = experiment_config_1['models'][self.get_model()]['window_length']
-            window_offset = self.da_window_params.window_offset(window_length)
-            background_time_offset = experiment_config_1['models'][self.get_model()]['background_time_offset']
             experiment_id_1 = experiment_config_1['experiment_id']
             comparison_suite = experiment_config_1['suite_to_run']
+            observations = experiment_config_1['models'][model]['observations']
 
+        # Second file parameters
         with open(experiment_path_2, 'r') as f:
             experiment_config_2 = yaml.safe_load(f)
             experiment_id_2 = experiment_config_2['experiment_id']
 
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(background_time_offset)
-
+        # JEDI config file 1
         jedi_config_file_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                          self.__datetime__.string_directory(), self.get_model(), f'jedi_{log_type}_config.yaml')
+                                          self.__datetime__.string_directory(), model,
+                                          f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_1, 'r') as f:
             jedi_config = yaml.safe_load(f)
             obs_config_1 = jedi_config['cost function']['observations']['observers']
 
+        # JEDI config file 2
         jedi_config_file_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                          self.__datetime__.string_directory(), self.get_model(), f'jedi_{log_type}_config.yaml')
+                                          self.__datetime__.string_directory(), model,
+                                          f'jedi_{log_type}_config.yaml')
 
         with open(jedi_config_file_2, 'r') as f:
             jedi_config = yaml.safe_load(f)
@@ -87,7 +89,6 @@ class EvaComparisonObservations(taskBase):
 
         # Read Eva template file into dictionary
         # --------------------------------------
-        model = self.get_model()
         # eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
         eva_path = os.path.join(get_swell_path(), 'suites', 'compare', 'eva')
         eva_config_file = os.path.join(eva_path,
@@ -119,7 +120,7 @@ class EvaComparisonObservations(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
-        for observation in self.config.observations():
+        for observation in observations:
             if self.get_model() == 'geos_atmosphere':
                 obs_long_name = ioda_name_to_long_name(observation, self.logger)
             else:
