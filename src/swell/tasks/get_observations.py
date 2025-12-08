@@ -182,6 +182,18 @@ class GetObservations(taskBase):
                     self.logger.info(f"Successfully fetched {target_file}")
                 except Exception as e:
                     self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+                    self.logger.info("Fetch empty observation instead")
+
+                    # fetch empty obs
+                    r2d2.fetch (
+                        item='observation',
+                        provider='empty_provider',
+                        observation_type='empty_type',
+                        file_extension='nc4',
+                        window_start='19700101T030000Z',
+                        window_length='PT6H',
+                        target_file=target_file,
+                    )
 
             # Check how many of the combine_input_files exist in the cycle directory.
             # If all of them are missing proceed without creating an observation input
@@ -198,8 +210,9 @@ class GetObservations(taskBase):
                 if len(obs_list_dto) == 1:
                     os.rename(combine_input_files[0], jedi_obs_file)
                 else:
-                   self.read_and_combine(combine_input_files, jedi_obs_file)
+                    self.read_and_combine(combine_input_files, jedi_obs_file)
                 # Change permission
+                # this will cause issue for linked files (fetched from archive)
                 os.chmod(jedi_obs_file, 0o644)
 
             # Otherwise there is only work to do if the observation operator has bias correction
