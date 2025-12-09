@@ -46,8 +46,8 @@ All storage locations should be available at the same file paths to both login a
 None of the storage locations have inode limits, but some storage types do have (small) costs per read/write operation, so pay some attention to this.
 
 * Home directories are mounted on AWS Elastic File System (EFS). This is a pay-for-what-you-use storage device with no practical upper limit. The price is $0.30/GB-month ($300/TB-month), plus a $0.03/GB charge for reads and a $0.06/GB charge for writes. Performance characteristics are average; decent, but not amazing and possibly inconsistent, throughput and latency.
-* There is also a shared `/efs` folder with the same pricing and performance characteristics.
-* `/fast1` is pre-allocated SSD storage, fixed (for now) to 200 GB. We pay for 200 GB whether this is 0% or 100% full. Note that although this is SSD, it is mounted to compute nodes via NFS (over the network), so the performance will likely be worse than advertised. There is no cost to read or write operations.
+* There is also a shared `/efs` folder with the same pricing and performance characteristics as above.
+* `/fast1` is pre-allocated SSD storage, fixed (for now) to 200 GB. We pay for 200 GB whether this is 0% or 100% full. Note that although this is SSD, it is mounted to compute nodes via NFS (over the network), so the performance will likely be (significantly) worse than advertised. There is no cost to read or write operations.
 * `/slow1` is pre-allocated HDD (spinning disk) storage, fixed to 1 TB (as above, but much cheaper and with worse performance). Since it's pre-allocated, this is a great place to store infrequently accessed data. Again, no cost to read or write operations.
 * `/s3` is a mounted S3 bucket. Like EFS, this is pay-for-what-you-use and infinitely expandable, but significantly cheaper -- $0.023/GB-month ($23/TB-month). However, this is not quite a true POSIX file system. It should work great for reading and writing files, but not very well for editing files. There is also a small fee for each read, write, and delete operation (~$0.005 per 1000 ops...but it can add up for certain access patterns).
 
