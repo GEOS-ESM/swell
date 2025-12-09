@@ -2,115 +2,202 @@
 
 ## Build spack-stack
 
-Building spack-stack (at least, the unified-dev environment --- we may be able to get away with a subset of what's in there) takes forever (~6 hours) and produces ~76 GB of binaries.
+Building spack-stack (at least, the unified-dev environment --- we may be able to get away with a subset of what's in there) takes a long time (~6 hours) and produces ~11 GB of binaries.
 Before doing this, check if an existing spack-stack install for the relevant operating system exists.
-For example, for the install below, a pre-existing spack-stack installation is stored in `s3://gmao-spack-stack`.
+For example, for the install below, a pre-existing spack-stack installation is stored in `/fast1/spack-envs/`.
 
 ### Install spack-stack dependencies
 
-This assumes Ubuntu 22.04.
+For this cluster, these dependencies are installed as part of the AMI (virtual machine image) used by the cluster.
+For the latest version of that configuration, see scripts in https://github.com/ashiklom/smce-gmao-tf/tree/main/deployments/pcluster/image (note: this is a private repository, for security reasons).
+
+An excerpt of the dependencies (for Ubuntu 24.04) is listed below for reference:
 
 ```sh
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-################################################################################
-# Spack-stack dependencies
-# https://spack-stack.readthedocs.io/en/1.9.1/NewSiteConfigs.html#prerequisites-ubuntu-one-off
-################################################################################
-
-sudo apt-get update -y
+sudo apt-get update
 sudo apt-get upgrade -y
-
-# Dependencies
 sudo apt-get install -y \
-	gcc \
-	g++ \
-	gfortran \
-	gdb \
-	environment-modules \
-	build-essential \
-	libkrb5-dev \
-	m4 \
-	git \
-	git-lfs \
-	bzip2 \
-	unzip \
-	automake \
-	autopoint \
-	gettext \
-	texlive \
-	libcurl4-openssl-dev \
-	libssl-dev \
-	wget
+  build-essential \
+  g++-11 \
+  g++-12 \
+  g++-13 \
+  gcc-11 \
+  gcc-12 \
+  gcc-13 \
+  gfortran-11 \
+  gfortran-12 \
+  gfortran-13 \
+  make \
+  apt-utils \
+  autoconf \
+  automake \
+  autopoint \
+  bc \
+  bzip2 \
+  cmake \
+  cpp-11 \
+  curl \
+  file \
+  flex \
+  gettext \
+  gh \
+  git \
+  git-lfs \
+  golang \
+  gnupg2 \
+  iproute2 \
+  less \
+  libcurl4-openssl-dev \
+  libgomp1 \
+  liblua5.3-dev \
+  liblua5.3.0 \
+  libmysqlclient-dev \
+  libqt5svg5-dev \
+  libtcl8.6 \
+  libtool \
+  libtree \
+  locales \
+  lua-bit32 \
+  lua-posix \
+  lua-posix-dev \
+  lua5.3 \
+  make \
+  mysql-server \
+  pkg-config \
+  python3 \
+  python3-pip \
+  python3-setuptools \
+  qt5-qmake \
+  qt5dxcb-plugin \
+  qtbase5-dev \
+  tcl \
+  tcl-dev \
+  tcl8.6 \
+  tcl8.6-dev\
+  unzip \
+  wget
+
+# Install lmod manually
+(
+  LMOD_TMP=$(mktemp -d)
+  cd "$LMOD_TMP"
+  wget https://github.com/TACC/Lmod/archive/refs/tags/8.7.60.tar.gz
+  tar -xf 8.7.60.tar.gz
+  cd Lmod-8.7.60
+  sudo mkdir -p /opt
+  ./configure --prefix=/opt/ --with-lmodConfigDir=/opt/lmod/8.7/config
+  sudo make install
+)
+sudo ln -sf /opt/lmod/lmod/init/profile /etc/profile.d/z00_lmod.sh
+sudo ln -sf /opt/lmod/lmod/init/cshrc /etc/profile.d/z00_lmod.csh
+sudo ln -sf /opt/lmod/lmod/init/profile.fish /etc/profile.d/z00_lmod.fish
 ```
 
 ### Install spack-stack
 
 NOTE: This uses the `unified-dev` environment, which installs _everything_ --- GEOS, Skylab, NEPTUNE, GSI.
-Therefore, it is **huge** (final install is ~76 GB) and takes **forever** (6-8 hours on a `t3.medium`).
+Therefore, it is very large (final install is ~12 GB) and takes a long time (~4 hours on a `c7i.xlarge`).
 
 ```sh
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -uo pipefail
+# set -euxo pipefail
 
-################################################################################
-# Creating a new environment
-# https://spack-stack.readthedocs.io/en/1.9.1/NewSiteConfigs.html#prerequisites-red-hat-centos-8-one-off
-################################################################################
+umask 022
 
-cd /shared
+if [[ -z $SPACK_STACK_VERSION ]]; then
+  echo "SPACK_STACK_VERSION is unset"
+  exit 1
+fi
 
-git clone --recurse-submodules https://github.com/jcsda/spack-stack.git
-cd spack-stack
-# NOTE: This sets $SPACK_STACK_DIR to PWD
+if [[ -z $COMPILER ]]; then
+  echo "COMPILER is unset"
+  exit 1
+fi
+
+if [[ -z $ENVNAME ]]; then
+  echo "ENVNAME is unset"
+  exit 1
+fi
+
+ROOTDIR="/opt/spack/"
+SRCDIR="$ROOTDIR/spack-stack"
+ENVDIR="$ROOTDIR/envs"
+
+SCRIPT_USER=$(whoami)
+
+sudo mkdir -p "$ROOTDIR"
+sudo chown "$SCRIPT_USER:$SCRIPT_USER" "$ROOTDIR"
+chmod 755 "$ROOTDIR"
+
+git clone --recurse-submodules "https://github.com/jcsda/spack-stack" $SRCDIR
+
+cd "$SRCDIR"
+git checkout "$SPACK_STACK_VERSION"
+git submodule update
+
 source setup.sh
 
-# Create preconfigured environment
-# NOTE: Add --template unified-dev to install *everything*.
-ENVNAME="swell.my_aws"
-TEMPLATE="unified-dev"
-spack stack create env --site linux.default --name $ENVNAME --template $TEMPLATE --compiler=gcc
-cd envs/$ENVNAME
+# Change tcl to lmod
+sed -i 's/tcl/lmod/g' configs/sites/tier2/linux.default/modules.yaml
 
-# Activate the environment (-p sets the prompt)
+spack stack create env \
+  --site linux.default \
+  --template unified-dev \
+	--dir "$ENVDIR" \
+	--name "$ENVNAME" \
+	--compiler "$COMPILER"
+
+cd "$ENVDIR/$ENVNAME"
 spack env activate -p .
 
 export SPACK_SYSTEM_CONFIG_PATH="$PWD/site"
 
-# Find all external tools except the ones listed here
-# NOTE: Dropping --scope system because it doesn't work ("invaid choice: 'system'")
-spack external find --exclude cmake --exclude curl --exclude openssl --exclude openssh --exclude python
-spack external find grep
-spack external find sed
-spack external find perl
-spack external find wget
+spack external find --scope system \
+  --exclude python \
+  --exclude openssl \
+  --exclude cmake
 
-spack compiler find
+spack external find --scope system wget
+spack external find --scope system mysql
+spack external find --scope system grep
+spack external find --scope system go
+
+# Manually add gh
+if [[ ! -f site/packages.yaml.bak ]]; then
+  cp site/packages.yaml{,.bak}
+fi
+cat <<-EOF >> site/packages.yaml
+  gh:
+    externals:
+    - spec: gh@2.45
+      prefix: /usr
+EOF
+
+# spack compiler find --scope system "$COMPILER"
+
+GCC13_VERSION=$("$COMPILER-13" --version | head -n1 | grep -oP ' \d+\.\d+\.\d+ *$' | xargs)
+
+QT_VERSION=$(apt-cache show qtbase5-dev | grep 'Version: ' | grep -oP '\d+\.\d+\.\d+')
+
 unset SPACK_SYSTEM_CONFIG_PATH
 
-spack config add "packages:all:compiler:[gcc@$(gcc -dumpfullversion)]"
-spack config add "packages:all:compiler:[openmpi@5.0.3]"
-
+spack config add "packages:all:compiler:[gcc@$GCC13_VERSION]"
+spack config add "packages:all:providers:mpi:[openmpi@5.0.5]"
 spack config add "packages:fontconfig:variants:+pic"
 spack config add "packages:pixman:variants:+pic"
 spack config add "packages:cairo:variants:+pic"
+spack config add "packages:ewok-env:variants:+mysql"
 
-# Process and install
+# Concretize and install
 spack concretize 2>&1 | tee log.concretize
+# cat log.concretize | ${SPACK_STACK_DIR}/util/show_duplicate_packages.py
+spack install --fail-fast 2>&1 | tee log.install
 
-# nohup spack install --yes-to-all --source --verbose --jobs 8 &> log.install &
-spack install --source --verbose
+# Install lmod modules
 spack module lmod refresh
 spack stack setup-meta-modules
-${SPACK_STACK_DIR}/util/check_permissions.sh
-
-# Confirm that this works
-module use ${SPACK_STACK_DIR}/envs/$ENVNAME/install/modulefiles/Core
-module avail
-module load stack-gcc/11.4.0
 ```
 
 ### (Optional, but recommended) Set up shortcuts for swell modules
@@ -126,19 +213,19 @@ Be sure to adjust the path in the first `module use` statement to wherever you i
 module purge
 
 # NOTE: Change this path to match the spack-stack installation above.
-module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core
+module use /fast1/spack-envs/unified-env-gcc/install/modulefiles/Core
 
-module load stack-gcc/11.4.0
+module load stack-gcc/13.3.0
 module load stack-openmpi/5.0.5
 module load stack-python/3.11.7
 
 # JEDI
-module load jedi-fv3-env/1.0.0
-module load soca-env/1.0.0
-module load gmao-swell-env/1.0.0
+module load jedi-fv3-env
+module load soca-env
+module load gmao-swell-env
 
 # Extras
-module load git-lfs/3.0.2
+module load git-lfs/3.4.1
 module load py-pip/23.1.2
 
 # vim: set filetype=sh :
@@ -146,90 +233,127 @@ module load py-pip/23.1.2
 
 ## Building JEDI
 
-Public releases of JEDI source code are significantly behind (~1 year or more) the latest version.
-Swell works best with a recent version of JEDI, but currently, the JCSDA repository is not public.
-Therefore, we pull the latest JEDI source code from Discover (where it is updated daily):
+Swell uses [`jedi_bundle`](https://github.com/geos-esm/jedi_bundle) to build JEDI.
+This will clone, configure, and build specific versions of all JEDI components needed for Swell.
+Note that some of these components are in private repositories, so you will need to follow the [instructions in the `jedi_bundle` documentation](https://geos-esm.github.io/jedi_bundle/#/git_credentials) to set up your Git credentials.
 
-```
-/discover/nobackup/gmao_ci/swell/tier2/stable/build_jedi/jedi_bundle/source/
-```
+An install script like the following should work.
 
-On the current AWS configuration, this is synced to `/shared/jedi-bundles/latest/source/`.
-
-NOTE: The instructions below assume `spack-stack` 1.9 was built as described above.
+**NOTE**: The `cat <<EOF > ...` step below creates a new file in the `jedi_bundle` _source_ repository to create an AWS configuration. In the future, this will be included in the main `jedi_bundle` repo and will not be necessary here.
 
 ```sh
-# ---
-# /shared/jedi-bundles/jedi-modules.sh
-# ---
-
 #!/usr/bin/env bash
+#SBATCH --partition demand-16cpu
 
-module purge
-module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core
+# ^^ SBATCH directive here is for building this directly on the cluster.
 
-module load stack-gcc/11.4.0
-module load stack-openmpi/5.0.5
-module load ecbuild/3.7.2
-
-# NOTE: Depends on stack-openmpi
-module load jedi-fv3-env/1.0.0
-module load ewok-env/1.0.0
-module load soca-env/1.0.0
-
-# NOTE: Depends on stack-gcc
-module load sp/2.5.0
-```
-
-```sh
-# ---
-# /shared/jedi-bundles/build-jedi.sh
-# ---
-
-#!/usr/bin/env bash
-
-set -euo pipefail
+JEDI_ROOT="/efs/jedi/"
+JEDI_BUNDLE_SRC="$JEDI_ROOT/jedi_bundle"
+SPACK_ROOT="/fast1/spack-envs/unified-env-gcc/"
+S3DIR="/s3"
 
 VERSION="latest"
+GCCVER="13.3.0"
+SKYLAB_VERSION="2.4.1_skylab_4.0"
 
-JEDI_ROOT="/shared/jedi-bundles/$VERSION"
-JEDI_SRC="$JEDI_ROOT/source"
-if [[ ! -f "$JEDI_SRC/CMakeLists.txt" ]]; then
-  echo "$JEDI_SRC/CMakeLists.txt not found."
-  echo "Confirm that $JEDI_ROOT is correctly set."
-  # exit 1
+N_AVAILABLE_CORES=$(nproc)
+
+mkdir -p "$JEDI_ROOT"
+
+if [[ ! -f "$SPACK_ROOT/spack.lock" ]]; then
+  echo "$SPACK_ROOT not found or improperly configured"
+  exit 1
 fi
-JEDI_BUILD="$JEDI_ROOT/build"
 
-echo "Source directory: $JEDI_SRC"
-echo "Build directory: $JEDI_BUILD"
+if [[ ! -d "$S3DIR/SwellStaticFiles" ]]; then
+  echo "Couldn't find $S3DIR/SwellStaticFiles"
+  exit 1
+fi
 
-mkdir -p "$JEDI_BUILD"
-cd "$JEDI_BUILD"
+JEDI_BUILD="$JEDI_ROOT/builds/jedi-build-gcc_$GCCVER"
+if [[ -d "$JEDI_BUILD" ]]; then
+  echo "Existing JEDI build found in this directory. Exiting..."
+  exit 1
+fi
 
-source jedi-modules.sh
+if [[ ! -d "$JEDI_BUNDLE_SRC" ]]; then
+  git clone https://github.com/geos-esm/jedi_bundle $JEDI_BUNDLE_SRC
+fi
 
-ecbuild "$JEDI_SRC"
-# NOTE: If using git, can run this to update
-# make update
+cd "$JEDI_BUNDLE_SRC"
 
-# Build using an sbatch job (recommended because the JEDI build is resource intensive!)
-sbatch --output "build.log" --wrap "make -j8"
+## Using geos-esm/jedi_bundle
+module use -a $SPACK_ROOT/install/modulefiles/Core
 
-# Or, just run `make` directly.
+module purge
+module load stack-gcc/13.3.0
+module load stack-openmpi/5.0.5
+module load stack-python/3.11.7
+module load git-lfs/3.4.1
+module load py-pip/23.1.2
+
+mkdir -p $JEDI_BUILD
+cd $JEDI_BUILD
+python -m venv ".venv"
+source .venv/bin/activate
+
+# Before we install JEDI, need to add an AWS configuration
+cat <<EOF > $JEDI_BUNDLE_SRC/src/jedi_bundle/config/platforms/aws.yaml
+platform_name: aws
+
+is_it_me:
+  - command: 'echo \$SLURM_CLUSTER_NAME'
+    contains: 'gmao-pcluster'
+crtm_coeffs_path: "$S3DIR/SwellStaticFiles/jedi/crtm_coefficients/"
+crtm_coeffs_version: "$SKYLAB_VERSION"
+modules:
+  default_modules: gnu
+  gnu:
+    init:
+      - source /opt/lmod/lmod/init/bash
+    load:
+      - module purge
+      - module use $SPACK_ROOT/install/modulefiles/Core
+      - module load stack-gcc/13.3.0
+      - module load stack-openmpi/5.0.5
+      - module load stack-python/3.11.7
+      - module load jedi-fv3-env
+      - module load soca-env
+      - module load gmao-swell-env
+    configure: '-DCMAKE_Fortran_FLAGS="-ffree-line-length-none"'
+    # configure: -DMPIEXEC_EXECUTABLE="/usr/bin/srun" -DMPIEXEC_NUMPROC_FLAG="-n"
+  gnu-geos:
+    init:
+      - source /opt/lmod/lmod/init/bash
+    load:
+      - module purge
+      - module use $SPACK_ROOT/install/modulefiles/Core
+      - module load stack-gcc/13.3.0
+      - module load stack-openmpi/5.0.5
+      - module load stack-python/3.11.7
+      - module load jedi-fv3-env
+      - module load soca-env
+      - module load gmao-swell-env
+      - module load esmf python py-pyyaml py-numpy pflogger fargparse zlib-ng cmake
+    configure: '-DCMAKE_Fortran_FLAGS="-ffree-line-length-none"'
+    # configure: -DMPIEXEC_EXECUTABLE="/usr/bin/srun" -DMPIEXEC_NUMPROC_FLAG="-n"
+EOF
+
+pip install "$JEDI_BUNDLE_SRC"
+
+echo "JEDI bundle path:"
+which jedi_bundle
+
+# Generate config file
+jedi_bundle --pinned_versions
+
+# Tweak config file
+sed -i "/ *cores_to_use_for_make/s/6/$N_AVAILABLE_CORES/" build.yaml
+
+# Run
+jedi_bundle all build.yaml
+
 ```
-
-## Internal JCSDA dependencies
-
-You will also need the following JCSDA dependencies that are not (currently) in public repositories:
-
-- `r2d2`
-- `solo`
-
-Sources for these may be available in `/discover/nobackup/projects/gmao/advda/JediOpt/src`.
-
-On Discover, these are available as environment modules.
-On AWS, these are just open source code folders and are installed in Swell via `pip` (see `requirements-aws.txt`).
 
 ## Building GEOS
 
@@ -251,7 +375,7 @@ Load required modules.
 
 ```sh
 module use /shared/spack-stack/envs/swell.my_aws/install/modulefiles/Core/
-module load stack-gcc/11.4.0
+module load stack-gcc/13.3.0
 module load stack-openmpi/5.0.5
 module load geos-gcm-env/1.0.0
 ```
@@ -273,7 +397,7 @@ cmake -B build -S . --install-prefix=install
 cmake --build build --target install
 ```
 
-The resulting GEOS installation lives is in `/shared/GEOSgcm/v11.6.0/install`.
+The resulting GEOS installation lives is in `/efs/GEOSgcm/v11.6.0/install`.
 
 ## Essential data for Swell
 
