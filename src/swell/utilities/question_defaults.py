@@ -1005,6 +1005,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class npx(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "npx"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the number of grid points in the x-direction on each cube face?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class npy(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "npy"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the number of grid points in the y-direction on each cube face?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class number_of_iterations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "number_of_iterations"
