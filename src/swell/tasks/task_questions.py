@@ -463,6 +463,19 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    IngestBackground = QuestionList(
+        list_name="IngestBackground",
+        questions=[
+            qd.dry_run(),
+            qd.backgrounds_to_ingest(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            qd.window_offset(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     JediLogComparison = QuestionList(
         list_name="JediComparisonLog",
         questions=[

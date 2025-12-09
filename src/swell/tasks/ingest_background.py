@@ -5,9 +5,9 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
-Task for R2D2 v3 Observation Ingestion
+Task for R2D2 v3 Background/Forecast Ingestion
 
-Ingests model observations to R2D2.
+Ingests model backgrounds and forecasts to R2D2.
 """
 
 import glob
@@ -21,24 +21,23 @@ from swell.swell_path import get_swell_path
 import r2d2
 
 
-class IngestObs(taskBase):
+class IngestBackground(taskBase):
     """
-    Task to ingest observations to R2D2 v3 using modular YAML configuration files.
+    Task to ingest backgrounds/forecasts to R2D2 v3 using modular YAML configuration files.
     
-    - 'obs_to_ingest' list comes from experiment.yaml (e.g., ['geos_restart', 'mom6_forecast'])
-    - Separate YAML file for each observation type defining retrieval method and metadata.
+    - 'backgrounds_to_ingest' list comes from experiment.yaml (e.g., ['geos_restart', 'mom6_forecast'])
+    - Separate YAML file for each background type defining retrieval method and metadata.
     """
 
     def execute(self) -> None:
         
-        # Get list of observations to ingest (strings)
-        obs_to_ingest = self.config.obs_to_ingest([])
+        # Get list of backgrounds to ingest (strings)
+        backgrounds_to_ingest = self.config.backgrounds_to_ingest([])
         
         # Get window parameters
         window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
-        window_length = self.config.window_length()
         
-        # Check for dry-run mode (default True for safety)
+        # Check for dry-run mode
         dry_run = self.config.dry_run(True)
         
         if dry_run:
@@ -57,34 +56,28 @@ class IngestObs(taskBase):
         total_failed = 0
         
         # Iterate over the simple list of names
-        for obs_name in obs_to_ingest:
-            self.logger.info(f"Preparing to ingest: {obs_name}")
+        for bg_name in backgrounds_to_ingest:
+            self.logger.info(f"Preparing to ingest: {bg_name}")
             
             # Locate the configuration file
-            # Look in the JEDI config directory and get obs yaml file from obs_name (e.g. adt_cryosat2n.yaml)
             config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
-                                      'geos_marine', 'ingest_observations', f'{obs_name}.yaml')
+                                      'geos_marine', 'ingest_backgrounds', f'{bg_name}.yaml')
             
             if not os.path.exists(config_path):
-                self.logger.error(f"Config file not found for {obs_name} at {config_path}")
+                self.logger.error(f"Config file not found for {bg_name} at {config_path}")
                 total_failed += 1
                 continue
                 
             # Load the YAML config
             with open(config_path, 'r') as f:
-                obs_config = yaml.safe_load(f)
+                bg_config = yaml.safe_load(f)
                 
-            # 3. Perform Ingestion
-            ingested, failed = self.process_obs_config(obs_config, obs_name, window_begin, window_length, dry_run)
+            # Ingestion
+            ingested, failed = self.process_background_config(bg_config, bg_name, window_begin, dry_run)
             
             total_ingested += len(ingested)
             total_failed += len(failed)
 
-        # ioda-obs-2024060118-adt_cryosat2n.nc
-        # TODO: Each task and timestep needs to create the following structure
-        # /discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/2023/07/ioda-obs-2023070218-adt_sentinel6a.nc
-        
-        # Summary
         self.logger.info("="*60)
         self.logger.info("INGESTION SUMMARY")
         self.logger.info("="*60)
@@ -95,28 +88,30 @@ class IngestObs(taskBase):
             self.logger.info(f"Successfully ingested: {total_ingested} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def process_obs_config(self, config, obs_name, window_start, window_length, dry_run):
-        """Process a single observation configuration file."""
+    def process_background_config(self, config, bg_name, date, dry_run):
+        """Process a single background configuration file."""
         ingested = []
         failed = []
         
         # Extract metadata
-        obs_metadata = config.get('obs_to_ingest', {})
-        provider = obs_metadata.get('provider')
-        retrieval_method = config.get('retrieval_method') # cp or s3
+        bg_metadata = config.get('bg_to_ingest', {})
+        model = bg_metadata.get('model')
+        experiment = bg_metadata.get('experiment')
+        resolution = bg_metadata.get('resolution')
+        file_type = bg_metadata.get('file_type')
+        step = bg_metadata.get('step', 'P0H')  # Default to analysis time
         
-        # Determine source pattern based on method
-        source_pattern = config.get(f'{retrieval_method}_source') # cp_source or s3_source
+        retrieval_method = config.get('retrieval_method')
+        source_pattern = config.get(f'{retrieval_method}_source')
         
         if not source_pattern:
-            self.logger.error(f"No source pattern found for method '{retrieval_method}' in {obs_name}.yaml")
-            return ingested, [(obs_name, "Missing source pattern")]
+            self.logger.error(f"No source pattern found for method '{retrieval_method}' in {bg_name}.yaml")
+            return ingested, [(bg_name, "Missing source pattern")]
         
-        # TODO: This will need to be handled different for s3_source and cp_source
-        # Handle simple YYYY/MM replacements
-        dt = datetime.strptime(window_start, "%Y-%m-%dT%H:%M:%SZ")
+        # Handle datetime replacements
+        dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
         
-        # Basic support for Skylab-style placeholders
+        # Support Skylab-style placeholders
         final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
                                       .replace('YYYY', '%Y') \
                                       .replace('MM', '%m') \
@@ -130,20 +125,22 @@ class IngestObs(taskBase):
             files_found = glob.glob(expected_file)
             if not files_found:
                 self.logger.warning(f"No files matched pattern: {expected_file}")
-                return ingested, [(obs_name, "No files found")]
-            target_file = files_found[0] # Take first match
+                return ingested, [(bg_name, "No files found")]
+            target_file = files_found[0]
         else:
             target_file = expected_file
 
         # Check existence
         if not os.path.exists(target_file):
             self.logger.warning(f"File not found: {target_file}")
-            return ingested, [(obs_name, "File not found")]
+            return ingested, [(bg_name, "File not found")]
 
         if dry_run:
             self.logger.info(f"  [DRY RUN] Would ingest:")
-            self.logger.info(f"    Obs Name: {obs_name}")
-            self.logger.info(f"    Provider: {provider}")
+            self.logger.info(f"    Name: {bg_name}")
+            self.logger.info(f"    Model: {model}")
+            self.logger.info(f"    Experiment: {experiment}")
+            self.logger.info(f"    Resolution: {resolution}")
             self.logger.info(f"    Method: {retrieval_method}")
             self.logger.info(f"    Source: {target_file}")
             ingested.append(target_file)
@@ -151,19 +148,22 @@ class IngestObs(taskBase):
             try:
                 # Store to R2D2
                 r2d2.store(
-                    item='observation',
-                    provider=provider,
-                    observation_type=obs_name,
-                    file_extension=os.path.splitext(target_file)[1][1:], # 'nc' from '.nc'
-                    window_start=window_start,
-                    window_length=window_length,
+                    item='forecast',
+                    model=model,
+                    experiment=experiment,
+                    file_extension=os.path.splitext(target_file)[1][1:],
+                    resolution=resolution,
+                    step=step,
+                    date=date,
+                    file_type=file_type,
                     source_file=target_file
                 )
 
                 ingested.append(target_file)
-                self.logger.info(f"Successfully ingested {obs_name}")
+                self.logger.info(f"Successfully ingested {bg_name}")
             except Exception as e:
-                self.logger.error(f"Failed to ingest {obs_name}: {e}")
-                failed.append((obs_name, str(e)))
+                self.logger.error(f"Failed to ingest {bg_name}: {e}")
+                failed.append((bg_name, str(e)))
                 
         return ingested, failed
+

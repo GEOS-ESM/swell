@@ -1,8 +1,7 @@
 """
-Suite for testing R2D2 observation ingestion.
+Suite for R2D2 background/forecast ingestion.
 
-Usage: swell create ingest_obs_marine
-
+Usage: swell create ingest_background_marine
 """
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
@@ -13,18 +12,17 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    ingest_obs = QuestionList(
-        list_name="ingest_obs",
+    ingest_background = QuestionList(
+        list_name="ingest_background",
         questions=[
             sq.common,
         ],
     )
-    # This name should be unique and not conflict with other suites
-    # (otherwise it might get overwritten)
-    ingest_obs_marine = QuestionList(
-        list_name="ingest_obs_marine",
+
+    ingest_background_marine = QuestionList(
+        list_name="ingest_background_marine",
         questions=[
-            ingest_obs,
+            ingest_background,
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
             qd.final_cycle_point("2021-07-03T06:00:00Z"),
@@ -35,7 +33,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_length("PT6H"),
             qd.window_offset("PT3H"),
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
-            qd.obs_to_ingest(['adt_cryosat2n']),  # List of obs names
+            qd.backgrounds_to_ingest(['geos_restart']),  # List of background names
             qd.dry_run(True),
         ]
     )
+

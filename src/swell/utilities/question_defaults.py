@@ -784,6 +784,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class backgrounds_to_ingest(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "backgrounds_to_ingest"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which backgrounds/forecasts do you want to ingest to R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ioda_locations_not_in_r2d2(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "ioda_locations_not_in_r2d2"
