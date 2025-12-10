@@ -40,6 +40,8 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.npx_proc(),
             qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
         ]
@@ -402,7 +404,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.cycling_varbc(),
             qd.obs_experiment(),
-            qd.obs_provider(),
             qd.observing_system_records_path(),
             qd.r2d2_local_path(),
             qd.window_length(),

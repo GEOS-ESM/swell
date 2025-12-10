@@ -94,12 +94,6 @@ number_of_iterations:
 obs_experiment:
   default_value: s2s_v1
 
-obs_provider:
-  default_value: odas
-  options:
-  - gdas_marine
-  - odas
-
 observations:
   default_value:
   - adt_sentinel3a
