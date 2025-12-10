@@ -182,6 +182,18 @@ class GetObservations(taskBase):
                     self.logger.info(f"Successfully fetched {target_file}")
                 except Exception as e:
                     self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+                    self.logger.info("Fetch empty observation instead.")
+
+                    # fetch empty obs
+                    r2d2.fetch(
+                        item='observation',
+                        provider='empty_provider',
+                        observation_type='empty_type',
+                        file_extension='nc4',
+                        window_start='19700101T030000Z',
+                        window_length='PT6H',
+                        target_file=target_file,
+                    )
 
             # Check how many of the combine_input_files exist in the cycle directory.
             # If all of them are missing proceed without creating an observation input
