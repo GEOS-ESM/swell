@@ -40,7 +40,7 @@ class JediLogComparison(taskBase):
 
         tolerances = {}
         for number in range(number_of_iterations):
-            tolerances[f'Residual norm ( {number})'] = 0.01
+            tolerances[f'Residual norm ({number:>2})'] = 1e-5
 
         # Construct dictionary for all results from log file
         all_results = {}
@@ -150,15 +150,16 @@ class JediLogComparison(taskBase):
             out_string += '\n'
 
             for key in tolerances.keys():
-                val_dict = cycle_results[key]
+                if key in cycle_results:
+                    val_dict = cycle_results[key]
 
-                out_string += key + ' ' * (widths['key'] - len(key))
-                out_string += val_dict['exp0'] + ' ' * (widths['exp0'] - len(val_dict['exp0']))
-                out_string += val_dict['exp1'] + ' ' * (widths['exp1'] - len(val_dict['exp1']))
-                out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
-                out_string += str(val_dict['pass']) + ' ' * (
-                        widths['pass'] - len(str(val_dict['pass'])))
-                out_string += '\n'
+                    out_string += key + ' ' * (widths['key'] - len(key))
+                    out_string += val_dict['exp0'] + ' ' * (widths['exp0'] - len(val_dict['exp0']))
+                    out_string += val_dict['exp1'] + ' ' * (widths['exp1'] - len(val_dict['exp1']))
+                    out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
+                    out_string += str(val_dict['pass']) + ' ' * (
+                            widths['pass'] - len(str(val_dict['pass'])))
+                    out_string += '\n'
 
             out_string += '\n'
 
