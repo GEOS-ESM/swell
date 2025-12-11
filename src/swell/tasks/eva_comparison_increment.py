@@ -31,9 +31,9 @@ class EvaComparisonIncrement(taskBase):
             config_dict = yaml.safe_load(f)
 
         window_type = config_dict['models'][self.get_model()]['window_type']
-        window_offset = config_dict['models'][self.get_model()]['window_offset']
+        window_length = config_dict['models'][self.get_model()]['window_length']
 
-        return window_type, window_offset
+        return window_type, window_length
 
     def execute(self) -> None:
 
@@ -51,7 +51,7 @@ class EvaComparisonIncrement(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
-        window_type, window_offset = self.window_info_from_config(experiment_path_1)
+        window_type, window_length = self.window_info_from_config(experiment_path_1)
 
         # Create the cycle dir for this experiment
         cycle_dir = self.cycle_dir()
@@ -61,7 +61,7 @@ class EvaComparisonIncrement(taskBase):
         da_window_params = DataAssimilationWindowParams(self.logger, cycle_time_dto.strftime(
             '%Y-%m-%dT%H:%M:%SZ'))
 
-        window_begin_dto = da_window_params.window_begin(window_offset, dto=True)
+        window_begin_dto = da_window_params.window_begin(window_length, dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Info to task log
