@@ -41,9 +41,6 @@ class IngestObs(taskBase):
         # Get window parameters
         window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
         window_length = self.config.window_length()
-
-        # Get model component (e.g. geos_marine)
-        model_component = self.config.model_component()
         
         # Check for dry-run mode (default True for safety)
         dry_run = self.config.dry_run(True)
@@ -70,7 +67,7 @@ class IngestObs(taskBase):
             # Locate the configuration file
             # Look in the JEDI config directory and get obs yaml file from obs_name (e.g. adt_cryosat2n.yaml)
             config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
-                                      model_component, 'ingest_observations', f'{obs_name}.yaml')
+                                      'geos_marine', 'ingest_observations', f'{obs_name}.yaml')
             
             if not os.path.exists(config_path):
                 self.logger.error(f"Config file not found for {obs_name} at {config_path}")
@@ -86,6 +83,8 @@ class IngestObs(taskBase):
             
             total_ingested += len(ingested)
             total_failed += len(failed)
+            if len(ingested) == 0 and len(failed) == 0:
+                total_skipped += 1
 
         # Summary
         self.logger.info("="*60)
@@ -96,16 +95,44 @@ class IngestObs(taskBase):
             self.logger.info(f"Would fail: {total_failed} files")
         else:
             self.logger.info(f"Successfully ingested: {total_ingested} files")
+            self.logger.info(f"Skipped (already exist): {total_skipped} files")
             self.logger.info(f"Failed: {total_failed} files")
+
+    def check_already_in_r2d2(self, obs_name, provider, window_start, window_length):
+        """Check if observation already exists in R2D2."""
+        try:
+            # Query R2D2 to see if this observation already exists
+            results = r2d2.fetch(
+                item='observation',
+                provider=provider,
+                observation_type=obs_name,
+                window_start=window_start,
+                window_length=window_length,
+                type='fetch'  # Just check, don't download
+            )
+            # If fetch succeeds, the observation exists
+            return True
+        except Exception as e:
+            # If fetch fails (e.g., "not found"), it doesn't exist
+            self.logger.debug(f"Observation not found in R2D2: {e}")
+            return False
+
 
     def process_obs_config(self, config, obs_name, window_start, window_length, dry_run):
         """Process a single observation configuration file."""
         ingested = []
         failed = []
-        
+        total_skipped = 0
+
         # Extract metadata
         # obs_metadata = config.get('obs_to_ingest', {})
         provider = get_provider_for_observation(obs_name, self.ioda_names_list, self.logger)
+
+        # Check if already in R2D2
+        if self.check_already_in_r2d2(obs_name, provider, window_start, window_length):
+            self.logger.info(f"  SKIPPING: {obs_name} already exists in R2D2 for {window_start}")
+            return [], []  # Already ingested, skip
+
         retrieval_method = config.get('retrieval_method') # cp or s3
         
         # Determine source pattern based on method
