@@ -1,0 +1,94 @@
+      # Observation Pre Filters (QC)
+      # ----------------------------
+      obs pre filters:
+      # Step 1: Create Derived Variables
+      # Assign channel wavenumbers in m-1
+      - filter: Variable Assignment
+        assignments:
+        - name: MetaData/sensorCentralWavenumber
+          type: float
+          channels: *iasi_metop-c_channels
+          function:
+            name: ObsFunction/LinearCombination
+            options:
+              variables:
+              - name: ObsValue/spectralRadiance
+                channels: *iasi_metop-c_channels
+              coefs: [25.0]
+              intercept: 64475.0
+              use channel numbers: true
+
+    ### Do not need this in the present setting
+    ### Scaled radiance to spectral radiance
+    ### creates a spectral radiance in (W / (m^2.sr.m^-1))
+#     - filter: Variable Transforms
+#       Transform: SatRadianceFromScaledRadiance
+#       transform from:
+#         name: ObsValue/spectralRadiance
+#         channels: *iasi_metop-c_channels
+#       number of scale factors: 1
+#       scale factor variable: MetaData/channelScaleFactor
+#       scale factor start: MetaData/sensorChannelStart
+#       scale factor end: MetaData/sensorChannelEnd
+#       get scaling factors from multiple arrays: true
+
+     # Step 2: Transform radiance to brightness temperature
+      - filter: Variable Transforms
+        Transform: SatBrightnessTempFromRad
+        transform from:
+          name: ObsValue/spectralRadiance
+          channels: *iasi_metop-c_channels
+        spectral variable:
+          name: MetaData/sensorCentralWavenumber
+          channels: *iasi_metop-c_channels
+        radiance units: wavenumber
+        planck1: 1.191042953e-16
+        planck2: 1.4387774e-2
+
+      # Step 3: Assign Observation Error
+      - filter: Perform Action
+        filter variables:
+        - name: brightnessTemperature
+          channels: *iasi_metop-c_channels
+        action:
+          name: assign error
+          error parameter vector: *iasi_metop-c_obserr
+     
+      # Step 4: Remove Observations from the Edge of the Scan
+      - filter: Domain Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: *iasi_metop-c_channels
+        where:
+        - variable:
+            name: MetaData/sensorScanPosition
+          is_in: 5-56
+        action:
+          name: reduce obs space
+     
+      # Step 5: Create cloudFree variable (for thinning) 
+      - filter: Variable Assignment
+        assignments:
+        - name: DerivedMetaData/fractionOfClearPixelsInFOV
+          type: float
+          function:
+            name: ObsFunction/Arithmetic
+            options:
+              variables:
+              - name: MetaData/fractionOfClearPixelsInFOV
+              coefs: [1.0]
+     
+      # Step 6: Data Thinning 
+      - filter: Gaussian Thinning
+        filter variables:
+        - name: brightnessTemperature
+          channels: *iasi_metop-c_channels
+#       GSI value leads to consirably more obs than GSI uses!
+#       horizontal_mesh: 145
+        horizontal_mesh: 175
+        use_reduced_horizontal_grid: true
+        distance_norm: geodesic
+        priority_variable: DerivedMetaData/fractionOfClearPixelsInFOV
+        action:
+          name: reduce obs space
+
