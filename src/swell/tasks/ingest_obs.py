@@ -17,6 +17,7 @@ from datetime import datetime
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 from swell.swell_path import get_swell_path
 import r2d2
 
@@ -33,6 +34,9 @@ class IngestObs(taskBase):
         
         # Get list of observations to ingest (strings)
         obs_to_ingest = self.config.obs_to_ingest([])
+
+        # Read observation ioda names (for provider lookup)
+        self.ioda_names_list = get_ioda_names_list()
         
         # Get window parameters
         window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
@@ -101,8 +105,8 @@ class IngestObs(taskBase):
         failed = []
         
         # Extract metadata
-        obs_metadata = config.get('obs_to_ingest', {})
-        provider = obs_metadata.get('provider')
+        # obs_metadata = config.get('obs_to_ingest', {})
+        provider = get_provider_for_observation(obs_name, self.ioda_names_list, self.logger)
         retrieval_method = config.get('retrieval_method') # cp or s3
         
         # Determine source pattern based on method
