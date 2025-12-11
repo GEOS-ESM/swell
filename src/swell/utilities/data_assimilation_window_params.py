@@ -35,9 +35,39 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_window_begin_dto__(self, window_offset: str) -> datetime.datetime:
+    def __get_window_offset_dur__(self, window_length: str) -> datetime.datetime:
+        # Calculate window offset from window length
+        window_offset_dur = isodate.parse_duration(window_length) / 2
 
-        window_offset_dur = isodate.parse_duration(window_offset)
+        return window_offset_dur
+
+    # ----------------------------------------------------------------------------------------------
+
+    def window_offset(self, window_length: str, dto: bool = False) -> str:
+        window_offset_dur = self.__get_window_offset_dur__(window_length)
+
+        if dto:
+            return window_offset_dur
+        else:
+            return isodate.duration_isoformat(window_offset_dur)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def analysis_forecast_window_offset(self, window_length, dto: bool = False) -> str:
+        window_offset_dur = self.__get_window_offset_dur__(window_length)
+
+        analysis_forecast_window_offset = -1 * window_offset_dur
+
+        if dto:
+            return analysis_forecast_window_offset
+        else:
+            return isodate.duration_isoformat(analysis_forecast_window_offset)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def __get_window_begin_dto__(self, window_length: str) -> datetime.datetime:
+        window_offset_dur = self.__get_window_offset_dur__(window_length)
+
         return self.__current_cycle_dto__ - window_offset_dur
 
     # ----------------------------------------------------------------------------------------------
@@ -45,12 +75,12 @@ class DataAssimilationWindowParams():
     def __get_local_background_time__(
         self,
         window_type: str,
-        window_offset: str
+        window_length: str
     ) -> datetime.datetime:
 
         # Background time for the window
         if window_type == '4D':
-            local_background_time = self.__get_window_begin_dto__(window_offset)
+            local_background_time = self.__get_window_begin_dto__(window_length)
         elif window_type == '3D':
             local_background_time = self.__current_cycle_dto__
 
@@ -58,11 +88,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __get_analysis_time__(
-        self,
-        window_type: str,
-        suite_name: str
-    ) -> datetime.datetime:
+    def __get_analysis_time__(self) -> datetime.datetime:
 
         # Default, 3D or 3D-FGAT
         analysis_time_dto = self.__current_cycle_dto__
@@ -75,21 +101,21 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time(self, window_type: str, suite_name: str) -> str:
+    def analysis_time(self) -> str:
 
-        analysis_time_dto = self.__get_analysis_time__(window_type, suite_name)
+        analysis_time_dto = self.__get_analysis_time__()
         return analysis_time_dto.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def analysis_time_iso(self, window_type: str, suite_name: str) -> str:
+    def analysis_time_iso(self) -> str:
 
-        analysis_time_dto = self.__get_analysis_time__(window_type, suite_name)
+        analysis_time_dto = self.__get_analysis_time__()
         return analysis_time_dto.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def background_time(self, window_offset: str, background_time_offset: str) -> str:
+    def background_time(self, background_time_offset: str) -> str:
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
         background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
@@ -97,7 +123,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def background_time_iso(self, window_offset: str, background_time_offset: str) -> str:
+    def background_time_iso(self, background_time_offset: str) -> str:
 
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
         background_time_dto = self.__current_cycle_dto__ - background_time_offset_dur
@@ -105,17 +131,20 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time_iso(self, window_offset: str, window_type: str) -> str:
+    def local_background_time_iso(self, window_length: str, window_type: str) -> str:
 
-        local_background_time = self.__get_local_background_time__(window_type, window_offset)
+        local_background_time = self.__get_local_background_time__(window_type, window_length)
         return local_background_time.strftime(datetime_formats['iso_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def local_background_time(self, window_offset, window_type, dto=False
+    def local_background_time(self,
+                              window_length,
+                              window_type,
+                              dto=False
                               ) -> Union[str, Tuple[str, datetime.datetime]]:
 
-        local_background_time = self.__get_local_background_time__(window_type, window_offset)
+        local_background_time = self.__get_local_background_time__(window_type, window_length)
 
         # Return datetime object if asked
         if dto:
@@ -126,9 +155,9 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_offset: str, dto: bool = False) -> Union[str, datetime.datetime]:
+    def window_begin(self, window_length: str, dto: bool = False) -> Union[str, datetime.datetime]:
 
-        window_begin_dto = self.__get_window_begin_dto__(window_offset)
+        window_begin_dto = self.__get_window_begin_dto__(window_length)
 
         # Return datetime object if asked
         if dto:
@@ -138,9 +167,9 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin_iso(self, window_offset: str, dto: bool = False):
+    def window_begin_iso(self, window_length: str, dto: bool = False):
 
-        window_begin_dto = self.__get_window_begin_dto__(window_offset)
+        window_begin_dto = self.__get_window_begin_dto__(window_length)
 
         # Return datetime object if asked
         if dto:
@@ -150,13 +179,13 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_end_iso(self, window_offset: str, window_length: str, dto: bool = False) -> str:
+    def window_end_iso(self, window_length: str, dto: bool = False) -> str:
 
         # Compute window length duration
         window_length_dur = isodate.parse_duration(window_length)
 
         # Get window beginning time
-        window_begin_dto = self.__get_window_begin_dto__(window_offset)
+        window_begin_dto = self.__get_window_begin_dto__(window_length)
 
         # Window end time
         window_end_dto = window_begin_dto + window_length_dur

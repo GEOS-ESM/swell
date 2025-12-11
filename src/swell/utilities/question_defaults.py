@@ -204,19 +204,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class analysis_forecast_window_offset(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "analysis_forecast_window_offset"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "What is the duration from the middle of the window when forecasts start?"
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class analysis_variables(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "analysis_variables"
@@ -1060,6 +1047,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class npx(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "npx"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the number of grid points in the x-direction on each cube face?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class npy(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "npy"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the number of grid points in the y-direction on each cube face?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class number_of_iterations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "number_of_iterations"
@@ -1082,19 +1095,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the database providing the observations?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class obs_provider(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "obs_provider"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which group(s) provide the observations?"
-        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1423,19 +1423,6 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the duration for the data assimilation window?"
-        widget_type: WType = WType.ISO_DURATION
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class window_offset(TaskQuestion):
-        question_name: str = "window_offset"
-        default_value: str = "defer_to_model"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "What is the duration between the middle of the window and the beginning?"
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------

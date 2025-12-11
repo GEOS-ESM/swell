@@ -25,7 +25,6 @@ class GetGeovals(taskBase):
         # ------------
         geovals_experiment = self.config.geovals_experiment()
         geovals_provider = self.config.geovals_provider()
-        window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         window_length = self.config.window_length()
@@ -33,9 +32,8 @@ class GetGeovals(taskBase):
         r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window begin time
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
+        window_begin = self.da_window_params.window_begin(window_length)
+        background_time = self.da_window_params.background_time(background_time_offset)
 
         # Set R2D2 config file
         # --------------------

@@ -46,7 +46,7 @@ class EvaIncrement(taskBase):
 
         # Create time strings for eva_override directory
         cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
-        window_begin_dto = self.da_window_params.window_begin(self.config.window_offset(),
+        window_begin_dto = self.da_window_params.window_begin(self.config.window_length(),
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 

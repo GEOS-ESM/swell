@@ -8,7 +8,6 @@
 
 
 import os
-import sys
 import stat
 import subprocess
 from typing import Any, Optional, IO, Union
@@ -90,25 +89,6 @@ def run_subprocess(
     except subprocess.CalledProcessError as e:
         msg = (f"Subprocess with command '{command}' failed, throwing error '{e}'")
         logger.abort(msg)
-
-# --------------------------------------------------------------------------------------------------
-
-
-def run_subprocess_simple_output(
-    logger: Logger,
-    command: Union[list[str], str],
-    stdout: Union[int, IO[Any], None] = None,
-    stderr: Union[int, IO[Any], None] = None,
-    **kwargs
-) -> None:
-
-    # Run subprocess
-    try:
-        result = subprocess.run(command, check=True, text=True, capture_output=True)
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(e.stderr)
-        sys.exit(e.stderr)
 
 # --------------------------------------------------------------------------------------------------
 
