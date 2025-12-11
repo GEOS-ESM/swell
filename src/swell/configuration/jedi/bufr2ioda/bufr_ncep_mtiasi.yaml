@@ -62,6 +62,18 @@ observations:
             query: "*/SELV"
             type: float 
 
+          sensorChannelStart1:
+            query: "*/STCH"
+#           mnemonic: STCH
+
+          sensorChannelEnd1:
+            query: "*/ENCH"
+#           mnemonic: ENCH
+
+          channelScaleFactor1:
+            query: "*/CHSF"
+#           mnemonic: CHSF
+
           sensorViewAngle:
             sensorScanAngle:
               fieldOfViewNumber: "*/FOVN"
@@ -233,9 +245,27 @@ observations:
           units: "1"
           range: [0, 1]
 
+        - name: "MetaData/sensorChannelStart1"
+          source: variables/sensorChannelStart1
+          dimensions: ["ChannelBlock"]
+          longName: "Starting channel number"
+          units: ""
+
+        - name: "MetaData/sensorChannelEnd1"
+          source: variables/sensorChannelEnd1
+          dimensions: ["ChannelBlock"]
+          longName: "Ending channel number"
+          units: ""
+
+        - name: "MetaData/channelScaleFactor1"
+          source: variables/channelScaleFactor1
+          dimensions: ["ChannelBlock"]
+          longName: "Channel scale factor"
+          units: ""
+
 #       The unit from BUFR is W m-2 sr-1 m -- this is radiance per wavenumber
-#       - name: "ObsValue/spectralRadiance"
-        - name: "ObsValue/radiance"
+#       - name: "ObsValue/radiance"
+        - name: "ObsValue/spectralRadiance"
           source: variables/spectralRadiance
           longName: "IASI Spectral Radiance"
           units: "W m-2 sr-1"

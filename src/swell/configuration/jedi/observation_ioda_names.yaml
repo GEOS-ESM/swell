@@ -88,10 +88,10 @@ ioda instrument names:
     inst type: radiance
   - ioda name: iasi_metop-b
     full name: IASI (METOP-B)
-    inst type: radiance
+    inst type: spectralRadiance
   - ioda name: iasi_metop-c
     full name: IASI (METOP-C)
-    inst type: radiance
+    inst type: spectralRadiance
   - ioda name: mhs_metop-a
     full name: MHS (METOP-A)
     inst type: radiance
