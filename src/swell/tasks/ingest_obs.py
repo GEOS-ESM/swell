@@ -41,6 +41,9 @@ class IngestObs(taskBase):
         # Get window parameters
         window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
         window_length = self.config.window_length()
+
+        # Get model component (e.g. geos_marine)
+        model_component = self.config.model_component()
         
         # Check for dry-run mode (default True for safety)
         dry_run = self.config.dry_run(True)
@@ -67,7 +70,7 @@ class IngestObs(taskBase):
             # Locate the configuration file
             # Look in the JEDI config directory and get obs yaml file from obs_name (e.g. adt_cryosat2n.yaml)
             config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
-                                      'geos_marine', 'ingest_observations', f'{obs_name}.yaml')
+                                      model_component, 'ingest_observations', f'{obs_name}.yaml')
             
             if not os.path.exists(config_path):
                 self.logger.error(f"Config file not found for {obs_name} at {config_path}")
@@ -84,10 +87,6 @@ class IngestObs(taskBase):
             total_ingested += len(ingested)
             total_failed += len(failed)
 
-        # ioda-obs-2024060118-adt_cryosat2n.nc
-        # TODO: Each task and timestep needs to create the following structure
-        # /discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/2023/07/ioda-obs-2023070218-adt_sentinel6a.nc
-        
         # Summary
         self.logger.info("="*60)
         self.logger.info("INGESTION SUMMARY")
