@@ -39,8 +39,9 @@ class IngestObs(taskBase):
         self.ioda_names_list = get_ioda_names_list()
         
         # Get window parameters
-        window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
         window_length = self.config.window_length()
+        # window_begin = self.da_window_params.window_begin_iso(window_length)
+        window_begin = self.cycle_time()
         
         # Check for dry-run mode (default True for safety)
         dry_run = self.config.dry_run(True)

@@ -33,7 +33,7 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
         geos_marine=[
             qd.window_length("PT6H"),
-            qd.window_offset("PT3H"),
+            # qd.window_offset("PT3H"),
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
             qd.obs_to_ingest(['adt_cryosat2n']),  # List of obs names
             qd.dry_run(True),

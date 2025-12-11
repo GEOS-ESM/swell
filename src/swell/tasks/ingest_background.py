@@ -35,8 +35,8 @@ class IngestBackground(taskBase):
         backgrounds_to_ingest = self.config.backgrounds_to_ingest([])
         
         # Get window parameters
-        window_begin = self.da_window_params.window_begin_iso(self.config.window_offset())
-        
+        window_length = self.config.window_length()
+        window_begin = self.da_window_params.window_begin_iso(window_length)        
         # Check for dry-run mode
         dry_run = self.config.dry_run(True)
         
