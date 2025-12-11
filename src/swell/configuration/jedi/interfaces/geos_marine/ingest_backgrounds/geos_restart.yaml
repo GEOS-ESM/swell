@@ -1,6 +1,7 @@
-available_period:
-  time_begin: '2020-01-01T00:00:00Z'
-  time_end: '2021-12-31T23:59:59Z'
+# Data availability period (for reference only):
+# available_period:
+#   time_begin: '2020-01-01T00:00:00Z'
+#   time_end: '2021-12-31T23:59:59Z'
 
 bg_to_ingest:
   item_type: 'background'
