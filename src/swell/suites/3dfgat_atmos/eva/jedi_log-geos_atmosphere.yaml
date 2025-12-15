@@ -69,20 +69,20 @@ graphics:
     plots:
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Quadratic Cost Function'
+        add_legend: 
         layers:
         - type: LinePlot
+          label: 'jb'
           x:
             variable: JediLogTest::convergence::total_iteration
           y:
-            variable: JediLogTest::convergence::Jb
-          color: 'red'
-
-      - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Log(norm reduction)'
-        layers:
+            variable: JediLogTest::convergence::jb
+          color: 'black'
+          linestyle: '--'
         - type: LinePlot
+          label: 'jojc'
           x:
             variable: JediLogTest::convergence::total_iteration
           y:
-            variable: JediLogTest::convergence::JoJc
-          color: 'blue'
+            variable: JediLogTest::convergence::jojc
+          color: 'black'
