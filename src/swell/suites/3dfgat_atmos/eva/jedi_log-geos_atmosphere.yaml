@@ -62,3 +62,27 @@ graphics:
             variable: JediLogTest::convergence::norm_reduction_log
           color: 'blue'
           label: 'Log norm reduction'
+
+  - figure:
+      title: 'Cost Function Plot'
+      output name: '{{cycle_dir}}/eva/jedi_log/cost_function/cost_function.png'
+    plots:
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Quadratic Cost Function'
+        layers:
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::Jb
+          color: 'red'
+
+      - add_xlabel: 'Total inner iteration number'
+        add_ylabel: 'Log(norm reduction)'
+        layers:
+        - type: LinePlot
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::JoJc
+          color: 'blue'
