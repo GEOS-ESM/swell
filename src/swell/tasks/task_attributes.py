@@ -30,6 +30,8 @@ np_proc_resolution = QuestionList(
     questions=[
         qd.npx_proc(),
         qd.npy_proc(),
+        qd.npx(),
+        qd.npy(),
         qd.horizontal_resolution(),
         qd.vertical_resolution()
     ]
@@ -41,7 +43,6 @@ window_questions = QuestionList(
     list_name="window_questions",
     questions=[
         qd.window_length(),
-        qd.window_offset(),
         qd.window_type()
     ]
 )
@@ -199,7 +200,7 @@ class TaskAttributes():
             self.is_model = True
             self.question_list = QuestionList([
                 qd.marine_models(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.window_type()
             ])
 
@@ -218,7 +219,7 @@ class TaskAttributes():
             self.is_model = True
             self.question_list = QuestionList([
                 qd.marine_models(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.window_type()
             ])
 
@@ -234,7 +235,7 @@ class TaskAttributes():
                 background_crtm_obs,
                 qd.marine_models(),
                 qd.observing_system_records_path(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.marine_models(),
             ])
 
@@ -249,7 +250,6 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 background_crtm_obs,
                 qd.window_length(),
-                qd.window_offset(),
                 qd.ncdiag_experiments(),
                 qd.marine_models(),
             ])
@@ -272,7 +272,7 @@ class TaskAttributes():
             self.is_model = True
             self.question_list = QuestionList([
                 window_questions,
-                qd.analysis_forecast_window_offset(),
+                qd.window_length(),
                 qd.background_experiment(),
                 qd.background_frequency(),
                 qd.horizontal_resolution(),
@@ -345,7 +345,6 @@ class TaskAttributes():
                 qd.geovals_provider(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-                qd.window_offset()
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -368,7 +367,7 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 background_crtm_obs,
                 qd.observing_system_records_path(),
-                qd.window_offset()
+                qd.window_length()
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -391,7 +390,7 @@ class TaskAttributes():
                 qd.observations(),
                 qd.produce_geovals(),
                 qd.single_observations(),
-                qd.window_offset()
+                qd.window_length()
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -406,7 +405,6 @@ class TaskAttributes():
                 qd.marine_models(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-                qd.window_offset(),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -429,11 +427,9 @@ class TaskAttributes():
                 background_crtm_obs,
                 qd.cycling_varbc(),
                 qd.obs_experiment(),
-                qd.obs_provider(),
                 qd.observing_system_records_path(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-                qd.window_offset(),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -472,7 +468,7 @@ class TaskAttributes():
                 qd.number_of_iterations(),
                 qd.observing_system_records_path(),
                 qd.total_processors(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.window_type()
             ])
 
@@ -487,7 +483,7 @@ class TaskAttributes():
                 qd.background_error_model(),
                 qd.horizontal_resolution(),
                 qd.vertical_resolution(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.window_type()
             ])
 
@@ -522,7 +518,6 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.question_list = QuestionList([
-                qd.analysis_forecast_window_offset(),
                 qd.mom6_iau(),
                 qd.window_length()
             ])
@@ -556,10 +551,10 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.question_list = QuestionList([
-                qd.analysis_forecast_window_offset(),
                 qd.analysis_variables(),
                 qd.mom6_iau(),
-                qd.total_processors()
+                qd.total_processors(),
+                qd.window_length(),
             ])
 
     # --------------------------------------------------------------------------------------------------
@@ -720,7 +715,6 @@ class TaskAttributes():
                 qd.generate_yaml_and_exit(),
                 qd.single_observations(),
                 qd.window_length(),
-                qd.window_offset(),
                 qd.comparison_log_type('ufo_tests'),
             ])
 
@@ -739,7 +733,7 @@ class TaskAttributes():
                 qd.marine_models(),
                 qd.observations(),
                 qd.total_processors(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.window_type(),
                 qd.comparison_log_type('convert_state_soca2cice'),
             ])
@@ -767,7 +761,7 @@ class TaskAttributes():
             self.question_list = QuestionList([
                 background_crtm_obs,
                 qd.r2d2_local_path(),
-                qd.window_offset(),
+                qd.window_length(),
                 qd.marine_models()
             ])
 
@@ -862,4 +856,4 @@ class TaskAttributes():
     def get(cls, name: str) -> Task:
         return getattr(cls, name)
 
-# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------

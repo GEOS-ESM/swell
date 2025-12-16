@@ -51,7 +51,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sea_ice_snow_thickness"
             ]),
             qd.window_length("PT6H"),
-            qd.window_offset("PT3H"),
             qd.window_type("4D"),
             qd.horizontal_resolution("72x36"),
             qd.vertical_resolution("50"),
@@ -76,9 +75,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "temp_profile_xbt"
             ]),
             qd.number_of_iterations([10]),
-            qd.obs_provider(['odas', 'gdas_marine']),
             qd.mom6_iau(True),
-            qd.analysis_forecast_window_offset("-PT3H"),
             qd.background_time_offset("PT9H"),
             qd.clean_patterns([
                 "*.txt",
