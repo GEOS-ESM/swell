@@ -45,6 +45,16 @@ class EvaComparisonJediLog(taskBase):
         experiment_path_1 = experiment_paths[0]
         experiment_path_2 = experiment_paths[1]
 
+        with open(experiment_path_1, 'r') as f:
+            experiment_dict_1 = yaml.safe_load(f)
+
+        experiment_id_1 = experiment_dict_1['experiment_id']
+
+        with open(experiment_path_2, 'r') as f:
+            experiment_dict_2 = yaml.safe_load(f)
+
+        experiment_id_2 = experiment_dict_2['experiment_id']
+
         cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
                                    self.__datetime__.string_directory(), self.get_model())
         cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
@@ -61,6 +71,9 @@ class EvaComparisonJediLog(taskBase):
         eva_override['cycle_dir'] = self.cycle_dir()
         eva_override['cycle_dir_1'] = cycle_dir_1
         eva_override['cycle_dir_2'] = cycle_dir_2
+
+        eva_override['experiment_id_1'] = experiment_id_1
+        eva_override['experiment_id_2'] = experiment_id_2
 
         eva_override['log_type'] = log_type
 

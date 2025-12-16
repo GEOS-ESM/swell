@@ -72,17 +72,18 @@ graphics:
         add_legend: 
         layers:
         - type: LinePlot
-          label: 'jb'
-          x:
-            variable: JediLogTest::convergence::total_iteration
-          y:
-            variable: JediLogTest::convergence::jb
-          color: 'black'
-          linestyle: '--'
-        - type: LinePlot
           label: 'jojc'
           x:
             variable: JediLogTest::convergence::total_iteration
           y:
             variable: JediLogTest::convergence::jojc
-          color: 'black'
+          color: 'blue'
+          markersize: 2
+        - type: LinePlot
+          label: 'jb'
+          x:
+            variable: JediLogTest::convergence::total_iteration
+          y:
+            variable: JediLogTest::convergence::jb
+          color: 'red'
+          markersize: 2
