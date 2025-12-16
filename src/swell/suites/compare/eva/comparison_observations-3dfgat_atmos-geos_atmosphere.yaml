@@ -620,7 +620,7 @@ graphics:
       channels: *channels
     figure:
       layout: [4,1]
-      figure size: [40, 10]
+      figure size: [10, 40]
       title: 'OmA vs. OmB | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_oma_vs_omb_{{instrument}}_${variable}${channel}.png'
     plots:
