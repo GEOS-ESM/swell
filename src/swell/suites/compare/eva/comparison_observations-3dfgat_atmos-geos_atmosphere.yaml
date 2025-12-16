@@ -619,8 +619,8 @@ graphics:
       variables: *variables
       channels: *channels
     figure:
-      layout: [2,1]
-      figure size: [20, 10]
+      layout: [4,1]
+      figure size: [40, 10]
       title: 'OmA vs. OmB | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}${channel}/jedi_oma_vs_omb_{{instrument}}_${variable}${channel}.png'
     plots:
@@ -675,6 +675,36 @@ graphics:
           markersize: 5
           color: 'red'
           label: 'OmA versus OmB (passed QC)'
+
+      - add_xlabel: 'OmA {{experiment_id_1}} (1)'
+        add_ylabel: 'OmA {{experiment_id_2}} (2)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment_1::oman::${variable}
+          y:
+            variable: experiment_2::oman::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
+
+      - add_xlabel: 'OmB {{experiment_id_1}} (1)'
+        add_ylabel: 'OmB {{experiment_id_2}} (2)'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: Scatter
+          x:
+            variable: experiment_1::ombg::${variable}
+          y:
+            variable: experiment_2::ombg::${variable}
+          channel: ${channel}
+          markersize: 5
+          color: 'black'
 
   # JediFinalObsError vs GsiObsFinalObsError
   - batch figure:
