@@ -36,7 +36,7 @@ class EvaObservations(Task):
         ])
 ```
 
-Attributes are set by override the `set_attributes` method in `Task`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section.
+Attributes are set by override the `set_attributes` method in `Task`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section. For the task specification above for `EvaObservations`, the runtime section will be renderend as the following:
 
 ```
 [[EvaObservations-geos_marine]]
@@ -53,7 +53,7 @@ Attributes are set by override the `set_attributes` method in `Task`. This has b
         --account = <account>
 ```
 
-This can be used to set task-specific defaults in `task_attributes.py`, rather than being set in `slurm.py`:
+This can be used to set task-specific defaults in `task_attributes.py`, rather than being set in `slurm.py`. For example, the task below defaults to slurm setting `--nodes=1`.
 
 ```python
 class RunJediConvertStateSoca2ciceExecutable(Task):

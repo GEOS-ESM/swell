@@ -169,8 +169,11 @@ def task_config_wrapper(task_name: str,
 
     logger.info(f'Writing task config under {config_file}')
 
-    # Build the modules file depending on the suite
+    # Build the modules file depending on the shell type
     shell = os.environ.get('SHELL')
+    if shell is None:
+        logger.abort('Could not ascertaine $SHELL')
+
     if shell is not None and 'bash' in shell:
         template_modules_file(logger, experiment_dict, task_path)
         modules_file = os.path.join(task_path, 'modules')
@@ -180,13 +183,7 @@ def task_config_wrapper(task_name: str,
         modules_file = os.path.join(task_path, 'modules-csh')
         shell_type = 'csh'
     else:
-        # Default to bash
-        template_modules_file(logger, experiment_dict, task_path)
-        create_modules_csh(logger, task_path)
-        logger.info('Shell type not detected, make sure you have the proper modules'
-                    ' loaded before running experiment')
-        modules_file = os.path.join(task_path, 'modules')
-        shell_type = 'bash'
+        logger.abort(f'Failed to deduce the target shell. $SHELL is currently set to {shell}')
 
     file_ext = shell_type
     if len(task_slurm_dict) > 0:

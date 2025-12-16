@@ -41,7 +41,7 @@ class taskBase(ABC):
         datetime_input: Optional[str],
         model: str,
         ensemblePacket: Optional[str],
-        task_name: str,
+        task_name: str
     ) -> None:
 
         # Create message logger
@@ -192,7 +192,7 @@ class taskBase(ABC):
                                  'should not be called if the task does not receive model.')
 
         # Check whether to send to cycle dir
-        if self.config.use_cycle_dir(True):
+        if self.config.use_cycle_dir(default_value=True):
 
             # Combine datetime string (directory format) with the model
             cycle_dir = os.path.join(self.experiment_path(), 'run',
@@ -280,7 +280,7 @@ class taskFactory():
         config: str,
         datetime: Union[str, dt, None],
         model: str,
-        ensemblePacket: Optional[str],
+        ensemblePacket: Optional[str]
     ) -> taskBase:
 
         # Load R2D2 credentials before importing any task modules
@@ -319,7 +319,7 @@ def get_tasks() -> list:
     tasks = []
     for task_file in task_files:
         base_name = os.path.basename(task_file)
-        if '__' not in base_name and base_name not in ['task_attributes.py']:
+        if '__' not in base_name and base_name != 'task_attributes.py':
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
 
     # Return list of valid task choices

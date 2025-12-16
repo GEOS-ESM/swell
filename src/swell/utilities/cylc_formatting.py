@@ -42,29 +42,6 @@ def indent_lines(string: str, level: int = 0, reset: bool = False):
 # --------------------------------------------------------------------------------------------------
 
 
-def format_section(section: Self, level: int = 0) -> str:
-    # Format a string to match cylc's section syntax
-    # format the header with the appropriate amount of enclosing brackets and indents
-
-    section_str = ''
-
-    name = section.name
-    if name is not None:
-        section_str += textwrap.indent(f'{(level+1)*"["}{name}{"]"*(level+1)}\n', INDENT*level)
-    else:
-        level -= 1
-
-    content = section.content
-    if isinstance(content, Mapping):
-        content = format_dict(content)
-
-    section_str += indent_lines(content, level+1)
-
-    return section_str
-
-# --------------------------------------------------------------------------------------------------
-
-
 class CylcSection():
     '''
     Holds the information contained in a section, including the name and contents, which can be a
@@ -78,11 +55,31 @@ class CylcSection():
 
         self.subsections = []
 
+    def format_section(self, section: Self, level: int = 0) -> str:
+        # Format a string to match cylc's section syntax
+        # format the header with the appropriate amount of enclosing brackets and indents
+
+        section_str = ''
+
+        name = section.name
+        if name is not None:
+            section_str += textwrap.indent(f'{(level+1)*"["}{name}{"]"*(level+1)}\n', INDENT*level)
+        else:
+            level -= 1
+
+        content = section.content
+        if isinstance(content, Mapping):
+            content = format_dict(content)
+
+        section_str += indent_lines(content, level+1)
+
+        return section_str
+
     def add_subsection(self, subsection: Self) -> None:
         self.subsections.append(subsection)
 
     def get_section_str(self, level: int = 0) -> str:
-        section_str = format_section(self, level)
+        section_str = self.format_section(self, level)
 
         for subsection in self.subsections:
             section_str += subsection.get_section_str(level+1)

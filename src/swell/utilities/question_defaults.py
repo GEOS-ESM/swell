@@ -9,7 +9,7 @@
 
 
 from dataclasses import dataclass
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Literal
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -1286,7 +1286,7 @@ class QuestionDefaults():
 
     @dataclass
     class task_email_parameters(TaskQuestion):
-        default_value: Union[str, dict] = "auto"
+        default_value: Union[Literal["auto"], dict] = "auto"
         question_name: str = "task_email_parameters"
         prompt: str = ("Provide a dictionary mapping tasks to cylc event statuses, or 'auto' to "
                        "automatically configure these based on the graph.")
