@@ -37,11 +37,10 @@ def check_obs(
 
         # Open file and check if number of location dimension is nonzero
         # --------------------------------------------------------------
-        dataset = nc.Dataset(filename, 'r')
-
-        for dim_name, dim in dataset.dimensions.items():
-            if dim_name == 'Location' and dim.size > 0:
-                use_observation = True
+        with nc.Dataset(filename, 'r') as dataset:
+            for dim_name, dim in dataset.dimensions.items():
+                if dim_name == 'Location' and dim.size > 0:
+                    use_observation = True
 
     if input_and_output:
         # Check if observations in output file exists
@@ -51,12 +50,12 @@ def check_obs(
 
             # Open file and check if number of location dimension is nonzero
             # --------------------------------------------------------------
-            dataset = nc.Dataset(filename, 'r')
+            with nc.Dataset(filename, 'r') as dataset:
 
-            for dim_name, dim in dataset.dimensions.items():
-                if dim_name == 'Location' and dim.size < 1:
-                    print(f'IODA {observation} output has {dim.size} location dimension(s)')
-                    use_observation = False
+                for dim_name, dim in dataset.dimensions.items():
+                    if dim_name == 'Location' and dim.size < 1:
+                        print(f'IODA {observation} output has {dim.size} location dimension(s)')
+                        use_observation = False
 
     return use_observation
 
