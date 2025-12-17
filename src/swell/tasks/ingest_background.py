@@ -15,6 +15,8 @@ import os
 import yaml
 from datetime import datetime
 
+import requests
+
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.swell_path import get_swell_path
@@ -200,12 +202,12 @@ class IngestBackground(taskBase):
                     file_type=file_type,
                     source_file=target_file
                 )
-
-                ingested.append(target_file)
-                self.logger.info(f"Successfully ingested {bg_name}")
-            except Exception as e:
+            except (ValueError, KeyError, FileNotFoundError, OSError, requests.RequestException) as e:
                 self.logger.error(f"Failed to ingest {bg_name}: {e}")
                 failed.append((bg_name, str(e)))
+            else:
+                ingested.append(target_file)
+                self.logger.info(f"Successfully ingested {bg_name}")
                 
         return ingested, failed
 

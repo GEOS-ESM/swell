@@ -15,6 +15,8 @@ import os
 import yaml
 from datetime import datetime
 
+import requests
+
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
@@ -233,11 +235,11 @@ class IngestObs(taskBase):
                     window_length=window_length,
                     source_file=target_file
                 )
-
-                ingested.append(target_file)
-                self.logger.info(f"Successfully ingested {obs_name}")
-            except Exception as e:
+            except (ValueError, KeyError, FileNotFoundError, OSError, requests.RequestException) as e:
                 self.logger.error(f"Failed to ingest {obs_name}: {e}")
                 failed.append((obs_name, str(e)))
+            else:
+                ingested.append(target_file)
+                self.logger.info(f"Successfully ingested {obs_name}")
                 
         return ingested, failed
