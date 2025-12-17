@@ -3,12 +3,10 @@
 #   time_begin: '2020-01-01T00:00:00Z'
 #   time_end: '2021-12-31T23:59:59Z'
 
-bg_to_ingest:
-  item_type: 'background'
-  model: 'geos'
-  experiment: 'c180_o1440'
-  resolution: 'C180'
-  file_type: 'restart'
+model: 'geos'
+experiment: 'c180_o1440'
+resolution: 'c180'
+file_type: 'restart'
 
 retrieval_method: 'cp'
 cp_source: '/discover/nobackup/projects/gmao/soca/data/GEOS_restarts/YYYY/MM/DD/geos.bkg.YYYYMMDDHH.nc4'

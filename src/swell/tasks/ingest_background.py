@@ -33,6 +33,10 @@ class IngestBackground(taskBase):
     the input file paths for the current DA window, and optionally stores them
     in R2D2 v3.
 
+    Each YAML file specifies R2D2 metadata (``model``, ``experiment``,
+    ``resolution``, ``file_type``, optional ``step``) and retrieval details
+    (``retrieval_method``, ``cp_source`` or ``s3_source``).
+
     The task supports a dry‑run mode that only logs which files would be
     ingested and how they would be labeled in R2D2, without calling
     ``r2d2.store``.
@@ -133,13 +137,12 @@ class IngestBackground(taskBase):
         ingested = []
         failed = []
         
-        # Extract metadata
-        bg_metadata = config.get('bg_to_ingest', {})
-        model = bg_metadata.get('model')
-        experiment = bg_metadata.get('experiment')
-        resolution = bg_metadata.get('resolution')
-        file_type = bg_metadata.get('file_type')
-        step = bg_metadata.get('step', 'P0H')  # Default to analysis time
+        # Extract metadata directly from config (flat structure)
+        model = config.get('model')
+        experiment = config.get('experiment')
+        resolution = config.get('resolution')
+        file_type = config.get('file_type')
+        step = config.get('step', 'P0H')  # Default to analysis time
         
         retrieval_method = config.get('retrieval_method')
         source_pattern = config.get(f'{retrieval_method}_source')
