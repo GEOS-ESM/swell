@@ -179,8 +179,12 @@ class IngestObs(taskBase):
         source_pattern = config.get(f'{retrieval_method}_source') # cp_source or s3_source
         
         if not source_pattern:
-            self.logger.error(f"No source pattern found for method '{retrieval_method}' in {obs_name}.yaml")
-            return ingested, [(obs_name, "Missing source pattern")]
+            msg = (
+                f"No source pattern found for method '{retrieval_method}' in "
+                f"{obs_name}.yaml (expected key '{retrieval_method}_source')."
+            )
+            self.logger.error(msg)
+            raise ValueError(msg)
         
         # TODO: This will need to be handled different for s3_source and cp_source
         # Handle simple YYYY/MM replacements

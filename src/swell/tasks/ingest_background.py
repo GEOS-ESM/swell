@@ -143,8 +143,12 @@ class IngestBackground(taskBase):
         source_pattern = config.get(f'{retrieval_method}_source')
         
         if not source_pattern:
-            self.logger.error(f"No source pattern found for method '{retrieval_method}' in {bg_name}.yaml")
-            return ingested, [(bg_name, "Missing source pattern")]
+            msg = (
+                f"No source pattern found for method '{retrieval_method}' in "
+                f"{bg_name}.yaml (expected key '{retrieval_method}_source')."
+            )
+            self.logger.error(msg)
+            raise ValueError(msg)
         
         # Handle datetime replacements
         dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
