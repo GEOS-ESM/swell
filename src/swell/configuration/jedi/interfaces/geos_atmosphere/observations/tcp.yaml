@@ -21,14 +21,6 @@ obs operator:
   geovar_sfc_geomz: height_above_mean_sea_level_at_surface
   station_altitude: height
 
-linear obs operator:
-
-  #  station pressure is using the lowest model level (identity)
-  name: Identity
-  variables:
-  - name: stationPressure
-
-
 obs prior filters:
 
 # Apply variable changes needed for rescaled height coordinate
