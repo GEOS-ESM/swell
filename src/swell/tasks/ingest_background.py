@@ -120,7 +120,13 @@ class IngestBackground(taskBase):
             self.logger.info(f"Successfully ingested: {total_ingested} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def process_background_config(self, config, bg_name, date, dry_run):
+    def process_background_config(
+        self,
+        config: dict,
+        bg_name: str,
+        date: str,
+        dry_run: bool,
+    ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single background configuration file."""
         ingested = []
         failed = []

@@ -151,7 +151,14 @@ class IngestObs(taskBase):
             return False
 
 
-    def process_obs_config(self, config, obs_name, window_start, window_length, dry_run):
+    def process_obs_config(
+        self,
+        config: dict,
+        obs_name: str,
+        window_start: str,
+        window_length: str,
+        dry_run: bool,
+    ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single observation configuration file."""
         ingested = []
         failed = []
