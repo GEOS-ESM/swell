@@ -22,11 +22,43 @@ import r2d2
 
 
 class IngestBackground(taskBase):
-    """
-    Task to ingest backgrounds/forecasts to R2D2 v3 using modular YAML configuration files.
-    
-    - 'backgrounds_to_ingest' list comes from experiment.yaml (e.g., ['geos_restart', 'mom6_forecast'])
-    - Separate YAML file for each background type defining retrieval method and metadata.
+    """Ingest background/forecast fields into R2D2.
+
+    This task reads a list of background/forecast types from the experiment
+    configuration (``backgrounds_to_ingest``), loads per‑type metadata from
+    modular YAML files under
+    ``configuration/jedi/interfaces/geos_marine/ingest_backgrounds/``, resolves
+    the input file paths for the current DA window, and optionally stores them
+    in R2D2 v3.
+
+    The task supports a dry‑run mode that only logs which files would be
+    ingested and how they would be labeled in R2D2, without calling
+    ``r2d2.store``.
+
+    Args:
+        config: Inherited from ``taskBase``. Provides task configuration
+            including:
+
+            - ``backgrounds_to_ingest``: List of background/forecast labels
+              (e.g. ``['geos_restart', 'mom6_forecast']``).
+            - ``window_length``: Length of the DA window as an ISO-8601 duration.
+            - ``dry_run``: If ``True``, only log which files would be ingested.
+            - ``r2d2_local_path``: Optional local cache path used when writing
+              R2D2 configuration (non–dry run).
+
+    Example:
+        In a Cylc suite:
+
+        ```bash
+        swell task IngestBackground experiment.yaml -d 2021-07-02T06:00:00Z -m geos_marine
+        ```
+
+        With an ``experiment.yaml`` snippet:
+
+        ```yaml
+        backgrounds_to_ingest: ['geos_restart']
+        dry_run: true
+        ```
     """
 
     def execute(self) -> None:

@@ -23,11 +23,43 @@ import r2d2
 
 
 class IngestObs(taskBase):
-    """
-    Task to ingest observations to R2D2 v3 using modular YAML configuration files.
-    
-    - 'obs_to_ingest' list comes from experiment.yaml (e.g., ['geos_restart', 'mom6_forecast'])
-    - Separate YAML file for each observation type defining retrieval method and metadata.
+    """Ingest observation files into R2D2 v3.
+
+    This task reads a list of observation types from the experiment configuration
+    (``obs_to_ingest``), looks up per-observation metadata in modular YAML files
+    under ``configuration/jedi/interfaces/geos_marine/ingest_observations/``,
+    resolves file paths for the current cycle time, and optionally stores them
+    in R2D2 v3.
+
+    The task can run in a "dry run" mode where it only logs which files it would
+    ingest, without calling ``r2d2.store``. It also checks R2D2 first and skips
+    any observations that are already present for the requested window.
+
+    Args:
+        config: Inherited from ``taskBase``. Provides task configuration
+            including:
+
+            - ``obs_to_ingest``: List of observation names to ingest
+              (e.g. ``['adt_cryosat2n']``).
+            - ``window_length``: Length of the DA window as an ISO-8601 duration
+              (e.g. ``"PT6H"``).
+            - ``dry_run``: If ``True``, only log which files would be ingested.
+            - ``r2d2_local_path``: Optional local cache path used when writing
+              R2D2 configuration (non–dry run).
+
+    Example:
+        In a Cylc suite:
+
+        ```bash
+        swell task IngestObs experiment.yaml -d 2021-07-02T06:00:00Z -m geos_marine
+        ```
+
+        With an ``experiment.yaml`` snippet:
+
+        ```yaml
+        obs_to_ingest: ['adt_cryosat2n']
+        dry_run: true
+        ```
     """
 
     def execute(self) -> None:
