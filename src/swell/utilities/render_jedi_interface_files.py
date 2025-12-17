@@ -110,6 +110,8 @@ class JediConfigRendering():
             'mom6_iau',
             'npx_proc',
             'npy_proc',
+            'npx',
+            'npy',
             'number_of_iterations',
             'obs_filenames',
             'packet_ensemble_members',

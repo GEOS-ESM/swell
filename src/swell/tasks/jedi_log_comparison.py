@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import yaml
 import os
 import re
 import numpy as np
@@ -25,9 +26,21 @@ class JediLogComparison(taskBase):
 
     def execute(self):
 
+        experiment_paths = self.config.comparison_experiment_paths()
+
+        # Get the number of iterations between experiments
+        iterations_list = []
+        for path in experiment_paths:
+            with open(path, 'r') as f:
+                exp_dict = yaml.safe_load(f)
+                num_iters = int(exp_dict['models'][self.get_model()]['number_of_iterations'][0])
+                iterations_list.append(num_iters)
+
+        number_of_iterations = min(iterations_list)
+
         tolerances = {}
-        for number in range(int(self.config.number_of_iterations()[0])):
-            tolerances[f'Residual norm ( {number})'] = 0.01
+        for number in range(number_of_iterations):
+            tolerances[f'Residual norm ({number:>2})'] = 1e-5
 
         # Construct dictionary for all results from log file
         all_results = {}
@@ -35,7 +48,6 @@ class JediLogComparison(taskBase):
         # Boolean for whether fields fall within tolerances
         passed = True
 
-        experiment_paths = self.config.comparison_experiment_paths()
         log_type = self.config.comparison_log_type()
 
         for exp_num, experiment_path in enumerate(experiment_paths):
@@ -138,15 +150,16 @@ class JediLogComparison(taskBase):
             out_string += '\n'
 
             for key in tolerances.keys():
-                val_dict = cycle_results[key]
+                if key in cycle_results:
+                    val_dict = cycle_results[key]
 
-                out_string += key + ' ' * (widths['key'] - len(key))
-                out_string += val_dict['exp0'] + ' ' * (widths['exp0'] - len(val_dict['exp0']))
-                out_string += val_dict['exp1'] + ' ' * (widths['exp1'] - len(val_dict['exp1']))
-                out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
-                out_string += str(val_dict['pass']) + ' ' * (
-                        widths['pass'] - len(str(val_dict['pass'])))
-                out_string += '\n'
+                    out_string += key + ' ' * (widths['key'] - len(key))
+                    out_string += val_dict['exp0'] + ' ' * (widths['exp0'] - len(val_dict['exp0']))
+                    out_string += val_dict['exp1'] + ' ' * (widths['exp1'] - len(val_dict['exp1']))
+                    out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
+                    out_string += str(val_dict['pass']) + ' ' * (
+                            widths['pass'] - len(str(val_dict['pass'])))
+                    out_string += '\n'
 
             out_string += '\n'
 
