@@ -64,9 +64,9 @@ class GenerateBClimatologyByLinking(taskBase):
 
         # Compute data assimilation window parameters to obtain the local background time
         # -------------------------------------------------------------------------------
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         window_type = self.config.window_type()
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
 
         # Background

@@ -35,10 +35,10 @@ class GsiNcdiagToIoda(taskBase):
         observations = self.config.observations()
         single_observations = self.config.single_observations()
         produce_geovals = self.config.produce_geovals()
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
 
         # Get window beginning time
-        window_begin = self.da_window_params.window_begin(window_offset)
+        window_begin = self.da_window_params.window_begin(window_length)
 
         # Keep copy of the
         observations_orig = observations.copy()
@@ -116,7 +116,7 @@ class GsiNcdiagToIoda(taskBase):
         for gsi_type_to_process in gsi_types_to_process:
 
             log_str = f'Processing GSI file {gsi_type_to_process}'
-            self.logger.info('', wrap=False)
+            self.logger.info('')
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 
@@ -157,7 +157,7 @@ class GsiNcdiagToIoda(taskBase):
             Diag.toIODAobs(self.cycle_dir(), platforms=needed_platforms)
 
             if produce_geovals:
-                self.logger.info('', wrap=False)
+                self.logger.info('')
                 self.logger.info(f'Processing GeoVaLs from {gsi_type_to_process_actual}')
                 Diag.toGeovals(self.cycle_dir())
 
@@ -176,7 +176,7 @@ class GsiNcdiagToIoda(taskBase):
 
             # Logging
             log_str = f'Combining IODA files for {needed_ioda_type}'
-            self.logger.info('', wrap=False)
+            self.logger.info('')
             self.logger.info(log_str)
             self.logger.info('-'*len(log_str))
 

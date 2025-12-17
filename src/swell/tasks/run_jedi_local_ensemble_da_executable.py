@@ -33,7 +33,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
-        window_offset = self.config.window_offset()
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
@@ -45,15 +44,14 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         # Compute data assimilation window parameters
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
-        local_background_time = self.da_window_params.local_background_time(window_offset,
+        background_time = self.da_window_params.background_time(background_time_offset)
+        local_background_time = self.da_window_params.local_background_time(window_length,
                                                                             window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
                                                                                     window_type)
-        window_begin = self.da_window_params.window_begin(window_offset)
-        window_begin_iso = self.da_window_params.window_begin_iso(window_offset)
-        window_end_iso = self.da_window_params.window_end_iso(window_offset, window_length)
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_iso = self.da_window_params.window_begin_iso(window_length)
+        window_end_iso = self.da_window_params.window_end_iso(window_length)
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -172,22 +170,20 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         localization_path = os.path.join(swell_path,
                                          f'configuration/jedi/interfaces/geos_atmosphere'
                                          f'/observations/localization')
-        if self.config.local_ensemble_use_linear_observer():
-            for index, observation in enumerate(observations):
-                # Get pointer to observer (ref to list)
-                observer = jedi_config_dict['observations']['observers'][index]
-                config_file = os.path.join(localization_path, f'{observation}.yaml')
-                with open(config_file, 'r') as f:
-                    loc_list = yaml.safe_load(f)
-                    horizLoc = loc_list['obs localizations']
-                localization = [horizLoc]
-                observer.update({'obs localizations': localization})
-                observer['obs space'].update(
-                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+        for index, observation in enumerate(observations):
+            # Get pointer to observer (ref to list)
+            observer = jedi_config_dict['observations']['observers'][index]
+            config_file = os.path.join(localization_path, f'{observation}.yaml')
+            with open(config_file, 'r') as f:
+                loc_list = yaml.safe_load(f)
+                horizLoc = loc_list['obs localizations']
+            localization = [horizLoc]
+            observer.update({'obs localizations': localization})
+            observer['obs space'].update(
+                {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
         # bypass the writing of HofXs
         # -------------------------------------------------------------------
-
         bypass_HofXs = True
         if bypass_HofXs:
             for observer in jedi_config_dict['observations']['observers']:
@@ -196,7 +192,8 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open,
+                      default_flow_style=False, sort_keys=False)
 
         # Get the JEDI interface metadata
         # -------------------------------

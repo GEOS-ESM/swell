@@ -2,29 +2,39 @@ import os
 import unittest
 import subprocess
 from swell.utilities.logger import get_logger
+from swell.utilities.exceptions import SwellError
 from swell.test.code_tests.testing_utilities import suppress_stdout
 from swell.utilities.pinned_versions.check_hashes import check_hashes
+from swell.utilities.test_cache import get_test_cache
 
 
 class PinnedVersionsTest(unittest.TestCase):
 
     def test_wrong_hash(self) -> None:
         logger = get_logger("PinnedVersionsTest")
+
         jedi_bundle_dir = "jedi_bundle/"
+        test_cache = get_test_cache()
+
+        if test_cache:
+            jedi_bundle_dir = os.path.join(test_cache, jedi_bundle_dir)
+
         if not os.path.exists(jedi_bundle_dir):
             os.makedirs(jedi_bundle_dir)
 
         # Clone oops repository in jedi_bundle (develop hash)
         if not os.path.exists(jedi_bundle_dir + "oops"):
             cmd = ["git", "clone", "https://github.com/JCSDA/oops.git"]
+            wd = jedi_bundle_dir
         else:
-            cmd = ["git", "checkout", "develop"]
+            cmd = ["git", "switch", "develop"]
+            wd = os.path.join(jedi_bundle_dir, 'oops')
 
-        subprocess.run(cmd, cwd=jedi_bundle_dir, stderr=subprocess.DEVNULL,
+        subprocess.run(cmd, cwd=wd, stderr=subprocess.DEVNULL,
                        stdout=subprocess.DEVNULL)
         abort_message = "Wrong commit hashes found for these repositories in jedi_bundle: [oops]"
         # Run check hash (expect abort)
-        with self.assertRaises(SystemExit) as abort, suppress_stdout():
+        with self.assertRaises(SwellError) as abort, suppress_stdout():
             log_level = logger.level
             # Set logger priority to 60. This number sets the minimum level of message
             # that the logger can register (Where message criticality ascends from 0 to 50).
