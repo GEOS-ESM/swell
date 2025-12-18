@@ -44,8 +44,7 @@ class MoveEraseDaRestart(taskBase):
 
         # Create cycle_dir and RESTART
         # ----------------------------
-        if not os.path.exists(self.forecast_dir('RESTART')):
-            os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
+        os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
 
         # Move and rename files in the next forecast directory
         # ----------------------------------------------

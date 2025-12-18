@@ -75,6 +75,7 @@ class GetCoupledGeosRestart(taskBase):
             geos_expdir_path = os.path.join(swell_exp_path, 'GEOSgcm', 'GEOS_expdir')
             # Check if link already exists, unlink first if it does
             if os.path.lexists(geos_expdir_path):
+                self.logger.info('Unlinking existing GEOS EXPDIR link: ' + geos_expdir_path)
                 os.unlink(geos_expdir_path)
             self.logger.info('Linking GEOS EXPDIR to ' + geos_expdir_path)
             os.symlink(self.expdir, geos_expdir_path)
@@ -83,8 +84,7 @@ class GetCoupledGeosRestart(taskBase):
 
         # Create forecast_dir and RESTART
         # ----------------------------
-        if not os.path.exists(self.forecast_dir('RESTART')):
-            os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
+        os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
 
         # Restarts should be in the EXPDIR or HOMDIR
         # -----------------------------------------

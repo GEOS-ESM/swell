@@ -84,7 +84,7 @@ class GenerateBClimatology(taskBase):
 
         # Compute number of processors
         # ----------------------------
-        self.np = eval(str(model_component_meta['total_processors']))
+        self.np = int(model_component_meta['total_processors'])
 
         # Obtain and initialize proper error model
         # ----------------------------------------
