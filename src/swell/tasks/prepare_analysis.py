@@ -100,9 +100,16 @@ class PrepareAnalysis(taskBase):
     # ----------------------------------------------------------------------------------------
 
     def at_cycledir(self, paths: Union[list, str] = []) -> str:
-        '''
+        """
         Get the absolute path to the model cycle directory for the given relative paths.
-        '''
+
+        Args:
+            paths (Union[list, str]): Relative path or list of relative paths to join with the cycle
+                                      directory. Defaults to [].
+
+        Returns:
+            str: The absolute path to the joined directory/file.
+        """
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------

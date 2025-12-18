@@ -28,7 +28,7 @@ def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
             logger.info(' Copying file: '+src)
             shutil.copy(src, dst_dir)
 
-    except Exception as e:
+    except OSError as e:
         logger.abort(f'Copying failed: {e}')
 
 # --------------------------------------------------------------------------------------------------
