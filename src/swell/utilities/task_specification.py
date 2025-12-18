@@ -16,6 +16,7 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
 from swell.utilities.dictionary import update_dict
 from swell.utilities.swell_questions import QuestionList
+from swell.utilities.settings import read_settings
 
 # --------------------------------------------------------------------------------------------------
 
@@ -234,25 +235,22 @@ class Task:
             runtime_section.add_subsection(section)
 
         # Check slurm messaging parameters
-        events = []
         events = self.mail_events
 
+        settings_dict = read_settings()
+
         # Add messaging section
-        settings_file = os.path.expanduser(os.path.join('~', '.swell', 'swell-settings.yaml'))
-        if os.path.exists(settings_file) and len(events) > 0:
-            with open(settings_file, 'r') as f:
-                settings_dict = yaml.safe_load(f)
-            if 'email_address' in settings_dict.keys():
-                email_address = settings_dict['email_address']
-                address_section = self.create_new_section('mail', f'to = {email_address}')
-                runtime_section.add_subsection(address_section)
+        if len(events) > 0 and 'email_address' in settings_dict.keys():
+            email_address = settings_dict['email_address']
+            address_section = self.create_new_section('mail', f'to = {email_address}')
+            runtime_section.add_subsection(address_section)
 
-                event_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
-                event_str += "mail events = " + ', '.join(events)
-                event_str += "\n{% endif %}\n"
+            event_str = "{% if environ['SWELL_SEND_MESSAGES'] %}\n"
+            event_str += "mail events = " + ', '.join(events)
+            event_str += "\n{% endif %}\n"
 
-                event_section = self.create_new_section('events', event_str)
-                runtime_section.add_subsection(event_section)
+            event_section = self.create_new_section('events', event_str)
+            runtime_section.add_subsection(event_section)
 
         runtime_string = runtime_section.get_section_str(1)
 
