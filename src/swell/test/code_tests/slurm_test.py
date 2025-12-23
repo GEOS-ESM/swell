@@ -11,7 +11,7 @@ import unittest
 
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
 from swell.utilities.logger import get_logger
-from swell.tasks.task_attributes import TaskAttributes
+from swell.tasks.base.task_attributes import TaskAttributes
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------

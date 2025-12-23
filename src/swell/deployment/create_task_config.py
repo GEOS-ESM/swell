@@ -12,7 +12,7 @@ from typing import Optional
 import yaml
 import isodate
 
-from swell.tasks.task_attributes import TaskAttributes
+from swell.tasks.base.task_attributes import TaskAttributes
 from swell.utilities.logger import get_logger
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
     PrepareExperimentConfigAndSuite
