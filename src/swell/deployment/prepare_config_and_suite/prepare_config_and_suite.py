@@ -119,7 +119,6 @@ class PrepareExperimentConfigAndSuite:
 
         return self.experiment_dict, self.comment_dict
 
-
     # ----------------------------------------------------------------------------------------------
 
     def prepare_suite_question_dictionary(self) -> None:

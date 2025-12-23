@@ -7,8 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
-import yaml
 from collections.abc import Mapping
 from abc import abstractmethod, ABC
 
@@ -28,10 +26,10 @@ class TaskSetup(ABC):
 
     Attributes:
     model: model the task is being run under at runtime
-    platform: platform the task is being run on 
+    platform: platform the task is being run on
 
     base_name: basic name of the task within Swell
-    scheduling_name: name for the task within cylc, typically model type is appended to the base name
+    scheduling_name: name for the task within cylc
     is_cycling: boolean for whether the task is run on cycles
     is_model: boolean for whether the task is run on a certain model
     pre_script: cylc setting for scripts run before the main script
@@ -41,7 +39,7 @@ class TaskSetup(ABC):
     slurm: dictionary of slurm parameters
     mail events: list of events for email messaging through cylc
     question_list: list of questions keys used by the task
-    additional_sections: list of additional CylcSection objects to append to the runtime section of the task
+    additional_sections: list of additional CylcSection objects to append to the runtime section
     '''
 
     def __init__(self, model: str | None = None, platform: str | None = None) -> None:

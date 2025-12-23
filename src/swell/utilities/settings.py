@@ -12,6 +12,7 @@ import yaml
 
 # --------------------------------------------------------------------------------------------------
 
+
 def read_settings() -> dict:
     '''
     Reads user settings from yaml file under ~/.swell/swell-settings.yaml
@@ -27,7 +28,7 @@ def read_settings() -> dict:
     if os.path.exists(settings_file):
         with open(settings_file, 'r') as f:
             settings_dict = yaml.safe_load(f)
-        
+
     else:
         settings_dict = {}
 
