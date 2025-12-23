@@ -162,7 +162,7 @@ class TaskSetup:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_time_limit(self) -> str:
+    def get_time_limit(self, platform) -> str:
 
         # Set the time limit, default is 1 hour
         if self.time_limit is True:
@@ -201,7 +201,7 @@ class TaskSetup:
         if self.slurm is not None:
             runtime_dict['platform'] = platform
 
-        time_limit = self.get_time_limit()
+        time_limit = self.get_time_limit(platform)
 
         if time_limit is not None:
             runtime_dict['execution time limit'] = time_limit
