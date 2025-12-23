@@ -119,10 +119,6 @@ class PrepareExperimentConfigAndSuite:
 
         return self.experiment_dict, self.comment_dict
 
-    # ----------------------------------------------------------------------------------------------
-
-    def get_experiment_dict(self) -> Mapping:
-        return self.experiment_dict
 
     # ----------------------------------------------------------------------------------------------
 

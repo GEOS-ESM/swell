@@ -94,7 +94,7 @@ def prepare_config(
 
     # Retrieved the answered suite questions
     # --------------------------------------
-    suite_dict = prepare_config_and_suite.get_experiment_dict()
+    suite_dict = prepare_config_and_suite.experiment_dict
 
     suite_dict = suite_dict.copy()
 

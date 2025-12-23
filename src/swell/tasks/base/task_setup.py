@@ -9,8 +9,8 @@
 
 import os
 import yaml
-from typing import Union, Optional
 from collections.abc import Mapping
+from abc import abstractmethod, ABC
 
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
@@ -21,13 +21,30 @@ from swell.utilities.settings import read_settings
 # --------------------------------------------------------------------------------------------------
 
 
-class TaskSetup:
+class TaskSetup(ABC):
 
     '''
     Contains the basic properties and information needed to format the cylc [runtime] section.
+
+    Attributes:
+    model: model the task is being run under at runtime
+    platform: platform the task is being run on 
+
+    base_name: basic name of the task within Swell
+    scheduling_name: name for the task within cylc, typically model type is appended to the base name
+    is_cycling: boolean for whether the task is run on cycles
+    is_model: boolean for whether the task is run on a certain model
+    pre_script: cylc setting for scripts run before the main script
+    script: string of shell code to be run by cylc for the task
+    retry: times * time interval cylc should retry the task, e.g. 2*PT10s
+    time_limit: execution time limit for slurm
+    slurm: dictionary of slurm parameters
+    mail events: list of events for email messaging through cylc
+    question_list: list of questions keys used by the task
+    additional_sections: list of additional CylcSection objects to append to the runtime section of the task
     '''
 
-    def __init__(self, model: Optional[str] = None, platform: Optional[str] = None) -> None:
+    def __init__(self, model: str | None = None, platform: str | None = None) -> None:
 
         self.model = model
         self.platform = platform
@@ -45,7 +62,6 @@ class TaskSetup:
         self.time_limit = None
         self.slurm = None
 
-        self.subsections = []
         self.mail_events = ['failed', 'submit-failed']
 
         self.question_list = QuestionList([])
@@ -56,7 +72,10 @@ class TaskSetup:
 
     # --------------------------------------------------------------------------------------------------
 
+    @abstractmethod
     def set_attributes(self) -> None:
+        '''Abstract method to be overridden by each task in order to set attributes.
+        '''
         pass
 
     # --------------------------------------------------------------------------------------------------
@@ -85,6 +104,18 @@ class TaskSetup:
             self.script = self.script.format(model=self.model)
             self.scheduling_name = self.scheduling_name.format(model=self.model)
 
+        # Set retry defaults
+        if self.retry is True:
+            self.retry = '2*PT1M'
+        else:
+            self.retry = self.match_platform(self.retry)
+
+        # Set time limit defaults
+        if self.time_limit is True:
+            self.time_limit = 'PT1H'
+        elif self.time_limit:
+            self.time_limit = self.match_platform(self.time_limit)
+
     # --------------------------------------------------------------------------------------------------
 
     def format_string_block(self, string: str) -> str:
@@ -96,12 +127,12 @@ class TaskSetup:
 
     # --------------------------------------------------------------------------------------------------
 
-    def match_platform(self, content: Union[str, dict], platform: str):
+    def match_platform(self, content: str | dict):
         # Resolve platform-specific entries in the task object
 
         if isinstance(content, Mapping):
-            if platform in content.keys():
-                content = content[platform]
+            if self.platform in content.keys():
+                content = content[self.platform]
             elif 'all' in content.keys():
                 content = content['all']
 
@@ -110,8 +141,8 @@ class TaskSetup:
     # --------------------------------------------------------------------------------------------------
 
     def create_new_section(self,
-                           name: Optional[str] = None,
-                           content: Union[str, dict] = ''
+                           name: str | None = None,
+                           content: str | dict = ''
                            ) -> CylcSection:
         return CylcSection(name, content)
 
@@ -140,7 +171,7 @@ class TaskSetup:
         slurm_dict = {}
         if self.slurm is not None:
             for key, value in self.slurm.items():
-                slurm_dict[key] = self.match_platform(value, platform)
+                slurm_dict[key] = self.match_platform(value)
 
         slurm_globals = slurm_external['slurm_directives_global']
         slurm_task = {}
@@ -162,21 +193,7 @@ class TaskSetup:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_time_limit(self, platform) -> str:
-
-        # Set the time limit, default is 1 hour
-        if self.time_limit is True:
-            time_limit = 'PT1H'
-        elif self.time_limit:
-            time_limit = self.match_platform(self.time_limit, platform)
-        else:
-            time_limit = None
-
-        return time_limit
-
-    # --------------------------------------------------------------------------------------------------
-
-    def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping):
+    def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping) -> str:
         ''' Return the runtime section for the given task. '''
 
         platform = experiment_dict['platform']
@@ -201,19 +218,12 @@ class TaskSetup:
         if self.slurm is not None:
             runtime_dict['platform'] = platform
 
-        time_limit = self.get_time_limit(platform)
-
-        if time_limit is not None:
-            runtime_dict['execution time limit'] = time_limit
+        if self.time_limit is not None:
+            runtime_dict['execution time limit'] = self.time_limit
 
         # Set the retry if this task needs it
         if self.retry:
-            if self.retry is True:
-                retry = '2*PT1M'
-            else:
-                retry = self.match_platform(self.retry, platform)
-
-            runtime_dict['execution retry delays'] = retry
+            runtime_dict['execution retry delays'] = self.retry
 
         runtime_section = self.create_new_section(self.scheduling_name, runtime_dict)
 
@@ -252,7 +262,7 @@ class TaskSetup:
             event_section = self.create_new_section('events', event_str)
             runtime_section.add_subsection(event_section)
 
-        runtime_string = runtime_section.get_section_str(1)
+        runtime_string = runtime_section.get_section_str(level=1)
 
         runtime_string += '    # ' + '-' * 96 + '\n\n'
 
