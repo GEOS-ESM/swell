@@ -120,7 +120,7 @@ class TaskSetup(ABC):
 
     def format_string_block(self, string: str) -> str:
         """Format a string block with indentation for use in cylc.
-        
+
         Arguments:
         string: string to be placed in quotes and indented
 
@@ -137,7 +137,7 @@ class TaskSetup(ABC):
 
     def match_platform(self, content: str | dict):
         '''Resolve platform-specific entries in mapping.
-        
+
         Arguments:
         content: string or mapping containing platform-designated entries
 
@@ -168,7 +168,7 @@ class TaskSetup(ABC):
                            content: str | dict = ''
                            ) -> CylcSection:
         '''Create and retrun a new CylcSection object for use in formatting.
-        
+
         Arguments:
         name: Name of cylc section to be created
         content: string or dictionary of contents for the section
@@ -191,7 +191,7 @@ class TaskSetup(ABC):
         >>> self.resolve_model({'time': '01:00:00', 'nodes': {'geos_atmosphere': 1, 'geos_marine': 3}})
 
         {'time': '01:00:00', 'nodes': 3}
-        '''
+        '''  # noqa
         if 'all' in slurm_dict.keys() and isinstance(slurm_dict['all'], Mapping):
             slurm_dict = update_dict(slurm_dict, slurm_dict['all'])
             del slurm_dict['all']
@@ -211,7 +211,7 @@ class TaskSetup(ABC):
         to get the dict that will be output in the runtime section
 
         Arguments:
-        slurm_external: dictionary from `utilities/slurm.py` with defaults from the 
+        slurm_external: dictionary from `utilities/slurm.py` with defaults from the
                         platform and user.
 
         Returns:
@@ -244,8 +244,8 @@ class TaskSetup(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping) -> str:
-        '''Return the runtime section for the given task. 
-        
+        '''Return the runtime section for the given task.
+
         Arguments:
         experiment_dict: experiment dictionary from `create_experiment`
         slurm_external: external slurm defaults from globals and user defaults
@@ -288,7 +288,7 @@ class TaskSetup(ABC):
         # Specify the slurm dictionary with defaults from user and global settings
         if self.slurm is not None:
 
-            slurm_dict = self.generate_task_slurm_dict(slurm_external, platform)
+            slurm_dict = self.generate_task_slurm_dict(slurm_external)
 
             slurm_section_dict = {}
             for key, value in slurm_dict.items():

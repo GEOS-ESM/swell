@@ -56,7 +56,7 @@ class SLURMConfigTest(unittest.TestCase):
         run_jedi_var_class = TaskAttributes.get('RunJediVariationalExecutable')
         run_jedi_var_obj = run_jedi_var_class('geos_marine', 'nccs_discover_sles15')
         run_jedi_var_slurm = run_jedi_var_obj.generate_task_slurm_dict(
-                sd_discover_sles15, 'nccs_discover_sles15')
+                sd_discover_sles15)
 
         self.assertEqual(run_jedi_var_slurm["constraint"], "mil")
         self.assertEqual(run_jedi_var_slurm["qos"], "dastest")
@@ -74,13 +74,13 @@ class SLURMConfigTest(unittest.TestCase):
                 run_jedi_ufo_obj = run_jedi_ufo_class(mc, 'nccs_discover_sles15')
 
                 run_jedi_var_dict = run_jedi_var_obj.generate_task_slurm_dict(
-                        sd, 'nccs_discover_sles15')
+                        sd)
                 eva_obs_dict = eva_obs_obj.generate_task_slurm_dict(
-                        sd, 'nccs_discover_sles15')
+                        sd)
                 build_jedi_dict = build_jedi_obj.generate_task_slurm_dict(
-                        sd, 'nccs_discover_sles15')
+                        sd)
                 run_jedi_ufo_dict = run_jedi_ufo_obj.generate_task_slurm_dict(
-                        sd, 'nccs_discover_sles15')
+                        sd)
 
                 # Hard-coded task-specific defaults
                 self.assertEqual(run_jedi_var_dict["nodes"], 3)
