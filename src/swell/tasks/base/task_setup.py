@@ -79,6 +79,8 @@ class TaskSetup(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def post_init(self):
+        '''Sets and resolves defaults for tasks after assignment
+        '''
 
         if self.base_name is None:
             self.base_name = self.__class__.__name__
@@ -117,6 +119,14 @@ class TaskSetup(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def format_string_block(self, string: str) -> str:
+        """Format a string block with indentation for use in cylc.
+        
+        Arguments:
+        string: string to be placed in quotes and indented
+
+        Returns:
+        Indented and quoted string.
+        """
         out_string = '"""\n'
         out_string += indent_lines(string, 1)
         out_string += '"""'
@@ -126,7 +136,22 @@ class TaskSetup(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def match_platform(self, content: str | dict):
-        # Resolve platform-specific entries in the task object
+        '''Resolve platform-specific entries in mapping.
+        
+        Arguments:
+        content: string or mapping containing platform-designated entries
+
+        Returns:
+        content filtered by the current platform, if specified
+
+        Examples:
+        >>> self.match_platform('a')
+        'a'
+
+        self.platform = 'nccs_discover_sles15'
+        >>> self.match_platform({'nccs_discover_sles15': 'a', 'nccs_discover_cascade': 'b'})
+        'a'
+        '''
 
         if isinstance(content, Mapping):
             if self.platform in content.keys():
@@ -142,12 +167,31 @@ class TaskSetup(ABC):
                            name: str | None = None,
                            content: str | dict = ''
                            ) -> CylcSection:
+        '''Create and retrun a new CylcSection object for use in formatting.
+        
+        Arguments:
+        name: Name of cylc section to be created
+        content: string or dictionary of contents for the section
+        '''
         return CylcSection(name, content)
 
     # --------------------------------------------------------------------------------------------------
 
     def resolve_model(self, slurm_dict: Mapping) -> dict:
-        ''' Resolve "all" and "model" entries in slurm dictionary '''
+        '''Resolve model-specific entries in slurm dictionary specification, if they exist.
+
+        Arguments:
+        slurm_dict: dictionary of slurm settings
+
+        Returns:
+        dictionary of slurm settings with any model-specific defaults resolved
+
+        Examples:
+        >>> self.model = 'geos_marine'
+        >>> self.resolve_model({'time': '01:00:00', 'nodes': {'geos_atmosphere': 1, 'geos_marine': 3}})
+
+        {'time': '01:00:00', 'nodes': 3}
+        '''
         if 'all' in slurm_dict.keys() and isinstance(slurm_dict['all'], Mapping):
             slurm_dict = update_dict(slurm_dict, slurm_dict['all'])
             del slurm_dict['all']
@@ -162,9 +206,17 @@ class TaskSetup(ABC):
 
     # --------------------------------------------------------------------------------------------------
 
-    def generate_task_slurm_dict(self, slurm_external: Mapping, platform: str) -> Mapping:
-        # Take the external slurm dictionary and merge it with the task's parameters
-        # to get the dict that will be output in the flow.cylc
+    def generate_task_slurm_dict(self, slurm_external: Mapping) -> Mapping:
+        '''Take the external slurm dictionary and merge it with the task's parameters
+        to get the dict that will be output in the runtime section
+
+        Arguments:
+        slurm_external: dictionary from `utilities/slurm.py` with defaults from the 
+                        platform and user.
+
+        Returns:
+        Finalized dictionary of slurm defaults for the task.
+        '''
 
         slurm_dict = {}
         if self.slurm is not None:
@@ -192,7 +244,15 @@ class TaskSetup(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping) -> str:
-        ''' Return the runtime section for the given task. '''
+        '''Return the runtime section for the given task. 
+        
+        Arguments:
+        experiment_dict: experiment dictionary from `create_experiment`
+        slurm_external: external slurm defaults from globals and user defaults
+
+        Returns:
+        String to place in flow.cylc.
+        '''
 
         platform = experiment_dict['platform']
         runtime_dict = {}

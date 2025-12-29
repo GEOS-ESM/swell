@@ -13,8 +13,8 @@ from importlib import import_module
 
 from swell.swell_path import get_swell_path
 from swell.utilities.suite_utils import get_suites
-from swell.suites.suite_questions import SuiteQuestions
-from swell.utilities.cylc_workflow import CylcWorkflow
+from swell.suites.base.suite_questions import SuiteQuestions
+from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.utilities.swell_questions import QuestionList
 
 # --------------------------------------------------------------------------------------------------

@@ -22,7 +22,7 @@ from swell.utilities.dictionary import add_comments_to_dictionary, dict_get, upd
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
-from swell.suites.all_suites import suite_configs, workflows
+from swell.suites.base.all_suites import suite_configs, workflows
 from swell.utilities.check_da_params import check_da_params
 
 
