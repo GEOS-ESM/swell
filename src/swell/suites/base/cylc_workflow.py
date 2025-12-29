@@ -63,7 +63,7 @@ class CylcWorkflow(ABC):
 
     def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
         """Iterates through tasks and separate questions into model-independent and dependent.
-        
+
         Returns:
         List of model-independent questions.
         Mapping of model to list of questions associated with that model.
