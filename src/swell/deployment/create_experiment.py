@@ -36,6 +36,7 @@ def clone_config(
     platform: str,
     advanced: bool
 ) -> str:
+
     # Create a logger
     logger = get_logger('SwellCloneExperiment')
 
