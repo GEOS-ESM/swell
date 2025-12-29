@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from typing import Tuple
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from swell.utilities.logger import get_logger
 
@@ -25,15 +25,17 @@ header_str = '''#!jinja2
 '''
 
 
-class CylcWorkflow():
+class CylcWorkflow(ABC):
 
-    '''
-    Handles generating the flow.cylc file contents using the CylcSection syntax for each
-    necessary section in the cylc file. Since Swell workflows share a lot of common language,
-    this method has the convenience of automatically setting a lot of the contents. This means
-    that the graph section is the only part that will need to be adjusted in many cases,
-    and tasks may need to be altered in src/swell/tasks/task_runtimes.py.
-    '''
+    """Abstract class setting tasks to be run by the workflow,
+    as well as specifying the contents of flow.cylc.
+
+    Attributes:
+    experiment_dict: Mapping of suite config to use in configuring the graph
+    slurm_external: Mapping of user and global slurm settings
+    tasks: list of TaskSetup objects which specify questions used by the
+           suite and cylc runtime attributes
+    """
 
     def __init__(self, experiment_dict, slurm_external) -> None:
         self.experiment_dict = experiment_dict
@@ -47,18 +49,25 @@ class CylcWorkflow():
     # --------------------------------------------------------------------------------------------------
 
     def default_header(self) -> str:
+        """Set the default header, contains copyright information for Swell."""
         return header_str
 
     # --------------------------------------------------------------------------------------------------
 
     @abstractmethod
     def set_tasks(self) -> None:
+        """Abstract method to be overridden by child workflows, sets a list of TaskSetup objects."""
         pass
 
     # --------------------------------------------------------------------------------------------------
 
     def get_independent_and_model_tasks(self) -> Tuple[list, dict]:
-        # Separate the tasks into model independent and dependent
+        """Iterates through tasks and separate questions into model-independent and dependent.
+        
+        Returns:
+        List of model-independent questions.
+        Mapping of model to list of questions associated with that model.
+        """
 
         ind_tasks = []
         model_tasks = {}
@@ -84,6 +93,7 @@ class CylcWorkflow():
 
     @abstractmethod
     def get_workflow_string(self) -> str:
+        """Abstract method containing instructions for constructing flow.cylc contents."""
         return ''
 
     # --------------------------------------------------------------------------------------------------
