@@ -23,7 +23,8 @@ def format_dict(dictionary: Mapping):
         dictionary (Mapping): The dictionary to format.
 
     Returns:
-        str: A string representation of the dictionary, with each key-value pair on a new line in the format 'key = value'.
+        str: A string representation of the dictionary, with each key-value pair on a
+             new line in the format 'key = value'.
 
     Examples:
         >>> format_dict({'a': 1, 'b': "test"})
@@ -112,7 +113,7 @@ class CylcSection():
 
     def add_subsection(self, subsection: Self) -> None:
         """Add subsection to section tracking.
-        
+
         Arguments:
         subsection: CylcSection object to append
         """
