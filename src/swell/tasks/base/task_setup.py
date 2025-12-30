@@ -321,7 +321,8 @@ class TaskSetup(ABC):
         events = self.mail_events
 
         # Add messaging section
-        if len(events) > 0 and 'email_address' in experiment_dict:
+        if len(events) > 0 and "email_address" in experiment_dict and \
+                experiment_dict["email_address"] != "defer_to_user":
             email_address = experiment_dict['email_address']
             address_section = self.create_new_section('mail', f'to = {email_address}')
             runtime_section.add_subsection(address_section)
