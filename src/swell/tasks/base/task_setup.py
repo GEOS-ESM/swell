@@ -62,7 +62,7 @@ class TaskSetup(ABC):
 
         self.mail_events = ['failed', 'submit-failed']
 
-        self.question_list = QuestionList([])
+        self.questions = []
         self.additional_sections = []
 
         self.set_attributes()
@@ -115,6 +115,9 @@ class TaskSetup(ABC):
             self.time_limit = 'PT1H'
         elif self.time_limit:
             self.time_limit = self.match_platform(self.time_limit)
+
+        # Convert questions list into object
+        self.question_list = QuestionList(self.questions)
 
     # --------------------------------------------------------------------------------------------------
 

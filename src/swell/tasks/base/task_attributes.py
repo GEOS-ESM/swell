@@ -99,30 +99,30 @@ class TaskAttributes():
 
     class BuildGeos(TaskSetup):
         def set_attributes(self):
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.geos_build_method()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class BuildGeosByLinking(TaskSetup):
         def set_attributes(self):
             self.mail_events = ['submit-failed']
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.existing_geos_gcm_build_path(),
                 qd.geos_build_method()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class BuildJediByLinking(TaskSetup):
         def set_attributes(self):
             self.mail_events = ['submit-failed']
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.existing_jedi_build_directory(),
                 qd.existing_jedi_build_directory_pinned(),
                 qd.jedi_build_method()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -130,10 +130,10 @@ class TaskAttributes():
         def set_attributes(self):
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.bundles(),
                 qd.jedi_build_method()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -141,49 +141,49 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.clean_patterns()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class CloneGeos(TaskSetup):
         def set_attributes(self):
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.existing_geos_gcm_source_path(),
                 qd.geos_build_method(),
                 qd.geos_gcm_tag()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class CloneJedi(TaskSetup):
         def set_attributes(self):
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.bundles(),
                 qd.existing_jedi_source_directory(),
                 qd.existing_jedi_source_directory_pinned(),
                 qd.jedi_build_method()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class CloneGeosMksi(TaskSetup):
         def set_attributes(self):
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.observing_system_records_mksi_path(),
                 qd.observing_system_records_mksi_path_tag()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class CloneGmaoPerllib(TaskSetup):
         def set_attributes(self):
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.existing_perllib_path(),
                 qd.gmao_perllib_tag()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -198,11 +198,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.marine_models(),
                 qd.window_length(),
                 qd.window_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -210,9 +210,9 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.comparison_log_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -220,11 +220,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.marine_models(),
                 qd.window_length(),
                 qd.window_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -234,13 +234,13 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.marine_models(),
                 qd.observing_system_records_path(),
                 qd.window_length(),
                 qd.marine_models(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -250,12 +250,12 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.window_length(),
                 qd.ncdiag_experiments(),
                 qd.marine_models(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -263,10 +263,10 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.parser_options(),
                 qd.comparison_log_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -274,7 +274,7 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 window_questions,
                 qd.window_length(),
                 qd.background_experiment(),
@@ -282,7 +282,7 @@ class TaskAttributes():
                 qd.horizontal_resolution(),
                 qd.marine_models(),
                 qd.r2d2_local_path(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -291,12 +291,12 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.mail_events = ['submit-failed']
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.horizontal_resolution(),
                 qd.background_experiment(),
                 qd.background_time_offset(),
                 qd.geos_x_background_directory()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -304,9 +304,9 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.bufr_obs_classes()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -321,21 +321,21 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.background_experiment(),
                 qd.background_time_offset(),
                 qd.geos_x_ensemble_directory()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class GetGeosRestart(TaskSetup):
         def set_attributes(self):
             self.is_cycling = True
-            self.question_list = QuestionList([
+            self.questions = [
                 swell_static_file_questions,
                 qd.geos_restarts_directory()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -343,13 +343,13 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.geovals_experiment(),
                 qd.geovals_provider(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -357,10 +357,10 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.path_to_gsi_bc_coefficients(),
                 qd.window_length()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -368,11 +368,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.observing_system_records_path(),
                 qd.window_length()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -380,9 +380,9 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.path_to_gsi_nc_diags()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -390,12 +390,12 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.observations(),
                 qd.produce_geovals(),
                 qd.single_observations(),
                 qd.window_length()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -403,13 +403,13 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.ncdiag_experiments(),
                 qd.marine_models(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -417,9 +417,9 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.path_to_geos_adas_background()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -427,14 +427,14 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.cycling_varbc(),
                 qd.obs_experiment(),
                 qd.observing_system_records_path(),
                 qd.r2d2_local_path(),
                 qd.window_length(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -443,9 +443,9 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.mail_events = ['submit-failed']
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.ioda_locations_not_in_r2d2(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -456,7 +456,7 @@ class TaskAttributes():
             self.is_model = True
             self.retry = '2*PT1M'
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 swell_static_file_questions,
                 qd.analysis_variables(),
@@ -474,7 +474,7 @@ class TaskAttributes():
                 qd.total_processors(),
                 qd.window_length(),
                 qd.window_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -482,14 +482,14 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 swell_static_file_questions,
                 qd.background_error_model(),
                 qd.horizontal_resolution(),
                 qd.vertical_resolution(),
                 qd.window_length(),
                 qd.window_type()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -497,11 +497,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.observations(),
                 qd.observing_system_records_mksi_path(),
                 qd.observing_system_records_path()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -509,11 +509,11 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 window_questions,
                 qd.background_frequency(),
                 qd.marine_models()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -521,32 +521,32 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.mom6_iau(),
                 qd.window_length()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class MoveForecastRestart(TaskSetup):
         def set_attributes(self):
             self.is_cycling = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.forecast_duration()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class PrepGeosRunDir(TaskSetup):
         def set_attributes(self):
             self.is_cycling = True
-            self.question_list = QuestionList([
+            self.questions = [
                 swell_static_file_questions,
                 qd.existing_geos_gcm_build_path(),
                 qd.forecast_duration(),
                 qd.geos_experiment_directory(),
                 qd.mom6_iau_nhours()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -554,12 +554,12 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.analysis_variables(),
                 qd.mom6_iau(),
                 qd.total_processors(),
                 qd.window_length(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -569,11 +569,11 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 run_jedi_executable,
                 qd.marine_models(),
                 qd.comparison_log_type('fgat'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -583,7 +583,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 window_questions,
                 qd.analysis_variables(),
@@ -593,7 +593,7 @@ class TaskAttributes():
                 qd.observations(),
                 qd.observing_system_records_path(),
                 qd.comparison_log_type('ensmeanvariance'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -603,7 +603,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 window_questions,
                 background_crtm_obs,
@@ -615,7 +615,7 @@ class TaskAttributes():
                 qd.jedi_forecast_model(),
                 qd.total_processors(),
                 qd.comparison_log_type('hofx'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -625,7 +625,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 window_questions,
                 background_crtm_obs,
@@ -635,7 +635,7 @@ class TaskAttributes():
                 qd.save_geovals(),
                 qd.total_processors(),
                 qd.comparison_log_type('ensemblehofx'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -645,7 +645,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 window_questions,
                 background_crtm_obs,
@@ -678,7 +678,7 @@ class TaskAttributes():
                 qd.vertical_localization_method(),
                 qd.perhost(),
                 qd.comparison_log_type('localensembleda'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -688,11 +688,11 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.slurm = {'nodes': 3}
-            self.question_list = QuestionList([
+            self.questions = [
                 run_jedi_executable,
                 qd.perhost(),
                 qd.comparison_log_type('variational'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -714,13 +714,13 @@ class TaskAttributes():
             self.is_cycling = True
             self.is_model = True
             self.slurm = {'ntasks-per-node': 1}
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.generate_yaml_and_exit(),
                 qd.single_observations(),
                 qd.window_length(),
                 qd.comparison_log_type('ufo_tests'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -730,7 +730,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {'nodes': 1}
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.analysis_variables(),
                 qd.generate_yaml_and_exit(),
                 qd.jedi_forecast_model(),
@@ -740,7 +740,7 @@ class TaskAttributes():
                 qd.window_length(),
                 qd.window_type(),
                 qd.comparison_log_type('convert_state_soca2cice'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -750,11 +750,11 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 run_jedi_executable,
                 qd.marine_models(),
                 qd.comparison_log_type('fgat'),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -762,12 +762,12 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 background_crtm_obs,
                 qd.r2d2_local_path(),
                 qd.window_length(),
                 qd.marine_models()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -775,28 +775,28 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 window_questions,
                 qd.background_time_offset(),
                 qd.forecast_duration(),
                 qd.horizontal_resolution(),
                 qd.marine_models(),
                 qd.r2d2_local_path()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
     class StageJedi(TaskSetup):
         def set_attributes(self):
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 swell_static_file_questions,
                 qd.gsibec_configuration(),
                 qd.gsibec_nlats(),
                 qd.gsibec_nlons(),
                 qd.horizontal_resolution(),
                 qd.vertical_resolution()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -806,14 +806,14 @@ class TaskAttributes():
             self.is_model = True
             self.base_name = "StageJedi"
             self.scheduling_name = "StageJediCycle-{model}"
-            self.question_list = QuestionList([
+            self.questions = [
                 swell_static_file_questions,
                 qd.gsibec_configuration(),
                 qd.gsibec_nlats(),
                 qd.gsibec_nlons(),
                 qd.horizontal_resolution(),
                 qd.vertical_resolution()
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -826,10 +826,10 @@ class TaskAttributes():
     class JediLogComparison(TaskSetup):
         def set_attributes(self):
             self.is_model = True
-            self.question_list = QuestionList([
+            self.questions = [
                 qd.number_of_iterations(),
                 qd.comparison_log_type(),
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
@@ -841,7 +841,7 @@ class TaskAttributes():
             self.is_model = True
             self.time_limit = True
             self.slurm = {}
-            self.question_list = QuestionList([
+            self.questions = [
                 np_proc_resolution,
                 window_questions,
                 background_crtm_obs,
@@ -852,7 +852,7 @@ class TaskAttributes():
                 qd.total_processors(),
                 qd.obs_thinning_rej_fraction(),
                 qd.comparison_log_type('obsfilters')
-            ])
+            ]
 
     # --------------------------------------------------------------------------------------------------
 
