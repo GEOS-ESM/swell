@@ -249,6 +249,19 @@ class TaskSetup(ABC):
     def runtime_string(self, experiment_dict: Mapping, slurm_external: Mapping) -> str:
         '''Return the runtime section for the given task.
 
+        Constructs a CylcSection object by filling in a dictionary with the following components
+        from the task:
+
+        1) pre-script
+        2) script
+        3) platform
+        4) execution time limit
+        5) execution retry delays
+        6) slurm subsection
+        7) any additional subsections
+
+        The CylcSection's contents is then converted into a string
+
         Arguments:
         experiment_dict: experiment dictionary from `create_experiment`
         slurm_external: external slurm defaults from globals and user defaults

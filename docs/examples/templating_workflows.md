@@ -8,35 +8,35 @@ The `flow.cylc` that is generated under this method is not much different from t
 
 ## Tasks and the runtime section
 
-Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting `src/swell/tasks/task_attributes.py`. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `Task` class. This class will dynamically set attributes such as messaging parameters and slurm settings.
+Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting `src/swell/tasks/base/task_attributes.py`. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `TaskSetup` class. This class will dynamically set attributes such as messaging parameters and slurm settings.
 
 ```python
-class CloneJedi(Task):
+class CloneJedi(TaskSetup):
     def set_attributes(self):
-        self.question_list = QuestionList([
+        self.questions = [
             qd.bundles(),
             qd.existing_jedi_source_directory(),
             qd.existing_jedi_source_directory_pinned(),
             qd.jedi_build_method()
-        ])
+        ]
 
 
-class EvaObservations(Task):
+class EvaObservations(TaskSetup):
     def set_attributes(self):
         self.time_limit = True
         self.is_cycling = True
         self.is_model = True
         self.slurm = {}
-        self.question_list = QuestionList([
+        self.questions = [
             background_crtm_obs,
             qd.marine_models(),
             qd.observing_system_records_path(),
             qd.window_offset(),
             qd.marine_models(),
-        ])
+        ]
 ```
 
-Attributes are set by override the `set_attributes` method in `Task`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section. For the task specification above for `EvaObservations`, the runtime section will be renderend as the following:
+Attributes are set by override the `set_attributes` method in `TaskSetup`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section. For the task specification above for `EvaObservations`, the runtime section will be renderend as the following:
 
 ```
 [[EvaObservations-geos_marine]]
@@ -56,7 +56,7 @@ Attributes are set by override the `set_attributes` method in `Task`. This has b
 This can be used to set task-specific defaults in `task_attributes.py`, rather than being set in `slurm.py`. For example, the task below defaults to slurm setting `--nodes=1`.
 
 ```python
-class RunJediConvertStateSoca2ciceExecutable(Task):
+class RunJediConvertStateSoca2ciceExecutable(TaskSetup):
     def set_attributes(self):
         self.is_cycling = True
         self.is_model = True 
@@ -67,7 +67,7 @@ class RunJediConvertStateSoca2ciceExecutable(Task):
 This supports setting platform-specific overrides, for example:
 
 ```python
-class RunJediConvertStateSoca2ciceExecutable(Task):
+class RunJediConvertStateSoca2ciceExecutable(TaskSetup):
     def set_attributes(self):
         self.is_cycling = True
         self.is_model = True 
