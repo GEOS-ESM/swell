@@ -14,7 +14,6 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
 from swell.utilities.dictionary import update_dict
 from swell.utilities.swell_questions import QuestionList
-from swell.utilities.settings import read_settings
 
 # --------------------------------------------------------------------------------------------------
 
@@ -321,11 +320,9 @@ class TaskSetup(ABC):
         # Check slurm messaging parameters
         events = self.mail_events
 
-        settings_dict = read_settings()
-
         # Add messaging section
-        if len(events) > 0 and 'email_address' in settings_dict.keys():
-            email_address = settings_dict['email_address']
+        if len(events) > 0 and 'email_address' in experiment_dict:
+            email_address = experiment_dict['email_address']
             address_section = self.create_new_section('mail', f'to = {email_address}')
             runtime_section.add_subsection(address_section)
 

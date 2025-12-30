@@ -28,7 +28,8 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.experiment_id(),
             qd.experiment_root(),
             qd.pause_on_tasks(),
-            qd.task_email_parameters()
+            qd.task_email_parameters(),
+            qd.email_address()
         ]
     )
 

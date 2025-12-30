@@ -247,6 +247,24 @@ class PrepareExperimentConfigAndSuite:
                                 question[platform_key] == 'defer_to_platform':
                             question[platform_key] = platform_val
 
+        # Construct the dictionary for user defaults
+        # ------------------------------------------
+        user_defaults = {}
+        settings_file = os.path.expanduser('~/.swell/swell-settings.yaml')
+        if os.path.exists(settings_file):
+            with open(settings_file, 'r') as f:
+                user_defaults = yaml.safe_load(f)
+
+        # See if any questions have user defaults
+        # ---------------------------------------
+        for question_name, question in self.question_dictionary_model_ind.items():
+            if question['question_type'] == suite_task:
+                if question_name in user_defaults.keys():
+                    for user_key, user_val in user_defaults[question_name].items():
+                        if platform_key not in question.keys() or \
+                                question[platform_key] == 'defer_to_user':
+                            question[user_key] = user_val
+
         # Perform a model override on the model_dep dictionary
         # ----------------------------------------------------
         if self.suite_needs_model_components:

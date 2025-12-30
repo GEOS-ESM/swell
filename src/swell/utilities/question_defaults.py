@@ -62,6 +62,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class email_address(SuiteQuestion):
+        default_value: str = "defer_to_user"
+        question_name: str = "email_address"
+        prompt: str = "What email address should cylc messages be sent to?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensemble_hofx_packets(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"
