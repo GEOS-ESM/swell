@@ -95,15 +95,14 @@ def prepare_config(
 
     # Retrieved the answered suite questions
     # --------------------------------------
-    suite_dict = prepare_config_and_suite.experiment_dict
-
-    suite_dict = suite_dict.copy()
+    suite_dict = prepare_config_and_suite.experiment_dict.copy()
 
     # Overrides for comparison suites
     if 'start_cycle_point' in suite_dict:
         start_cycle_point = suite_dict['start_cycle_point']
         final_cycle_point = suite_dict['final_cycle_point']
-        if suite_dict['start_cycle_point'] is None:
+        if 'comparison_experiment_paths' in suite_dict and \
+                suite_dict['start_cycle_point'] is None:
             config_list = suite_dict['comparison_experiment_paths']
             for model in suite_dict['model_components']:
                 cycle_times = suite_dict['models'][model]['cycle_times']
@@ -173,6 +172,10 @@ def prepare_config(
     # Ask the task questions
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
+
+    if 'start_cycle_point' in suite_dict:
+        experiment_dict['start_cycle_point'] = suite_dict['start_cycle_point']
+        experiment_dict['final_cycle_point'] = suite_dict['final_cycle_point']
 
     # Update dict with cycle times
     # ----------------------------

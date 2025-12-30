@@ -210,6 +210,9 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
+            self.question_list = QuestionList([
+                qd.comparison_log_type()
+            ])
 
     # --------------------------------------------------------------------------------------------------
 
@@ -262,6 +265,7 @@ class TaskAttributes():
             self.is_model = True
             self.question_list = QuestionList([
                 qd.parser_options(),
+                qd.comparison_log_type()
             ])
 
     # --------------------------------------------------------------------------------------------------

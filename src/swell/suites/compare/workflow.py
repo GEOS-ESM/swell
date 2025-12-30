@@ -77,7 +77,9 @@ class Workflow_compare(CylcWorkflow):
 
     def set_tasks(self) -> list:
 
-        for path in self.experiment_dict['comparison_experiment_paths']:
+        paths = self.experiment_dict['comparison_experiment_paths']
+
+        for path in paths:
             with open(path, 'r') as f:
                 config_dict = yaml.safe_load(f)
             for model in self.experiment_dict['model_components']:
@@ -85,10 +87,18 @@ class Workflow_compare(CylcWorkflow):
 
                 self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
 
+        self.tasks.append(ta.root())
+
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.EvaComparisonIncrement(model=model))
             self.tasks.append(ta.EvaComparisonJediLog(model=model))
-            self.tasks.append(ta.JediOopsLogParser(model=model))
             self.tasks.append(ta.JediLogComparison(model=model))
+
+            for i, path in enumerate(paths):
+                log_parser = ta.JediOopsLogParser(model=model)
+                log_parser.scheduling_name = f'JediOopsLogParser-{model}-{i}'
+                log_parser.script = (f'swell task JediOopsLogParser {paths[i]}'
+                                     f' -d $datetime -m {model}')
+                self.tasks.append(log_parser)
 
 # --------------------------------------------------------------------------------------------------
