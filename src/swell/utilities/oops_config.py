@@ -12,15 +12,25 @@ from abc import ABC, abstractmethod
 from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
+from swell.utilities.render_jedi_interface_files import JediConfigRendering
 
 # --------------------------------------------------------------------------------------------------
 
 
 class OopsConfig(ABC):
-    # Abstract class that contains render information for oops configurations
+    """Abstract class that contains render information for JEDI oops configurations.
+
+    Attributes:
+    jedi_rendering: JediConfigRendering object
+    window_type: String of window dimensionality (e.g. '3D' or '4D')
+    cycle_time: ISO datetime (e.g. 20210701T120000Z)
+    cycle_dir: Location of cycle directory in the experiment
+    jedi_forecast_model: forecast model to be used by the experiment (e.g. pseudo-model)
+    observing_system_records_path: output path for geos_mksi
+    """
 
     def __init__(self,
-                 jedi_rendering,
+                 jedi_rendering: JediConfigRendering,
                  window_type: str,
                  cycle_time: str,
                  cycle_dir: str,
@@ -43,6 +53,11 @@ class OopsConfig(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def special_observations(self) -> Mapping:
+        """Grabs JEDI observation dictionary from `obs.yaml`, rendered by RenderJediObservations.
+
+        Returns:
+        Dictionary of observation information for the executable.
+        """
 
         jedi_observations_file = os.path.join(self.cycle_dir, 'obs.yaml')
 
@@ -56,6 +71,12 @@ class OopsConfig(ABC):
     # --------------------------------------------------------------------------------------------------
 
     def interface_model(self, config_name: str) -> Mapping:
+        """
+        Method used to reference interface files.
+
+        Returns:
+        Rendered dictionary of interface data
+        """
 
         # Pass through to jedi rendering render method
         config_value = self.jedi_rendering.render_interface_model(config_name)
@@ -66,6 +87,11 @@ class OopsConfig(ABC):
 
     @abstractmethod
     def render_oops(self) -> Mapping:
+        """Abstract method used to construct contents of OOPs file
+
+        Returns:
+        JEDI configuration dictionary
+        """
         return {}
 
 # --------------------------------------------------------------------------------------------------
