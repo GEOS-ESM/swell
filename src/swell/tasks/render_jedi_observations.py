@@ -35,13 +35,12 @@ class RenderJediObservations(taskBase):
         marine_models = self.config.marine_models(None)
 
         # Window parameters
-        window_offset = self.config.window_offset()
+        window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
 
         # Window parameters for observations
-        window_begin = self.da_window_params.window_begin(window_offset)
-        background_time = self.da_window_params.background_time(window_offset,
-                                                                background_time_offset)
+        window_begin = self.da_window_params.window_begin(window_length)
+        background_time = self.da_window_params.background_time(background_time_offset)
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
 
         # Set fields for obs files
