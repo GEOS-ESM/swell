@@ -136,19 +136,18 @@ class IngestObs(taskBase):
     def check_already_in_r2d2(self, obs_name, provider, window_start, window_length):
         """Check if observation already exists in R2D2."""
         try:
-            # Query R2D2 to see if this observation already exists
-            r2d2.fetch(
+            # Query R2D2 database
+            results = r2d2.search(
                 item='observation',
                 provider=provider,
                 observation_type=obs_name,
                 window_start=window_start,
                 window_length=window_length,
-                type='fetch'  # Just check, don't download
             )
-            # If fetch succeeds, the observation exists
+            # If search returns results, the observation exists
             return True
         except Exception:
-            # If fetch fails (e.g., "not found"), it doesn't exist
+            # If search fails (e.g., connection error), assume not found
             self.logger.debug(f"Observation {obs_name} not found in R2D2")
             return False
 
