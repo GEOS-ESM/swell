@@ -17,6 +17,7 @@ from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_e
 
 # --------------------------------------------------------------------------------------------------
 
+
 def replace_key(obj, old_key, new_key):
     """
     Recursively replace dictionary keys in nested dictionaries/lists.
@@ -255,7 +256,5 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
-
-
 
 # --------------------------------------------------------------------------------------------------
