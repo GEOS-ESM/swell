@@ -91,7 +91,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(True),
             qd.local_ensemble_save_posterior_ensemble(False),
             qd.local_ensemble_save_posterior_ensemble_increments(False),
-            qd.obs_thinning_rej_fraction(0.85),
+            qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
