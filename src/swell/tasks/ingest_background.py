@@ -142,7 +142,7 @@ class IngestBackground(taskBase):
         experiment = config.get('experiment')
         resolution = config.get('resolution')
         file_type = config.get('file_type')
-        step = config.get('step', 'P0H')  # Default to analysis time
+        step = config.get('step', 'PT0H')  # Default to analysis time
         
         retrieval_method = config.get('retrieval_method')
         source_pattern = config.get(f'{retrieval_method}_source')
@@ -167,20 +167,12 @@ class IngestBackground(taskBase):
         
         expected_file = dt.strftime(final_pattern)
         
-        # Handle wildcards if present (glob)
-        if '*' in expected_file:
-            files_found = glob.glob(expected_file)
-            if not files_found:
-                self.logger.warning(f"No files matched pattern: {expected_file}")
-                return ingested, [(bg_name, "No files found")]
-            target_file = files_found[0]
-        else:
-            target_file = expected_file
-
-        # Check existence
-        if not os.path.exists(target_file):
-            self.logger.warning(f"File not found: {target_file}")
-            return ingested, [(bg_name, "File not found")]
+        # Match file path using glob
+        files_found = glob.glob(expected_file)
+        if not files_found:
+            self.logger.warning(f"No files matched pattern: {expected_file}")
+            return ingested, [(bg_name, "No files found")]
+        target_file = files_found[0]
 
         if dry_run:
             self.logger.info(f"  [DRY RUN] Would ingest:")

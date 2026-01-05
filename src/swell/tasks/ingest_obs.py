@@ -91,7 +91,7 @@ class IngestObs(taskBase):
                 self.cycle_dir(), 
                 self.config.r2d2_local_path()
             )
-
+        
         total_ingested = 0
         total_failed = 0
         
@@ -120,7 +120,7 @@ class IngestObs(taskBase):
             total_failed += len(failed)
             if len(ingested) == 0 and len(failed) == 0:
                 total_skipped += 1
-
+        
         # Summary
         self.logger.info("="*60)
         self.logger.info("INGESTION SUMMARY")
@@ -137,7 +137,7 @@ class IngestObs(taskBase):
         """Check if observation already exists in R2D2."""
         try:
             # Query R2D2 to see if this observation already exists
-            results = r2d2.fetch(
+            r2d2.fetch(
                 item='observation',
                 provider=provider,
                 observation_type=obs_name,
@@ -147,9 +147,9 @@ class IngestObs(taskBase):
             )
             # If fetch succeeds, the observation exists
             return True
-        except Exception as e:
+        except Exception:
             # If fetch fails (e.g., "not found"), it doesn't exist
-            self.logger.debug(f"Observation not found in R2D2: {e}")
+            self.logger.debug(f"Observation {obs_name} not found in R2D2")
             return False
 
 
@@ -201,20 +201,12 @@ class IngestObs(taskBase):
         
         expected_file = dt.strftime(final_pattern)
         
-        # Handle wildcards if present (glob)
-        if '*' in expected_file:
-            files_found = glob.glob(expected_file)
-            if not files_found:
-                self.logger.warning(f"No files matched pattern: {expected_file}")
-                return ingested, [(obs_name, "No files found")]
-            target_file = files_found[0] # Take first match
-        else:
-            target_file = expected_file
-
-        # Check existence
-        if not os.path.exists(target_file):
-            self.logger.warning(f"File not found: {target_file}")
-            return ingested, [(obs_name, "File not found")]
+        # Match file path using glob
+        files_found = glob.glob(expected_file)
+        if not files_found:
+            self.logger.warning(f"No files matched pattern: {expected_file}")
+            return ingested, [(obs_name, "No files found")]
+        target_file = files_found[0]
 
         if dry_run:
             self.logger.info(f"  [DRY RUN] Would ingest:")
@@ -230,7 +222,7 @@ class IngestObs(taskBase):
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
-                    file_extension=os.path.splitext(target_file)[1][1:], # 'nc' from '.nc'
+                    file_extension=os.path.splitext(target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file
@@ -241,5 +233,5 @@ class IngestObs(taskBase):
             else:
                 ingested.append(target_file)
                 self.logger.info(f"Successfully ingested {obs_name}")
-                
+        
         return ingested, failed
