@@ -18,6 +18,22 @@ from swell.utilities.run_jedi_executables import run_executable
 # --------------------------------------------------------------------------------------------------
 
 
+def replace_key(obj, old_key, new_key):
+    """
+    Recursively replace dictionary keys in nested dictionaries/lists.
+    """
+    if isinstance(obj, dict):
+        new_dict = {}
+        for k, v in obj.items():
+            new_k = new_key if k == old_key else k
+            new_dict[new_k] = replace_key(v, old_key, new_key)
+        return new_dict
+    elif isinstance(obj, list):
+        return [replace_key(item, old_key, new_key) for item in obj]
+    else:
+        return obj
+
+
 class RunJediLocalEnsembleDaExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
@@ -183,16 +199,22 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
         # bypass the writing of HofXs
-        # -------------------------------------------------------------------
-        bypass_HofXs = True
+        # ---------------------------
+        bypass_HofXs = False
         if bypass_HofXs:
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
 
-        yaml = YAML()
+        # change variational bc to static bc
+        # -------------------------------------------------------------------
+        for observer in jedi_config_dict['observations']['observers']:
+            if 'obs bias' in observer:
+                observer['obs bias'] = replace_key(observer['obs bias'],
+                                                   "variational bc", "static bc")
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
+        yaml = YAML()
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 
