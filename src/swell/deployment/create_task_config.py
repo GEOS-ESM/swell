@@ -24,11 +24,12 @@ from swell.utilities.shell_commands import create_executable_file
 
 # --------------------------------------------------------------------------------------------------
 
-script_template = '''
-#!{{shell}}
+script_template = '''#!{{shell}}
+{% if task_slurm_dict != None %}
 {%- for key, value in task_slurm_dict.items() %}
 #SBATCH --{{key}} = {{value}}
 {%- endfor %}
+{% endif %}
 
 # -------------------
 
@@ -134,20 +135,17 @@ def task_config_wrapper(task_name: str,
     experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)
 
-    # Construct the slurm defaults
-    slurm_external_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
-
     # Construct the slurm dict for the task
+    task_slurm_dict = None
     if task.slurm is not None:
-        task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict, platform)
+        # Construct the slurm defaults
+        slurm_external_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
+        task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict)
 
-        time_limit = task.get_time_limit()
+        time_limit = task.time_limit
         if time_limit is not None:
             time_limit_dto = isodate.parse_duration(time_limit)
             task_slurm_dict['time'] = isodate.strftime(time_limit_dto, '%H:%M:%S')
-
-    else:
-        task_slurm_dict = {}
 
     # Determine the path for task results
     experiment_root = experiment_dict['experiment_root']
@@ -186,7 +184,7 @@ def task_config_wrapper(task_name: str,
         logger.abort(f'Failed to deduce the target shell. $SHELL is currently set to {shell}')
 
     file_ext = shell_type
-    if len(task_slurm_dict) > 0:
+    if task_slurm_dict is not None:
         file_ext = 'slurm'
 
     # Build the swell task script
@@ -217,7 +215,7 @@ def task_config_wrapper(task_name: str,
     logger.info('To run the task by itself, run: ')
     print(f'\n  {script}\n')
     logger.info('Or, to use auto-generated script, run: ')
-    if len(task_slurm_dict) > 0:
+    if task_slurm_dict is not None:
         print(f'\n  sbatch {script_file}\n')
     else:
         print(f'\n  {script_file}\n')
