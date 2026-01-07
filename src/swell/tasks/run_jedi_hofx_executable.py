@@ -35,6 +35,7 @@ class RunJediHofxExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
+        forecast_length = self.config.forecast_length(window_length)
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
@@ -60,6 +61,7 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
+        self.jedi_rendering.add_key('forecast_length', forecast_length)
 
         # Background
         # ----------
@@ -120,6 +122,8 @@ class RunJediHofxExecutable(taskBase):
                     observer['get values'] = {
                         'time interpolation': 'linear'
                     }
+                self.jedi_rendering.add_key('forecast_length',
+                                            self.config.forecast_length(window_length))
 
             # Update config filters to save the GeoVaLs from the model interface.
             # Add GOMsaver to either obs filters OR obs prior filters, if neither

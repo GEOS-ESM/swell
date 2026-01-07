@@ -31,7 +31,7 @@ class hofx4D(OopsConfig):
 
         oops['model'] = self.interface_model(self.jedi_forecast_model)
 
-        oops['forecast length'] = self.template_dict['window_length']
+        oops['forecast length'] = self.template_dict['forecast_length']
 
         return oops
 

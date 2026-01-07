@@ -31,6 +31,7 @@ class RunJediVariationalExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
+        forecast_length = self.config.forecast_length(window_length)
         background_time_offset = self.config.background_time_offset()
         number_of_iterations = self.config.number_of_iterations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
@@ -61,6 +62,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
+        self.jedi_rendering.add_key('forecast_length', forecast_length)
         self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())

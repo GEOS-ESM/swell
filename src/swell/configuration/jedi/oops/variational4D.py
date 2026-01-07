@@ -26,7 +26,7 @@ class variational4D(OopsConfig):
                 'geometry': self.interface_model('geometry'),
                 'model': self.interface_model('pseudo_model'),
                 'variable change': {'variable change name': 'Analysis2Model'},
-                'forecast length': self.template_dict['window_length'],
+                'forecast length': self.template_dict['forecast_length'],
                 'analysis variables': self.template_dict['analysis_variables'],
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error'),
