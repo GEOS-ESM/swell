@@ -208,8 +208,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # change variational bc to static bc
         # -------------------------------------------------------------------
         for observer in jedi_config_dict['observations']['observers']:
-            observer['obs bias'] = replace_key(observer['obs bias'],
-                                               "variational bc", "static bc")
+            if 'obs bias' in observer:
+                observer['obs bias'] = replace_key(observer['obs bias'],
+                                                   "variational bc", "static bc")
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
