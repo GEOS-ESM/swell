@@ -36,7 +36,20 @@ class EvaObservations(TaskSetup):
         ]
 ```
 
-Attributes are set by override the `set_attributes` method in `TaskSetup`. This has been combined with the previously-used `task_questions.py` for simplicity. Here, the tags `is_cycling` and `is_model` are used to specify what tags the task needs to be appended with in the runtime section. These are set to `False` by default. Tasks with a specified `slurm` dictionary (rather than set to null, as by default) will use their contents to build the `directives` section. For the task specification above for `EvaObservations`, the runtime section will be renderend as the following:
+Attributes are set by override the `set_attributes` method in `TaskSetup`. This has been combined with the previously-used `task_questions.py` for simplicity. 
+
+The tags `is_cycling` and `is_model` (both `False` by default) modify the script command (`swell task <task name> $config`):
+
+- `is_cycling = True` adds `-d $datetime` for cycling tasks
+- `is_model = True` adds `-m {model}` to indicate model-specific tasks.
+
+The `slurm` attribute determines where or not the task requires Slurm and provides a way to set task-specific overrides:
+
+- `slurm = None` means the task is not a Slurm task, so no `[[[directives]]]` section will be written.
+- `slurm = {}` means the task *is* a Slurm task, so the `[[[directives]]]` will be populated according to the platform's default slurm settings (in `src/swell/deployment/platforms`) along with user-specific overrides.
+- `slurm = {<arguments>}` will optionally override the platform defaults with task-specific ones (but note that *user-configured overrides always have the highest priority*).
+
+For the task specification above for `EvaObservations`, the runtime section will be renderend as the following:
 
 ```
 [[EvaObservations-geos_marine]]
