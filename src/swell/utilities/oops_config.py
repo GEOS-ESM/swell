@@ -25,7 +25,7 @@ class OopsConfig(ABC):
     window_type: String of window dimensionality (e.g. '3D' or '4D')
     cycle_time: ISO datetime (e.g. 20210701T120000Z)
     cycle_dir: Location of cycle directory in the experiment
-    jedi_forecast_model: forecast model to be used by the experiment (e.g. pseudo-model)
+    jedi_forecast_model: forecast model to be used by the experiment (e.g. pseudo_model)
     observing_system_records_path: output path for geos_mksi
     """
 
