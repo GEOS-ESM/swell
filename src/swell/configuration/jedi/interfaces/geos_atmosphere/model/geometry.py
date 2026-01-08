@@ -19,16 +19,6 @@ def geometry(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
     vertical_resolution = template_dict['vertical_resolution']
 
-    try:
-        horizontal_resolution = int(horizontal_resolution)
-    except ValueError:
-        pass
-
-    try:
-        vertical_resolution = int(vertical_resolution)
-    except ValueError:
-        pass
-
     geometry = {
         'fms initialization': {
             'namelist filename': './fv3-jedi/fv3files/fmsmpp.nml',
