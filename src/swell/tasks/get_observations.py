@@ -181,7 +181,7 @@ class GetObservations(taskBase):
                 try:
                     r2d2.fetch(**fetch_criteria)
                     self.logger.info(f"Successfully fetched {target_file}")
-                except Exception as e:
+                except Exception:
                     self.logger.info(
                         f"Failed to fetch {target_file}. "
                         "Fetch empty observation instead."
