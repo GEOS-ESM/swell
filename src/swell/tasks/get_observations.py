@@ -182,7 +182,7 @@ class GetObservations(taskBase):
                     self.logger.info(f"Successfully fetched {target_file}")
                 except Exception as e:
                     self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
-                    self.logger.info("Fetch empty observation instead.")
+                    self.logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
 
                     # fetch empty obs
                     r2d2.fetch(
