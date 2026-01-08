@@ -88,8 +88,10 @@ template_str = '''
 
             # Data assimilation preperation
             StageJediCycle-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+
             GenerateBClimatology-{{model_component}} => RunJediFgatExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediFgatExecutable-{{model_component}}
 
             # Run analysis diagnostics
             RunJediFgatExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -183,12 +185,12 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             self.tasks.append(ta.EvaJediLog(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
             self.tasks.append(ta.SaveRestart(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
-
 
 # --------------------------------------------------------------------------------------------------

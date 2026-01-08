@@ -87,8 +87,10 @@ template_str = '''
 
             # Data assimilation things
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Run analysis diagnostics
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -134,7 +136,6 @@ template_str = '''
 
     # Task defaults
     # -------------
-
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
@@ -176,6 +177,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             self.tasks.append(ta.GenerateBClimatology(model=model))
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
             self.tasks.append(ta.MoveDaRestart(model=model))
             self.tasks.append(ta.RemoveForecastDir(model=model))

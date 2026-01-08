@@ -75,7 +75,8 @@ template_str = '''
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
@@ -99,7 +100,6 @@ template_str = '''
 
     # Task defaults
     # -------------
-
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
@@ -136,6 +136,7 @@ class Workflow_hofx(CylcWorkflow):
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.GetObsNotInR2d2(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediHofxExecutable(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))

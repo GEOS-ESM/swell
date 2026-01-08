@@ -8,8 +8,10 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 from typing import Union, Optional, Any
+from importlib import import_module
+from collections.abc import Mapping
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -73,6 +75,7 @@ class JediConfigRendering():
             'background_time',
             'cice6_domain',
             'crtm_coeff_dir',
+            'cycle_dir',
             'cycling_varbc',
             'ensemble_members',
             'ensemble_hofx_packets',
@@ -128,6 +131,7 @@ class JediConfigRendering():
             'window_begin_iso',
             'window_end_iso',
             'window_length',
+            'forecast_length',
         ]
 
         # List of all potential valid dynamic keys that can be used in templates
@@ -179,36 +183,56 @@ class JediConfigRendering():
         config_file_str = template_string_jinja2(self.logger, config_file_str_templated,
                                                  self.__template_dict__)
 
+        # Construct ruamel interpreter
+        yaml = YAML(typ='safe')
+
         # Convert string to dictionary
-        return yaml.safe_load(config_file_str)
+        return yaml.load(config_file_str)
 
     # ----------------------------------------------------------------------------------------------
 
     # Prepare path to oops file and call rendering
-    def render_oops_file(self, config_name: str) -> dict:
+    def render_oops_file(self,
+                         config_name: str,
+                         window_type: Optional[str] = None,
+                         jedi_forecast_model: Optional[str] = None) -> dict:
 
-        # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'oops', f'{config_name}.yaml')
+        # Import the module
+        module = import_module(f'swell.configuration.jedi.oops.{config_name}')
+
+        # Get the config class
+        config_class = getattr(module, config_name)
+
+        # Construct the config object
+        config_obj = config_class(jedi_rendering=self,
+                                  window_type=window_type,
+                                  cycle_time=self.cycle_time,
+                                  cycle_dir=self.cycle_dir,
+                                  jedi_forecast_model=jedi_forecast_model,
+                                  observing_system_records_path=self.observing_system_records_path)
+
+        # Call the config's custom oops method
+        oops_dict = config_obj.render_oops()
 
         # Render templates in file and return dictionary
-        return self.__open_file_render_to_dict__(config_file)
+        return oops_dict
 
     # ----------------------------------------------------------------------------------------------
 
-    # Prepare path to interface model file and call rendering
-    def render_interface_model(self, config_name: str) -> dict[Any, Any]:
+    def render_interface_model(self, config_name: str) -> Mapping:
+        # Get and call the interface model method in file
 
-        # Assert that there is a jedi interface associated with the task
-        self.logger.assert_abort(self.jedi_interface is not None, f'In order to render a ' +
-                                 f'jedi interface config file the task must have an associated' +
-                                 f'jedi interface.')
+        # Import the module
+        module = import_module(
+                f'swell.configuration.jedi.interfaces.{self.jedi_interface}.model.{config_name}')
 
-        # Path to configuration file
-        config_file = os.path.join(self.jedi_config_path, 'interfaces', self.jedi_interface,
-                                   'model', f'{config_name}.yaml')
+        # Get the function attribute
+        config_func = getattr(module, config_name)
 
-        # Render templates in file and return dictionary
-        return self.__open_file_render_to_dict__(config_file)
+        # Call the function with the template dict
+        config_value = config_func(self.__template_dict__)
+
+        return config_value
 
     # ----------------------------------------------------------------------------------------------
 

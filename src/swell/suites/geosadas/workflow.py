@@ -61,7 +61,8 @@ template_str = '''
             StageJedi[^] => RunJediVariationalExecutable
             GsiBcToIoda => RunJediVariationalExecutable
             GsiNcdiagToIoda => RunJediVariationalExecutable
-            GetGeosAdasBackground => RunJediVariationalExecutable
+            GetGeosAdasBackground => RenderJediObservations
+            RenderJediObservations => RunJediVariationalExecutable
 
             # Clean cycle
             RunJediVariationalExecutable => CleanCycle
@@ -73,7 +74,6 @@ template_str = '''
 
     # Task defaults
     # -------------
-
 '''
 
 # --------------------------------------------------------------------------------------------------
@@ -110,6 +110,7 @@ class Workflow_geosadas(CylcWorkflow):
             self.tasks.append(ta.GsiNcdiagToIoda(model=model))
             self.tasks.append(ta.GetGeosAdasBackground(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

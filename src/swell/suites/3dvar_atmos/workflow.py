@@ -83,7 +83,8 @@ template_str = '''
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -152,6 +153,7 @@ class Workflow_3dvar_atmos(CylcWorkflow):
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.GetObsNotInR2d2(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))

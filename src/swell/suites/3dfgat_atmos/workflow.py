@@ -86,11 +86,12 @@ template_str = '''
             RunJediVariationalExecutable-{{model_component}}
 
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} =>
-            RunJediVariationalExecutable-{{model_component}}
 
-            GenerateObservingSystemRecords-{{model_component}} =>
-            RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -159,6 +160,7 @@ class Workflow_3dfgat_atmos(CylcWorkflow):
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))

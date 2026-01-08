@@ -64,7 +64,9 @@ template_str = '''
 
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
 
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => sync_point
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            
+            RenderJediObservations-{{model_component}} => sync_point
 
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
 
@@ -152,6 +154,7 @@ class Workflow_localensembleda(CylcWorkflow):
             self.tasks.append(ta.GenerateObservingSystemRecords(model=model))
             self.tasks.append(ta.GetEnsembleGeosExperiment(model=model))
             self.tasks.append(ta.sync_point(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediObsfiltersExecutable(model=model))
             self.tasks.append(ta.RunJediLocalEnsembleDaExecutable(model=model))
             self.tasks.append(ta.RunJediEnsembleMeanVariance(model=model))

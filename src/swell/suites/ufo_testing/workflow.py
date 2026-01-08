@@ -67,7 +67,10 @@ template_str = '''
 
             GetGeovals
 
+            GsiNcdiagToIoda => RenderJediObservations
+
             # Run Jedi hofx executable
+            RenderJediObservations => RunJediUfoTestsExecutable
             GenerateObservingSystemRecords => RunJediUfoTestsExecutable
             GsiNcdiagToIoda => RunJediUfoTestsExecutable
             GsiBcToIoda => RunJediUfoTestsExecutable
@@ -88,7 +91,6 @@ template_str = '''
 
     # Task defaults
     # -------------
-
 '''
 
 # --------------------------------------------------------------------------------------------------
@@ -123,6 +125,7 @@ class Workflow_ufo_testing(CylcWorkflow):
             self.tasks.append(ta.GsiBcToIoda(model=model))
             self.tasks.append(ta.GetGsiNcdiag(model=model))
             self.tasks.append(ta.GsiNcdiagToIoda(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediUfoTestsExecutable(model=model))
             self.tasks.append(ta.GetGeovals(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
