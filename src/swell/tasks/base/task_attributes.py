@@ -567,7 +567,7 @@ class TaskAttributes():
         def set_attributes(self):
             self.is_cycling = True
             self.is_model = True
-            self.questions=[
+            self.questions = [
                 qd.check_for_obs(),
                 qd.crtm_coeff_dir(),
                 qd.background_time_offset(),
@@ -576,7 +576,7 @@ class TaskAttributes():
                 qd.set_obs_as_local(),
                 qd.window_length()
             ]
-    
+
     # --------------------------------------------------------------------------------------------------
 
     class RunJediFgatExecutable(TaskSetup):
