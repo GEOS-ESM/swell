@@ -10,12 +10,12 @@
 
 import glob
 import os
-import yaml
+from ruamel.yaml import YAML
 from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
@@ -35,6 +35,7 @@ class RunJediHofxExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
+        forecast_length = self.config.forecast_length(window_length)
         background_time_offset = self.config.background_time_offset()
         observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
@@ -60,6 +61,7 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
+        self.jedi_rendering.add_key('forecast_length', forecast_length)
 
         # Background
         # ----------
@@ -106,15 +108,12 @@ class RunJediHofxExecutable(taskBase):
             # ---------------
             output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
-            # Open the JEDI config file and fill initial templates
+            # Open the JEDI config file and fill templates
             # ----------------------------------------------------
             jedi_config_dict = \
-                self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
-
-            # Perform complete template rendering
-            # -----------------------------------
-            jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                     observations, self.cycle_time_dto(), jedi_forecast_model)
+                self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+                                                     window_type,
+                                                     jedi_forecast_model)
 
             # If window type is 4D add time interpolation to each observer
             # ------------------------------------------------------------
@@ -123,6 +122,8 @@ class RunJediHofxExecutable(taskBase):
                     observer['get values'] = {
                         'time interpolation': 'linear'
                     }
+                self.jedi_rendering.add_key('forecast_length',
+                                            self.config.forecast_length(window_length))
 
             # Update config filters to save the GeoVaLs from the model interface.
             # Add GOMsaver to either obs filters OR obs prior filters, if neither
@@ -131,10 +132,12 @@ class RunJediHofxExecutable(taskBase):
             if save_geovals:
                 self.append_gomsaver(observations, jedi_config_dict, window_begin)
 
+            yaml = YAML()
+
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
             with open(jedi_config_file, 'w') as jedi_config_file_open:
-                yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+                yaml.dump(jedi_config_dict, jedi_config_file_open)
 
             # Jedi executable name
             # --------------------
@@ -158,7 +161,8 @@ class RunJediHofxExecutable(taskBase):
 
                 # Combine the GeoVaLs
                 # -------------------
-                for observation in observations:
+                for observer in jedi_config_dict['observations']['observers']:
+                    observation = observer['observation_name']
 
                     self.logger.info(f'Combining GeoVaLs files for {observation}')
 
@@ -193,15 +197,13 @@ class RunJediHofxExecutable(taskBase):
                 output_log_file = os.path.join(self.cycle_dir(),
                                                f'jedi_{jedi_application}_mem{mem}_log.log')
 
-                # Open the JEDI config file and fill initial templates
-                # ----------------------------------------------------
+                # Open the JEDI config file and fill templates
+                # --------------------------------------------
                 jedi_config_dict = \
-                    self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
-
-                # Perform complete template rendering
-                # -----------------------------------
-                jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                         observations, self.cycle_time_dto(), jedi_forecast_model)
+                    self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+                                                         window_type,
+                                                         observations,
+                                                         jedi_forecast_model)
 
                 # Continue with the yaml edits below some of which need to be
                 # done for each observation and ensemble member
@@ -217,10 +219,9 @@ class RunJediHofxExecutable(taskBase):
                 # For each observation, add the ensemble member to the output
                 # filename to create seperate files for each ensemble member
                 # ------------------------------------------------------------
-                for index, observation in enumerate(observations):
+                for observer in jedi_config_dict['observations']['observers']:
 
-                    # Get pointer to observer
-                    observer = jedi_config_dict['observations']['observers'][index]
+                    observation = observer['observations_name']
 
                     # Get the output file string
                     outfile = observer['obs space']['obsdataout']['engine']['obsfile']
@@ -239,7 +240,7 @@ class RunJediHofxExecutable(taskBase):
                 # Write the expanded dictionary to YAML file
                 # ------------------------------------------
                 with open(jedi_config_file, 'w') as jedi_config_file_open:
-                    yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+                    yaml.dump(jedi_config_dict, jedi_config_file_open)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -258,7 +259,9 @@ class RunJediHofxExecutable(taskBase):
         # Add mem to the filename if it is not None
         mem_str = f'_mem{mem}' if mem is not None else ''
 
-        for index, observation in enumerate(observations):
+        for observer in jedi_config_dict['observations']['observers']:
+
+            observation = observer['observation_name']
 
             # Define the GeoVaLs saver dictionary
             gom_saver_dict = {
@@ -266,9 +269,6 @@ class RunJediHofxExecutable(taskBase):
                 'filename': os.path.join(self.cycle_dir(),
                                          f'{observation}-geovals.{window_begin}{mem_str}.nc4')
             }
-
-            # Get pointer to observer
-            observer = jedi_config_dict['observations']['observers'][index]
 
             # Check if observer has obs filters and if so add them to the jedi_config_dict
             if 'obs filters' in observer:

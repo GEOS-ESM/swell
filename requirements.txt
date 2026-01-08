@@ -10,3 +10,4 @@ questionary>=1.10.0
 h5py>=3.7.0
 flake8==6.1.0
 netCDF4
+ruamel.yaml==0.17.16
