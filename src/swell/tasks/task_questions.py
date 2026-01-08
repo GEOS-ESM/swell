@@ -518,6 +518,21 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RenderJediObservations = QuestionList(
+        list_name="RenderJediObservations",
+        questions=[
+            qd.check_for_obs(),
+            qd.crtm_coeff_dir(),
+            qd.background_time_offset(),
+            qd.observing_system_records_path(),
+            qd.observations(),
+            qd.set_obs_as_local(),
+            qd.window_length()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediConvertStateSoca2ciceExecutable = QuestionList(
         list_name="RunJediConvertStateSoca2ciceExecutable",
         questions=[
