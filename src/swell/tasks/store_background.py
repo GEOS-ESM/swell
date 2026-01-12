@@ -11,16 +11,30 @@
 from datetime import datetime as dt
 import isodate
 import os
-from r2d2 import store
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import create_r2d2_config
 
 
 # --------------------------------------------------------------------------------------------------
 
+class StoreBackground(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.r2d2_local_path(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class StoreBackground(taskBase):
 
@@ -33,6 +47,9 @@ class StoreBackground(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
+
+        from r2d2 import store
+        from swell.utilities.r2d2 import create_r2d2_config
 
         # Current cycle time object
         # -------------------------

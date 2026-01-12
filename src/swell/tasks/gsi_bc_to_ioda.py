@@ -13,12 +13,24 @@ import os
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.dictionary import write_dict_to_yaml
 from swell.utilities.shell_commands import run_track_log_subprocess
 
 
 # --------------------------------------------------------------------------------------------------
 
+class GetGsiBcSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.path_to_gsi_bc_coefficients(),
+            qd.window_length()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GsiBcToIoda(taskBase):
 

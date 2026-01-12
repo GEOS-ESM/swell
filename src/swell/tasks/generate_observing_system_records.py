@@ -11,10 +11,23 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.observing_system_records import ObservingSystemRecords
 
 # --------------------------------------------------------------------------------------------------
 
+class GenerateObservingSystemRecordsSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.observations(),
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_path()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GenerateObservingSystemRecords(taskBase):
 

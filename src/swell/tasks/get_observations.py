@@ -10,12 +10,12 @@
 import isodate
 import numpy as np
 import os
-import r2d2
-import netCDF4 as nc
 from typing import Union
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
@@ -30,6 +30,23 @@ r2d2_model_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
+class GetObservationsSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.cycling_varbc(),
+            qd.obs_experiment(),
+            qd.observing_system_records_path(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GetObservations(taskBase):
 
@@ -96,6 +113,11 @@ class GetObservations(taskBase):
         --------------
         "tlapse" files need to be fetched.
         """
+
+        # Import modules
+        # --------------
+        import r2d2
+        import netCDF4 as nc
 
         # Parse config
         # ------------

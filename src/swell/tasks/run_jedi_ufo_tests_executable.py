@@ -13,12 +13,32 @@ import os
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.dictionary import update_dict
 from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
 
+class RunJediUfoTestsExecutable(TaskSetup):
+    def set_attributes(self):
+        self.time_limit = True
+        self.is_cycling = True
+        self.is_model = True
+        self.slurm = {'ntasks-per-node': 1}
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.generate_yaml_and_exit(),
+            qd.single_observations(),
+            qd.window_length(),
+            qd.comparison_log_type('ufo_tests'),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class RunJediUfoTestsExecutable(taskBase):
 

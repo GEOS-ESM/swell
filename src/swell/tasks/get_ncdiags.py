@@ -9,11 +9,27 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
-from r2d2 import fetch
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+class GetNcdiagsSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.ncdiag_experiments(),
+            qd.marine_models(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GetNcdiags(taskBase):
 
@@ -22,6 +38,11 @@ class GetNcdiags(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Import modules
+        # --------------
+        from r2d2 import fetch
+        from swell.utilities.r2d2 import create_r2d2_config
 
         # Parse config
         # ------------

@@ -12,10 +12,27 @@ import os
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
+class RenderJediObservations(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.check_for_obs(),
+            qd.crtm_coeff_dir(),
+            qd.background_time_offset(),
+            qd.observing_system_records_path(),
+            qd.observations(),
+            qd.set_obs_as_local(),
+            qd.window_length()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class RenderJediObservations(taskBase):
 

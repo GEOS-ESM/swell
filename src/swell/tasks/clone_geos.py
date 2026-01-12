@@ -11,12 +11,23 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import build_and_source_dirs, link_path
 from swell.utilities.git_utils import git_clone
 from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
+class CloneGeosSetup(TaskSetup):
+    def set_attributes(self):
+        self.questions = [
+            qd.existing_geos_gcm_source_path(),
+            qd.geos_build_method(),
+            qd.geos_gcm_tag()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class CloneGeos(taskBase):
 

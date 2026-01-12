@@ -12,10 +12,20 @@ import glob
 from typing import Union
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.file_system_operations import move_files
 
 # --------------------------------------------------------------------------------------------------
 
+class MoveForecastRestartSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.questions = [
+            qd.forecast_duration()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class MoveForecastRestart(taskBase):
 

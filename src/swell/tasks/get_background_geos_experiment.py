@@ -14,10 +14,25 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
+class GetBackgroundGeosExperimentSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.mail_events = ['submit-failed']
+        self.questions = [
+            qd.horizontal_resolution(),
+            qd.background_experiment(),
+            qd.background_time_offset(),
+            qd.geos_x_background_directory()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GetBackgroundGeosExperiment(taskBase):
 

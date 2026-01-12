@@ -11,11 +11,22 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import build_and_source_dirs, link_path
 
 
 # --------------------------------------------------------------------------------------------------
 
+class BuildGeosByLinkingSetup(TaskSetup):
+    def set_attributes(self):
+        self.mail_events = ['submit-failed']
+        self.questions = [
+            qd.existing_geos_gcm_build_path(),
+            qd.geos_build_method()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class BuildGeosByLinking(taskBase):
 

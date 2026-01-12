@@ -13,12 +13,28 @@ import os
 from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.file_system_operations import copy_to_dst_dir
-from swell.utilities.r2d2 import create_r2d2_config
 
 # --------------------------------------------------------------------------------------------------
 
+class SaveRestart(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_time_offset(),
+            qd.forecast_duration(),
+            qd.horizontal_resolution(),
+            qd.marine_models(),
+            qd.r2d2_local_path()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class SaveRestart(taskBase):
 
@@ -29,6 +45,8 @@ class SaveRestart(taskBase):
         This is a temporary solution until we have a proper v3 data storage
         Does not handle 4d backgrounds properly
         """
+
+        from swell.utilities.r2d2 import create_r2d2_config
 
         # Parse config
         window_type = self.config.window_type()

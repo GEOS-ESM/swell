@@ -8,13 +8,30 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.file_system_operations import link_all_files_from_first_in_hierarchy_of_sources
 
 
 # --------------------------------------------------------------------------------------------------
 
+class GenerateBClimatologyByLinking(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.background_error_model(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
-class GenerateBClimatologyByLinking(taskBase):
+# --------------------------------------------------------------------------------------------------
+
+class GenerateBClimatologyByLinkingSetup(taskBase):
 
     def execute(self) -> None:
         """Acquires B Matrix files for background error model(s):

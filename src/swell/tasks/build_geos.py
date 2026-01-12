@@ -11,12 +11,21 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import build_and_source_dirs
 from swell.utilities.shell_commands import run_subprocess, create_executable_file
 
 
 # --------------------------------------------------------------------------------------------------
 
+class BuildGeosSetup(TaskSetup):
+    def set_attributes(self):
+        self.questions = [
+            qd.geos_build_method()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class BuildGeos(taskBase):
 
@@ -32,10 +41,12 @@ class BuildGeos(taskBase):
         geos_gcm_build_path, geos_gcm_source_path = build_and_source_dirs(geos_gcm_path)
         os.makedirs(geos_gcm_build_path, exist_ok=True)
 
+        geos_build_method = self.config.geos_build_method()
+
         # Check that the choice is to create build
         # ----------------------------------------
-        if not self.config.geos_build_method() == 'create':
-            self.logger.abort(f'Found \'{jedi_build_method}\' for jedi_build_method in the '
+        if not geos_build_method == 'create':
+            self.logger.abort(f'Found \'{geos_build_method}\' for jedi_build_method in the '
                               f'experiment dictionary. Must be \'create\'.')
 
         # Create script that encapsulates the steps of building GEOS

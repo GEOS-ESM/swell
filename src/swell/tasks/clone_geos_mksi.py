@@ -10,10 +10,21 @@
 
 import os
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import link_path
 
 # --------------------------------------------------------------------------------------------------
 
+class CloneGeosMksiSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_model = True
+        self.questions = [
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_mksi_path_tag()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class CloneGeosMksi(taskBase):
 

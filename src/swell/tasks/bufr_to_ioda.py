@@ -14,6 +14,7 @@ import subprocess
 import yaml
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
 from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
@@ -34,6 +35,12 @@ bufr2ioda_obs_type_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
+class BufrToIodaSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+
+# --------------------------------------------------------------------------------------------------
 
 class BufrToIoda(taskBase):
 

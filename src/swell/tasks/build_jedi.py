@@ -13,10 +13,22 @@ import os
 from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 # --------------------------------------------------------------------------------------------------
 
+class BuildJediSetup(TaskSetup):
+    def set_attributes(self):
+        self.time_limit = True
+        self.slurm = {}
+        self.questions = [
+            qd.bundles(),
+            qd.jedi_build_method()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class BuildJedi(taskBase):
 

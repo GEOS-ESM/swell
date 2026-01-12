@@ -11,10 +11,17 @@ import os
 from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.shell_commands import run_track_log_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
+class RunGeosExecutable(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+
+# --------------------------------------------------------------------------------------------------
 
 class RunGeosExecutable(taskBase):
 

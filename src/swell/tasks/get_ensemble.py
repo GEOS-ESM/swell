@@ -12,12 +12,14 @@ import glob
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------
 
 
-class GetEnsemble(taskBase):
+class GetEnsembleSetup(taskBase):
 
     def execute(self) -> None:
         """Acquires ensemble member files for a given experiment and cycle

@@ -11,17 +11,30 @@
 import os
 import yaml
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
+class EvaIncrementSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.marine_models(),
+            qd.window_length(),
+            qd.window_type()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class EvaIncrement(taskBase):
 
     def execute(self) -> None:
+
+        from eva.eva_driver import eva
 
         # Get the model and window type
         # -----------------------------

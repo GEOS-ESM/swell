@@ -15,9 +15,23 @@ from typing import Union
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+class PrepareAnalysisSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.analysis_variables(),
+            qd.mom6_iau(),
+            qd.total_processors(),
+            qd.window_length(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class PrepareAnalysis(taskBase):
 

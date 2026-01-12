@@ -12,10 +12,10 @@ from multiprocessing import Pool
 import os
 import yaml
 
-from eva.eva_driver import eva
-
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
@@ -31,10 +31,30 @@ def run_eva(eva_dict: dict) -> eva:
 
 # --------------------------------------------------------------------------------------------------
 
+class EvaObservationsSetup(TaskSetup):
+    def set_attributes(self):
+        self.time_limit = True
+        self.is_cycling = True
+        self.is_model = True
+        self.slurm = {}
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.marine_models(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+            qd.marine_models(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class EvaObservations(taskBase):
 
     def execute(self) -> None:
+
+        from eva.eva_driver import eva
 
         window_length = self.config.window_length()
 

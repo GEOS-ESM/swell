@@ -12,14 +12,27 @@ import isodate
 import os
 from netCDF4 import Dataset
 import numpy as np
-import xarray as xr
 from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+class LinkGeosOutputSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_frequency(),
+            qd.marine_models()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class LinkGeosOutput(taskBase):
 
@@ -32,6 +45,8 @@ class LinkGeosOutput(taskBase):
         This will depend on the model type (ocean vs. atmosphere), model output
         type (history vs. restart), DA method, and window length.
         """
+
+        import xarray as xr
 
         # Parse configuration
         # -------------------

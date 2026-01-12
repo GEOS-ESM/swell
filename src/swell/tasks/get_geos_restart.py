@@ -11,10 +11,22 @@ import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
+class GetGeosRestartSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.questions = [
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.geos_restarts_directory()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GetGeosRestart(taskBase):
 

@@ -10,10 +10,16 @@
 import shutil
 
 from swell.tasks.base.task_base import taskBase
-
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+class RemoveForecastDirSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+
+# --------------------------------------------------------------------------------------------------
 
 class RemoveForecastDir(taskBase):
 

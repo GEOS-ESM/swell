@@ -11,15 +11,35 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.r2d2 import create_r2d2_config
-from r2d2 import fetch
 
+
+# --------------------------------------------------------------------------------------------------
+
+class GetGeovalsSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.geovals_experiment(),
+            qd.geovals_provider(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
 class GetGeovals(taskBase):
 
     def execute(self) -> None:
+
+        from r2d2 import fetch
 
         # Parse config
         # ------------

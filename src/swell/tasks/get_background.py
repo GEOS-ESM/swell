@@ -9,7 +9,8 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 import isodate
 import os
@@ -25,7 +26,24 @@ r2d2_model_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
-class GetBackground(taskBase):
+class GetBackground(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.window_length(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.marine_models(),
+            qd.r2d2_local_path(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
+
+class GetBackgroundSetup(taskBase):
 
     def execute(self) -> None:
         """Acquires background files for a given experiment and cycle
@@ -35,6 +53,8 @@ class GetBackground(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
+
+        from swell.utilities.r2d2 import create_r2d2_config
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------

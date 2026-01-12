@@ -13,10 +13,22 @@ import os
 import subprocess
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 
 
 # --------------------------------------------------------------------------------------------------
 
+class GetObsNotInR2d2Setup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.mail_events = ['submit-failed']
+        self.questions = [
+            qd.ioda_locations_not_in_r2d2(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class GetObsNotInR2d2(taskBase):
 

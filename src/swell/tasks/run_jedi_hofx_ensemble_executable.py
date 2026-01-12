@@ -12,11 +12,43 @@ import os
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.run_jedi_executables import run_executable
 from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
 # --------------------------------------------------------------------------------------------------
 
+class RunJediHofxEnsembleExecutable(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.time_limit = True
+        self.slurm = {}
+        self.questions = [
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.background_frequency(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.total_processors(),
+            qd.comparison_log_type('hofx'),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
 

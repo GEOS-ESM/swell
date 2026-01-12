@@ -12,14 +12,25 @@ import os
 import yaml
 import glob
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 
 # --------------------------------------------------------------------------------------------------
 
+class EvaComparisonIncrementSetup(TaskSetup):
+    def set_attributes(self):
+        self.is_cycling = True
+        self.is_model = True
+        self.questions = [
+            qd.marine_models(),
+            qd.window_length(),
+            qd.window_type()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class EvaComparisonIncrement(taskBase):
 
@@ -36,6 +47,8 @@ class EvaComparisonIncrement(taskBase):
         return window_type, window_length
 
     def execute(self) -> None:
+
+        from eva.eva_driver import eva
 
         model = self.get_model()
 

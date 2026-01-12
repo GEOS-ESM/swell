@@ -12,6 +12,8 @@ import os
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.filehandler import get_file_handler
 from swell.utilities.exceptions import SwellError
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
@@ -19,6 +21,20 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
+class StageJedi(TaskSetup):
+    def set_attributes(self):
+        self.is_model = True
+        self.questions = [
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 class StageJedi(taskBase):
 
