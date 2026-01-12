@@ -14,6 +14,7 @@ import re
 import numpy as np
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,6 +28,11 @@ class JediLogComparison(taskBase):
     def execute(self):
 
         experiment_paths = self.config.comparison_experiment_paths()
+
+        experiment_tag_paths = comparison_tags(experiment_paths)
+
+        exp_tag_0 = experiment_tag_paths.keys()[0]
+        exp_tag_1 = experiment_tag_paths.keys()[0]
 
         # Get the number of iterations between experiments
         iterations_list = []
@@ -50,7 +56,7 @@ class JediLogComparison(taskBase):
 
         log_type = self.config.comparison_log_type()
 
-        for exp_num, experiment_path in enumerate(experiment_paths):
+        for exp_tag, experiment_path in experiment_tag_paths.items():
 
             # Paths to cycle dirs
             cycles_path = os.path.join(os.path.dirname(experiment_path), '..', 'run')
@@ -86,9 +92,9 @@ class JediLogComparison(taskBase):
                             # val = field['dtype'](val)
 
                             if key not in cycle_results.keys():
-                                cycle_results[key] = {f'exp{exp_num}': val}
+                                cycle_results[key] = {exp_tag: val}
                             else:
-                                cycle_results[key][f'exp{exp_num}'] = val
+                                cycle_results[key][exp_tag] = val
 
                 for key in cycle_results.keys():
                     for field_name in comparison_fields.keys():
@@ -96,9 +102,9 @@ class JediLogComparison(taskBase):
                             dtype = comparison_fields[field_name]['dtype']
 
                             if dtype == float:
-                                if 'exp0' in cycle_results[key] and 'exp1' in cycle_results[key]:
-                                    diff = float(cycle_results[key]['exp0']) - \
-                                            float(cycle_results[key]['exp1'])
+                                if exp_tag_0 in cycle_results[key] and exp_tag_1 in cycle_results[key]:
+                                    diff = float(cycle_results[key][exp_tag_0]) - \
+                                            float(cycle_results[key][exp_tag_1])
                                     cycle_results[key]['diff'] = str(diff)
                                     if key in tolerances:
                                         key_passed = np.abs(diff) < tolerances[key]
@@ -113,14 +119,14 @@ class JediLogComparison(taskBase):
                                 cycle_results[key]['diff'] = 'N/A'
                                 cycle_results[key]['pass'] = ''
 
-        widths = {'key': len(cycle), 'exp0': 0, 'exp1': 0, 'diff': 0, 'pass': 0}
+        widths = {'key': len(cycle), exp_tag_0: 0, exp_tag_1: 0, 'diff': 0, 'pass': 0}
 
         for cycle, cycle_results in all_results.items():
             for key in cycle_results:
                 if 'exp0' not in cycle_results[key]:
-                    cycle_results[key]['exp0'] = 'N/A'
+                    cycle_results[key][exp_tag_0] = 'N/A'
                 if 'exp1' not in cycle_results[key]:
-                    cycle_results[key]['exp1'] = 'N/A'
+                    cycle_results[key][exp_tag_1] = 'N/A'
                 if 'diff' not in cycle_results[key]:
                     cycle_results[key]['diff'] = 'N/A'
                 if 'pass' not in cycle_results[key]:
@@ -128,22 +134,22 @@ class JediLogComparison(taskBase):
                     passed = False
 
                 widths['key'] = max(widths['key'], len(key))
-                widths['exp0'] = max(widths['exp0'], len(cycle_results[key]['exp0']))
-                widths['exp1'] = max(widths['exp1'], len(cycle_results[key]['exp1']))
+                widths[exp_tag_0] = max(widths[exp_tag_0], len(cycle_results[key][exp_tag_0]))
+                widths[exp_tag_1] = max(widths[exp_tag_1], len(cycle_results[key][exp_tag_1]))
                 widths['diff'] = max(widths['diff'], len(str(cycle_results[key]['diff'])))
 
         for key, val in widths.items():
             widths[key] = val + 2
 
         out_string = '\n'
-        out_string += f'exp0: {experiment_paths[0]}\n'
-        out_string += f'exp1: {experiment_paths[1]}\n'
+        out_string += f'{exp_tag_0}: {experiment_paths[0]}\n'
+        out_string += f'{exp_tag_1}: {experiment_paths[1]}\n'
         out_string += '\n'
 
         for cycle, cycle_results in all_results.items():
             out_string += cycle + ' ' * (widths['key'] - len(cycle))
-            out_string += 'exp0' + ' ' * (widths['exp0'] - len('exp0'))
-            out_string += 'exp1' + ' ' * (widths['exp1'] - len('exp1'))
+            out_string += exp_tag_0 + ' ' * (widths[exp_tag_0] - len(exp_tag_0))
+            out_string += exp_tag_1 + ' ' * (widths[exp_tag_1] - len(exp_tag_1))
             out_string += 'diff' + ' ' * (widths['diff'] - len('diff'))
             out_string += 'pass' + ' ' * (widths['pass'] - len('pass'))
 
@@ -154,8 +160,8 @@ class JediLogComparison(taskBase):
                     val_dict = cycle_results[key]
 
                     out_string += key + ' ' * (widths['key'] - len(key))
-                    out_string += val_dict['exp0'] + ' ' * (widths['exp0'] - len(val_dict['exp0']))
-                    out_string += val_dict['exp1'] + ' ' * (widths['exp1'] - len(val_dict['exp1']))
+                    out_string += val_dict[exp_tag_0] + ' ' * (widths[exp_tag_0] - len(val_dict[exp_tag_0]))
+                    out_string += val_dict[exp_tag_1] + ' ' * (widths[exp_tag_1] - len(val_dict[exp_tag_1]))
                     out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
                     out_string += str(val_dict['pass']) + ' ' * (
                             widths['pass'] - len(str(val_dict['pass'])))
