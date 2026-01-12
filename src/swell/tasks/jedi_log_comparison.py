@@ -29,10 +29,10 @@ class JediLogComparison(taskBase):
 
         experiment_paths = self.config.comparison_experiment_paths()
 
-        experiment_tag_paths = comparison_tags(experiment_paths)
+        experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        exp_tag_0 = experiment_tag_paths.keys()[0]
-        exp_tag_1 = experiment_tag_paths.keys()[0]
+        exp_tag_0 = list(experiment_tag_paths.keys())[0]
+        exp_tag_1 = list(experiment_tag_paths.keys())[1]
 
         # Get the number of iterations between experiments
         iterations_list = []
@@ -123,9 +123,9 @@ class JediLogComparison(taskBase):
 
         for cycle, cycle_results in all_results.items():
             for key in cycle_results:
-                if 'exp0' not in cycle_results[key]:
+                if exp_tag_0 not in cycle_results[key]:
                     cycle_results[key][exp_tag_0] = 'N/A'
-                if 'exp1' not in cycle_results[key]:
+                if exp_tag_1 not in cycle_results[key]:
                     cycle_results[key][exp_tag_1] = 'N/A'
                 if 'diff' not in cycle_results[key]:
                     cycle_results[key]['diff'] = 'N/A'
