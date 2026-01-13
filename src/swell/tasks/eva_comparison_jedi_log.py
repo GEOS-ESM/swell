@@ -15,6 +15,7 @@ from eva.eva_driver import eva
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.comparisons import comparison_tags
 
 
 # --------------------------------------------------------------------------------------------------
@@ -42,8 +43,13 @@ class EvaComparisonJediLog(taskBase):
         # Get the paths for the two experiments
         experiment_paths = self.config.comparison_experiment_paths()
 
-        experiment_path_1 = experiment_paths[0]
-        experiment_path_2 = experiment_paths[1]
+        experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
+
+        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
+        experiment_tag_2 = list(experiment_tag_paths.keys())[0]
+
+        experiment_path_1 = list(experiment_tag_paths.values())[0]
+        experiment_path_2 = list(experiment_tag_paths.values())[1]
 
         with open(experiment_path_1, 'r') as f:
             experiment_dict_1 = yaml.safe_load(f)
@@ -74,6 +80,9 @@ class EvaComparisonJediLog(taskBase):
 
         eva_override['experiment_id_1'] = experiment_id_1
         eva_override['experiment_id_2'] = experiment_id_2
+
+        eva_override['experiment_tag_1'] = experiment_tag_1
+        eva_override['experiment_tag_2'] = experiment_tag_2
 
         eva_override['log_type'] = log_type
 

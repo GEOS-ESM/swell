@@ -22,6 +22,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 from swell.utilities.run_jedi_executables import check_obs
 from swell.utilities.observations import ioda_name_to_long_name
+from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------
 
@@ -45,8 +46,14 @@ class EvaComparisonObservations(taskBase):
         # Get the experiment paths
         # ------------------------
         experiment_paths = self.config.comparison_experiment_paths()
-        experiment_path_1 = experiment_paths[0]
-        experiment_path_2 = experiment_paths[1]
+
+        experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
+
+        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
+        experiment_tag_2 = list(experiment_tag_paths.keys())[0]
+
+        experiment_path_1 = list(experiment_tag_paths.values())[0]
+        experiment_path_2 = list(experiment_tag_paths.values())[1]
 
         model = self.get_model()
 
@@ -198,6 +205,9 @@ class EvaComparisonObservations(taskBase):
             eva_override['domain'] = 'global'
             eva_override['experiment_id_1'] = experiment_id_1
             eva_override['experiment_id_2'] = experiment_id_2
+
+            eva_override['experiment_tag_1'] = experiment_tag_1
+            eva_override['experiment_tag_2'] = experiment_tag_2
 
             # If filename contains icec_ change map projection to polar stereographic
             # -----------------------------------------------------------------------
