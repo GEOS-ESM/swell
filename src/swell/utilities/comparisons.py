@@ -7,6 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
+from ruamel.yaml import YAML
 from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
@@ -40,5 +41,33 @@ def comparison_tags(pathspecs: list | dict,
 
     return pathspecs_out
 
+# --------------------------------------------------------------------------------------------------
+
+def experiment_ids(experiment_paths) -> tuple:
+    '''Get experiment ids from path's experiment.yaml
+
+    Arguments:
+    experiment_paths: List of two experiment paths
+
+    Returns:
+    Tuple (experiment_id_1, experiment_id_2)
+    '''
+
+    experiment_path_1 = experiment_paths[0]
+    experiment_path_2 = experiment_paths[1]
+
+    yaml = YAML(typ='safe')
+    
+    with open(experiment_path_1, 'r') as f:
+        experiment_dict_1 = yaml.load(f)
+
+    experiment_id_1 = experiment_dict_1['experiment_id']
+
+    with open(experiment_path_2, 'r') as f:
+        experiment_dict_2 = yaml.load(f)
+
+    experiment_id_2 = experiment_dict_2['experiment_id']
+
+    return experiment_id_1, experiment_id_2
 
 # --------------------------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ from eva.eva_driver import eva
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
-from swell.utilities.comparisons import comparison_tags
+from swell.utilities.comparisons import comparison_tags, experiment_ids
 
 # --------------------------------------------------------------------------------------------------
 
@@ -56,6 +56,8 @@ class EvaComparisonIncrement(taskBase):
 
         experiment_path_1 = list(experiment_tag_paths.values())[0]
         experiment_path_2 = list(experiment_tag_paths.values())[1]
+
+        experiment_id_1, experiment_id_2 = experiment_ids(experiment_paths)
 
         window_type, window_length = self.window_info_from_config(experiment_path_1)
 
@@ -127,6 +129,9 @@ class EvaComparisonIncrement(taskBase):
 
         eva_override['experiment_tag_1'] = experiment_tag_1
         eva_override['experiment_tag_2'] = experiment_tag_2
+
+        eva_override['experiment_id_1'] = experiment_id_1
+        eva_override['experiment_id_2'] = experiment_id_2
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
