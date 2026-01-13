@@ -19,7 +19,7 @@ graphics:
   - batch figure:
       variables: [ps]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
@@ -96,7 +96,7 @@ graphics:
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
@@ -174,7 +174,7 @@ graphics:
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
@@ -413,7 +413,7 @@ graphics:
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -494,7 +494,7 @@ graphics:
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -655,7 +655,7 @@ graphics:
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
@@ -736,7 +736,7 @@ graphics:
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
@@ -817,7 +817,7 @@ graphics:
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
@@ -898,7 +898,7 @@ graphics:
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -979,7 +979,7 @@ graphics:
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -1141,7 +1141,7 @@ graphics:
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
@@ -1222,7 +1222,7 @@ graphics:
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
@@ -1303,7 +1303,7 @@ graphics:
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
@@ -1385,7 +1385,7 @@ graphics:
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -1466,7 +1466,7 @@ graphics:
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -1708,7 +1708,7 @@ graphics:
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
@@ -1789,7 +1789,7 @@ graphics:
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
@@ -1870,7 +1870,7 @@ graphics:
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
