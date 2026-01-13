@@ -32,6 +32,7 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -53,6 +54,7 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -73,8 +75,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Surface Pressure Increment Diff (1-2)
+          label: Surface Pressure Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -104,7 +107,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -126,8 +130,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -148,7 +153,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         add_grid:
         layers:
         - type: MapGridded
@@ -179,8 +185,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -201,8 +208,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -223,7 +231,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_id_2}})'
         add_grid:
         layers:
         - type: MapGridded
@@ -254,8 +263,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -277,8 +287,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -300,8 +311,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -331,8 +343,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -354,8 +367,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -377,8 +391,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -409,8 +424,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -432,8 +448,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -455,8 +472,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
