@@ -334,7 +334,7 @@ graphics:
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -360,7 +360,7 @@ graphics:
 
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -396,7 +396,7 @@ graphics:
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'GSI h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -422,7 +422,7 @@ graphics:
 
       - add_xlabel: 'Observation Value'
         add_ylabel: 'GSI h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -458,7 +458,7 @@ graphics:
     plots:
       - add_xlabel: 'GSI h(x)'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -484,7 +484,7 @@ graphics:
 
       - add_xlabel: 'GSI h(x)'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -520,7 +520,7 @@ graphics:
     plots:
       - add_xlabel: 'GSI observation minus h(x)'
         add_ylabel: 'JEDI observation minus h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -546,7 +546,7 @@ graphics:
 
       - add_xlabel: 'GSI observation minus h(x)'
         add_ylabel: 'JEDI observation minus h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -582,7 +582,7 @@ graphics:
     plots:
       - add_xlabel: 'GSI observation minus h(x)'
         add_ylabel: 'JEDI h(x) minus GSI h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -599,7 +599,7 @@ graphics:
 
       - add_xlabel: 'GSI observation minus h(x)'
         add_ylabel: 'JEDI h(x) minus GSI h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -626,7 +626,7 @@ graphics:
     plots:
       - add_xlabel: 'OmA'
         add_ylabel: 'OmB'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -652,7 +652,7 @@ graphics:
 
       - add_xlabel: 'OmA'
         add_ylabel: 'OmB'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -676,8 +676,8 @@ graphics:
           color: 'red'
           label: 'OmA versus OmB (passed QC)'
 
-      - add_xlabel: 'OmA {{experiment_id_1}} (1)'
-        add_ylabel: 'OmA {{experiment_id_2}} (2)'
+      - add_xlabel: 'OmA ({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_ylabel: 'OmA ({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -691,8 +691,8 @@ graphics:
           markersize: 5
           color: 'black'
 
-      - add_xlabel: 'OmB {{experiment_id_1}} (1)'
-        add_ylabel: 'OmB {{experiment_id_2}} (2)'
+      - add_xlabel: 'OmB ({{experiment_tag_1}}) {{experiment_id_1}}'
+        add_ylabel: 'OmB ({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -718,7 +718,7 @@ graphics:
     plots:
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -744,7 +744,7 @@ graphics:
 
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -780,7 +780,7 @@ graphics:
     plots:
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -806,7 +806,7 @@ graphics:
 
       - add_xlabel: 'GsiFinalObsError'
         add_ylabel: 'JediFinalObsError'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -854,7 +854,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -878,7 +878,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -916,7 +916,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -940,7 +940,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -978,7 +978,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -1002,7 +1002,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -1040,7 +1040,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -1101,7 +1101,7 @@ graphics:
         add_colorbar:
           label: '${variable}'
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -1161,7 +1161,7 @@ graphics:
     plots:
       - add_xlabel: 'Observation minus h(x)'
         add_ylabel: 'Count'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_legend:
           loc: 'upper left'
         layers:
@@ -1219,7 +1219,7 @@ graphics:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'

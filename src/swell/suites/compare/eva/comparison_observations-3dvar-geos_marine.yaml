@@ -155,7 +155,7 @@ graphics:
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -179,7 +179,7 @@ graphics:
 
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         add_legend:
           loc: 'upper left'
@@ -219,7 +219,7 @@ graphics:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -265,7 +265,7 @@ graphics:
 
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         set_xlim: [-3, 3]
         add_legend:
           loc: 'upper left'
@@ -330,7 +330,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -353,7 +353,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -376,7 +376,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -399,7 +399,7 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -433,7 +433,7 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -456,7 +456,7 @@ graphics:
         add_colorbar:
           label: EffectiveQC1
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
@@ -490,7 +490,7 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapScatter
           longitude:
@@ -513,7 +513,7 @@ graphics:
         add_colorbar:
           label: Increment (OmBg - OmAn)
         add_grid:
-        add_title: '{{experiment_id_2}} (2)'
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapScatter
           longitude:
