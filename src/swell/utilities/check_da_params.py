@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import yaml
+from ruamel.yaml import YAML
 import os
 from typing import Optional
 from datetime import datetime
@@ -42,8 +42,9 @@ def check_da_params(config_list: list,
             logger.abort(f'Config file {config_file} does not exist.')
 
         # Open the file for location and window information
+        yaml = YAML(typ='safe')
         with open(config_file, 'r') as f:
-            config_dict = yaml.safe_load(f)
+            config_dict = yaml.load(f)
 
         # Window params
         start_cycle_point = config_dict['start_cycle_point']
