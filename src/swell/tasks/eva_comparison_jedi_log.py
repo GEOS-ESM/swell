@@ -46,7 +46,7 @@ class EvaComparisonJediLog(taskBase):
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
         experiment_tag_1 = list(experiment_tag_paths.keys())[0]
-        experiment_tag_2 = list(experiment_tag_paths.keys())[0]
+        experiment_tag_2 = list(experiment_tag_paths.keys())[1]
 
         experiment_path_1 = list(experiment_tag_paths.values())[0]
         experiment_path_2 = list(experiment_tag_paths.values())[1]
