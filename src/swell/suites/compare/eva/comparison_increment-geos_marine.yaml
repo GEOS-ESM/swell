@@ -24,7 +24,7 @@ graphics:
   - batch figure:
       variables: [ave_ssh]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'SOCA Increment'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
@@ -36,8 +36,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSH Increment 1
+          label: SSH Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -58,8 +59,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSH Increment 2
+          label: SSH Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -80,8 +82,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSH Increment (1-2) Diff
+          label: SSH Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -97,7 +100,7 @@ graphics:
   - batch figure:
       variables: [Temp]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Soca Increment'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
@@ -108,8 +111,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SST Increment 1
+          label: SST Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -131,8 +135,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SST Increment 2
+          label: SST Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -154,8 +159,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SST Increment (1-2) Diff
+          label: SST Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -165,14 +171,14 @@ graphics:
           data:
             variable: experiment_increment_1::SOCAVars::Temp_diff
             slices: '[0,...]'
-          label: SST increment (1-2) Diff
+          label: SST increment Diff
           colorbar: true
           cmap: 'bwr'
 
   - batch figure:
       variables: [Salt]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Soca Increment'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
@@ -183,8 +189,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment 1
+          label: SSS Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -206,8 +213,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment 2
+          label: SSS Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -217,7 +225,7 @@ graphics:
           data:
             variable: experiment_increment_2::SOCAVars::Salt
             slices: '[0,...]'
-          label: SSS increment 2
+          label: SSS increment
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_salt
@@ -229,8 +237,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: SSS Increment (1-2) Diff
+          label: SSS Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -240,7 +249,7 @@ graphics:
           data:
             variable: experiment_increment_1::SOCAVars::Salt_diff
             slices: '[0,...]'
-          label: SSS increment (1-2) Diff
+          label: SSS increment Diff
           colorbar: true
           cmap: 'bwr'
 
