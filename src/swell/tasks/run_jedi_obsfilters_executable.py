@@ -133,7 +133,7 @@ class RunJediObsfiltersExecutable(taskBase):
         del jedi_config_dict['observations']
         jedi_config_dict.update(new_dict)
 
-        yaml = YAML()
+        yaml = YAML(typ='safe')
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

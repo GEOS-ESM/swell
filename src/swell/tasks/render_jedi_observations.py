@@ -82,7 +82,7 @@ class RenderJediObservations(taskBase):
 
         jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
 
-        yaml = YAML()
+        yaml = YAML(typ='safe')
 
         with open(jedi_observations_file, 'w') as f:
             yaml.dump(observations, f)

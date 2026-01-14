@@ -123,7 +123,7 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
                                                                 window_type,
                                                                 jedi_forecast_model)
 
-        yaml = YAML()
+        yaml = YAML(typ='safe')
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

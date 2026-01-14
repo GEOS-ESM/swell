@@ -144,7 +144,7 @@ class RunJediUfoTestsExecutable(taskBase):
         # with open(file, 'w') as jedi_config_file_open:
         #     yaml.dump(jedi_operator_dict, jedi_config_file_open)
 
-        yaml = YAML()
+        yaml = YAML(typ='safe')
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsFilters_config.yaml')
         with open(file, 'w') as jedi_config_file_open:

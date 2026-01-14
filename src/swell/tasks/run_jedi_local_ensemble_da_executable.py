@@ -214,7 +214,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
-        yaml = YAML()
+        yaml = YAML(typ='safe')
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 

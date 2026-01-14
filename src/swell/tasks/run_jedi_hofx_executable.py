@@ -132,7 +132,7 @@ class RunJediHofxExecutable(taskBase):
             if save_geovals:
                 self.append_gomsaver(observations, jedi_config_dict, window_begin)
 
-            yaml = YAML()
+            yaml = YAML(typ='safe')
 
             # Write the expanded dictionary to YAML file
             # ------------------------------------------
