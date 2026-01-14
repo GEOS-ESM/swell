@@ -31,49 +31,10 @@ graphics:
   figure_list:
 
   - figure:
-      layout: [3,1]
       figure size: [12,10]
       title: 'Residual Norm and Norm Reduction Plots'
       output name: '{{cycle_dir}}/eva/jedi_log/convergence/residual_norm_reduction.png'
     plots:
-      - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Residual norm'
-        add_legend:
-        layers:
-        - type: LinePlot
-          x:
-            variable: JediLogTest_1::convergence::total_iteration
-          y:
-            variable: JediLogTest_1::convergence::residual_norm
-          color: 'red'
-          label: 'Experiment 1'
-        - type: LinePlot
-          x:
-            variable: JediLogTest_2::convergence::total_iteration
-          y:
-            variable: JediLogTest_2::convergence::residual_norm
-          color: 'blue'
-          label: 'Experiment 2'
-
-      - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Log(norm reduction)'
-        add_legend:
-        layers:
-        - type: LinePlot
-          x:
-            variable: JediLogTest_1::convergence::total_iteration
-          y:
-            variable: JediLogTest_1::convergence::norm_reduction
-          color: 'red'
-          label: 'Experiment 1'
-        - type: LinePlot
-          x:
-            variable: JediLogTest_2::convergence::total_iteration
-          y:
-            variable: JediLogTest_2::convergence::norm_reduction
-          color: 'blue'
-          label: 'Experiment 2'
-
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Log(reduction)'
         add_legend:
@@ -84,42 +45,40 @@ graphics:
           y:
             variable: JediLogTest_1::convergence::residual_norm_log
           color: 'red'
-          label: 'Log(residual norm) 1'
+          label: '{{experiment_tag_1}} Log(residual norm)'
         - type: LinePlot
           x:
             variable: JediLogTest_2::convergence::total_iteration
           y:
             variable: JediLogTest_2::convergence::residual_norm_log
           color: 'blue'
-          label: 'Log(residual norm) 2'
+          label: '{{experiment_tag_2}} Log(residual norm)'
         - type: LinePlot
           x:
             variable: JediLogTest_1::convergence::total_iteration
           y:
             variable: JediLogTest_1::convergence::norm_reduction_log
           color: 'yellow'
-          label: 'Log norm reduction 1'
+          label: '{{experiment_tag_1}} Log norm reduction'
         - type: LinePlot
           x:
             variable: JediLogTest_2::convergence::total_iteration
           y:
             variable: JediLogTest_2::convergence::norm_reduction_log
           color: 'green'
-          label: 'Log norm reduction 2'
+          label: '{{experiment_tag_1}} Log norm reduction'
 
   - figure:
       title: 'Cost Function Plot'
       output name: '{{cycle_dir}}/eva/jedi_log/cost_function/cost_function.png'
-      layout: [3, 1]
-      #figure size: [10, 30]
     plots:
       - add_xlabel: 'Total inner iteration number'
         add_ylabel: 'Quadratic Cost Function'
         add_legend:
-        add_title: '{{experiment_id_1}} (1)'
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}}) diff'
         layers:
         - type: LinePlot
-          label: 'jb'
+          label: '{{experiment_tag_1}} jb'
           x:
             variable: JediLogTest_1::convergence::total_iteration
           y:
@@ -128,53 +87,7 @@ graphics:
           linestyle: '--'
           markersize: 2
         - type: LinePlot
-          label: 'jojc'
-          x:
-            variable: JediLogTest_1::convergence::total_iteration
-          y:
-            variable: JediLogTest_1::convergence::jojc
-          color: 'blue'
-          markersize: 2
-
-      - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Quadratic Cost Function'
-        add_legend:
-        add_title: '{{experiment_id_2}} (2)'
-        layers:
-        - type: LinePlot
-          label: 'jb'
-          x:
-            variable: JediLogTest_2::convergence::total_iteration
-          y:
-            variable: JediLogTest_2::convergence::jb
-          color: 'green'
-          linestyle: '--'
-          markersize: 0
-        - type: LinePlot
-          label: 'jojc'
-          x:
-            variable: JediLogTest_2::convergence::total_iteration
-          y:
-            variable: JediLogTest_2::convergence::jojc
-          color: 'black'
-          markersize: 0
-
-      - add_xlabel: 'Total inner iteration number'
-        add_ylabel: 'Quadratic Cost Function'
-        add_legend:
-        add_title: '1 - 2 diff'
-        layers:
-        - type: LinePlot
-          label: 'jb 1'
-          x:
-            variable: JediLogTest_1::convergence::total_iteration
-          y:
-            variable: JediLogTest_1::convergence::jb
-          color: 'red'
-          linestyle: '--'
-          markersize: 2
-        - type: LinePlot
-          label: 'jojc 1'
+          label: '{{experiment_tag_1}} jojc'
           x:
             variable: JediLogTest_1::convergence::total_iteration
           y:
@@ -182,7 +95,7 @@ graphics:
           color: 'blue'
           markersize: 2
         - type: LinePlot
-          label: 'jb 2'
+          label: '{{experiment_tag_2}} jb'
           x:
             variable: JediLogTest_2::convergence::total_iteration
           y:
@@ -191,7 +104,7 @@ graphics:
           linestyle: '--'
           markersize: 2
         - type: LinePlot
-          label: 'jojc 2'
+          label: '{{experiment_tag_2}} jojc'
           x:
             variable: JediLogTest_2::convergence::total_iteration
           y:
