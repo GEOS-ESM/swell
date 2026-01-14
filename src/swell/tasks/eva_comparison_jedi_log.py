@@ -9,7 +9,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
 
@@ -66,7 +66,8 @@ class EvaComparisonJediLog(taskBase):
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-        eva_dict = yaml.safe_load(eva_str)
+        yaml = YAML(typ='safe')
+        eva_dict = yaml.load(eva_str)
 
         # Write eva dictionary to file
         # ----------------------------
@@ -74,7 +75,7 @@ class EvaComparisonJediLog(taskBase):
                                    'comparison_jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
-            yaml.dump(eva_dict, outfile, default_flow_style=False)
+            yaml.dump(eva_dict, outfile)
 
         # Call eva
         # --------
