@@ -69,8 +69,9 @@ class GenerateBClimatology(taskBase):
         # ---------------------------------------------------------------
         jedi_config_dict = self.generate_jedi_config()
 
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 
@@ -134,8 +135,9 @@ class GenerateBClimatology(taskBase):
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 
@@ -175,8 +177,9 @@ class GenerateBClimatology(taskBase):
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 
