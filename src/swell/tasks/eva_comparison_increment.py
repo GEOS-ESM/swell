@@ -48,7 +48,7 @@ class EvaComparisonIncrement(taskBase):
 
         # Get the paths for the two experiments
         experiment_paths = self.config.comparison_experiment_paths()
-
+        print(experiment_paths)
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
         experiment_tag_1 = list(experiment_tag_paths.keys())[0]

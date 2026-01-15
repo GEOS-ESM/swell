@@ -73,10 +73,17 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
+    {% if comparison_experiment_paths is mapping %}
+    {% for path in comparison_experiment_paths.values() %}
+    [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
+        script = "swell task JediOopsLogParser {{path}} -d $datetime -m {{model_component}}"
+    {% endfor %}
+    {% else %}
     {% for path in comparison_experiment_paths %}
     [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
         script = "swell task JediOopsLogParser {{path}} -d $datetime -m {{model_component}}"
     {% endfor %}
+    {% endif %}
 
     [[JediLogComparison-{{model_component}}]]
         script = "swell task JediLogComparison $config -m {{model_component}}"

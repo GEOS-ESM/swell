@@ -34,9 +34,12 @@ class JediLogComparison(taskBase):
         exp_tag_0 = list(experiment_tag_paths.keys())[0]
         exp_tag_1 = list(experiment_tag_paths.keys())[1]
 
+        experiment_path_0 = list(experiment_tag_paths.values())[0]
+        experiment_path_1 = list(experiment_tag_paths.values())[1]
+
         # Get the number of iterations between experiments
         iterations_list = []
-        for path in experiment_paths:
+        for path in experiment_tag_paths.values():
             with open(path, 'r') as f:
                 exp_dict = yaml.safe_load(f)
                 num_iters = int(exp_dict['models'][self.get_model()]['number_of_iterations'][0])
@@ -102,7 +105,8 @@ class JediLogComparison(taskBase):
                             dtype = comparison_fields[field_name]['dtype']
 
                             if dtype == float:
-                                if exp_tag_0 in cycle_results[key] and exp_tag_1 in cycle_results[key]:
+                                if exp_tag_0 in cycle_results[key] and exp_tag_1 in \
+                                        cycle_results[key]:
                                     diff = float(cycle_results[key][exp_tag_0]) - \
                                             float(cycle_results[key][exp_tag_1])
                                     cycle_results[key]['diff'] = str(diff)
@@ -142,8 +146,8 @@ class JediLogComparison(taskBase):
             widths[key] = val + 2
 
         out_string = '\n'
-        out_string += f'{exp_tag_0}: {experiment_paths[0]}\n'
-        out_string += f'{exp_tag_1}: {experiment_paths[1]}\n'
+        out_string += f'{exp_tag_0}: {experiment_path_0}\n'
+        out_string += f'{exp_tag_1}: {experiment_path_1}\n'
         out_string += '\n'
 
         for cycle, cycle_results in all_results.items():
@@ -160,8 +164,10 @@ class JediLogComparison(taskBase):
                     val_dict = cycle_results[key]
 
                     out_string += key + ' ' * (widths['key'] - len(key))
-                    out_string += val_dict[exp_tag_0] + ' ' * (widths[exp_tag_0] - len(val_dict[exp_tag_0]))
-                    out_string += val_dict[exp_tag_1] + ' ' * (widths[exp_tag_1] - len(val_dict[exp_tag_1]))
+                    out_string += val_dict[exp_tag_0] + ' ' * (widths[exp_tag_0] -
+                                                               len(val_dict[exp_tag_0]))
+                    out_string += val_dict[exp_tag_1] + ' ' * (widths[exp_tag_1] -
+                                                               len(val_dict[exp_tag_1]))
                     out_string += val_dict['diff'] + ' ' * (widths['diff'] - len(val_dict['diff']))
                     out_string += str(val_dict['pass']) + ' ' * (
                             widths['pass'] - len(str(val_dict['pass'])))

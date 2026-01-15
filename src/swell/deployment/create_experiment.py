@@ -123,6 +123,8 @@ def prepare_config(
         final_cycle_point = experiment_dict['final_cycle_point']
         if experiment_dict['start_cycle_point'] is None:
             config_list = experiment_dict['comparison_experiment_paths']
+            if isinstance(config_list, dict):
+                config_list = list(config_list.values())
             for model in experiment_dict['model_components']:
                 cycle_times = experiment_dict['models'][model]['cycle_times']
                 start_cycle_point, final_cycle_point, cycle_times = check_da_params(
