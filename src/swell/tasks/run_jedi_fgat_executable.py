@@ -124,7 +124,8 @@ class RunJediFgatExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', window_type,
                                                                 jedi_forecast_model)
 
-        yaml = YAML(typ='safe')
+        yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

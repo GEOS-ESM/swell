@@ -184,6 +184,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                          f'configuration/jedi/interfaces/geos_atmosphere'
                                          f'/observations/localization')
 
+        # Read in safe mode
         in_yaml = YAML(typ="safe")
         for observer in jedi_config_dict['observations']['observers']:
 
@@ -212,9 +213,10 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                 observer['obs bias'] = replace_key(observer['obs bias'],
                                                    "variational bc", "static bc")
 
-        # Write the expanded dictionary to YAML file
+        # Write the expanded dictionary to YAML file (in rt mode)
         # ------------------------------------------
-        yaml = YAML(typ='safe')
+        yaml = YAML()
+        yaml.default_flow_style = False
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open)
 

@@ -74,7 +74,8 @@ class RunJediConvertStateSoca2ciceExecutable(taskBase):
                                                                 window_type,
                                                                 jedi_forecast_model)
 
-        yaml = YAML(typ='safe')
+        yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
