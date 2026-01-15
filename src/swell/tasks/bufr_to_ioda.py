@@ -20,16 +20,17 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 # Dictionary linking each obs type to the appropriate yaml template
 bufr2ioda_obs_type_dict = {
-    '1bmhs': 'bufr_ncep_1bmhs.yaml',
-    'amsua': 'bufr_ncep_1bamua_ta.yaml',
-    '1bamua': 'bufr_ncep_1bamua_ta.yaml',
-    'ncep_1bamua_bufr': 'bufr_ncep_1bamua_ta.yaml',
-    'atms': 'bufr_ncep_atms.yaml',
-    'mtiasi': 'bufr_ncep_mtiasi.yaml',
-    'ncep_mtiasi_bufr': 'bufr_ncep_mtiasi.yaml',
-    'satwind': 'bufr_ncep_satwind_avhrr.yaml',
-    'aircft': 'bufr_ncep_prepbufr_aircft.yaml',
-    'sevcsr': 'bufr_ncep_sevcsr.yaml'
+    '1bmhs': 'bufr_mapping_1bmhs.yaml',
+    'ncep_1bmhs_bufr': 'bufr_mapping_1bmhs.yaml',
+    'amsua': 'bufr_mapping_1bamua_ta.yaml',
+    '1bamua': 'bufr_mapping_1bamua_ta.yaml',
+    'ncep_1bamua_bufr': 'bufr_mapping_1bamua_ta.yaml',
+    'atms': 'bufr_mapping_atms.yaml',
+    'mtiasi': 'bufr_mapping_mtiasi.yaml',
+    'ncep_mtiasi_bufr': 'bufr_mapping_mtiasi.yaml',
+    'satwind': 'bufr_mapping_satwind_avhrr.yaml',
+    'aircft': 'bufr_mapping_prepbufr_aircft.yaml',
+    'sevcsr': 'bufr_mapping_sevcsr.yaml'
 }
 
 # --------------------------------------------------------------------------------------------------
@@ -45,14 +46,14 @@ class BufrToIoda(taskBase):
 
         Dictionary:
         bufr2ioda_obs_type_dict = {
-            '1bmhs': 'bufr_ncep_1bmhs.yaml',
-            'amsua': 'bufr_ncep_1bamua_ta.yaml',
-            '1bamua': 'bufr_ncep_1bamua_ta.yaml',
-            'atms': 'bufr_ncep_atms.yaml',
-            'mtiasi': 'bufr_ncep_mtiasi.yaml',
-            'satwind': 'bufr_ncep_satwind_avhrr.yaml',
-            'aircft': 'bufr_ncep_prepbufr_aircft.yaml',
-            'sevcsr': 'bufr_ncep_sevcsr.yaml'
+            '1bmhs': 'bufr_mapping_1bmhs.yaml',
+            'amsua': 'bufr_mapping_1bamua_ta.yaml',
+            '1bamua': 'bufr_mapping_1bamua_ta.yaml',
+            'atms': 'bufr_mapping_atms.yaml',
+            'mtiasi': 'bufr_mapping_mtiasi.yaml',
+            'satwind': 'bufr_mapping_satwind_avhrr.yaml',
+            'aircft': 'bufr_mapping_prepbufr_aircft.yaml',
+            'sevcsr': 'bufr_mapping_sevcsr.yaml'
         }
 
         """
@@ -67,7 +68,7 @@ class BufrToIoda(taskBase):
 
     # --------------------------------------------------------------------------------------------------
 
-    def generate_iodaconv_yaml(self,
+    def get_bufr_mapping_yaml(self,
                                bufr_file_source_path,
                                ioda_file_target_path,
                                path_to_ioda_conv_yaml_tmpl_dir,
@@ -102,37 +103,14 @@ class BufrToIoda(taskBase):
         # ----------------------------------------------------
         if yaml_file_target is None:
             # Overwrite original if no output file is specified
-            yaml_file_target = os.path.join(self.cycle_dir(), 'generated_iodaconv_input.yaml')
+            yaml_file_target = os.path.join(self.cycle_dir(), f'bufr_mapping_{bufr_file_obs_type}.yaml')
 
         self.logger.info(f'YAML template used:  {yaml_file_source}.------------------------------ ')
         self.logger.info(f'YAML file saved as {yaml_file_target}. ------------------------------ ')
 
         # Copy the yaml file
-        subprocess.run(['cp', yaml_file_source, yaml_file_target])
-
-        # Generate the yaml file that will be used in the conversion step ~ bufr2ioda.x [yaml file]
-        # -----------------------------------------------------------------------------------------
         try:
-            # Load the YAML template file
-            with open(yaml_file_source, 'r') as file:
-                yaml_str = file.read()
-
-            # Construct dictionary to fill yaml file
-            template_dictionary = {'obsdatain': obsdatain,
-                                   'obsdataout': obsdataout}
-
-            # Apply the replacements for input and output file paths
-            yaml_str = template_string_jinja2(self.logger,
-                                              templated_string=yaml_str,
-                                              dictionary_of_templates=template_dictionary)
-
-            # Load the dictionary
-            yaml_content = yaml.safe_load(yaml_str)
-
-            with open(yaml_file_target, 'w') as file:
-                yaml.dump(yaml_content, file, default_flow_style=False, sort_keys=False)
-                self.logger.info(f'Updated YAML file content: {yaml_file_target}')
-
+            subprocess.run(['cp', yaml_file_source, yaml_file_target])
         except FileNotFoundError:
             self.logger.info(f'Error: File "{yaml_file_source}" not found.')
         except yaml.YAMLError as e:
@@ -179,20 +157,42 @@ class BufrToIoda(taskBase):
             ioda_file_target_name = parts[0] + '.{splits/satId}.tm00.nc4'
             ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
 
-            bufr2ioda_conv_yaml = self.generate_iodaconv_yaml(bufr_path_file, ioda_file_target_path,
+            bufr2ioda_conv_yaml = self.get_bufr_mapping_yaml(bufr_path_file, ioda_file_target_path,
                                                               path_to_ioda_conv_yaml_tmpl_dir)
 
             # Jedi executable name (IODA Converter Name)
             # --------------------
-            jedi_executable = 'bufr2ioda.x'
+            jedi_executable = 'bufr2netcdf.x'
             jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
                                                 'build', 'bin', jedi_executable)
+            
+            # CLI Command
+            # ------------
+            # bufr2netcdf.x [bufr file] [bufr_mapping.yaml]  [output .nc file]
+            # bufr2netcdf.x bufr_path_file bufr2ioda_conv_yaml ioda_file_target_path
+            cli_command = [jedi_executable_path, bufr_path_file, bufr2ioda_conv_yaml, ioda_file_target_path]
+
+            # ----------------------------------------------------------------------------------------------------
+            # # Single threaded
+            # bufr2netcdf.x gdas.1bmhs.bufr_d mhs_mapping.yaml mhs.nc
+
+            # # Using mpi
+            # mpirun -n 4 bufr2netcdf.x gdas.1bmhs.bufr_d mhs_mapping.yaml mhs.nc   !!! 
+
+            # # Using slurm
+            # srun -A <my account> -n 4 bufr2netcdf.x gdas.1bmhs.bufr_d mhs_mapping.yaml mhs.nc
+
+            # # Splitting according to sat ID in yaml spec
+            # bufr2netcdf.x gdas.1bmhs.bufr_d split_mhs_mapping.yaml mhs-{splits/satId}.nc !!!!!
+
+            # # Running WMO bufr file requires extra arguments
+            # bufr2netcdf.x -t <BUFR table dir> wmo.bufr_d wmo_mapping.yaml wmo.nc
 
             # Run the JEDI executable
-            # -----------------------
+            # ---------------------------------------------------------------------------------------------------
             try:
                 self.logger.info('Running '+jedi_executable_path+' with '+bufr2ioda_conv_yaml+'.')
-                subprocess.run([jedi_executable_path, bufr2ioda_conv_yaml])
+                subprocess.run([jedi_executable_path, bufr_path_file, bufr2ioda_conv_yaml, ioda_file_target_path])
             except FileNotFoundError:
                 self.logger.info(f'Error: File "{bufr2ioda_conv_yaml}" not found.')
             except yaml.YAMLError as e:
