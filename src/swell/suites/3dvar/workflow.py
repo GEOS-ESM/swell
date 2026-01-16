@@ -9,7 +9,7 @@
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
-from swell.tasks.base.task_attributes import TaskAttributes as ta
+from swell.tasks.base.task_attributes import task_attributes as ta
 
 # --------------------------------------------------------------------------------------------------
 

@@ -17,6 +17,8 @@ from swell.utilities.build import link_path
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'CloneGeosMksi'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -27,6 +29,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class CloneGeosMksi(taskBase):
 

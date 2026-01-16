@@ -19,6 +19,8 @@ from swell.utilities.jinja2 import template_string_jinja2
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'EvaIncrement'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -31,6 +33,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class EvaIncrement(taskBase):
 

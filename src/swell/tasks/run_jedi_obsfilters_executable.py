@@ -20,11 +20,13 @@ from swell.utilities.run_jedi_executables import run_executable
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'RunJediObsfiltersExecutable'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
         self.script = ("swell task RunJediObsfiltersExecutable $config"
-                        " -d $datetime -m geos_atmosphere")
+                       " -d $datetime -m geos_atmosphere")
         self.is_cycling = True
         self.is_model = True
         self.time_limit = True
@@ -52,6 +54,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class RunJediObsfiltersExecutable(taskBase):
 

@@ -11,7 +11,7 @@ import unittest
 
 from swell.utilities.slurm import prepare_slurm_defaults_and_overrides
 from swell.utilities.logger import get_logger
-from swell.tasks.base.task_attributes import TaskAttributes
+from swell.tasks.base.task_attributes import task_attributes
 from unittest.mock import patch, Mock
 
 # --------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class SLURMConfigTest(unittest.TestCase):
         sd_discover_sles15 = prepare_slurm_defaults_and_overrides(logger, 'nccs_discover_sles15',
                                                                   experiment_dict)
 
-        run_jedi_var_class = TaskAttributes.get('RunJediVariationalExecutable')
+        run_jedi_var_class = task_attributes.get('RunJediVariationalExecutable')
         run_jedi_var_obj = run_jedi_var_class('geos_marine', 'nccs_discover_sles15')
         run_jedi_var_slurm = run_jedi_var_obj.generate_task_slurm_dict(
                 sd_discover_sles15)
@@ -61,9 +61,9 @@ class SLURMConfigTest(unittest.TestCase):
         self.assertEqual(run_jedi_var_slurm["constraint"], "mil")
         self.assertEqual(run_jedi_var_slurm["qos"], "dastest")
 
-        eva_obs_class = TaskAttributes.get('EvaObservations')
-        build_jedi_class = TaskAttributes.get('BuildJedi')
-        run_jedi_ufo_class = TaskAttributes.get('RunJediUfoTestsExecutable')
+        eva_obs_class = task_attributes.get('EvaObservations')
+        build_jedi_class = task_attributes.get('BuildJedi')
+        run_jedi_ufo_class = task_attributes.get('RunJediUfoTestsExecutable')
 
         # Platform generic tests
         for sd in [sd_discover_sles15]:

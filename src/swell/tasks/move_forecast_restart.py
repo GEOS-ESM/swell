@@ -19,6 +19,8 @@ from swell.utilities.file_system_operations import move_files
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'MoveForecastRestart'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -28,6 +30,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class MoveForecastRestart(taskBase):
 

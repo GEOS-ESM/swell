@@ -18,6 +18,8 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'JediOopsLogParser'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -29,6 +31,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class JediOopsLogParser(taskBase):
 

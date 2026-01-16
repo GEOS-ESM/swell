@@ -19,6 +19,8 @@ from swell.utilities.r2d2 import create_r2d2_config
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'GetGeovals'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -36,6 +38,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class GetGeovals(taskBase):
 

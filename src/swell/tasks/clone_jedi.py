@@ -21,6 +21,8 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'CloneJedi'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -32,6 +34,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class CloneJedi(taskBase):
 

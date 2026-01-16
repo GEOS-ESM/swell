@@ -19,6 +19,8 @@ from swell.utilities.build import build_and_source_dirs, link_path
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'BuildGeosByLinking'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -29,6 +31,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class BuildGeosByLinking(taskBase):
 

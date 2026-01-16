@@ -18,7 +18,9 @@ import glob
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'CleanCycle'
-class CleanCycleSetup(TaskSetup):
+
+
+class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
         self.is_cycling = True
@@ -28,6 +30,7 @@ class CleanCycleSetup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class CleanCycle(taskBase):
 

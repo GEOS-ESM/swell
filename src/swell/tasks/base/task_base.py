@@ -21,7 +21,6 @@ from typing import Union, Optional
 # swell imports
 from swell.swell_path import get_swell_path
 from swell.utilities.case_switching import camel_case_to_snake_case, snake_case_to_camel_case
-from swell.utilities.config import Config
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.datetime_util import Datetime
 from swell.utilities.logger import get_logger
@@ -47,6 +46,8 @@ class taskBase(ABC):
         # Create message logger
         # ---------------------
         self.logger = get_logger(task_name)
+
+        from swell.utilities.config import Config
 
         # Write out the initialization info
         # ---------------------------------

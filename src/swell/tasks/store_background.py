@@ -22,6 +22,8 @@ from swell.utilities.datetime_util import datetime_formats
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'StoreBackground'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -37,6 +39,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class StoreBackground(taskBase):
 

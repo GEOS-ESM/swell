@@ -18,6 +18,18 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
+task_name = 'GetEnsemble'
+
+
+class Setup(TaskSetup):
+    def set_attributes(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.path_to_ensemble()
+        ]
+
+# --------------------------------------------------------------------------------------------------
+
 
 class GetEnsemble(taskBase):
 

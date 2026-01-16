@@ -24,6 +24,8 @@ comparison_fields = {'Residual norm': {'delimiter': '=', 'dtype': float}}
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'JediLogComparison'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -34,6 +36,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class JediLogComparison(taskBase):
 

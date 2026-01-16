@@ -25,13 +25,16 @@ from swell.utilities.run_jedi_executables import check_obs
 
 
 # Pass through to avoid confusion with optional logger argument inside eva
-def run_eva(eva_dict: dict) -> eva:
+def run_eva(eva_dict: dict):
+    from eva.eva_driver import eva
     eva(eva_dict)
 
 
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'EvaObservations'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -52,11 +55,10 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class EvaObservations(taskBase):
 
     def execute(self) -> None:
-
-        from eva.eva_driver import eva
 
         window_length = self.config.window_length()
 

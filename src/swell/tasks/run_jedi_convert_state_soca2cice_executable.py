@@ -20,6 +20,8 @@ from swell.utilities.run_jedi_executables import run_executable
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'RunJediConvertStateSoca2ciceExecutable'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -41,8 +43,8 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
-class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
+class RunJediConvertStateSoca2ciceExecutable(taskBase):
 
     def execute(self) -> None:
 

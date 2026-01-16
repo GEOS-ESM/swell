@@ -16,6 +16,8 @@ from swell.utilities.file_system_operations import link_all_files_from_first_in_
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'GenerateBClimatologyByLinking'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -32,6 +34,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class GenerateBClimatologyByLinking(taskBase):
 

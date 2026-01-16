@@ -18,16 +18,20 @@ from swell.utilities.build import build_and_source_dirs, link_path
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'BuildJediByLinking'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
         self.mail_events = ['submit-failed']
         self.questions = [
-            qd.existing_geos_gcm_build_path(),
-            qd.geos_build_method()
+            qd.existing_jedi_build_directory(),
+            qd.existing_jedi_build_directory_pinned(),
+            qd.jedi_build_method()
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class BuildJediByLinking(taskBase):
 

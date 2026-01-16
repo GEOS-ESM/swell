@@ -31,6 +31,8 @@ r2d2_model_dict = {
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'GetObservations'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -49,6 +51,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class GetObservations(taskBase):
 
@@ -119,7 +122,6 @@ class GetObservations(taskBase):
         # Import modules
         # --------------
         import r2d2
-        import netCDF4 as nc
 
         # Parse config
         # ------------
@@ -435,6 +437,7 @@ class GetObservations(taskBase):
     # Get the target data from the netcdf file
     # ----------------------------------------
     def get_data(self, input_file: str, group: str, var_name: str) -> object:
+        import netCDF4 as nc
         with nc.Dataset(input_file, 'r') as ds:
             return ds[group][var_name][:]
 
@@ -459,6 +462,8 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
+
+        import netCDF4 as nc
 
         # Reduce the list of input files to only those that exist
         # -------------------------------------------------------------

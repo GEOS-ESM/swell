@@ -22,6 +22,8 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'LinkGeosOutput'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -36,6 +38,7 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
@@ -47,8 +50,6 @@ class LinkGeosOutput(taskBase):
         This will depend on the model type (ocean vs. atmosphere), model output
         type (history vs. restart), DA method, and window length.
         """
-
-        import xarray as xr
 
         # Parse configuration
         # -------------------
@@ -205,6 +206,8 @@ class LinkGeosOutput(taskBase):
                               dst_history: str,
                               ) -> None:
 
+        import xarray as xr
+
         # Since history already has the aggregated variables, we just need to rename
         # the dimensions and variables to match SOCA requirements
         ds = xr.open_dataset(src_history)
@@ -226,6 +229,8 @@ class LinkGeosOutput(taskBase):
         soca2cice_vars = {'aice_h': 'aicen',
                           'hi_h': 'vicen',
                           'hs_h': 'vsnon'}
+
+        import xarray as xr
 
         # read CICE6 restart
         # -----------------

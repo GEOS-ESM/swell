@@ -20,6 +20,8 @@ from swell.utilities.shell_commands import run_subprocess
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'CloneGeos'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -30,6 +32,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class CloneGeos(taskBase):
 

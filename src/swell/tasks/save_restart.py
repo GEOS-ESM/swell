@@ -10,7 +10,6 @@
 from datetime import datetime as dt
 import isodate
 import os
-from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -21,6 +20,8 @@ from swell.utilities.file_system_operations import copy_to_dst_dir
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'SaveRestart'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -38,6 +39,7 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class SaveRestart(taskBase):
 
     def execute(self):
@@ -49,6 +51,7 @@ class SaveRestart(taskBase):
         """
 
         from swell.utilities.r2d2 import create_r2d2_config
+        from r2d2 import store
 
         # Parse config
         window_type = self.config.window_type()

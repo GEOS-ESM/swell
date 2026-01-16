@@ -14,7 +14,6 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 import isodate
 import os
-import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,6 +26,8 @@ r2d2_model_dict = {
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'GetBackground'
+
+
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
@@ -45,6 +46,7 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class GetBackground(taskBase):
 
     def execute(self) -> None:
@@ -57,6 +59,7 @@ class GetBackground(taskBase):
         """
 
         from swell.utilities.r2d2 import create_r2d2_config
+        import r2d2
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
