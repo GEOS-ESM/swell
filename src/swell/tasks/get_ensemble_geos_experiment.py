@@ -19,8 +19,10 @@ from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
-class GetEnsembleGeosExperimentSetup(TaskSetup):
+task_name = 'GetEnsembleGeosExperiment'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

@@ -18,8 +18,10 @@ from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
 
-class RunJediVariationalExecutable(TaskSetup):
+task_name = 'RunJediVariationalExecutable'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.time_limit = True
         self.is_cycling = True
         self.is_model = True

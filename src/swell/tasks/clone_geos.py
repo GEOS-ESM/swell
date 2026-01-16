@@ -19,8 +19,10 @@ from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
-class CloneGeosSetup(TaskSetup):
+task_name = 'CloneGeos'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.questions = [
             qd.existing_geos_gcm_source_path(),
             qd.geos_build_method(),

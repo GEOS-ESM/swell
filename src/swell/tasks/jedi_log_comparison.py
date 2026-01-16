@@ -23,8 +23,10 @@ comparison_fields = {'Residual norm': {'delimiter': '=', 'dtype': float}}
 
 # --------------------------------------------------------------------------------------------------
 
-class JediLogComparisonSetup(TaskSetup):
+task_name = 'JediLogComparison'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_model = True
         self.questions = [
             qd.number_of_iterations(),

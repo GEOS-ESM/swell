@@ -16,8 +16,10 @@ from swell.utilities.build import link_path
 
 # --------------------------------------------------------------------------------------------------
 
-class CloneGeosMksiSetup(TaskSetup):
+task_name = 'CloneGeosMksi'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_model = True
         self.questions = [
             qd.observing_system_records_mksi_path(),

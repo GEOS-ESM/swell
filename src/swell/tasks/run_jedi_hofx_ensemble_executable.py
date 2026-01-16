@@ -19,8 +19,10 @@ from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
 # --------------------------------------------------------------------------------------------------
 
-class RunJediHofxEnsembleExecutable(TaskSetup):
+task_name = 'RunJediHofxEnsembleExecutable'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.time_limit = True

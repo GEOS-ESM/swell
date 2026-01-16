@@ -18,8 +18,10 @@ from swell.utilities.r2d2 import create_r2d2_config
 
 # --------------------------------------------------------------------------------------------------
 
-class GetGeovalsSetup(TaskSetup):
+task_name = 'GetGeovals'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

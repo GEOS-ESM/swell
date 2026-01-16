@@ -31,8 +31,10 @@ def run_eva(eva_dict: dict) -> eva:
 
 # --------------------------------------------------------------------------------------------------
 
-class EvaObservationsSetup(TaskSetup):
+task_name = 'EvaObservations'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.time_limit = True
         self.is_cycling = True
         self.is_model = True

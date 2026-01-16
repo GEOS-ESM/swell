@@ -20,8 +20,10 @@ from swell.utilities.data_assimilation_window_params import DataAssimilationWind
 
 # --------------------------------------------------------------------------------------------------
 
-class EvaComparisonIncrementSetup(TaskSetup):
+task_name = 'EvaComparisonIncrement'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

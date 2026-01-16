@@ -19,8 +19,10 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
-class GetObsNotInR2d2Setup(TaskSetup):
+task_name = 'GetObsNotInR2d2'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.mail_events = ['submit-failed']

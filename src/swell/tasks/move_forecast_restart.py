@@ -18,8 +18,10 @@ from swell.utilities.file_system_operations import move_files
 
 # --------------------------------------------------------------------------------------------------
 
-class MoveForecastRestartSetup(TaskSetup):
+task_name = 'MoveForecastRestart'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.questions = [
             qd.forecast_duration()

@@ -20,8 +20,10 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 # --------------------------------------------------------------------------------------------------
 
-class CloneJedi(TaskSetup):
+task_name = 'CloneJedi'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.questions = [
             qd.bundles(),
             qd.existing_jedi_source_directory(),
@@ -31,7 +33,7 @@ class CloneJedi(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
-class CloneJediSetup(taskBase):
+class CloneJedi(taskBase):
 
     def execute(self) -> None:
 

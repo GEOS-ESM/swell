@@ -15,8 +15,10 @@ from swell.utilities.file_system_operations import link_all_files_from_first_in_
 
 # --------------------------------------------------------------------------------------------------
 
-class GenerateBClimatologyByLinking(TaskSetup):
+task_name = 'GenerateBClimatologyByLinking'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [
@@ -31,7 +33,7 @@ class GenerateBClimatologyByLinking(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
-class GenerateBClimatologyByLinkingSetup(taskBase):
+class GenerateBClimatologyByLinking(taskBase):
 
     def execute(self) -> None:
         """Acquires B Matrix files for background error model(s):

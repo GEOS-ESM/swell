@@ -30,8 +30,10 @@ r2d2_model_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
-class GetObservationsSetup(TaskSetup):
+task_name = 'GetObservations'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

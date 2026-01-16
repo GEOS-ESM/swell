@@ -15,8 +15,10 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
-class RemoveForecastDirSetup(TaskSetup):
+task_name = 'RemoveForecastDir'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
 
 # --------------------------------------------------------------------------------------------------

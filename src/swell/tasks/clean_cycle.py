@@ -17,8 +17,10 @@ import glob
 
 # --------------------------------------------------------------------------------------------------
 
+task_name = 'CleanCycle'
 class CleanCycleSetup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

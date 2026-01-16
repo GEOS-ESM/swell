@@ -19,8 +19,10 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 
 # --------------------------------------------------------------------------------------------------
 
-class BuildGeosSetup(TaskSetup):
+task_name = 'BuildGeos'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.questions = [
             qd.geos_build_method()
         ]

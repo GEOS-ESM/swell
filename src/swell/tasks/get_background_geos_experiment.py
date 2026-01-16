@@ -20,8 +20,10 @@ from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
-class GetBackgroundGeosExperimentSetup(TaskSetup):
+task_name = 'GetBackgroundGeosExperiment'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.mail_events = ['submit-failed']

@@ -23,8 +23,10 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 
 # --------------------------------------------------------------------------------------------------
 
-class GsiNcdiagToIodaSetup(TaskSetup):
+task_name = 'GsiNcdiagToIoda'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

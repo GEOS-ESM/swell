@@ -26,8 +26,10 @@ r2d2_model_dict = {
 
 # --------------------------------------------------------------------------------------------------
 
-class GetBackground(TaskSetup):
+task_name = 'GetBackground'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [
@@ -43,7 +45,7 @@ class GetBackground(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
-class GetBackgroundSetup(taskBase):
+class GetBackground(taskBase):
 
     def execute(self) -> None:
         """Acquires background files for a given experiment and cycle

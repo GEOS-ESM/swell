@@ -17,8 +17,10 @@ from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_fil
 
 # --------------------------------------------------------------------------------------------------
 
-class GetGeosRestartSetup(TaskSetup):
+task_name = 'GetGeosRestart'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.questions = [
             qd.swell_static_files(),

@@ -18,8 +18,10 @@ from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
 
-class RenderJediObservations(TaskSetup):
+task_name = 'RenderJediObservations'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

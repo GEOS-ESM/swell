@@ -19,8 +19,10 @@ from swell.utilities.file_system_operations import move_files
 
 # --------------------------------------------------------------------------------------------------
 
-class MoveDaRestartSetup(TaskSetup):
+task_name = 'MoveDaRestart'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

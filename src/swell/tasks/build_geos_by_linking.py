@@ -18,8 +18,10 @@ from swell.utilities.build import build_and_source_dirs, link_path
 
 # --------------------------------------------------------------------------------------------------
 
-class BuildGeosByLinkingSetup(TaskSetup):
+task_name = 'BuildGeosByLinking'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.mail_events = ['submit-failed']
         self.questions = [
             qd.existing_geos_gcm_build_path(),

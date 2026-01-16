@@ -17,8 +17,10 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
-class CloneGmaoPerllibSetup(TaskSetup):
+task_name = 'CloneGmaoPerllib'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.questions = [
             qd.existing_perllib_path(),
             qd.gmao_perllib_tag()

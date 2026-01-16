@@ -19,8 +19,10 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 # --------------------------------------------------------------------------------------------------
 
-class BuildJediSetup(TaskSetup):
+task_name = 'BuildJedi'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.time_limit = True
         self.slurm = {}
         self.questions = [

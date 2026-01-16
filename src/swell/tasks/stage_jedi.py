@@ -21,8 +21,10 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
 
-class StageJedi(TaskSetup):
+task_name = 'StageJedi'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_model = True
         self.questions = [
             qd.swell_static_files(),

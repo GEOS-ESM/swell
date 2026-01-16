@@ -20,8 +20,10 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
-class GetGeosAdasBackgroundSetup(TaskSetup):
+task_name = 'GetGeosAdasBackground'
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.is_cycling = True
         self.is_model = True
         self.questions = [

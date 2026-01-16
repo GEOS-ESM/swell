@@ -19,7 +19,7 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 # --------------------------------------------------------------------------------------------------
 
 
-class GetEnsembleSetup(taskBase):
+class GetEnsemble(taskBase):
 
     def execute(self) -> None:
         """Acquires ensemble member files for a given experiment and cycle
