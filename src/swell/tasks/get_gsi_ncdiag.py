@@ -57,7 +57,7 @@ class GetGsiNcdiag(taskBase):
         os.makedirs(gsi_diag_dir, 0o755, exist_ok=True)
 
         # Assert that some files were found
-        self.logger.assert_abort(len(gsi_diag_path_files) != 0 is not None, f'No ncdiag ' +
+        self.logger.assert_abort(len(gsi_diag_path_files) != 0, f'No ncdiag ' +
                                  f'files found in the source directory ' +
                                  f'\'{gsi_diag_path}\'')
 
