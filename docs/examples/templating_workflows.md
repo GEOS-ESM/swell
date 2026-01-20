@@ -8,30 +8,47 @@ The `flow.cylc` that is generated under this method is not much different from t
 
 ## Tasks and the runtime section
 
-Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting `src/swell/tasks/base/task_attributes.py`. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `TaskSetup` class. This class will dynamically set attributes such as messaging parameters and slurm settings.
+Swell will parse the graph section, which is constructed first, to obtain the tasks which are used by the experiment. It will then build the runtime section by consulting task setup objects. Since swell tasks broadly fall into only a few categories (model-dependent or independent, cycling or non-cycling) that do not differ much between suites, they are easily abstracted into a `TaskSetup` class. This class will dynamically set attributes such as messaging parameters and slurm settings. Each task has an associated `TaskSetup` class, which is defined in the main task file, and registered into the `TaskAttributes` container. For example, the following displays the `TaskSetup` class for `CloneJedi`, located in `src/swell/tasks/clone_jedi.py`:
 
 ```python
-class CloneJedi(TaskSetup):
+
+task_name = 'CloneJedi'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.questions = [
             qd.bundles(),
             qd.existing_jedi_source_directory(),
             qd.existing_jedi_source_directory_pinned(),
             qd.jedi_build_method()
         ]
+```
+
+Other tasks have different requirements, such as `EvaObservations`:
+
+```python
+task_name = 'EvaObservations'
 
 
-class EvaObservations(TaskSetup):
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
     def set_attributes(self):
+        self.base_name = task_name
         self.time_limit = True
         self.is_cycling = True
         self.is_model = True
         self.slurm = {}
         self.questions = [
-            background_crtm_obs,
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
             qd.marine_models(),
             qd.observing_system_records_path(),
-            qd.window_offset(),
+            qd.window_length(),
             qd.marine_models(),
         ]
 ```

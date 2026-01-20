@@ -33,7 +33,11 @@ class sync_point(TaskSetup):
 # --------------------------------------------------------------------------------------------------
 
 def discover_plugins(package):
+    '''Walk through packages to trigger any hooks.
 
+    Parameters:
+    package: Python package
+    '''
     for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__):
         full_module_name = f"{package.__name__}.{module_name}"
 
@@ -48,6 +52,11 @@ class TaskAttributes():
         setattr(self, 'sync_point', sync_point)
 
     def register(self, name):
+        '''Provides wrapper to register class using <name>.
+
+        Parameters:
+        name: Name to refer to Setup object
+        '''
         def wrapper(cls):
             setattr(self, name, cls)
             return cls
