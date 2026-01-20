@@ -41,6 +41,8 @@ class TaskSetup(ABC):
     additional_sections: list of additional CylcSection objects to append to the runtime section
     '''
 
+    _registry = {}
+
     def __init__(self, model: str | None = None, platform: str | None = None) -> None:
 
         self.model = model
@@ -66,6 +68,13 @@ class TaskSetup(ABC):
 
         self.set_attributes()
         self.post_init()
+
+    # --------------------------------------------------------------------------------------------------
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        cls._registry[cls.__name__.lower()] = cls
 
     # --------------------------------------------------------------------------------------------------
 

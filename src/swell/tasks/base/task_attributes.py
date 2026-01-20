@@ -10,11 +10,13 @@
 import os
 import glob
 import importlib
+import pkgutil
 
 from swell.swell_path import get_swell_path
 from swell.utilities.case_switching import snake_case_to_camel_case
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.stage_jedi import Setup as StageJedi
+import swell.tasks
 
 # --------------------------------------------------------------------------------------------------
 
@@ -44,28 +46,26 @@ class sync_point(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+def discover_plugins(package):
+
+    for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__):
+        full_module_name = f"{package.__name__}.{module_name}"
+
+        importlib.import_module(full_module_name)
+
+# --------------------------------------------------------------------------------------------------
+
 class TaskAttributes():
     def __init__(self) -> None:
-        task_path = os.path.join(get_swell_path(), 'tasks', '*.py')
 
         setattr(self, 'root', root)
         setattr(self, 'StageJediCycle', StageJediCycle)
         setattr(self, 'sync_point', sync_point)
 
-        for task_file in glob.glob(task_path):
-            module_name = os.path.basename(task_file).split('.py')[0]
-            module_path = f'swell.tasks.{module_name}'
+        discover_plugins(swell.tasks)
 
-            try:
-                module = importlib.import_module(module_path)
-                setup = getattr(module, 'Setup')
-
-                task_name = snake_case_to_camel_case(module_name)
-
-                setattr(self, task_name, setup)
-
-            except AttributeError:
-                pass
+        for module_name, module in TaskSetup._registry.items():
+            setattr(self, module_name, module)
 
     def get(self, task_name):
         return getattr(self, task_name)
