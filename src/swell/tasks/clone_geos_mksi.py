@@ -13,7 +13,6 @@ from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.utilities.build import link_path
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,6 +39,8 @@ class CloneGeosMksi(taskBase):
         """
         Generate the satellite channel record from GEOSmksi files
         """
+
+        from swell.utilities.build import link_path
 
         # This task should only execute for geos_atmosphere
         # -------------------------------------------------

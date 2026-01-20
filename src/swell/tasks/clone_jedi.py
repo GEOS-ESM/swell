@@ -10,13 +10,11 @@
 
 import os
 
-from swell.utilities.build import link_path
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.pinned_versions.check_hashes import check_hashes
-from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 from swell.tasks.base.task_attributes import task_attributes
 
 
@@ -46,6 +44,7 @@ class CloneJedi(taskBase):
         # Import JEDI modules
         # -------------------
         from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
+        from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs, link_path
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------

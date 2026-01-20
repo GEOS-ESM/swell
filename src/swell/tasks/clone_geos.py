@@ -14,7 +14,6 @@ from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.utilities.build import build_and_source_dirs, link_path
 from swell.utilities.git_utils import git_clone
 from swell.utilities.shell_commands import run_subprocess
 
@@ -44,6 +43,8 @@ class CloneGeos(taskBase):
         # ---------------------------------
         swell_exp_path = self.experiment_path()
         geos_gcm_path = os.path.join(swell_exp_path, 'GEOSgcm')
+
+        from swell.utilities.build import build_and_source_dirs, link_path
 
         # Get paths to build and source
         # -----------------------------
