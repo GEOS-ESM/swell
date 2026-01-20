@@ -15,8 +15,6 @@ import pkgutil
 from swell.swell_path import get_swell_path
 from swell.utilities.case_switching import snake_case_to_camel_case
 from swell.tasks.base.task_setup import TaskSetup
-from swell.tasks.stage_jedi import Setup as StageJedi
-import swell.tasks
 
 # --------------------------------------------------------------------------------------------------
 
@@ -28,15 +26,6 @@ class root(TaskSetup):
         self.additional_sections = [self.create_new_section('environment',
                                                             {'datetime': '$CYLC_TASK_CYCLE_POINT',
                                                              'config': '$CYLC_SUITE_DEF_PATH/experiment.yaml'})]  # noqa
-
-
-class StageJediCycle(StageJedi):
-    def set_attributes(self):
-        super().set_attributes()
-        self.base_name = "StageJedi"
-        self.scheduling_name = "StageJediCycle-{model}"
-        self.is_cycling = True
-        self.is_model = True
 
 
 class sync_point(TaskSetup):
@@ -75,6 +64,7 @@ class TaskAttributes():
 
 task_attributes = TaskAttributes()
 
+import swell.tasks
 discover_plugins(swell.tasks)
 
 # --------------------------------------------------------------------------------------------------

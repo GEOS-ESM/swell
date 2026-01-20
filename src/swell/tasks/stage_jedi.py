@@ -39,6 +39,15 @@ class Setup(TaskSetup):
             qd.vertical_resolution()
         ]
 
+@task_attributes.register(task_name)
+class StageJediCycle(Setup):
+    def set_attributes(self):
+        super().set_attributes()
+        self.base_name = "StageJedi"
+        self.scheduling_name = "StageJediCycle-{model}"
+        self.is_cycling = True
+        self.is_model = True
+
 # --------------------------------------------------------------------------------------------------
 
 
