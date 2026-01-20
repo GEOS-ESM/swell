@@ -15,6 +15,7 @@ import numpy as np
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ comparison_fields = {'Residual norm': {'delimiter': '=', 'dtype': float}}
 
 task_name = 'JediLogComparison'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

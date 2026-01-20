@@ -14,6 +14,7 @@ from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
@@ -21,7 +22,7 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 task_name = 'BuildJedi'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

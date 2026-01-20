@@ -12,13 +12,14 @@ from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.shell_commands import run_track_log_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'RunGeosExecutable'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

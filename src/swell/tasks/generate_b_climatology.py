@@ -10,6 +10,7 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
@@ -18,7 +19,7 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 task_name = 'GenerateBClimatology'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

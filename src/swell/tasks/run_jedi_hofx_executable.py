@@ -15,6 +15,7 @@ from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.netcdf_files import combine_files_without_groups
 from swell.utilities.run_jedi_executables import run_executable
@@ -24,7 +25,7 @@ from swell.utilities.run_jedi_executables import run_executable
 
 task_name = 'RunJediHofxExecutable'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

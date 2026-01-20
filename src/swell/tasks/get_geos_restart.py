@@ -12,6 +12,7 @@ import glob
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
 
@@ -19,7 +20,7 @@ from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_fil
 
 task_name = 'GetGeosRestart'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

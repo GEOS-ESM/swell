@@ -13,6 +13,7 @@ from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.file_system_operations import move_files
 
@@ -20,7 +21,7 @@ from swell.utilities.file_system_operations import move_files
 
 task_name = 'MoveForecastRestart'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

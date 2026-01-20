@@ -13,6 +13,7 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.jinja2 import template_string_jinja2
 
 
@@ -20,7 +21,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 task_name = 'EvaJediLog'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

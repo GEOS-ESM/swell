@@ -13,6 +13,7 @@ import os
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.filehandler import get_file_handler
 from swell.utilities.exceptions import SwellError
@@ -23,7 +24,7 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 task_name = 'StageJedi'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

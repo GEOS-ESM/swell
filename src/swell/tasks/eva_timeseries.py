@@ -17,6 +17,7 @@ import yaml
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
@@ -37,7 +38,7 @@ def run_eva(eva_dict: dict):
 
 task_name = 'EvaTimeseries'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name

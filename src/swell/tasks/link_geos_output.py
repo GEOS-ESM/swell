@@ -17,13 +17,14 @@ from typing import Tuple
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.question_defaults import QuestionDefaults as qd
 
 # --------------------------------------------------------------------------------------------------
 
 task_name = 'LinkGeosOutput'
 
-
+@task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
