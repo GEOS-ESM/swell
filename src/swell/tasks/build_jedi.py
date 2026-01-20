@@ -45,7 +45,7 @@ class BuildJedi(taskBase):
         swell_exp_path = self.experiment_path()
         jedi_bundle_path = os.path.join(swell_exp_path, 'jedi_bundle')
 
-        from swell.utilities.build import build_and_source_dirs
+        from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
         # Get paths to build and source
         # -----------------------------
