@@ -22,6 +22,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 
 task_name = 'EvaComparisonJediLog'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

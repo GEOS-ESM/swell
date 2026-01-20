@@ -22,6 +22,7 @@ from swell.utilities.file_system_operations import copy_to_dst_dir
 
 task_name = 'SaveRestart'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

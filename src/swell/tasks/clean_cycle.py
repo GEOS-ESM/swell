@@ -20,6 +20,7 @@ import glob
 
 task_name = 'CleanCycle'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

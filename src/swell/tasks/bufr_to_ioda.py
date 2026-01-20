@@ -38,6 +38,7 @@ bufr2ioda_obs_type_dict = {
 
 task_name = 'BufrToIoda'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

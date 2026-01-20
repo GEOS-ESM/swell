@@ -17,6 +17,7 @@ from swell.tasks.base.task_attributes import task_attributes
 
 task_name = 'RemoveForecastDir'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

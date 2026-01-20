@@ -22,6 +22,7 @@ from swell.utilities.question_defaults import QuestionDefaults as qd
 
 task_name = 'GetObsNotInR2d2'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

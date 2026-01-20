@@ -33,6 +33,7 @@ r2d2_model_dict = {
 
 task_name = 'GetObservations'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

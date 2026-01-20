@@ -21,6 +21,7 @@ from swell.utilities.r2d2 import create_r2d2_config
 
 task_name = 'GetGeovals'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

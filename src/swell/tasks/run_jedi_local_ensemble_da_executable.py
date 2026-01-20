@@ -41,6 +41,7 @@ def replace_key(obj, old_key, new_key):
 
 task_name = 'RunJediLocalEnsembleDaExecutable'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

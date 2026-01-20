@@ -19,6 +19,7 @@ from swell.utilities.shell_commands import run_track_log_subprocess
 
 task_name = 'RunGeosExecutable'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

@@ -20,6 +20,7 @@ from swell.utilities.observing_system_records import ObservingSystemRecords
 
 task_name = 'GenerateObservingSystemRecords'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

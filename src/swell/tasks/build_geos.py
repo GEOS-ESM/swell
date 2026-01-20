@@ -22,6 +22,7 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 
 task_name = 'BuildGeos'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

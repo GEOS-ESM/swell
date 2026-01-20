@@ -7,13 +7,10 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
-import glob
 import importlib
 import pkgutil
 
-from swell.swell_path import get_swell_path
-from swell.utilities.case_switching import snake_case_to_camel_case
+import swell.tasks
 from swell.tasks.base.task_setup import TaskSetup
 
 # --------------------------------------------------------------------------------------------------
@@ -44,10 +41,10 @@ def discover_plugins(package):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class TaskAttributes():
     def __init__(self) -> None:
         setattr(self, 'root', root)
-        setattr(self, 'StageJediCycle', StageJediCycle)
         setattr(self, 'sync_point', sync_point)
 
     def register(self, name):
@@ -64,7 +61,6 @@ class TaskAttributes():
 
 task_attributes = TaskAttributes()
 
-import swell.tasks
 discover_plugins(swell.tasks)
 
 # --------------------------------------------------------------------------------------------------

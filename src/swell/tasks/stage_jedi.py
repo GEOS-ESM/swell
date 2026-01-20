@@ -24,6 +24,7 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 task_name = 'StageJedi'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
@@ -39,7 +40,8 @@ class Setup(TaskSetup):
             qd.vertical_resolution()
         ]
 
-@task_attributes.register(task_name)
+
+@task_attributes.register('StageJediCycle')
 class StageJediCycle(Setup):
     def set_attributes(self):
         super().set_attributes()

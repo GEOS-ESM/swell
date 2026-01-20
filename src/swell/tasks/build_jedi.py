@@ -22,6 +22,7 @@ from swell.utilities.build import set_jedi_bundle_config, build_and_source_dirs
 
 task_name = 'BuildJedi'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

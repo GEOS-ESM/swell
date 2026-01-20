@@ -21,6 +21,7 @@ from swell.utilities.build import build_and_source_dirs, link_path
 
 task_name = 'BuildGeosByLinking'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

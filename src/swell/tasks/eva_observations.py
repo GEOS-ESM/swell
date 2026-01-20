@@ -35,6 +35,7 @@ def run_eva(eva_dict: dict):
 
 task_name = 'EvaObservations'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

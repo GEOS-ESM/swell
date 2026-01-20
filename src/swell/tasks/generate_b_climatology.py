@@ -19,6 +19,7 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 task_name = 'GenerateBClimatology'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

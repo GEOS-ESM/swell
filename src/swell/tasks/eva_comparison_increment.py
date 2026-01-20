@@ -23,6 +23,7 @@ from swell.utilities.data_assimilation_window_params import DataAssimilationWind
 
 task_name = 'EvaComparisonIncrement'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

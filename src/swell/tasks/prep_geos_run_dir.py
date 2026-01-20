@@ -24,6 +24,7 @@ from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_fil
 
 task_name = 'PrepGeosRunDir'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

@@ -22,6 +22,7 @@ from swell.utilities.datetime_util import datetime_formats
 
 task_name = 'GetEnsembleGeosExperiment'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

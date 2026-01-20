@@ -20,6 +20,7 @@ from swell.utilities.run_jedi_executables import check_obs
 
 task_name = 'SaveObsDiags'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

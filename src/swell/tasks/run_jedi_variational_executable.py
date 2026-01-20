@@ -21,6 +21,7 @@ from swell.utilities.run_jedi_executables import run_executable
 
 task_name = 'RunJediVariationalExecutable'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):

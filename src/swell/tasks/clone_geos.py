@@ -22,6 +22,7 @@ from swell.utilities.shell_commands import run_subprocess
 
 task_name = 'CloneGeos'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_attributes(self):
