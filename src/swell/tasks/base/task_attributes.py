@@ -75,4 +75,6 @@ class TaskAttributes():
 
 task_attributes = TaskAttributes()
 
+discover_plugins(swell.tasks)
+
 # --------------------------------------------------------------------------------------------------
