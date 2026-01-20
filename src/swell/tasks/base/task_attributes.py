@@ -57,15 +57,15 @@ def discover_plugins(package):
 
 class TaskAttributes():
     def __init__(self) -> None:
-
         setattr(self, 'root', root)
         setattr(self, 'StageJediCycle', StageJediCycle)
         setattr(self, 'sync_point', sync_point)
 
-        discover_plugins(swell.tasks)
-
-        for module_name, module in TaskSetup._registry.items():
-            setattr(self, module_name, module)
+    def register(self, name):
+        def wrapper(cls):
+            setattr(self, name, cls)
+            return cls
+        return wrapper
 
     def get(self, task_name):
         return getattr(self, task_name)
