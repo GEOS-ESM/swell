@@ -10,8 +10,6 @@
 
 import os
 
-from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
-
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
@@ -40,6 +38,8 @@ class Setup(TaskSetup):
 class BuildJedi(taskBase):
 
     def execute(self) -> None:
+
+        from jedi_bundle.bin.jedi_bundle import execute_tasks, get_bundles
 
         # Get the experiment/jedi_bundle directory
         # ----------------------------------------
