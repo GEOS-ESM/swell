@@ -135,31 +135,6 @@ class IngestBackground(taskBase):
             self.logger.info(f"Successfully ingested: {total_ingested} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def check_already_in_r2d2(
-            self,
-            model,
-            experiment,
-            resolution,
-            file_type,
-            date,
-            step):
-        """Check if background already exists in R2D2."""
-        try:
-            # Query R2D2 database
-            results = r2d2.search(
-                item='forecast',
-                model=model,
-                experiment=experiment,
-                resolution=resolution,
-                file_type=file_type,
-                date=date,
-                step=step,
-            )
-            return bool(results)
-        except Exception:
-            self.logger.debug(f"R2D2 search failed, assuming not in R2D2")
-            return False
-
     def process_background_config(
         self,
         config: dict,
@@ -207,18 +182,6 @@ class IngestBackground(taskBase):
             self.logger.warning(f"No files matched pattern: {expected_file}")
             return ingested, [(bg_name, "No files found")]
         target_file = files_found[0]
-
-        # Check if already in R2D2
-        if self.check_already_in_r2d2(
-                model,
-                experiment,
-                resolution,
-                file_type,
-                date,
-                step):
-            self.logger.info(
-                f"  SKIPPING: {bg_name} already exists in R2D2 for {date}")
-            return [], []
 
         if dry_run:
             self.logger.info(f"  [DRY RUN] Would ingest:")

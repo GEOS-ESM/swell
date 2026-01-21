@@ -143,7 +143,6 @@ class IngestObs(taskBase):
             self.logger.info(f"Skipped (already exist): {total_skipped} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-
     def process_obs_config(
         self,
         config: dict,
