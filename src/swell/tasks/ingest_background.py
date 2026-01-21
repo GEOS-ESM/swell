@@ -68,57 +68,66 @@ class IngestBackground(taskBase):
     """
 
     def execute(self) -> None:
-        
+
         # Get list of backgrounds to ingest (strings)
         backgrounds_to_ingest = self.config.backgrounds_to_ingest([])
-        
+
         # Get window parameters
         window_length = self.config.window_length()
-        window_begin = self.da_window_params.window_begin_iso(window_length)        
+        window_begin = self.da_window_params.window_begin_iso(window_length)
         # Check for dry-run mode
         dry_run = self.config.dry_run(True)
-        
+
         if dry_run:
-            self.logger.info("="*60)
-            self.logger.info("DRY RUN MODE - No files will be ingested to R2D2")
-            self.logger.info("="*60)
+            self.logger.info("=" * 60)
+            self.logger.info(
+                "DRY RUN MODE - No files will be ingested to R2D2")
+            self.logger.info("=" * 60)
         else:
             create_r2d2_config(
-                self.logger, 
-                self.platform(), 
-                self.cycle_dir(), 
+                self.logger,
+                self.platform(),
+                self.cycle_dir(),
                 self.config.r2d2_local_path()
             )
 
         total_ingested = 0
         total_failed = 0
-        
+
         # Iterate over the simple list of names
         for bg_name in backgrounds_to_ingest:
             self.logger.info(f"Preparing to ingest: {bg_name}")
-            
+
             # Locate the configuration file
-            config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
-                                      'geos_marine', 'ingest_backgrounds', f'{bg_name}.yaml')
-            
+            config_path = os.path.join(
+                get_swell_path(),
+                'configuration',
+                'jedi',
+                'interfaces',
+                'geos_marine',
+                'ingest_backgrounds',
+                f'{bg_name}.yaml')
+
             if not os.path.exists(config_path):
-                self.logger.error(f"Config file not found for {bg_name} at {config_path}")
+                self.logger.error(
+                    f"Config file not found for {bg_name} at {config_path}")
                 total_failed += 1
                 continue
-                
+
             # Load the YAML config
             with open(config_path, 'r') as f:
                 bg_config = yaml.safe_load(f)
-                
+
             # Ingestion
-            ingested, failed = self.process_background_config(bg_config, bg_name, window_begin, dry_run)
-            
+            ingested, failed = self.process_background_config(
+                bg_config, bg_name, window_begin, dry_run)
+
             total_ingested += len(ingested)
             total_failed += len(failed)
 
-        self.logger.info("="*60)
+        self.logger.info("=" * 60)
         self.logger.info("INGESTION SUMMARY")
-        self.logger.info("="*60)
+        self.logger.info("=" * 60)
         if dry_run:
             self.logger.info(f"Would ingest: {total_ingested} files")
             self.logger.info(f"Would fail: {total_failed} files")
@@ -126,7 +135,14 @@ class IngestBackground(taskBase):
             self.logger.info(f"Successfully ingested: {total_ingested} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def check_already_in_r2d2(self, model, experiment, resolution, file_type, date, step):
+    def check_already_in_r2d2(
+            self,
+            model,
+            experiment,
+            resolution,
+            file_type,
+            date,
+            step):
         """Check if background already exists in R2D2."""
         try:
             # Query R2D2 database
@@ -154,17 +170,17 @@ class IngestBackground(taskBase):
         """Process a single background configuration file."""
         ingested = []
         failed = []
-        
+
         # Extract metadata directly from config (flat structure)
         model = config.get('model')
         experiment = config.get('experiment')
         resolution = config.get('resolution')
         file_type = config.get('file_type')
         step = config.get('step', 'PT0H')  # Default to analysis time
-        
+
         retrieval_method = config.get('retrieval_method')
         source_pattern = config.get(f'{retrieval_method}_source')
-        
+
         if not source_pattern:
             msg = (
                 f"No source pattern found for method '{retrieval_method}' in "
@@ -172,19 +188,19 @@ class IngestBackground(taskBase):
             )
             self.logger.error(msg)
             raise ValueError(msg)
-        
+
         # Handle datetime replacements
         dt = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
-        
+
         # Support Skylab-style placeholders
         final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
                                       .replace('YYYY', '%Y') \
                                       .replace('MM', '%m') \
                                       .replace('DD', '%d') \
                                       .replace('HH', '%H')
-        
+
         expected_file = dt.strftime(final_pattern)
-        
+
         # Match file path using glob
         files_found = glob.glob(expected_file)
         if not files_found:
@@ -193,8 +209,15 @@ class IngestBackground(taskBase):
         target_file = files_found[0]
 
         # Check if already in R2D2
-        if self.check_already_in_r2d2(model, experiment, resolution, file_type, date, step):
-            self.logger.info(f"  SKIPPING: {bg_name} already exists in R2D2 for {date}")
+        if self.check_already_in_r2d2(
+                model,
+                experiment,
+                resolution,
+                file_type,
+                date,
+                step):
+            self.logger.info(
+                f"  SKIPPING: {bg_name} already exists in R2D2 for {date}")
             return [], []
 
         if dry_run:
@@ -220,12 +243,12 @@ class IngestBackground(taskBase):
                     file_type=file_type,
                     source_file=target_file
                 )
-            except (ValueError, KeyError, FileNotFoundError, OSError, requests.RequestException) as e:
+            except (ValueError, KeyError, FileNotFoundError,
+                    OSError, requests.RequestException) as e:
                 self.logger.error(f"Failed to ingest {bg_name}: {e}")
                 failed.append((bg_name, str(e)))
             else:
                 ingested.append(target_file)
                 self.logger.info(f"Successfully ingested {bg_name}")
-                
-        return ingested, failed
 
+        return ingested, failed

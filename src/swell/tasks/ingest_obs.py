@@ -65,66 +65,76 @@ class IngestObs(taskBase):
     """
 
     def execute(self) -> None:
-        
+
         # Get list of observations to ingest (strings)
         obs_to_ingest = self.config.obs_to_ingest([])
 
         # Read observation ioda names (for provider lookup)
         self.ioda_names_list = get_ioda_names_list()
-        
+
         # Get window parameters
         window_length = self.config.window_length()
         # window_begin = self.da_window_params.window_begin_iso(window_length)
         window_begin = self.cycle_time()
-        
+
         # Check for dry-run mode (default True for safety)
         dry_run = self.config.dry_run(True)
-        
+
         if dry_run:
-            self.logger.info("="*60)
-            self.logger.info("DRY RUN MODE - No files will be ingested to R2D2")
-            self.logger.info("="*60)
+            self.logger.info("=" * 60)
+            self.logger.info(
+                "DRY RUN MODE - No files will be ingested to R2D2")
+            self.logger.info("=" * 60)
         else:
             create_r2d2_config(
-                self.logger, 
-                self.platform(), 
-                self.cycle_dir(), 
+                self.logger,
+                self.platform(),
+                self.cycle_dir(),
                 self.config.r2d2_local_path()
             )
-        
+
         total_ingested = 0
         total_failed = 0
-        
+
         # Iterate over the simple list of names
         for obs_name in obs_to_ingest:
             self.logger.info(f"Preparing to ingest: {obs_name}")
-            
+
             # Locate the configuration file
-            # Look in the JEDI config directory and get obs yaml file from obs_name (e.g. adt_cryosat2n.yaml)
-            config_path = os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces', 
-                                      'geos_marine', 'ingest_observations', f'{obs_name}.yaml')
-            
+            # Look in the JEDI config directory and get obs yaml file from
+            # obs_name (e.g. adt_cryosat2n.yaml)
+            config_path = os.path.join(
+                get_swell_path(),
+                'configuration',
+                'jedi',
+                'interfaces',
+                'geos_marine',
+                'ingest_observations',
+                f'{obs_name}.yaml')
+
             if not os.path.exists(config_path):
-                self.logger.error(f"Config file not found for {obs_name} at {config_path}")
+                self.logger.error(
+                    f"Config file not found for {obs_name} at {config_path}")
                 total_failed += 1
                 continue
-                
+
             # Load the YAML config
             with open(config_path, 'r') as f:
                 obs_config = yaml.safe_load(f)
-                
+
             # 3. Perform Ingestion
-            ingested, failed = self.process_obs_config(obs_config, obs_name, window_begin, window_length, dry_run)
-            
+            ingested, failed = self.process_obs_config(
+                obs_config, obs_name, window_begin, window_length, dry_run)
+
             total_ingested += len(ingested)
             total_failed += len(failed)
             if len(ingested) == 0 and len(failed) == 0:
                 total_skipped += 1
-        
+
         # Summary
-        self.logger.info("="*60)
+        self.logger.info("=" * 60)
         self.logger.info("INGESTION SUMMARY")
-        self.logger.info("="*60)
+        self.logger.info("=" * 60)
         if dry_run:
             self.logger.info(f"Would ingest: {total_ingested} files")
             self.logger.info(f"Would fail: {total_failed} files")
@@ -133,7 +143,12 @@ class IngestObs(taskBase):
             self.logger.info(f"Skipped (already exist): {total_skipped} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def check_already_in_r2d2(self, obs_name, provider, window_start, window_length):
+    def check_already_in_r2d2(
+            self,
+            obs_name,
+            provider,
+            window_start,
+            window_length):
         """Check if observation already exists in R2D2."""
         try:
             # Query R2D2 database
@@ -151,7 +166,6 @@ class IngestObs(taskBase):
             self.logger.debug(f"Observation {obs_name} not found in R2D2")
             return False
 
-
     def process_obs_config(
         self,
         config: dict,
@@ -163,22 +177,26 @@ class IngestObs(taskBase):
         """Process a single observation configuration file."""
         ingested = []
         failed = []
-        total_skipped = 0
 
-        # Extract metadata
-        # obs_metadata = config.get('obs_to_ingest', {})
-        provider = get_provider_for_observation(obs_name, self.ioda_names_list, self.logger)
+        provider = get_provider_for_observation(
+            obs_name, self.ioda_names_list, self.logger)
 
         # Check if already in R2D2
-        if self.check_already_in_r2d2(obs_name, provider, window_start, window_length):
-            self.logger.info(f"  SKIPPING: {obs_name} already exists in R2D2 for {window_start}")
+        if self.check_already_in_r2d2(
+                obs_name,
+                provider,
+                window_start,
+                window_length):
+            self.logger.info(
+                f"  SKIPPING: {obs_name} already exists in R2D2 for {window_start}")
             return [], []  # Already ingested, skip
 
-        retrieval_method = config.get('retrieval_method') # cp or s3
-        
+        retrieval_method = config.get('retrieval_method')  # cp or s3
+
         # Determine source pattern based on method
-        source_pattern = config.get(f'{retrieval_method}_source') # cp_source or s3_source
-        
+        source_pattern = config.get(
+            f'{retrieval_method}_source')  # cp_source or s3_source
+
         if not source_pattern:
             msg = (
                 f"No source pattern found for method '{retrieval_method}' in "
@@ -186,20 +204,20 @@ class IngestObs(taskBase):
             )
             self.logger.error(msg)
             raise ValueError(msg)
-        
+
         # TODO: This will need to be handled different for s3_source and cp_source
         # Handle simple YYYY/MM replacements
         dt = datetime.strptime(window_start, "%Y-%m-%dT%H:%M:%SZ")
-        
+
         # Basic support for Skylab-style placeholders
         final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
                                       .replace('YYYY', '%Y') \
                                       .replace('MM', '%m') \
                                       .replace('DD', '%d') \
                                       .replace('HH', '%H')
-        
+
         expected_file = dt.strftime(final_pattern)
-        
+
         # Match file path using glob
         files_found = glob.glob(expected_file)
         if not files_found:
@@ -221,16 +239,18 @@ class IngestObs(taskBase):
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
-                    file_extension=os.path.splitext(target_file)[1][1:],  # 'nc' from '.nc'
+                    file_extension=os.path.splitext(
+                        target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file
                 )
-            except (ValueError, KeyError, FileNotFoundError, OSError, requests.RequestException) as e:
+            except (ValueError, KeyError, FileNotFoundError,
+                    OSError, requests.RequestException) as e:
                 self.logger.error(f"Failed to ingest {obs_name}: {e}")
                 failed.append((obs_name, str(e)))
             else:
                 ingested.append(target_file)
                 self.logger.info(f"Successfully ingested {obs_name}")
-        
+
         return ingested, failed
