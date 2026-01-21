@@ -143,28 +143,6 @@ class IngestObs(taskBase):
             self.logger.info(f"Skipped (already exist): {total_skipped} files")
             self.logger.info(f"Failed: {total_failed} files")
 
-    def check_already_in_r2d2(
-            self,
-            obs_name,
-            provider,
-            window_start,
-            window_length):
-        """Check if observation already exists in R2D2."""
-        try:
-            # Query R2D2 database
-            results = r2d2.search(
-                item='observation',
-                provider=provider,
-                observation_type=obs_name,
-                window_start=window_start,
-                window_length=window_length,
-            )
-            # If search returns results, the observation exists
-            return True
-        except Exception:
-            # If search fails (e.g., connection error), assume not found
-            self.logger.debug(f"Observation {obs_name} not found in R2D2")
-            return False
 
     def process_obs_config(
         self,
@@ -180,16 +158,6 @@ class IngestObs(taskBase):
 
         provider = get_provider_for_observation(
             obs_name, self.ioda_names_list, self.logger)
-
-        # Check if already in R2D2
-        if self.check_already_in_r2d2(
-                obs_name,
-                provider,
-                window_start,
-                window_length):
-            self.logger.info(
-                f"  SKIPPING: {obs_name} already exists in R2D2 for {window_start}")
-            return [], []  # Already ingested, skip
 
         retrieval_method = config.get('retrieval_method')  # cp or s3
 

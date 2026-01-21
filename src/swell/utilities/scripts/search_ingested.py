@@ -1,5 +1,4 @@
 import r2d2
-from datetime import datetime
 
 # providers = ['gdas']
 # Search for all observations
