@@ -1,0 +1,45 @@
+# (C) Copyright 2021-2022 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Setup and installation script
+#
+# Usage: "pip install --prefix=/path/to/install ."
+
+# --------------------------------------------------------------------------------------------------
+
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swell"
+version = "1.20.3"
+authors = [{name = "NASA Global Modeling and Assimilation Office"}]
+description = "Workflow suites, tasks and configuration for coupled data assimilation"
+requires-python = ">=3.11"
+classifiers = [
+"Development Status :: 1 - Planning",
+"Environment :: Console",
+"Intended Audience :: Science/Research",
+"Programming Language :: Python :: 3 :: Only",
+"Licence :: OSI Approved :: Apache Software License",
+"Natural Language :: English",
+"Operating System :: OS Independent"
+]
+
+[project.urls]
+Repository = "https://github.com/geos-esm/swell"
+Documentation = "https://geos-esm.github.io/swell/#/"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[project.scripts]
+swell = "swell.swell:main"
+cylc = "swell.cylc_swell:execute_cylc"
+
