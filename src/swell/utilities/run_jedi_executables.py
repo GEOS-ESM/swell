@@ -11,11 +11,9 @@
 import os
 import netCDF4 as nc
 from typing import Optional
-import datetime
 
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.logger import Logger
-from swell.tasks.base.task_base import JediConfigRendering
 
 # --------------------------------------------------------------------------------------------------
 
@@ -33,6 +31,7 @@ def check_obs(
     # Check if observations in input file exists
     # ------------------------------------------
     filename = obs_dict['obs space']['obsdatain']['engine']['obsfile']
+
     if os.path.exists(filename):
 
         # Open file and check if number of location dimension is nonzero
@@ -44,6 +43,7 @@ def check_obs(
                 use_observation = True
 
     if input_and_output:
+
         # Check if observations in output file exists
         # ------------------------------------------
         filename = obs_dict['obs space']['obsdataout']['engine']['obsfile']
@@ -60,59 +60,8 @@ def check_obs(
 
     return use_observation
 
-# --------------------------------------------------------------------------------------------------
-
-
-def jedi_dictionary_iterator(
-    jedi_config_dict: dict,
-    jedi_rendering: JediConfigRendering,
-    window_type: Optional[str] = None,
-    obs: Optional[list[str]] = None,
-    cycle_time: Optional[datetime.datetime] = None,
-    jedi_forecast_model: Optional[str] = None
-) -> None:
-
-    # Assemble configuration YAML file
-    # --------------------------------
-    for key, value in jedi_config_dict.items():
-        if isinstance(value, dict):
-            jedi_dictionary_iterator(value, jedi_rendering, window_type, obs,
-                                     jedi_forecast_model)
-
-        elif isinstance(value, bool):
-            continue
-
-        elif isinstance(value, list):
-            for item in value:
-                if isinstance(item, dict):
-                    jedi_dictionary_iterator(
-                        item, jedi_rendering, window_type, obs,
-                        jedi_forecast_model
-                    )
-
-        else:
-            if 'TASKFILL' in value:
-                value_file = value.replace('TASKFILL', '')
-                value_dict = jedi_rendering.render_interface_model(value_file)
-
-                jedi_config_dict[key] = value_dict
-
-            elif 'SPECIAL' in value:
-                value_special = value.replace('SPECIAL', '')
-                if value_special == 'observations':
-                    observations = []
-                    obs_list = obs.copy()
-                    for ob in obs_list:
-                        obs_dict = jedi_rendering.render_interface_observations(ob)
-                        observations.append(obs_dict)
-                    jedi_config_dict[key] = observations
-
-                elif value_special == 'model' and window_type == '4D':
-                    model_dict = jedi_rendering.render_interface_model(jedi_forecast_model)
-                    jedi_config_dict[key] = model_dict
-
-
 # ----------------------------------------------------------------------------------------------
+
 
 def run_executable(
     logger: Logger,

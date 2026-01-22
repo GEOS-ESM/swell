@@ -10,7 +10,6 @@ import yaml
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 # --------------------------------------------------------------------------------------------------
@@ -38,10 +37,6 @@ class GenerateBClimatology(taskBase):
         # Render StaticBInit (no templates needed)
         # ----------------------------------------
         jedi_config_dict = self.jedi_rendering.render_oops_file('StaticBInit')
-
-        # Read configs for the rest of the dictionary
-        # -------------------------------------------
-        self.jedi_dictionary_iterator(jedi_config_dict)
 
         return jedi_config_dict
 
@@ -175,10 +170,6 @@ class GenerateBClimatology(taskBase):
         # Output log file
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering)
 
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)

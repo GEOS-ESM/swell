@@ -1,8 +1,0 @@
-fms initialization:
-  namelist filename: './fv3-jedi/fv3files/fmsmpp.nml'
-  field table filename: './fv3-jedi/fv3files/field_table_gmao'
-akbk: './fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4'
-layout: [{{npx_proc}},{{npy_proc}}]
-npx: {{horizontal_resolution}}
-npy: {{horizontal_resolution}}
-npz: {{vertical_resolution}}

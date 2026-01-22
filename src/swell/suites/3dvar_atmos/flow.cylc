@@ -73,7 +73,8 @@
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -150,8 +151,8 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediVariationalExecutable-{{model_component}}]]
-        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"

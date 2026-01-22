@@ -179,9 +179,9 @@ horizontal_resolution:
   - '361'
 
 jedi_forecast_model:
-  default_value: pseudo-model
+  default_value: pseudo_model
   options:
-  - pseudo-model
+  - pseudo_model
 
 local_ensemble_inflation_mult:
   default_value: 1.1
