@@ -15,6 +15,7 @@ import os
 
 
 def get_swell_path() -> str:
+    print(__file__)
     return os.path.split(__file__)[0]
 
 
