@@ -12,7 +12,7 @@ from typing import Callable
 
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.utilities.logger import Logger
-from swell.suites.all_suites import AllSuites
+from swell.suites.base.all_suites import suite_configs
 
 
 # --------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ class Config():
         # -------------------------------------------------------------------------
 
         # Check for suite questions
-        suite_questions = AllSuites.get_config(
+        suite_questions = suite_configs.get_config(
                 self.__suite_to_run__).get_all_question_names('suite')
         question_list = []
 

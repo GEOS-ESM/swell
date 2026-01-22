@@ -16,7 +16,7 @@ import sys
 import yaml
 from typing import Union, Optional
 
-from swell.suites.all_suites import AllSuites
+from swell.suites.base.all_suites import suite_configs
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
      PrepareExperimentConfigAndSuite
 from swell.swell_path import get_swell_path
@@ -189,7 +189,7 @@ def create_experiment_directory(
 
     # Get the base name of the suite
     # ------------------------------
-    suite = AllSuites.base_suite(suite_config)
+    suite = suite_configs.base_suite(suite_config)
 
     # Create a logger
     # ---------------
