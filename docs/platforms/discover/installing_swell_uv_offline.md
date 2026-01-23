@@ -33,7 +33,7 @@ We will download all the required packages on local with the corresponding pytho
     which pip3  # make sure that the path of pip3 is the one under your venv
 
     mkdir ../downloaded  # where offline packages will be saved to
-    pip3 download "setuptools>=40.8.0" -d ../downloaded
+    pip3 download "setuptools>=68.0.0" -d ../downloaded
     pip3 download -r requirements.txt -d ../downloaded  
 ```
 3. Upload the packages under `downloaded` to a Discover directory, `[discover_offline_pkg_path]`
