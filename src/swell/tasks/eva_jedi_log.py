@@ -55,6 +55,8 @@ class EvaJediLog(taskBase):
         conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
+            # dont sort the mappings to preserve the order in the output yaml
+            yaml.sort_base_mapping_type_on_output = False
             yaml.dump(eva_dict, outfile)
 
         # Call eva
