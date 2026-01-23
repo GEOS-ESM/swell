@@ -126,10 +126,11 @@ class BufrToIoda(taskBase):
                                               templated_string=yaml_str,
                                               dictionary_of_templates=template_dictionary)
 
-            # Load the dictionary
-            yaml_config = YAML(typ='safe')
+            # Load and write the dictionary using rt mode (preserves formatting)
+            yaml_config = YAML()
             yaml_content = yaml_config.load(yaml_str)
 
+            # Write the updated content to the target yaml file
             with open(yaml_file_target, 'w') as file:
                 yaml_config.dump(yaml_content, file)
                 self.logger.info(f'Updated YAML file content: {yaml_file_target}')
