@@ -43,17 +43,9 @@ Documentation = "https://geos-esm.github.io/swell/#/"
 swell = [
     'deployment/platforms/*/modules*',
     'deployment/platforms/*/*.yaml',
-    'suites/*',
-    'suites/*/*',
-    'suites/*/*/*',
-    'tasks/task_questions.yaml',
+    'suites/**',
     'test/suite_tests/*.yaml',
-    'configuration/*',
-    'configuration/*/*',
-    'configuration/*/*/*',
-    'configuration/*/*/*/*',
-    'configuration/*/*/*/*/*',
-    'configuration/*/*/*/*/*/*',
+    'configuration/**',
     'utilities/pinned_versions/*.yaml'
 ]
 
