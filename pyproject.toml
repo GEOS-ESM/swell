@@ -39,6 +39,24 @@ Documentation = "https://geos-esm.github.io/swell/#/"
 [tool.setuptools.package-dir]
 "" = "src"
 
+[tool.setuptools.package-data]
+swell = [
+    'deployment/platforms/*/modules*',
+    'deployment/platforms/*/*.yaml',
+    'suites/*',
+    'suites/*/*',
+    'suites/*/*/*',
+    'tasks/task_questions.yaml',
+    'test/suite_tests/*.yaml',
+    'configuration/*',
+    'configuration/*/*',
+    'configuration/*/*/*',
+    'configuration/*/*/*/*',
+    'configuration/*/*/*/*/*',
+    'configuration/*/*/*/*/*/*',
+    'utilities/pinned_versions/*.yaml'
+]
+
 [project.scripts]
 swell = "swell.swell:main"
 cylc = "swell.cylc_swell:execute_cylc"
