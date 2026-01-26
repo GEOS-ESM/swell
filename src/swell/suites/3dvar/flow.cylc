@@ -58,8 +58,10 @@
             StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -134,6 +136,9 @@
         {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
