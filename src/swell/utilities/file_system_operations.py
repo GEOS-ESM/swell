@@ -29,7 +29,7 @@ def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
             shutil.copy(src, dst_dir)
 
     except OSError as e:
-        logger.abort(f'Copying failed: {e}')
+        logger.abort(f'Copying failed: {e}', exception=type(e))
 
 # --------------------------------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ def move_files(logger: Logger, src_dir: str, dst_dir: str) -> None:
         logger.info(' Moving file(s) from: '+src_dir)
         shutil.move(src_dir, dst_dir)
 
-    except Exception as e:
-        logger.abort(f'Moving failed: {e}')
+    except OSError as e:
+        logger.abort(f'Moving failed: {e}', exception=type(e))
 
 # ----------------------------------------------------------------------------------------------
