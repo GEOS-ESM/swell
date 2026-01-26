@@ -31,6 +31,7 @@ classifiers = [
 "Natural Language :: English",
 "Operating System :: OS Independent"
 ]
+
 dependencies = [
     "click>=8.0.0",
     "jinja2>=3.0.3",
