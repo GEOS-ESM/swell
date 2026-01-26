@@ -299,10 +299,10 @@ class taskFactory():
         # Try to use the model-specific task if it exists
         if model is not None:
             try:
-                task_class = getattr(importlib.import_module(f'swell.tasks.{model}.{task_lower}'),
-                                     task)
+                task_class = getattr(importlib.import_module(
+                    f'swell.tasks.{model}.{task_lower}-{model}'), task)
                 factory_logger.info(f'Using model-specific version of {task} in '
-                                    f'<swell.tasks.{model}.{task_lower}>')
+                                    f'<swell.tasks.{model}.{task_lower}-{model}>')
             except ModuleNotFoundError:
                 factory_logger.info(f'Could not find model-specific version of {task}.'
                                     ' Looking for generic version.')
@@ -312,6 +312,7 @@ class taskFactory():
 
             # Import class based on user selected task
             task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
+            factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket, task)
