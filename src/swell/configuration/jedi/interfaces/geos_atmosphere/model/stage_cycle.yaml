@@ -1,7 +1,0 @@
-- link_files:
-    directories:
-      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/GEOS_CRTM_Surface/geos.crtmsrf.{{horizontal_resolution}}.nc4', '{{cycle_dir}}/fv3-jedi/bkg/']
-      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/fv3files/*', '{{cycle_dir}}/fv3-jedi/fv3files/']
-      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec/1.0.1/gsi-coeffs-gmao-global-l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nc4', '{{cycle_dir}}/fv3-jedi/gsibec/']
-      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/gsibec//1.0.1/{{gsibec_configuration}}_l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nml', '{{cycle_dir}}/fv3-jedi/gsibec/']
-      - ['{{swell_static_files}}/jedi/interfaces/geos_atmosphere/rcov/1.0.0/*', '{{cycle_dir}}/fv3-jedi/rcov/']

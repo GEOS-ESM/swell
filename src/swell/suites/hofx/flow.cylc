@@ -65,7 +65,8 @@
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations
@@ -135,6 +136,9 @@
 
     [[GetObsNotInR2d2-{{model_component}}]]
         script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
+
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
     [[RunJediHofxExecutable-{{model_component}}]]
         script = "swell task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
