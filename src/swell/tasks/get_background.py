@@ -60,6 +60,7 @@ class GetBackground(taskBase):
              See the taskBase constructor for more information.
         """
 
+        # Local import because module is not loaded until experiment launch
         from swell.utilities.r2d2 import create_r2d2_config
         import r2d2
 

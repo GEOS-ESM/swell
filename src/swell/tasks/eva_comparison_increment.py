@@ -54,7 +54,8 @@ class EvaComparisonIncrement(taskBase):
         return window_type, window_length
 
     def execute(self) -> None:
-
+        
+        # Local import because module is not loaded until experiment launch
         from eva.eva_driver import eva
 
         model = self.get_model()

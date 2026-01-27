@@ -30,6 +30,7 @@ from swell.utilities.observations import ioda_name_to_long_name
 # Pass through to avoid confusion with optional logger argument inside eva
 def run_eva(eva_dict: dict):
 
+    # Local import because module is not loaded until experiment launch
     from eva.eva_driver import eva
     eva(eva_dict)
 

@@ -121,7 +121,7 @@ class GetObservations(taskBase):
         "tlapse" files need to be fetched.
         """
 
-        # Import modules
+        # # Local import because module is not loaded until experiment launch
         # --------------
         import r2d2
 

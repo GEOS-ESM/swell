@@ -40,6 +40,7 @@ class EvaComparisonJediLog(taskBase):
 
     def execute(self) -> None:
 
+        # Local import because module is not loaded until experiment launch
         from eva.eva_driver import eva
 
         # Get the model
