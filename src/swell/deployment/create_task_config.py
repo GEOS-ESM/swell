@@ -7,12 +7,13 @@
 
 # --------------------------------------------------------------------------------------------------
 
+import io
 import os
 from typing import Optional
-import yaml
+from ruamel.yaml import YAML
 import isodate
 
-from swell.tasks.base.task_attributes import TaskAttributes
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.logger import get_logger
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
     PrepareExperimentConfigAndSuite
@@ -60,7 +61,7 @@ def task_config_wrapper(task_name: str,
     logger.info(f'Generating config for task {task_name}')
 
     # Get the task attributes for the class
-    task_attr_class = getattr(TaskAttributes, task_name)
+    task_attr_class = getattr(task_attributes, task_name)
     task = task_attr_class(model=model, platform=platform)
 
     # Check that model is specified for the task
@@ -73,9 +74,16 @@ def task_config_wrapper(task_name: str,
         logger.abort('Task requires datetime (e.g. 20231010T000000Z)'
                      ' but none was specified at the command line.')
 
+    yaml = YAML(typ='safe')
+
     # Construct overrides
-    if override is None:
+    if isinstance(override, str):
+        with open(override, 'r') as f:
+            override = yaml.load(f)
+    elif override is None:
         override = {}
+    elif not isinstance(override, dict):
+        raise TypeError('Specified override is not a string filepath or dictionary.')
 
     if model is not None:
         override['model_components'] = [model]
@@ -125,12 +133,16 @@ def task_config_wrapper(task_name: str,
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
 
     # Expand all environment vars in the dictionary
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
-    experiment_dict = yaml.safe_load(experiment_dict_string)
+    experiment_dict = yaml.load(experiment_dict_string)
 
     # Add comments to dictionary
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
 
     experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)

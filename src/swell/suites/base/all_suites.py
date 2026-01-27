@@ -43,7 +43,7 @@ class Workflows():
 
         self.workflow_dict = workflow_dict
 
-    def get_workflow(self, suite: str) -> CylcWorkflow:
+    def get_workflow(self, suite: str) -> type[CylcWorkflow]:
         return self.workflow_dict[suite]
 
     def all_workflows(self) -> list:
