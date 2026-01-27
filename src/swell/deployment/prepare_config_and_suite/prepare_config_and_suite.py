@@ -100,6 +100,11 @@ class PrepareExperimentConfigAndSuite:
         # -------------------------------
         self.possible_model_components = get_model_components()
 
+        # Initialize task trackers
+        # ------------------------
+        self.model_dependent_tasks = []
+        self.model_independent_tasks = {}
+
         # Start initializing the suite questions first
         # --------------------------------------------
         self.prepare_suite_question_dictionary()
@@ -109,7 +114,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def configure_and_ask_task_questions(self) -> None:
+    def configure_and_ask_task_questions(self) -> tuple[dict, dict]:
         # Finalize the experiment config with task questions
 
         self.prepare_task_question_dictionary()
@@ -385,7 +390,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def ask_questions_and_configure(self, suite_task: QuestionType) -> Tuple[dict, dict]:
+    def ask_questions_and_configure(self, suite_task: QuestionType) -> None:
         # Handle asking questions for either suites or tasks
 
         if self.config_client.__class__.__name__ == 'GetAnswerCli' and (
