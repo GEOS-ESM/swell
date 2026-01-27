@@ -15,9 +15,31 @@ from swell.tasks.base.task_setup import TaskSetup
 
 # --------------------------------------------------------------------------------------------------
 
+'''
+The TaskAttributes class provides tracking of TaskSetup classes, which should be defined in each
+task's file. It handles this by providing a wrapper method to register each class.
+
+Attributes:
+root and sync_point: Setup for tasks used swell-wide that don't require separate files
+discover_plugins: Handles discovery of packages, which then run the register hooks when imported
+TaskAttributes: class that registers TaskSetup classes in each task file
+
+Example for task registry:
+<src/swell/tasks/example.py>
+
+from swell.tasks.base.task_attributes import task_attributes
+
+@task_attributes.register('Example')
+class Setup(TaskSetup):
+    def __init__(self):
+        pass
+'''
+
+# --------------------------------------------------------------------------------------------------
 
 class root(TaskSetup):
     def set_attributes(self):
+        # root is a precursor to all tasks, it runs the pre-script before any task's script
         self.script = False
         self.pre_script = "source $CYLC_SUITE_DEF_PATH/modules"
         self.additional_sections = [self.create_new_section('environment',
@@ -26,6 +48,8 @@ class root(TaskSetup):
 
 
 class sync_point(TaskSetup):
+    # placeholder task to check run dependencies in cylc graph
+    # The command "true" is run in the shell as a placeholder
     def set_attributes(self):
         self.script = "true"
 
