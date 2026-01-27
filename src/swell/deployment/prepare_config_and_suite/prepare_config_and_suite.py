@@ -11,7 +11,7 @@
 import os
 import yaml
 from collections.abc import Mapping
-from typing import Union, Tuple, Optional
+from typing import Union, Optional
 import datetime
 
 from swell.swell_path import get_swell_path
