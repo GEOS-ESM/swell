@@ -298,8 +298,27 @@ class taskFactory():
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
-        # Import class based on user selected task
-        task_class = getattr(importlib.import_module('swell.tasks.' + task_lower), task)
+        task_class = None
+
+        factory_logger = get_logger('TaskFactory')
+
+        # Try to use the model-specific task if it exists
+        if model is not None:
+            try:
+                task_class = getattr(importlib.import_module(
+                    f'swell.tasks.{model}.{task_lower}-{model}'), task)
+                factory_logger.info(f'Using model-specific version of {task} in '
+                                    f'<swell.tasks.{model}.{task_lower}-{model}>')
+            except ModuleNotFoundError:
+                factory_logger.info(f'Could not find model-specific version of {task}.'
+                                    ' Looking for generic version.')
+
+        # Try to import model-independent task
+        if task_class is None:
+
+            # Import class based on user selected task
+            task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
+            factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket,
