@@ -9,6 +9,7 @@
 
 
 import click
+from ruamel.yaml import YAML
 from typing import Union, Optional, Literal
 
 from swell.deployment.platforms.platforms import get_platforms
@@ -160,7 +161,13 @@ def create_task_config(
         task (str): Name of the task to execute.\n
 
     """
-    task_config_wrapper(task, platform, datetime, model, input_method, override, slurm, cwd)
+    if override is not None:
+        yaml = YAML(typ='safe')
+        with open(override, 'r') as f:
+            override_dict = yaml.load(f)
+    else:
+        override_dict = {}
+    task_config_wrapper(task, platform, datetime, model, input_method, override_dict, slurm, cwd)
 
 # --------------------------------------------------------------------------------------------------
 

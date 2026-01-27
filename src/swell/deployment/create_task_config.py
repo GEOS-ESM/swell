@@ -51,7 +51,7 @@ def task_config_wrapper(task_name: str,
                         datetime: Optional[str],
                         model: Optional[str],
                         input_method: str,
-                        override: str,
+                        override: dict,
                         slurm: str,
                         cwd: bool) -> None:
 
@@ -73,17 +73,6 @@ def task_config_wrapper(task_name: str,
     if task.is_cycling and datetime is None:
         logger.abort('Task requires datetime (e.g. 20231010T000000Z)'
                      ' but none was specified at the command line.')
-
-    yaml = YAML(typ='safe')
-
-    # Construct overrides
-    if isinstance(override, str):
-        with open(override, 'r') as f:
-            override = yaml.load(f)
-    elif override is None:
-        override = {}
-    elif not isinstance(override, dict):
-        raise TypeError('Specified override is not a string filepath or dictionary.')
 
     if model is not None:
         override['model_components'] = [model]
@@ -131,6 +120,8 @@ def task_config_wrapper(task_name: str,
 
     # Configure and ask all questions
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
+
+    yaml = YAML(typ='safe')
 
     # Expand all environment vars in the dictionary
     output = io.StringIO()
