@@ -39,8 +39,7 @@ git clone https://github.com/GEOS-ESM/swell.git swell-develop
 4) Load all the modules that Swell needs: `mod_swell` (this is the `csh` alias function created in the preliminary steps)
 5) Create a Python virtual environment: `python3 -m venv .venv`
 6) Activate the virtual environment: `source .venv/bin/activate.csh`
-7) Install Swell dependencies: `pip install -r --ignore-installed requirements.txt`
-8) Install swell in editable mode: `pip install -e .` (note: make sure you run this while the `venv` is active)
+7) Install swell in editable mode: `pip install -e .` (note: make sure you run this while the `venv` is active)
 
 9) Now, work on SWELL. Any changes you make to the SWELL source code will be automatically applied to the install (because it's an editable install); no need to manually reinstall.
 
