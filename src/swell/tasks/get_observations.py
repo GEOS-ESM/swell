@@ -8,10 +8,11 @@
 # --------------------------------------------------------------------------------------------------
 
 import isodate
+import netCDF4 as nc
 import numpy as np
 import os
 import r2d2
-import netCDF4 as nc
+import shutil
 from typing import Union
 
 from datetime import timedelta, datetime as dt
@@ -180,8 +181,22 @@ class GetObservations(taskBase):
                 try:
                     r2d2.fetch(**fetch_criteria)
                     self.logger.info(f"Successfully fetched {target_file}")
-                except Exception as e:
-                    self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
+                except Exception:
+                    self.logger.info(
+                        f"Failed to fetch {target_file}. "
+                        "Fetch empty observation instead."
+                    )
+
+                    # fetch empty obs
+                    r2d2.fetch(
+                        item='observation',
+                        provider='empty_provider',
+                        observation_type='empty_type',
+                        file_extension='nc4',
+                        window_start='19700101T030000Z',
+                        window_length='PT6H',
+                        target_file=target_file,
+                    )
 
             # Check how many of the combine_input_files exist in the cycle directory.
             # If all of them are missing proceed without creating an observation input
@@ -441,85 +456,106 @@ class GetObservations(taskBase):
         existing_files = [f for f in input_filenames if os.path.exists(f)]
         input_filenames = existing_files
 
-        # Loop through the input files and get the total dimension size for each dimension
-        # Location requires special handling to get the cumulative sum of the dimension size
-        # ---------------------------------------------------------------------------------
-        out_dim_size = {'Location': 0}
-        for input_filename in input_filenames:
-            with nc.Dataset(input_filename, 'r') as ds:
-                for dim_name, dim in ds.dimensions.items():
-                    if dim_name == 'Location':
-                        out_dim_size[dim_name] += dim.size
+        # Remove empty files from input_filenames
+        # -------------------------------------------------------------
+        valid_files = []
+
+        for fname in input_filenames:
+            try:
+                with nc.Dataset(fname, 'r') as ds:
+                    if 'Location' in ds.dimensions and ds.dimensions['Location'].size > 0:
+                        valid_files.append(fname)
                     else:
-                        out_dim_size[dim_name] = dim.size
+                        empty_template = fname
+            except OSError:
+                continue
 
-        with nc.Dataset(output_filename, 'w') as out_ds:
-            # Open the input NetCDF files for reading
-            # ---------------------------------------
-            self.logger.info(f"Combining files {input_filenames} ")
+        input_filenames = valid_files
 
-            # Create an output file template based on the first input file
-            # ------------------------------------------------------------
-            with nc.Dataset(input_filenames[0], 'r') as ds:
-                # Access groups and create dimensions
-                # -----------------------------------
-                input_groups = ds.groups.keys()
+        if input_filenames:
+            # Loop through the input files and get the total dimension size for each dimension
+            # Location requires special handling to get the cumulative sum of the dimension size
+            # ---------------------------------------------------------------------------------
+            out_dim_size = {'Location': 0}
+            for input_filename in input_filenames:
+                with nc.Dataset(input_filename, 'r') as ds:
+                    for dim_name, dim in ds.dimensions.items():
+                        if dim_name == 'Location':
+                            out_dim_size[dim_name] += dim.size
+                        else:
+                            out_dim_size[dim_name] = dim.size
 
-                for dim_name, dim in ds.dimensions.items():
-                    out_ds.createDimension(dim_name, out_dim_size[dim_name])
+            with nc.Dataset(output_filename, 'w') as out_ds:
+                # Open the input NetCDF files for reading
+                # ---------------------------------------
+                self.logger.info(f"Combining files {input_filenames} ")
 
-                # Loop through groups and process variables
-                # -----------------------------------------
-                for group_name in input_groups:
-                    group = ds[group_name]
+                # Create an output file template based on the first input file
+                # ------------------------------------------------------------
+                with nc.Dataset(input_filenames[0], 'r') as ds:
+                    # Access groups and create dimensions
+                    # -----------------------------------
+                    input_groups = ds.groups.keys()
 
-                    # Create the groups in output file
-                    # --------------------------------
-                    out_group = out_ds.createGroup(group_name)
+                    for dim_name, dim in ds.dimensions.items():
+                        out_ds.createDimension(dim_name, out_dim_size[dim_name])
 
-                    # Access variables within a group
-                    # -------------------------------
-                    variables_in_group = group.variables.keys()
+                    # Loop through groups and process variables
+                    # -----------------------------------------
+                    for group_name in input_groups:
+                        group = ds[group_name]
 
-                    # Loop over variables from input files, combine, and write to the new file
-                    # ------------------------------------------------------------------------
-                    for var_name in variables_in_group:
-                        list_data = []
-
-                        # Get the dimensions of the variable
-                        # ----------------------------------
-                        var_dims = group[var_name].dimensions
-
-                        # Loop over all the files and combine the variable data into a list
-                        # Channel dimensions remain the same, so we can break the loop
-                        # ----------------------------------------------------------------
-                        for input_file in input_filenames:
-                            list_data.append(self.get_data(input_file, group_name, var_name))
-                            # Only break if the first dimension is Channel
-                            if var_dims[0] == 'Channel':
-                                break
-
-                        # Concatenate the masked arrays along the first dimension
-                        # --------------------------------------------------------
-                        variable_data = np.ma.concatenate(list_data, axis=0)
-
-                        # Fill value needs to be assigned while creating variables
-                        # --------------------------------------------------------
-                        subset_var = out_group.createVariable(
-                            var_name,
-                            variable_data.dtype,
-                            var_dims,
-                            fill_value=group[var_name].getncattr('_FillValue')
-                        )
-                        for attr_name in group[var_name].ncattrs():
-                            if attr_name == '_FillValue':
-                                continue
-                            subset_var.setncattr(
-                                attr_name, group[var_name].getncattr(attr_name)
-                            )
-
-                        # Write subset data to the new file
+                        # Create the groups in output file
                         # --------------------------------
-                        subset_var[:] = variable_data
+                        out_group = out_ds.createGroup(group_name)
 
+                        # Access variables within a group
+                        # -------------------------------
+                        variables_in_group = group.variables.keys()
+
+                        # Loop over variables from input files, combine, and write to the new file
+                        # ------------------------------------------------------------------------
+                        for var_name in variables_in_group:
+                            list_data = []
+
+                            # Get the dimensions of the variable
+                            # ----------------------------------
+                            var_dims = group[var_name].dimensions
+
+                            # Loop over all the files and combine the variable data into a list
+                            # Channel dimensions remain the same, so we can break the loop
+                            # ----------------------------------------------------------------
+                            for input_file in input_filenames:
+                                list_data.append(self.get_data(input_file, group_name, var_name))
+                                # Only break if the first dimension is Channel
+                                if var_dims[0] == 'Channel':
+                                    break
+
+                            # Concatenate the masked arrays along the first dimension
+                            # --------------------------------------------------------
+                            variable_data = np.ma.concatenate(list_data, axis=0)
+
+                            # Fill value needs to be assigned while creating variables
+                            # --------------------------------------------------------
+                            subset_var = out_group.createVariable(
+                                var_name,
+                                variable_data.dtype,
+                                var_dims,
+                                fill_value=group[var_name].getncattr('_FillValue')
+                            )
+                            for attr_name in group[var_name].ncattrs():
+                                if attr_name == '_FillValue':
+                                    continue
+                                subset_var.setncattr(
+                                    attr_name, group[var_name].getncattr(attr_name)
+                                )
+
+                            # Write subset data to the new file
+                            # --------------------------------
+                            subset_var[:] = variable_data
+
+        else:
+
+            # If all the files are empty copy of them as the output file
+            shutil.copyfile(empty_template, output_filename)
 # ----------------------------------------------------------------------------------------------
