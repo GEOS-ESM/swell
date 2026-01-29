@@ -10,7 +10,7 @@
 
 import copy
 import os
-import yaml
+from ruamel.yaml import YAML
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 
@@ -272,12 +272,13 @@ class PrepareExperimentConfigAndSuite:
 
         # Perform a platform override on the model_ind dictionary
         # -------------------------------------------------------
+        yaml = YAML(typ='safe')
         platform_defaults = {}
         for suite_task in ['suite', 'task']:
             platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
                                               self.platform, f'{suite_task}_questions.yaml')
             with open(platform_dict_file, 'r') as ymlfile:
-                platform_defaults.update(yaml.safe_load(ymlfile))
+                platform_defaults.update(yaml.load(ymlfile))
 
         # Loop over the keys in self.question_dictionary_model_ind and update with platform_defaults
         # if that dictionary shares the key
@@ -297,7 +298,7 @@ class PrepareExperimentConfigAndSuite:
                                                    'interfaces', model,
                                                    f'{suite_task}_questions.yaml')
                     with open(model_dict_file, 'r') as ymlfile:
-                        model_defaults.update(yaml.safe_load(ymlfile))
+                        model_defaults.update(yaml.load(ymlfile))
 
                 # Loop over the keys in self.question_dictionary_model_ind and update with
                 # model_defaults or platform_defaults if that dictionary shares the key
@@ -348,8 +349,9 @@ class PrepareExperimentConfigAndSuite:
                 override_dict.update_dict(override_dict, self.override)
 
             elif isinstance(self.override, str):
+                yaml = YAML(typ='safe')
                 with open(self.override, 'r') as ymlfile:
-                    override_dict = update_dict(override_dict, yaml.safe_load(ymlfile))
+                    override_dict = update_dict(override_dict, yaml.load(ymlfile))
             else:
                 self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 
