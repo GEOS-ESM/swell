@@ -9,7 +9,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -62,14 +62,17 @@ class EvaJediLog(taskBase):
 
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-        eva_dict = yaml.safe_load(eva_str)
+        yaml = YAML(typ='safe')
+        eva_dict = yaml.load(eva_str)
 
         # Write eva dictionary to file
         # ----------------------------
         conf_output = os.path.join(self.cycle_dir(), 'eva', 'jedi_log', 'jedi_log_eva.yaml')
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
-            yaml.dump(eva_dict, outfile, default_flow_style=False)
+            # dont sort the mappings to preserve the order in the output yaml
+            yaml.sort_base_mapping_type_on_output = False
+            yaml.dump(eva_dict, outfile)
 
         # Call eva
         # --------

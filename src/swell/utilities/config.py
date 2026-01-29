@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import yaml
+from ruamel.yaml import YAML
 from typing import Callable
 
 from swell.tasks.base.task_attributes import task_attributes
@@ -52,8 +52,9 @@ class Config():
         self.__logger__ = logger
 
         # Read the configuration yaml file
+        yaml = YAML(typ='safe')
         with open(input_file, 'r') as ymlfile:
-            experiment_dict = yaml.safe_load(ymlfile)
+            experiment_dict = yaml.load(ymlfile)
 
         # Save some things that all tasks can use (suite level questions)
         self.__experiment_root__ = experiment_dict.get('experiment_root')

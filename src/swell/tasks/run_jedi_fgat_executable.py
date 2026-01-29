@@ -169,6 +169,7 @@ class RunJediFgatExecutable(taskBase):
                                                                 jedi_forecast_model)
 
         yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

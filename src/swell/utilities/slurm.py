@@ -9,9 +9,9 @@
 import importlib
 import os
 import re
-import yaml
 from typing import Union
 from collections.abc import Mapping
+from ruamel.yaml import YAML
 
 from importlib import resources
 
@@ -44,8 +44,9 @@ def prepare_slurm_defaults_and_overrides(
     global_defaults['slurm_directives_global'] = {}
 
     logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
+    yaml = YAML(typ='safe')
     with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
-        global_defaults['slurm_directives_global'] = yaml.safe_load(yaml_file)
+        global_defaults['slurm_directives_global'] = yaml.load(yaml_file)
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
     # ----------------------------------------------
@@ -134,12 +135,13 @@ def slurm_global_defaults(
 
     if os.path.exists(yaml_path):
         logger.info(f"Loading SLURM user configuration from {yaml_path}")
+        yaml = YAML(typ='safe')
         with open(yaml_path, "r") as yaml_file:
             user_globals['slurm_directives_global'] = yaml.safe_load(yaml_file)
     '''
+    yaml = YAML(typ='safe')
     with open(yaml_path, 'r') as yaml_file:
-        user_globals = yaml.safe_load(yaml_file)
-
+        user_globals = yaml.load(yaml_file)
     return user_globals
 
 # --------------------------------------------------------------------------------------------------

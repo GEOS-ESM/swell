@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import yaml
+from ruamel.yaml import YAML
 import os
 import re
 import numpy as np
@@ -46,11 +46,12 @@ class JediLogComparison(taskBase):
 
         experiment_paths = self.config.comparison_experiment_paths()
 
+        yaml = YAML(typ='safe')
         # Get the number of iterations between experiments
         iterations_list = []
         for path in experiment_paths:
             with open(path, 'r') as f:
-                exp_dict = yaml.safe_load(f)
+                exp_dict = yaml.load(f)
                 num_iters = int(exp_dict['models'][self.get_model()]['number_of_iterations'][0])
                 iterations_list.append(num_iters)
 

@@ -302,16 +302,17 @@ def test(test: str) -> None:
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing", "localensembleda")))
+@click.argument('suite', type=click.Choice(("hofx", "3dvar", "3dvar_atmos", "localensembleda",
+                                            "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar", "ufo_testing", "localensembleda"],
+    suite: Literal["hofx", "3dvar", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar, 3dvar_atmos, localensembleda)
     """
     run_suite(suite, platform, TestSuite.TIER1)
 

@@ -164,6 +164,7 @@ class RunJediVariationalExecutable(taskBase):
                                                                 jedi_forecast_model)
 
         ruamel_yaml = YAML()
+        ruamel_yaml.default_flow_style = False
 
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:

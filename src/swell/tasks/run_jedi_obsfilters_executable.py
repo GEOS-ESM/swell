@@ -174,6 +174,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_config_dict.update(new_dict)
 
         yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------

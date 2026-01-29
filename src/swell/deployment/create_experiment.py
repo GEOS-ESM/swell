@@ -9,10 +9,11 @@
 
 
 import copy
+import io
 import os
 import shutil
 import sys
-import yaml
+from ruamel.yaml import YAML
 from typing import Union, Optional
 
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
@@ -46,7 +47,8 @@ def clone_config(
 
     # Open the target experiment YAML. It will be used as the override
     with open(configuration, 'r') as f:
-        override_dict = yaml.safe_load(f)
+        yaml = YAML(typ='safe')
+        override_dict = yaml.load(f)
 
     # Check that override_dict has a suite key and get the suite name
     if 'suite_to_run' not in override_dict:
@@ -80,6 +82,9 @@ def prepare_config(
     # Create a logger
     # ---------------
     logger = get_logger('SwellPrepSuiteConfig')
+
+    yaml = YAML(typ='safe')
+    yaml.default_flow_style = False
 
     # Assert valid method
     # -------------------
@@ -188,13 +193,17 @@ def prepare_config(
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
-    experiment_dict = yaml.safe_load(experiment_dict_string)
+    experiment_dict = yaml.load(experiment_dict_string)
 
     # Add comments to dictionary
     # --------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
 
     experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)
@@ -232,7 +241,8 @@ def create_experiment_directory(
 
     # Load the string using yaml
     # --------------------------
-    experiment_dict = yaml.safe_load(experiment_dict_str)
+    yaml = YAML(typ='safe')
+    experiment_dict = yaml.load(experiment_dict_str)
 
     # Experiment ID and root from the user input
     # ------------------------------------------
