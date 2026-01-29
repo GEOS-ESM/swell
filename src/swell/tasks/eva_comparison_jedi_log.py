@@ -50,7 +50,7 @@ class EvaComparisonJediLog(taskBase):
 
         experiment_path_1 = list(experiment_tag_paths.values())[0]
         experiment_path_2 = list(experiment_tag_paths.values())[1]
-        
+
         yaml = YAML(typ='safe')
         with open(experiment_path_1, 'r') as f:
             experiment_dict_1 = yaml.load(f)
