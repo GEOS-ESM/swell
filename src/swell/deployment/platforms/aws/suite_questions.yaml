@@ -1,0 +1,5 @@
+experiment_root:
+  default_value: /efs/${USER}/SwellExperiments
+
+r2d2_local_path:
+  default_value: /efs/${USER}/R2D2DataStore/Local

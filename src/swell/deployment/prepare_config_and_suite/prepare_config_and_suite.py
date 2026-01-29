@@ -276,8 +276,23 @@ class PrepareExperimentConfigAndSuite:
         for suite_task in ['suite', 'task']:
             platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
                                               self.platform, f'{suite_task}_questions.yaml')
-            with open(platform_dict_file, 'r') as ymlfile:
-                platform_defaults.update(yaml.safe_load(ymlfile))
+            try:
+                with open(platform_dict_file, 'r') as ymlfile:
+                    platform_defaults.update(yaml.safe_load(ymlfile))
+            except FileNotFoundError:
+                self.logger.info(
+                    f"Platform defaults file {platform_dict_file} not found. "
+                    "Assuming no platform defaults. "
+                    "Note that your workflows are likely to fail unless you "
+                    "have manually configured every platform-specific default "
+                    "in your overrides."
+                )
+            except TypeError as err:
+                if str(err) == "'Nonetype' object is not callable":
+                    self.logger.info(
+                        f"Platform defaults file {platform_dict_file} is empty. "
+                        "Assuming no platform defaults."
+                    )
 
         # Loop over the keys in self.question_dictionary_model_ind and update with platform_defaults
         # if that dictionary shares the key

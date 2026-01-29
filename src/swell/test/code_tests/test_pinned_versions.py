@@ -1,6 +1,8 @@
 import os
 import unittest
 import subprocess
+import shutil
+import atexit
 from swell.utilities.logger import get_logger
 from swell.utilities.exceptions import SwellError
 from swell.test.code_tests.testing_utilities import suppress_stdout
@@ -21,6 +23,8 @@ class PinnedVersionsTest(unittest.TestCase):
 
         if not os.path.exists(jedi_bundle_dir):
             os.makedirs(jedi_bundle_dir)
+            # Remove directory after the test
+            atexit.register(lambda: shutil.rmtree(jedi_bundle_dir))
 
         # Clone oops repository in jedi_bundle (develop hash)
         if not os.path.exists(jedi_bundle_dir + "oops"):

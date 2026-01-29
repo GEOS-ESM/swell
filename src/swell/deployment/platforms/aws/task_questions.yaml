@@ -1,0 +1,35 @@
+crtm_coeff_dir:
+  default_value: /shared/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
+
+existing_geos_gcm_build_path:
+  default_value: /shared/GEOSgcm/v11.6.0/install/
+
+existing_geos_gcm_source_path:
+  default_value: /shared/GEOSgcm/v11.6.0/
+
+existing_jedi_build_directory:
+  default_value: /shared/build-jedi/build
+
+existing_jedi_source_directory:
+  default_value: /shared/build-jedi/jedi-bundle/
+
+existing_jedi_build_directory_pinned:
+  default_value: /shared/jedi-bundles/current-pinned-jedi-bundle/build
+
+existing_jedi_source_directory_pinned:
+  default_value: /shared/jedi-bundles/current-pinned-jedi-bundle/source
+
+geos_experiment_directory:
+  # Prefix: <swell_static_files>/geos/run_dirs/
+  default_value: 5deg_0701
+
+geos_restarts_directory:
+  # Prefix: <swell_static_files>/geos/restarts/
+  default_value: restarts_20210701_210000_5deg
+
+r2d2_local_path:
+  default_value: /efs/${USER}/R2D2DataStore/Local
+
+swell_static_files:
+  default_value: /shared/SwellStaticFiles
+

@@ -1186,7 +1186,7 @@ class QuestionDefaults():
 
     @dataclass
     class perhost(TaskQuestion):
-        default_value: str = None
+        default_value: str | None = None
         question_name: str = "perhost"
         ask_question: bool = True
         options: List[bool] = mutable_field([
@@ -1284,7 +1284,7 @@ class QuestionDefaults():
 
     @dataclass
     class swell_static_files_user(TaskQuestion):
-        default_value: str = "None"
+        default_value: str | None = None
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
         widget_type: WType = WType.STRING

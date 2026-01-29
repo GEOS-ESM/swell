@@ -1,0 +1,6 @@
+mepo>=2.3.2
+eva @ git+https://github.com/JCSDA-internal/eva@1.6.5
+jedibundle @ git+https://github.com/GEOS-ESM/jedi_bundle@1.0.27
+
+git+file:///shared/jedi-src/spack19/solo
+git+file:///shared/jedi-src/spack19/r2d2
