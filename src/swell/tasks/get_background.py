@@ -9,7 +9,6 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
 
 import isodate
 import os
@@ -46,7 +45,6 @@ class GetBackground(taskBase):
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_type = self.config.window_type()
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
@@ -57,10 +55,6 @@ class GetBackground(taskBase):
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Convert to datetime durations
         # -----------------------------

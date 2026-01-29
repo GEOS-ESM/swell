@@ -287,7 +287,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
         ]
     )
 
@@ -340,7 +339,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.geovals_experiment(),
             qd.geovals_provider(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -391,7 +389,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.ncdiag_experiments(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -405,7 +402,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -701,7 +697,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.r2d2_local_path(),
             qd.marine_models()
         ]
     )
@@ -743,7 +738,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
-            qd.r2d2_local_path(),
         ]
     )
 
