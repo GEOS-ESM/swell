@@ -189,6 +189,7 @@ class IngestBackground(taskBase):
             self.logger.info(f"    Model: {model}")
             self.logger.info(f"    Experiment: {experiment}")
             self.logger.info(f"    Resolution: {resolution}")
+            self.logger.info(f"    Step: {step}")
             self.logger.info(f"    Method: {retrieval_method}")
             self.logger.info(f"    Source: {target_file}")
             ingested.append(target_file)

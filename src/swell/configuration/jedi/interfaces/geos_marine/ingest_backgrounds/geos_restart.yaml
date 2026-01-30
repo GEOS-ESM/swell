@@ -7,6 +7,7 @@ model: 'geos'
 experiment: 'c180_o1440'
 resolution: 'c180'
 file_type: 'restart'
+step: 'PT0H'
 
 retrieval_method: 'cp'
 cp_source: '/discover/nobackup/projects/gmao/soca/data/GEOS_restarts/YYYY/MM/DD/geos.bkg.YYYYMMDDHH.nc4'
