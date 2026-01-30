@@ -10,11 +10,11 @@
 
 import copy
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import update_dict
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
@@ -57,14 +57,9 @@ class RunJediUfoTestsExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, '3D',
-                                 observations, self.cycle_time_dto())
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}', '3D')
 
         # Make modifications needed for testing
         # -------------------------------------
@@ -143,15 +138,18 @@ class RunJediUfoTestsExecutable(taskBase):
         # ---------------------------------------
         # file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperator_config.yaml')
         # with open(file, 'w') as jedi_config_file_open:
-        #     yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
+        #     yaml.dump(jedi_operator_dict, jedi_config_file_open)
 
         # file = os.path.join(self.cycle_dir(), 'jedi_test_ObsOperatorTLAD_config.yaml')
         # with open(file, 'w') as jedi_config_file_open:
-        #     yaml.dump(jedi_operator_dict, jedi_config_file_open, default_flow_style=False)
+        #     yaml.dump(jedi_operator_dict, jedi_config_file_open)
+
+        yaml = YAML()
+        yaml.default_flow_style = False
 
         file = os.path.join(self.cycle_dir(), 'jedi_test_ObsFilters_config.yaml')
         with open(file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_filter_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_filter_dict, jedi_config_file_open)
 
         # Tests to run
         # ------------

@@ -55,7 +55,8 @@
             StageJedi[^] => RunJediVariationalExecutable
             GsiBcToIoda => RunJediVariationalExecutable
             GsiNcdiagToIoda => RunJediVariationalExecutable
-            GetGeosAdasBackground => RunJediVariationalExecutable
+            GetGeosAdasBackground => RenderJediObservations
+            RenderJediObservations => RunJediVariationalExecutable
 
             # Clean cycle
             RunJediVariationalExecutable => CleanCycle
@@ -105,6 +106,9 @@
 
     [[ GetGeosAdasBackground ]]
         script = "swell task GetGeosAdasBackground $config -d $datetime -m geos_atmosphere"
+
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m geos_atmosphere"
 
     [[RunJediVariationalExecutable]]
         script = "swell task RunJediVariationalExecutable $config -d $datetime -m geos_atmosphere"

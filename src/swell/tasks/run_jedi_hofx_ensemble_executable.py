@@ -9,11 +9,9 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator
-
 from swell.utilities.run_jedi_executables import run_executable
 from swell.tasks.run_jedi_hofx_executable import RunJediHofxExecutable
 
@@ -40,7 +38,6 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
 
@@ -120,19 +117,19 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         output_log_file = os.path.join(self.cycle_dir(),
                                        f'jedi_{jedi_application}_pack{this_packet}_log.log')
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+                                                                window_type,
+                                                                jedi_forecast_model)
 
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.cycle_time_dto(), jedi_forecast_model)
+        yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Call execute of RunJediHofxExecutable to render hofx templates for each member
         # ------------------------------------------------------------------------------

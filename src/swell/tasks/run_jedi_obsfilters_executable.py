@@ -9,11 +9,11 @@
 
 import os
 import shutil
-import yaml
+from ruamel.yaml import YAML
 from typing import Optional
 import random
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
 
@@ -33,7 +33,6 @@ class RunJediObsfiltersExecutable(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
-        observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         obs_thinning_rej_fraction = self.config.obs_thinning_rej_fraction()
@@ -98,14 +97,10 @@ class RunJediObsfiltersExecutable(taskBase):
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning')
-
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type,
-                                 observations, self.cycle_time_dto(), jedi_forecast_model)
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning', window_type,
+                                                                jedi_forecast_model)
 
         # Include filter_thinning into {observations: obs sapce: obs filters:}
         # -------------------------------------------------------------------
@@ -138,10 +133,13 @@ class RunJediObsfiltersExecutable(taskBase):
         del jedi_config_dict['observations']
         jedi_config_dict.update(new_dict)
 
+        yaml = YAML()
+        yaml.default_flow_style = False
+
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Jedi executable name
         # --------------------
