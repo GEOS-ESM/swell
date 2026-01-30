@@ -83,6 +83,8 @@ def prepare_scheduling_dict(
         'RunJediHofxEnsembleExecutable',
         'RunJediHofxExecutable',
         'RunJediLocalEnsembleDaExecutable',
+        'RunJediEtkfObserver',
+        'RunJediEtkfSolver',
         'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',

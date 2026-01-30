@@ -672,6 +672,78 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediEtkfObserver = QuestionList(
+        list_name="RunJediEtkfObserver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_method(),
+            qd.perhost(),
+            qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediEtkfSolver = QuestionList(
+        list_name="RunJediEtkfSolver",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            background_crtm_obs,
+            qd.ensemble_num_members(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_method(),
+            qd.perhost(),
+            qd.comparison_log_type('localensembleda'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediUfoTestsExecutable = QuestionList(
         list_name="RunJediUfoTestsExecutable",
         questions=[

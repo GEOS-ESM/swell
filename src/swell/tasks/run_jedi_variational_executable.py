@@ -147,6 +147,11 @@ class RunJediVariationalExecutable(taskBase):
             run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                            jedi_config_file, output_log_file, perhost)
         else:
+            mpi_command = "mpirun"
+            if not (perhost is None or perhost == "None"):
+                mpi_command += f" -perhost {perhost}"
+            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+            print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------
