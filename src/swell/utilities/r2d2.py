@@ -13,6 +13,33 @@ import yaml
 from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
+# R2D2 Model Name Mapping
+# --------------------------------------------------------------------------------------------------
+# To add a new model:
+#   1. Register the model in R2D2 (with r2d2.register_model())
+#   2. Add it to the dictionary below
+
+R2D2_MODEL_MAP = {
+    'geos_atmosphere': 'geos',
+    'geos_marine': 'mom6',
+}
+
+
+def get_r2d2_model_name(swell_model):
+    return R2D2_MODEL_MAP.get(swell_model, swell_model)
+
+
+# Lifetime is set when registering an experiment with r2d2.register_experiment(),
+# All data stored under an experiment inherits its lifetime.
+#
+# Valid values:
+#   - 'debug':       Short-term
+#   - 'science':     Medium-term
+#   - 'publication': Long-term
+#   - 'release':     Permanent
+#
+# Ex: r2d2.register_experiment(name='exp_name', ..., lifetime='science')
+# --------------------------------------------------------------------------------------------------
 
 
 def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:

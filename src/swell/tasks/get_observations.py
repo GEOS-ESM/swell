@@ -19,14 +19,7 @@ from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-
-# --------------------------------------------------------------------------------------------------
-
-# R2D2 model name mapping
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',
-}
+from swell.utilities.r2d2 import get_r2d2_model_name
 
 # --------------------------------------------------------------------------------------------------
 
@@ -107,9 +100,9 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         cycling_varbc = self.config.cycling_varbc(None)
 
-        # Get model component
+        # Get model component and translate to R2D2 model name
         model_component = self.get_model()
-        r2d2_model = r2d2_model_dict.get(model_component, model_component)
+        r2d2_model = get_r2d2_model_name(model_component)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))

@@ -9,18 +9,11 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.r2d2 import get_r2d2_model_name
 
 import isodate
 import os
 import r2d2
-
-# --------------------------------------------------------------------------------------------------
-
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',  # 'mom6_cice6_UFS'
-}
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -144,7 +137,7 @@ class GetBackground(taskBase):
                 r2d2.fetch(
                     item='forecast',
                     target_file=target_file,
-                    model=r2d2_model_dict[model_component],  # 'mom6' need to be registered mom6
+                    model=get_r2d2_model_name(model_component),
                     experiment=background_experiment,
                     file_extension=file_extension,
                     resolution=horizontal_resolution,
