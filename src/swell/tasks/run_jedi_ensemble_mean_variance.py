@@ -9,10 +9,10 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
@@ -31,7 +31,6 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Parse configuration
         # -------------------
         jedi_forecast_model = self.config.jedi_forecast_model(None)
-        observations = self.config.observations()
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
@@ -80,19 +79,19 @@ class RunJediEnsembleMeanVariance(taskBase):
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}.log')
 
-        # Open the JEDI config file and fill initial templates
-        # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}')
+        # Open the JEDI config file and fill templates
+        # --------------------------------------------
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
+                                                                window_type,
+                                                                jedi_forecast_model)
 
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.cycle_time_dto(), jedi_forecast_model)
+        yaml = YAML()
+        yaml.default_flow_style = False
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------

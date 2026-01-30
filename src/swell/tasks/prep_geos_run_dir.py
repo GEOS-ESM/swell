@@ -10,7 +10,7 @@
 import os
 import isodate
 import glob
-import yaml
+from ruamel.yaml import YAML
 
 from datetime import datetime as dt
 
@@ -456,8 +456,9 @@ class PrepGeosRunDir(taskBase):
         else:
             self.logger.info('Modifying WSUB_ExtData.yaml')
 
+            yaml = YAML(typ='safe')
             with open(self.forecast_dir('WSUB_ExtData.yaml'), 'r') as f:
-                wsub = yaml.safe_load(f)
+                wsub = yaml.load(f)
 
             # Modifying one particular value
             # -----------------------------
@@ -465,7 +466,7 @@ class PrepGeosRunDir(taskBase):
 
             # Write the updated YAML back to the file
             with open(self.forecast_dir('WSUB_ExtData.yaml'), 'w') as f:
-                yaml.dump(wsub, f, sort_keys=False)
+                yaml.dump(wsub, f)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -490,8 +491,10 @@ class PrepGeosRunDir(taskBase):
         rcdict['RECORD_REF_DATE'] = da_begin_dto.strftime("%Y%m%d")
         rcdict['RECORD_REF_TIME'] = da_begin_dto.strftime("%H%M%S")
 
+        yaml = YAML(typ='safe')
+        yaml.default_flow_style = False
         with open(rcfile, "w") as f:
-            yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
+            yaml.dump(rcdict, f)
 
         return self.geos.rc_to_bool(rcdict)
 
@@ -512,8 +515,10 @@ class PrepGeosRunDir(taskBase):
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = time_string
 
+        yaml = YAML(typ='safe')
+        yaml.default_flow_style = False
         with open(rcfile, "w") as f:
-            yaml.dump(rcdict, f, default_flow_style=False, sort_keys=False)
+            yaml.dump(rcdict, f)
 
         return self.geos.rc_to_bool(rcdict)
 

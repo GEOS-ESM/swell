@@ -7,12 +7,11 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from collections import OrderedDict
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import jedi_dictionary_iterator, run_executable
+from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
@@ -32,9 +31,9 @@ class RunJediVariationalExecutable(taskBase):
         # -------------------
         window_type = self.config.window_type()
         window_length = self.config.window_length()
+        forecast_length = self.config.forecast_length(window_length)
         background_time_offset = self.config.background_time_offset()
         number_of_iterations = self.config.number_of_iterations()
-        observations = self.config.observations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         perhost = self.config.perhost(None)
@@ -63,6 +62,7 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('window_length', window_length)
+        self.jedi_rendering.add_key('forecast_length', forecast_length)
         self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
@@ -115,39 +115,16 @@ class RunJediVariationalExecutable(taskBase):
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}')
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+                                                                window_type,
+                                                                jedi_forecast_model)
 
-        # Perform complete template rendering
-        # -----------------------------------
-        jedi_dictionary_iterator(jedi_config_dict, self.jedi_rendering, window_type, observations,
-                                 self.cycle_time_dto(), jedi_forecast_model)
-
-        def represent_ordereddict(dumper, data):
-            # Serialize an OrderedDict as a YAML mapping
-            return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
-
-        def construct_ordereddict(loader, node):
-            # Construct an OrderedDict from a YAML mapping
-            return OrderedDict(loader.construct_pairs(node))
-
-        # Recursive conversion, dictionary to an OrderedDict
-        def dict_to_ordereddict(d):
-            if isinstance(d, dict):
-                return OrderedDict((k, dict_to_ordereddict(v)) for k, v in d.items())
-            elif isinstance(d, list):
-                return [dict_to_ordereddict(v) for v in d]
-            else:
-                return d
-
-        yaml.add_representer(OrderedDict, represent_ordereddict)
-        yaml.add_constructor('tag:yaml.org,2002:map', construct_ordereddict)
-
-        # Assuming jedi_config_dict is your original dictionary
-        ordered_dict = dict_to_ordereddict(jedi_config_dict)
+        ruamel_yaml = YAML()
+        ruamel_yaml.default_flow_style = False
 
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(ordered_dict, jedi_config_file_open, default_flow_style=False)
+            ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------

@@ -94,3 +94,15 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    _3dfgat_atmos_tier2 = QuestionList(
+        list_name="3dfgat_atmos_tier2",
+        questions=[
+            _3dfgat_atmos_tier1,
+        ],
+        geos_atmosphere=[
+            qd.number_of_iterations([100]),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
