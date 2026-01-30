@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 
 
 '''
-The `delete` function deletes a data file from `data_store`. 
+The `delete` function deletes a data file from `data_store`.
 '''
+
 
 def deregister_observations_in_range(
     observation_type: str,
@@ -18,17 +19,17 @@ def deregister_observations_in_range(
     dry_run: bool = True
 ):
     """Delete observations between start_date and end_date."""
-    
+
     start = datetime.strptime(start_date, "%Y-%m-%dT%H:%M:%SZ")
     end = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%SZ")
-    
+
     current = start
     deleted = 0
-    
+
     while current <= end:
         for hour in cycle_hours:
             window_start = current.replace(hour=hour).strftime("%Y-%m-%dT%H:%M:%SZ")
-            
+
             if dry_run:
                 print(f"[DRY RUN] Would delete: {observation_type} at {window_start}")
             else:
@@ -46,13 +47,15 @@ def deregister_observations_in_range(
                     deleted += 1
                 except Exception as e:
                     print(f"Skip (not found or error): {window_start} - {e}")
-        
+
         current += timedelta(days=1)
-    
+
     print(f"Total deleted: {deleted}")
 
-# In this below example, adt_cryosat2n observations from 2021-07-01 to 2021-07-31 
+# In this below example, adt_cryosat2n observations from 2021-07-01 to 2021-07-31
 # will be deleted from R2D2 data store `r2d2-experiments-nccs-gmao`.
+
+
 deregister_observations_in_range(
     observation_type='adt_cryosat2n',
     provider='odas',
