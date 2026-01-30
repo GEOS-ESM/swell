@@ -15,7 +15,6 @@ import isodate
 import os
 import r2d2
 
-# --------------------------------------------------------------------------------------------------
 
 class GetBackground(taskBase):
 
