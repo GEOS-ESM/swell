@@ -184,8 +184,7 @@ class RunJediEtkfObserver(taskBase):
         driver['read HX from disk'] = False
         print(f'driver= {driver}')
 
-        observers = jedi_config_dict
-        ["observations"]["observers"]
+        observers = jedi_config_dict["observations"]["observers"]
         npx = 1
         npy = 2
         np = 6 * npx * npy
