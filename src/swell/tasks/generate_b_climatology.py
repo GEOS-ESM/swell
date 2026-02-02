@@ -6,7 +6,7 @@
 
 # -----------------------------------------------
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_track_log_subprocess
@@ -144,8 +144,11 @@ class GenerateBClimatology(taskBase):
         # ---------------------------------------------------------------
         jedi_config_dict = self.generate_jedi_config()
 
+        yaml = YAML()
+        yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------
@@ -207,8 +210,11 @@ class GenerateBClimatology(taskBase):
 
         # Write the expanded dictionary to YAML file
         # ------------------------------------------
+        yaml = YAML()
+        yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Execute calc_scales.py, which is a Python script in SOCA/tools
         # Make sure the file is executable
@@ -246,8 +252,11 @@ class GenerateBClimatology(taskBase):
         # ---------------
         output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
 
+        yaml = YAML()
+        yaml.default_flow_style = False
+
         with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open, default_flow_style=False)
+            yaml.dump(jedi_config_dict, jedi_config_file_open)
 
         # Get the JEDI interface metadata
         # -------------------------------
