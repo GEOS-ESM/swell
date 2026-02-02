@@ -30,12 +30,13 @@
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-            EvaComparisonIncrement-{{model_component}}
-            EvaComparisonJediLog-{{model_component}}
-	    EvaComparisonObservations-{{model_component}}
             {% for path in comparison_experiment_paths %}
-            JediOopsLogParser-{{model_component}}-{{ loop.index0 }} => JediLogComparison-{{model_component}}
+            JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
+            JediLogComparison-{{model_component}}?
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
+	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}
         {% endif %}
         {% endfor %}
         """
