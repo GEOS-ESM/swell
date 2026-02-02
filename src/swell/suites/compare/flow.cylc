@@ -36,7 +36,7 @@
             JediLogComparison-{{model_component}}?
             JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
             JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
-	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}
+	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -57,6 +57,9 @@
         [[[environment]]]
             datetime = $CYLC_TASK_CYCLE_POINT
             config = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    [[comparison_fail]]
+        script = "exit 1"
 
     {% for model_component in model_components %}
     [[EvaComparisonIncrement-{{model_component}}]]
