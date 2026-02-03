@@ -16,15 +16,13 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
     cycle_dir = template_dict['cycle_dir']
     swell_static_files = template_dict['swell_static_files']
 
-    stage_cycle = {
-        'copy_files': {
+    stage_cycle = [
+        {'copy_files': {
             'directories': [
-                #[f'{swell_static_files}/jedi/interfaces/geos_cf/namelists/*', f'{cycle_dir}/']
-                [f'{swell_static_files}/jedi/interfaces/geos_atmosphere/fv3files/*', f'{cycle_dir}/fv3-jedi/fv3files/'],  # noqa
-                ['/gpfsm/dnb33/mabdiosk/SWELL_uv/swell/src/swell/configuration/jedi/interfaces/geos_cf/namelists/*', f'{cycle_dir}/']
+                [f'{swell_static_files}/jedi/interfaces/geos_cf/namelists/*', f'{cycle_dir}/']
             ]
-        }
-    }
+        }}
+    ]
 
     return stage_cycle
 

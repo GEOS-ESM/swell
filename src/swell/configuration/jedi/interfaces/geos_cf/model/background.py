@@ -25,7 +25,6 @@ state_variables = [
 
 
 def background(template_dict: Mapping) -> Mapping:
-    horizontal_resolution = template_dict['horizontal_resolution']
 
     background = {
         'datetime': template_dict['local_background_time_iso'],

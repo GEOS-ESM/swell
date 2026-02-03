@@ -61,6 +61,7 @@ class RenderJediObservations(taskBase):
         # Iterate through list
         for ob in obs_list:
 
+            self.logger.info(f'print {ob}')
             # Render the yaml file
             obs_dict = self.jedi_rendering.render_interface_observations(ob)
 
@@ -74,6 +75,7 @@ class RenderJediObservations(taskBase):
                 self.logger.info(f'Not checking for obs {ob}')
                 use_observation = True
 
+            self.logger.info(f'use_observation is {use_observation}')
             if use_observation:
                 observations.append(obs_dict)
 
