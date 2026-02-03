@@ -74,8 +74,12 @@ class IngestObs(taskBase):
 
         # Get window parameters
         window_length = self.config.window_length()
-        # window_begin = self.da_window_params.window_begin_iso(window_length)
-        window_begin = self.cycle_time()
+        
+        # Beginning of the DA window
+        window_start = self.da_window_params.window_begin_iso(window_length)
+        
+        # Used for file path construction
+        cycle_time = self.cycle_time()
 
         # Check for dry-run mode (default True for safety)
         dry_run = self.config.dry_run(True)
@@ -122,14 +126,12 @@ class IngestObs(taskBase):
             with open(config_path, 'r') as f:
                 obs_config = yaml.safe_load(f)
 
-            # 3. Perform Ingestion
+            # Ingest
             ingested, failed = self.process_obs_config(
-                obs_config, obs_name, window_begin, window_length, dry_run)
+                obs_config, obs_name, cycle_time, window_start, window_length, dry_run)
 
             total_ingested += len(ingested)
             total_failed += len(failed)
-            if len(ingested) == 0 and len(failed) == 0:
-                total_skipped += 1
 
         # Summary
         self.logger.info("=" * 60)
@@ -140,13 +142,13 @@ class IngestObs(taskBase):
             self.logger.info(f"Would fail: {total_failed} files")
         else:
             self.logger.info(f"Successfully ingested: {total_ingested} files")
-            self.logger.info(f"Skipped (already exist): {total_skipped} files")
             self.logger.info(f"Failed: {total_failed} files")
 
     def process_obs_config(
         self,
         config: dict,
         obs_name: str,
+        cycle_time: str,
         window_start: str,
         window_length: str,
         dry_run: bool,
@@ -172,9 +174,8 @@ class IngestObs(taskBase):
             self.logger.error(msg)
             raise ValueError(msg)
 
-        # TODO: This will need to be handled different for s3_source and cp_source
-        # Handle simple YYYY/MM replacements
-        dt = datetime.strptime(window_start, "%Y-%m-%dT%H:%M:%SZ")
+        # Use cycle_time to construct file path
+        dt = datetime.strptime(cycle_time, "%Y-%m-%dT%H:%M:%SZ")
 
         # Basic support for Skylab-style placeholders
         final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
