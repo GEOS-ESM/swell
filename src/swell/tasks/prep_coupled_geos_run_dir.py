@@ -29,17 +29,18 @@ class PrepCoupledGeosRunDir(taskBase):
     def execute(self) -> None:
 
         """
-        Copies GEOS HOMDIR files to the cycle forecast directory to prepare before executing gcm_run.j.
+        Copies GEOS HOMDIR files to the cycle forecast directory to prepare before executing
+        gcm_run.j.
         Modifies certain resource files using python's re package according to cycle_date such as:
         CAP.rc, AGCM.rc, input.nml, and gcm_run.j.
 
-        As the name suggests, this task is geared towards coupled GEOSgcm simulations but the only
-        difference between this and dataOcean ones should be in the get_static() method.
+        As the name suggests, this task is geared towards coupled GEOSgcm simulations but
+        the only difference between this and dataOcean ones should be in the get_static() method.
 
         xx) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
         xx) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
-        xx) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with experiment.yaml
-        value if the override switch is on
+        xx) (Optional) Checks GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL are consistent with
+            experiment.yaml value if the override switch is on
         xx) Modifies CAP.rc according to cycle_date and forecast_duration
         """
 
@@ -137,7 +138,8 @@ class PrepCoupledGeosRunDir(taskBase):
         # ------------------------------------------------------------
         # with open(self.forecast_dir('gcm_run.j'), "w") as outfile:
         #     for line in lines:
-        #         # Match setenv GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL and replace only the first path segment
+        #         # Match setenv GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL and replace only the
+        #         # first path segment
         #         match = re.match(r'^(\s*setenv\s+GEOS(DIR|BIN|ETC|UTIL)\s+)(\S+)', line)
         #         if match:
         #             var_prefix = match.group(1)
@@ -191,7 +193,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # model specific
         req_files = ['AGCM.rc', 'CAP.rc', 'data_table', 'diag_table', 'fvcore_layout.rc',
                      'gcm_emip.setup', 'gcm_run.j', 'HISTORY.rc', '__init__.py', 'input.nml',
-                     'logging.yaml' , 'ice_in', 'MOM_input', 'MOM_override']
+                     'logging.yaml', 'ice_in', 'MOM_input', 'MOM_override']
 
         # Optional files in the sense that these are optional MOM6 modules that might be used in
         # forecast or IAU mode that won't break the model if not present. This will also depend on
@@ -264,7 +266,8 @@ class PrepCoupledGeosRunDir(taskBase):
 
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = time_string
-        rcdict['END_DATE'] = '50010101 000000' # far into the future, we only want to run one segment
+        # END_DATE is set far into the future, we only want to run one segment for DA cycles
+        rcdict['END_DATE'] = '50010101 000000'
 
         self.geos.write_rc(rcdict, rcfile)
         return self.geos.rc_to_bool(rcdict)

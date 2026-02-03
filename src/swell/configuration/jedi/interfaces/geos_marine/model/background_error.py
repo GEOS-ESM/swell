@@ -87,9 +87,9 @@ def background_error(template_dict: Mapping) -> Mapping:
                  },
              'unbalanced salinity': {},
              'unbalanced ssh': {},
-            #  'save diagnostics': {'filepath': 'parametric_ocean_stddev_diags'}
+             # 'save diagnostics': {'filepath': 'parametric_ocean_stddev_diags'}
              }
-            
+
         ],
         'linear variable change': {
             'input variables': template_dict['analysis_variables'],

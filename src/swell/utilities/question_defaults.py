@@ -571,8 +571,8 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "geos_homdir"
         ask_question: bool = True
-        prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and gcm_setup) "
-                      "that contains model settings and RC files?")
+        prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and "
+                       "gcm_setup) that contains model settings and RC files?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -599,8 +599,9 @@ class QuestionDefaults():
         depends: Dict = mutable_field({
             "geos_expdir_different": True
         })
-        prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model output and restart files),"
-                       " if it is different than your GEOS HOME Directory?")
+        prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
+                       "output and restart files), if it is different than your GEOS HOME "
+                       "Directory?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -796,7 +797,6 @@ class QuestionDefaults():
         ])
         prompt: str = "How should initial GEOS restarts be obtained?"
         widget_type: WType = WType.STRING_DROP_LIST
-
 
     # --------------------------------------------------------------------------------------------------
 

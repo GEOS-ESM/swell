@@ -374,7 +374,6 @@ class TaskQuestions(QuestionContainer, Enum):
         ]
     )
 
-
     # --------------------------------------------------------------------------------------------------
 
     GetGeosRestart = QuestionList(

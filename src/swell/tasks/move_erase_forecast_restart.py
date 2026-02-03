@@ -44,7 +44,6 @@ class MoveEraseForecastRestart(taskBase):
         self.move_marine_restarts()
         self.geos.rename_checkpoints(self.forecast_dir())
 
-
     # ----------------------------------------------------------------------------------------------
 
     def move_restarts(self) -> None:
@@ -60,6 +59,7 @@ class MoveEraseForecastRestart(taskBase):
             filename = os.path.basename(filepath).split('.')[0]
             move_files(self.logger, filepath, self.forecast_dir(filename))
 
+    # ----------------------------------------------------------------------------------------------
 
     def move_marine_restarts(self) -> None:
         ''' Moving marine model restart files to the next forecast directory. '''

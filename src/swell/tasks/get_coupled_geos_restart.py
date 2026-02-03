@@ -40,7 +40,8 @@ class GetCoupledGeosRestart(taskBase):
         file. Not it can be absolute path, however MOM6 and CICE6 restarts are expected to be in
         the RESTART subdirectory of geos_expdir.
 
-        xx) Creates HOMDIR and EXPDIR in the experiment/GEOSgcm directory (which are names used by GEOS)
+        xx) Creates HOMDIR and EXPDIR in the experiment/GEOSgcm directory (which are names
+            used by GEOS)
         xx) Obtains files from geos_homdir OR geos_expdir according to user input
         """
 
@@ -145,7 +146,8 @@ class GetCoupledGeosRestart(taskBase):
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, src)
-            copy_to_dst_dir(self.logger, os.path.join(geos_expdir_path, src), self.forecast_dir(dst))
+            copy_to_dst_dir(self.logger, os.path.join(geos_expdir_path, src),
+                            self.forecast_dir(dst))
 
         # Consider the case of multiple MOM restarts
         # -------------------------------------------
