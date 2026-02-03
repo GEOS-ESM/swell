@@ -566,22 +566,13 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
-    # @dataclass
-    # class geos_experiment_directory(TaskQuestion):
-    #     default_value: str = "defer_to_platform"
-    #     question_name: str = "geos_experiment_directory"
-    #     ask_question: bool = True
-    #     prompt: str = "What is the path to the GEOS restarts directory?"
-    #     widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
     @dataclass
     class geos_homdir(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "geos_homdir"
         ask_question: bool = True
-        prompt: str = "What is the path to the GEOS experiment directory (HOMDIR)?"
+        prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and gcm_setup) "
+                      "that contains model settings and RC files?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -595,7 +586,8 @@ class QuestionDefaults():
             True,
             False
         ])
-        prompt: str = "Is your GEOS EXPDIR (where restarts and scratch is located) different than your HOMDIR?"
+        prompt: str = ("Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, "
+                       "different than your GEOS HOME Directory?")
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
@@ -607,8 +599,8 @@ class QuestionDefaults():
         depends: Dict = mutable_field({
             "geos_expdir_different": True
         })
-        prompt: str = ("What is the path to the GEOS experiment directory (EXPDIR), where restarts are located"
-                       " if it is different than HOMDIR?")
+        prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model output and restart files),"
+                       " if it is different than your GEOS HOME Directory?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -791,6 +783,20 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
         widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class initial_restarts_method(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "initial_restarts_method"
+        ask_question: bool = True
+        options: List[str] = mutable_field([
+            "directory",
+            "r2d2 (inactive)",
+        ])
+        prompt: str = "How should initial GEOS restarts be obtained?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
 
     # --------------------------------------------------------------------------------------------------
 
