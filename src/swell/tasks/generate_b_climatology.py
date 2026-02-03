@@ -17,94 +17,6 @@ from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
 class GenerateBClimatology(taskBase):
 
-    def execute(self) -> None:
-        """ Creates B Matrix files for background error model(s):
-
-            - BUMP:
-             Creates bump files in 'cycle_dir' that depend upon the number of total
-             processors and active model components (sea-ice or no sea-ice).
-
-            - EXPLICIT_DIFFUSION:
-             Uses the methodology described in Weaver et al. (20xx). This requires
-             creating horizontal (offline) and vertical diffusion (online with irregular
-             frequency) parameter files. With SOCA implementation, it is also required
-             to have horizontal length scales defined beforehand.
-
-        Parameters
-        ----------
-            All inputs are extracted from the JEDI experiment file configuration.
-            See the taskBase constructor for more information.
-        """
-
-        # Parse configuration
-        # -------------------
-        window_offset = self.config.window_offset()
-        window_type = self.config.window_type()
-        background_error_model = self.config.background_error_model()
-
-        swell_static_files_user = self.config.swell_static_files_user(None)
-        self.swell_static_files = self.config.swell_static_files()
-
-        # Use static_files_user if present in config and contains files
-        # -------------------------------------------------------------
-        if swell_static_files_user is not None and swell_static_files_user != 'None':
-            self.logger.info('swell_static_files_user specified, checking for files')
-            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
-                self.logger.info(f'Using swell static files in {swell_static_files_user}')
-                self.swell_static_files = swell_static_files_user
-
-        self.horizontal_resolution = self.config.horizontal_resolution()
-        self.vertical_resolution = self.config.vertical_resolution()
-        self.generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-
-        # Get the JEDI interface for this model component
-        # -----------------------------------------------
-        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
-        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
-        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
-        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
-        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
-
-        # Compute data assimilation window parameters
-        # -------------------------------------------
-        local_background_time = self.da_window_params.local_background_time(window_offset,
-                                                                            window_type)
-        local_background_time_iso = self.da_window_params.local_background_time_iso(window_offset,
-                                                                                    window_type)
-
-        # Background
-        # ----------
-        self.jedi_rendering.add_key('local_background_time', local_background_time)
-        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-
-        model_component_meta = self.jedi_rendering.render_interface_meta()
-        self.jedi_interface = model_component_meta['jedi_interface']
-
-        # Compute number of processors
-        # ----------------------------
-        self.np = int(model_component_meta['total_processors'])
-
-        # Obtain and initialize proper error model
-        # ----------------------------------------
-        self.background_error_model = background_error_model
-        self.initialize_background()
-
-    # ----------------------------------------------------------------------------------------------
-
-    def jedi_dictionary_iterator(self, jedi_config_dict: dict) -> None:
-
-        # Loop over dictionary and replace if value is a dictionary
-        # ---------------------------------------------------------
-        for key, value in jedi_config_dict.items():
-            if isinstance(value, dict):
-                self.jedi_dictionary_iterator(value)
-            else:
-                if 'TASKFILL' in value:
-                    value_file = value.replace('TASKFILL', '')
-                    value_dict = self.jedi_rendering.render_interface_model(value_file)
-                    jedi_config_dict[key] = value_dict
-
     # ----------------------------------------------------------------------------------------------
 
     def generate_jedi_config(self) -> dict:
@@ -286,5 +198,79 @@ class GenerateBClimatology(taskBase):
 
         else:
             self.logger.info('YAML generated, now exiting.')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def execute(self) -> None:
+        """ Creates B Matrix files for background error model(s):
+
+            - BUMP:
+             Creates bump files in 'cycle_dir' that depend upon the number of total
+             processors and active model components (sea-ice or no sea-ice).
+
+            - EXPLICIT_DIFFUSION:
+             Uses the methodology described in Weaver et al. (20xx). This requires
+             creating horizontal (offline) and vertical diffusion (online with irregular
+             frequency) parameter files. With SOCA, implementation, it is also required
+             to have horizontal length scales defined beforehand.
+
+        Parameters
+        ----------
+            All inputs are extracted from the JEDI experiment file configuration.
+            See the taskBase constructor for more information.
+        """
+
+        # Parse configuration
+        # -------------------
+        window_length = self.config.window_length()
+        window_type = self.config.window_type()
+        background_error_model = self.config.background_error_model()
+
+        swell_static_files_user = self.config.swell_static_files_user(None)
+        self.swell_static_files = self.config.swell_static_files()
+
+        # Use static_files_user if present in config and contains files
+        # -------------------------------------------------------------
+        if swell_static_files_user is not None and swell_static_files_user != 'None':
+            self.logger.info('swell_static_files_user specified, checking for files')
+            if check_if_files_exist_in_path(self.logger, swell_static_files_user):
+                self.logger.info(f'Using swell static files in {swell_static_files_user}')
+                self.swell_static_files = swell_static_files_user
+
+        self.horizontal_resolution = self.config.horizontal_resolution()
+        self.vertical_resolution = self.config.vertical_resolution()
+        self.generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+
+        # Get the JEDI interface for this model component
+        # -----------------------------------------------
+        self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
+        self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
+        self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('background_error_model', self.config.background_error_model())
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        # Compute data assimilation window parameters
+        # -------------------------------------------
+        local_background_time = self.da_window_params.local_background_time(window_length,
+                                                                            window_type)
+        local_background_time_iso = self.da_window_params.local_background_time_iso(window_length,
+                                                                                    window_type)
+
+        # Background
+        # ----------
+        self.jedi_rendering.add_key('local_background_time', local_background_time)
+        self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+
+        model_component_meta = self.jedi_rendering.render_interface_meta()
+        self.jedi_interface = model_component_meta['jedi_interface']
+
+        # Compute number of processors
+        # ----------------------------
+        self.np = eval(str(model_component_meta['total_processors']))
+
+        # Obtain and initialize proper error model
+        # ----------------------------------------
+        self.background_error_model = background_error_model
+        self.initialize_background()
 
 # --------------------------------------------------------------------------------------------------
