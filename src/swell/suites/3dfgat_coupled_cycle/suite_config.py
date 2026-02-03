@@ -31,7 +31,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
             qd.model_components(['geos_marine']),
-            qd.geos_expdir_different(True),
         ],
         geos_marine=[
             qd.cycle_times([
