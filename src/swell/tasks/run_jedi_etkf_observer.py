@@ -38,6 +38,7 @@ class RunJediEtkfObserver(taskBase):
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
+        change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -166,7 +167,6 @@ class RunJediEtkfObserver(taskBase):
 
         # change variational bc to static bc
         # -------------------------------------------------------------------
-        change_vbc_to_sbc = False
         if change_vbc_to_sbc:
             for observer in jedi_config_dict['observations']['observers']:
                 if 'obs bias' in observer:

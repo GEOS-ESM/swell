@@ -34,6 +34,7 @@ class RunJediEtkfSolver(taskBase):
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         background_time_offset = self.config.background_time_offset()
+        change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
 
         jedi_forecast_model = self.config.jedi_forecast_model(None)
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)

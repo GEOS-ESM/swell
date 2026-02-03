@@ -648,6 +648,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_lengthscale(),
             qd.vertical_localization_method(),
             qd.perhost(),
+            qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
         ]
     )
@@ -702,6 +703,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_lengthscale(),
             qd.vertical_localization_method(),
             qd.perhost(),
+            qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
         ]
     )
@@ -738,6 +740,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_lengthscale(),
             qd.vertical_localization_method(),
             qd.perhost(),
+            qd.change_vbc_to_sbc(),
             qd.comparison_log_type('localensembleda'),
         ]
     )

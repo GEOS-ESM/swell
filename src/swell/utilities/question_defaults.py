@@ -933,6 +933,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class change_vbc_to_sbc(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "change_vbc_to_sbc"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Shall variational bc be changed to static bc in local ensemble DA yaml?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class minimizer(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "minimizer"

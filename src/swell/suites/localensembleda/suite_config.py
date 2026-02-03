@@ -59,6 +59,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "mhs_n19",
                 "sondes",
             ]),
+            qd.change_vbc_to_sbc(False),
             qd.window_type("4D"),
             qd.clean_patterns(['*.txt'])
         ]
@@ -130,6 +131,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
+            qd.change_vbc_to_sbc(False),
             qd.window_type("4D"),
             qd.clean_patterns(['*.txt'])
         ]

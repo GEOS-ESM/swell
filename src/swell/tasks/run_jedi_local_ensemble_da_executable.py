@@ -40,6 +40,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         ensmean_only = self.config.ensmean_only()
         ensmeanvariance_only = self.config.ensmeanvariance_only()
+        change_vbc_to_sbc = self.config.change_vbc_to_sbc(False)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -193,10 +194,11 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # change variational bc to static bc
         # -------------------------------------------------------------------
-        for observer in jedi_config_dict['observations']['observers']:
-            if 'obs bias' in observer:
-                observer['obs bias'] = replace_key(observer['obs bias'],
-                                                   "variational bc", "static bc")
+        if change_vbc_to_sbc:
+            for observer in jedi_config_dict['observations']['observers']:
+                if 'obs bias' in observer:
+                    observer['obs bias'] = replace_key(observer['obs bias'],
+                                                       "variational bc", "static bc")
 
         # Write the expanded dictionary to YAML file (in rt mode)
         # ------------------------------------------
