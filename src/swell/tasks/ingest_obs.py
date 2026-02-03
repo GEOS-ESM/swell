@@ -74,10 +74,10 @@ class IngestObs(taskBase):
 
         # Get window parameters
         window_length = self.config.window_length()
-        
+
         # Beginning of the DA window
         window_start = self.da_window_params.window_begin_iso(window_length)
-        
+
         # Used for file path construction
         cycle_time = self.cycle_time()
 
