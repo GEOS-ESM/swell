@@ -5,6 +5,7 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 # --------------------------------------------------------------------------------------------------
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString
 
 field_io_names = {
     'eastward_wind': 'ua',
@@ -13,7 +14,7 @@ field_io_names = {
     'air_pressure_at_surface': 'PS',
     'air_pressure_thickness': 'DELP',
     'volume_mixing_ratio_of_no2': 'NO2',
-    'volume_mixing_ratio_of_no': 'NO', # need to fix this.
+    'volume_mixing_ratio_of_no': DoubleQuotedScalarString('NO'),
     'volume_mixing_ratio_of_o3': 'O3',
     'volume_mixing_ratio_of_co': 'CO'
 }

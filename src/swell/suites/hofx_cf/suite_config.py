@@ -29,7 +29,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2023-08-05T18:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
-            qd.check_for_obs(False)
+            qd.check_for_obs(False) # don't check empty for empty obs
         ],
         geos_cf=[
         ]
