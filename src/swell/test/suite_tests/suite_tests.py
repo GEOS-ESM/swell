@@ -1,5 +1,5 @@
 import tempfile
-import yaml
+from ruamel.yaml import YAML
 import random
 
 from pathlib import Path
@@ -24,7 +24,8 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
                             "build_jedi-tier1.yaml")
 
     with suite_overrides_file.open("r") as f:
-        suite_overrides = yaml.safe_load(f)
+        yaml = YAML(typ='safe')
+        suite_overrides = yaml.load(f)
 
     experiment_id = experiment_id_root + "build_jedi"
 
@@ -69,10 +70,11 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     test_config = {
         "test_root": Path(tempfile.TemporaryDirectory().name)
     }
+    yaml = YAML(typ='safe')
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
     try:
         with open(yamlfile, "r") as f:
-            test_user_config = yaml.safe_load(f)
+            test_user_config = yaml.load(f)
         print(f"Updating test defaults with user config from {yamlfile}.")
         test_config = {**test_config, **test_user_config}
     except FileNotFoundError:

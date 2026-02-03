@@ -9,7 +9,7 @@
 import importlib
 import os
 import re
-import yaml
+from ruamel.yaml import YAML
 
 from importlib import resources
 
@@ -37,8 +37,9 @@ def prepare_scheduling_dict(
         raise err
 
     logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
+    yaml = YAML(typ='safe')
     with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
-        global_defaults = yaml.safe_load(yaml_file)
+        global_defaults = yaml.load(yaml_file)
 
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
@@ -220,8 +221,9 @@ def slurm_global_defaults(
     user_globals = {}
     if os.path.exists(yaml_path):
         logger.info(f"Loading SLURM user configuration from {yaml_path}")
+        yaml = YAML(typ='safe')
         with open(yaml_path, "r") as yaml_file:
-            user_globals = yaml.safe_load(yaml_file)
+            user_globals = yaml.load(yaml_file)
     return user_globals
 
 
