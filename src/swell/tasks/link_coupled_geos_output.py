@@ -29,8 +29,9 @@ class LinkCoupledGeosOutput(taskBase):
 
         """
         Linking proper GEOS output files for JEDI to ingest and produce analysis.
-        This will depend on the model type (ocean and sea-ice), model output
+        This will depend on the model type (atm, compo, ocean and sea-ice), model output
         type (history vs. restart), DA method, and window length.
+        Currently only SOCA background files are considered.
         """
 
         # Parse configuration
@@ -38,14 +39,13 @@ class LinkCoupledGeosOutput(taskBase):
         self.marine_models = self.config.marine_models(None) or []
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
-        self.window_offset = self.config.window_offset()
-        self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_offset)
+        self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_length)
 
         if self.window_type == '4D' or 'fgat' in self.suite_name():
             self.background_frequency = self.config.background_frequency()
 
         self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time(
-            self.window_offset,
+            self.window_length,
             self.window_type,
             dto=True)
 

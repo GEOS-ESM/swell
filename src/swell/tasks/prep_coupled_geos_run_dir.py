@@ -34,7 +34,7 @@ class PrepCoupledGeosRunDir(taskBase):
         CAP.rc, AGCM.rc, input.nml, and gcm_run.j.
 
         As the name suggests, this task is geared towards coupled GEOSgcm simulations but the only
-        difference should be in the get_static() method.
+        difference between this and dataOcean ones should be in the get_static() method.
 
         xx) Changes HOMDIR and EXPDIR in gcm_run.j to point to the forecast directory
         xx) Provides consistency for GEOSgcm version by copying GEOSgcm.x from EXPDIR
@@ -46,13 +46,17 @@ class PrepCoupledGeosRunDir(taskBase):
         # These links were created in get_*_geos_restart task. This step will copy experiment
         # config.s to the cycle forecast directory
         self.geos_homdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_homdir')
-        self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
+
+        if self.config.geos_expdir_different():
+            self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
+        else:
+            self.geos_expdir = self.geos_homdir
 
         self.geos_build = self.config.existing_geos_gcm_build_path()
 
-        self.logger.info('Preparing GEOS Forecast directory')
-        self.logger.info('Some steps involve modifying input files and replacing')
-        self.logger.info(' file contents. Users are encouraged to validate file modifications.')
+        self.logger.info('Preparing GEOS Forecast directory......')
+        self.logger.info('Some steps involve modifying input files and replacing file contents.')
+        self.logger.info('Users are encouraged to validate file modifications.')
 
         # Forecast start time can be calculated from cycle_date and forecast_duration
         # This task doesn't have access to DA window lengths since it could be used without the DA
@@ -182,15 +186,16 @@ class PrepCoupledGeosRunDir(taskBase):
 
         src_dirs = []
 
-        # Make a list of required files to copy, so not everything is copied.
-        # This part will eventually be handled with a modern gcm_setup script but for now these will
-        # be very model specific
+        # Make a list of required files to copy, so not everything in HOMDIR gets copied.
+        # This part will eventually be handled with a modern gcm_setup script but for now these are
+        # model specific
         req_files = ['AGCM.rc', 'CAP.rc', 'data_table', 'diag_table', 'fvcore_layout.rc',
                      'gcm_emip.setup', 'gcm_run.j', 'HISTORY.rc', '__init__.py', 'input.nml',
                      'logging.yaml' , 'ice_in', 'MOM_input', 'MOM_override']
 
         # Optional files in the sense that these are optional MOM6 modules that might be used in
-        # forecast or IAU mode
+        # forecast or IAU mode that won't break the model if not present. This will also depend on
+        # the input.nml configuration
         opt_files = ['MOM_oda_incupd', 'MOM_saltrestore']
 
         # Append required files to src_dirs with geos_homdir
