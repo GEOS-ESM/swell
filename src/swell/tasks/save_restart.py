@@ -30,6 +30,10 @@ class SaveRestart(taskBase):
         Does not handle 4d backgrounds properly
         """
 
+        self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
+                         'for coupled models yet')
+        return
+
         # Parse config
         window_type = self.config.window_type()
         window_length = self.config.window_length()
