@@ -35,3 +35,10 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_cf=[
         ]
     )
+
+    hofx_cf_tier1 = QuestionList(
+        list_name = "hofx_cf_tier1",
+        questions = [
+             hofx_cf
+        ]
+    )
