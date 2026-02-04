@@ -37,8 +37,8 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     hofx_cf_tier1 = QuestionList(
-        list_name = "hofx_cf_tier1",
-        questions = [
+        list_name="hofx_cf_tier1",
+        questions=[
              hofx_cf
         ]
     )
