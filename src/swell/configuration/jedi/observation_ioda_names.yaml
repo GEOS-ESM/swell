@@ -3,6 +3,9 @@ ioda instrument names:
     full name: ABI (GOES-16)
     provider : ncdiag
     inst type: radiance
+  - ioda name: abi_g18
+    full name: ABI (GOES-18)
+    inst type: radiance
   - ioda name: ahi_himawari8
     full name: AHI (Himawari-8)
     provider : ncdiag

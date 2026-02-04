@@ -47,6 +47,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
             qd.observations([
+                "abi_g16",
+                "abi_g18",
                 "aircraft_temperature",
                 "aircraft_wind",
                 "airs_aqua",
