@@ -42,6 +42,10 @@ def get_provider_for_observation(observation: str,
                 logger.abort(f'No provider found for observation {observation} in ' +
                              'observation_ioda_names.yaml')
 
+    logger.abort(f'Observation {observation} not found in ' +
+                 'observation_ioda_names.yaml')
+
+
 # ------------------------------------------------------------------------------------------------
 
 
