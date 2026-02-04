@@ -11,7 +11,7 @@ import os
 import glob
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
+from swell.utilities.file_system_operations import copy_to_dst_dir
 
 # --------------------------------------------------------------------------------------------------
 
@@ -54,6 +54,9 @@ class GetCoupledGeosRestart(taskBase):
         # Obtain GEOS HOMDIR and EXPDIR from user input
         self.geos_homdir = self.config.geos_homdir()
         self.geos_expdir = self.geos_homdir
+
+        # Create GEOSgcm directory in the experiment folder if it doesn't exist yet
+        os.makedirs(os.path.join(swell_exp_path, 'GEOSgcm'), 0o755, exist_ok=True)
 
         expdir_different = self.config.geos_expdir_different()
 

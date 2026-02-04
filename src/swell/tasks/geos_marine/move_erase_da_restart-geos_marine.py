@@ -42,6 +42,10 @@ class MoveEraseDaRestart(taskBase):
         self.mom6_iau = self.config.mom6_iau()
         self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
 
+        # Current and restart time objects
+        # --------------------------------
+        self.cc_dto = self.cycle_time_dto()
+
         # Create cycle_dir and RESTART
         # ----------------------------
         os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
@@ -70,7 +74,7 @@ class MoveEraseDaRestart(taskBase):
         if 'RECORD_FREQUENCY' in agcm_dict:
             window_length = self.config.window_length()
             an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
-            rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+            rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
 
             self.logger.info('Using _checkpoint restarts with timestamps')
             src = self.forecast_dir(['scratch', rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4')])
@@ -111,7 +115,7 @@ class MoveEraseDaRestart(taskBase):
             window_length = self.config.window_length()
 
             an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
-            rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+            rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
             seconds = rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second
 
             # Ensure seconds is a string with 5 digits

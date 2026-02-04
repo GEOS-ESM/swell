@@ -52,9 +52,10 @@ class PrepareAnalysis(taskBase):
         window_length = self.config.window_length()
 
         # GEOS restarts have seconds in their filename
-        # --------------------------------------------
+        # We want to use rst_dto at the beginning of the DA window (window offset is negative)
+        # ---------------------------------------------------------
         an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
-        rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+        rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
         # Determine which models require analysis (code will fail if executed
