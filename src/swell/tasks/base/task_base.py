@@ -343,8 +343,6 @@ def get_tasks() -> list:
                 if f'-{model}.py' in task_file:
                     task_name = task_file.split(f'-{model}.py')[0]
                     tasks.append(snake_case_to_camel_case(task_name))
-                else:
-                    print('huh')
 
     # Return list of valid task choices
     return tasks
