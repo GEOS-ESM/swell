@@ -335,6 +335,17 @@ def get_tasks() -> list:
         if '__' not in base_name:
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
 
+    # Get model-specific task names
+    for model in os.listdir(os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces')):
+        model_task_path = os.path.join(get_swell_path(), 'tasks', model)
+        if os.path.exists(model_task_path):
+            for task_file in os.listdir(model_task_path):
+                if f'-{model}.py' in task_file:
+                    task_name = task_file.split(f'-{model}.py')[0]
+                    tasks.append(snake_case_to_camel_case(task_name))
+                else:
+                    print('huh')
+
     # Return list of valid task choices
     return tasks
 
