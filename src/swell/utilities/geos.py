@@ -9,6 +9,7 @@
 
 import datetime
 import f90nml
+import glob
 import isodate
 import os
 import re
@@ -25,10 +26,14 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def __init__(self, logger: Logger, forecast_dir: Optional[str]) -> None:
+    def __init__(
+        self,
+        logger: Logger,
+        forecast_dir: Optional[str],
+    ) -> None:
 
         '''
-        Intention with creating this GEOS class is to not have any model dependent
+        The intention behind creating this GEOS class is to not have any model dependent
         methods. This way, methods would be shared between the forecast-only and
         cycling DA tasks.
         '''
@@ -85,7 +90,7 @@ class Geos():
             'ENABLE_GEOSCHEM': 'GEOSCHEMchem_ExtData.rc',
             'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
             'ENABLE_DNA': 'DNA_ExtData.rc',
-            'ENABLE_ACHEM': 'GEOSachem_ExtData.rc',
+            'ENABLE_ACHEM': 'ACHEM_ExtData.rc',
         }
 
         for key, value in chem_files.items():
@@ -224,7 +229,20 @@ class Geos():
 
                 if parts[0] == 'setenv':
                     key = parts[1]
-                    rcdict[key] = parts[2]
+                    # if setenv is empty, assign None
+                    value = parts[2] if len(parts) > 2 else None
+                    rcdict[key] = value
+
+                # Parse set lines (e.g., set VAR = VALUE)
+                elif parts[0] == 'set' and '=' in line:
+                    # Find the variable name and value
+                    match = re.match(r'set\s+(\w+)\s*=\s*(.*)', line)
+                    if match:
+                        key = match.group(1)
+                        value = match.group(2)
+                        # Remove backticks and shell expressions for now
+                        value = value.strip('`').strip()
+                        rcdict[key] = value
 
         return rcdict
 
@@ -277,78 +295,106 @@ class Geos():
     # ----------------------------------------------------------------------------------------------
 
     def parse_rc(self, rcfile: str) -> dict:
-
-        # Parse AGCM.rc & CAP.rc line by line. It ignores comments and commented
-        # out lines. Some values involve multiple ":" characters which required
-        # some extra steps to handle them as dictionary values.
-        # ----------------------------------------------------------------------
-
+        """
+        Parses .rc files line by line, ignoring comments and handling empty entries.
+        Properly handles multi-line sections delimited by :: markers.
+        """
         with open(rcfile, 'r') as file:
             lines = file.readlines()
 
         rcdict = {}
+        in_multiline_section = False
+        current_section_key = None
+        section_content = []
 
-        for line in lines:
-            # Strip any leading or trailing whitespace from the line
-            # ------------------------------------------------------
+        for line_num, line in enumerate(lines, 1):
             line = line.strip()
 
-            # Skip if the line is a comment (i.e., starts with #)
-            # ------------------------------------------------------
-            if line.startswith("#"):
+            if not line or line.startswith("#"):
                 continue
 
-            # Split the line to ignore comments after #
-            # ---------------------------------------------
+            # Check for start of multi-line section (key followed by ::)
+            if line.endswith("::") and line != "::":
+                current_section_key = line[:-2].strip()  # Remove :: and get the key
+                in_multiline_section = True
+                section_content = []
+                continue
+
+            # Check for end of multi-line section (standalone ::)
+            if line == "::":
+                if in_multiline_section and current_section_key:
+                    # Store the multiline section as a list
+                    rcdict[current_section_key] = section_content.copy()
+                in_multiline_section = False
+                current_section_key = None
+                section_content = []
+                continue
+
+            # Collect content inside multi-line sections
+            if in_multiline_section:
+                section_content.append(line)
+                continue
+
+            # Regular key-value parsing
             parts = line.split('#', 1)
-            line = parts[0]
+            clean_line = parts[0].strip()
 
-            # Split the line into key and value using the first occurrence of ":" as the delimiter
-            # This part is required because of AGCM.rc entries with confusing
-            # lines (e.g., CH4_FRIENDLIES: DYNAMICS:TURBULENCE:MOIST)
-            # ------------------------------------------------------------------------------------
-            split_line = line.split(":", 1)
-            if len(split_line) == 2:
-                key, value = split_line
-                # Re-join any remaining parts of the value with ":" again
-                # -------------------------------------------------------
-                value = value.split(":")
-                value = ":".join(value)
+            if not clean_line:
+                continue
 
-                # Strip any whitespace from the key and value
-                # --------------------------------------------
+            if ":" in clean_line:
+                key, value = clean_line.split(":", 1)
                 key = key.strip()
                 value = value.strip()
-                rcdict[key] = value
+
+                if key:
+                    rcdict[key] = value if value else None
 
         return rcdict
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_nml(self, cold_restart: bool = False) -> None:
+    def write_rc(self, rcdict: dict, output_file: str) -> None:
+        """
+        Writes the parsed RC dictionary back to a file.
+        Properly handles multi-line sections.
+        """
+        with open(output_file, 'w') as file:
+            for key, value in rcdict.items():
+                if isinstance(value, list):
+                    # Multi-line section
+                    file.write(f"{key}::\n")
+                    for item in value:
+                        file.write(f"{item}\n")
+                    file.write("::\n")
+                elif value is None:
+                    # Empty value
+                    file.write(f"{key}:\n")
+                else:
+                    # Regular key-value pair
+                    file.write(f"{key}: {value}\n")
 
-        # In gcm_run.j, fvcore_layout.rc is concatenated with input.nml
-        # -------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------
 
-        nml1 = f90nml.read(os.path.join(self.forecast_dir, 'input.nml'))
+    def process_nml(self, combine_fvcore: bool = False, cold_restart: bool = False) -> None:
+
+        # Make sure input.nml is set up properly for hot/cold restart
+        nml_comb = f90nml.read(os.path.join(self.forecast_dir, 'input.nml'))
 
         if not cold_restart:
             self.logger.info('Hot start, Swell will expect rst/checkpoint files')
 
             # mom_input_nml needs to be 'r' for hot_restart
             # ----------------------------------------------
-            nml1['mom_input_nml']['input_filename'] = 'r'
+            nml_comb['mom_input_nml']['input_filename'] = 'r'
 
-        nml2 = f90nml.read(os.path.join(self.forecast_dir, 'fvcore_layout.rc'))
-
-        # Combine the dictionaries and write the new input.nml
-        # ---------------------------------------------------
-        nml_comb = {**nml1, **nml2}
-
-        self.logger.info('Combining input.nml and fvcore_layout.rc')
+        if combine_fvcore:
+            self.logger.info('Combining fvcore with input.nml')
+            nml2 = f90nml.read(os.path.join(self.forecast_dir, 'fvcore_layout.rc'))
+            nml_comb.update(nml2)
 
         with open(os.path.join(self.forecast_dir, 'input.nml'), 'w') as f:
-            f90nml.write(nml_comb, f)
+            f90nml.write(nml_comb, f, sort=False)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -373,16 +419,18 @@ class Geos():
         # ----------------------------------------------------------------------
 
         for key, value in rcdict.items():
-            if rcdict[key].strip('.').lower() == 'true':
-                rcdict[key] = True
-            elif rcdict[key].strip('.').lower() == 't':
-                rcdict[key] = True
-            elif rcdict[key].strip('.').lower() == 'false':
-                rcdict[key] = False
-            elif rcdict[key].strip('.').lower() == 'f':
-                rcdict[key] = False
-            else:
+            # Skip None values and non-string values
+            if value is None or not isinstance(value, str):
                 continue
+
+            # Strip dots and convert to lowercase for comparison
+            normalized_value = value.strip('.').lower()
+
+            if normalized_value == 'true' or normalized_value == 't':
+                rcdict[key] = True
+            elif normalized_value == 'false' or normalized_value == 'f':
+                rcdict[key] = False
+            # If it's not a boolean value, keep it as is
 
         return rcdict
 
@@ -467,7 +515,7 @@ class Geos():
         # Calculate the number of states using background frequency and window length
         number_of_states = int(isodate.parse_duration(window_length)
                                / isodate.parse_duration(background_frequency)) + 1
-        self.logger.info('Number of states: ', str(number_of_states-1))
+        self.logger.info('Number of states: ' + str(number_of_states-1))
 
         # Generate the list of states dictionary with date and marine filename entries.
         # The date is calculated by adding the background frequency to the window begin date.
