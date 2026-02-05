@@ -73,7 +73,7 @@ template_str = '''
             GetEnsembleGeosExperiment-{{model_component}} => sync_point
 
             sync_point => RunJediObsfiltersExecutable-{{model_component}}
-            {% if skip_ensemble_hofx %}
+            {% if models[model_component]['skip_ensemble_hofx'] %}
                sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
             {% else %}
                # Run hofx for ensemble members according to strategy
