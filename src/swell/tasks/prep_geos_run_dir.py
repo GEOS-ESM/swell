@@ -45,9 +45,14 @@ class PrepGeosRunDir(taskBase):
                 self.logger.info(f'Using swell static files in {swell_static_files_user}')
                 self.swell_static_files = swell_static_files_user
 
-        # TODO: exp. directory location requires better handling
-        self.geos_exp_dir = os.path.join(self.swell_static_files, 'geos', 'run_dirs',
-                                         self.config.geos_experiment_directory())
+        # These links were created in get_*_geos_restart task. This step will copy experiment
+        # config.s to the cycle forecast directory
+        self.geos_homdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_homdir')
+
+        if self.config.geos_expdir_different():
+            self.geos_expdir = os.path.join(self.experiment_path(), 'GEOSgcm', 'GEOS_expdir')
+        else:
+            self.geos_expdir = self.geos_homdir
         self.geos_build = self.config.existing_geos_gcm_build_path()
 
         self.logger.info('Preparing GEOS Forecast directory')
@@ -62,6 +67,16 @@ class PrepGeosRunDir(taskBase):
         # -------------------------------------------------------------
         self.forecast_duration = self.config.forecast_duration()
         self.fc_dto = self.cycle_time_dto() - isodate.parse_duration(self.forecast_duration) * 3 / 4
+
+        # Copy RESTART directory to INPUT directory if it exists in geos_expdir. This is needed for
+        # coupled runs, which expect restarts in the INPUT directory, and a solution to handle both
+        # ways of executing GEOSgcm (direct call or via SWELL)
+        # -------------------------------------------------------------
+        if os.path.exists(os.path.join(self.geos_expdir, 'RESTART')):
+            self.logger.info('Copying RESTART directory to INPUT directory')
+            src_restart_dir = os.path.join(self.geos_expdir, 'RESTART')
+            dst_restart_dir = self.forecast_dir('INPUT')
+            copy_to_dst_dir(self.logger, src_restart_dir, dst_restart_dir)
 
         # Get static files
         # ----------------
@@ -102,10 +117,11 @@ class PrepGeosRunDir(taskBase):
             else:
                 self.logger.warning('MOM6 Increment file was not found in INPUT directory')
 
+        # TODO/WARNING: This following combination does not happen anymore after the GEOSgcm revamp
         # Combine input.nml and fvcore_layout
         # Modify input.nml if not cold start (default)
         # --------------------------------------------
-        self.geos.process_nml()
+        self.geos.process_nml(combine_fvcore=True)
 
         # Parse .rc files and convert bool.s to Python format
         # ---------------------------------------------------
@@ -118,12 +134,6 @@ class PrepGeosRunDir(taskBase):
         # --------------------------------------------------
         self.geos.rc_assign(self.cap_dict, 'USE_EXTDATA2G')
 
-        # Link replay files if active TODO
-        # --------------------------------
-        if 'REPLAY_MODE' in self.agcm_dict:
-            self.logger.info('Replay Mode is Active')
-            self.link_replay()
-
         # Set AGCM.rc record ref_date to fcst start time
         # TODO: This needs rethinking for forecast_geos vs cycle cases
         # ------------------------------------------------------------
@@ -134,7 +144,7 @@ class PrepGeosRunDir(taskBase):
         # ------------------------------------------------------
         self.gcm_dict = self.geos.parse_gcmrun(self.forecast_dir('gcm_run.j'))
 
-        # Beginning GEOSgcm v11.6.0, linkbcs is a separate file outside of gcm_run.j.
+        # As of GEOSgcm v11.6.0, linkbcs is a separate file outside of gcm_run.j.
         # So parse linkbcs file using parse_gcmrun method and update gcm_dict
         # -----------------------------------------------------------------------
         self.gcm_dict.update(self.geos.parse_gcmrun(self.forecast_dir('linkbcs')))
@@ -183,6 +193,12 @@ class PrepGeosRunDir(taskBase):
         # ------------------
         self.geos.run_geos_script(self.geosbin, 'bundleParser.py')
 
+        # Link replay files if active
+        # --------------------------------
+        if 'REPLAY_MODE' in self.agcm_dict:
+            self.logger.info('Replay Mode is Active')
+            self.link_replay()
+
     # ----------------------------------------------------------------------------------------------
 
     def generate_extdata(self) -> None:
@@ -216,6 +232,18 @@ class PrepGeosRunDir(taskBase):
             self.geos.run_geos_script(self.geosbin, 'construct_extdata_yaml_list.py',
                                       './GEOS_ChemGridComp.rc')
             open(self.forecast_dir('ExtData.rc'), 'w').close()
+
+        # Modify RRTMG to RRTMGP in all _instance*.rc files
+        instance_pattern = self.forecast_dir('*_instance*.rc')
+        for instance_file in glob.glob(instance_pattern):
+            with open(instance_file, 'r') as f:
+                lines = f.readlines()
+            with open(instance_file, 'w') as f:
+                for line in lines:
+                    # Only substitute on lines containing 'RRTMG'
+                    if 'RRTMG' in line:
+                        line = line.replace('RRTMG', 'RRTMGP')
+                    f.write(line)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -313,20 +341,19 @@ class PrepGeosRunDir(taskBase):
 
         self.bcs_dict = {
             os.path.join(geos_geomdir, f"{geos_bcrslv}-Pfafstetter.til"):
-                'tile.data',
+            'tile.data',
             os.path.join(geos_geomdir, f"{geos_bcrslv}-Pfafstetter.TRN"):
-                'runoff.bin',
+            'runoff.bin',
             os.path.join(geos_obcsdir, f"SEAWIFS_KPAR_mon_clim.{OGCM_IM}x{OGCM_JM}"):
-                'SEAWIFS_KPAR_mon_clim.data',
-            os.path.join(geos_geomdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
+            'SEAWIFS_KPAR_mon_clim.data',
+            # os.path.join(geos_geomdir, 'MAPL_Tripolar.nc'): 'MAPL_Tripolar.nc',
+            os.path.join(geos_cpldir, f"{OGCM_IM}x{OGCM_JM}", 'MAPL_Tripolar.nc'):
+            'MAPL_Tripolar.nc',
             os.path.join(geos_obcsdir, f"vgrid{OGCM_LM}.ascii"): 'vgrid.ascii',
-            os.path.join(geos_bcsdir, pchem_dir, pchem[pchem_clim_years]):
-                'species.data',
             # os.path.join(geos_bcsdir, 'Shared', '*bin'): '',
             os.path.join(geos_chmdir, '*'): self.forecast_dir('ExtData'),
             os.path.join('/discover/nobackup/projects/gmao/ssd/aogcm/atmosphere_bcs/',
                          '*'): self.forecast_dir('ExtData'),
-            # os.path.join(geos_bcsdir, 'Shared', '*c2l*.nc4'): '',
             os.path.join(geos_landdir, f"visdf_{AGCM_IM}x{AGCM_JM}.dat"): 'visdf.dat',
             os.path.join(geos_landdir, f"nirdf_{AGCM_IM}x{AGCM_JM}.dat"): 'nirdf.dat',
             os.path.join(geos_landdir, f"vegdyn_{AGCM_IM}x{AGCM_JM}.dat"): 'vegdyn.data',
@@ -334,15 +361,20 @@ class PrepGeosRunDir(taskBase):
             os.path.join(geos_landdir, f"green_clim_{AGCM_IM}x{AGCM_JM}.data"): 'green.data',
             os.path.join(geos_landdir, f"ndvi_clim_{AGCM_IM}x{AGCM_JM}.data"): 'ndvi.data',
             os.path.join(geos_topodir, f"topo_DYN_ave_{AGCM_IM}x{AGCM_JM}.data"):
-                'topo_dynave.data',
+            'topo_dynave.data',
             os.path.join(geos_topodir, f"topo_GWD_var_{AGCM_IM}x{AGCM_JM}.data"):
-                'topo_gwdvar.data',
+            'topo_gwdvar.data',
             os.path.join(geos_topodir, f"topo_TRB_var_{AGCM_IM}x{AGCM_JM}.data"):
-                'topo_trbvar.data',
+            'topo_trbvar.data',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_grid.nc'): '',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_kmt.nc'): '',
             os.path.join(geos_obcsdir, 'cice6', 'cice6_global.bathy.nc'): '',
         }
+
+        # Only add pchem species file if pchem_clim_years is not None
+        if pchem_clim_years is not None:
+            pchem_path = os.path.join(geos_bcsdir, pchem_dir, pchem[pchem_clim_years])
+            self.bcs_dict[pchem_path] = 'species.data'
 
         # Conditional BCs that don't break the model
         # ------------------------------------------
@@ -358,9 +390,21 @@ class PrepGeosRunDir(taskBase):
                     })
 
         # Fetch more resolution dependent files
+        # Hit an edge case which is avoided by cp but impacts shutil
+        # https://stackoverflow.com/questions/11835833/why-would-shutil-copy-raise-a-permission-exception-when-cp-doesnt
         # -------------------------------------
-        copy_to_dst_dir(self.logger, os.path.join(geos_obcsdir, 'INPUT'),
-                        self.forecast_dir('INPUT'))
+        # Copy files individually from the OBCS INPUT directory
+        src_input_dir = os.path.join(geos_obcsdir, 'INPUT')
+        dst_input_dir = self.forecast_dir('INPUT')
+        if os.path.isdir(src_input_dir):
+            for name in sorted(os.listdir(src_input_dir)):
+                src_path = os.path.join(src_input_dir, name)
+                # skip file name "WOA05_ptemp_salt_annual.v20141007.nc"
+                if name == "WOA05_ptemp_salt_annual.v20141007.nc":
+                    continue
+                copy_to_dst_dir(self.logger, src_path, dst_input_dir)
+        else:
+            self.logger.warning(f"OBCS INPUT directory not found: {src_input_dir}")
 
     # ----------------------------------------------------------------------------------------------
 
@@ -393,15 +437,36 @@ class PrepGeosRunDir(taskBase):
     def get_static(self) -> None:
 
         # Obtain experiment input files created by GEOS gcm_setup
+        # Keep in mind that GEOSgcm uses .HOMDIR and .EXPDIR to define paths to the experiment
+        # folders
         # --------------------------------------------------
         geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build', 'bin')
 
         src_dirs = []
 
-        # Create list of static files
-        # ---------------------------------
-        src_dirs.append(self.geos_exp_dir)
-        src_dirs.append(os.path.join(self.geos_exp_dir, 'RC'))
+        # Make a list of required files to copy, so not everything is copied.
+        # This part will eventually be handled with a modern gcm_setup script.
+        req_files = ['AGCM.rc', 'CAP.rc', 'data_table', 'diag_table', 'fvcore_layout.rc',
+                     'gcm_emip.setup', 'gcm_run.j', 'HISTORY.rc', '__init__.py', 'input.nml',
+                     'linkbcs', 'logging.yaml']
+
+        # Optional files in the sense that they are required for coupled or dataAtm runs
+        opt_files = ['ice_in', 'MOM_input', 'MOM_oda_incupd', 'MOM_override', 'MOM_saltrestore']
+
+        # Append required files to src_dirs with geos_expdir
+        for file in req_files:
+            src_dirs.append(os.path.join(self.geos_expdir, file))
+
+        # Append optional files to src_dirs with geos_expdir only if they exist
+        for file in opt_files:
+            src_path = os.path.join(self.geos_expdir, file)
+            if os.path.exists(src_path):
+                self.logger.info(f'Adding optional file: {file}')
+                src_dirs.append(src_path)
+
+        # Finalize the list of source directories
+        # ---------------------------------------
+        src_dirs.append(os.path.join(self.geos_expdir, 'RC'))
         src_dirs.append(os.path.join(geos_install_path, 'bundleParser.py'))
 
         for src_dir in src_dirs:
@@ -416,20 +481,39 @@ class PrepGeosRunDir(taskBase):
         # ---------------------------------------------------------
 
         if self.agcm_dict['REPLAY_MODE'] == 'Exact' or self.agcm_dict['REPLAY_MODE'] == 'Regular':
-            # ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
+            ANA_EXPID = self.agcm_dict['REPLAY_ANA_EXPID']
             ANA_LOCATION = self.agcm_dict['REPLAY_ANA_LOCATION']
             # REPLAY_FILE = self.agcm_dict['REPLAY_FILE']
 
+            # Modify GAAS_GridComp_ExtData.yaml
+            yaml_file = self.forecast_dir('GAAS_GridComp_ExtData.yaml')
+            yaml_tmpl = yaml_file + '.tmpl'
+            if os.path.exists(yaml_file):
+                os.rename(yaml_file, yaml_tmpl)
+                with open(yaml_tmpl, 'r') as f_in, open(yaml_file, 'w') as f_out:
+                    for line in f_in:
+                        # Substitute das.aod_ with chem/Y%y4/M%m2/${ANA_EXPID}.aod_
+                        f_out.write(line.replace(
+                            'das.aod_',
+                            f'chem/Y%y4/M%m2/{ANA_EXPID}.aod_'
+                        ))
+
+            # Modify GAAS_GridComp_ExtData.rc
+            rc_file = self.forecast_dir('GAAS_GridComp_ExtData.rc')
+            rc_tmpl = rc_file + '.tmpl'
+            if os.path.exists(rc_file):
+                os.rename(rc_file, rc_tmpl)
+                with open(rc_tmpl, 'r') as f_in, open(rc_file, 'w') as f_out:
+                    for line in f_in:
+                        f_out.write(line.replace(
+                            'das.aod_',
+                            f'chem/Y%y4/M%m2/{ANA_EXPID}.aod_'
+                        ))
+
         rply_dict = {
             os.path.join(ANA_LOCATION, 'ana'): '',
+            os.path.join(ANA_LOCATION, 'chem'): '',
         }
-
-        # if 'REPLAY_FILE09' in self.agcm_dict:
-        #     REPLAY_FILE09 = self.agcm_dict['REPLAY_FILE09']
-        #     self.logger.info(' Including REPLAY_FILE09: ' + src)
-        #     self.rply_dict.update({
-        #         os.path.join(ANA_LOCATION): '',
-        #         })
 
         for src, dst in rply_dict.items():
             self.logger.info(' Linking file: ' + src)
@@ -456,7 +540,7 @@ class PrepGeosRunDir(taskBase):
         else:
             self.logger.info('Modifying WSUB_ExtData.yaml')
 
-            yaml = YAML(typ='safe')
+            yaml = YAML()
             with open(self.forecast_dir('WSUB_ExtData.yaml'), 'r') as f:
                 wsub = yaml.load(f)
 
@@ -491,10 +575,7 @@ class PrepGeosRunDir(taskBase):
         rcdict['RECORD_REF_DATE'] = da_begin_dto.strftime("%Y%m%d")
         rcdict['RECORD_REF_TIME'] = da_begin_dto.strftime("%H%M%S")
 
-        yaml = YAML(typ='safe')
-        yaml.default_flow_style = False
-        with open(rcfile, "w") as f:
-            yaml.dump(rcdict, f)
+        self.geos.write_rc(rcdict, rcfile)
 
         return self.geos.rc_to_bool(rcdict)
 
@@ -515,10 +596,7 @@ class PrepGeosRunDir(taskBase):
         rcdict['NUM_SGMT'] = '1'
         rcdict['JOB_SGMT'] = time_string
 
-        yaml = YAML(typ='safe')
-        yaml.default_flow_style = False
-        with open(rcfile, "w") as f:
-            yaml.dump(rcdict, f)
+        self.geos.write_rc(rcdict, rcfile)
 
         return self.geos.rc_to_bool(rcdict)
 
