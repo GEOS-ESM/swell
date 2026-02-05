@@ -44,7 +44,8 @@
             BuildJediByLinking:fail? => BuildJedi
 
             # Need first set of restarts to run model
-            GetGeosRestart => PrepGeosRunDir
+            # GetGeosRestart => PrepGeosRunDir
+            GetCoupledGeosRestart => PrepGeosRunDir
 
             # Model cannot run without code
             BuildGeosByLinking? | BuildGeos => RunGeosExecutable
@@ -181,8 +182,8 @@
     [[RemoveForecastDir]]
         script = "swell task RemoveForecastDir $config -d $datetime"
 
-    [[GetGeosRestart]]
-        script = "swell task GetGeosRestart $config -d $datetime"
+    [[GetCoupledGeosRestart]]
+        script = "swell task GetCoupledGeosRestart $config -d $datetime"
 
     {% for model_component in model_components %}
 
