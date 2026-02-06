@@ -20,7 +20,6 @@ import requests
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-from swell.swell_path import get_swell_path
 import r2d2
 
 
@@ -28,14 +27,18 @@ class IngestObs(taskBase):
     """Ingest observation files into R2D2 v3.
 
     This task reads a list of observation types from the experiment configuration
-    (``obs_to_ingest``), looks up per-observation metadata in modular YAML files
-    under ``configuration/jedi/interfaces/geos_marine/ingest_observations/``,
-    resolves file paths for the current cycle time, and optionally stores them
-    in R2D2 v3.
+    (``obs_to_ingest``), looks up per-observation metadata from YAML files in the
+    experiment's ``configuration/jedi/interfaces/<model-name>/ingest_observations/``
+    directory, resolves file paths for the current cycle time, and stores them
+    in R2D2.
+
+    The observation YAML files are copied from the swell source code to the
+    experiment directory during ``swell create``. Users should modify these files
+    in their experiment directory to change file paths or retrieval methods
+    without touching the source code.
 
     The task can run in a "dry run" mode where it only logs which files it would
-    ingest, without calling ``r2d2.store``. It also checks R2D2 first and skips
-    any observations that are already present for the requested window.
+    ingest, without calling ``r2d2.store``.
 
     Args:
         config: Inherited from ``taskBase``. Provides task configuration
@@ -104,15 +107,14 @@ class IngestObs(taskBase):
         for obs_name in obs_to_ingest:
             self.logger.info(f"Preparing to ingest: {obs_name}")
 
-            # Locate the configuration file
-            # Look in the JEDI config directory and get obs yaml file from
-            # obs_name (e.g. adt_cryosat2n.yaml)
+            # Locate the configuration file from the experiment directory.
+            # Look in the experiment directory for the configuration file.
             config_path = os.path.join(
-                get_swell_path(),
+                self.experiment_path(),
                 'configuration',
                 'jedi',
                 'interfaces',
-                'geos_marine',
+                self.get_model(),
                 'ingest_observations',
                 f'{obs_name}.yaml')
 
