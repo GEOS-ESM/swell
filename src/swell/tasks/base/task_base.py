@@ -340,8 +340,8 @@ def get_tasks() -> list:
         model_task_path = os.path.join(get_swell_path(), 'tasks', model)
         if os.path.exists(model_task_path):
             for task_file in os.listdir(model_task_path):
-                if f'-{model}.py' in task_file:
-                    task_name = task_file.split(f'-{model}.py')[0]
+                if f'_{model}.py' in task_file:
+                    task_name = task_file.split(f'_{model}.py')[0]
                     tasks.append(snake_case_to_camel_case(task_name))
 
     # Return list of valid task choices
