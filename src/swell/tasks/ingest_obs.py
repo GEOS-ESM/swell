@@ -88,10 +88,8 @@ class IngestObs(taskBase):
         dry_run = self.config.dry_run(True)
 
         if dry_run:
-            self.logger.info("=" * 60)
             self.logger.info(
                 "DRY RUN MODE - No files will be ingested to R2D2")
-            self.logger.info("=" * 60)
         else:
             create_r2d2_config(
                 self.logger,
@@ -136,9 +134,7 @@ class IngestObs(taskBase):
             total_failed += len(failed)
 
         # Summary
-        self.logger.info("=" * 60)
         self.logger.info("INGESTION SUMMARY")
-        self.logger.info("=" * 60)
         if dry_run:
             self.logger.info(f"Would ingest: {total_ingested} files")
             self.logger.info(f"Would fail: {total_failed} files")
