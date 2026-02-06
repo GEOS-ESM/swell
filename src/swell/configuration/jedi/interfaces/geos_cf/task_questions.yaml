@@ -87,8 +87,5 @@ vertical_resolution:
 window_length:
   default_value: PT6H
 
-window_offset:
-  default_value: PT3H
-
 window_type:
   default_value: 3D
