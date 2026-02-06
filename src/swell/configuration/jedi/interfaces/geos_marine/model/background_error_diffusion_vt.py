@@ -14,7 +14,6 @@ from collections.abc import Mapping
 def background_error_diffusion_vt(template_dict: Mapping) -> Mapping:
     background_error_diffusion_vt = {
         'covariance model': 'SABER',
-        'covariance type': 'gsi hybrid covariance',
         'saber central block': {
             'saber block name': 'diffusion',
             'calibration': {
