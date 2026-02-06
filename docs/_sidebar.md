@@ -21,7 +21,9 @@
   - [Description](examples/description.md)
   - **SOCA**
     -  [3DVAR](examples/soca/3dvar.md)
-    -  [3DFGAT_cycle](examples/soca/3dfgat_cycle.md)
+    -  [3DFGAT_cycle]((examples/soca/3dfgat_cycle.md))
+  - **R2D2 - Storing Data**
+       - [Storing Observations to R2D2](../src/swell/suites/ingest_obs/README.md)
 
 - Configuration files in swell
 

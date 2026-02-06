@@ -18,9 +18,8 @@ for result in results:
 
     obs_summary[obs_type].append(window_start)
 
-print("=" * 50)
 print("Available Observations")
-print("=" * 50)
+
 for obs_type, dates in sorted(obs_summary.items()):
     dates_sorted = sorted(dates)
     if dates_sorted:
