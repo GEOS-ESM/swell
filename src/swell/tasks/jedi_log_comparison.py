@@ -31,7 +31,7 @@ task_name = 'JediLogComparison'
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
-        self.is_model = True
+        self.model_dep = True
         self.questions = [
             qd.number_of_iterations(),
             qd.comparison_log_type(),

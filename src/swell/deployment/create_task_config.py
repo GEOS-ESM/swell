@@ -65,7 +65,7 @@ def task_config_wrapper(task_name: str,
     task = task_attr_class(model=model, platform=platform)
 
     # Check that model is specified for the task
-    if task.is_model and model is None:
+    if task.model_dep and model is None:
         logger.abort('Task requires model (e.g. geos_marine, geos_atmsophere)'
                      ' but none was specified at the command line.')
 
@@ -145,10 +145,10 @@ def task_config_wrapper(task_name: str,
         slurm_external_dict = prepare_slurm_defaults_and_overrides(logger, platform, slurm)
         task_slurm_dict = task.generate_task_slurm_dict(slurm_external_dict)
 
-        time_limit = task.time_limit
-        if time_limit is not None:
-            time_limit_dto = isodate.parse_duration(time_limit)
-            task_slurm_dict['time'] = isodate.strftime(time_limit_dto, '%H:%M:%S')
+        task_time_limit = task.task_time_limit
+        if task_time_limit is not None:
+            task_time_limit_dto = isodate.parse_duration(task_time_limit)
+            task_slurm_dict['time'] = isodate.strftime(task_time_limit_dto, '%H:%M:%S')
 
     # Determine the path for task results
     experiment_root = experiment_dict['experiment_root']

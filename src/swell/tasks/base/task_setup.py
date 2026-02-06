@@ -30,11 +30,11 @@ class TaskSetup(ABC):
     base_name: basic name of the task within Swell
     scheduling_name: name for the task within cylc
     is_cycling: boolean for whether the task is run on cycles
-    is_model: boolean for whether the task is run on a certain model
+    model_dep: boolean for whether the task is run on a certain model
     pre_script: cylc setting for scripts run before the main script
     script: string of shell code to be run by cylc for the task
     retry: times * time interval cylc should retry the task, e.g. 2*PT10s
-    time_limit: execution time limit for slurm
+    task_time_limit: execution time limit for slurm
     slurm: dictionary of slurm parameters
     mail events: list of events for email messaging through cylc
     question_list: list of questions keys used by the task
@@ -48,12 +48,12 @@ class TaskSetup(ABC):
     scheduling_name: str | None
 
     is_cycling: bool
-    is_model: bool
+    model_dep: bool
 
     pre_script: bool | str | None
     script: bool | str | None
     retry: str | None
-    time_limit: str | dict | None
+    task_time_limit: str | dict | None
     slurm: dict | None
 
     mail_events: list
@@ -69,13 +69,13 @@ class TaskSetup(ABC):
         self.scheduling_name = None
 
         self.is_cycling = False
-        self.is_model = False
+        self.model_dep = False
 
         self.pre_script = False
         self.script = None
 
         self.retry = None
-        self.time_limit = None
+        self.task_time_limit = None
         self.slurm = None
 
         self.mail_events = ['failed', 'submit-failed']
@@ -106,7 +106,7 @@ class TaskSetup(ABC):
         if self.scheduling_name is None:
             self.scheduling_name = self.base_name
 
-            if self.is_model and self.model is not None:
+            if self.model_dep and self.model is not None:
                 self.scheduling_name += f'-{self.model}'
 
         if self.script is None:
@@ -115,10 +115,10 @@ class TaskSetup(ABC):
             if self.is_cycling:
                 self.script += ' -d $datetime'
 
-            if self.is_model and self.model is not None:
+            if self.model_dep and self.model is not None:
                 self.script += ' -m {model}'
 
-        if self.is_model and self.model is not None:
+        if self.model_dep and self.model is not None:
             self.script = self.script.format(model=self.model)
             self.scheduling_name = self.scheduling_name.format(model=self.model)
 
@@ -129,10 +129,10 @@ class TaskSetup(ABC):
             self.retry = self.match_platform(self.retry)
 
         # Set time limit defaults
-        if self.time_limit is True:
-            self.time_limit = 'PT1H'
-        elif self.time_limit:
-            self.time_limit = self.match_platform(self.time_limit)
+        if self.task_time_limit is True:
+            self.task_time_limit = 'PT1H'
+        elif self.task_time_limit:
+            self.task_time_limit = self.match_platform(self.task_time_limit)
 
         # Convert questions list into object
         self.question_list = QuestionList(self.questions)
@@ -310,8 +310,8 @@ class TaskSetup(ABC):
         if self.slurm is not None:
             runtime_dict['platform'] = platform
 
-        if self.time_limit is not None:
-            runtime_dict['execution time limit'] = self.time_limit
+        if self.task_time_limit is not None:
+            runtime_dict['execution time limit'] = self.task_time_limit
 
         # Set the retry if this task needs it
         if self.retry:

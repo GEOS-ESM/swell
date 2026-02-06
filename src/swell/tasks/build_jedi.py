@@ -24,7 +24,7 @@ task_name = 'BuildJedi'
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
-        self.time_limit = 'PT3H'
+        self.task_time_limit = 'PT3H'
         self.slurm = {}
         self.questions = [
             qd.bundles(),

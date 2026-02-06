@@ -30,7 +30,7 @@ class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
         self.is_cycling = True
-        self.is_model = True
+        self.model_dep = True
         self.questions = [
             qd.path_to_gsi_bc_coefficients(),
             qd.window_length()

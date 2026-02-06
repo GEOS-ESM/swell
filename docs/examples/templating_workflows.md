@@ -37,9 +37,9 @@ task_name = 'EvaObservations'
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
-        self.time_limit = True
+        self.task_time_limit = True
         self.is_cycling = True
-        self.is_model = True
+        self.model_dep = True
         self.slurm = {}
         self.questions = [
             qd.background_time_offset(),
@@ -55,10 +55,10 @@ class Setup(TaskSetup):
 
 Attributes are set by override the `set_attributes` method in `TaskSetup`. This has been combined with the previously-used `task_questions.py` for simplicity. 
 
-The tags `is_cycling` and `is_model` (both `False` by default) modify the script command (`swell task <task name> $config`):
+The tags `is_cycling` and `model_dep` (both `False` by default) modify the script command (`swell task <task name> $config`):
 
 - `is_cycling = True` adds `-d $datetime` for cycling tasks
-- `is_model = True` adds `-m {model}` to indicate model-specific tasks.
+- `model_dep = True` adds `-m {model}` to indicate model-specific tasks.
 
 The `slurm` attribute determines where or not the task requires Slurm and provides a way to set task-specific overrides:
 
@@ -89,8 +89,8 @@ This can be used to set task-specific defaults in `task_attributes.py`, rather t
 class RunJediConvertStateSoca2ciceExecutable(TaskSetup):
     def set_attributes(self):
         self.is_cycling = True
-        self.is_model = True 
-        self.time_limit = True
+        self.model_dep = True 
+        self.task_time_limit = True
         self.slurm = {'nodes': 1}
 ```
 
@@ -100,8 +100,8 @@ This supports setting platform-specific overrides, for example:
 class RunJediConvertStateSoca2ciceExecutable(TaskSetup):
     def set_attributes(self):
         self.is_cycling = True
-        self.is_model = True 
-        self.time_limit = True
+        self.model_dep = True 
+        self.task_time_limit = True
         self.slurm = {'all': 1,
                       'nccs_discover_cascade': 2}
 ```

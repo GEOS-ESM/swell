@@ -28,7 +28,7 @@ class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
         self.is_cycling = True
-        self.is_model = True
+        self.model_dep = True
         self.mail_events = ['submit-failed']
         self.questions = [
             qd.ioda_locations_not_in_r2d2(),

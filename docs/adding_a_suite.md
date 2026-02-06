@@ -189,7 +189,7 @@ task_name = 'CloneGeosMksi'
 class Setup(TaskSetup):
     def set_attributes(self):
         self.base_name = task_name
-        self.is_model = True
+        self.model_dep = True
         self.questions = [
             qd.observing_system_records_mksi_path(),
             qd.observing_system_records_mksi_path_tag()

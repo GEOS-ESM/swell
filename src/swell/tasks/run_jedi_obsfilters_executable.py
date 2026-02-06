@@ -30,8 +30,8 @@ class Setup(TaskSetup):
         self.script = ("swell task RunJediObsfiltersExecutable $config"
                        " -d $datetime -m geos_atmosphere")
         self.is_cycling = True
-        self.is_model = True
-        self.time_limit = True
+        self.model_dep = True
+        self.task_time_limit = True
         self.slurm = {}
         self.questions = [
             qd.npx_proc(),
