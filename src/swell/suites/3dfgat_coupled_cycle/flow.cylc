@@ -185,9 +185,6 @@
     [[MoveEraseDaRestart-{{model_component}}]]
         script = "swell task MoveEraseDaRestart $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
-
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
 
