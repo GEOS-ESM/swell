@@ -198,7 +198,7 @@ class LinkCoupledGeosOutput(taskBase):
         ds = ds.rename({'aice': 'aice_h', 'hi': 'hi_h', 'hs': 'hs_h'})
 
         # Save as a new file
-        ds.to_netcdf(dst_history, mode='w')
+        ds.to_netcdf(dst_history, mode='w', format='NETCDF4')
 
     # ----------------------------------------------------------------------------------------------
 
