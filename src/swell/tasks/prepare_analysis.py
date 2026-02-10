@@ -165,7 +165,7 @@ class PrepareAnalysis(taskBase):
         # TODO: This will fail for multiple restart files and no IAU
         # ----------------------------------------------------------
 
-        for filepath in list(glob.glob(ana_path)):
+        for filepath in list(glob.glob(ana_pth)):
             f_ana = filepath
 
         # Open read and write and rename dimensions
