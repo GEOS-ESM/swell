@@ -51,46 +51,44 @@ class GetCoupledGeosRestart(taskBase):
         # ---------------------------------------------------
         swell_exp_path = self.experiment_path()
 
-        # Obtain GEOS HOMDIR and EXPDIR from user input
+        # Obtain GEOS HOMDIR from user input
         self.geos_homdir = self.config.geos_homdir()
-        self.geos_expdir = self.geos_homdir
+        self.logger.info(f'GEOS HOME directory: {self.geos_homdir}')
 
         # Create GEOSgcm directory in the experiment folder if it doesn't exist yet
-        os.makedirs(os.path.join(swell_exp_path, 'GEOSgcm'), 0o755, exist_ok=True)
+        geos_gcm_path = os.path.join(swell_exp_path, 'GEOSgcm')
+        os.makedirs(geos_gcm_path, 0o755, exist_ok=True)
 
-        expdir_different = self.config.geos_expdir_different()
+        # Link GEOS HOME directory
+        geos_homdir_path = os.path.join(geos_gcm_path, 'GEOS_homdir')
+        if not os.path.exists(self.geos_homdir):
+            self.logger.abort(f'GEOS_homdir does not exist: {self.geos_homdir}')
 
-        self.logger.info('GEOS HOME directory: ' + self.geos_homdir)
-        geos_homdir_path = os.path.join(swell_exp_path, 'GEOSgcm', 'GEOS_homdir')
-        if os.path.exists(self.geos_homdir):
-            self.logger.info('Linking GEOS HOME directory to ' + geos_homdir_path)
-            # Check if link already exists, unlink first if it does
-            if os.path.lexists(geos_homdir_path):
-                os.unlink(geos_homdir_path)
-            os.symlink(self.geos_homdir, geos_homdir_path)
-            geos_expdir_path = geos_homdir_path
-        else:
-            self.logger.abort('GEOS_homdir does not exist: ' + self.geos_homdir)
+        if os.path.lexists(geos_homdir_path):
+            os.unlink(geos_homdir_path)
 
-        # If GEOS expdir is set to be different to homdir, create a link to expdir and fail if it
-        # does not exist
-        if expdir_different:
-            self.logger.info('GEOS EXPERIMENT directory: ' + geos_expdir_path)
+        self.logger.info(f'Linking GEOS HOME directory to {geos_homdir_path}')
+        os.symlink(self.geos_homdir, geos_homdir_path)
+
+        # Initialize geos_expdir_path with geos_homdir_path
+        geos_expdir_path = geos_homdir_path
+
+        # If GEOS expdir is set to be different to homdir, create a link to expdir
+        if self.config.geos_expdir_different():
             self.expdir = self.config.geos_expdir()
-        else:
-            self.logger.info('GEOS EXPERIMENT directory is the same as GEOS HOME directory. '
-                             'Set `geos_expdir_different: true` to point a different directory.')
+            self.logger.info(f'GEOS EXPERIMENT directory: {self.expdir}')
 
-        if expdir_different and os.path.exists(self.geos_expdir):
-            geos_expdir_path = os.path.join(swell_exp_path, 'GEOSgcm', 'GEOS_expdir')
-            # Check if link already exists, unlink first if it does
+            if not os.path.exists(self.expdir):
+                self.logger.abort(f'GEOS_expdir does not exist: {self.expdir}')
+
+            geos_expdir_path = os.path.join(geos_gcm_path, 'GEOS_expdir')
             if os.path.lexists(geos_expdir_path):
-                self.logger.info('Unlinking existing GEOS EXPDIR link: ' + geos_expdir_path)
                 os.unlink(geos_expdir_path)
-            self.logger.info('Linking GEOS EXPDIR to ' + geos_expdir_path)
+
+            self.logger.info(f'Linking GEOS EXPDIR to {geos_expdir_path}')
             os.symlink(self.expdir, geos_expdir_path)
-        elif expdir_different and not os.path.exists(self.expdir):
-            self.logger.abort('GEOS_expdir directory does not exist: ' + self.expdir)
+        else:
+            self.logger.info('GEOS EXPERIMENT directory is the same as GEOS HOME directory.')
 
         # Create forecast_dir and RESTART
         # ----------------------------
