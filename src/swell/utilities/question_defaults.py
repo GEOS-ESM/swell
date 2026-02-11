@@ -1220,6 +1220,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class publish_directory(TaskQuestion):
+        default_value: str = None
+        question_name: str = "publish_directory"
+        ask_question: bool = False
+        prompt: str = "Provide an external directory to publish relevant results to."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class r2d2_local_path(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "r2d2_local_path"

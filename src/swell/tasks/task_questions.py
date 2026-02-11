@@ -493,6 +493,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    PublishComparisons = QuestionList(
+        list_name="PublishComparisons",
+        questions=[
+            qd.publish_directory()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     PrepareAnalysis = QuestionList(
         list_name="PrepareAnalysis",
         questions=[
