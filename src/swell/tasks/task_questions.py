@@ -496,6 +496,7 @@ class TaskQuestions(QuestionContainer, Enum):
     PublishComparisons = QuestionList(
         list_name="PublishComparisons",
         questions=[
+            qd.model_components(),
             qd.publish_directory()
         ]
     )
