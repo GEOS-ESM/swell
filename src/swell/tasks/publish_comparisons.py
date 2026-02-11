@@ -21,7 +21,7 @@ from swell.tasks.base.task_base import taskBase
 class PublishComparisons(taskBase):
 
     '''Copies releveant text files and plots to a specified "publish location".
-    
+
     If 'publish_directory' is None, the files will not be copied.
     '''
 
@@ -33,7 +33,7 @@ class PublishComparisons(taskBase):
         # Skip this task if there is no publish directory
         if publish_directory is None:
             return
-        
+
         # For CI tests - contain results under the run ID
         github_run_id = os.environ.get('GITHUB_RUN_ID')
         experiment_id = self.experiment_id()
@@ -55,11 +55,13 @@ class PublishComparisons(taskBase):
 
         for cycle in cycles:
             for model in self.config.model_components():
-                if os.path.isdir(os.path.join(cycle, model, 'eva')):
+                if os.path.isdir(os.path.join(cycle_path, cycle, model, 'eva')):
 
                     # Copy eva png files
-                    files = glob.glob(os.path.join(cycle_path, cycle, model, 'eva', '**', '*.png'))
-                    out_path = os.path.join(publish_directory, cycle, model)
+                    files = glob.glob(os.path.join(cycle_path, cycle, model,
+                                                   'eva', '**', '*.png'), recursive=True)
+
+                    out_path = os.path.join(publish_location, cycle, model)
 
                     os.makedirs(out_path, exist_ok=True)
 
