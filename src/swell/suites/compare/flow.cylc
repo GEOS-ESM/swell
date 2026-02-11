@@ -34,9 +34,11 @@
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
             JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
-	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => comparison_fail
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons
+	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons
+
+            PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -92,5 +94,8 @@
     [[JediLogComparison-{{model_component}}]]
         script = "swell task JediLogComparison $config -m {{model_component}}"
     {% endfor %}
+
+    [[PublishComparisons]]
+        script = "swell task PublishComparisons $config"
 
 # --------------------------------------------------------------------------------------------------
