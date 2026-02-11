@@ -26,6 +26,11 @@
     runahead limit = {{runahead_limit}}
 
     [[graph]]
+	R1 = """
+        {% for model_component in model_components %}
+            JediLogComparison-{{model_component}}?
+        {% endfor %}     
+        """
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
@@ -33,12 +38,9 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons
-	    JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons
-
-            PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
+	    JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -79,6 +81,9 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
+    [[PublishComparisons]]
+         script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
+
     {% if comparison_experiment_paths is mapping %}
     {% for path in comparison_experiment_paths.values() %}
     [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
@@ -94,8 +99,5 @@
     [[JediLogComparison-{{model_component}}]]
         script = "swell task JediLogComparison $config -m {{model_component}}"
     {% endfor %}
-
-    [[PublishComparisons]]
-        script = "swell task PublishComparisons $config"
 
 # --------------------------------------------------------------------------------------------------
