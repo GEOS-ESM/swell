@@ -49,23 +49,16 @@ class PublishComparisons(taskBase):
         log_file = os.path.join(self.experiment_path(), 'jedi_log_comparison.txt')
         shutil.copy(log_file, publish_location)
 
-        # Get the cycles
-        cycle_path = os.path.join(self.experiment_path(), 'run')
-        cycles = [d for d in os.listdir(cycle_path) if re.match('[0-9]*T[0-9]*Z', d)]
+        if os.path.isdir(os.path.join(self.cycle_dir(), 'eva')):
 
-        for cycle in cycles:
-            for model in self.config.model_components():
-                if os.path.isdir(os.path.join(cycle_path, cycle, model, 'eva')):
+            # Copy eva png files
+            files = glob.glob(os.path.join(self.cycle_dir(), 'eva', '**', '*.png'), recursive=True)
 
-                    # Copy eva png files
-                    files = glob.glob(os.path.join(cycle_path, cycle, model,
-                                                   'eva', '**', '*.png'), recursive=True)
+            out_path = os.path.join(publish_location, self.__datetime__.string_directory(), self.get_model())
 
-                    out_path = os.path.join(publish_location, cycle, model)
+            os.makedirs(out_path, exist_ok=True)
 
-                    os.makedirs(out_path, exist_ok=True)
-
-                    for file in files:
-                        shutil.copy(file, out_path)
+            for file in files:
+                shutil.copy(file, out_path)
 
 # --------------------------------------------------------------------------------------------------
