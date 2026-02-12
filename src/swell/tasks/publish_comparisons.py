@@ -9,7 +9,6 @@
 
 
 import os
-import re
 import glob
 import shutil
 
@@ -32,8 +31,10 @@ class PublishComparisons(taskBase):
 
         # Skip this task if there is no publish directory
         if publish_directory is None:
+            print('Skipping')
             return
 
+        print('Not skipped')
         # For CI tests - contain results under the run ID
         github_run_id = os.environ.get('GITHUB_RUN_ID')
         experiment_id = self.experiment_id()
@@ -54,7 +55,8 @@ class PublishComparisons(taskBase):
             # Copy eva png files
             files = glob.glob(os.path.join(self.cycle_dir(), 'eva', '**', '*.png'), recursive=True)
 
-            out_path = os.path.join(publish_location, self.__datetime__.string_directory(), self.get_model())
+            out_path = os.path.join(publish_location, self.__datetime__.string_directory(),
+                                    self.get_model())
 
             os.makedirs(out_path, exist_ok=True)
 
