@@ -21,28 +21,21 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self) -> None:
+        """Copies coupled GEOS restart files to the forecast directory.
 
-        """
-        Copies coupled GEOS restart files to the cycle forecast directory, which are:
-
-        - *_rst files (including the atmosphere restart file)
-        - iced.nc (CICE6 restart, mandatory)
-        - MOM.res.nc (MOM6 restart, mandatory)
+        The files copied include:
+        - *_rst files (including atmosphere and tile interface files)
+        - iced.nc (CICE6 restart)
+        - MOM.res.nc (MOM6 restart)
         - mom6_increment.nc (optional)
 
-        Restart files can be obtained by three different ways:
+        Restart files are retrieved via one of the following methods:
+        1) From a previous GEOS experiment (geos_homdir).
+        2) R2D2 retrieval (not yet implemented).
+        3) External GEOS folder (if geos_expdir is different).
 
-        1) From a previous GEOS forecast experiment (geos_homdir or geos_expdir)
-        2) R2D2 retrieval (not implemented yet)
-        3) External folder (user is expected to copy them manually before running the experiment)
-
-        geos_expdir can be different from geos_homdir, in which case must be specified in the config
-        file. Not it can be absolute path, however MOM6 and CICE6 restarts are expected to be in
-        the RESTART subdirectory of geos_expdir.
-
-        xx) Creates HOMDIR and EXPDIR in the experiment/GEOSgcm directory (which are names
-            used by GEOS)
-        xx) Obtains files from geos_homdir OR geos_expdir according to user input
+        This task also creates the necessary internal GEOS directory structure
+        (HOMDIR and EXPDIR) within the swell experiment path.
         """
 
         self.logger.info('Obtaining GEOS restarts for a coupled simulation')
@@ -75,18 +68,18 @@ class GetCoupledGeosRestart(taskBase):
 
         # If GEOS expdir is set to be different to homdir, create a link to expdir
         if self.config.geos_expdir_different():
-            self.expdir = self.config.geos_expdir()
-            self.logger.info(f'GEOS EXPERIMENT directory: {self.expdir}')
+            self.geos_expdir = self.config.geos_expdir()
+            self.logger.info(f'GEOS EXPERIMENT directory: {self.geos_expdir}')
 
-            if not os.path.exists(self.expdir):
-                self.logger.abort(f'GEOS_expdir does not exist: {self.expdir}')
+            if not os.path.exists(self.geos_expdir):
+                self.logger.abort(f'GEOS_expdir does not exist: {self.geos_expdir}')
 
             geos_expdir_path = os.path.join(geos_gcm_path, 'GEOS_expdir')
             if os.path.lexists(geos_expdir_path):
                 os.unlink(geos_expdir_path)
 
             self.logger.info(f'Linking GEOS EXPDIR to {geos_expdir_path}')
-            os.symlink(self.expdir, geos_expdir_path)
+            os.symlink(self.geos_expdir, geos_expdir_path)
         else:
             self.logger.info('GEOS EXPERIMENT directory is the same as GEOS HOME directory.')
 
@@ -118,6 +111,11 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def initial_restarts_from_directory(self, geos_expdir_path: str) -> None:
+        """Determines the method for obtaining initial restarts and executes it.
+
+        Args:
+            geos_expdir_path (str): Path to the source GEOS experiment directory.
+        """
 
         # GEOS forecast checkpoint files are created in advance
         # -------------------------------------------------------------------
