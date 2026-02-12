@@ -89,7 +89,7 @@ class DeployWorkflow():
             self.logger.info(' ')
 
             # Launch the job monitor
-            self.logger.critical('Press any key to launch the TUI. To exit TUI, ' +
+            self.logger.critical('Press Enter to launch the TUI. To exit TUI, ' +
                                  'press \'q\' at any time.')
             input()
             self.logger.info(' ')
