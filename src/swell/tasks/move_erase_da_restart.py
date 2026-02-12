@@ -11,8 +11,6 @@ import glob
 import isodate
 import os
 import re
-import shutil
-from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
@@ -41,6 +39,10 @@ class MoveEraseDaRestart(taskBase):
         # ----------------------
         self.mom6_iau = self.config.mom6_iau()
         self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
+
+        # Current and restart time objects
+        # --------------------------------
+        self.cc_dto = self.cycle_time_dto()
 
         # Create cycle_dir and RESTART
         # ----------------------------
