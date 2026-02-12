@@ -1,4 +1,5 @@
-  filetype: cube sphere history
+#  filetype: cube sphere history
+  filetype: auxgrid
   provider: geos
   datapath: {{cycle_dir}}
   filename: geos.ensemblevariance.%yyyy%mm%dd_%hh%MM%ssz.nc4

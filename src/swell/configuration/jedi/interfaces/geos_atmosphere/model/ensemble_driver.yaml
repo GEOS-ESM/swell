@@ -1,3 +1,7 @@
+update obs config with geometry info: true
+do test prints: true
+read HX from disk: false
+run as observer only: false
 save posterior mean: {{local_ensemble_save_posterior_mean}}
 save posterior ensemble: {{local_ensemble_save_posterior_ensemble}}
 save posterior mean increment: {{local_ensemble_save_posterior_mean_increment}}
