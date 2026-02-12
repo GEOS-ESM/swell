@@ -35,21 +35,21 @@
             BuildGeosByLinking:fail? => BuildGeos
 
             # Need first set of restarts to run model
-            GetGeosRestart => PrepGeosRunDir
+            GetCoupledGeosRestart => PrepGeosRunDir
 
             # Get first set of restarts
-            BuildGeosByLinking? | BuildGeos  => RunGeosExecutable
+            BuildGeosByLinking? | BuildGeos  => RunGeos
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time}} = """
 
             # Run Geos Executable
-            PrepGeosRunDir => RunGeosExecutable
+            PrepGeosRunDir => RunGeos
             MoveEraseForecastRestart[-PT6H] => PrepGeosRunDir
 
             # Move restart to next cycle
-            RunGeosExecutable => MoveEraseForecastRestart
+            RunGeos => MoveEraseForecastRestart
 
         """
         {% endfor %}
@@ -87,8 +87,8 @@
     [[PrepGeosRunDir]]
         script = "swell task PrepGeosRunDir $config -d $datetime"
 
-    [[GetGeosRestart]]
-        script = "swell task GetGeosRestart $config -d $datetime"
+    [[GetCoupledGeosRestart]]
+        script = "swell task GetCoupledGeosRestart $config -d $datetime"
 
     [[MoveEraseForecastRestart]]
         script = "swell task MoveEraseForecastRestart $config -d $datetime"
@@ -96,12 +96,13 @@
     [[SaveRestart]]
         script = "swell task SaveRestart $config -d $datetime"
 
-    [[RunGeosExecutable]]
-        script = "{{experiment_path}}/forecast/gcm_run.j"
+    [[RunGeos]]
+        script = "{{experiment_path}}/GEOSgcm/forecast/gcm_run.j"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
+        [[[job]]]
+            shell = /bin/csh
         [[[directives]]]
-        {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["RunGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 

@@ -9,15 +9,12 @@
 
 import os
 import isodate
-import glob
-import yaml
-import json
 import re
 
 from datetime import datetime as dt
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.file_system_operations import copy_to_dst_dir, check_if_files_exist_in_path
+from swell.utilities.file_system_operations import copy_to_dst_dir
 
 # --------------------------------------------------------------------------------------------------
 
@@ -132,10 +129,11 @@ class PrepCoupledGeosRunDir(taskBase):
         # with open(self.forecast_dir('gcm_run.j'), "r") as infile:
         #     lines = infile.readlines()
 
-        # If override switch is on, replace GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL paths
-        # This might be necessary if a user wants to use a different GEOSgcm build
-        # than the one used to create the experiment directory
-        # ------------------------------------------------------------
+        # TODO: If, in the future, an override switch is introduced, additional logic can be
+        # added here to update GEOSDIR, GEOSBIN, GEOSETC, and GEOSUTIL paths in gcm_run.j
+        # so that a different GEOSgcm build can be used than the one that created the
+        # experiment directory.
+        # ------------------------------------------------------------------------------------------
         # with open(self.forecast_dir('gcm_run.j'), "w") as outfile:
         #     for line in lines:
         #         # Match setenv GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL and replace only the
@@ -184,8 +182,6 @@ class PrepCoupledGeosRunDir(taskBase):
         # Keep in mind that GEOSgcm uses .HOMDIR and .EXPDIR to define paths to the experiment
         # folders
         # --------------------------------------------------
-        geos_install_path = os.path.join(self.experiment_path(), 'GEOSgcm', 'build', 'bin')
-
         src_dirs = []
 
         # Make a list of required files to copy, so not everything in HOMDIR gets copied.

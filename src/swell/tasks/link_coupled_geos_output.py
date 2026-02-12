@@ -53,7 +53,7 @@ class LinkCoupledGeosOutput(taskBase):
         # -----------------------------------------------------------------------------------
         self.src_dst_dict = {}
 
-        if self.get_model() in ('geos_marine'):
+        if self.get_model() in 'geos_marine':
             if self.window_type == '4D' or 'fgat' in self.suite_name():
                 self.link_mom6_history_4d()
             else:
@@ -198,7 +198,7 @@ class LinkCoupledGeosOutput(taskBase):
         ds = ds.rename({'aice': 'aice_h', 'hi': 'hi_h', 'hs': 'hs_h'})
 
         # Save as a new file
-        ds.to_netcdf(dst_history, mode='w')
+        ds.to_netcdf(dst_history, mode='w', format='NETCDF4')
 
     # ----------------------------------------------------------------------------------------------
 

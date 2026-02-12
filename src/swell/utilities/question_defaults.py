@@ -157,8 +157,9 @@ class QuestionDefaults():
         default_value: str = "P4"
         question_name: str = "runahead_limit"
         ask_question: bool = True
-        prompt: str = ("How many additional cycles can be run"
-                       "simultaneously? (P1: one, P3: three)")
+        prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
+                       "that may be active ahead of the current cycle "
+                       "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -607,6 +608,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class geos_experiment_directory(TaskQuestion):
+        default_value: str = "coupled_5deg"
+        question_name: str = "geos_experiment_directory"
+        prompt: str = ("(will be taken out) What is the experiment directory?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class geos_gcm_tag(TaskQuestion):
         default_value: str = "v11.6.0"
         question_name: str = "geos_gcm_tag"
@@ -793,7 +803,7 @@ class QuestionDefaults():
         ask_question: bool = True
         options: List[str] = mutable_field([
             "directory",
-            "r2d2 (inactive)",
+            "r2d2",
         ])
         prompt: str = "How should initial GEOS restarts be obtained?"
         widget_type: WType = WType.STRING_DROP_LIST
