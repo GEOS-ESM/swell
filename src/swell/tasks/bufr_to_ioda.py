@@ -11,7 +11,7 @@
 import glob
 import os
 import subprocess
-import yaml
+from ruamel.yaml import YAML, YAMLError
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
@@ -126,16 +126,18 @@ class BufrToIoda(taskBase):
                                               templated_string=yaml_str,
                                               dictionary_of_templates=template_dictionary)
 
-            # Load the dictionary
-            yaml_content = yaml.safe_load(yaml_str)
+            # Load and write the dictionary using rt mode (preserves formatting)
+            yaml_config = YAML()
+            yaml_content = yaml_config.load(yaml_str)
 
+            # Write the updated content to the target yaml file
             with open(yaml_file_target, 'w') as file:
-                yaml.dump(yaml_content, file, default_flow_style=False, sort_keys=False)
+                yaml_config.dump(yaml_content, file)
                 self.logger.info(f'Updated YAML file content: {yaml_file_target}')
 
         except FileNotFoundError:
             self.logger.info(f'Error: File "{yaml_file_source}" not found.')
-        except yaml.YAMLError as e:
+        except YAMLError as e:
             self.logger.info(f'Error processing YAML file: {e}')
         # returns the path of the yaml file the function generated
         return yaml_file_target
@@ -195,7 +197,7 @@ class BufrToIoda(taskBase):
                 subprocess.run([jedi_executable_path, bufr2ioda_conv_yaml])
             except FileNotFoundError:
                 self.logger.info(f'Error: File "{bufr2ioda_conv_yaml}" not found.')
-            except yaml.YAMLError as e:
+            except YAMLError as e:
                 self.logger.info(f'Error processing YAML file: {e}')
             else:
                 self.logger.info('YAML generated, now exiting.')

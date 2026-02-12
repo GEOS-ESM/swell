@@ -10,16 +10,19 @@
 
 from multiprocessing import Pool
 import os
-from ruamel.yaml import YAML
+import yaml
 
 from eva.eva_driver import eva
 
+from swell.swell_path import get_swell_path
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
 from swell.utilities.run_jedi_executables import check_obs
+from swell.utilities.observations import ioda_name_to_long_name
+from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------
 
@@ -32,28 +35,57 @@ def run_eva(eva_dict: dict) -> eva:
 # --------------------------------------------------------------------------------------------------
 
 
-class EvaObservations(taskBase):
+class EvaComparisonObservations(taskBase):
 
     def execute(self) -> None:
 
-        window_length = self.config.window_length()
+        # Comparison log type
+        # -------------------
+        log_type = self.config.comparison_log_type()
 
-        # Compute window beginning time
-        # -----------------------------
-        window_begin = self.da_window_params.window_begin(window_length)
-        background_time = self.da_window_params.background_time(
-                self.config.background_time_offset())
+        # Get the experiment paths
+        # ------------------------
+        experiment_paths = self.config.comparison_experiment_paths()
 
-        # Create JEDI interface config templates dictionary
-        # -------------------------------------------------
-        self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
-        self.jedi_rendering.add_key('window_begin', window_begin)
+        experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        # Get the model
-        # -------------
+        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
+        experiment_tag_2 = list(experiment_tag_paths.keys())[1]
+
+        experiment_path_1 = list(experiment_tag_paths.values())[0]
+        experiment_path_2 = list(experiment_tag_paths.values())[1]
+
         model = self.get_model()
-        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+
+        # Take parameters from first file
+        with open(experiment_path_1, 'r') as f:
+            experiment_config_1 = yaml.safe_load(f)
+            experiment_id_1 = experiment_config_1['experiment_id']
+            comparison_suite = experiment_config_1['suite_to_run']
+            observations = experiment_config_1['models'][model]['observations']
+
+        # Second file parameters
+        with open(experiment_path_2, 'r') as f:
+            experiment_config_2 = yaml.safe_load(f)
+            experiment_id_2 = experiment_config_2['experiment_id']
+
+        # JEDI config file 1
+        jedi_config_file_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
+                                          self.__datetime__.string_directory(), model,
+                                          f'jedi_{log_type}_config.yaml')
+
+        with open(jedi_config_file_1, 'r') as f:
+            jedi_config = yaml.safe_load(f)
+            obs_config_1 = jedi_config['cost function']['observations']['observers']
+
+        # JEDI config file 2
+        jedi_config_file_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
+                                          self.__datetime__.string_directory(), model,
+                                          f'jedi_{log_type}_config.yaml')
+
+        with open(jedi_config_file_2, 'r') as f:
+            jedi_config = yaml.safe_load(f)
+            obs_config_2 = jedi_config['cost function']['observations']['observers']
 
         # Determine if running on login or compute node and set workers
         # -------------------------------------------------------------
@@ -64,8 +96,11 @@ class EvaObservations(taskBase):
 
         # Read Eva template file into dictionary
         # --------------------------------------
-        eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
-        eva_config_file = os.path.join(eva_path, f'observations-{model}.yaml')
+        # eva_path = os.path.join(self.experiment_path(), self.experiment_id()+'-suite', 'eva')
+        eva_path = os.path.join(get_swell_path(), 'suites', 'compare', 'eva')
+        eva_config_file = os.path.join(eva_path,
+                                       f'comparison_observations-{comparison_suite}-{model}.yaml')
+
         with open(eva_config_file, 'r') as eva_config_file_open:
             eva_str_template = eva_config_file_open.read()
 
@@ -92,33 +127,64 @@ class EvaObservations(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
-        yaml = YAML(typ='safe')
+        for observation in observations:
+            if self.get_model() == 'geos_atmosphere':
+                obs_long_name = ioda_name_to_long_name(observation, self.logger)
+            else:
+                obs_long_name = observation
 
-        for observation in self.config.observations():
+            observation_dict_1 = None
+            for value in obs_config_1:
+                if value['obs space']['name'] == obs_long_name:
+                    observation_dict_1 = value.copy()
 
-            # Load the observation dictionary
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dict_2 = None
+            for value in obs_config_2:
+                if value['obs space']['name'] == obs_long_name:
+                    observation_dict_2 = value.copy()
+
+            if observation_dict_1 is None or observation_dict_2 is None:
+                continue
 
             # Check if IODA observation input and output have non-zero location dimensions
-            use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                observation_dict, self.cycle_time_dto(), input_and_output=True)
+            use_obs_1 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
+                                  observation_dict_1, self.cycle_time_dto(), input_and_output=True)
+
+            use_obs_2 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
+                                  observation_dict_2, self.cycle_time_dto(), input_and_output=True)
+
+            use_obs = use_obs_1 and use_obs_2
 
             if not use_obs:
                 continue
 
             # Split the full path into path and filename
-            obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
-            cycle_dir, obs_file = os.path.split(obs_path_file)
+            obs_path_file_1 = observation_dict_1['obs space']['obsdataout']['engine']['obsfile']
+            cycle_dir_1, obs_file_1 = os.path.split(obs_path_file_1)
+
+            # Split the full path into path and filename
+            obs_path_file_2 = observation_dict_2['obs space']['obsdataout']['engine']['obsfile']
+            cycle_dir_2, obs_file_2 = os.path.split(obs_path_file_2)
 
             # Check for need to add 0000 to the file
             # --------------------------------------
-            if not os.path.exists(obs_path_file):
-                obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
+            if not os.path.exists(obs_path_file_1):
+                obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file_1)
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
                 if not os.path.exists(obs_path_file_0000):
-                    self.logger.abort(f'No observation file found for {obs_path_file} or ' +
+                    self.logger.abort(f'No observation file found for {obs_path_file_1} or ' +
                                       f'{obs_path_file_0000}')
-                obs_path_file = obs_path_file_0000
+                obs_path_file_1 = obs_path_file_0000
+
+            # Check for need to add 0000 to the file
+            # --------------------------------------
+            if not os.path.exists(obs_path_file_2):
+                obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file_2)
+                obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
+                if not os.path.exists(obs_path_file_0000):
+                    self.logger.abort(f'No observation file found for {obs_path_file_2} or ' +
+                                      f'{obs_path_file_0000}')
+                obs_path_file_2 = obs_path_file_0000
 
             # Get instrument ioda and full name
             # ---------------------------------
@@ -129,41 +195,48 @@ class EvaObservations(taskBase):
             # -------------------------------------------------
             eva_override = {}
             eva_override['cycle_dir'] = self.cycle_dir()
-            eva_override['obs_path_file'] = obs_path_file
+            eva_override['obs_path_file_1'] = obs_path_file_1
+            eva_override['obs_path_file_2'] = obs_path_file_2
             eva_override['instrument'] = ioda_name
             eva_override['instrument_title'] = full_name
             eva_override['simulated_variables'] = \
-                observation_dict['obs space']['simulated variables']
+                observation_dict_1['obs space']['simulated variables']
             eva_override['map_projection'] = 'plcarr'
             eva_override['domain'] = 'global'
+            eva_override['experiment_id_1'] = experiment_id_1
+            eva_override['experiment_id_2'] = experiment_id_2
+
+            eva_override['experiment_tag_1'] = experiment_tag_1
+            eva_override['experiment_tag_2'] = experiment_tag_2
 
             # If filename contains icec_ change map projection to polar stereographic
             # -----------------------------------------------------------------------
-            if 'icec_' in obs_file:
+            if 'icec_' in obs_file_1:
                 eva_override['map_projection'] = 'npstere'
                 eva_override['domain'] = 'north'
+
                 # if file name has 'south" or "sh" then change to south polar stereographic
                 # ---------------------------------------------------------------
-                if 'south' in obs_file or 'sh' in obs_file:
+                if 'south' in obs_file_1 or 'sh' in obs_file_1:
                     eva_override['map_projection'] = 'spstere'
                     eva_override['domain'] = 'south'
 
             # # Check if the "passivate" condition exists within the "obs filters" list
             passivate_exists = any(
                 filter_item.get('action', {}).get('name') == 'passivate'
-                for filter_item in observation_dict.get('obs filters', [])
+                for filter_item in observation_dict_1.get('obs filters', [])
             )
 
             if passivate_exists:
                 self.logger.info("Condition 'passivate' exists in 'obs filters'")
                 eva_override['passivated_variables'] = True
 
-            if 'channels' in observation_dict['obs space']:
+            if 'channels' in observation_dict_1['obs space']:
                 need_channels = True
                 if observation in channels_to_plot:
                     eva_override['channels'] = channels_to_plot[observation]
                 else:
-                    eva_override['channels'] = observation_dict['obs space']['channels']
+                    eva_override['channels'] = observation_dict_1['obs space']['channels']
             else:
                 need_channels = False
                 eva_override['channels'] = ''
@@ -172,7 +245,7 @@ class EvaObservations(taskBase):
             # Override the eva dictionary
             # ---------------------------
             eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-            eva_dict = yaml.load(eva_str)
+            eva_dict = yaml.safe_load(eva_str)
 
             # Remove channel keys if not needed
             # ---------------------------------
@@ -186,9 +259,7 @@ class EvaObservations(taskBase):
             conf_output = os.path.join(self.cycle_dir(), 'eva', ioda_name, ioda_name+'_eva.yaml')
             os.makedirs(os.path.dirname(conf_output), exist_ok=True)
             with open(conf_output, 'w') as outfile:
-                # dont sort the mappings to preserve the order in the output yaml
-                yaml.sort_base_mapping_type_on_output = False
-                yaml.dump(eva_dict, outfile)
+                yaml.dump(eva_dict, outfile, default_flow_style=False)
 
             # Add eva dictionary to list
             # --------------------------

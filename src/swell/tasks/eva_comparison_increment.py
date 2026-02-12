@@ -9,7 +9,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 import glob
 
 from eva.eva_driver import eva
@@ -17,6 +17,7 @@ from eva.eva_driver import eva
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
+from swell.utilities.comparisons import comparison_tags, experiment_ids
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,8 +28,9 @@ class EvaComparisonIncrement(taskBase):
 
         config_file = os.path.join(os.path.dirname(path), 'experiment.yaml')
 
+        yaml = YAML(typ='safe')
         with open(config_file, 'r') as f:
-            config_dict = yaml.safe_load(f)
+            config_dict = yaml.load(f)
 
         window_type = config_dict['models'][self.get_model()]['window_type']
         window_length = config_dict['models'][self.get_model()]['window_length']
@@ -47,9 +49,16 @@ class EvaComparisonIncrement(taskBase):
 
         # Get the paths for the two experiments
         experiment_paths = self.config.comparison_experiment_paths()
+        print(experiment_paths)
+        experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
 
-        experiment_path_1 = experiment_paths[0]
-        experiment_path_2 = experiment_paths[1]
+        experiment_tag_1 = list(experiment_tag_paths.keys())[0]
+        experiment_tag_2 = list(experiment_tag_paths.keys())[1]
+
+        experiment_path_1 = list(experiment_tag_paths.values())[0]
+        experiment_path_2 = list(experiment_tag_paths.values())[1]
+
+        experiment_id_1, experiment_id_2 = experiment_ids(experiment_paths)
 
         window_type, window_length = self.window_info_from_config(experiment_path_1)
 
@@ -119,9 +128,16 @@ class EvaComparisonIncrement(taskBase):
         eva_override['increment_file_path_1'] = increment_file_path_1
         eva_override['increment_file_path_2'] = increment_file_path_2
 
+        eva_override['experiment_tag_1'] = experiment_tag_1
+        eva_override['experiment_tag_2'] = experiment_tag_2
+
+        eva_override['experiment_id_1'] = experiment_id_1
+        eva_override['experiment_id_2'] = experiment_id_2
+
         # Override the eva dictionary
         eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-        eva_dict = yaml.safe_load(eva_str)
+        yaml = YAML(typ='safe')
+        eva_dict = yaml.load(eva_str)
 
         # Write eva dictionary to file
         # ----------------------------
@@ -130,7 +146,7 @@ class EvaComparisonIncrement(taskBase):
 
         os.makedirs(os.path.dirname(conf_output), exist_ok=True)
         with open(conf_output, 'w') as outfile:
-            yaml.dump(eva_dict, outfile, default_flow_style=False)
+            yaml.dump(eva_dict, outfile)
 
         # Call eva
         # --------
