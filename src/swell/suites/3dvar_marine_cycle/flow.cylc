@@ -44,11 +44,10 @@
             BuildJediByLinking:fail? => BuildJedi
 
             # Need first set of restarts to run model
-            # GetGeosRestart => PrepGeosRunDir
-            GetCoupledGeosRestart => PrepGeosRunDir
+            GetCoupledGeosRestart => PrepCoupledGeosRunDir
 
             # Model cannot run without code
-            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+            BuildGeosByLinking? | BuildGeos => RunGeos
 
             {% for model_component in model_components %}
 
@@ -65,18 +64,17 @@
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
 
-            # Model things
+            # Model preperation
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepGeosRunDir
-            PrepGeosRunDir => RunGeosExecutable
+            MoveEraseDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepCoupledGeosRunDir
+            PrepCoupledGeosRunDir => RunGeos
 
             # Run the analysis
-            # RunGeosExecutable => StageJediCycle-{{model_component}}
-            RunGeosExecutable => LinkGeosOutput-{{model_component}}
-            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+            RunGeos => LinkCoupledGeosOutput-{{model_component}}
+            LinkCoupledGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
-            # Data assimilation things
+            # Data assimilation preperation
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -100,8 +98,8 @@
             PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
-            # Move restart to next cycle
-            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # Move restart to next cycle and then erase current forecast folder
+            SaveRestart-{{model_component}} => MoveEraseDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -166,13 +164,13 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[RunGeosExecutable]]
-        script = "swell task RunGeosExecutable $config -d $datetime"
+    [[RunGeos]]
+        script = "{{experiment_path}}/GEOSgcm/forecast/gcm_run.j"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunGeosExecutable"]["execution_time_limit"]}}
-        execution retry delays = 2*PT1M
+        [[[job]]]
+            shell = /bin/csh
         [[[directives]]]
-        {%- for key, value in scheduling["RunGeosExecutable"]["directives"]["all"].items() %}
+        {%- for key, value in scheduling["RunGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 
@@ -187,11 +185,11 @@
 
     {% for model_component in model_components %}
 
-    [[LinkGeosOutput-{{model_component}}]]
-        script = "swell task LinkGeosOutput $config -d $datetime -m {{model_component}}"
+    [[LinkCoupledGeosOutput-{{model_component}}]]
+        script = "swell task LinkCoupledGeosOutput $config -d $datetime -m {{model_component}}"
 
-    [[MoveDaRestart-{{model_component}}]]
-        script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
+    [[MoveEraseDaRestart-{{model_component}}]]
+        script = "swell task MoveEraseDaRestart $config -d $datetime -m {{model_component}}"
 
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
@@ -206,7 +204,6 @@
         script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
         execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
-        execution retry delays = 2*PT1M
         [[[directives]]]
         {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
@@ -253,8 +250,8 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    # [[SaveRestart-{{model_component}}]]
-    #     script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[SaveObsDiags-{{model_component}}]]
         script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"

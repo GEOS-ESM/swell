@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_coupled_cycle_tier1 = QuestionList(
-        list_name="3dfgat_coupled_cycle",
+    _3dfgat_marine_cycle = QuestionList(
+        list_name="3dfgat_marine_cycle",
         questions=[
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
@@ -31,6 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
             qd.model_components(['geos_marine']),
+            qd.comparison_log_type('fgat'),
         ],
         geos_marine=[
             qd.cycle_times([
@@ -86,10 +87,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_coupled_cycle = QuestionList(
-        list_name="3dfgat_coupled_cycle",
+    _3dfgat_marine_cycle_tier1 = QuestionList(
+        list_name="3dfgat_marine_cycle_tier1",
         questions=[
-            _3dfgat_coupled_cycle_tier1
+            _3dfgat_marine_cycle
         ]
     )
 

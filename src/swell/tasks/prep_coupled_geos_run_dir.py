@@ -11,8 +11,6 @@ import os
 import isodate
 import re
 
-from datetime import datetime as dt
-
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
