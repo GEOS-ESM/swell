@@ -18,7 +18,7 @@ from swell.utilities.file_system_operations import move_files
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveEraseDaRestart(taskBase):
+class MoveDaRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -26,8 +26,8 @@ class MoveEraseDaRestart(taskBase):
 
         """
         Moving restart files (i.e., _checkpoint) to the next cycle directory.
-        One way is using AGCM.rc checkpoint option. This creates time stamped _checkpoint
-        files requiring additional filename handling.
+        One way is using AGCM.rc checkpoint option called RECORD_FREQUENCY. This creates time
+        stamped _checkpoint files in scratch directory requiring additional filename handling.
 
         The reason this is a separate task than MoveForecast is that the use of
         "window_length" will require model argument input.
@@ -57,6 +57,7 @@ class MoveEraseDaRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def move_restarts(self) -> None:
+        """Moves GEOS checkpoint restarts from scratch to the forecast directory."""
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------

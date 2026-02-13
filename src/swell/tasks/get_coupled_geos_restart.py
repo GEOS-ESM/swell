@@ -94,6 +94,11 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def initial_restarts(self, geos_expdir_path: str) -> None:
+        """Determines the method for obtaining initial restarts and executes it.
+
+        Args:
+            geos_expdir_path (str): Path to the source GEOS experiment directory.
+        """
 
         # Coupled GEOS restarts can be obtained from:
         # 1) a GEOS experiment directory
@@ -111,7 +116,7 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def initial_restarts_from_directory(self, geos_expdir_path: str) -> None:
-        """Determines the method for obtaining initial restarts and executes it.
+        """Copies GEOS restarts from an existing GEOS experiment directory.
 
         Args:
             geos_expdir_path (str): Path to the source GEOS experiment directory.
@@ -159,6 +164,7 @@ class GetCoupledGeosRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def initial_restarts_from_r2d2(self) -> None:
+        """Obtains GEOS restarts from R2D2 (not yet implemented)."""
 
         # GEOS restarts can be obtained from R2D2
         # --------------------------------------
