@@ -163,7 +163,7 @@ class RunJediEtkfObserver(taskBase):
             localization = [horizLoc]
             observer.update({'obs localizations': localization})
             observer['obs space'].update(
-                {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                {'distribution': {'name': 'RoundRobin', 'halo size': 1500.e3}})
 
         # change variational bc to static bc
         # -------------------------------------------------------------------

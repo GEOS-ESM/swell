@@ -125,11 +125,11 @@ class RunJediEtkfSolver(taskBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_etkf_solver_config.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_etkf_solver_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -170,7 +170,7 @@ class RunJediEtkfSolver(taskBase):
             localization = [horizLoc]
             observer.update({'obs localizations': localization})
             observer['obs space'].update(
-                {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                {'distribution': {'name': 'Halo', 'halo size': 1500.e3}})
 
         # change variational bc to static bc
         # -------------------------------------------------------------------
@@ -194,15 +194,7 @@ class RunJediEtkfSolver(taskBase):
             obs['obs space']['obsdatain']['engine']['obsfile'] = obs_file_read
             dir_path = os.path.dirname(obs_file_read)
             file_name = os.path.basename(obs_file_read)
-            obs['obs space']['obsdataout']['engine']['obsfile'] = os.path.join
-            (dir_path, 'solver.' + file_name)
-
-        # bypass the writing of HofXs
-        # ---------------------------
-        bypass_HofXs = True
-        if bypass_HofXs:
-            for observer in jedi_config_dict['observations']['observers']:
-                del observer['obs space']['obsdataout']
+            obs['obs space']['obsdataout']['engine']['obsfile'] = os.path.join(dir_path, 'solver.' + file_name)
 
         with open(jedi_config_file, 'w') as f:
             yaml.dump(jedi_config_dict, f)
@@ -212,7 +204,7 @@ class RunJediEtkfSolver(taskBase):
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
         np = eval(str(model_component_meta['total_processors']))
-        perhost = self.config.perhost()
+        perhost = self.config.perhost(None)
         if not generate_yaml_and_exit:
             run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                            jedi_config_file, output_log_file, perhost=perhost)
