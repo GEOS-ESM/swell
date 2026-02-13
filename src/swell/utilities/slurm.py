@@ -77,6 +77,7 @@ def prepare_scheduling_dict(
         'BuildJedi',
         'BuildGeos',
         'EvaObservations',
+        'EvaComparisonObservations',
         'EvaTimeseries',
         'GenerateBClimatology',
         'RunJediEnsembleMeanVariance',
