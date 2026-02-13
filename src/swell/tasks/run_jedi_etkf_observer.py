@@ -163,7 +163,7 @@ class RunJediEtkfObserver(taskBase):
             localization = [horizLoc]
             observer.update({'obs localizations': localization})
             observer['obs space'].update(
-                {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                {'distribution': {'name': 'RoundRobin', 'halo size': 1500.e3}})
 
         # change variational bc to static bc
         # -------------------------------------------------------------------
@@ -186,7 +186,7 @@ class RunJediEtkfObserver(taskBase):
 
         observers = jedi_config_dict["observations"]["observers"]
         npx = 1
-        npy = 2
+        npy = 1
         np = 6 * npx * npy
         cmd = """
         export SLURM_MPI_TYPE=pmi2
@@ -215,8 +215,8 @@ class RunJediEtkfObserver(taskBase):
         assert np_use <= np_total, error_msg
 
         if not generate_yaml_and_exit:
-            subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL,
-                           stderr=subprocess.DEVNULL, check=True)
+            subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, check=True)
         else:
             print(f'intended mpi_command = {cmd}')
             self.logger.info('YAML generated, now exiting.')
