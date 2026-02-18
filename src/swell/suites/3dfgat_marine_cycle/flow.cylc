@@ -68,7 +68,7 @@
             # Model preperation
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveEraseDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepCoupledGeosRunDir
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepCoupledGeosRunDir
             PrepCoupledGeosRunDir => RunGeos
 
             # Run the analysis
@@ -100,7 +100,7 @@
             {% endif %}
 
             # Move restart to next cycle and then erase current forecast folder
-            SaveRestart-{{model_component}} => MoveEraseDaRestart-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
             # Save analysis output
             # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
@@ -181,8 +181,8 @@
     [[LinkCoupledGeosOutput-{{model_component}}]]
         script = "swell task LinkCoupledGeosOutput $config -d $datetime -m {{model_component}}"
 
-    [[MoveEraseDaRestart-{{model_component}}]]
-        script = "swell task MoveEraseDaRestart $config -d $datetime -m {{model_component}}"
+    [[MoveDaRestart-{{model_component}}]]
+        script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
 
     [[StageJedi-{{model_component}}]]
         script = "swell task StageJedi $config -m {{model_component}}"
