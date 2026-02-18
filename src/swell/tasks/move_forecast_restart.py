@@ -9,7 +9,6 @@
 
 import os
 import glob
-from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files

@@ -162,7 +162,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # Set AGCM.rc record ref_date to fcst start time
         # RECORD_FREQUENCY is used for dropping restart files at specific intervals
         # The values needs to be rewrittent according to the forecast and DA window lengths
-        # TODO: This may need rethinking for forecast_geos vs cycle cases
+        # TODO: This may need rethinking for forecast_coupled_geos vs cycle cases
         # ------------------------------------------------------------
         if 'RECORD_FREQUENCY' in self.agcm_dict:
             self.rewrite_agcm(self.agcm_dict, self.forecast_dir('AGCM.rc'))

@@ -13,7 +13,7 @@ import glob
 import isodate
 import os
 import re
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime_util import datetime_formats
@@ -40,36 +40,6 @@ class Geos():
 
         self.logger = logger
         self.forecast_dir = forecast_dir
-
-    # ----------------------------------------------------------------------------------------------
-
-    def adjacent_cycle(
-        self,
-        offset: str,
-        return_date: bool = False
-    ) -> Union[str, datetime.datetime]:
-
-        # Basename consists of swell datetime and model
-        # ---------------------------------------------
-        dt_str = os.path.basename(os.path.dirname(self.forecast_dir))
-        dt_obj = datetime.datetime.strptime(dt_str, datetime_formats['directory_format'])
-
-        # Modify datetime by using date offset
-        # ------------------------------------
-        modified_dt_obj = dt_obj + isodate.parse_duration(offset)
-
-        if return_date:
-            return modified_dt_obj
-
-        # Replace datetime section in the basename with the modified datetime string
-        # -----------------------------------------------------------------
-        modified_dt_str = modified_dt_obj.strftime(datetime_formats['directory_format'])
-
-        # Create new file path with modified basename
-        # --------------------------------------------
-        adj_cycle_dir = self.forecast_dir.replace(dt_str, modified_dt_str)
-
-        return adj_cycle_dir
 
     # ----------------------------------------------------------------------------------------------
 
