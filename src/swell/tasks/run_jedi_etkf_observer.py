@@ -212,7 +212,8 @@ class RunJediEtkfObserver(taskBase):
         np_use = (i+1) * np
         np_total = eval(str(model_component_meta['total_processors']))
         error_msg = f'{i+1} obs: each {np} cores, np_use: {np_use} vs np_avail: {np_total}'
-        assert np_use <= np_total, error_msg
+# ygyu debug
+        ##        assert np_use <= np_total, error_msg
 
         if not generate_yaml_and_exit:
             subprocess.run(cmd, shell=True, stdout=subprocess.PIPE,

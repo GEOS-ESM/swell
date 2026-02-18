@@ -61,6 +61,11 @@ class GetEnsembleGeosExperiment(taskBase):
         # ----------------------------
         background_time_offset_dur = isodate.parse_duration(background_time_offset)
 
+        # ygyu check
+        print( f'self.cycle_time_dto() = {self.cycle_time_dto()}')
+        print( f'background_time_offset_dur = {background_time_offset_dur}')
+#        exit()
+        
         # Get the ensemble experiment start time
         # -----------------------------------------
         bkg_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
