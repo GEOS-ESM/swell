@@ -1039,7 +1039,7 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class npy(TaskQuestion): 
+    class npy(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "npy"
         ask_question: bool = True
