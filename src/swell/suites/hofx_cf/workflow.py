@@ -7,8 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import yaml
-
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
@@ -18,7 +16,7 @@ from swell.tasks.base.task_attributes import task_attributes as ta
 template_str = '''
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for running comparison tests on completed experiments
+# Cylc suite for executing JEDI-based h(x)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -35,17 +33,55 @@ template_str = '''
     runahead limit = {{runahead_limit}}
 
     [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+        """
+
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-            {% for path in comparison_experiment_paths %}
-            JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
-            {% endfor %}
-            JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => comparison_fail
+
+            # Task triggers for: {{model_component}}
+            # ------------------
+
+            # Get background
+            GetBackground-{{model_component}}
+
+            # Get observations
+            GetObservations-{{model_component}}
+
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
+            # Run Jedi hofx executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+
+            # EvaObservations
+            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # Save feedback
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            CleanCycle-{{model_component}}
+
         {% endif %}
         {% endfor %}
         """
@@ -58,15 +94,12 @@ template_str = '''
     # Task defaults
     # -------------
 
-    [[comparison_fail]]
-        script = "exit 1"
-
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
 
 
-class Workflow_compare(CylcWorkflow):
+class Workflow_hofx_cf(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
@@ -78,33 +111,24 @@ class Workflow_compare(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+
         return workflow_str
 
     def set_tasks(self) -> list:
 
-        paths = self.experiment_dict['comparison_experiment_paths']
-
-        for path in paths:
-            with open(path, 'r') as f:
-                config_dict = yaml.safe_load(f)
-            for model in self.experiment_dict['model_components']:
-                num_of_iterations = config_dict['models'][model]['number_of_iterations']
-
-                self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
-
         self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.BuildJedi())
 
         for model in self.experiment_dict['model_components']:
-            self.tasks.append(ta.EvaComparisonObservations(model=model))
-            self.tasks.append(ta.EvaComparisonIncrement(model=model))
-            self.tasks.append(ta.EvaComparisonJediLog(model=model))
-            self.tasks.append(ta.JediLogComparison(model=model))
-
-            for i, path in enumerate(paths):
-                log_parser = ta.JediOopsLogParser(model=model)
-                log_parser.scheduling_name = f'JediOopsLogParser-{model}-{i}'
-                log_parser.script = (f'swell task JediOopsLogParser {paths[i]}'
-                                     f' -d $datetime -m {model}')
-                self.tasks.append(log_parser)
+            self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.GetBackground(model=model))
+            self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
+            self.tasks.append(ta.RunJediHofxExecutable(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
 
 # --------------------------------------------------------------------------------------------------

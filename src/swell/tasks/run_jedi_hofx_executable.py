@@ -113,6 +113,8 @@ class RunJediHofxExecutable(taskBase):
         self.jedi_rendering.add_key('npx_proc', self.config.npx_proc(None))
         self.jedi_rendering.add_key('npy_proc', self.config.npy_proc(None))
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
+        self.jedi_rendering.add_key('npx', self.config.npx(None))
+        self.jedi_rendering.add_key('npy', self.config.npy(None))
 
         # Observations
         # ------------

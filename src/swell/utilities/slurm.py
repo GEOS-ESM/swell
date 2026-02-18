@@ -78,6 +78,7 @@ def prepare_slurm_defaults_and_overrides(
         })
         if slurm_invalid_keys:
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
+
     else:
         slurm_overrides = {}
 

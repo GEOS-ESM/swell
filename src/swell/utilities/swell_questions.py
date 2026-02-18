@@ -138,6 +138,7 @@ class QuestionList:
     list_name: str = ''
 
     geos_atmosphere: list = mutable_field([])
+    geos_cf: list = mutable_field([])
     geos_marine: list = mutable_field([])
 
     # --------------------------------------------------------------------------------------------------
