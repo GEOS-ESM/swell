@@ -10,10 +10,11 @@
 
 import copy
 import datetime
+import io
 import os
 import shutil
 import sys
-import yaml
+from ruamel.yaml import YAML
 from typing import Union, Optional
 
 from swell.suites.all_suites import AllSuites
@@ -46,7 +47,8 @@ def clone_config(
 
     # Open the target experiment YAML. It will be used as the override
     with open(configuration, 'r') as f:
-        override_dict = yaml.safe_load(f)
+        yaml = YAML(typ='safe')
+        override_dict = yaml.load(f)
 
     # Check that override_dict has a suite key and get the suite name
     if 'suite_to_run' not in override_dict:
@@ -80,6 +82,9 @@ def prepare_config(
     # Create a logger
     # ---------------
     logger = get_logger('SwellPrepSuiteConfig')
+
+    yaml = YAML(typ='safe')
+    yaml.default_flow_style = False
 
     # Assert valid method
     # -------------------
@@ -123,6 +128,8 @@ def prepare_config(
         final_cycle_point = experiment_dict['final_cycle_point']
         if experiment_dict['start_cycle_point'] is None:
             config_list = experiment_dict['comparison_experiment_paths']
+            if isinstance(config_list, dict):
+                config_list = list(config_list.values())
             for model in experiment_dict['model_components']:
                 cycle_times = experiment_dict['models'][model]['cycle_times']
                 start_cycle_point, final_cycle_point, cycle_times = check_da_params(
@@ -146,7 +153,7 @@ def prepare_config(
         logger.info(f"Reading SLURM directives from {slurm}.")
         assert os.path.exists(slurm)
         with open(slurm, "r") as slurmfile:
-            slurm_dict = yaml.safe_load(slurmfile)
+            slurm_dict = yaml.load(slurmfile)
         # Ensure that SLURM dict is _only_ used for SLURM directives.
         slurm_invalid_keys = set(slurm_dict.keys()).difference({
             "slurm_directives_global",
@@ -158,13 +165,17 @@ def prepare_config(
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
     experiment_dict_string = os.path.expandvars(experiment_dict_string)
-    experiment_dict = yaml.safe_load(experiment_dict_string)
+    experiment_dict = yaml.load(experiment_dict_string)
 
     # Add comments to dictionary
     # --------------------------
-    experiment_dict_string = yaml.dump(experiment_dict, default_flow_style=False, sort_keys=False)
+    output = io.StringIO()
+    yaml.dump(experiment_dict, output)
+    experiment_dict_string = output.getvalue()
 
     experiment_dict_string_comments = add_comments_to_dictionary(logger, experiment_dict_string,
                                                                  comment_dict)
@@ -202,7 +213,8 @@ def create_experiment_directory(
 
     # Load the string using yaml
     # --------------------------
-    experiment_dict = yaml.safe_load(experiment_dict_str)
+    yaml = YAML(typ='safe')
+    experiment_dict = yaml.load(experiment_dict_str)
 
     # Experiment ID and root from the user input
     # ------------------------------------------

@@ -15,6 +15,16 @@ import isodate
 import os
 import r2d2
 
+# --------------------------------------------------------------------------------------------------
+
+r2d2_model_dict = {
+    'geos_atmosphere': 'geos',
+    'geos_marine': 'mom6',  # 'mom6_cice6_UFS'
+    'geos_cf': 'geos_cf',
+}
+
+
+# --------------------------------------------------------------------------------------------------
 
 class GetBackground(taskBase):
 

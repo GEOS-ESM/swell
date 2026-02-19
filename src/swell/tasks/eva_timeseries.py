@@ -12,7 +12,7 @@ from multiprocessing import Pool
 from datetime import datetime as dt
 import isodate
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
 
@@ -116,6 +116,8 @@ class EvaTimeseries(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
+        yaml = YAML(typ='safe')
+
         for observation in self.config.observations():
 
             # Load the observation dictionary
@@ -178,7 +180,7 @@ class EvaTimeseries(taskBase):
                 eva_override['channel'] = ''
 
             eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-            eva_dict = yaml.safe_load(eva_str)
+            eva_dict = yaml.load(eva_str)
 
             # Remove channel keys if not needed
             # ---------------------------------
@@ -192,7 +194,7 @@ class EvaTimeseries(taskBase):
             conf_output = os.path.join(self.cycle_dir(), 'eva', ioda_name, ioda_name+'_eva.yaml')
             os.makedirs(os.path.dirname(conf_output), exist_ok=True)
             with open(conf_output, 'w') as outfile:
-                yaml.dump(eva_dict, outfile, default_flow_style=False, sort_keys=False)
+                yaml.dump(eva_dict, outfile)
 
             # Add eva dictionary to list
             # --------------------------

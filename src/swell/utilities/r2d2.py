@@ -8,7 +8,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.utilities.logger import Logger
 
@@ -102,8 +102,9 @@ def load_r2d2_credentials(
     if os.path.exists(yaml_path):
         logger.info(f"Loading R2D2 v3 credentials from {yaml_path}")
         try:
+            yaml = YAML(typ='safe')
             with open(yaml_path, 'r') as yaml_file:
-                credentials = yaml.safe_load(yaml_file)
+                credentials = yaml.load(yaml_file)
         except Exception as e:
             logger.error(f"Error loading R2D2 credentials from {yaml_path}: {e}")
             logger.info("Continuing with existing environment variables...")

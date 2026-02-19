@@ -194,6 +194,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    EvaComparisonObservations = QuestionList(
+        list_name="EvaComparisonObservations",
+        questions=[
+            qd.comparison_log_type(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     EvaIncrement = QuestionList(
         list_name="EvaIncrement",
         questions=[
@@ -435,6 +444,19 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.produce_geovals(),
             qd.single_observations(),
             qd.window_length()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    IngestObs = QuestionList(
+        list_name="IngestObs",
+        questions=[
+            qd.dry_run(),
+            qd.obs_to_ingest(),
+            qd.r2d2_local_path(),
+            qd.window_length(),
+            # qd.window_offset(),
         ]
     )
 

@@ -8,7 +8,7 @@
 
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
 from swell.utilities.logger import Logger
@@ -18,9 +18,10 @@ from swell.utilities.logger import Logger
 
 # Read observation_ioda_names.yaml
 def get_ioda_names_list() -> list:
+    yaml = YAML(typ='safe')
     with open(os.path.join(get_swell_path(), 'configuration', 'jedi',
                            'observation_ioda_names.yaml'), 'r') as f:
-        ioda_dict = yaml.safe_load(f)
+        ioda_dict = yaml.load(f)
 
     ioda_names_list = ioda_dict['ioda instrument names']
 
@@ -42,6 +43,10 @@ def get_provider_for_observation(observation: str,
                 logger.abort(f'No provider found for observation {observation} in ' +
                              'observation_ioda_names.yaml')
 
+    logger.abort(f'Observation {observation} not found in ' +
+                 'observation_ioda_names.yaml')
+
+
 # ------------------------------------------------------------------------------------------------
 
 
@@ -54,8 +59,9 @@ def ioda_name_to_long_name(ioda_name: str, logger: Logger) -> str:
     obs_ioda_names_file = os.path.join(jedi_configuration_path, 'observation_ioda_names.yaml')
 
     # Open file and convert to dictionary
+    yaml_config = YAML(typ='safe')
     with open(obs_ioda_names_file, 'r') as obs_ioda_names_str:
-        obs_ioda_names_dict = yaml.safe_load(obs_ioda_names_str)
+        obs_ioda_names_dict = yaml_config.load(obs_ioda_names_str)
 
     # Get the list of ioda instrument names
     obs_ioda_names = obs_ioda_names_dict['ioda instrument names']

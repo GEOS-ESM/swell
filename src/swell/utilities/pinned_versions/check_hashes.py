@@ -1,5 +1,5 @@
 import os
-import yaml
+from ruamel.yaml import YAML
 import subprocess
 from pathlib import Path
 import importlib.resources
@@ -19,7 +19,8 @@ def check_hashes(jedi_bundle_loc: str, logger: Logger) -> None:
     pinned_vers_path = get_pinned_vers_path()
     # Loaded pinned_versions into dict
     with open(pinned_vers_path) as stream:
-        pinned_vers = yaml.safe_load(stream)
+        yaml = YAML(typ='safe')
+        pinned_vers = yaml.load(stream)
 
     incorrect_hash = []
     for repo_dict in pinned_vers:
