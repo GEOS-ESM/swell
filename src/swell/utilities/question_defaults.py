@@ -1025,7 +1025,8 @@ class QuestionDefaults():
         question_name: str = "npx_proc"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "geos_atmosphere",
+            "geos_cf"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
         widget_type: WType = WType.INTEGER
@@ -1038,7 +1039,8 @@ class QuestionDefaults():
         question_name: str = "npy_proc"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "geos_atmosphere",
+            "geos_cf"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
         widget_type: WType = WType.INTEGER
