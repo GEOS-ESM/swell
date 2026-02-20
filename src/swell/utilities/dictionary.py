@@ -122,7 +122,7 @@ def add_comments_to_dictionary(
 def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: str) -> object:
 
     # Convert dictionary to string
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.default_flow_style = False
     stream = io.StringIO()
     yaml.dump(dictionary, stream)
@@ -141,7 +141,7 @@ def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: s
 def write_dict_to_yaml(dictionary: dict, file: str) -> None:
 
     # Convert dictionary to YAML string
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.default_flow_style = False
     with open(file, 'w') as file_open:
         yaml.dump(dictionary, file_open)
