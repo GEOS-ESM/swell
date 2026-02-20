@@ -66,9 +66,9 @@ class PrepCoupledGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
-        # IAU augment
-        # -----------
-        if 'geos_marine' in self.config.model_components():
+        # IAU augment for MOM6
+        # --------------------
+        if 'geos_marine' == self.get_model():
             self.mom6_iau()
 
         # Modify input.nml if not cold start (default)
