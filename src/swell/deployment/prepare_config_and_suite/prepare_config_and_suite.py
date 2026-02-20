@@ -231,7 +231,8 @@ class PrepareExperimentConfigAndSuite:
         if 'cycle_times' in self.question_dictionary_model_ind.keys():
             if not self.suite_needs_model_components:
                 self.question_dictionary_model_ind['cycle_times'].pop('models')
-                self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
+                if self.question_dictionary_model_ind['cycle_times']['default_value'] == 'defer_to_model':
+                    self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
 
         # At this point we can return if there are no model components
         if not self.suite_needs_model_components:
