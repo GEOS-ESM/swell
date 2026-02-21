@@ -14,12 +14,12 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 def analysis(template_dict: Mapping) -> Mapping:
     analysis = {
-        'filetype': 'cube sphere history',
-        'provider': 'geos',
+        'filetype': 'auxgrid',
+        'gridtype': 'latlon',
         'datapath': template_dict['cycle_dir'],
-        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-        'first': 'PT0H',
-        'frequency': 'PT1H',
+        'filename': f'{template_dict["experiment_id"]}.analysis.',
+#        'first': 'PT0H',
+#        'frequency': 'PT1H',
         'field io names': field_io_names,
     }
 
