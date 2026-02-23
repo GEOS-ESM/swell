@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_coupled_cycle_tier1 = QuestionList(
-        list_name="3dfgat_coupled_cycle",
+    _3dfgat_marine_cycle = QuestionList(
+        list_name="3dfgat_marine_cycle",
         questions=[
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
@@ -31,6 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
             qd.model_components(['geos_marine']),
+            qd.comparison_log_type('fgat'),
         ],
         geos_marine=[
             qd.cycle_times([
@@ -86,10 +87,64 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_coupled_cycle = QuestionList(
-        list_name="3dfgat_coupled_cycle",
+    _3dfgat_marine_cycle_tier1 = QuestionList(
+        list_name="3dfgat_marine_cycle_tier1",
         questions=[
-            _3dfgat_coupled_cycle_tier1
+            _3dfgat_marine_cycle
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    _3dfgat_marine_cycle_tier2 = QuestionList(
+        list_name="3dfgat_marine_cycle_tier2",
+
+        questions=[
+            _3dfgat_marine_cycle,
+            qd.start_cycle_point("2023-07-02T12:00:00Z"),
+            qd.final_cycle_point("2023-07-04T12:00:00Z"),
+            qd.forecast_duration("P2D"),
+            qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/"
+                           "GEOS_v12_rc20/dataatm_025deg_access")
+        ],
+        geos_marine=[
+            qd.cycle_times([
+                "T12",
+            ]),
+            qd.analysis_variables([
+                "sea_water_salinity",
+                "sea_water_potential_temperature",
+                "sea_surface_height_above_geoid",
+                "sea_water_cell_thickness",
+                "sea_ice_area_fraction",
+                "sea_ice_thickness",
+                "sea_ice_snow_thickness"
+            ]),
+            qd.window_length("P1D"),
+            qd.horizontal_resolution("1440x1080"),
+            qd.vertical_resolution("75"),
+            qd.total_processors(720),
+            qd.observations([
+                "adt_cryosat2n",
+                "adt_jason3",
+                "adt_saral",
+                "adt_sentinel3a",
+                "adt_sentinel3b",
+                "insitu_profile_argo",
+                "icec_amsr2_north",
+                "icec_amsr2_south",
+                "icec_nsidc_nh",
+                "icec_nsidc_sh",
+                "sst_ostia",
+                "sss_smos",
+                "sss_smapv5",
+                "sst_abi_g16_l3c",
+                "sst_gmi_l3u",
+                "sst_viirs_n20_l3u",
+                "temp_profile_xbt"
+            ]),
+            qd.number_of_iterations([50]),
+            qd.background_time_offset("P1DT12H"),
         ]
     )
 

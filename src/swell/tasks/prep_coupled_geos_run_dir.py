@@ -11,8 +11,6 @@ import os
 import isodate
 import re
 
-from datetime import datetime as dt
-
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
@@ -68,40 +66,10 @@ class PrepCoupledGeosRunDir(taskBase):
         # ----------------
         self.get_static()
 
-        # Augment MOM_oda_incupd (IAU) with MOM_input IF mom6_iau is true and IF mom6_increment.nc
-        # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
-        # be present in the INPUT directory, so this step is skipped.
-        # --------------------------------------------------------------------------
-        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
-            if os.path.exists(self.forecast_dir('RESTART/mom6_increment.nc')):
-
-                self.logger.info('MOM6 Increment file found in RESTART directory')
-                self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
-
-                mom_input = self.forecast_dir('MOM_input')
-                mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
-                mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
-                # P50D is just a random input for get_key_for_model to function
-                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
-                                                                'PT50D')
-
-                # convert ISO to 3.0
-                duration = isodate.parse_duration(mom6_iau_nhours)
-                hours = duration.total_seconds() / 3600
-                mom6_config["ODA_INCUPD_NHOURS"] = hours
-
-                # Write the updated configuration back to a file
-                output_path = self.forecast_dir('MOM_oda_incupd')
-                self.geos.write_mom6_input(mom6_config, output_path)
-
-                with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
-                    mom_input_txt = inp_f.read()
-                    mom_oda_txt = append_f.read()
-
-                with open(mom_input, 'w') as out_f:
-                    out_f.write(mom_input_txt + mom_oda_txt)
-            else:
-                self.logger.warning('MOM6 Increment file was not found in RESTART directory')
+        # IAU augment for MOM6
+        # --------------------
+        if 'geos_marine' == self.get_model():
+            self.mom6_iau()
 
         # Modify input.nml if not cold start (default)
         # --------------------------------------------
@@ -164,7 +132,7 @@ class PrepCoupledGeosRunDir(taskBase):
         # Set AGCM.rc record ref_date to fcst start time
         # RECORD_FREQUENCY is used for dropping restart files at specific intervals
         # The values needs to be rewrittent according to the forecast and DA window lengths
-        # TODO: This may need rethinking for forecast_geos vs cycle cases
+        # TODO: This may need rethinking for forecast_coupled_geos vs cycle cases
         # ------------------------------------------------------------
         if 'RECORD_FREQUENCY' in self.agcm_dict:
             self.rewrite_agcm(self.agcm_dict, self.forecast_dir('AGCM.rc'))
@@ -219,6 +187,45 @@ class PrepCoupledGeosRunDir(taskBase):
         # Copy RC directory as a whole
         # ---------------------------------------------------
         copy_to_dst_dir(self.logger, os.path.join(self.geos_expdir, 'RC'), self.forecast_dir('RC'))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def mom6_iau(self) -> None:
+
+        # Augment MOM_oda_incupd (IAU) with MOM_input IF mom6_iau is true and IF mom6_increment.nc
+        # file is located inside the INPUT directory. At the first cycle, mom6_increment.nc may not
+        # be present in the INPUT directory, so this step is skipped.
+        # --------------------------------------------------------------------------
+        if self.config.get_key_for_model('mom6_iau', 'geos_marine', False):
+            if os.path.exists(self.forecast_dir('RESTART/mom6_increment.nc')):
+
+                self.logger.info('MOM6 Increment file found in RESTART directory')
+                self.logger.info('Augmenting MOM_oda_incupd with MOM_input')
+
+                mom_input = self.forecast_dir('MOM_input')
+                mom_oda_incupd = self.forecast_dir('MOM_oda_incupd')
+                mom6_config = self.geos.parse_mom6_input(mom_oda_incupd)
+                # P50D is just a random input for get_key_for_model to function
+                mom6_iau_nhours = self.config.get_key_for_model('mom6_iau_nhours', 'geos_marine',
+                                                                'PT50D')
+
+                # convert ISO to 3.0
+                duration = isodate.parse_duration(mom6_iau_nhours)
+                hours = duration.total_seconds() / 3600
+                mom6_config["ODA_INCUPD_NHOURS"] = hours
+
+                # Write the updated configuration back to a file
+                output_path = self.forecast_dir('MOM_oda_incupd')
+                self.geos.write_mom6_input(mom6_config, output_path)
+
+                with open(mom_input, 'r') as inp_f, open(mom_oda_incupd, 'r') as append_f:
+                    mom_input_txt = inp_f.read()
+                    mom_oda_txt = append_f.read()
+
+                with open(mom_input, 'w') as out_f:
+                    out_f.write(mom_input_txt + mom_oda_txt)
+            else:
+                self.logger.warning('MOM6 Increment file was not found in RESTART directory')
 
     # ----------------------------------------------------------------------------------------------
 

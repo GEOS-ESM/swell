@@ -35,7 +35,7 @@
             BuildGeosByLinking:fail? => BuildGeos
 
             # Need first set of restarts to run model
-            GetCoupledGeosRestart => PrepGeosRunDir
+            GetCoupledGeosRestart => PrepCoupledGeosRunDir
 
             # Get first set of restarts
             BuildGeosByLinking? | BuildGeos  => RunGeos
@@ -45,11 +45,11 @@
         {{cycle_time}} = """
 
             # Run Geos Executable
-            PrepGeosRunDir => RunGeos
-            MoveEraseForecastRestart[-PT6H] => PrepGeosRunDir
+            PrepCoupledGeosRunDir => RunGeos
+            MoveForecastRestart[-PT6H] => PrepCoupledGeosRunDir
 
             # Move restart to next cycle
-            RunGeos => MoveEraseForecastRestart
+            RunGeos => MoveForecastRestart
 
         """
         {% endfor %}
@@ -84,14 +84,14 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[PrepGeosRunDir]]
-        script = "swell task PrepGeosRunDir $config -d $datetime"
+    [[PrepCoupledGeosRunDir]]
+        script = "swell task PrepCoupledGeosRunDir $config -d $datetime"
 
     [[GetCoupledGeosRestart]]
         script = "swell task GetCoupledGeosRestart $config -d $datetime"
 
-    [[MoveEraseForecastRestart]]
-        script = "swell task MoveEraseForecastRestart $config -d $datetime"
+    [[MoveForecastRestart]]
+        script = "swell task MoveForecastRestart $config -d $datetime"
 
     [[SaveRestart]]
         script = "swell task SaveRestart $config -d $datetime"

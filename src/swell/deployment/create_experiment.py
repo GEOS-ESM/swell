@@ -47,7 +47,7 @@ def clone_config(
 
     # Open the target experiment YAML. It will be used as the override
     with open(configuration, 'r') as f:
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         override_dict = yaml.load(f)
 
     # Check that override_dict has a suite key and get the suite name
@@ -83,7 +83,7 @@ def prepare_config(
     # ---------------
     logger = get_logger('SwellPrepSuiteConfig')
 
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.default_flow_style = False
 
     # Assert valid method
@@ -213,7 +213,7 @@ def create_experiment_directory(
 
     # Load the string using yaml
     # --------------------------
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     experiment_dict = yaml.load(experiment_dict_str)
 
     # Experiment ID and root from the user input

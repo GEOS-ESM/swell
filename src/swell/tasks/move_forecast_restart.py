@@ -9,7 +9,6 @@
 
 import os
 import glob
-from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.file_system_operations import move_files
@@ -17,14 +16,16 @@ from swell.utilities.file_system_operations import move_files
 # --------------------------------------------------------------------------------------------------
 
 
-class MoveEraseForecastRestart(taskBase):
+class MoveForecastRestart(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
     def execute(self) -> None:
+        """Moves restart files to the next forecast cycle.
 
-        """
-        Moving restart files (i.e., _checkpoint) to the next cycle geosdir.
+        This involves moving _checkpoint files and marine model restarts
+        from the scratch directory to the forecast directory, and
+        renaming them as necessary.
         """
 
         self.logger.info('Moving GEOS restarts for the next forecast cycle')
@@ -47,6 +48,7 @@ class MoveEraseForecastRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def move_restarts(self) -> None:
+        """Moves GEOS checkpoint restarts from scratch to the forecast directory."""
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
@@ -62,7 +64,7 @@ class MoveEraseForecastRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def move_marine_restarts(self) -> None:
-        ''' Moving marine model restart files to the next forecast directory. '''
+        """Moves marine model restart files to the next forecast directory."""
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------

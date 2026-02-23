@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_cycle_tier1 = QuestionList(
-        list_name="3dfgat_cycle",
+    _3dvar_marine_cycle = QuestionList(
+        list_name="3dvar_marine_cycle",
         questions=[
             sq.marine,
             qd.start_cycle_point("2021-07-02T06:00:00Z"),
@@ -31,26 +31,16 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.jedi_build_method("use_existing"),
             qd.geos_build_method("use_existing"),
             qd.model_components(['geos_marine']),
-            qd.comparison_log_type('fgat'),
+            qd.comparison_log_type('variational'),
         ],
         geos_marine=[
             qd.cycle_times([
                 "T00",
                 "T06",
                 "T12",
-                "T18"
-            ]),
-            qd.analysis_variables([
-                "sea_water_salinity",
-                "sea_water_potential_temperature",
-                "sea_surface_height_above_geoid",
-                "sea_water_cell_thickness",
-                "sea_ice_area_fraction",
-                "sea_ice_thickness",
-                "sea_ice_snow_thickness"
+                "T18",
             ]),
             qd.window_length("PT6H"),
-            qd.window_type("4D"),
             qd.horizontal_resolution("72x36"),
             qd.vertical_resolution("50"),
             qd.total_processors(6),
@@ -61,10 +51,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "adt_sentinel3a",
                 "adt_sentinel3b",
                 "insitu_profile_argo",
-                "icec_amsr2_north",
-                "icec_amsr2_south",
-                "icec_nsidc_nh",
-                "icec_nsidc_sh",
                 "sst_ostia",
                 "sss_smos",
                 "sss_smapv5",
@@ -75,8 +61,10 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.number_of_iterations([10]),
             qd.mom6_iau(True),
+            qd.marine_models(['mom6']),
             qd.background_time_offset("PT9H"),
             qd.clean_patterns([
+                "*.nc4",
                 "*.txt",
                 "*.rc",
                 "*.bin"
@@ -86,10 +74,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dfgat_cycle = QuestionList(
-        list_name="3dfgat_cycle",
+    _3dvar_marine_cycle_tier1 = QuestionList(
+        list_name="3dvar_marine_cycle_tier1",
         questions=[
-            _3dfgat_cycle_tier1
+            _3dvar_marine_cycle
         ]
     )
 

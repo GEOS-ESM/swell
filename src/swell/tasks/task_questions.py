@@ -587,7 +587,8 @@ class TaskQuestions(QuestionContainer, Enum):
             swell_static_file_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_experiment_directory(),
+            qd.geos_expdir_different(),
+            qd.geos_expdir(),
             qd.mom6_iau_nhours()
         ]
     )
