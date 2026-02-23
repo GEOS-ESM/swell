@@ -121,6 +121,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sea_ice_snow_thickness"
             ]),
             qd.window_length("P1D"),
+            qd.mom6_iau_nhours("PT18H"),
             qd.horizontal_resolution("1440x1080"),
             qd.vertical_resolution("75"),
             qd.total_processors(720),
