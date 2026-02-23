@@ -285,12 +285,12 @@ ioda instrument names:
     full name: AMSR2 (SST)
     provider : gdas_marine
     inst type: conventional
-  - ioda name: sst_avhrr_ma_l3u
-    full name: Metop-A (SST)
+  - ioda name: sst_avhrrf_mb_l3u
+    full name: Metop-B (SST)
     provider : gdas_marine
     inst type: avhrr (IR)
-  - ioda name: sst_avhrr_mb_l3u
-    full name: Metop-B (SST)
+  - ioda name: sst_avhrrf_mc_l3u
+    full name: Metop-C (SST)
     provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
