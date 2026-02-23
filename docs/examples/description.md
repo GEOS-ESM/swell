@@ -9,10 +9,10 @@ There are common elements in these examples in terms of [creating](../creating_a
 
 
 ### Using Defaults:
-To create a `3dvar` suite run the following command. This will use the default `3dvar-tier1` test configuration:
+To create a `3dvar_marine` suite run the following command. This will use the default `3dvar_marine_tier1` test configuration:
 
 ```bash
-swell create 3dvar
+swell create 3dvar_marine
 ```
 
 This will create the experiment directory in the default `experiment_root` with the
@@ -27,7 +27,7 @@ experiment_id: {suite_name}-suite
 user to pick which platform they would like to run on. If unspecified, swell will run on SLES15 by default.
 
 ```bash
-swell create 3dvar -p nccs_discover_sles15
+swell create 3dvar_marine -p nccs_discover_sles15
 ```
 
 To see all available arguments use the command `swell create --help`.
@@ -42,7 +42,7 @@ It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM
   For instance, to create a new experiment folder at a different location with a different id, use the override argument:
 
    ```bash
-  swell create 3dvar -o override.yaml
+  swell create 3dvar_marine -o override.yaml
   ```
 
   The `override.yaml` should contain the following keys to override defaults:
@@ -53,7 +53,7 @@ It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM
   experiment_id: test001
   ```
 
-  This would _only_ override default location (`SwellExperiments`) and id (`3dvar-suite`). The same structure
+  This would _only_ override default location (`SwellExperiments`) and id (`3dvar_marine-suite`). The same structure
   could be used for overriding model level keys (i.e., `observations`, `window_type`). Users are encouraged to
   create default experiment folders first while switching between different platforms to accidentally override
   platform specific folders.
@@ -63,7 +63,7 @@ It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM
 Alternatively, you can use the CLI option to create your experiment folder:
 
 ```bash
-swell create 3dvar -m cli
+swell create 3dvar_marine -m cli
 ```
 
 This will walk you through different options depending on the suite type which is very similar
