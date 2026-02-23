@@ -470,7 +470,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_to_ingest(),
             qd.r2d2_local_path(),
             qd.window_length(),
-            # qd.window_offset(),
         ]
     )
 
