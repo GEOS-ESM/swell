@@ -385,16 +385,6 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    GetGeosRestart = QuestionList(
-        list_name="GetGeosRestart",
-        questions=[
-            swell_static_file_questions,
-            qd.geos_restarts_directory()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
     GetGsiBc = QuestionList(
         list_name="GetGsiBc",
         questions=[
@@ -570,25 +560,10 @@ class TaskQuestions(QuestionContainer, Enum):
     PrepCoupledGeosRunDir = QuestionList(
         list_name="PrepCoupledGeosRunDir",
         questions=[
-            # swell_static_file_questions,
-            qd.existing_geos_gcm_build_path(),
-            qd.forecast_duration(),
-            qd.geos_expdir_different(),
-            qd.geos_expdir(),
-            qd.mom6_iau_nhours()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    PrepGeosRunDir = QuestionList(
-        list_name="PrepGeosRunDir",
-        questions=[
             swell_static_file_questions,
+            geos_gcm_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_expdir_different(),
-            qd.geos_expdir(),
             qd.mom6_iau_nhours()
         ]
     )

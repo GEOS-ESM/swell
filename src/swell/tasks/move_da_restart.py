@@ -70,12 +70,16 @@ class MoveDaRestart(taskBase):
         # -------------------------------------------------------------------------
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
-        if 'RECORD_FREQUENCY' in agcm_dict:
+        # Make sure the time stamped _checkpoint files exist if RECORD_FREQUENCY is set to be
+        # greater than 0. If not, abort the run as something is wrong with the restart outputs
+        # and/or RECORD_FREQUENCY inputs.
+        if int(agcm_dict.get('RECORD_FREQUENCY', '0')) > 0:
+            self.logger.info('RECORD_FREQUENCY is turned on in AGCM.rc. Using _checkpoint files '
+                             'with timestamps.')
             window_length = self.config.window_length()
             an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
             rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
 
-            self.logger.info('Using _checkpoint restarts with timestamps')
             src = self.forecast_dir(['scratch', rst_dto.strftime('*_checkpoint.%Y%m%d_%H%Mz.nc4')])
 
         for filepath in list(glob.glob(src)):
@@ -91,6 +95,9 @@ class MoveDaRestart(taskBase):
                    'scratch/RESTART/iced.nc': 'RESTART',
                    }
 
+        # TODO: iced.nc has an option to be time stamped with RECORD_FREQUENCY in AGCM.rc.
+        # With 1day and 6-hr DA windows, this difference is ignored and the iced.nc restart at the
+        # end of the forecast is used but for a 5-day DA window this could be handled differently.
         for src, dst in src_dst.items():
             dst = os.path.join(dst, os.path.basename(src))
             move_files(self.logger, self.forecast_dir(src), self.forecast_dir(dst))
@@ -109,7 +116,7 @@ class MoveDaRestart(taskBase):
         # -------------------------------------------------------------------------
         agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
 
-        if 'RECORD_FREQUENCY' in agcm_dict:
+        if int(agcm_dict.get('RECORD_FREQUENCY', '0')) > 0:
 
             window_length = self.config.window_length()
 

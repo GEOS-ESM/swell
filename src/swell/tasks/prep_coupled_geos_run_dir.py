@@ -94,14 +94,14 @@ class PrepCoupledGeosRunDir(taskBase):
                 else:
                     outfile.write(line)
 
-        # with open(self.forecast_dir('gcm_run.j'), "r") as infile:
-        #     lines = infile.readlines()
-
         # TODO: If, in the future, an override switch is introduced, additional logic can be
         # added here to update GEOSDIR, GEOSBIN, GEOSETC, and GEOSUTIL paths in gcm_run.j
         # so that a different GEOSgcm build can be used than the one that created the
         # experiment directory.
         # ------------------------------------------------------------------------------------------
+        # with open(self.forecast_dir('gcm_run.j'), "r") as infile:
+        #     lines = infile.readlines()
+
         # with open(self.forecast_dir('gcm_run.j'), "w") as outfile:
         #     for line in lines:
         #         # Match setenv GEOSDIR, GEOSBIN, GEOSETC, GEOSUTIL and replace only the
