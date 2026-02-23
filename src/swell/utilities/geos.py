@@ -61,7 +61,8 @@ class Geos():
 
         Args:
             iso_duration (str): ISO 8601 duration string (e.g., 'PT6H').
-            half (bool): If True, divides the duration by two (useful for RESTART). Defaults to False.
+            half (bool): If True, divides the duration by two (useful for RESTART).
+                         Defaults to False.
             agcm (bool): If True, returns hours in HHH format instead of HH. Defaults to False.
 
         Returns:
@@ -106,10 +107,11 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def linker(self,
-               src: str,
-               dst: str,
-               dst_dir: str = None
+    def linker(
+        self,
+        src: str,
+        dst: str,
+        dst_dir: str = None
     ) -> None:
         """
         Creates a symbolic link from a source file to a destination.
@@ -152,8 +154,9 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_mom6_input(self,
-                         mom6_input_path: str
+    def parse_mom6_input(
+        self,
+        mom6_input_path: str
     ) -> dict:
         """
         Parses MOM6 input files (e.g., MOM_oda_incupd) and extracts configuration values.
@@ -209,8 +212,9 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_rc(self,
-                 rcfile: str
+    def parse_rc(
+        self,
+        rcfile: str
     ) -> dict:
         """
         Parses GEOS .rc files line by line, handling comments, multi-line
@@ -278,9 +282,10 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def write_rc(self,
-                 rcdict: dict,
-                 output_file: str
+    def write_rc(
+        self,
+        rcdict: dict,
+        output_file: str
     ) -> None:
         """
         Writes a dictionary back to a GEOS .rc file format, preserving multi-line sections.
@@ -306,9 +311,10 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_nml(self,
-                    combine_fvcore: bool = False,
-                    cold_restart: bool = False
+    def process_nml(
+        self,
+        combine_fvcore: bool = False,
+        cold_restart: bool = False
     ) -> None:
         """
         Adjusts the input.nml file for hot or cold starts and optionally merges
@@ -340,8 +346,9 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def rc_to_bool(self,
-                   rcdict: dict
+    def rc_to_bool(
+        self,
+        rcdict: dict
     ) -> dict:
         """
         Converts boolean strings in a GEOS .rc dictionary (e.g., '.TRUE.', '.FALSE.', 'T', 'F')
@@ -378,8 +385,9 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def rename_checkpoints(self,
-                           forecast_dir: str
+    def rename_checkpoints(
+        self,
+        forecast_dir: str
     ) -> None:
         """
         Renames all files ending in '_checkpoint' to '_rst' in the specified directory.
@@ -416,12 +424,13 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def states_generator(self,
-                         background_frequency: str,
-                         window_length: str,
-                         window_begin_iso: str,
-                         model: str = 'geos_marine',
-                         marine_models: list = []
+    def states_generator(
+        self,
+        background_frequency: str,
+        window_length: str,
+        window_begin_iso: str,
+        model: str = 'geos_marine',
+        marine_models: list = []
     ) -> list:
         """
         Generates a list of states for JEDI configuration based on the model type.
