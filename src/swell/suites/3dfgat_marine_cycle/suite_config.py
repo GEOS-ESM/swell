@@ -102,10 +102,10 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             _3dfgat_marine_cycle,
             qd.start_cycle_point("2023-07-02T12:00:00Z"),
-            qd.final_cycle_point("2023-07-04T12:00:00Z"),
+            qd.final_cycle_point("2023-07-03T12:00:00Z"),
             qd.forecast_duration("P2D"),
-            qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/"
-                           "GEOS_v12_rc20/dataatm_025deg_access")
+            qd.geos_homdir("/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/"
+                           "dataatm_025")
         ],
         geos_marine=[
             qd.cycle_times([

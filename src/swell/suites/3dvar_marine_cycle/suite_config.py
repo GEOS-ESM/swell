@@ -90,8 +90,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.start_cycle_point("2023-07-02T12:00:00Z"),
             qd.final_cycle_point("2023-07-02T18:00:00Z"),
             qd.forecast_duration("PT12H"),
-            qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/"
-                           "GEOS_v12_rc20/dataatm_025deg_access")
+            qd.geos_homdir("/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/"
+                           "dataatm_025")
         ],
         geos_marine=[
             qd.cycle_times([
