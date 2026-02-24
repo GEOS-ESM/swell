@@ -239,22 +239,23 @@ def create_experiment_directory(
 
     # Register the experiment in R2D2
     # -------------------------------
-
-    import r2d2
-    from swell.utilities.r2d2 import load_r2d2_credentials
+    if 'r2d2_experiment_id' in experiment_dict:
+        import r2d2
+        from swell.utilities.r2d2 import load_r2d2_credentials
     
-    r2d2_id = experiment_dict['r2d2_experiment_id']
+        r2d2_id = experiment_dict['r2d2_experiment_id']
+        r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
 
-    load_r2d2_credentials(logger, platform)
-    user = r2d2.get_client_user()
-    host = r2d2.get_client_host()
-    compiler = r2d2.get_client_compiler()
+        load_r2d2_credentials(logger, platform)
+        user = r2d2.get_client_user()
+        host = r2d2.get_client_host()
+        compiler = r2d2.get_client_compiler()
 
-    r2d2.register(item='experiment',
-                  name=r2d2_id,
-                  user=user,
-                  compute_host=f'{host}-{compiler}',
-                  lifetime='debug')
+        r2d2.register(item='experiment',
+                      name=r2d2_id,
+                      user=user,
+                      compute_host=f'{host}-{compiler}',
+                      lifetime=r2d2_lifetime)
 
     # At this point we need to write the complete suite file with all templates resolved. Call the
     # function to build the scheduling dictionary, combine with the experiment dictionary,
