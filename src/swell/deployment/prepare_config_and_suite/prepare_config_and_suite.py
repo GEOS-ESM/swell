@@ -722,16 +722,6 @@ class PrepareExperimentConfigAndSuite:
             except Exception as e:
 
                 if '400 Client Error' in str(e):
-                    user = r2d2.get_client_user()
-                    host = r2d2.get_client_host()
-                    compiler = r2d2.get_client_compiler()
-
-                    r2d2.register(item='experiment',
-                                  name=temp_id,
-                                  user=user,
-                                  compute_host=f'{host}-{compiler}',
-                                  lifetime='debug')
-
                     return temp_id
 
         raise Exception('Could not find a valid experiment_id for R2D2')
