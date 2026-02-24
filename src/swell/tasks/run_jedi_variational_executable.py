@@ -46,6 +46,9 @@ class RunJediVariationalExecutable(taskBase):
         gsibec_configuration = self.config.gsibec_configuration(None)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
+        npx = self.config.npx(None)
+        npy = self.config.npy(None)        
+
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -84,6 +87,8 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
+        self.jedi_rendering.add_key('npx', npx)
+        self.jedi_rendering.add_key('npy', npy)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
 
         # Observations
