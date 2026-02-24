@@ -37,7 +37,7 @@
 
             {% for model_component in model_components %}
             # Stage JEDI static files
-            CloneJedi => StageJedi-{{model_component}}
+            CloneJedi => StageJediCycle-{{model_component}}
             {% endfor %}
         """
 
@@ -47,14 +47,17 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
+            # Generate background error covariance
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
             # Run Jedi variational executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
-            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
 
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
