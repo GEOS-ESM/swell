@@ -17,7 +17,6 @@ background_experiment:
 background_frequency:
   default_value: PT3H
 
-
 # How long before the middle of the analysis window did
 # the background providing forecast begin?
 
@@ -52,7 +51,6 @@ npy:
   - 91
   - 361
 
-
 npx_proc:
   default_value: 1
 
@@ -75,7 +73,6 @@ observations:
   default_value: 
   - tempo_no2_tropo
   - tropomi_s5p_no2_tropo
-#  - tempo_no2_total
   options: 
   - tempo_no2_tropo
   - tropomi_s5p_no2_tropo

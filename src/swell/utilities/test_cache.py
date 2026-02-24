@@ -10,7 +10,7 @@
 from typing import Optional
 
 import os
-import yaml
+from ruamel.yaml import YAML
 
 # --------------------------------------------------------------------------------------------------
 
@@ -18,8 +18,9 @@ import yaml
 def get_test_cache() -> Optional[str]:
     test_settings_file = os.path.expanduser('~/.swell/swell-test.yaml')
     if os.path.exists(test_settings_file):
+        yaml = YAML(typ='safe')
         with open(test_settings_file, 'r') as f:
-            test_settings = yaml.safe_load(f)
+            test_settings = yaml.load(f)
         if 'test_cache_location' in test_settings:
             return test_settings['test_cache_location']
     return None

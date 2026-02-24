@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import yaml
+import io
+from ruamel.yaml import YAML
 from collections.abc import Hashable
 from typing import Union
 
@@ -121,13 +122,17 @@ def add_comments_to_dictionary(
 def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: str) -> object:
 
     # Convert dictionary to string
-    dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
+    yaml = YAML(typ='safe')
+    yaml.default_flow_style = False
+    stream = io.StringIO()
+    yaml.dump(dictionary, stream)
+    dictionary_string = stream.getvalue()
 
     # Replace string in the dictionary
     dictionary_string = dictionary_string.replace(string_in, string_out)
 
     # Convert back to dictionary
-    return yaml.safe_load(dictionary_string)
+    return yaml.load(dictionary_string)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -136,11 +141,10 @@ def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: s
 def write_dict_to_yaml(dictionary: dict, file: str) -> None:
 
     # Convert dictionary to YAML string
-    dictionary_string = yaml.dump(dictionary, default_flow_style=False, sort_keys=False)
-
-    # Write string to file
+    yaml = YAML(typ='safe')
+    yaml.default_flow_style = False
     with open(file, 'w') as file_open:
-        file_open.write(dictionary_string)
+        yaml.dump(dictionary, file_open)
 
 
 # --------------------------------------------------------------------------------------------------

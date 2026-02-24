@@ -10,7 +10,7 @@
 
 import importlib
 import os
-import yaml
+from ruamel.yaml import YAML
 from enum import Enum
 import subprocess
 
@@ -66,7 +66,8 @@ def login_or_compute(platform) -> str:
     # Open the properties file
     properties_file = resources.files(path_import).joinpath('properties.yaml')
     with properties_file.open('r') as yaml_file:
-        properties = yaml.safe_load(yaml_file)
+        yaml = YAML(typ='safe')
+        properties = yaml.load(yaml_file)
 
     # If properties file does not exist return login to be safe
     if not os.path.exists(properties_file):
