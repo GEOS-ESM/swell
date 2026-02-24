@@ -10,7 +10,6 @@ from collections.abc import Mapping
 from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
         field_io_names
 
-
 # --------------------------------------------------------------------------------------------------
 
 
