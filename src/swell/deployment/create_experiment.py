@@ -242,7 +242,7 @@ def create_experiment_directory(
     if 'r2d2_experiment_id' in experiment_dict:
         import r2d2
         from swell.utilities.r2d2 import load_r2d2_credentials
-    
+
         r2d2_id = experiment_dict['r2d2_experiment_id']
         r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
 
