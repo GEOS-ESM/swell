@@ -204,6 +204,9 @@ local_ensemble_use_linear_observer:
   - true
   - false
 
+frac_retained_variance:
+  default_value: 0.9
+
 minimizer:
   default_value: DRPCG
   options:
@@ -350,7 +353,7 @@ vertical_localization_ioda_vertical_coord_group:
   - MetaData
 
 vertical_localization_lengthscale:
-  default_value: 4
+  default_value: 2
 
 vertical_localization_method:
   default_value: Vertical localization

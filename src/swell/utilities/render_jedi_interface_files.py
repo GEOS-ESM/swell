@@ -105,6 +105,7 @@ class JediConfigRendering():
             'local_ensemble_save_posterior_mean_increment',
             'local_ensemble_solver',
             'local_ensemble_use_linear_observer',
+            'frac_retained_variance',
             'marine_models',
             'minimizer',
             'mom6_iau',

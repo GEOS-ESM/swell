@@ -933,6 +933,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class frac_retained_variance(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "frac_retained_variance"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the fraction of retained variance for GETKF?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class change_vbc_to_sbc(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "change_vbc_to_sbc"

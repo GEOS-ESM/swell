@@ -63,6 +63,8 @@ class LocalEnsembleDA(OopsConfig):
             oops['output ensemble increments'] = self.interface_model(
                     'ensemble_members_increment_output')
 
+#        oops['list of eigen vectors to write'] =  self.interface_model(
+#                    'vertical_localization_evecs_output')
         return oops
 
 

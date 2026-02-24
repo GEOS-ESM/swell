@@ -648,6 +648,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_mean_increment(),
             qd.local_ensemble_solver(),
             qd.local_ensemble_use_linear_observer(),
+            qd.frac_retained_variance(),
             qd.skip_ensemble_hofx(),
             qd.total_processors(),
             qd.vertical_localization_apply_log_transform(),
