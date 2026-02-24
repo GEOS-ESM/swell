@@ -47,7 +47,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "tempo_no2_tropo",
                 "tropomi_s5p_no2_tropo",
-                "tempo_no2_total"
             ]),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
         ]

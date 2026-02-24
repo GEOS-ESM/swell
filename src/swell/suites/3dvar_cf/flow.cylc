@@ -4,7 +4,6 @@
 # This software is licensed under the terms of the Apache Licence Version 2.0
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
-
 # --------------------------------------------------------------------------------------------------
 
 # Cylc suite for executing JEDI-based non-cycling variational data assimilation
@@ -118,7 +117,7 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[GetBackground-{{model_component}} ]]
+    [[GetBackground-{{model_component}}]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
