@@ -93,7 +93,7 @@ class RunJediVariationalExecutable(taskBase):
 
         # Atmosphere background error model
         # ---------------------------------
-        if npx_proc is not None and npy_proc is not None:
+        if gsibec_configuration is not None:
             self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
             self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
             self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
