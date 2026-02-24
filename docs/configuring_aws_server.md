@@ -87,28 +87,27 @@ EOF
 
 ## 2) To test within Swell:
 
-Make sure `~/.swell/r2d2_credentials.yaml` exists with your user/api_key/host/compiler, and `~/.aws/credentials` has the `[aws-us-east-1]` profile.
+Make sure `~/.swell/r2d2_credentials.yaml` exists with your user/api_key/host/compiler and AWS credentials for S3 access.
 
 #### a. Set ~/.swell/r2d2_credentials.yaml
 
 ```bash
-export R2D2_USER=CHANGE_THIS
-export R2D2_API_KEY=CHANGE_THIS
-export R2D2_HOST=discover
-export R2D2_COMPILER=intel
-export R2D2_SERVER_HOST=CHANGE_THIS
-export R2D2_SERVER_PORT="8080"
+# R2D2 API credentials
+user: <your_username>
+api_key: <your_key>
+r2d2_host: discover
+r2d2_compiler: intel
+r2d2_server_host: "<enter_ip_address>"
+r2d2_server_port: "8080"
+
+# For S3 access
+aws_access_key_id : <access_key_id>
+aws_secret_access_key : <secret_access_key>
+aws_session_token : "<session_token>"
+
 ```
 
-#### b. Set ~/.aws/credentials
-
-```bash
-[aws-us-east-1]
-aws_access_key_id = ACCESS_KEY
-aws_secret_access_key = SECRET_KEY
-```
-
-#### c. Quick test
+#### b. Quick test
 
 Run `IngestObs` directly without launching a full workflow:
 
