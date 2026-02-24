@@ -190,10 +190,25 @@ def load_r2d2_credentials(
     if 'api_key' in credentials and 'R2D2_API_KEY' not in os.environ:
         os.environ['R2D2_API_KEY'] = credentials['api_key']
 
+    if 'r2d2_server_host' in credentials and 'R2D2_HOST' not in os.environ:
+        os.environ['R2D2_SERVER_HOST'] = credentials['r2d2_server_host']
+    
+    if 'r2d2_server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
+        os.environ['R2D2_SERVER_PORT'] = str(credentials['r2d2_server_port'])
+    
+    if 'aws_access_key_id' in credentials and 'AWS_ACCESS_KEY_ID' not in os.environ:
+        os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
+    
+    if 'aws_secret_access_key' in credentials and 'AWS_SECRET_ACCESS_KEY' not in os.environ:
+        os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
+
+    if 'aws_session_token' in credentials and 'AWS_SESSION_TOKEN' not in os.environ:
+        os.environ['AWS_SESSION_TOKEN'] = credentials['aws_session_token']
+
     # Set host and compiler (YAML config takes precedence over platform detection)
-    if 'host' in credentials and 'R2D2_HOST' not in os.environ:
-        os.environ['R2D2_HOST'] = credentials['host']
-        logger.info(f"Using platform host '{r2d2_host}' (overriding YAML '{credentials['host']}')")
+    if 'r2d2_host' in credentials and 'R2D2_HOST' not in os.environ:
+        os.environ['R2D2_HOST'] = credentials['r2d2_host']
+        logger.info(f"Using platform host '{r2d2_host}' (overriding YAML '{credentials['r2d2_host']}')")
         logger.warning("Using host from YAML file")
 
     elif r2d2_host and 'R2D2_HOST' not in os.environ:
@@ -201,10 +216,10 @@ def load_r2d2_credentials(
         logger.info(f"Set R2D2_HOST={r2d2_host} from platform configuration")
 
     # Set compiler
-    if 'compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
-        os.environ['R2D2_COMPILER'] = credentials['compiler']
+    if 'r2d2_compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+        os.environ['R2D2_COMPILER'] = credentials['r2d2_compiler']
         logger.info(f"Using platform compiler '{r2d2_compiler}' \
-                    (overriding YAML '{credentials['compiler']}')")
+                    (overriding YAML '{credentials['r2d2_compiler']}')")
         logger.warning("Using compiler from YAML file")
 
     elif r2d2_compiler and 'R2D2_COMPILER' not in os.environ:
