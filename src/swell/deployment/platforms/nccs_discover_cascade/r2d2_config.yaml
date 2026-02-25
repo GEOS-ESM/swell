@@ -13,9 +13,6 @@ compute_host: discover-gmao-intel
 fetch_order:
   - ${USER}
 
-# Optional: credentials file for v3 API authentication
-# credentials_file: ~/.swell/swell-r2d2-credentials.yaml
-
 # Cache settings
 cache_name: ${USER}
 cache_fetch: false
