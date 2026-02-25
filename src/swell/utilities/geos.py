@@ -12,10 +12,8 @@ import f90nml
 import glob
 import isodate
 import os
-import re
 from typing import Tuple, Optional
 
-from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
 
