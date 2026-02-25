@@ -163,6 +163,31 @@ def prepare_config(
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
         experiment_dict = {**experiment_dict, **slurm_dict}
 
+    # Register the experiment in R2D2
+    # -------------------------------
+    if 'r2d2_experiment_id' in experiment_dict:
+
+        import r2d2
+        from swell.utilities.r2d2 import load_r2d2_credentials, unique_r2d2_id
+
+        r2d2_id = experiment_dict['r2d2_experiment_id']
+
+        unique_id = unique_r2d2_id(r2d2_id, platform)
+        experiment_dict['r2d2_experiment_id'] = unique_id
+
+        r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
+
+        load_r2d2_credentials(logger, platform)
+        user = r2d2.get_client_user()
+        host = r2d2.get_client_host()
+        compiler = r2d2.get_client_compiler()
+
+        r2d2.register(item='experiment',
+                      name=unique_id,
+                      user=user,
+                      compute_host=f'{host}-{compiler}',
+                      lifetime=r2d2_lifetime)
+
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
     output = io.StringIO()
@@ -236,26 +261,6 @@ def create_experiment_directory(
     # ---------------------------------------------
     with open(os.path.join(exp_suite_path, 'experiment.yaml'), 'w') as file:
         file.write(experiment_dict_str)
-
-    # Register the experiment in R2D2
-    # -------------------------------
-    if 'r2d2_experiment_id' in experiment_dict:
-        import r2d2
-        from swell.utilities.r2d2 import load_r2d2_credentials
-
-        r2d2_id = experiment_dict['r2d2_experiment_id']
-        r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
-
-        load_r2d2_credentials(logger, platform)
-        user = r2d2.get_client_user()
-        host = r2d2.get_client_host()
-        compiler = r2d2.get_client_compiler()
-
-        r2d2.register(item='experiment',
-                      name=r2d2_id,
-                      user=user,
-                      compute_host=f'{host}-{compiler}',
-                      lifetime=r2d2_lifetime)
 
     # At this point we need to write the complete suite file with all templates resolved. Call the
     # function to build the scheduling dictionary, combine with the experiment dictionary,

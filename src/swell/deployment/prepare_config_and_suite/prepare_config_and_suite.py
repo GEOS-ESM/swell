@@ -12,7 +12,6 @@ import os
 from ruamel.yaml import YAML
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
-import random
 
 from swell.swell_path import get_swell_path
 from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
@@ -23,8 +22,6 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import AllSuites
-from swell.utilities.r2d2 import load_r2d2_credentials
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -342,7 +339,7 @@ class PrepareExperimentConfigAndSuite:
                 if swell_id == 'defer_to_code':
                     swell_id = f'swell-{self.suite}'
                     self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
-                val['default_value'] = self.create_r2d2_id(swell_id)
+                val['default_value'] = swell_id
 
     # ----------------------------------------------------------------------------------------------
 
@@ -697,33 +694,5 @@ class PrepareExperimentConfigAndSuite:
                 tasks.extend(question['default_value'])
 
         return tasks
-
-    # ----------------------------------------------------------------------------------------------
-
-    def random_hex_id(self, swell_id: str, length: int = 8):
-        return f"{swell_id}-{random.randrange(16**length):0{length}x}"
-
-    # ----------------------------------------------------------------------------------------------
-
-    def create_r2d2_id(self, swell_id: str) -> str:
-
-        # Load credentials to allow search
-        load_r2d2_credentials(self.logger, self.platform)
-
-        import r2d2
-
-        self.logger.info('Generating Experiment ID for R2D2')
-
-        # Only try this 10 times
-        for i in range(10):
-            temp_id = self.random_hex_id(swell_id, length=8)
-            try:
-                r2d2.get(item='experiment', name=temp_id)
-            except Exception as e:
-
-                if '400 Client Error' in str(e):
-                    return temp_id
-
-        raise Exception('Could not find a valid experiment_id for R2D2')
 
 # --------------------------------------------------------------------------------------------------

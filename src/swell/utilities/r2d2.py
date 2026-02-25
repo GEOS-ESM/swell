@@ -9,10 +9,11 @@
 
 import os
 from ruamel.yaml import YAML
+import random
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.logger import Logger
+from swell.utilities.logger import get_logger, Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -59,6 +60,8 @@ def create_r2d2_config(
     with open(r2d2_config_file, 'w') as f:
         f.write(r2d2_config_file_template_str)
 
+# --------------------------------------------------------------------------------------------------
+
 
 def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
     if not platform:
@@ -94,6 +97,8 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
     else:
         logger.warning(f"Unknown platform '{platform}', cannot determine R2D2 host/compiler")
         return None, None
+
+# --------------------------------------------------------------------------------------------------
 
 
 def load_r2d2_credentials(
@@ -161,5 +166,46 @@ def load_r2d2_credentials(
 
     logger.info("R2D2 v3 credentials loaded successfully")
 
+# ----------------------------------------------------------------------------------------------
+
+
+def random_hex_id(swell_id: str, length: int = 8):
+    return f"{swell_id}-{random.randrange(16**length):0{length}x}"
 
 # ----------------------------------------------------------------------------------------------
+
+
+def experiment_exists(r2d2_id: str):
+    import r2d2
+
+    try:
+        r2d2.get(item='experiment', name=r2d2_id)
+    except Exception as e:
+        if '400 Client Error' in str(e):
+            return False
+
+    return True
+
+# ----------------------------------------------------------------------------------------------
+
+
+def unique_r2d2_id(swell_id: str, platform: str) -> str:
+    logger = get_logger('CreateR2D2ID')
+
+    # Load credentials to allow search
+    load_r2d2_credentials(logger, platform)
+
+    # Just use the ID if it doesn't exist
+    if not experiment_exists(swell_id):
+        return swell_id
+
+    # If not, append an unused hex id
+    # Only try this 10 times
+    for i in range(10):
+        temp_id = random_hex_id(swell_id, length=8)
+        if not experiment_exists(temp_id):
+            return temp_id
+
+    raise Exception('Could not find a valid experiment_id for R2D2')
+
+# --------------------------------------------------------------------------------------------------
