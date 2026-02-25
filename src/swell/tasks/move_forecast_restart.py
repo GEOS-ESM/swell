@@ -55,7 +55,7 @@ class MoveForecastRestart(taskBase):
         self.logger.info('GEOS restarts are being moved to the next forecast dir')
         self.logger.info('Finding _checkpoint restarts')
 
-        src = self.forecast_dir('scratch', '*_checkpoint')
+        src = self.forecast_dir(['scratch', '*_checkpoint'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
