@@ -16,7 +16,48 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import get_logger, Logger
 
 # --------------------------------------------------------------------------------------------------
+import subprocess
 
+# Platform-specific R2D2 module config
+_R2D2_MODULE_CONFIG = {
+    'nccs_discover_sles15': {
+        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
+        'module_name': 'r2d2-client/112025',
+    },
+    'nccs_discover_cascade': {
+        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
+        'module_name': 'r2d2-client/112025',
+    },
+}
+
+def load_r2d2_module(logger: Logger, platform: str) -> None:
+    """Load R2D2 module via bash, capture env, apply to current process."""
+    if platform not in _R2D2_MODULE_CONFIG:
+        return
+    config = _R2D2_MODULE_CONFIG[platform]
+    cmd = (
+        f'source /usr/share/lmod/lmod/init/bash && '
+        f'module use -a {config["module_path"]} && '
+        f'module load {config["module_name"]} && env'
+    )
+    try:
+        result = subprocess.run(['bash', '-c', cmd], capture_output=True, text=True, timeout=30)
+        if result.returncode != 0:
+            logger.warning(f'Failed to load R2D2 module: {result.stderr}')
+            return
+        for line in result.stdout.strip().split('\n'):
+            if '=' in line:
+                key, _, value = line.partition('=')
+                os.environ[key] = value
+                # PYTHONPATH needs to be added to sys.path for import to work
+                if key == 'PYTHONPATH':
+                    import sys
+                    for p in value.split(':'):
+                        if p and p not in sys.path:
+                            sys.path.insert(0, p)
+        logger.info(f'Loaded R2D2 module: {config["module_name"]}')
+    except Exception as e:
+        logger.warning(f'Could not load R2D2 module: {e}')
 
 def create_r2d2_config(
     logger: Logger,

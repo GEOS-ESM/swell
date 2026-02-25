@@ -167,8 +167,12 @@ def prepare_config(
     # -------------------------------
     if 'r2d2_experiment_id' in experiment_dict:
 
+        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+
+        load_r2d2_credentials(logger, platform)
+        load_r2d2_module(logger, platform)
+
         import r2d2
-        from swell.utilities.r2d2 import load_r2d2_credentials, unique_r2d2_id
 
         r2d2_id = experiment_dict['r2d2_experiment_id']
 
@@ -177,7 +181,6 @@ def prepare_config(
 
         r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
 
-        load_r2d2_credentials(logger, platform)
         user = r2d2.get_client_user()
         host = r2d2.get_client_host()
         compiler = r2d2.get_client_compiler()
