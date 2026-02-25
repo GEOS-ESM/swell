@@ -10,13 +10,13 @@
 import os
 from ruamel.yaml import YAML
 import random
+import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import get_logger, Logger
 
 # --------------------------------------------------------------------------------------------------
-import subprocess
 
 # Platform-specific R2D2 module config
 _R2D2_MODULE_CONFIG = {
@@ -29,6 +29,9 @@ _R2D2_MODULE_CONFIG = {
         'module_name': 'r2d2-client/112025',
     },
 }
+
+# --------------------------------------------------------------------------------------------------
+
 
 def load_r2d2_module(logger: Logger, platform: str) -> None:
     """Load R2D2 module via bash, capture env, apply to current process."""
@@ -58,6 +61,9 @@ def load_r2d2_module(logger: Logger, platform: str) -> None:
         logger.info(f'Loaded R2D2 module: {config["module_name"]}')
     except Exception as e:
         logger.warning(f'Could not load R2D2 module: {e}')
+
+# ----------------------------------------------------------------------------------------------
+
 
 def create_r2d2_config(
     logger: Logger,

@@ -112,11 +112,6 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
-    # Load R2D2 credentials
-    from swell.utilities.r2d2 import load_r2d2_credentials
-    from swell.utilities.logger import get_logger
-    logger = get_logger("Swell Create")
-    load_r2d2_credentials(logger, platform)
 
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
