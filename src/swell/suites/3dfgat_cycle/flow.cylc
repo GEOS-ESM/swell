@@ -104,9 +104,11 @@
             # Move restart to next cycle
             # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
+            {% if not save_r2d2 %}
             # Save analysis output
             # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
@@ -116,7 +118,7 @@
             MoveDaRestart-{{model_component}} => RemoveForecastDir
 
             # Clean up large files
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & SaveObsDiags-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """

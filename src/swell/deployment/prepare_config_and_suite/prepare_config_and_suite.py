@@ -58,7 +58,7 @@ class PrepareExperimentConfigAndSuite:
         suite_config: str,
         platform: str,
         config_client: str,
-        override: Union[str, dict, None]
+        override: dict
     ) -> None:
 
         # Store local copy of the inputs
@@ -346,40 +346,24 @@ class PrepareExperimentConfigAndSuite:
 
     def override_with_external(self) -> None:
 
-        # Append with any user provide overrides
-        if self.override is not None:
+        # In this case the user is sending in a dictionary that looks like the experiment
+        # dictionary that they will ultimately be looking at. This means the dictionary does
+        # not contain default_value or options and the override cannot be performed.
 
-            # Create an override dictionary
-            override_dict = {}
+        # Iterate over the model_ind dictionary and override
+        # --------------------------------------------------
+        for key, val in self.question_dictionary_model_ind.items():
+            if key in self.override:
+                val['default_value'] = self.override[key]
 
-            if isinstance(self.override, Mapping):
-                override_dict.update_dict(override_dict, self.override)
-
-            elif isinstance(self.override, str):
-                yaml = YAML(typ='safe')
-                with open(self.override, 'r') as ymlfile:
-                    override_dict = update_dict(override_dict, yaml.load(ymlfile))
-            else:
-                self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
-
-            # In this case the user is sending in a dictionary that looks like the experiment
-            # dictionary that they will ultimately be looking at. This means the dictionary does
-            # not contain default_value or options and the override cannot be performed.
-
-            # Iterate over the model_ind dictionary and override
-            # --------------------------------------------------
-            for key, val in self.question_dictionary_model_ind.items():
-                if key in override_dict:
-                    val['default_value'] = override_dict[key]
-
-            # Iterate over the model_dep dictionary and override
-            # --------------------------------------------------
-            if self.suite_needs_model_components and 'models' in override_dict.keys():
-                for model, model_dict in self.question_dictionary_model_dep.items():
-                    for key, val in model_dict.items():
-                        if model in override_dict['models']:
-                            if key in override_dict['models'][model]:
-                                val['default_value'] = override_dict['models'][model][key]
+        # Iterate over the model_dep dictionary and override
+        # --------------------------------------------------
+        if self.suite_needs_model_components and 'models' in self.override.keys():
+            for model, model_dict in self.question_dictionary_model_dep.items():
+                for key, val in model_dict.items():
+                    if model in self.override['models']:
+                        if key in self.override['models'][model]:
+                            val['default_value'] = self.override['models'][model][key]
 
     # ----------------------------------------------------------------------------------------------
 
