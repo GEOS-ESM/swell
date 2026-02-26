@@ -42,7 +42,6 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.model_components(),
             qd.runahead_limit(),
             qd.r2d2_experiment_id(),
-            qd.r2d2_experiment_lifetime()
         ]
     )
 

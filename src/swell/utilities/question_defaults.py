@@ -162,16 +162,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class r2d2_experiment_lifetime(SuiteQuestion):
-        default_value: str = "debug"
-        question_name: str = "r2d2_experiment_lifetime"
-        options: list = mutable_field(['debug', 'science', 'publication', 'release'])
-        prompt: str = "What lifetime should the experiment have in R2D2?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"

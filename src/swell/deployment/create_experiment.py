@@ -179,8 +179,6 @@ def prepare_config(
         unique_id = unique_r2d2_id(r2d2_id, platform)
         experiment_dict['r2d2_experiment_id'] = unique_id
 
-        r2d2_lifetime = experiment_dict['r2d2_experiment_lifetime']
-
         user = r2d2.get_client_user()
         host = r2d2.get_client_host()
         compiler = r2d2.get_client_compiler()
@@ -189,7 +187,7 @@ def prepare_config(
                       name=unique_id,
                       user=user,
                       compute_host=f'{host}-{compiler}',
-                      lifetime=r2d2_lifetime)
+                      lifetime='debug')
 
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
