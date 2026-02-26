@@ -39,6 +39,11 @@ horizontal_resolution:
   - 'c90'
   - 'c360'
 
+  vertical_resolution:
+  default_value: 72
+  options:
+  - 72
+
 npx:
   default_value: 91
   options:
@@ -52,10 +57,10 @@ npy:
   - 361
 
 npx_proc:
-  default_value: 1
+  default_value: 2
 
 npy_proc:
-  default_value: 1
+  default_value: 2
 
 
 obs_provider:
@@ -77,11 +82,6 @@ observations:
 
 observing_system_records_path:
   default_value: None
-
-vertical_resolution:
-  default_value: '72'
-  options:
-  - '72'
 
 window_length:
   default_value: PT6H
