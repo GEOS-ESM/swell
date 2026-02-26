@@ -107,7 +107,7 @@
             RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
-            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+            # MoveBackground-{{model_component}} => SaveForecast-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & SaveObsDiags-{{model_component}} =>
@@ -240,6 +240,12 @@
         {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[SaveAnalysis-{{model_component}}]]
+        script = "swell task SaveAnalysis $config -d $datetime -m {{model_component}}"
+
+    [[SaveForecast-{{model_component}}]]
+        script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
 
     [[SaveRestart-{{model_component}}]]
         script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"

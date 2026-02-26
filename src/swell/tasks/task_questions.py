@@ -787,8 +787,8 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    StoreBackground = QuestionList(
-        list_name="StoreBackground",
+    SaveForecast = QuestionList(
+        list_name="SaveForecast",
         questions=[
             window_questions,
             qd.background_experiment(),

@@ -106,7 +106,7 @@
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Save model output
-            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+            # MoveBackground-{{model_component}} => SaveForecast-{{model_component}}
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}}  & SaveObsDiags-{{model_component}} =>
