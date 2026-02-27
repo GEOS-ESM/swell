@@ -39,7 +39,7 @@ horizontal_resolution:
   - 'c90'
   - 'c360'
 
-  vertical_resolution:
+vertical_resolution:
   default_value: 72
   options:
   - 72
