@@ -7,11 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import importlib
-import pkgutil
-
 import swell.tasks
 from swell.tasks.base.task_setup import TaskSetup
+from swell.utilities.plugins import discover_plugins
 
 # --------------------------------------------------------------------------------------------------
 
@@ -54,19 +52,6 @@ class sync_point(TaskSetup):
     def set_attributes(self):
         self.script = "true"
 
-
-# --------------------------------------------------------------------------------------------------
-
-def discover_plugins(package):
-    '''Walk through packages to trigger any hooks.
-
-    Parameters:
-    package: Python package
-    '''
-    for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__):
-        full_module_name = f"{package.__name__}.{module_name}"
-
-        importlib.import_module(full_module_name)
 
 # --------------------------------------------------------------------------------------------------
 
