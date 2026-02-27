@@ -15,7 +15,7 @@ import glob
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
-from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.configuration.question_defaults import QuestionDefaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.comparisons import comparison_tags, experiment_ids

@@ -6,7 +6,7 @@ Usage: swell create ingest_obs_marine
 """
 
 from swell.utilities.swell_questions import QuestionContainer, QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.configuration.question_defaults import QuestionDefaults as qd
 from swell.suites.base.suite_questions import SuiteQuestions as sq
 from enum import Enum
 

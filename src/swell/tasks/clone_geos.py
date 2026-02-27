@@ -13,7 +13,7 @@ import os
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
-from swell.utilities.question_defaults import QuestionDefaults as qd
+from swell.configuration.question_defaults import QuestionDefaults as qd
 from swell.utilities.git_utils import git_clone
 from swell.utilities.shell_commands import run_subprocess
 
