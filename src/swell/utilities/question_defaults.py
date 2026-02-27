@@ -385,6 +385,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class dry_run(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "dry_run"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Dry-run mode: preview what would be ingested before storing to R2D2"
+        widget_type: WType = WType.BOOLEAN
+    
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensemble_hofx_packets(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"
@@ -773,6 +786,20 @@ class QuestionDefaults():
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
         widget_type: WType = WType.STRING_DROP_LIST
 
+    # ------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_ingest(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_ingest"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to ingest to R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -783,7 +810,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = ("Provide a path that contains observation files not in r2d2.")
+        prompt: str = (
+            "Provide a path that contains observation files not in r2d2.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1072,8 +1100,9 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = ("What number of iterations do you wish to use for each outer loop?"
-                       " Provide a list of integers the same length as the number of outer loops.")
+        prompt: str = (
+            "What number of iterations do you wish to use for each outer loop?"
+            " Provide a list of integers the same length as the number of outer loops.")
         widget_type: WType = WType.INTEGER_LIST
 
     # --------------------------------------------------------------------------------------------------
@@ -1175,7 +1204,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = ("What is the path for the GEOSadas cubed sphere backgrounds?")
+        prompt: str = (
+            "What is the path for the GEOSadas cubed sphere backgrounds?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
