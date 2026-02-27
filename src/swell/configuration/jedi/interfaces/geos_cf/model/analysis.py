@@ -13,9 +13,13 @@ from collections.abc import Mapping
 
 def analysis(template_dict: Mapping) -> Mapping:
     analysis = {
-        'datadir': './',
-        'exp': template_dict['experiment_id'],
-        'type': 'an'
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath': template_dict['cycle_dir'],
+        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'first': 'PT0H',
+        'frequency': 'PT1H',
+        'field io names': field_io_names,
     }
 
     return analysis
