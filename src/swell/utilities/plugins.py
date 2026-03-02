@@ -19,7 +19,9 @@ def discover_plugins(package):
     '''
     for loader, module_name, is_pkg in pkgutil.walk_packages(package.__path__):
         full_module_name = f"{package.__name__}.{module_name}"
+        module = importlib.import_module(full_module_name)
 
-        importlib.import_module(full_module_name)
+        if is_pkg:
+            discover_plugins(module)
 
 # --------------------------------------------------------------------------------------------------

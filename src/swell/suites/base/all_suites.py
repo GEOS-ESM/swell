@@ -72,7 +72,7 @@ class SuiteConfigs():
         
         self.__config_map__[config_name] = sub_dict = {}
 
-        sub_dict[config_name]['suite'] = base_suite
+        sub_dict['suite'] = base_suite
         sub_dict['list'] = question_list
     
     # --------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ class SuiteConfigs():
 
 # Objects to reference in imports
 suite_configs = SuiteConfigs()
-
+print('huh')
 discover_plugins(swell.suites)
-
+print(suite_configs.all_configs())
 # --------------------------------------------------------------------------------------------------
