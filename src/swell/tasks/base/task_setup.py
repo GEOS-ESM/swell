@@ -78,6 +78,7 @@ class TaskSetup(ABC):
                  additional_sections: list | None = None
                  ) -> None:
 
+        # Set the base defaults needed by the class
         self.model = model
         self.platform = platform
 
@@ -99,8 +100,10 @@ class TaskSetup(ABC):
         self.questions = []
         self.additional_sections = []
 
+        # Set the defaults for the individual task
         self.set_defaults()
 
+        # Override the task defaults with the defaults being provided by the suite
         if base_name != blank_spec:
             self.base_name = base_name
 
