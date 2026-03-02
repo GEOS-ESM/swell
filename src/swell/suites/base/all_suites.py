@@ -16,6 +16,8 @@ from swell.utilities.suite_utils import get_suites
 from swell.suites.base.suite_questions import SuiteQuestions
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.utilities.swell_questions import QuestionList
+import swell.suites
+from swell.utilities.plugins import discover_plugins
 
 # --------------------------------------------------------------------------------------------------
 
@@ -49,61 +51,48 @@ class Workflows():
     def all_workflows(self) -> list:
         return self.workflow_dict.keys()
 
+# --------------------------------------------------------------------------------------------------
+
+workflows = Workflows()
 
 # --------------------------------------------------------------------------------------------------
 
-
 class SuiteConfigs():
-    # Maps suite configuration objects
 
     def __init__(self) -> None:
 
-        # Dictionary used to create the enum
-        config_dict = {}
-        # Map of config names to their parent suites
-        config_map = {}
+        # Dictionary tracking configs under each suite
+        self.__suites_to_configs_map__ = {}
+        self.__configs_to_suites_map__ = {}
 
-        # Find all of the suite configs
-        for suite in get_suites():
-            config_path = os.path.join(get_swell_path(), 'suites', suite, 'suite_config.py')
-            if os.path.exists(config_path):
-                suite_container = getattr(
-                        import_module(f'swell.suites.{suite}.suite_config'), 'SuiteConfig')
-                suite_configs = suite_container.get_all()
+        # Dictionary tracking the suite for each config
+        self.__config_map__ = {}
+    
+    def register(self, base_suite: str, config_name: str, question_list: QuestionList) -> None:
+        
+        if base_suite not in self.__suite_map__:
+            self.__suites_to_configs_map__[base_suite] = []
 
-                for config in suite_configs:
-                    config_dict[format_suite_name(config)] = getattr(suite_container, config)
-                    config_map[format_suite_name(config)] = suite
-            else:
-                config_dict[suite] = SuiteQuestions.all_suites
-                config_map[suite] = suite
+        self.__suites_to_configs_map__[base_suite].append(config_name)
 
-        config_dict['task_minimum'] = SuiteQuestions.task_minimum
-        config_map['task_minimum'] = 'task_minimum'
+        self.__configs_to_suites_map__[config_name] = base_suite
 
-        self.config_dict = config_dict
-        self.__config_map__ = config_map
+        self.__config_map__[config_name] = question_list
 
-    # --------------------------------------------------------------------------------------------------
-
-    def get_config(self, name: str) -> QuestionList:
-        return self.config_dict[name].value
-
-    # --------------------------------------------------------------------------------------------------
-
-    def all_configs(self) -> list:
-        return list(self.config_dict.keys())
-
-    # --------------------------------------------------------------------------------------------------
-
-    def base_suite(self, config: str) -> str:
-        return self.__config_map__[config]
+    def get_config(self, config_name: str) -> QuestionList:
+        return self.__config_map__[config_name]
+    
+    def base_suite(self, config_name: str) -> str:
+        return self.__configs_to_suites_map__[config_name]
+    
+    def all_configs(self) -> str:
+        return list(self.__configs_to_suites_map__.keys())
 
 # --------------------------------------------------------------------------------------------------
 
-
 # Objects to reference in imports
 suite_configs = SuiteConfigs()
-workflows = Workflows()
+
+discover_plugins(swell.suites)
 
 # --------------------------------------------------------------------------------------------------

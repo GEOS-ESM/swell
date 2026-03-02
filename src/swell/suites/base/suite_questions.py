@@ -12,73 +12,73 @@ from enum import Enum
 
 from swell.utilities.swell_questions import QuestionList, QuestionContainer
 from swell.configuration.question_defaults import QuestionDefaults as qd
+from swell.suites.base.all_suites import suite_configs
 
+# --------------------------------------------------------------------------------------------------
+# Shared groups of questions across suites
+# --------------------------------------------------------------------------------------------------
+
+all_suites = QuestionList(
+    list_name="all_suites",
+    questions=[
+        qd.experiment_id(),
+        qd.experiment_root(),
+        qd.pause_on_tasks(),
+        qd.task_email_parameters(),
+        qd.email_address()
+    ]
+)
+
+suite_configs.register('AllSuites', 'AllSuites', all_suites)
 
 # --------------------------------------------------------------------------------------------------
 
-class SuiteQuestions(QuestionContainer, Enum):
+common = QuestionList(
+    list_name="common",
+    questions=[
+        all_suites,
+        qd.cycle_times(),
+        qd.start_cycle_point(),
+        qd.final_cycle_point(),
+        qd.model_components(),
+        qd.runahead_limit()
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
-    # Shared groups of questions across suites
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    all_suites = QuestionList(
-        list_name="all_suites",
-        questions=[
-            qd.experiment_id(),
-            qd.experiment_root(),
-            qd.pause_on_tasks(),
-            qd.task_email_parameters(),
-            qd.email_address()
-        ]
-    )
+marine = QuestionList(
+    list_name="marine",
+    questions=[
+        common,
+        qd.marine_models()
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    common = QuestionList(
-        list_name="common",
-        questions=[
-            all_suites,
-            qd.cycle_times(),
-            qd.start_cycle_point(),
-            qd.final_cycle_point(),
-            qd.model_components(),
-            qd.runahead_limit()
-        ]
-    )
+compare = QuestionList(
+    list_name="compare",
+    questions=[
+        all_suites,
+        qd.comparison_experiment_paths()
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    marine = QuestionList(
-        list_name="marine",
-        questions=[
-            common,
-            qd.marine_models()
-        ]
-    )
+task_minimum = QuestionList(
+    list_name="task_minimum",
+    questions=[
+        qd.experiment_id(),
+        qd.experiment_root(),
+        qd.comparison_experiment_paths(),
+        qd.model_components(),
+        qd.marine_models(),
+        qd.use_cycle_dir(),
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register('TaskMinimum', 'TaskMinimum', task_minimum)
 
-    compare = QuestionList(
-        list_name="compare",
-        questions=[
-            all_suites,
-            qd.comparison_experiment_paths()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    task_minimum = QuestionList(
-        list_name="task_minimum",
-        questions=[
-            qd.experiment_id(),
-            qd.experiment_root(),
-            qd.comparison_experiment_paths(),
-            qd.model_components(),
-            qd.marine_models(),
-            qd.use_cycle_dir(),
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
