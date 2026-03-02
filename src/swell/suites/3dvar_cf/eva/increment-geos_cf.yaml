@@ -39,5 +39,5 @@ graphics:
           label: NO2 increment (surface level)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1e-8
-          vmax: 1e-8
+          vmin: -1e-10
+          vmax: 1e-10
