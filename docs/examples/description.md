@@ -113,4 +113,4 @@ dependencies. For each suite, this will have a different structure and different
 
 `experiment.yaml`: This is the key configuration file that dictates the inputs for contain configuration variables that will be used for different scripts in the workflow.
 
-For each JEDI bundle type (i.e., fv3-jedi, soca) and suite (3dvar, hofx etc.) in this section, we will display the `experiment.yaml` and talk about details.
+For each JEDI bundle type (i.e., fv3-jedi, soca) and suite (3dvar_marine, hofx etc.) in this section, we will display the `experiment.yaml` and talk about details.
