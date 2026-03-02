@@ -13,7 +13,6 @@ from importlib import import_module
 
 from swell.swell_path import get_swell_path
 from swell.utilities.suite_utils import get_suites
-from swell.suites.base.suite_questions import SuiteQuestions
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.utilities.swell_questions import QuestionList
 import swell.suites
@@ -61,32 +60,50 @@ class SuiteConfigs():
 
     def __init__(self) -> None:
 
-        # Dictionary tracking configs under each suite
-        self.__suites_to_configs_map__ = {}
-        self.__configs_to_suites_map__ = {}
-
         # Dictionary tracking the suite for each config
         self.__config_map__ = {}
     
-    def register(self, base_suite: str, config_name: str, question_list: QuestionList) -> None:
+    # --------------------------------------------------------------------------------------------------
+    
+    def register(self,
+                 base_suite: str,
+                 config_name: str,
+                 question_list: QuestionList) -> None:
         
-        if base_suite not in self.__suite_map__:
-            self.__suites_to_configs_map__[base_suite] = []
+        self.__config_map__[config_name] = sub_dict = {}
 
-        self.__suites_to_configs_map__[base_suite].append(config_name)
-
-        self.__configs_to_suites_map__[config_name] = base_suite
-
-        self.__config_map__[config_name] = question_list
+        sub_dict[config_name]['suite'] = base_suite
+        sub_dict['list'] = question_list
+    
+    # --------------------------------------------------------------------------------------------------
 
     def get_config(self, config_name: str) -> QuestionList:
-        return self.__config_map__[config_name]
+        return self.__config_map__[config_name]['list']
+    
+    # --------------------------------------------------------------------------------------------------
     
     def base_suite(self, config_name: str) -> str:
-        return self.__configs_to_suites_map__[config_name]
+        return self.__config_map__[config_name]['suite']
+
+    # --------------------------------------------------------------------------------------------------
     
     def all_configs(self) -> str:
-        return list(self.__configs_to_suites_map__.keys())
+        return list(self.__config_map__.keys())
+    
+    # --------------------------------------------------------------------------------------------------
+
+    def configs_under_suites(self) -> dict:
+        suite_map = {}
+
+        for config_name, config_dict in self.__config_map__.items():
+            suite_name = config_dict['suite']
+
+            if suite_name not in suite_map:
+                suite_map[suite_name] = []
+
+            suite_map[suite_name].append(config_name)
+
+        return suite_map
 
 # --------------------------------------------------------------------------------------------------
 
