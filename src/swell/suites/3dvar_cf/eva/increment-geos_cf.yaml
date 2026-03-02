@@ -4,7 +4,7 @@ datasets:
   type: LatLon
   filename: {{increment_file_path}}
   name: experiment_increment
-  variables: [volume_mixing_ratio_of_no2, lat, lon]
+  variables: [NO2, lat, lon]
 
 graphics:
 
@@ -13,7 +13,7 @@ graphics:
 
   #map plot for NO2 increment (near surface)
   - batch figure:
-      variables: [volume_mixing_ratio_of_no2]
+      variables: [NO2]
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -34,7 +34,7 @@ graphics:
           latitude:
             variable: experiment_increment::increment::lat
           data:
-            variable: experiment_increment::increment::volume_mixing_ratio_of_no2
+            variable: experiment_increment::increment::NO2
             slices: '[71,...]'
           label: NO2 increment (surface level)
           colorbar: true
