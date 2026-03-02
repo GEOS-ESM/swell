@@ -215,7 +215,7 @@ For initial development/testing purposes, it may be easier to create a `flow.cyl
 
 ### Question Objects
 
-Questions for swell are stored as dataclass instances, in the file `src/swell/utilities/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
+Questions for swell are stored as dataclass instances, in the file `src/swell/configuration/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
 
 ```python
 @dataclass
@@ -288,8 +288,8 @@ In this question infrastructure, **suites take priority over tasks**. Any questi
 Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
 
 ```python
-from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.suites.suite_questions import SuiteQuestions as sq
+from swell.configuration.question_defaults import QuestionDefaults as qd
+from swell.suites.base.suite_questions import SuiteQuestions as sq
 
 class SuiteQuestions(QuestionContainer, Enum):
 
@@ -383,4 +383,4 @@ class SuiteConfig(QuestionContainer, Enum):
 ```
 The class `SuiteQuestions` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite. 
 
-`_3dvar_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `QuestionDefaults` (`src/swell/utilities/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_tier1`, and set their own defaults on top of the existing ones. 
+`_3dvar_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `QuestionDefaults` (`src/swell/configuration/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_tier1`, and set their own defaults on top of the existing ones. 
