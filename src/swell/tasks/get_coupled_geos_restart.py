@@ -30,9 +30,11 @@ class GetCoupledGeosRestart(taskBase):
         - mom6_increment.nc (optional)
 
         Restart files are retrieved via one of the following methods:
-        1) From a previous GEOS experiment (geos_homdir).
+        1) From a previous GEOS experiment (geos_expdir).
         2) R2D2 retrieval (not yet implemented).
         3) External GEOS folder (if geos_expdir is different).
+        4) Hotstart, just use the existing restarts in the forecast directory (e.g., from a
+           previous run or manually placed there).
 
         This task also creates the necessary internal GEOS directory structure
         (HOMDIR and EXPDIR) within the swell experiment path.
@@ -103,13 +105,17 @@ class GetCoupledGeosRestart(taskBase):
         # Coupled GEOS restarts can be obtained from:
         # 1) a GEOS experiment directory
         # 2) (Inactive) Via R2D2
+        # 3) Hotstart, just use the existing restarts in the forecast directory (e.g., from a
+        # previous run or manually placed there)
         # ----------------------------------------------------
-        initial_restarts_method = self.config.initial_restarts_method('directory')
+        initial_restarts_method = self.config.initial_restarts_method('geos_expdir')
 
-        if initial_restarts_method == 'directory':
+        if initial_restarts_method == 'geos_expdir':
             self.initial_restarts_from_directory(geos_expdir_path)
         elif initial_restarts_method == 'r2d2':
             self.initial_restarts_from_r2d2()
+        elif initial_restarts_method == 'hotstart':
+            self.logger.info('Using existing restarts in the forecast directory (hotstart)')
         else:
             self.logger.abort(f'Unknown method for initial restarts: {initial_restarts_method}')
 

@@ -48,7 +48,7 @@ If you prefer, you can create a dedicated `sbatch` script to wrap the `swell t1t
 By default, tier tests will be run on the `nccs_discover_sles15` platform, alternative platforms can be specified with the `-p` flag, similar to other swell commands.
 
 4. Repeat (2) for other tests you would like to run. Currently, we recommend running the following tests:
-    - `3dvar`
+    - `3dvar_marine`
     - `hofx`
     - `ufo_testing`
 
@@ -85,9 +85,7 @@ By default, tier 2 tests will build JEDI at the beginning of the job, unless a p
 This works because, unless otherwise specified, `sbatch` automatically inherits all current environment variables, which you have already configured in step 2 above.
 
 4. Repeat (2) for other tests you would like to run. Currently, we recommend running the following tests:
-    - `3dvar`
+    - `3dvar_marine`
     - `hofx`
-    - `ufo_testing`
-    - `convert_ncdiags`
     - `3dfgat_atmos`
     - `build_jedi`

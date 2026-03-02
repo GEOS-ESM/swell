@@ -132,6 +132,7 @@ def replace_string_in_dictionary(dictionary: dict, string_in: str, string_out: s
     dictionary_string = dictionary_string.replace(string_in, string_out)
 
     # Convert back to dictionary
+    yaml = YAML(typ='safe')
     return yaml.load(dictionary_string)
 
 

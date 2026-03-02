@@ -102,10 +102,10 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             _3dfgat_marine_cycle,
             qd.start_cycle_point("2023-07-02T12:00:00Z"),
-            qd.final_cycle_point("2023-07-04T12:00:00Z"),
+            qd.final_cycle_point("2023-07-03T12:00:00Z"),
             qd.forecast_duration("P2D"),
-            qd.geos_homdir("/discover/nobackup/projects/gmao/soca/dardag/GEOS_FORWARD/"
-                           "GEOS_v12_rc20/dataatm_025deg_access")
+            qd.geos_homdir("/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/"
+                           "dataatm_025")
         ],
         geos_marine=[
             qd.cycle_times([
@@ -121,16 +121,34 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sea_ice_snow_thickness"
             ]),
             qd.window_length("P1D"),
+<<<<<<< HEAD
+=======
+            qd.mom6_iau_nhours("PT18H"),
+>>>>>>> feature/exec_geos_direct_part3
             qd.horizontal_resolution("1440x1080"),
             qd.vertical_resolution("75"),
             qd.total_processors(720),
             qd.observations([
                 "adt_cryosat2n",
                 "adt_jason3",
+<<<<<<< HEAD
                 "adt_saral",
                 "adt_sentinel3a",
                 "adt_sentinel3b",
                 "insitu_profile_argo",
+=======
+                "adt_jason3n",
+                "adt_saral",
+                "adt_sentinel3a",
+                "adt_sentinel3b",
+                "adt_sentinel6a",
+                "adt_swot_nadir",
+                "insitu_profile_argo",
+                "insitu_profile_ctd",
+                "insitu_profile_pirata",
+                "insitu_profile_rama",
+                "insitu_profile_tao",
+>>>>>>> feature/exec_geos_direct_part3
                 "icec_amsr2_north",
                 "icec_amsr2_south",
                 "icec_nsidc_nh",
@@ -139,8 +157,15 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sss_smos",
                 "sss_smapv5",
                 "sst_abi_g16_l3c",
+<<<<<<< HEAD
                 "sst_gmi_l3u",
                 "sst_viirs_n20_l3u",
+=======
+                "sst_avhrrf_mb_l3u",
+                "sst_avhrrf_mc_l3u",
+                "sst_viirs_n20_l3u",
+                "sst_viirs_npp_l3u",
+>>>>>>> feature/exec_geos_direct_part3
                 "temp_profile_xbt"
             ]),
             qd.number_of_iterations([50]),

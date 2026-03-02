@@ -162,8 +162,6 @@
     [[RunGeos]]
         script = "{{experiment_path}}/GEOSgcm/forecast/gcm_run.j"
         platform = {{platform}}
-        [[[job]]]
-            shell = /bin/csh
         [[[directives]]]
         {%- for key, value in scheduling["RunGeos"]["directives"]["all"].items() %}
             --{{key}} = {{value}}

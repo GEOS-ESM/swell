@@ -12,10 +12,8 @@ import f90nml
 import glob
 import isodate
 import os
-import re
 from typing import Tuple, Optional
 
-from swell.utilities.shell_commands import run_subprocess
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
 
@@ -23,6 +21,11 @@ from swell.utilities.logger import Logger
 
 
 class Geos():
+    """
+    Utility class for GEOS-specific operations, providing methods to parse configuration
+    files, handle time conversions, manage symbolic links, and generate JEDI state
+    configurations.
+    """
 
     # ----------------------------------------------------------------------------------------------
 
@@ -31,64 +34,17 @@ class Geos():
         logger: Logger,
         forecast_dir: Optional[str],
     ) -> None:
+        """
+        Initializes the Geos class. The intention is to share methods between forecast-only
+        and cycling DA tasks without model-dependent logic.
 
-        '''
-        The intention behind creating this GEOS class is to not have any model dependent
-        methods. This way, methods would be shared between the forecast-only and
-        cycling DA tasks.
-        '''
+        Args:
+            logger (Logger): Logger object for reporting messages and errors.
+            forecast_dir (Optional[str]): Path to the forecast directory.
+        """
 
         self.logger = logger
         self.forecast_dir = forecast_dir
-
-    # ----------------------------------------------------------------------------------------------
-
-    def chem_rename(self, rcdict: dict) -> None:
-
-        # Some files are renamed according to bool. switches in GEOS_ChemGridComp.rc
-        # -------------------------------------------------------------------------
-
-        # Convert rc bool.s to python
-        # ---------------------------
-        rcdict = self.rc_to_bool(rcdict)
-
-        # GEOS Chem filenames, shares same keys as rcdict
-        # -----------------------------------------------
-        chem_files = {
-            'ENABLE_STRATCHEM': 'StratChem_ExtData.rc',
-            'ENABLE_GMICHEM': 'GMI_ExtData.rc',
-            'ENABLE_GEOSCHEM': 'GEOSCHEMchem_ExtData.rc',
-            'ENABLE_CARMA': 'CARMAchem_GridComp_ExtData.rc',
-            'ENABLE_DNA': 'DNA_ExtData.rc',
-            'ENABLE_ACHEM': 'ACHEM_ExtData.rc',
-        }
-
-        for key, value in chem_files.items():
-            fname = os.path.join(self.forecast_dir, value)
-
-            if not rcdict[key] and os.path.isfile(fname):
-                self.logger.info(' Renaming file: '+fname)
-                os.system('rename .rc .rc.NOT_USED ' + fname)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def run_geos_script(
-        self,
-        script_src: str,
-        script: str,
-        input: str = '',
-        output: str = '',
-        **kwargs
-    ) -> None:
-
-        # Source g5_modules and execute scripts in a new shell process then return
-        # Define the command to source the Bash script and run the Python command
-        # -----------------------------------------------------------------------
-        command = f'source {script_src}/g5_modules.sh && {script_src}/{script} {input} {output}'
-
-        # Containerized run of the GEOS build steps
-        # -----------------------------------------
-        run_subprocess(self.logger, ['/bin/bash', '-c', command], cwd=self.forecast_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -98,6 +54,21 @@ class Geos():
         half: bool = False,
         agcm: bool = False,
     ) -> Tuple[str, int, datetime.timedelta]:
+        """
+        Converts an ISO 8601 duration string to various time representations.
+
+        Args:
+            iso_duration (str): ISO 8601 duration string (e.g., 'PT6H').
+            half (bool): If True, divides the duration by two (useful for RESTART).
+                         Defaults to False.
+            agcm (bool): If True, returns hours in HHH format instead of HH. Defaults to False.
+
+        Returns:
+            Tuple[str, int, datetime.timedelta]: A tuple containing:
+                - time_string (str): Time formatted as 'HHMMSS' or 'HHHMMSS'.
+                - days (int): Number of days in the duration.
+                - duration (datetime.timedelta): The duration as a timedelta object.
+        """
 
         # Parse the ISO duration string and get the total number of seconds
         # It is written to handle fcst_duration less than a day for now
@@ -134,7 +105,21 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def linker(self, src: str, dst: str, dst_dir: str = None) -> None:
+    def linker(
+        self,
+        src: str,
+        dst: str,
+        dst_dir: str = None
+    ) -> None:
+        """
+        Creates a symbolic link from a source file to a destination.
+
+        Args:
+            src (str): Path to the source file.
+            dst (str): Name or path of the destination link.
+            dst_dir (str, optional): Directory where the link should be created.
+                                     Defaults to self.forecast_dir.
+        """
 
         # Link files from BC directories
         # ------------------------------
@@ -167,58 +152,19 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_gcmrun(self, jfile: str) -> dict:
+    def parse_mom6_input(
+        self,
+        mom6_input_path: str
+    ) -> dict:
+        """
+        Parses MOM6 input files (e.g., MOM_oda_incupd) and extracts configuration values.
 
-        # Parse gcm_run.j line by line and snatch setenv variables. gcm_setup
-        # creates gcm_run.j and handles platform dependencies.
-        # ----------------------------------------------------------------------
+        Args:
+            mom6_input_path (str): Path to the MOM6 input file.
 
-        with open(jfile, 'r') as file:
-            lines = file.readlines()
-
-        rcdict = {}
-
-        for line in lines:
-
-            # Skip if the line is a comment (i.e., starts with #)
-            # ------------------------------------------------------
-            if line.startswith("#"):
-                continue
-
-            # Strip any leading or trailing whitespace from the line
-            # ------------------------------------------------------
-            line = line.strip()
-
-            # Skips empty lines
-            # ------------------
-            if line:
-
-                # Split the line and use setenv expressions for key-value pairs
-                # -------------------------------------------------------------
-                parts = line.split()
-
-                if parts[0] == 'setenv':
-                    key = parts[1]
-                    # if setenv is empty, assign None
-                    value = parts[2] if len(parts) > 2 else None
-                    rcdict[key] = value
-
-                # Parse set lines (e.g., set VAR = VALUE)
-                elif parts[0] == 'set' and '=' in line:
-                    # Find the variable name and value
-                    match = re.match(r'set\s+(\w+)\s*=\s*(.*)', line)
-                    if match:
-                        key = match.group(1)
-                        value = match.group(2)
-                        # Remove backticks and shell expressions for now
-                        value = value.strip('`').strip()
-                        rcdict[key] = value
-
-        return rcdict
-
-    # ----------------------------------------------------------------------------------------------
-
-    def parse_mom6_input(self, mom6_input_path: str) -> dict:
+        Returns:
+            dict: Dictionary containing parsed key-value pairs from the MOM6 input.
+        """
 
         # Parses the MOM6 input file(s) (e.g., MOM_oda_incupd) and extracts configuration values.
         # ---------------------------------------------------------------------------------
@@ -264,10 +210,20 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def parse_rc(self, rcfile: str) -> dict:
+    def parse_rc(
+        self,
+        rcfile: str
+    ) -> dict:
         """
-        Parses .rc files line by line, ignoring comments and handling empty entries.
-        Properly handles multi-line sections delimited by :: markers.
+        Parses GEOS .rc files line by line, handling comments, multi-line
+        sections (delimited by ::), and empty entries.
+
+        Args:
+            rcfile (str): Path to the .rc file to be parsed.
+
+        Returns:
+            dict: Dictionary containing the parsed keys and values. Multi-line sections
+                  are returned as lists.
         """
         with open(rcfile, 'r') as file:
             lines = file.readlines()
@@ -324,10 +280,17 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def write_rc(self, rcdict: dict, output_file: str) -> None:
+    def write_rc(
+        self,
+        rcdict: dict,
+        output_file: str
+    ) -> None:
         """
-        Writes the parsed RC dictionary back to a file.
-        Properly handles multi-line sections.
+        Writes a dictionary back to a GEOS .rc file format, preserving multi-line sections.
+
+        Args:
+            rcdict (dict): Dictionary of RC settings to write.
+            output_file (str): Path where the .rc file will be saved.
         """
         with open(output_file, 'w') as file:
             for key, value in rcdict.items():
@@ -346,7 +309,20 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def process_nml(self, combine_fvcore: bool = False, cold_restart: bool = False) -> None:
+    def process_nml(
+        self,
+        combine_fvcore: bool = False,
+        cold_restart: bool = False
+    ) -> None:
+        """
+        Adjusts the input.nml file for hot or cold starts and optionally merges
+        fvcore_layout.rc settings.
+
+        Args:
+            combine_fvcore (bool): If True, merges fvcore_layout.rc into input.nml.
+                                   Defaults to False.
+            cold_restart (bool): If True, configures for a cold start. Defaults to False.
+        """
 
         # Make sure input.nml is set up properly for hot/cold restart
         nml_comb = f90nml.read(os.path.join(self.forecast_dir, 'input.nml'))
@@ -366,21 +342,22 @@ class Geos():
         with open(os.path.join(self.forecast_dir, 'input.nml'), 'w') as f:
             f90nml.write(nml_comb, f, sort=False)
 
-    # ----------------------------------------------------------------------------------------------
-
-    def rc_assign(self, rcdict: dict, key_inquiry: str) -> None:
-
-        # Some of the gcm_run.j steps involve setting environment values using
-        # .rc files. These files may or may not have some of the key values used
-        # for environment setting. Hence, they will be assigned 'False'.
-        # ----------------------------------------------------------------------
-
-        if key_inquiry not in rcdict:
-            rcdict.setdefault(key_inquiry, False)
-
     # --------------------------------------------------------------------------------------------------
 
-    def rc_to_bool(self, rcdict: dict) -> dict:
+    def rc_to_bool(
+        self,
+        rcdict: dict
+    ) -> dict:
+        """
+        Converts boolean strings in a GEOS .rc dictionary (e.g., '.TRUE.', '.FALSE.', 'T', 'F')
+        to Python boolean objects.
+
+        Args:
+            rcdict (dict): Dictionary of settings parsed from an .rc file.
+
+        Returns:
+            dict: The updated dictionary with boolean strings converted to bool.
+        """
 
         # .rc files have switch values in .TRUE. or .FALSE. format, some might
         # have T and F.
@@ -406,11 +383,17 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
-    def rename_checkpoints(self, forecast_dir: str) -> None:
+    def rename_checkpoints(
+        self,
+        forecast_dir: str
+    ) -> None:
+        """
+        Renames all files ending in '_checkpoint' to '_rst' in the specified directory.
 
+        Args:
+            forecast_dir (str): Path to the directory containing checkpoint files.
         """
-        Rename _checkpoint files to _rst in the forecast_dir directory.
-        """
+
         # Validate directory exists
         if not os.path.exists(forecast_dir):
             self.logger.abort(f'Directory does not exist: {forecast_dir}')
@@ -439,29 +422,27 @@ class Geos():
 
     # --------------------------------------------------------------------------------------------------
 
-    def resub(self, filename: str, pattern: str, replacement: str) -> None:
+    def states_generator(
+        self,
+        background_frequency: str,
+        window_length: str,
+        window_begin_iso: str,
+        model: str = 'geos_marine',
+        marine_models: list = []
+    ) -> list:
+        """
+        Generates a list of states for JEDI configuration based on the model type.
 
-        # Replacing string values involving wildcards
-        # -------------------------------------------
-        with open(filename, 'r') as f:
-            full_text = f.read()
+        Args:
+            background_frequency (str): ISO 8601 duration between background states.
+            window_length (str): ISO 8601 duration of the DA window.
+            window_begin_iso (str): ISO 8601 datetime string for the start of the window.
+            model (str): Model component name (e.g., 'geos_marine'). Defaults to 'geos_marine'.
+            marine_models (list): List of active marine model components (e.g., ['cice6']).
 
-        # Perform the substitution and write the output to a new file
-        # -----------------------------------------------------------
-        modified_text = re.sub(pattern, replacement, full_text, flags=re.MULTILINE)
-
-        with open(filename, 'w') as out_file:
-            out_file.write(modified_text)
-
-    # --------------------------------------------------------------------------------------------------
-
-    def states_generator(self,
-                         background_frequency: str,
-                         window_length: str,
-                         window_begin_iso: str,
-                         model: str = 'geos_marine',
-                         marine_models: list = []
-                         ) -> list:
+        Returns:
+            list: A list of dictionaries, each representing a state with its date and filenames.
+        """
 
         states = []
         self.logger.info('Generating states for model: '+model)
@@ -479,6 +460,18 @@ class Geos():
                       window_begin_iso: str,
                       marine_models: list
                       ) -> list:
+        """
+        Generates states specifically for the geos_marine model component.
+
+        Args:
+            background_frequency (str): ISO 8601 duration between background states.
+            window_length (str): ISO 8601 duration of the DA window.
+            window_begin_iso (str): ISO 8601 datetime string for the start of the window.
+            marine_models (list): List of active marine model components.
+
+        Returns:
+            list: List of dictionaries containing JEDI state information for marine models.
+        """
 
         static_part = {"basename": "./", "read_from_file": 1}
 
@@ -513,6 +506,13 @@ class Geos():
     # --------------------------------------------------------------------------------------------------
 
     def write_mom6_input(self, mom6_config: dict, output_path: str) -> None:
+        """
+        Writes a MOM6 configuration dictionary to a file in MOM6 input format.
+
+        Args:
+            mom6_config (dict): Dictionary of MOM6 parameters.
+            output_path (str): Path where the MOM6 input file will be written.
+        """
 
         self.logger.info(f"Writing MOM6 configuration to: {output_path}")
 

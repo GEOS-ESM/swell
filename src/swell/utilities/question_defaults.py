@@ -608,15 +608,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geos_experiment_directory(TaskQuestion):
-        default_value: str = "coupled_5deg"
-        question_name: str = "geos_experiment_directory"
-        prompt: str = ("(will be taken out) What is the experiment directory?")
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class geos_gcm_tag(TaskQuestion):
         default_value: str = "v11.6.0"
         question_name: str = "geos_gcm_tag"
@@ -624,16 +615,6 @@ class QuestionDefaults():
             "geos_build_method": "create"
         })
         prompt: str = "Which GEOS tag do you wish to clone?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class geos_restarts_directory(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "geos_restarts_directory"
-        ask_question: bool = True
-        prompt: str = "What is the path to the GEOS restarts directory?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -829,8 +810,9 @@ class QuestionDefaults():
         question_name: str = "initial_restarts_method"
         ask_question: bool = True
         options: List[str] = mutable_field([
-            "directory",
+            "geos_expdir",
             "r2d2",
+            "hotstart",
         ])
         prompt: str = "How should initial GEOS restarts be obtained?"
         widget_type: WType = WType.STRING_DROP_LIST
