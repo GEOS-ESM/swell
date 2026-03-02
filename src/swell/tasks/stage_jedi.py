@@ -27,7 +27,7 @@ task_name = 'StageJedi'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.model_dep = True
         self.questions = [
@@ -43,8 +43,8 @@ class Setup(TaskSetup):
 
 @task_attributes.register('StageJediCycle')
 class StageJediCycle(Setup):
-    def set_attributes(self):
-        super().set_attributes()
+    def set_defaults(self):
+        super().set_defaults()
         self.base_name = "StageJedi"
         self.scheduling_name = "StageJediCycle-{model}"
         self.is_cycling = True

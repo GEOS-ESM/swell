@@ -37,7 +37,7 @@ class Setup(TaskSetup):
 
 
 class root(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         # root is a precursor to all tasks, it runs the pre-script before any task's script
         self.script = False
         self.pre_script = "source $CYLC_SUITE_DEF_PATH/modules"
@@ -49,7 +49,7 @@ class root(TaskSetup):
 class sync_point(TaskSetup):
     # placeholder task to check run dependencies in cylc graph
     # The command "true" is run in the shell as a placeholder
-    def set_attributes(self):
+    def set_defaults(self):
         self.script = "true"
 
 

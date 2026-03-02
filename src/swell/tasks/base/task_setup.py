@@ -9,6 +9,7 @@
 
 from collections.abc import Mapping
 from abc import abstractmethod, ABC
+from typing import Literal
 
 from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
@@ -17,6 +18,7 @@ from swell.utilities.swell_questions import QuestionList
 
 # --------------------------------------------------------------------------------------------------
 
+blank_spec = 'BLANKSPEC'
 
 class TaskSetup(ABC):
 
@@ -60,7 +62,21 @@ class TaskSetup(ABC):
     questions: list
     additional_sections: list
 
-    def __init__(self, model: str | None = None, platform: str | None = None) -> None:
+    def __init__(self, model: str | None = None,
+                 platform: str | None = None,
+                 base_name: str = blank_spec,
+                 scheduling_name: str = blank_spec,
+                 is_cycling: str | bool = blank_spec,
+                 model_dep: str | bool = blank_spec,
+                 pre_script: str | Literal[False] = blank_spec,
+                 script: str | Literal[False] | None = blank_spec,
+                 retry: str | None = blank_spec,
+                 task_time_limit: str | dict | None = blank_spec,
+                 slurm: Literal['BLANKSPEC'] | dict | None = blank_spec,
+                 mail_events: list | None = None,
+                 questions: list | None = None,
+                 additional_sections: list | None = None
+                 ) -> None:
 
         self.model = model
         self.platform = platform
@@ -83,13 +99,50 @@ class TaskSetup(ABC):
         self.questions = []
         self.additional_sections = []
 
-        self.set_attributes()
+        self.set_defaults()
+
+        if base_name != blank_spec:
+            self.base_name = base_name
+
+        if scheduling_name != blank_spec:
+            self.scheduling_name = scheduling_name
+
+        if is_cycling != blank_spec:
+            self.is_cycling = is_cycling
+
+        if model_dep != blank_spec:
+            self.model_dep = model_dep
+
+        if pre_script != blank_spec:
+            self.pre_script = pre_script
+
+        if script != blank_spec:
+            self.script = pre_script
+
+        if retry != blank_spec:
+            self.retry = retry
+
+        if task_time_limit != blank_spec:
+            self.task_time_limit = task_time_limit
+
+        if slurm != blank_spec:
+            self.slurm = slurm
+
+        if mail_events is not None:
+            self.mail_events = mail_events
+
+        if questions is not None:
+            self.questions = questions
+
+        if additional_sections is not None:
+            self.additional_sections = additional_sections
+
         self.post_init()
 
     # --------------------------------------------------------------------------------------------------
 
     @abstractmethod
-    def set_attributes(self) -> None:
+    def set_defaults(self) -> None:
         '''Abstract method to be overridden by each task in order to set attributes.
         '''
         pass

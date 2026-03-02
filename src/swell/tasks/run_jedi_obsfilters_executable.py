@@ -25,7 +25,7 @@ task_name = 'RunJediObsfiltersExecutable'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.script = ("swell task RunJediObsfiltersExecutable $config"
                        " -d $datetime -m geos_atmosphere")

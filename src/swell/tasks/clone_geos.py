@@ -24,7 +24,7 @@ task_name = 'CloneGeos'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.questions = [
             qd.existing_geos_gcm_source_path(),

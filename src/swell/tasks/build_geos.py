@@ -24,7 +24,7 @@ task_name = 'BuildGeos'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.questions = [
             qd.geos_build_method()

@@ -22,7 +22,7 @@ task_name = 'BuildJedi'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.task_time_limit = 'PT3H'
         self.slurm = {}

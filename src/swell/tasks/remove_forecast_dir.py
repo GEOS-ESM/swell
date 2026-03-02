@@ -20,7 +20,7 @@ task_name = 'RemoveForecastDir'
 
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = task_name
         self.is_cycling = True
 
