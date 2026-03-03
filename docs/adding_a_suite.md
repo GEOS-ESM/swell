@@ -287,99 +287,62 @@ In this question infrastructure, **suites take priority over tasks**. Any questi
 
 Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
 
-```python
-from swell.configuration.question_defaults import QuestionDefaults as qd
-from swell.suites.base.suite_questions import SuiteQuestions as sq
-
-class SuiteQuestions(QuestionContainer, Enum):
-
-    # --------------------------------------------------------------------------------------------------
-    # Shared groups of questions across suites
-    # --------------------------------------------------------------------------------------------------
-
-    all_suites = QuestionList(
-        list_name="all_suites",
-        questions=[
-            qd.experiment_id(),
-            qd.experiment_root()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    common = QuestionList(
-        list_name="common",
-        questions=[
-            all_suites,
-            qd.cycle_times(),
-            qd.start_cycle_point(),
-            qd.final_cycle_point(),
-            qd.model_components(),
-            qd.runahead_limit()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    marine = QuestionList(
-        list_name="marine",
-        questions=[
-            common,
-            qd.marine_models()
-        ]
-    )
-```
-
 
 ```python
-class SuiteConfig(QuestionContainer, Enum):
 
-    _3dvar_base = QuestionList(
-        list_name="3dvar",
-        questions=[
-            sq.marine
-        ]
-    )
+from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_questions import marine
 
-    # --------------------------------------------------------------------------------------------------
+_3dvar_base = QuestionList(
+    list_name="3dvar",
+    questions=[
+        marine
+    ]
+)
 
-    _3dvar_tier1 = QuestionList(
-        list_name="3dvar",
-        questions=[
-            _3dvar_base,
-            qd.start_cycle_point("2021-07-01T12:00:00Z"),
-            qd.final_cycle_point("2021-07-01T12:00:00Z"),
-            qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_marine']),
-        ],
-        geos_marine=[
-            qd.cycle_times(['T12']),
-            qd.marine_models(['mom6']),
-            qd.window_length("P1D"),
-            qd.horizontal_resolution("72x36"),
-            qd.vertical_resolution("50"),
-            qd.total_processors(6),
-            qd.obs_experiment("s2s_v1"),
-            qd.observations([
-                "adt_cryosat2n",
-                "adt_jason3",
-                "adt_saral",
-                "adt_sentinel3a",
-                "adt_sentinel3b",
-                "insitu_profile_argo",
-                "sst_ostia",
-                "sss_smos",
-                "sss_smapv5",
-                "sst_abi_g16_l3c",
-                "sst_gmi_l3u",
-                "sst_viirs_n20_l3u",
-                "temp_profile_xbt"
-            ]),
-            qd.obs_provider(['odas', 'gdas_marine']),
-            qd.background_time_offset("PT18H"),
-            qd.clean_patterns(['*.nc4', '*.txt']),
-        ]
-    )
+suite_configs.register('3dvar', '3dvar_base', _3dvar_base)
+
+# --------------------------------------------------------------------------------------------------
+
+_3dvar_tier1 = QuestionList(
+    list_name="3dvar",
+    questions=[
+        _3dvar_base,
+        qd.start_cycle_point("2021-07-01T12:00:00Z"),
+        qd.final_cycle_point("2021-07-01T12:00:00Z"),
+        qd.jedi_build_method("use_existing"),
+        qd.model_components(['geos_marine']),
+    ],
+    geos_marine=[
+        qd.cycle_times(['T12']),
+        qd.marine_models(['mom6']),
+        qd.window_length("P1D"),
+        qd.horizontal_resolution("72x36"),
+        qd.vertical_resolution("50"),
+        qd.total_processors(6),
+        qd.obs_experiment("s2s_v1"),
+        qd.observations([
+            "adt_cryosat2n",
+            "adt_jason3",
+            "adt_saral",
+            "adt_sentinel3a",
+            "adt_sentinel3b",
+            "insitu_profile_argo",
+            "sst_ostia",
+            "sss_smos",
+            "sss_smapv5",
+            "sst_abi_g16_l3c",
+            "sst_gmi_l3u",
+            "sst_viirs_n20_l3u",
+            "temp_profile_xbt"
+        ]),
+        qd.obs_provider(['odas', 'gdas_marine']),
+        qd.background_time_offset("PT18H"),
+        qd.clean_patterns(['*.nc4', '*.txt']),
+    ]
+)
+
+suite_configs.register('3dvar', '3dvar_tier1', _3dvar_tier1)
 ```
 The class `SuiteQuestions` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite. 
 
