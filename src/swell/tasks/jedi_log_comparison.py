@@ -16,7 +16,7 @@ import numpy as np
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
-from swell.configuration.question_defaults import QuestionDefaults as qd
+import swell.configuration.question_defaults as qd
 from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------

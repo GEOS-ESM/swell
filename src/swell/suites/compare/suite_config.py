@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from swell.utilities.swell_questions import QuestionList, WidgetType
-from swell.configuration.question_defaults import QuestionDefaults as qd
+import swell.configuration.question_defaults as qd
 from swell.suites.base.all_suites import suite_configs
 from swell.suites.base.suite_questions import all_suites
 
