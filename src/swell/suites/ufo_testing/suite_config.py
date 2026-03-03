@@ -28,6 +28,8 @@ ufo_testing_tier1 = QuestionList(
     geos_atmosphere=[
         qd.cycle_times(['T00']),
         qd.observations([
+            "abi_g16",
+            "abi_g18",
             "aircraft_temperature",
             "aircraft_wind",
             "airs_aqua",

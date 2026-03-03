@@ -60,6 +60,8 @@ eva_capabilities_atmosphere = QuestionList(
     geos_atmosphere=[
         qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
         qd.observations([
+            "abi_g16",
+            "abi_g18",
             # "aircraft_temperature",
             # "aircraft_wind",
             "airs_aqua",
