@@ -18,7 +18,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'ingest_obs'
 
 ingest_obs = QuestionList(
-    list_name="ingest_obs",
     questions=[
         common,
     ],
@@ -31,7 +30,6 @@ suite_configs.register(suite_name, 'ingest_obs', ingest_obs)
 # This name should be unique and not conflict with other suites
 # (otherwise it might get overwritten)
 ingest_obs_marine = QuestionList(
-    list_name="ingest_obs_marine",
     questions=[
         ingest_obs,
         marine,

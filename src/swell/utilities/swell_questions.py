@@ -121,7 +121,6 @@ class SwellQuestion:
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
     questions: List[Union[SwellQuestion, Self]] = mutable_field([])
-    list_name: str = ''
 
     geos_atmosphere: list = mutable_field([])
     geos_cf: list = mutable_field([])

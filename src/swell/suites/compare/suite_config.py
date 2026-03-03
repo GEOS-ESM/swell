@@ -17,7 +17,6 @@ from swell.suites.base.suite_questions import all_suites
 suite_name = 'compare'
 
 compare = QuestionList(
-    list_name="compare",
     questions=[
         all_suites,
         qd.comparison_experiment_paths(),
@@ -34,7 +33,6 @@ suite_configs.register(suite_name, 'compare', compare)
 # --------------------------------------------------------------------------------------------------
 
 compare_variational_marine = QuestionList(
-    list_name="compare_variational_marine",
     questions=[
         compare,
         qd.comparison_log_type('variational'),
@@ -47,7 +45,6 @@ suite_configs.register(suite_name, 'compare_variational_marine', compare_variati
 # --------------------------------------------------------------------------------------------------
 
 compare_variational_atmosphere = QuestionList(
-    list_name="compare_variational_atmosphere",
     questions=[
         compare,
         qd.comparison_log_type('variational'),
@@ -60,7 +57,6 @@ suite_configs.register(suite_name, 'compare_variational_atmosphere', compare_var
 # --------------------------------------------------------------------------------------------------
 
 compare_fgat_marine = QuestionList(
-    list_name="compare_fgat_marine",
     questions=[
         compare,
         qd.comparison_log_type('fgat'),

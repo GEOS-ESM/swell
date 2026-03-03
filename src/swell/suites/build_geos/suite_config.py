@@ -17,7 +17,6 @@ suite_name = 'build_geos'
 # --------------------------------------------------------------------------------------------------
 
 build_geos = QuestionList(
-    list_name="build_geos",
     questions=[
         all_suites
     ]

@@ -18,7 +18,6 @@ suite_name = '3dvar_cycle'
 # --------------------------------------------------------------------------------------------------
 
 _3dvar_cycle_tier1 = QuestionList(
-    list_name="3dvar_cycle",
     questions=[
         marine,
         qd.cycling_varbc(),
@@ -73,7 +72,6 @@ suite_configs.register(suite_name, '3dvar_cycle_tier1', _3dvar_cycle_tier1)
 # --------------------------------------------------------------------------------------------------
 
 _3dvar_cycle = QuestionList(
-    list_name="3dvar_cycle",
     questions=[
         _3dvar_cycle_tier1
     ]

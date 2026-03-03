@@ -19,7 +19,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'hofx'
 
 hofx_tier1 = QuestionList(
-    list_name="hofx",
     questions=[
         marine,
         qd.cycling_varbc(),
@@ -79,7 +78,6 @@ suite_configs.register(suite_name, 'hofx_tier1', hofx_tier1)
 # --------------------------------------------------------------------------------------------------
 
 hofx = QuestionList(
-    list_name="hofx",
     questions=[
         hofx_tier1
     ]

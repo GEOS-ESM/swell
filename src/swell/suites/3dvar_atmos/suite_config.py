@@ -18,7 +18,6 @@ suite_name = '3dvar_atmos'
 # --------------------------------------------------------------------------------------------------
 
 _3dvar_atmos_tier1 = QuestionList(
-    list_name="3dvar_atmos",
     questions=[
         common,
         qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -88,7 +87,6 @@ suite_configs.register(suite_name, '3dvar_atmos_tier1', _3dvar_atmos_tier1)
 # --------------------------------------------------------------------------------------------------
 
 _3dvar_atmos = QuestionList(
-    list_name="3dvar_atmos",
     questions=[
         _3dvar_atmos_tier1
     ]

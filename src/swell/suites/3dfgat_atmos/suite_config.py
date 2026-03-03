@@ -18,7 +18,6 @@ suite_name = '3dfgat_atmos'
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_atmos_tier1 = QuestionList(
-    list_name="3dfgat_atmos",
     questions=[
         common,
         qd.start_cycle_point("2023-10-10T00:00:00Z"),
@@ -86,7 +85,6 @@ suite_configs.register(suite_name, '3dfgat_atmos_tier1', _3dfgat_atmos_tier1)
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_atmos = QuestionList(
-    list_name="3dfgat_atmos",
     questions=[
         _3dfgat_atmos_tier1
     ]
@@ -97,7 +95,6 @@ suite_configs.register(suite_name, '3dfgat_atmos', _3dfgat_atmos)
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_atmos_tier2 = QuestionList(
-    list_name="3dfgat_atmos_tier2",
     questions=[
         _3dfgat_atmos_tier1,
     ],

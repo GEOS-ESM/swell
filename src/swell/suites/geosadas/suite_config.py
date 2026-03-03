@@ -19,7 +19,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'geosadas'
 
 geosadas_tier1 = QuestionList(
-    list_name="geosadas",
     questions=[
         all_suites,
         qd.jedi_build_method("use_existing"),
@@ -71,7 +70,6 @@ suite_configs.register(suite_name, 'geosadas_tier1', geosadas_tier1)
 # --------------------------------------------------------------------------------------------------
 
 geosadas = QuestionList(
-    list_name="geosadas",
     questions=[
         geosadas_tier1
     ]

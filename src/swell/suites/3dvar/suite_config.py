@@ -18,7 +18,6 @@ from swell.suites.base.suite_questions import marine
 suite_name = '3dvar'
 
 _3dvar_tier1 = QuestionList(
-    list_name="3dvar",
     questions=[
         marine,
         qd.cycling_varbc(),
@@ -61,7 +60,6 @@ suite_configs.register(suite_name, '3dvar_tier1', _3dvar_tier1)
 # --------------------------------------------------------------------------------------------------
 
 _3dvar = QuestionList(
-    list_name="3dvar",
     questions=[
         _3dvar_tier1
     ]

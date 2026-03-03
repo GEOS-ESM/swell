@@ -17,7 +17,6 @@ from swell.suites.base.all_suites import suite_configs
 # --------------------------------------------------------------------------------------------------
 
 all_suites = QuestionList(
-    list_name="all_suites",
     questions=[
         qd.experiment_id(),
         qd.experiment_root(),
@@ -32,7 +31,6 @@ suite_configs.register('AllSuites', 'AllSuites', all_suites)
 # --------------------------------------------------------------------------------------------------
 
 common = QuestionList(
-    list_name="common",
     questions=[
         all_suites,
         qd.cycle_times(),
@@ -46,7 +44,6 @@ common = QuestionList(
 # --------------------------------------------------------------------------------------------------
 
 marine = QuestionList(
-    list_name="marine",
     questions=[
         common,
         qd.marine_models()
@@ -56,7 +53,6 @@ marine = QuestionList(
 # --------------------------------------------------------------------------------------------------
 
 compare = QuestionList(
-    list_name="compare",
     questions=[
         all_suites,
         qd.comparison_experiment_paths()
@@ -66,7 +62,6 @@ compare = QuestionList(
 # --------------------------------------------------------------------------------------------------
 
 task_minimum = QuestionList(
-    list_name="task_minimum",
     questions=[
         qd.experiment_id(),
         qd.experiment_root(),

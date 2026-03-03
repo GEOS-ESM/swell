@@ -17,7 +17,6 @@ suite_name = 'build_jedi'
 # --------------------------------------------------------------------------------------------------
 
 build_jedi = QuestionList(
-    list_name="build_jedi",
     questions=[
         all_suites
     ]

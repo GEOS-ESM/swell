@@ -18,7 +18,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'eva_capabilities'
 
 eva_capabilities = QuestionList(
-    list_name="eva_capabilities",
     questions=[
         marine,
         qd.start_cycle_point("2021-07-02T06:00:00Z"),
@@ -52,7 +51,6 @@ suite_configs.register(suite_name, 'eva_capabilities', eva_capabilities)
 # --------------------------------------------------------------------------------------------------
 
 eva_capabilities_atmosphere = QuestionList(
-    list_name="eva_capabilities_atmosphere",
     questions=[
         eva_capabilities,
         qd.start_cycle_point("2023-10-10T00:00:00Z"),

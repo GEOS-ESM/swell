@@ -18,7 +18,6 @@ suite_name = '3dfgat_cycle'
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_cycle_tier1 = QuestionList(
-    list_name="3dfgat_cycle",
     questions=[
         marine,
         qd.cycling_varbc(),
@@ -86,7 +85,6 @@ suite_configs.register(suite_name, '3dfgat_cycle_tier1', _3dfgat_cycle_tier1)
 # --------------------------------------------------------------------------------------------------
 
 _3dfgat_cycle = QuestionList(
-    list_name="3dfgat_cycle",
     questions=[
         _3dfgat_cycle_tier1
     ]

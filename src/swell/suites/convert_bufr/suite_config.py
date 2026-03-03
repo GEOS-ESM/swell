@@ -19,7 +19,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'convert_bufr'
 
 convert_bufr = QuestionList(
-    list_name="convert_bufr",
     questions=[
         common,
         qd.start_cycle_point("2023-10-10T00:00:00Z"),

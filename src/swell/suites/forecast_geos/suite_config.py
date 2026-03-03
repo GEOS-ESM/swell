@@ -18,7 +18,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'forecast_geos'
 
 forecast_geos_tier1 = QuestionList(
-    list_name="forecast_geos",
     questions=[
         all_suites,
         qd.cycle_times(),
@@ -42,7 +41,6 @@ suite_configs.register(suite_name, 'forecast_geos_tier1', forecast_geos_tier1)
 # --------------------------------------------------------------------------------------------------
 
 forecast_geos = QuestionList(
-    list_name="forecast_geos",
     questions=[
         forecast_geos_tier1
     ]

@@ -18,7 +18,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'ufo_testing'
 
 ufo_testing_tier1 = QuestionList(
-    list_name="ufo_testing",
     questions=[
         common,
         qd.final_cycle_point("2023-10-10T00:00:00Z"),
@@ -87,7 +86,6 @@ suite_configs.register(suite_name, 'ufo_testing_tier1', ufo_testing_tier1)
 # --------------------------------------------------------------------------------------------------
 
 ufo_testing = QuestionList(
-    list_name="ufo_testing",
     questions=[
         ufo_testing_tier1
     ]

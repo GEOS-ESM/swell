@@ -19,7 +19,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'convert_ncdiags'
 
 convert_ncdiags_tier1 = QuestionList(
-    list_name="convert_ncdiags",
     questions=[
         common,
         qd.start_cycle_point("2021-12-12T00:00:00Z"),
@@ -85,7 +84,6 @@ suite_configs.register(suite_name, 'convert_ncdiags_tier1', convert_ncdiags_tier
 # --------------------------------------------------------------------------------------------------
 
 convert_ncdiags = QuestionList(
-    list_name="convert_ncdiags",
     questions=[
         convert_ncdiags_tier1
     ]

@@ -18,7 +18,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'localensembleda'
 
 localensembleda_tier1 = QuestionList(
-    list_name="localensembleda",
     questions=[
         marine,
         qd.cycling_varbc(),
@@ -62,7 +61,6 @@ suite_configs.register(suite_name, 'localensembleda_tier1', localensembleda_tier
 # --------------------------------------------------------------------------------------------------
 
 localensembleda_tier2 = QuestionList(
-    list_name="localensembleda",
     questions=[
         marine,
         qd.ensemble_hofx_packets(),
@@ -132,7 +130,6 @@ suite_configs.register(suite_name, 'localensembleda_tier2', localensembleda_tier
 # --------------------------------------------------------------------------------------------------
 
 localensembleda = QuestionList(
-    list_name="localensembleda",
     questions=[
         localensembleda_tier2
     ]

@@ -19,7 +19,6 @@ from swell.suites.base.all_suites import suite_configs
 suite_name = 'hofx_cf'
 
 hofx_cf = QuestionList(
-    list_name="hofx_cf",
     questions=[
         common,
         qd.start_cycle_point("2023-08-05T18:00:00Z"),
@@ -38,7 +37,6 @@ suite_configs.register(suite_name, 'hofx_cf', hofx_cf)
 # --------------------------------------------------------------------------------------------------
 
 hofx_cf_tier1 = QuestionList(
-    list_name="hofx_cf_tier1",
     questions=[
         hofx_cf
     ]
