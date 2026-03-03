@@ -72,6 +72,6 @@ task_minimum = QuestionList(
     ]
 )
 
-suite_configs.register('TaskMinimum', 'TaskMinimum', task_minimum)
+suite_configs.register('task_minimum', 'task_minimum', task_minimum)
 
 # --------------------------------------------------------------------------------------------------
