@@ -101,6 +101,7 @@ template_str = '''
             RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
+            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
             EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
             CleanCycle-{{model_component}}
 
