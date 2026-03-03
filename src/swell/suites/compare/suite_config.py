@@ -7,63 +7,67 @@
 #
 # --------------------------------------------------------------------------------------------------
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList, WidgetType
+from swell.utilities.swell_questions import QuestionList, WidgetType
 from swell.configuration.question_defaults import QuestionDefaults as qd
-from swell.suites.base.suite_questions import SuiteQuestions as sq
-
-from enum import Enum
+from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_questions import all_suites
 
 # --------------------------------------------------------------------------------------------------
 
+suite_name = 'compare'
 
-class SuiteConfig(QuestionContainer, Enum):
+compare = QuestionList(
+    list_name="compare",
+    questions=[
+        all_suites,
+        qd.comparison_experiment_paths(),
+        qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+        qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
+        qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
+        qd.model_components(),
+        qd.runahead_limit(),
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register(suite_name, 'compare', compare)
 
-    compare = QuestionList(
-        list_name="compare",
-        questions=[
-            sq.all_suites,
-            qd.comparison_experiment_paths(),
-            qd.start_cycle_point(default_value=None, widget_type=WidgetType.STRING),
-            qd.final_cycle_point(default_value=None, widget_type=WidgetType.STRING),
-            qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
-            qd.model_components(),
-            qd.runahead_limit(),
-        ]
-    )
+# --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
+compare_variational_marine = QuestionList(
+    list_name="compare_variational_marine",
+    questions=[
+        compare,
+        qd.comparison_log_type('variational'),
+        qd.model_components(['geos_marine']),
+    ]
+)
 
-    compare_variational_marine = QuestionList(
-        list_name="compare_variational_marine",
-        questions=[
-            compare,
-            qd.comparison_log_type('variational'),
-            qd.model_components(['geos_marine']),
-        ]
-    )
+suite_configs.register(suite_name, 'compare_variational_marine', compare_variational_marine)
 
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    compare_variational_atmosphere = QuestionList(
-        list_name="compare_variational_atmosphere",
-        questions=[
-            compare,
-            qd.comparison_log_type('variational'),
-            qd.model_components(['geos_atmosphere']),
-        ]
-    )
+compare_variational_atmosphere = QuestionList(
+    list_name="compare_variational_atmosphere",
+    questions=[
+        compare,
+        qd.comparison_log_type('variational'),
+        qd.model_components(['geos_atmosphere']),
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register(suite_name, 'compare_variational_atmosphere', compare_variational_atmosphere)
 
-    compare_fgat_marine = QuestionList(
-        list_name="compare_fgat_marine",
-        questions=[
-            compare,
-            qd.comparison_log_type('fgat'),
-            qd.model_components(['geos_marine']),
-        ]
-    )
+# --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
+compare_fgat_marine = QuestionList(
+    list_name="compare_fgat_marine",
+    questions=[
+        compare,
+        qd.comparison_log_type('fgat'),
+        qd.model_components(['geos_marine']),
+    ]
+)
+
+suite_configs.register(suite_name, 'compare_fgat_marine', compare_fgat_marine)
+
+# --------------------------------------------------------------------------------------------------

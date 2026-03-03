@@ -116,21 +116,6 @@ class SwellQuestion:
 
 # --------------------------------------------------------------------------------------------------
 
-
-class QuestionContainer:
-    """ Class to extend question lists for suites and tasks, use with Enum """
-
-    def __init__(self, *args):
-        arg_dict = asdict(args[0])
-        setattr(self, arg_dict['list_name'], args[0])
-
-    @classmethod
-    def get_all(cls):
-        return cls._member_names_
-
-# --------------------------------------------------------------------------------------------------
-
-
 @dataclass
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""

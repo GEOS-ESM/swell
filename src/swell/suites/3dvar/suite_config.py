@@ -8,15 +8,14 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
+from swell.utilities.swell_questions import QuestionList
 from swell.configuration.question_defaults import QuestionDefaults as qd
 from swell.suites.base.all_suites import suite_configs
 from swell.suites.base.suite_questions import marine
 
-from enum import Enum
-
-
 # --------------------------------------------------------------------------------------------------
+
+suite_name = '3dvar'
 
 _3dvar_tier1 = QuestionList(
     list_name="3dvar",
@@ -57,7 +56,7 @@ _3dvar_tier1 = QuestionList(
     ]
 )
 
-suite_configs.register('3dvar_tier1', '3dvar', _3dvar_tier1)
+suite_configs.register(suite_name, '3dvar_tier1', _3dvar_tier1)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -68,6 +67,6 @@ _3dvar = QuestionList(
     ]
 )
 
-suite_configs.register('3dvar', '3dvar', _3dvar)
+suite_configs.register(suite_name, '3dvar', _3dvar)
 
 # --------------------------------------------------------------------------------------------------

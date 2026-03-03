@@ -8,23 +8,21 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
-from swell.suites.base.suite_questions import SuiteQuestions as sq
+from swell.utilities.swell_questions import QuestionList
+from swell.suites.base.suite_questions import all_suites
+from swell.suites.base.all_suites import suite_configs
 
-from enum import Enum
-
+suite_name = 'build_geos'
 
 # --------------------------------------------------------------------------------------------------
 
-class SuiteConfig(QuestionContainer, Enum):
+build_geos = QuestionList(
+    list_name="build_geos",
+    questions=[
+        all_suites
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register(suite_name, 'build_geos', build_geos)
 
-    build_geos = QuestionList(
-        list_name="build_geos",
-        questions=[
-            sq.all_suites
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
