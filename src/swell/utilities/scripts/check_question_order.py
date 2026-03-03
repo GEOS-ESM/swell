@@ -16,7 +16,7 @@ from swell.swell_path import get_swell_path
 
 
 def check_question_order():
-    question_file = os.path.join(get_swell_path(), 'utilities', 'question_defaults.py')
+    question_file = os.path.join(get_swell_path(), 'configuration', 'question_defaults.py')
 
     with open(question_file, 'r') as f:
         lines = f.readlines()

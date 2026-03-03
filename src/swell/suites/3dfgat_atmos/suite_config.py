@@ -37,7 +37,7 @@ _3dfgat_atmos_tier1 = QuestionList(
         ]),
         qd.horizontal_resolution("91"),
         qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
-                                        "dadev/rtodling/archive/Restarts/JEDI/541x"),
+                                       "dadev/rtodling/archive/Restarts/JEDI/541x"),
         qd.window_type("4D"),
         qd.observations([
             "aircraft_temperature",

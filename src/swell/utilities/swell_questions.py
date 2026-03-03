@@ -116,6 +116,7 @@ class SwellQuestion:
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""

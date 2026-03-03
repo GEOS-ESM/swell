@@ -11,6 +11,7 @@ import pkgutil
 
 # --------------------------------------------------------------------------------------------------
 
+
 def discover_plugins(package):
     '''Walk through packages to trigger any hooks.
 

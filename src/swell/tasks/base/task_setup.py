@@ -20,6 +20,7 @@ from swell.utilities.swell_questions import QuestionList
 
 blank_spec = 'BLANKSPEC'
 
+
 class TaskSetup(ABC):
 
     '''

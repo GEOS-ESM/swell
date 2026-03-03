@@ -33,9 +33,9 @@ localensembleda_tier1 = QuestionList(
         qd.horizontal_resolution('91'),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                        'rtodling/archive/Restarts/JEDI/541x'),
+                                       'rtodling/archive/Restarts/JEDI/541x'),
         qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                        'rtodling/archive/541/Milan'),
+                                     'rtodling/archive/541/Milan'),
         qd.npx_proc(3),
         qd.npy_proc(3),
         qd.cycle_times(['T00']),
@@ -76,9 +76,9 @@ localensembleda_tier2 = QuestionList(
         qd.horizontal_resolution('91'),
         qd.background_experiment('x0050'),
         qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                        'rtodling/archive/Restarts/JEDI/541x'),
+                                       'rtodling/archive/Restarts/JEDI/541x'),
         qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                        'rtodling/archive/541/Milan'),
+                                     'rtodling/archive/541/Milan'),
         qd.npx_proc(4),
         qd.npy_proc(4),
         # qd.perhost(32),

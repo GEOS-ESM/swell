@@ -75,8 +75,8 @@ ufo_testing_tier1 = QuestionList(
             "gsi_ncdiags"
         ]),
         qd.path_to_gsi_bc_coefficients("/discover/nobackup/projects/gmao/dadev/rtodling/"
-                                        "archive/541/Milan/x0050/ana/Y%Y/M%m/"
-                                        "*bias*%Y%m%d_%Hz.txt"),
+                                       "archive/541/Milan/x0050/ana/Y%Y/M%m/"
+                                       "*bias*%Y%m%d_%Hz.txt"),
         qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/archive/"
                                 "541/Milan/x0050/obs/Y%Y/M%m/D%d/H%H/"),
     ]

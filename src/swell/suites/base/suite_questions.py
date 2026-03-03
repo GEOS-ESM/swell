@@ -8,8 +8,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from enum import Enum
-
 from swell.utilities.swell_questions import QuestionList
 from swell.configuration.question_defaults import QuestionDefaults as qd
 from swell.suites.base.all_suites import suite_configs

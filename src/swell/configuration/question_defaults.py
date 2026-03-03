@@ -394,7 +394,7 @@ class QuestionDefaults():
         ])
         prompt: str = "Dry-run mode: preview what would be ingested before storing to R2D2"
         widget_type: WType = WType.BOOLEAN
-    
+
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -789,20 +789,6 @@ class QuestionDefaults():
     # ------------------------------------------------------------------------------------------------
 
     @dataclass
-    class obs_to_ingest(TaskQuestion):
-        default_value: list = mutable_field([])
-        question_name: str = "obs_to_ingest"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which observations do you want to ingest to R2D2?"
-        widget_type: WType = WType.STRING_CHECK_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class ioda_locations_not_in_r2d2(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "ioda_locations_not_in_r2d2"
@@ -1129,6 +1115,20 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the rejection fraction for obs thinning?"
         widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_ingest(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_ingest"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to ingest to R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
