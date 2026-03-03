@@ -10,6 +10,7 @@
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
+from swell.suites.base.all_suites import workflows
 
 # --------------------------------------------------------------------------------------------------
 
@@ -81,6 +82,7 @@ template_str = '''
 # --------------------------------------------------------------------------------------------------
 
 
+@workflows.register('forecast_geos')
 class Workflow_forecast_geos(CylcWorkflow):
 
     def get_workflow_string(self):

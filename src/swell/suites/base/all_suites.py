@@ -27,34 +27,26 @@ def format_suite_name(suite_name):
 
 # --------------------------------------------------------------------------------------------------
 
-
 class Workflows():
-    # Maps suites to workflow objects
 
     def __init__(self) -> None:
-        workflow_dict = {}
+        self.__workflow_names__ = []
 
-        for suite in get_suites():
-            workflow_path = os.path.join(get_swell_path(), 'suites', suite, 'workflow.py')
-            if os.path.exists(workflow_path):
-                workflow = getattr(
-                        import_module(f'swell.suites.{suite}.workflow'), f'Workflow_{suite}')
-
-                workflow_dict[suite] = workflow
-
-        self.workflow_dict = workflow_dict
-
-    def get_workflow(self, suite: str) -> type[CylcWorkflow]:
-        return self.workflow_dict[suite]
-
-    def all_workflows(self) -> list:
-        return self.workflow_dict.keys()
+    def register(self, name: str) -> None:
+        self.__workflow_names__.append(name)
+        def wrapper(cls):
+            setattr(self, name, cls)
+            return cls
+        return wrapper
+    
+    def get(self, name: str) -> type[CylcWorkflow]:
+        return getattr(self, name)
+    
+    def all(self) -> list:
+        return self.__workflow_names__
 
 # --------------------------------------------------------------------------------------------------
 
-workflows = Workflows()
-
-# --------------------------------------------------------------------------------------------------
 
 class SuiteConfigs():
 
@@ -109,7 +101,7 @@ class SuiteConfigs():
 
 # Objects to reference in imports
 suite_configs = SuiteConfigs()
-print('huh')
+workflows = Workflows()
 discover_plugins(swell.suites)
-print(suite_configs.all_configs())
+
 # --------------------------------------------------------------------------------------------------
