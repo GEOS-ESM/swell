@@ -548,7 +548,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_time_offset(),
             qd.observing_system_records_path(),
             qd.observations(),
-            qd.set_obs_as_local(),
             qd.window_length()
         ]
     )
