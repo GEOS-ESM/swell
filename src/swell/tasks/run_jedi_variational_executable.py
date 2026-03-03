@@ -47,8 +47,7 @@ class RunJediVariationalExecutable(taskBase):
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
         npx = self.config.npx(None)
-        npy = self.config.npy(None)        
-
+        npy = self.config.npy(None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
