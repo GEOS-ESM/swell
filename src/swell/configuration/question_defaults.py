@@ -19,6 +19,7 @@ from swell.utilities.dataclass_utils import mutable_field
 # Suite question defaults go here
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class comparison_experiment_paths(SuiteQuestion):
     default_value: list = mutable_field([])
@@ -28,6 +29,7 @@ class comparison_experiment_paths(SuiteQuestion):
     widget_type: WType = WType.STRING_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class cycle_times(SuiteQuestion):
@@ -43,6 +45,7 @@ class cycle_times(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class cycling_varbc(SuiteQuestion):
     default_value: str = "defer_to_model"
@@ -56,6 +59,7 @@ class cycling_varbc(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class email_address(SuiteQuestion):
     default_value: str = "defer_to_user"
@@ -64,6 +68,7 @@ class email_address(SuiteQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class ensemble_hofx_packets(SuiteQuestion):
@@ -77,6 +82,7 @@ class ensemble_hofx_packets(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ensemble_hofx_strategy(SuiteQuestion):
     default_value: str = "defer_to_model"
@@ -89,6 +95,7 @@ class ensemble_hofx_strategy(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class experiment_id(SuiteQuestion):
     default_value: str = "defer_to_code"
@@ -99,16 +106,18 @@ class experiment_id(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class experiment_root(SuiteQuestion):
     default_value: str = "defer_to_platform"
     question_name: str = "experiment_root"
     ask_question: bool = True
     prompt: str = ("What is the experiment root (the directory where the "
-                    "experiment will be stored)?")
+                   "experiment will be stored)?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class final_cycle_point(SuiteQuestion):
@@ -119,6 +128,7 @@ class final_cycle_point(SuiteQuestion):
     widget_type: WType = WType.ISO_DATETIME
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class marine_models(SuiteQuestion):
@@ -134,6 +144,7 @@ class marine_models(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class model_components(SuiteQuestion):
     default_value: str = "defer_to_code"
@@ -144,6 +155,7 @@ class model_components(SuiteQuestion):
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class parser_options(SuiteQuestion):
@@ -156,16 +168,18 @@ class parser_options(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class runahead_limit(SuiteQuestion):
     default_value: str = "P4"
     question_name: str = "runahead_limit"
     ask_question: bool = True
     prompt: str = ("Since this suite is non-cycling choose how "
-                    "many hours the workflow can run ahead?")
+                   "many hours the workflow can run ahead?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class skip_ensemble_hofx(SuiteQuestion):
@@ -179,6 +193,7 @@ class skip_ensemble_hofx(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class start_cycle_point(SuiteQuestion):
     default_value: str = "2023-10-10T00:00:00Z"
@@ -189,16 +204,18 @@ class start_cycle_point(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class use_cycle_dir(SuiteQuestion):
     default_value: bool = True
     question_name: str = "use_cycle_dir"
     ask_question: bool = False
     prompt: str = ("For cycling tasks, send results to the experiment cycle directory?"
-                    " If false, results will be stored in the current working directory.")
+                   " If false, results will be stored in the current working directory.")
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class window_type(SuiteQuestion):
@@ -218,6 +235,7 @@ class window_type(SuiteQuestion):
 # Task question defaults go here
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class analysis_variables(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -230,6 +248,7 @@ class analysis_variables(TaskQuestion):
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class background_error_model(TaskQuestion):
@@ -244,6 +263,7 @@ class background_error_model(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class background_experiment(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -256,6 +276,7 @@ class background_experiment(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class background_frequency(TaskQuestion):
@@ -272,6 +293,7 @@ class background_frequency(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class background_time_offset(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -280,10 +302,12 @@ class background_time_offset(TaskQuestion):
         "all_models"
     ])
     prompt: str = ("How long before the middle of the analysis window did"
-                    " the background providing forecast begin?")
+                   " the background providing forecast begin?")
     widget_type: WType = WType.ISO_DURATION
 
 # --------------------------------------------------------------------------------------------------
+
+
 @dataclass
 class bufr_obs_classes(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -297,6 +321,7 @@ class bufr_obs_classes(TaskQuestion):
     widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class bundles(TaskQuestion):
@@ -325,6 +350,7 @@ class bundles(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class check_for_obs(TaskQuestion):
     default_value: bool = True
@@ -338,6 +364,7 @@ class check_for_obs(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class clean_patterns(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -350,6 +377,7 @@ class clean_patterns(TaskQuestion):
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class comparison_log_type(TaskQuestion):
@@ -367,6 +395,7 @@ class comparison_log_type(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class crtm_coeff_dir(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -378,6 +407,7 @@ class crtm_coeff_dir(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class dry_run(TaskQuestion):
@@ -391,6 +421,7 @@ class dry_run(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class ensemble_hofx_packets(TaskQuestion):
@@ -406,6 +437,7 @@ class ensemble_hofx_packets(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ensemble_hofx_strategy(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -420,6 +452,7 @@ class ensemble_hofx_strategy(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ensemble_num_members(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -432,6 +465,7 @@ class ensemble_num_members(TaskQuestion):
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class ensmean_only(TaskQuestion):
@@ -449,6 +483,7 @@ class ensmean_only(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ensmeanvariance_only(TaskQuestion):
     default_value: bool = False
@@ -465,6 +500,7 @@ class ensmeanvariance_only(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class existing_geos_gcm_build_path(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -477,6 +513,7 @@ class existing_geos_gcm_build_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class existing_geos_gcm_source_path(TaskQuestion):
@@ -491,6 +528,7 @@ class existing_geos_gcm_source_path(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class existing_jedi_build_directory(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -503,6 +541,7 @@ class existing_jedi_build_directory(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class existing_jedi_build_directory_pinned(TaskQuestion):
@@ -517,6 +556,7 @@ class existing_jedi_build_directory_pinned(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class existing_jedi_source_directory(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -529,6 +569,7 @@ class existing_jedi_source_directory(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class existing_jedi_source_directory_pinned(TaskQuestion):
@@ -543,6 +584,7 @@ class existing_jedi_source_directory_pinned(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class existing_perllib_path(TaskQuestion):
     default_value: str = 'defer_to_platform'
@@ -551,6 +593,7 @@ class existing_perllib_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class forecast_duration(TaskQuestion):
@@ -562,6 +605,7 @@ class forecast_duration(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class generate_yaml_and_exit(TaskQuestion):
     default_value: bool = False
@@ -570,6 +614,7 @@ class generate_yaml_and_exit(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_build_method(TaskQuestion):
@@ -585,6 +630,7 @@ class geos_build_method(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geos_experiment_directory(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -594,6 +640,7 @@ class geos_experiment_directory(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_gcm_tag(TaskQuestion):
@@ -605,6 +652,7 @@ class geos_gcm_tag(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geos_restarts_directory(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -614,6 +662,7 @@ class geos_restarts_directory(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_x_background_directory(TaskQuestion):
@@ -632,6 +681,7 @@ class geos_x_background_directory(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geos_x_ensemble_directory(TaskQuestion):
     default_value: str = "/dev/null/"
@@ -649,6 +699,7 @@ class geos_x_ensemble_directory(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geovals_experiment(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -662,6 +713,7 @@ class geovals_experiment(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geovals_provider(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -674,6 +726,7 @@ class geovals_provider(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class gmao_perllib_tag(TaskQuestion):
     default_value: str = 'g1.0.1'
@@ -682,6 +735,7 @@ class gmao_perllib_tag(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class gradient_norm_reduction(TaskQuestion):
@@ -695,6 +749,7 @@ class gradient_norm_reduction(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class gsibec_configuration(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -706,6 +761,7 @@ class gsibec_configuration(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class gsibec_nlats(TaskQuestion):
@@ -719,6 +775,7 @@ class gsibec_nlats(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class gsibec_nlons(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -730,6 +787,7 @@ class gsibec_nlons(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class horizontal_localization_lengthscale(TaskQuestion):
@@ -743,6 +801,7 @@ class horizontal_localization_lengthscale(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class horizontal_localization_max_nobs(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -751,10 +810,11 @@ class horizontal_localization_max_nobs(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("What is the maximum number of observations to consider"
-                    " for horizontal covariance localization?")
+                   " for horizontal covariance localization?")
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class horizontal_localization_method(TaskQuestion):
@@ -768,6 +828,7 @@ class horizontal_localization_method(TaskQuestion):
     widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class horizontal_resolution(TaskQuestion):
@@ -783,6 +844,7 @@ class horizontal_resolution(TaskQuestion):
 
 # ------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ioda_locations_not_in_r2d2(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -796,6 +858,7 @@ class ioda_locations_not_in_r2d2(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class jedi_build_method(TaskQuestion):
@@ -812,6 +875,7 @@ class jedi_build_method(TaskQuestion):
     widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class jedi_forecast_model(TaskQuestion):
@@ -830,6 +894,7 @@ class jedi_forecast_model(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class local_ensemble_inflation_mult(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -841,6 +906,7 @@ class local_ensemble_inflation_mult(TaskQuestion):
     widget_type: WType = WType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class local_ensemble_inflation_rtpp(TaskQuestion):
@@ -854,6 +920,7 @@ class local_ensemble_inflation_rtpp(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class local_ensemble_inflation_rtps(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -865,6 +932,7 @@ class local_ensemble_inflation_rtps(TaskQuestion):
     widget_type: WType = WType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class local_ensemble_save_posterior_ensemble(TaskQuestion):
@@ -881,6 +949,7 @@ class local_ensemble_save_posterior_ensemble(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class local_ensemble_save_posterior_ensemble_increments(TaskQuestion):
@@ -899,6 +968,7 @@ class local_ensemble_save_posterior_ensemble_increments(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class local_ensemble_save_posterior_mean(TaskQuestion):
     default_value: bool = False
@@ -915,6 +985,7 @@ class local_ensemble_save_posterior_mean(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class local_ensemble_save_posterior_mean_increment(TaskQuestion):
@@ -933,6 +1004,7 @@ class local_ensemble_save_posterior_mean_increment(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class local_ensemble_solver(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -946,6 +1018,7 @@ class local_ensemble_solver(TaskQuestion):
     widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class local_ensemble_use_linear_observer(TaskQuestion):
@@ -961,6 +1034,7 @@ class local_ensemble_use_linear_observer(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class minimizer(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -973,6 +1047,7 @@ class minimizer(TaskQuestion):
     widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class mom6_iau(TaskQuestion):
@@ -989,6 +1064,7 @@ class mom6_iau(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class mom6_iau_nhours(TaskQuestion):
@@ -1007,6 +1083,7 @@ class mom6_iau_nhours(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class ncdiag_experiments(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1020,6 +1097,7 @@ class ncdiag_experiments(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class npx(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1032,6 +1110,7 @@ class npx(TaskQuestion):
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class npx_proc(TaskQuestion):
@@ -1047,6 +1126,7 @@ class npx_proc(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class npy(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1059,6 +1139,7 @@ class npy(TaskQuestion):
     widget_type: WType = WType.INTEGER
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class npy_proc(TaskQuestion):
@@ -1074,6 +1155,7 @@ class npy_proc(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class number_of_iterations(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1088,6 +1170,7 @@ class number_of_iterations(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class obs_experiment(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1101,6 +1184,7 @@ class obs_experiment(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class obs_thinning_rej_fraction(TaskQuestion):
     default_value: float = 0.75
@@ -1112,6 +1196,7 @@ class obs_thinning_rej_fraction(TaskQuestion):
     widget_type: WType = WType.FLOAT
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class obs_to_ingest(TaskQuestion):
@@ -1127,6 +1212,7 @@ class obs_to_ingest(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class observations(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1141,6 +1227,7 @@ class observations(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class observing_system_records_mksi_path(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1152,6 +1239,7 @@ class observing_system_records_mksi_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class observing_system_records_mksi_path_tag(TaskQuestion):
@@ -1165,6 +1253,7 @@ class observing_system_records_mksi_path_tag(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class observing_system_records_path(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1176,6 +1265,7 @@ class observing_system_records_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class path_to_ensemble(TaskQuestion):
@@ -1191,6 +1281,7 @@ class path_to_ensemble(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class path_to_geos_adas_background(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1205,6 +1296,7 @@ class path_to_geos_adas_background(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class path_to_gsi_bc_coefficients(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1217,6 +1309,7 @@ class path_to_gsi_bc_coefficients(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class path_to_gsi_nc_diags(TaskQuestion):
@@ -1231,16 +1324,18 @@ class path_to_gsi_nc_diags(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class pause_on_tasks(TaskQuestion):
     default_value: list = mutable_field([])
     question_name: str = "pause_on_tasks"
     ask_question: bool = False
     prompt: str = ("Specify any tasks that the workflow should pause on "
-                    "(for development purposes).")
+                   "(for development purposes).")
     widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class perhost(TaskQuestion):
@@ -1259,6 +1354,7 @@ class perhost(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class produce_geovals(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1272,10 +1368,11 @@ class produce_geovals(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("When running the ncdiag to ioda converted do you "
-                    "want to produce GeoVaLs files?")
+                   "want to produce GeoVaLs files?")
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class r2d2_local_path(TaskQuestion):
@@ -1285,6 +1382,7 @@ class r2d2_local_path(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class save_geovals(TaskQuestion):
@@ -1298,6 +1396,7 @@ class save_geovals(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class set_obs_as_local(TaskQuestion):
@@ -1315,6 +1414,7 @@ class set_obs_as_local(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class single_observations(TaskQuestion):
     default_value: bool = False
@@ -1331,6 +1431,7 @@ class single_observations(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class swell_static_files(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -1339,6 +1440,7 @@ class swell_static_files(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class swell_static_files_user(TaskQuestion):
@@ -1349,15 +1451,17 @@ class swell_static_files_user(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class task_email_parameters(TaskQuestion):
     default_value: Union[Literal["auto"], dict] = "auto"
     question_name: str = "task_email_parameters"
     prompt: str = ("Provide a dictionary mapping tasks to cylc event statuses, or 'auto' to "
-                    "automatically configure these based on the graph.")
+                   "automatically configure these based on the graph.")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class total_processors(TaskQuestion):
@@ -1372,6 +1476,7 @@ class total_processors(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class vertical_localization_apply_log_transform(TaskQuestion):
     default_value: bool = True
@@ -1384,11 +1489,12 @@ class vertical_localization_apply_log_transform(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("Should a log (base 10) transformation be applied "
-                    "to vertical coordinate when "
-                    "constructing vertical localization?")
+                   "to vertical coordinate when "
+                   "constructing vertical localization?")
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class vertical_localization_function(TaskQuestion):
@@ -1403,6 +1509,7 @@ class vertical_localization_function(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class vertical_localization_ioda_vertical_coord(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1416,6 +1523,7 @@ class vertical_localization_ioda_vertical_coord(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class vertical_localization_ioda_vertical_coord_group(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1425,10 +1533,11 @@ class vertical_localization_ioda_vertical_coord_group(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("Which vertical coordinate group should be used "
-                    "in constructing vertical localization?")
+                   "in constructing vertical localization?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class vertical_localization_lengthscale(TaskQuestion):
@@ -1442,6 +1551,7 @@ class vertical_localization_lengthscale(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class vertical_localization_method(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1451,10 +1561,11 @@ class vertical_localization_method(TaskQuestion):
         "geos_atmosphere"
     ])
     prompt: str = ("What localization scheme should be applied in "
-                    "constructing a vertical localization?")
+                   "constructing a vertical localization?")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class vertical_resolution(TaskQuestion):
@@ -1470,6 +1581,7 @@ class vertical_resolution(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class window_length(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1481,6 +1593,7 @@ class window_length(TaskQuestion):
     widget_type: WType = WType.ISO_DURATION
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class window_type(TaskQuestion):
