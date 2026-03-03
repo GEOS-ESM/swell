@@ -10,7 +10,7 @@
 
 from swell.utilities.swell_questions import QuestionList
 from swell.suites.base.suite_questions import all_suites
-from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_attributes import suite_configs
 
 suite_name = 'build_geos'
 

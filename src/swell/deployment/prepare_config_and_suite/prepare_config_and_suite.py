@@ -21,7 +21,7 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_defaults impo
 from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
 from swell.utilities.dictionary import update_dict, add_dict
-from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.swell_questions import QuestionType
 
 

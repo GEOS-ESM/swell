@@ -18,7 +18,7 @@ from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
-from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 from swell.deployment.create_task_config import task_config_wrapper

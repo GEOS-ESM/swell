@@ -10,7 +10,7 @@ Usage: swell create ingest_obs_marine
 from swell.utilities.swell_questions import QuestionList
 import swell.configuration.question_defaults as qd
 from swell.suites.base.suite_questions import common, marine
-from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_attributes import suite_configs
 
 
 # --------------------------------------------------------------------------------------------------

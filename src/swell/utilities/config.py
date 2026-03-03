@@ -12,7 +12,7 @@ from typing import Callable
 
 from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.logger import Logger
-from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_attributes import suite_configs
 
 
 # --------------------------------------------------------------------------------------------------
