@@ -44,8 +44,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "gsi_ncdiags"
             ]),
             qd.observations([
-                "abi_g16",
-                "abi_g18",
                 "aircraft",
                 "airs_aqua",
                 "amsr2_gcom-w1",
