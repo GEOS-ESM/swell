@@ -37,8 +37,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npx_proc(2),
             qd.npy_proc(2),
             qd.observations([
-                "abi_g16",
-                "abi_g18",
                 "aircraft_temperature",
                 "aircraft_wind",
                 "airs_aqua",

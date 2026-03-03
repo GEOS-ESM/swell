@@ -43,8 +43,6 @@ class SuiteConfig(QuestionContainer, Enum):
                                            "dadev/rtodling/archive/Restarts/JEDI/541x"),
             qd.window_type("4D"),
             qd.observations([
-                "abi_g16",
-                "abi_g18",
                 "aircraft_temperature",
                 "aircraft_wind",
                 "airs_aqua",
