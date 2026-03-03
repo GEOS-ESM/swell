@@ -91,6 +91,6 @@ convert_ncdiags = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, 'convert_bufr', convert_ncdiags)
+suite_configs.register(suite_name, 'convert_ncdiags', convert_ncdiags)
 
 # --------------------------------------------------------------------------------------------------
