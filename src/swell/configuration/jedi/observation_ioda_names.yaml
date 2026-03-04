@@ -241,6 +241,34 @@ ioda instrument names:
     full name: ADT SWOT Nadir
     provider : odas
     inst type: altimeter
+  - ioda name: rads_adt_3a
+    full name: RADS ADT Sentinel-3A
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_3b
+    full name: RADS ADT Sentinel-3B
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_6a
+    full name: RADS ADT Sentinel-6A
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_c2
+    full name: RADS ADT CryoSat-2
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_j3
+    full name: RADS ADT Jason-3
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_sa
+    full name: RADS ADT SARAL/AltiKa
+    provider : gdas_marine
+    inst type: altimeter
+  - ioda name: rads_adt_sw
+    full name: RADS ADT SWOT
+    provider : gdas_marine
+    inst type: altimeter
   - ioda name: insitu_profile_argo
     full name: ARGO (In-situ)
     provider : odas
@@ -261,6 +289,90 @@ ioda instrument names:
     full name: TAO (In-situ)
     provider : odas
     inst type: conventional
+  - ioda name: insitu_salt_profile_argo
+    full name: ARGO Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_glider
+    full name: Glider Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_pirata
+    full name: PIRATA Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_rama
+    full name: RAMA Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_taotriton
+    full name: TAO/TRITON Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_tesac
+    full name: TESAC Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_profile_xbtctd
+    full name: XBT/CTD Salt Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_salt_surface_trkob
+    full name: Track Ob Salt Surface (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_sss_trkob
+    full name: Track Ob SSS (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_sst_trkob
+    full name: Track Ob SST (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_argo
+    full name: ARGO Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_bathy
+    full name: BATHY Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_glider
+    full name: Glider Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_pirata
+    full name: PIRATA Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_rama
+    full name: RAMA Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_taotriton
+    full name: TAO/TRITON Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_tesac
+    full name: TESAC Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_profile_xbtctd
+    full name: XBT/CTD Temperature Profile (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_surface_drifter
+    full name: Drifter Temperature Surface (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_surface_ndbc
+    full name: NDBC Temperature Surface (In-situ)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: insitu_temp_surface_trkob
+    full name: Track Ob Temperature Surface (In-situ)
+    provider : gdas_marine
+    inst type: conventional
   - ioda name: sss_smapv5
     full name: SMAP V5 (SSS)
     provider : odas
@@ -268,6 +380,14 @@ ioda instrument names:
   - ioda name: sss_smos
     full name: SMOS (SSS)
     provider : odas
+    inst type: conventional
+  - ioda name: sss_smap_l2
+    full name: SMAP L2 (SSS)
+    provider : gdas_marine
+    inst type: conventional
+  - ioda name: sss_smos_l2
+    full name: SMOS L2 (SSS)
+    provider : gdas_marine
     inst type: conventional
   - ioda name: sst_abi_g16_l3c
     full name: GOES-16 EAST (SST)
@@ -313,6 +433,34 @@ ioda instrument names:
     full name: Suomi-NPP (SST)
     provider : gdas_marine
     inst type: viirs (IR)
+  - ioda name: sst_abi_g18
+    full name: GOES-18 ABI (SST)
+    provider : gdas_marine
+    inst type: abi (IR)
+  - ioda name: sst_abi_g18_13c
+    full name: GOES-18 ABI 1.3um (SST)
+    provider : gdas_marine
+    inst type: abi (IR)
+  - ioda name: sst_ahi_h09
+    full name: Himawari-09 AHI (SST)
+    provider : gdas_marine
+    inst type: ahi (IR)
+  - ioda name: sst_avhrrf_ma_l3u
+    full name: Metop-A AVHRR-F L3U (SST)
+    provider : gdas_marine
+    inst type: avhrr (IR)
+  - ioda name: sst_avhrrf_mb_l3u
+    full name: Metop-B AVHRR-F L3U (SST)
+    provider : gdas_marine
+    inst type: avhrr (IR)
+  - ioda name: sst_avhrrf_mc_l3u
+    full name: Metop-C AVHRR-F L3U (SST)
+    provider : gdas_marine
+    inst type: avhrr (IR)
+  - ioda name: sst_viirs_n21_l3u
+    full name: NOAA-21 VIIRS L3U (SST)
+    provider : gdas_marine
+    inst type: viirs (IR)
   - ioda name: temp_profile_xbt
     full name: XBT (In-situ Temperature)
     provider : odas
@@ -338,6 +486,34 @@ ioda instrument names:
     full name: MERRA2 (Ice Concentration)
     provider : odas
     inst type: conventional
+  - ioda name: icec_amsu_ma1_l2
+    full name: AMSU-A Metop-A1 L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_atms_n20_l2
+    full name: ATMS NOAA-20 L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_atms_n21_l2
+    full name: ATMS NOAA-21 L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_atms_npp_l2
+    full name: ATMS Suomi-NPP L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_viirs_j01_l2
+    full name: VIIRS JPSS-1 L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_viirs_n21_l2
+    full name: VIIRS NOAA-21 L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
+  - ioda name: icec_viirs_npp_l2
+    full name: VIIRS Suomi-NPP L2 (Ice Concentration)
+    provider : gdas_marine
+    inst type: radiance
   # Compo
   - ioda name: tempo_no2_tropo
     full name: TEMPO tropospheric column NO2
