@@ -23,9 +23,20 @@ from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 from swell.utilities.r2d2 import get_r2d2_model_name
 
-    # ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
 
 def run_r2d2_fetch(r2d2_dict: dict) -> None:
+
+    """Runs fetch command for all types of obs files
+
+    Arguments:
+    r2d2_dict: Dictionary of r2d2 fetch parameters, ALSO including additional information including:
+    **r2d2_dict['fetch_empty']: bool whether fetching empty obs file is appropriate
+    **r2d2_dict['cycle_dir']: Experiment cycle directory (has to be specified this way for multiprocessing)
+    **r2d2_dict['logger']: Swell logger (has to be specified this way for multiprocessing)
+
+    These values will be popped from the dictionary before running the fetch command
+    """
 
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
     cycle_dir = r2d2_dict.pop('cycle_dir')
@@ -37,12 +48,12 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
         r2d2.fetch(**r2d2_dict)
         logger.info(f"Successfully fetched {target_file}")
     except Exception as e:
-        # If this is
+        # If this can be an empty obs file, fetch or copy empty file to the target file
         if fetch_empty_obs:
             logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
             empty_obs_file = os.path.join(cycle_dir, 'empty_obs.nc4')
             if not os.path.exists(empty_obs_file):
-                # fetch empty obs
+                # fetch empty obs, if it doesn't exist
                 r2d2.fetch(
                     item='observation',
                     provider='empty_provider',
@@ -52,12 +63,14 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
                     window_length='PT6H',
                     target_file=empty_obs_file,
                 )
-
+            
+            # Copy the empty file to the target file directory
             shutil.copy(empty_obs_file, target_file)
         
         else:
             raise Exception(e)
-        
+    
+    # Change the permissions
     os.chmod(target_file, 0o644)
 
 
@@ -181,6 +194,8 @@ class GetObservations(taskBase):
         # -----------------------------------------
         r2d2_fetch_dicts = []
         
+        # Dictionary tracking all observation files
+        # -----------------------------------------
         observation_dicts = {}
 
         # Loop over observation operators
@@ -351,7 +366,7 @@ class GetObservations(taskBase):
             # Fetch observation files
             # -----------------------
             combine_input_files = []
-            # Here, we are fetching
+
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
                 target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
