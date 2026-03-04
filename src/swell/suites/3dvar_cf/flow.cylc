@@ -34,11 +34,6 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
-
-            {% for model_component in model_components %}
-            # Stage JEDI static files
-            CloneJedi => StageJediCycle-{{model_component}}
-            {% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
@@ -114,9 +109,6 @@
         {%- endfor %}
 
     {% for model_component in model_components %}
-    [[StageJedi-{{model_component}}]]
-        script = "swell task StageJedi $config -m {{model_component}}"
-
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 

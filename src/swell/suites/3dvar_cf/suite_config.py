@@ -32,7 +32,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.check_for_obs(False)
         ],
         geos_cf=[
-            qd.cycle_times(['T18']),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("c90"),
@@ -43,7 +42,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.vertical_resolution(72),
             qd.analysis_variables(["volume_mixing_ratio_of_no2"]),
             qd.background_experiment("swell_test"),
-            qd.background_time_offset("PT9H"),
             qd.observations([
                 "tempo_no2_tropo",
                 "tropomi_s5p_no2_tropo",
