@@ -25,6 +25,7 @@ from swell.utilities.r2d2 import get_r2d2_model_name
 
 # ----------------------------------------------------------------------------------------------
 
+
 def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     """Runs fetch command for all types of obs files
@@ -32,8 +33,9 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     Arguments:
     r2d2_dict: Dictionary of r2d2 fetch parameters, ALSO including additional information including:
     **r2d2_dict['fetch_empty']: bool whether fetching empty obs file is appropriate
-    **r2d2_dict['cycle_dir']: Experiment cycle directory (has to be specified this way for multiprocessing)
-    **r2d2_dict['logger']: Swell logger (has to be specified this way for multiprocessing)
+    **r2d2_dict['cycle_dir']: Experiment cycle directory
+    **r2d2_dict['logger']: Swell logger
+    (specified this way for multiprocessing)
 
     These values will be popped from the dictionary before running the fetch command
     """
@@ -63,13 +65,13 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
                     window_length='PT6H',
                     target_file=empty_obs_file,
                 )
-            
+
             # Copy the empty file to the target file directory
             shutil.copy(empty_obs_file, target_file)
-        
+
         else:
             raise Exception(e)
-    
+
     # Change the permissions
     os.chmod(target_file, 0o644)
 
@@ -193,7 +195,7 @@ class GetObservations(taskBase):
         # Create a dictionary of all fetch criteria
         # -----------------------------------------
         r2d2_fetch_dicts = []
-        
+
         # Dictionary tracking all observation files
         # -----------------------------------------
         observation_dicts = {}
@@ -204,7 +206,8 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dicts[observation] = observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dicts[observation] = observation_dict = \
+                    self.jedi_rendering.render_interface_observations(observation)
 
             # Get the set obs providers for each observation
             # ----------------------------------------------
@@ -319,7 +322,7 @@ class GetObservations(taskBase):
                         'provider': 'gsi',
                         'observation_type': observation,
                         'file_extension': bias_file_ext + '_cov',
-                        'file_type': bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
+                        'file_type': bias_err_type,  # obsbias_coeff_errors Official JCSDA enum
                         'date': background_time_iso
                     })
 
