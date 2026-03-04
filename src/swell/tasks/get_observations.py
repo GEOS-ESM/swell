@@ -14,6 +14,7 @@ import os
 import r2d2
 import shutil
 from typing import Union
+from multiprocessing import Pool
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
@@ -29,8 +30,8 @@ r2d2_model_dict = {
     'geos_marine': 'mom6',
 }
 
-# --------------------------------------------------------------------------------------------------
 
+# --------------------------------------------------------------------------------------------------
 
 class GetObservations(taskBase):
 
@@ -147,26 +148,28 @@ class GetObservations(taskBase):
         # Read observation ioda names
         ioda_names_list = get_ioda_names_list()
 
+        # Create a dictionary of all fetch criteria
+        # -----------------------------------------
+        r2d2_fetch_dicts = []
+        
+        observation_dicts = {}
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dicts[observation] = observation_dict = self.jedi_rendering.render_interface_observations(observation)
 
             # Get the set obs providers for each observation
             # ----------------------------------------------
             obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
 
-            # Fetch observation files
-            # -----------------------
-            combine_input_files = []
             # Here, we are fetching
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
                 target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
-                combine_input_files.append(target_file)
 
                 fetch_criteria = {
                     'item': 'observation',               # Required for r2d2 v3
@@ -176,46 +179,10 @@ class GetObservations(taskBase):
                     'window_start': obs_window_begin,    # From filename timestamp
                     'window_length': obs_window_length,  # From filename
                     'target_file': target_file,          # Where to save
+                    'fetch_empty': True
                 }
 
-                try:
-                    r2d2.fetch(**fetch_criteria)
-                    self.logger.info(f"Successfully fetched {target_file}")
-                except Exception:
-                    self.logger.info(
-                        f"Failed to fetch {target_file}. "
-                        "Fetch empty observation instead."
-                    )
-
-                    # fetch empty obs
-                    r2d2.fetch(
-                        item='observation',
-                        provider='empty_provider',
-                        observation_type='empty_type',
-                        file_extension='nc4',
-                        window_start='19700101T030000Z',
-                        window_length='PT6H',
-                        target_file=target_file,
-                    )
-
-            # Check how many of the combine_input_files exist in the cycle directory.
-            # If all of them are missing proceed without creating an observation input
-            # file since bias correction files still need to be propagated to the next cycle
-            # for cycling VarBC.
-            # -----------------------------------------------------------------------
-            if not any([os.path.exists(f) for f in combine_input_files]):
-                self.logger.info(f'None of the {observation} files exist for this cycle!')
-            else:
-                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-                self.logger.info(f'Processing observation file {jedi_obs_file}')
-                # If obs_list_dto has one member, then just rename the file
-                # ---------------------------------------------------------
-                if len(obs_list_dto) == 1:
-                    os.rename(combine_input_files[0], jedi_obs_file)
-                else:
-                    self.read_and_combine(combine_input_files, jedi_obs_file)
-                # Change permission
-                os.chmod(jedi_obs_file, 0o644)
+                r2d2_fetch_dicts.append(fetch_criteria)
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
@@ -269,32 +236,29 @@ class GetObservations(taskBase):
                 if fetch_required:
                     # Fetch coefficients file (.acftbias or .satbias)
                     self.logger.info(f'Processing bias file {target_bccoef}')
-                    r2d2.fetch(
-                        item='bias_correction',
-                        target_file=target_bccoef,
-                        model=r2d2_model,
-                        experiment=obs_experiment,
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=bias_file_ext,
-                        file_type=bias_file_type,
-                        date=background_time_iso
-                    )
+                    r2d2_fetch_dicts.append({
+                        'item': 'bias_correction',
+                        'target_file': target_bccoef,
+                        'model': r2d2_model,
+                        'experiment': obs_experiment,
+                        'provider': 'gsi',
+                        'observation_type': observation,
+                        'file_extension': bias_file_ext,
+                        'file_type': bias_file_type,
+                        'date': background_time_iso
+                    })
 
-                    r2d2.fetch(
-                        item='bias_correction',
-                        target_file=target_bccovr,
-                        model=r2d2_model,
-                        experiment=obs_experiment,
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=bias_file_ext + '_cov',
-                        file_type=bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
-                        date=background_time_iso
-                    )
-                # Change permission
-                os.chmod(target_bccoef, 0o644)
-                os.chmod(target_bccovr, 0o644)
+                    r2d2_fetch_dicts.append({
+                        'item': 'bias_correction',
+                        'target_file': target_bccovr,
+                        'model': r2d2_model,
+                        'experiment': obs_experiment,
+                        'provider': 'gsi',
+                        'observation_type': observation,
+                        'file_extension': bias_file_ext + '_cov',
+                        'file_type': bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
+                        'date': background_time_iso
+                    })
 
             # Skip time lapse part for aircraft observations
             # ----------------------------------------------
@@ -307,20 +271,92 @@ class GetObservations(taskBase):
 
                 self.logger.info(f'Processing satellite time lapse file {target_file}')
 
-                r2d2.fetch(
-                    item='bias_correction',
-                    target_file=target_file,
-                    model=r2d2_model,
-                    experiment=obs_experiment,
-                    provider='gsi',
-                    observation_type=observation,
-                    file_extension='tlapse',
-                    file_type='obsbias_tlapse',  # Official JCSDA enum
-                    date=background_time_iso
-                )
+                r2d2_fetch_dicts.append({
+                    'item': 'bias_correction',
+                    'target_file': target_file,
+                    'model': r2d2_model,
+                    'experiment': obs_experiment,
+                    'provider': 'gsi',
+                    'observation_type': observation,
+                    'file_extension': 'tlapse',
+                    'file_type': 'obsbias_tlapse',  # Official JCSDA enum
+                    'date': background_time_iso
+                })
 
+        # Run through all files to fetch
+        # ------------------------------
+        number_of_workers = 4
+        self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
+        with Pool(processes=number_of_workers) as pool:
+            pool.map(self.run_r2d2_fetch, r2d2_fetch_dicts)
+
+        # Iterate through observation files to read and combine
+        # -----------------------------------------------------
+        for observation in observations:
+
+            observation_dict = observation_dicts[observation]
+
+            # Fetch observation files
+            # -----------------------
+            combine_input_files = []
+            # Here, we are fetching
+            for obs_num, obs_time in enumerate(obs_list_dto):
+                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                combine_input_files.append(target_file)
+
+            # Check how many of the combine_input_files exist in the cycle directory.
+            # If all of them are missing proceed without creating an observation input
+            # file since bias correction files still need to be propagated to the next cycle
+            # for cycling VarBC.
+            # -----------------------------------------------------------------------
+            if not any([os.path.exists(f) for f in combine_input_files]):
+                self.logger.info(f'None of the {observation} files exist for this cycle!')
+            else:
+                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                self.logger.info(f'Processing observation file {jedi_obs_file}')
+                # If obs_list_dto has one member, then just rename the file
+                # ---------------------------------------------------------
+                if len(obs_list_dto) == 1:
+                    os.rename(combine_input_files[0], jedi_obs_file)
+                else:
+                    self.read_and_combine(combine_input_files, jedi_obs_file)
                 # Change permission
-                os.chmod(target_file, 0o644)
+                os.chmod(jedi_obs_file, 0o644)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def run_r2d2_fetch(self, r2d2_dict: dict) -> None:
+        fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
+
+        target_file = r2d2_dict['target_file']
+
+        try:
+            r2d2.fetch(**r2d2_dict)
+            self.logger.info(f"Successfully fetched {target_file}")
+        except Exception as e:
+            # If this is 
+            if fetch_empty_obs:
+                self.logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
+                empty_obs_file = os.path.join(self.cycle_dir(), 'empty_obs.nc4')
+                if not os.path.exists(empty_obs_file):
+                    # fetch empty obs
+                    r2d2.fetch(
+                        item='observation',
+                        provider='empty_provider',
+                        observation_type='empty_type',
+                        file_extension='nc4',
+                        window_start='19700101T030000Z',
+                        window_length='PT6H',
+                        target_file=empty_obs_file,
+                    )
+
+                shutil.copy(empty_obs_file, target_file)
+            
+            else:
+                raise Exception(e)
+            
+        os.chmod(target_file, 0o644)
 
     # ----------------------------------------------------------------------------------------------
 
