@@ -23,6 +23,43 @@ from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 from swell.utilities.r2d2 import get_r2d2_model_name
 
+    # ----------------------------------------------------------------------------------------------
+
+def run_r2d2_fetch(r2d2_dict: dict) -> None:
+
+    fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
+    cycle_dir = r2d2_dict.pop('cycle_dir')
+    logger = r2d2_dict.pop('logger')
+
+    target_file = r2d2_dict['target_file']
+
+    try:
+        r2d2.fetch(**r2d2_dict)
+        logger.info(f"Successfully fetched {target_file}")
+    except Exception as e:
+        # If this is
+        if fetch_empty_obs:
+            logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
+            empty_obs_file = os.path.join(cycle_dir, 'empty_obs.nc4')
+            if not os.path.exists(empty_obs_file):
+                # fetch empty obs
+                r2d2.fetch(
+                    item='observation',
+                    provider='empty_provider',
+                    observation_type='empty_type',
+                    file_extension='nc4',
+                    window_start='19700101T030000Z',
+                    window_length='PT6H',
+                    target_file=empty_obs_file,
+                )
+
+            shutil.copy(empty_obs_file, target_file)
+        
+        else:
+            raise Exception(e)
+        
+    os.chmod(target_file, 0o644)
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -294,12 +331,16 @@ class GetObservations(taskBase):
                     'date': background_time_iso
                 })
 
+        for fetch_dict in r2d2_fetch_dicts:
+            fetch_dict['logger'] = self.logger
+            fetch_dict['cycle_dir'] = self.cycle_dir()
+
         # Run through all files to fetch
         # ------------------------------
         number_of_workers = 4
         self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
         with Pool(processes=number_of_workers) as pool:
-            pool.map(self.run_r2d2_fetch, r2d2_fetch_dicts)
+            pool.map(run_r2d2_fetch, r2d2_fetch_dicts)
 
         # Iterate through observation files to read and combine
         # -----------------------------------------------------
@@ -334,40 +375,6 @@ class GetObservations(taskBase):
                     self.read_and_combine(combine_input_files, jedi_obs_file)
                 # Change permission
                 os.chmod(jedi_obs_file, 0o644)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def run_r2d2_fetch(self, r2d2_dict: dict) -> None:
-        fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
-
-        target_file = r2d2_dict['target_file']
-
-        try:
-            r2d2.fetch(**r2d2_dict)
-            self.logger.info(f"Successfully fetched {target_file}")
-        except Exception as e:
-            # If this is 
-            if fetch_empty_obs:
-                self.logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
-                empty_obs_file = os.path.join(self.cycle_dir(), 'empty_obs.nc4')
-                if not os.path.exists(empty_obs_file):
-                    # fetch empty obs
-                    r2d2.fetch(
-                        item='observation',
-                        provider='empty_provider',
-                        observation_type='empty_type',
-                        file_extension='nc4',
-                        window_start='19700101T030000Z',
-                        window_length='PT6H',
-                        target_file=empty_obs_file,
-                    )
-
-                shutil.copy(empty_obs_file, target_file)
-            
-            else:
-                raise Exception(e)
-            
-        os.chmod(target_file, 0o644)
 
     # ----------------------------------------------------------------------------------------------
 
