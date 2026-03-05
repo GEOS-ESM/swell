@@ -13,9 +13,6 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
-    [[queues]]
-        [[[default]]]
-            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -24,6 +21,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit=6
 
     [[graph]]
         R1 = """
@@ -51,8 +51,9 @@
             # Get background
             GetBackground-{{model_component}}
 
-            # Get observations
-            GetObservations-{{model_component}}
+            {% for observation in models[model_component]['observations'] %}
+            GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
@@ -62,7 +63,6 @@
             StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
             GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
-            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
 
             # EvaObservations

@@ -13,9 +13,6 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
-    [[queues]]
-        [[[default]]]
-            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -23,6 +20,9 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
+    [[queues]]
+        [[[default]]]
+            limit=6
 
     [[graph]]
         R1 = """
@@ -82,7 +82,9 @@
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% for observation in models[model_component]['observations'] %}
+            GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Run analysis diagnostics

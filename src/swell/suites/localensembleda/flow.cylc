@@ -13,9 +13,6 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
-    [[queues]]
-        [[[default]]]
-            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -24,6 +21,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit=6
 
     [[graph]]
         R1 = """
@@ -54,9 +54,13 @@
             # Perform staging that is cycle dependent
             BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}} => sync_point
 
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservationsStart
 
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% for observation in models[model_component]['observations'] %}
+            GetObservationsStart => GetObservations-{{observation}}-{{model_component}} => GetObservationsFinish
+            {% endfor %}
+
+            GetObsNotInR2d2-{{model_component}}? | GetObservationsFinish => RenderJediObservations-{{model_component}}
             
             RenderJediObservations-{{model_component}} => sync_point
 
@@ -135,6 +139,12 @@
         {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[GetObservationsStart]]
+        script = "true"
+
+    [[GetObservationsFinish]]
+        script = "true"
 
     {% for model_component in model_components %}
 
