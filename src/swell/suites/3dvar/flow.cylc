@@ -21,6 +21,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit=6
 
     [[graph]]
         R1 = """
@@ -128,6 +131,10 @@
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
     # ---------------------------------------------------------------------------------------------
+    # [[GetObservations-{{model_component}}]]
+    #    script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+    # ---------------------------------------------------------------------------------------------
+
 
     {% for observation in models[model_component]['observations'] %}
     [[GetObservations-{{observation}}-{{model_component}}]]
