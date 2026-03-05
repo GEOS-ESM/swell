@@ -40,7 +40,7 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.start_cycle_point(),
             qd.final_cycle_point(),
             qd.model_components(),
-            qd.runahead_limit()
+            qd.runahead_limit(),
             qd.concurrent_limit()
         ]
     )

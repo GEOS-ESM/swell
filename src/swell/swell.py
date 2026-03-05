@@ -187,7 +187,8 @@ def launch(
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
-@click.option('-a', '--additional-parameter', 'additional_parameter', default=None, help=additional_parameter_help)
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
 def task(
     task: str,
