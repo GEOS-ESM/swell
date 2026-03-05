@@ -21,6 +21,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit = {{concurrent_limit}}
 
     [[graph]]
         R1 = """
@@ -58,12 +61,16 @@
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservationsStart
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
-            GetObservations-{{model_component}}
+            GetObservationsStart
             {% endif %}
+
+            {% for observation in models[model_component]['observations'] %}
+            GetObservationsStart => GetObservations-{{observation}}-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
@@ -151,6 +158,9 @@
 
     [[GetBackgroundGeosExperiment-{{model_component}} ]]
         script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
+
+    [[GetObservationsStart]]
+        script = "true"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
