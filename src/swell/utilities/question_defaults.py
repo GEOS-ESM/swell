@@ -35,6 +35,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class concurrent_limit(SuiteQuestion):
+        default_value: int = 10
+        question_name: str = "concurrent_limit"
+        ask_question: bool = False
+        prompt: str = "Cylc parameter for how many jobs can run concurrently."
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class cycle_times(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "cycle_times"

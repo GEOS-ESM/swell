@@ -22,7 +22,7 @@
     final cycle point = {{final_cycle_point}}
     [[queues]]
         [[[default]]]
-            limit=6
+            limit = {{concurrent_limit}}
 
     [[graph]]
         R1 = """

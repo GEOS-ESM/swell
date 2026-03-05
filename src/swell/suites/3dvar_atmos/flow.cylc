@@ -23,7 +23,7 @@
     runahead limit = {{runahead_limit}}
     [[queues]]
         [[[default]]]
-            limit=6
+            limit = {{concurrent_limit}}
 
     [[graph]]
         R1 = """
