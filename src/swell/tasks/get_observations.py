@@ -356,7 +356,7 @@ class GetObservations(taskBase):
         # Run through all files to fetch
         # ------------------------------
         number_of_workers = 4
-        self.logger.info(f'Running parallel plot generation with {number_of_workers} workers')
+        self.logger.info(f'Fetching observations in parallel with {number_of_workers} workers')
         with Pool(processes=number_of_workers) as pool:
             pool.map(run_r2d2_fetch, r2d2_fetch_dicts)
 
