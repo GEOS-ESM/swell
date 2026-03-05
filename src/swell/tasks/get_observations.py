@@ -100,10 +100,11 @@ class GetObservations(taskBase):
 
         # Get the observation from the environment
         # ----------------------------------------
-        observation = os.environ.get('OBSERVATION')
+        observation = self.get_parameter()
 
         if observation is None:
-            raise Exception('No observation specified.')
+            raise Exception('No observation specified. Specify observation '
+                            'using `swell task GetObservations -a <observation> ...`')
 
         # Parse config
         # ------------

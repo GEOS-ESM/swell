@@ -41,6 +41,7 @@ class taskBase(ABC):
         datetime_input: Optional[str],
         model: str,
         ensemblePacket: Optional[str],
+        additional_parameter: Optional[str],
         task_name: str
     ) -> None:
 
@@ -61,6 +62,10 @@ class taskBase(ABC):
         self.__datetime__ = None
         if datetime_input is not None:
             self.__datetime__ = Datetime(datetime_input)
+
+        # Keep copy of additional parameter
+        # ---------------------------------
+        self.__additional_parameter__ = additional_parameter
 
         # Keep copy of ensemblePacket
         # ---------------------------
@@ -172,6 +177,11 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def get_parameter(self) -> str:
+        return self.__additional_parameter__
+
+    # ----------------------------------------------------------------------------------------------
+
     def get_model_components(self) -> Union[str, list]:
         return self.__model_components__
 
@@ -275,6 +285,7 @@ class taskFactory():
         config: str,
         datetime: Union[str, dt, None],
         model: str,
+        additional_parameter: Optional[str],
         ensemblePacket: Optional[str]
     ) -> taskBase:
 
@@ -315,7 +326,7 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, task)
+        return task_class(config, datetime, model, ensemblePacket, additional_parameter, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -346,13 +357,15 @@ def task_wrapper(
     config: str,
     datetime: Union[str, dt, None],
     model: Optional[str],
+    additional_parameter: Optional[str],
     ensemblePacket: Optional[str]
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
-    task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
+    task_object = creator.create_task(task, config, datetime, model, additional_parameter,
+                                      ensemblePacket)
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 
