@@ -13,9 +13,6 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
-    [[queues]]
-        [[[default]]]
-            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -24,6 +21,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit=6
 
     [[graph]]
         R1 = """
