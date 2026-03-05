@@ -28,8 +28,8 @@ def ensemble_solver(template_dict: Mapping) -> Mapping:
             'fraction of retained variance': frac_retained_variance,
             'lengthscale': vertical_localization_lengthscale,
             'lengthscale units': 'logp',
-            'write eigen vectors': True,    # False
-            'read eigen vectors': False, 
+#            'write eigen vectors': False,    # False
+#            'read eigen vectors': False, 
         },
         'inflation': {
             'rtps': local_ensemble_inflation_rtps,

@@ -70,11 +70,11 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                     # 'sea_surface_temperature': 'ts_found',
                     # 'mole_fraction_of_carbon_dioxide_in_air': 'co2',
                 }
-            }
+            },
+            'pattern': '%mem%',
+            'nmembers': template_dict['ensemble_num_members'],
+            'zero padding': 3
         },
-        'pattern': '%mem%',
-        'nmembers': template_dict['ensemble_num_members'],
-        'zero padding': 3
     }
 
     return ensemble_block
