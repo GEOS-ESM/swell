@@ -13,6 +13,9 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+    [[queues]]
+        [[[default]]]
+            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -198,8 +201,19 @@
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[GetObservations-{{model_component}}]]
+    # ---------------------------------------------------------------------------------------------
+    # This has to be here so swell will successfully register the task
+    # [[GetObservations-{{model_component}}]]
+    #    script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+    # ---------------------------------------------------------------------------------------------
+
+    {% for observation in models[model_component]['observations'] %}
+    [[GetObservations-{{observation}}-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+        [[[environment]]]
+            OBSERVATION = {{observation}}
+    {% endfor %}
+    # ---------------------------------------------------------------------------------------------
 
     [[GenerateBClimatology-{{model_component}}]]
         script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"

@@ -13,6 +13,9 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+    [[queues]]
+        [[[default]]]
+            limit=6
 
 # --------------------------------------------------------------------------------------------------
 
@@ -115,8 +118,19 @@
     [[GetBackground-{{model_component}}]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
-    [[GetObservations-{{model_component}}]]
+    # ---------------------------------------------------------------------------------------------
+    # This has to be here so swell will successfully register the task
+    # [[GetObservations-{{model_component}}]]
+    #    script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+    # ---------------------------------------------------------------------------------------------
+
+    {% for observation in models[model_component]['observations'] %}
+    [[GetObservations-{{observation}}-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+        [[[environment]]]
+            OBSERVATION = {{observation}}
+    {% endfor %}
+    # ---------------------------------------------------------------------------------------------
 
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
