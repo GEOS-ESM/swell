@@ -60,7 +60,9 @@
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            {% for observation in models[model_component]['observations'] %}
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            {% endfor %}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
@@ -125,8 +127,12 @@
     [[ GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
-    [[GetObservations-{{model_component}}]]
+    {% for observation in models[model_component]['observations'] %}
+    [[GetObservations-{{observation}}-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+        [[[environment]]]
+            OBSERVATION = {{observation}}
+    {% endfor %}
 
     [[GenerateBClimatology-{{model_component}}]]
         script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
