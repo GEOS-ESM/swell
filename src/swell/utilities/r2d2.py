@@ -239,9 +239,6 @@ def experiment_exists(r2d2_id: str):
 def unique_r2d2_id(swell_id: str, platform: str) -> str:
     logger = get_logger('CreateR2D2ID')
 
-    # Load credentials to allow search
-    load_r2d2_credentials(logger, platform)
-
     # Just use the ID if it doesn't exist
     if not experiment_exists(swell_id):
         return swell_id

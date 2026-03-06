@@ -169,8 +169,8 @@ def prepare_config(
 
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
-        load_r2d2_credentials(logger, platform)
         load_r2d2_module(logger, platform)
+        load_r2d2_credentials(logger, platform)
 
         import r2d2
 
