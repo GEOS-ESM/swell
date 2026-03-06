@@ -207,6 +207,9 @@ local_ensemble_use_linear_observer:
 frac_retained_variance:
   default_value: 0.9
 
+vert_loc_units:
+  default_value: 'logP'
+
 minimizer:
   default_value: DRPCG
   options:

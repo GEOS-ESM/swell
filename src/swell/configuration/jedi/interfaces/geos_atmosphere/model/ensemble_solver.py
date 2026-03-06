@@ -20,16 +20,17 @@ def ensemble_solver(template_dict: Mapping) -> Mapping:
     local_ensemble_inflation_mult = template_dict['local_ensemble_inflation_mult']
     frac_retained_variance = template_dict['frac_retained_variance']
     vertical_localization_lengthscale = template_dict['vertical_localization_lengthscale']
-    
+    vert_loc_units = template_dict['vert_loc_units']
+
     ensemble_solver = {
         'solver': local_ensemble_solver,
         'use linear observer': local_ensemble_use_linear_observer,
         'vertical localization': {
             'fraction of retained variance': frac_retained_variance,
             'lengthscale': vertical_localization_lengthscale,
-            'lengthscale units': 'logp',
+            'lengthscale units': vert_loc_units
 #            'write eigen vectors': False,    # False
-#            'read eigen vectors': False, 
+#            'read eigen vectors': False,
         },
         'inflation': {
             'rtps': local_ensemble_inflation_rtps,

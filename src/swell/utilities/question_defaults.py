@@ -947,6 +947,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class vert_loc_units (TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "vert_loc_units"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the vertical localization units for GETKF?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class change_vbc_to_sbc(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "change_vbc_to_sbc"

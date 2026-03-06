@@ -106,6 +106,7 @@ class JediConfigRendering():
             'local_ensemble_solver',
             'local_ensemble_use_linear_observer',
             'frac_retained_variance',
+            'vert_loc_units',
             'marine_models',
             'minimizer',
             'mom6_iau',
