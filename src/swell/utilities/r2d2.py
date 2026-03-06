@@ -14,7 +14,7 @@ import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.logger import get_logger, Logger
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -237,7 +237,6 @@ def experiment_exists(r2d2_id: str):
 
 
 def unique_r2d2_id(swell_id: str, platform: str) -> str:
-    logger = get_logger('CreateR2D2ID')
 
     # Just use the ID if it doesn't exist
     if not experiment_exists(swell_id):
