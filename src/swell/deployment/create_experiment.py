@@ -47,7 +47,7 @@ def clone_config(
 
     # Open the target experiment YAML. It will be used as the override
     with open(configuration, 'r') as f:
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         override_dict = yaml.load(f)
 
     # Check that override_dict has a suite key and get the suite name
@@ -83,7 +83,7 @@ def prepare_config(
     # ---------------
     logger = get_logger('SwellPrepSuiteConfig')
 
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.default_flow_style = False
 
     # Assert valid method
@@ -239,7 +239,7 @@ def create_experiment_directory(
 
     # Load the string using yaml
     # --------------------------
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     experiment_dict = yaml.load(experiment_dict_str)
 
     # Experiment ID and root from the user input
@@ -268,7 +268,8 @@ def create_experiment_directory(
     # resolve the templates and write the suite file to the experiment suite directory.
     # --------------------------------------------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform)
+    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict,
+                              platform, exp_path)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
@@ -462,7 +463,8 @@ def prepare_cylc_suite_jinja2(
     swell_suite_path: str,
     exp_suite_path: str,
     experiment_dict: dict,
-    platform: str
+    platform: str,
+    experiment_path: str
 ) -> None:
 
     # Open suite file from swell
@@ -473,6 +475,10 @@ def prepare_cylc_suite_jinja2(
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
     render_dictionary = copy.deepcopy(experiment_dict)
+
+    # Add experiment path to the rendering dictionary
+    # ----------------------------------------------------
+    render_dictionary['experiment_path'] = experiment_path
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------

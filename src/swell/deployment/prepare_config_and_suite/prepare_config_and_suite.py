@@ -230,7 +230,9 @@ class PrepareExperimentConfigAndSuite:
         if 'cycle_times' in self.question_dictionary_model_ind.keys():
             if not self.suite_needs_model_components:
                 self.question_dictionary_model_ind['cycle_times'].pop('models')
-                self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
+                if self.question_dictionary_model_ind['cycle_times']['default_value'] == \
+                   'defer_to_model':
+                    self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
 
         # At this point we can return if there are no model components
         if not self.suite_needs_model_components:
@@ -281,9 +283,13 @@ class PrepareExperimentConfigAndSuite:
 
         # Loop over the keys in self.question_dictionary_model_ind and update with platform_defaults
         # if that dictionary shares the key
-        for key, val in self.question_dictionary_model_ind.items():
-            if key in platform_defaults.keys():
-                self.question_dictionary_model_ind[key].update(platform_defaults[key])
+        for question_name, question in self.question_dictionary_model_ind.items():
+            if question_name in platform_defaults.keys():
+                for key, val in question.items():
+                    if val == 'defer_to_platform' and \
+                       key in platform_defaults[question_name]:
+                        self.question_dictionary_model_ind[question_name][key] = platform_defaults[
+                                question_name][key]
 
         # Perform a model override on the model_dep dictionary
         # ----------------------------------------------------
@@ -318,7 +324,8 @@ class PrepareExperimentConfigAndSuite:
 
                     if question_name in platform_defaults.keys():
                         for key, val in question.items():
-                            if val == 'defer_to_platform':
+                            if val == 'defer_to_platform' and \
+                               key in platform_defaults[question_name]:
                                 model_dict[question_name][key] = platform_defaults[
                                         question_name][key]
 
