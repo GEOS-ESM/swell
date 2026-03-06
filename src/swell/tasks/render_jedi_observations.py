@@ -83,5 +83,23 @@ class RenderJediObservations(taskBase):
         with open(jedi_observations_file, 'w') as f:
             yaml.dump(observations, f)
 
+        write_each_obs_yaml = True
+        if write_each_obs_yaml:            
+            # Iterate through list
+            for ob in obs_list:
+                # Check whether to use the file, or skip if debugging config file
+                if check_for_obs:
+                    use_observation = check_obs(observing_system_records_path, ob,
+                                                obs_dict, self.cycle_time)
+                else:
+                    self.logger.info(f'Not checking for obs {ob}')
+                    use_observation = True
+                if use_observation:
+                    ob_file = os.path.join(self.cycle_dir(), f'{ob}.yaml')
+                    with open(ob_file, 'w') as f:
+                        yaml.dump(observations, f)                
+                
+
+            
 
 # --------------------------------------------------------------------------------------------------
