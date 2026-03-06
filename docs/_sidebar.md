@@ -29,6 +29,7 @@
 - Configuration files in swell
 
   - [Observation configuration](configs/observation_configuration.md)
+  - [R2D2 v3 credentials](configs/r2d2_v3_credentials.md)
   - [SLURM configuration](configs/slurm_configuration.md)
   - Model configuration:
     - [CICE6](configs/model_configurations/cice6.md)
