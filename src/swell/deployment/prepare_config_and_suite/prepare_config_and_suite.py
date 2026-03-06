@@ -24,7 +24,6 @@ from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import AllSuites
 
-
 # --------------------------------------------------------------------------------------------------
 
 
@@ -333,6 +332,7 @@ class PrepareExperimentConfigAndSuite:
         # Look for defer_to_code in the model_ind dictionary
         # --------------------------------------------------
         for key, val in self.question_dictionary_model_ind.items():
+
             if key == 'model_components':
                 if val['default_value'] == 'defer_to_code':
                     val['default_value'] = self.possible_model_components
@@ -341,6 +341,13 @@ class PrepareExperimentConfigAndSuite:
 
             if key == 'experiment_id' and val['default_value'] == 'defer_to_code':
                 val['default_value'] = f'swell-{self.suite}'
+
+            if key == 'r2d2_experiment_id' and val['default_value'] == 'defer_to_code':
+                swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
+                if swell_id == 'defer_to_code':
+                    swell_id = f'swell-{self.suite}'
+                    self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
+                val['default_value'] = swell_id
 
     # ----------------------------------------------------------------------------------------------
 
