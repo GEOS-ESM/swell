@@ -35,7 +35,7 @@ With R2D2 you can:
     ```python
     r2d2.fetch(
         item='observation',
-        provider='noaa',
+        provider='nasa',
         observation_type='airs',
         window_start='20240103T120000Z',
         window_length='PT6H',
@@ -85,7 +85,7 @@ With R2D2 you can:
        │                   (HPC/Discover, cloud etc.)               │
        │                                                            │
        │   import r2d2                                              │
-       │   r2d2.fetch(item='observation', provider='noaa', ...)     │
+       │   r2d2.fetch(item='observation', provider='nasa', ...)     │
        │   r2d2.store(item='observation', source_file='obs.nc', ...)│
        └────────────────────────────────────────────────────────────┘
                │                                 ▲
@@ -193,6 +193,8 @@ When you run a Swell experiment, R2D2 is used behind the scenes in several tasks
 | **Ingest Obs** | Ingest suite that stores newly processed observations into R2D2 |
 | **Save Obs Diags** | Stores feedback/diagnostic files (`item='feedback'`) |
 | **Save Restart** | Stores forecast and analysis restart files for model components |
+
+> **Note**: R2D2 adaptation in Swell is under active development. Task behavior and configuration may change as implementation continues.
 
 ---
 
