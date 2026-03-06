@@ -163,6 +163,32 @@ def prepare_config(
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
         experiment_dict = {**experiment_dict, **slurm_dict}
 
+    # Register the experiment in R2D2
+    # -------------------------------
+    if 'r2d2_experiment_id' in experiment_dict:
+
+        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+
+        load_r2d2_module(logger, platform)
+        load_r2d2_credentials(logger, platform)
+
+        import r2d2
+
+        r2d2_id = experiment_dict['r2d2_experiment_id']
+
+        unique_id = unique_r2d2_id(r2d2_id, platform)
+        experiment_dict['r2d2_experiment_id'] = unique_id
+
+        user = r2d2.get_client_user()
+        host = r2d2.get_client_host()
+        compiler = r2d2.get_client_compiler()
+
+        r2d2.register(item='experiment',
+                      name=unique_id,
+                      user=user,
+                      compute_host=f'{host}-{compiler}',
+                      lifetime='debug')
+
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
     output = io.StringIO()

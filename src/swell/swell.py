@@ -112,6 +112,7 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
+
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
