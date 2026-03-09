@@ -11,6 +11,7 @@ datasets:
     - name: EffectiveQC0
     - name: EffectiveQC1
     - name: MetaData
+    - name: ObsError
 
 transforms:
 
@@ -32,6 +33,15 @@ transforms:
   for:
     variable: *variables
 
+# Generate ObsError that passed QC for JEDI
+- transform: accept where
+  new name: experiment::ObsErrorPassedQc::${variable}
+  starting field: experiment::ObsError::${variable}
+  where:
+    - experiment::EffectiveQC0::${variable} == 0
+  for:
+    variable: *variables
+
 time_series:
 
   - begin_date: '{{start_cycle_point}}'
@@ -42,6 +52,9 @@ time_series:
     groups:
       - omanPassedQc
       - ombgPassedQc
+      - ombg
+      - ObsError
+      - ObsErrorPassedQc
     variables: *variables
     aggregation_methods:
       - mean
@@ -98,14 +111,14 @@ graphics:
         add_legend:
           loc: 'upper left'
         layers:
-        - type: LinePlot
-          x:
-            variable: experiment_time_series::MetaData::Dates
-          y:
-            variable: experiment_time_series::ombgPassedQc::${variable}_count
-          markersize: 5
-          color: 'black'
-          label: 'Obs count Observation - Background (ombg)'
+        # - type: LinePlot
+        #   x:
+        #     variable: experiment_time_series::MetaData::Dates
+        #   y:
+        #     variable: experiment_time_series::ombgPassedQc::${variable}_count
+        #   markersize: 5
+        #   color: 'black'
+        #   label: 'Obs count Observation - Background (PassedQC) (ombg)'
 
         - type: LinePlot
           x:
@@ -115,6 +128,15 @@ graphics:
           markersize: 5
           color: 'red'
           label: 'Obs count Observation - Analysis h(x) (oman)'
+
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ombg::${variable}_count
+          markersize: 5
+          color: 'blue'
+          label: 'Obs count Observation - Background (PreQC) h(x) (oman)'
 
   - batch figure:
       variables: *variables
@@ -146,4 +168,35 @@ graphics:
           markersize: 5
           color: 'red'
           label: 'Std of Observation - Analysis h(x) (oman)'
+
+  - batch figure:
+      variables: *variables
+    figure:
+      layout: [1,1]
+      title: 'Mean ObsError | {{instrument_title}} | ${variable_title}'
+      output name: '{{cycle_dir}}/eva/{{instrument}}/${variable}/jedi_timeseries_mean_obserror_{{instrument}}_${variable}.png'
+    plots:
+      - add_xlabel: 'Datetime'
+        add_ylabel: 'Mean ObsError'
+        add_grid:
+        add_legend:
+          loc: 'upper left'
+        layers:
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ObsError::${variable}_mean
+          markersize: 5
+          color: 'blue'
+          label: 'Mean ObsError'
+
+        - type: LinePlot
+          x:
+            variable: experiment_time_series::MetaData::Dates
+          y:
+            variable: experiment_time_series::ObsErrorPassedQc::${variable}_mean
+          markersize: 5
+          color: 'red'
+          label: 'Mean ObsError'
 
