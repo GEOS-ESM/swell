@@ -35,7 +35,8 @@ r2d2_local_path:
   default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
 
 swell_static_files:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+  default_value: /discover/nobackup/jbarre/geosdev/SwellStaticFiles
+  #default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
 ioda_locations_not_in_r2d2:
   default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda

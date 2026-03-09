@@ -68,6 +68,7 @@ class JediConfigRendering():
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
             'analysis_variables',
+            'analysis_variables_stddev',
             'analysis_time',
             'analysis_time_iso',
             'background_error_model',
