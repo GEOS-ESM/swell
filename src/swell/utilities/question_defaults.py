@@ -243,11 +243,12 @@ class QuestionDefaults():
     class saber_central_block(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "saber_central_block"
+        ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = "Which saber central block do you wan to use?"
+        prompt: str = "Which saber central block do you want to use?"
         widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
@@ -256,6 +257,7 @@ class QuestionDefaults():
     class saber_outer_block(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "saber_outer_block"
+        ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
             "all_models"
