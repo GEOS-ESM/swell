@@ -72,7 +72,7 @@ class SaveRestart(taskBase):
                   step=window_length,
                   resolution=self.config.horizontal_resolution(),
                   type='fc',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Loop over an
         for an in r2d2_dict['store']['an']:
@@ -83,7 +83,7 @@ class SaveRestart(taskBase):
                   fc_date_rendering='analysis',
                   resolution=self.config.horizontal_resolution(),
                   type='an',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Oceanstats needs special handling from the forecast folder. It is produced at the end of
         # the forecast and could be saved as a good metric. We are replicating the same structure as

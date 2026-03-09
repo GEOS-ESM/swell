@@ -153,6 +153,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_experiment_id(SuiteQuestion):
+        default_value: str = "defer_to_code"
+        question_name: str = "r2d2_experiment_id"
+        prompt: str = "What experiment_id should r2d2 reference for experiment?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
@@ -1306,22 +1315,6 @@ class QuestionDefaults():
             False
         ])
         prompt: str = "When running hofx do you want to output the GeoVaLs?"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class set_obs_as_local(TaskQuestion):
-        default_value: bool = False
-        question_name: str = "set_obs_as_local"
-        options: List[bool] = mutable_field([
-            True,
-            False
-        ])
-        models: List[str] = mutable_field([
-            'all_models'
-        ])
-        prompt: str = "Treat observations as 'local' to the directory?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

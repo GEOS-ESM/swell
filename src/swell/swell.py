@@ -112,6 +112,7 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
+
     # Create the experiment directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
 
@@ -246,17 +247,17 @@ def test(test: str) -> None:
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "3dvar_atmos", "localensembleda",
-                                            "3dvar_cycle")))
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
+                                            "localensembleda", "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, 3dvar_atmos, localensembleda)
+        suite (str): Name of the suite to run (e.g., 3dvar_marine, 3dvar_atmos, localensembleda)
     """
     run_suite(suite, platform, TestSuite.TIER1)
 
@@ -267,10 +268,10 @@ def t1test(
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "ufo_testing",
                                             "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
 def t2test(
-    suite: Literal["hofx", "3dvar", "ufo_testing",
+    suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
         platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
@@ -278,7 +279,7 @@ def t2test(
     Run a particular swell suite from the tier 2 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar_marine, ufo_testing)
     """
     run_suite(suite, platform, TestSuite.TIER2)
 

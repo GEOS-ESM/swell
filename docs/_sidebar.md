@@ -30,12 +30,13 @@
 
 - Configuration files in swell
 
-  - [Observation configuration](configs/observation_configuration.md)
-  - [SLURM configuration](configs/slurm_configuration.md)
-  - Model configuration:
+  - Model configurations:
     - [CICE6](configs/model_configurations/cice6.md)
     - [MOM6](configs/model_configurations/mom6.md)
     - [History Outputs](configs/model_configurations/history_outputs.md)
+  - [Observation configuration](configs/observation_configuration.md)
+  - [R2D2 configuration](configs/r2d2_v3_credentials.md)
+  - [SLURM configuration](configs/slurm_configuration.md)
 
 - Code test before pull request
 
