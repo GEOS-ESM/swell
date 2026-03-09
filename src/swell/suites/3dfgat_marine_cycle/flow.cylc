@@ -242,12 +242,15 @@
         {%- endfor %}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     [[SaveAnalysis-{{model_component}}]]
         script = "swell task SaveAnalysis $config -d $datetime -m {{model_component}}"
 
     [[SaveForecast-{{model_component}}]]
         script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
 
+=======
+>>>>>>> develop
 =======
 >>>>>>> develop
     [[SaveRestart-{{model_component}}]]
