@@ -4,10 +4,28 @@ analysis_variables:
   options:
   - volume_mixing_ratio_of_no2
 
-background_error_model:
+saber_central_block:
   default_value: identity
   options:
   - identity
+  - bump_nicas
+
+saber_outer_block:
+  default_value: stddev_bkg_scaled
+  options:
+  - stddev_bkg_scaled
+  - stddev_fixed_values
+
+# Note: the analysis_variables_stddev key is only used 
+# when saber_outer_block is set to stddev_fixed_values. 
+# This is not currently enforced in code, but should be 
+# kept in mind when setting these keys.
+#
+#analysis_variables_stddev:
+#  default_value:
+#    volume_mixing_ratio_of_no2: 5e-9
+#    volume_mixing_ratio_of_o3: 1e-8
+#    volume_mixing_ratio_of_co: 5e-8
 
 background_experiment:
   default_value: swell_test
