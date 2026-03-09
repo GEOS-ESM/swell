@@ -193,7 +193,9 @@ class RunJediEtkfSolver(taskBase):
             obs['obs space']['obsdatain']['engine']['obsfile'] = obs_file_read
             dir_path = os.path.dirname(obs_file_read)
             file_name = os.path.basename(obs_file_read)
-            obs['obs space']['obsdataout']['engine']['obsfile'] = os.path.join(dir_path, 'solver.' + file_name)
+            obs['obs space']['obsdataout']['engine']['obsfile'] = (
+                os.path.join(dir_path, 'solver.' + file_name)
+                )
 
         with open(jedi_config_file, 'w') as f:
             yaml.dump(jedi_config_dict, f)
