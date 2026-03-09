@@ -20,11 +20,11 @@ The two most basic parts to an experiment are the `experiment.yaml` config, and 
 
 ## Example Experiment Config
 
-`experiment.yaml` sets values for parameters used in the code. This is an example snippet from the Swell suite `3dvar`:
+`experiment.yaml` sets values for parameters used in the code. This is an example snippet from the Swell suite `3dvar_marine`:
 
 ```yaml
 # What is the experiment id?
-experiment_id: swell-3dvar
+experiment_id: swell-3dvar_marine
 
 # What is the experiment root (the directory where the experiment will be stored)?
 experiment_root: /discover/nobackup/manstett/SwellExperiments
@@ -57,7 +57,7 @@ The questions near the top of the file are suite questions, and are referred to 
 
 ## Example Experiment Workflow
 
-The `flow.cylc` file instructs `cylc` which tasks to run, and in what order. The `scheduler` section sets the order of tasks and their dependencies. For example, here is a small snippet of a `flow.cylc` generated for `3dvar`.
+The `flow.cylc` file instructs `cylc` which tasks to run, and in what order. The `scheduler` section sets the order of tasks and their dependencies. For example, here is a small snippet of a `flow.cylc` generated for `3dvar_marine`.
 
 ```
 [scheduling]
@@ -293,7 +293,7 @@ During experiment creation, Swell scans the suite's `flow.cylc` file to find all
 
 In this question infrastructure, **suites take priority over tasks**. Any question specified in a suite configuration will override the default value for a question in one of its member tasks. This allows for easily setting different configurations for suites without having to specify redundant questions. For ease of use, model-dependent questions can be assigned directly in their respective lists.
 
-Consider the following example of suite questions for `3dvar` (in python, variable names cannot begin with digits):
+Consider the following example of suite questions for `3dvar_marine` (in python, variable names cannot begin with digits):
 
 ```python
 from swell.utilities.question_defaults import QuestionDefaults as qd
@@ -342,8 +342,8 @@ class SuiteQuestions(QuestionContainer, Enum):
 ```python
 class SuiteConfig(QuestionContainer, Enum):
 
-    _3dvar_base = QuestionList(
-        list_name="3dvar",
+    _3dvar_marine_base = QuestionList(
+        list_name="3dvar_marine_base",
         questions=[
             sq.marine
         ]
@@ -351,8 +351,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dvar_tier1 = QuestionList(
-        list_name="3dvar",
+    _3dvar_marine_tier1 = QuestionList(
+        list_name="3dvar_marine_tier1",
         questions=[
             _3dvar_base,
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
@@ -389,6 +389,6 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 ```
-The class `SuiteQuestions` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite. 
+The class `SuiteQuestions` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite.
 
-`_3dvar_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `QuestionDefaults` (`src/swell/utilities/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_tier1`, and set their own defaults on top of the existing ones. 
+`_3dvar_marine_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `QuestionDefaults` (`src/swell/utilities/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_marine_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_marine_tier1`, and set their own defaults on top of the existing ones.
