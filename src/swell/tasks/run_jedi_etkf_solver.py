@@ -86,8 +86,12 @@ class RunJediEtkfSolver(taskBase):
                                     self.config.vertical_localization_method())
         self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
                                     self.config.vertical_localization_apply_log_transform())
+        self.jedi_rendering.add_key('vertical_localization_unit',
+                                    self.config.vertical_localization_unit())
         self.jedi_rendering.add_key('vertical_localization_lengthscale',
                                     self.config.vertical_localization_lengthscale())
+        self.jedi_rendering.add_key('vertical_localization_frac_retained_variance',
+                                    self.config.vertical_localization_frac_retained_variance())
         self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
                                     self.config.vertical_localization_ioda_vertical_coord())
         self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
