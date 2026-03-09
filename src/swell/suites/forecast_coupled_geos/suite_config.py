@@ -21,32 +21,26 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    forecast_geos_tier1 = QuestionList(
-        list_name="forecast_geos",
+    forecast_coupled_geos = QuestionList(
+        list_name="forecast_coupled_geos",
         questions=[
             sq.all_suites,
-            qd.cycle_times(),
-            qd.final_cycle_point(),
-            qd.start_cycle_point(),
-            qd.start_cycle_point("2021-06-20T00:00:00Z"),
-            qd.final_cycle_point("2021-06-21T00:00:00Z"),
+            qd.start_cycle_point("2021-07-02T12:00:00Z"),
+            qd.final_cycle_point("2021-07-03T12:00:00Z"),
             qd.cycle_times([
-                "T00",
-                "T06",
                 "T12",
-                "T18"
             ]),
             qd.geos_build_method("use_existing"),
-            qd.forecast_duration("PT6H"),
+            qd.forecast_duration("P1D"),
         ],
     )
 
     # --------------------------------------------------------------------------------------------------
 
-    forecast_geos = QuestionList(
-        list_name="forecast_geos",
+    forecast_coupled_geos_tier1 = QuestionList(
+        list_name="forecast_coupled_geos_tier1",
         questions=[
-            forecast_geos_tier1
+            forecast_coupled_geos
         ]
     )
 

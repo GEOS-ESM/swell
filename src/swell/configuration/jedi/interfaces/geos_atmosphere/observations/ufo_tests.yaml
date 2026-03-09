@@ -8,6 +8,14 @@ default:
 # Values for individual observation types
 # ---------------------------------------
 
+abi_g16:
+  filter_test:
+    passedBenchmark: 4511
+
+abi_g18:
+  filter_test:
+    passedBenchmark: 6938
+
 aircraft_temperature:
   filter_test:
     passedBenchmark: 160674
