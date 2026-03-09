@@ -153,12 +153,22 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_experiment_id(SuiteQuestion):
+        default_value: str = "defer_to_code"
+        question_name: str = "r2d2_experiment_id"
+        prompt: str = "What experiment_id should r2d2 reference for experiment?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
         ask_question: bool = True
-        prompt: str = ("Since this suite is non-cycling choose how "
-                       "many hours the workflow can run ahead?")
+        prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
+                       "that may be active ahead of the current cycle "
+                       "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -567,11 +577,41 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class geos_experiment_directory(TaskQuestion):
+    class geos_homdir(TaskQuestion):
         default_value: str = "defer_to_platform"
-        question_name: str = "geos_experiment_directory"
+        question_name: str = "geos_homdir"
         ask_question: bool = True
-        prompt: str = "What is the path to the GEOS restarts directory?"
+        prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and "
+                       "gcm_setup) that contains model settings and RC files?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_expdir_different(TaskQuestion):
+        default_value: str = False
+        question_name: str = "geos_expdir_different"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = ("Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, "
+                       "different than your GEOS HOME Directory?")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_expdir(TaskQuestion):
+        default_value: str = "/dev/null/"
+        question_name: str = "geos_expdir"
+        depends: Dict = mutable_field({
+            "geos_expdir_different": True
+        })
+        prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
+                       "output and restart files), if it is different than your GEOS HOME "
+                       "Directory?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -580,18 +620,10 @@ class QuestionDefaults():
     class geos_gcm_tag(TaskQuestion):
         default_value: str = "v11.6.0"
         question_name: str = "geos_gcm_tag"
-        ask_question: bool = True
+        depends: Dict = mutable_field({
+            "geos_build_method": "create"
+        })
         prompt: str = "Which GEOS tag do you wish to clone?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class geos_restarts_directory(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "geos_restarts_directory"
-        ask_question: bool = True
-        prompt: str = "What is the path to the GEOS restarts directory?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -753,6 +785,47 @@ class QuestionDefaults():
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
         widget_type: WType = WType.STRING_DROP_LIST
 
+    # ------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class dry_run(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "dry_run"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Dry-run mode: preview what would be ingested before storing to R2D2"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_ingest(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_ingest"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to ingest to R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class initial_restarts_method(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "initial_restarts_method"
+        ask_question: bool = True
+        options: List[str] = mutable_field([
+            "geos_expdir",
+            "r2d2",
+            "hotstart",
+        ])
+        prompt: str = "How should initial GEOS restarts be obtained?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -763,7 +836,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = ("Provide a path that contains observation files not in r2d2.")
+        prompt: str = (
+            "Provide a path that contains observation files not in r2d2.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1065,8 +1139,9 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = ("What number of iterations do you wish to use for each outer loop?"
-                       " Provide a list of integers the same length as the number of outer loops.")
+        prompt: str = (
+            "What number of iterations do you wish to use for each outer loop?"
+            " Provide a list of integers the same length as the number of outer loops.")
         widget_type: WType = WType.INTEGER_LIST
 
     # --------------------------------------------------------------------------------------------------
@@ -1168,7 +1243,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_atmosphere"
         ])
-        prompt: str = ("What is the path for the GEOSadas cubed sphere backgrounds?")
+        prompt: str = (
+            "What is the path for the GEOSadas cubed sphere backgrounds?")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1252,22 +1328,6 @@ class QuestionDefaults():
             False
         ])
         prompt: str = "When running hofx do you want to output the GeoVaLs?"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class set_obs_as_local(TaskQuestion):
-        default_value: bool = False
-        question_name: str = "set_obs_as_local"
-        options: List[bool] = mutable_field([
-            True,
-            False
-        ])
-        models: List[str] = mutable_field([
-            'all_models'
-        ])
-        prompt: str = "Treat observations as 'local' to the directory?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

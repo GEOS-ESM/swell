@@ -19,6 +19,8 @@ def write_welcome_message() -> None:
     print(" _____      _____| | |  Swell workflow deployment manager")
     print("/ __\ \ /\ / / _ \ | |  NASA Global Modeling and Assimilation Office")  # noqa
     print("\__ \\\ V  V /  __/ | |  Version {__version__}".format(__version__=__version__))  # noqa
-    print("|___/ \_/\_/ \___|_|_|  Source code located at: https://geos-esm.github.io/swell")  # noqa
+    print("|___/ \_/\_/ \___|_|_|  Documentation located at: https://geos-esm.github.io/swell")  # noqa
     print()
-    print()
+    print("Swell fetches and stores files using the R2D2 database framework")
+    print("Setup of R2D2 credentials is required to use Swell. For instructions, see:")
+    print("https://geos-esm.github.io/swell/#/configs/r2d2_v3_credentials")

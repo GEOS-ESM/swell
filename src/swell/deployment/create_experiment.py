@@ -47,7 +47,7 @@ def clone_config(
 
     # Open the target experiment YAML. It will be used as the override
     with open(configuration, 'r') as f:
-        yaml = YAML(typ='safe')
+        yaml = YAML()
         override_dict = yaml.load(f)
 
     # Check that override_dict has a suite key and get the suite name
@@ -83,7 +83,7 @@ def prepare_config(
     # ---------------
     logger = get_logger('SwellPrepSuiteConfig')
 
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     yaml.default_flow_style = False
 
     # Assert valid method
@@ -163,6 +163,32 @@ def prepare_config(
             logger.abort(f'SLURM file contains invalid keys: {slurm_invalid_keys}')
         experiment_dict = {**experiment_dict, **slurm_dict}
 
+    # Register the experiment in R2D2
+    # -------------------------------
+    if 'r2d2_experiment_id' in experiment_dict:
+
+        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+
+        load_r2d2_module(logger, platform)
+        load_r2d2_credentials(logger, platform)
+
+        import r2d2
+
+        r2d2_id = experiment_dict['r2d2_experiment_id']
+
+        unique_id = unique_r2d2_id(r2d2_id, platform)
+        experiment_dict['r2d2_experiment_id'] = unique_id
+
+        user = r2d2.get_client_user()
+        host = r2d2.get_client_host()
+        compiler = r2d2.get_client_compiler()
+
+        r2d2.register(item='experiment',
+                      name=unique_id,
+                      user=user,
+                      compute_host=f'{host}-{compiler}',
+                      lifetime='debug')
+
     # Expand all environment vars in the dictionary
     # ---------------------------------------------
     output = io.StringIO()
@@ -213,7 +239,7 @@ def create_experiment_directory(
 
     # Load the string using yaml
     # --------------------------
-    yaml = YAML(typ='safe')
+    yaml = YAML()
     experiment_dict = yaml.load(experiment_dict_str)
 
     # Experiment ID and root from the user input
@@ -242,7 +268,8 @@ def create_experiment_directory(
     # resolve the templates and write the suite file to the experiment suite directory.
     # --------------------------------------------------------------------------------------------
     swell_suite_path = os.path.join(get_swell_path(), 'suites', suite)
-    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict, platform)
+    prepare_cylc_suite_jinja2(logger, swell_suite_path, exp_suite_path, experiment_dict,
+                              platform, exp_path)
 
     # Copy suite and platform files to experiment suite directory
     # -----------------------------------------------------------
@@ -436,7 +463,8 @@ def prepare_cylc_suite_jinja2(
     swell_suite_path: str,
     exp_suite_path: str,
     experiment_dict: dict,
-    platform: str
+    platform: str,
+    experiment_path: str
 ) -> None:
 
     # Open suite file from swell
@@ -447,6 +475,10 @@ def prepare_cylc_suite_jinja2(
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
     render_dictionary = copy.deepcopy(experiment_dict)
+
+    # Add experiment path to the rendering dictionary
+    # ----------------------------------------------------
+    render_dictionary['experiment_path'] = experiment_path
 
     # Get unique list of cycle times with model flags to render dictionary
     # --------------------------------------------------------------------
