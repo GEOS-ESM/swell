@@ -22,8 +22,9 @@ from swell.utilities.logger import Logger
 #   2. Add it to the dictionary below
 
 R2D2_MODEL_MAP = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',
+    'geos_atmosphere': ['geos'],
+    'geos_marine': ['mom6', 'cice6'],
+    'geos_cf': ['geos_cf'],
 }
 
 # Platform-specific R2D2 module config
