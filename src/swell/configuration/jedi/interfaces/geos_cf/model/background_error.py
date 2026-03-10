@@ -72,10 +72,11 @@ def _build_stddev_fixed_values(template_dict: Mapping) -> Mapping:
     """Standard deviation outer block with fixed values from analysis variables"""
     # Get the stddev values for each analysis variable
     # Example: {'volume_mixing_ratio_of_no2': 5e-9, 'volume_mixing_ratio_of_o3': 1e-8}
-    stddev_dict = template_dict.get('analysis_variables_stddev', 
-                                    {'volume_mixing_ratio_of_no2': 5e-9, 
-                                     'volume_mixing_ratio_of_o3': 1e-8,
-                                     'volume_mixing_ratio_of_co': 5e-8,})
+    stddev_dict = {
+        'volume_mixing_ratio_of_no2': 5e-9, 
+        'volume_mixing_ratio_of_o3': 1e-8,
+        'volume_mixing_ratio_of_co': 5e-8,
+    }
     
     # Build the standard deviations list
     standard_deviations = [

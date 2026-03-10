@@ -249,7 +249,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which saber central block do you want to use?"
-        widget_type: WType = WType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -263,7 +263,7 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Which saber outer blocks do you want to use?"
-        widget_type: WType = WType.STRING_DROP_LIST
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
