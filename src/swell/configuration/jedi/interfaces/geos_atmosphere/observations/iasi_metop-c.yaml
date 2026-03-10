@@ -218,7 +218,7 @@ obs post filters:
     options:
       channels: *iasi_metop-c_channels
       error parameter vector: *iasi_metop-c_obserr
-      use_flag: &useflag_iasi_metop-c {{iasi_metopb_active_channels}}
+      use_flag: &useflag_iasi_metop-c {{iasi_metopc_active_channels}}
       use_flag_clddet: &clddet_iasi_metop-c [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

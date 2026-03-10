@@ -21,8 +21,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dvar_tier1 = QuestionList(
-        list_name="3dvar",
+    _3dvar_marine = QuestionList(
+        list_name="3dvar_marine",
         questions=[
             sq.marine,
             qd.start_cycle_point("2021-07-01T12:00:00Z"),
@@ -60,10 +60,10 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    _3dvar = QuestionList(
-        list_name="3dvar",
+    _3dvar_marine_tier1 = QuestionList(
+        list_name="3dvar_marine_tier1",
         questions=[
-            _3dvar_tier1
+            _3dvar_marine
         ]
     )
 

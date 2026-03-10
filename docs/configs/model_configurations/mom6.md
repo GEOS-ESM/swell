@@ -38,7 +38,7 @@ modules that are located in `MOM_input` and currently handled as an extra file i
 
 In GEOS and SWELL context it needs to be included in the GEOS experiment folder. For it to be active,  `ODA_INCUPD` should ne set as `True`. `ODA_INCUPD_FILE` name shouldn't be changed as that is also used in SWELL. `ODA_INCUPD_UV` is set to false for
 now until horizontal surface current fields are assimilated. In terms of `ODA_INCUPD_NHOURS`, there is no set rule but we aim
-for half DA window length.
+for half DA window length. Nonetheless, this can be changed using the `experiment.yaml` config key with the same name.
 
 ```fortran
 ! === module MOM_oda_incupd ===

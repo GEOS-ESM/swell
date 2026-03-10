@@ -29,7 +29,7 @@ All `sbatch` directives are supported (see [`man sbatch`](https://slurm.schedmd.
 However, note that SWELL will only validate that a given directive exists; we do not validate data types, or do anything fancy with type conversion (e.g., concatenation of arrays).
 If in doubt about types, use double quotes around values to force things to be strings.
 
-The second is to use the `-s / --slurm <somefile>` argument to SWELL (e.g., `slurm create 3dvar -s myslurm.yaml`).
+The second is to use the `-s / --slurm <somefile>` argument to SWELL (e.g., `slurm create 3dvar_marine -s myslurm.yaml`).
 This works similarly to the above but provides much finer-grained control over the ways that directives set for different tasks, though at the cost of more verbose syntax:
 
 ```yaml

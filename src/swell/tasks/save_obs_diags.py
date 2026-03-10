@@ -75,7 +75,7 @@ class SaveObsDiags(taskBase):
             try:
                 r2d2.store(
                     item='feedback',
-                    experiment=self.experiment_id(),
+                    experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
                     window_length='PT6H',

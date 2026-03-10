@@ -1,19 +1,15 @@
-<div style="border:1px solid red; padding: 5px; background-color: #ffe6e6; color: black; margin-bottom: 10px;">
-    <strong>Warning:</strong> Currently, <strong>3dvar</strong> suite only contains the <strong>geos_marine</strong> configuration and <strong>3dvar_atmos</strong> only contains the <strong>geos_atmosphere</strong> configuration. This will likely change in a future SWELL version.
-</div>
+## Create a Swell 3DVar_marine experiment:
 
-## Create a Swell 3DVar experiment:
-
-To create a 3dvar suite, run the following command:
+To create a 3dvar_marine suite, run the following command:
 
 ```bash
-swell create 3dvar
+swell create 3dvar_marine
 ```
 
 For this tutorial, we will use the override option (`-o` or `--override`):
 
 ```bash
-swell create 3dvar -o override.yaml
+swell create 3dvar_marine -o override.yaml
 ```
 
 Where the `override.yaml` contains the following keys to override defaults:
@@ -26,14 +22,14 @@ experiment_id: test001
 With this, the following experiment folder will be created:
 `/discover/nobackup/dardag/test_folder/test001`
 
-Before launching the experiment, let's take a look at the `experiment.yaml`.
+Before launching the experiment, let's take a look at the `experiment.yaml` experiment configuration.
 
 ## Inside `experiment.yaml`:
 
 The `experiment.yaml` is located at:
-`/discover/nobackup/dardag/test_folder/test001/test001-suite/experiment.yaml`
+`/discover/nobackup/dardag/test_folder/test001/test001-suite/experiment.yaml`. These configurations and outputs may display some minor differences dependening on SWELL and JEDI updates.
 
-For `3dvar` defaults (with the experiment root and id override), this is the `experiment.yaml`:
+For `3dvar_marine` defaults (with the experiment root and id override), this will be the `experiment.yaml`:
 
 ```yaml
 # What is the experiment id?
@@ -48,21 +44,21 @@ start_cycle_point: '2021-07-01T12:00:00Z'
 # What is the time of the final cycle (middle of the window)?
 final_cycle_point: '2021-07-01T12:00:00Z'
 
-# Since this suite is non-cycling choose how many hours the workflow can run ahead?
-runahead_limit: P4
-
 # List of models in this experiment
 model_components:
 - geos_marine
+
+# Set the Cylc runahead limit: the maximum number of cycles that may be active ahead of the current cycle (e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).
+runahead_limit: P4
 
 # Do you want to use an existing JEDI build or create a new build?
 jedi_build_method: use_existing
 
 # What is the path to the existing JEDI build directory?
-existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025/build-intel-release
+existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/build-intel-release/
 
 # What is the path to the existing JEDI source code directory?
-existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025
+existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/
 
 # Configurations for the model components.
 models:
@@ -78,11 +74,53 @@ models:
     marine_models:
     - mom6
 
-    # Enter the cycle times for this model.
+    # Perform check for observations? Set to false for debugging purposes.
+    check_for_obs: true
+
+    # How long before the middle of the analysis window did the background providing forecast begin?
+    background_time_offset: PT18H
+
+    # Which observations do you want to include?
+    observations:
+    - adt_cryosat2n
+    - adt_jason3
+    - adt_saral
+    - adt_sentinel3a
+    - adt_sentinel3b
+    - insitu_profile_argo
+    - sst_ostia
+    - sss_smos
+    - sss_smapv5
+    - sst_abi_g16_l3c
+    - sst_gmi_l3u
+    - sst_viirs_n20_l3u
+    - temp_profile_xbt
+
+    # Treat observations as 'local' to the directory?
+    set_obs_as_local: false
+
+    # What is the duration for the data assimilation window?
+    window_length: P1D
+
+    # What is the database providing the observations?
+    obs_experiment: s2s_v1
+
+    # What is the horizontal resolution for the forecast model and backgrounds?
+    horizontal_resolution: 72x36
+
+    # What is the vertical resolution for the forecast model and background?
+    vertical_resolution: '50'
+
+    # Do you want to use a 3D or 4D (including FGAT) window?
     window_type: 3D
 
-    # What is the duration from the middle of the window when forecasts start?
-    analysis_forecast_window_offset: -PT12H
+    # What is the name of the name of the experiment providing the backgrounds?
+    background_experiment: s2s
+
+    # Provide a list of patterns that you wish to remove from the cycle directory.
+    clean_patterns:
+    - '*.nc4'
+    - '*.txt'
 
     # What are the analysis variables?
     analysis_variables:
@@ -91,29 +129,8 @@ models:
     - sea_surface_height_above_geoid
     - sea_water_cell_thickness
 
-    # Which background error model do you want to use?
-    background_error_model: explicit_diffusion
-
-    # What is the name of the name of the experiment providing the backgrounds?
-    background_experiment: s2s
-
-    # How long before the middle of the analysis window did the background providing forecast begin?
-    background_time_offset: PT18H
-
-    # Provide a list of patterns that you wish to remove from the cycle directory.
-    clean_patterns:
-    - '*.nc4'
-    - '*.txt'
-
     # What value of gradient norm reduction for convergence?
     gradient_norm_reduction: 1e-10
-
-    # Which GSIBEC climatological or hybrid?
-    gsibec_configuration:
-    - None
-
-    # What is the horizontal resolution for the forecast model and backgrounds?
-    horizontal_resolution: 72x36
 
     # Which data assimilation minimizer do you wish to use?
     minimizer: RPCG
@@ -122,44 +139,14 @@ models:
     number_of_iterations:
     - 5
 
-    # What is the database providing the observations?
-    obs_experiment: s2s_v1
-
-    # What is the group providing the observations?
-    obs_provider:
-    - odas
-    - gdas_marine
-
-    # Which observations do you want to include?
-    observations:
-     - adt_cryosat2n
-     - adt_jason3
-     - adt_saral
-     - adt_sentinel3a
-     - adt_sentinel3b
-     - insitu_profile_argo
-     - sst_ostia
-     - sss_smos
-     - sss_smapv5
-     - sst_abi_g16_l3c
-     - sst_gmi_l3u
-     - sst_viirs_n20_l3u
-     - temp_profile_xbt
-
     # What is the number of processors for JEDI?
     total_processors: 6
 
-    # What is the vertical resolution for the forecast model and background?
-    vertical_resolution: '50'
+    # Provide the log naming convention (e.g. 'variational', 'fgat').
+    comparison_log_type: variational
 
-    # What is the duration for the data assimilation window?
-    window_length: P1D
-
-    # What is the duration between the middle of the window and the beginning?
-    window_offset: PT12H
-
-# Generate JEDI executable YAML and exit?
-generate_yaml_and_exit: false
+    # Which background error model do you want to use?
+    background_error_model: explicit_diffusion
 
 # What is the path to the R2D2 local directory?
 r2d2_local_path: /discover/nobackup/dardag/R2D2DataStore/Local
@@ -170,14 +157,17 @@ swell_static_files: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 # What is the path to the user provided Swell Static Files directory?
 swell_static_files_user: None
 
+# Generate JEDI executable YAML and exit?
+generate_yaml_and_exit: false
+
 # Datetime this file was created (auto added)
-datetime_created: 20240507_100807Z
+datetime_created: 20260223_111952Z
 
 # Computing platform to run the experiment
 platform: nccs_discover_sles15
 
 # Record of the suite being executed
-suite_to_run: 3dvar
+suite_to_run: 3dvar_marine
 ```
 
 Most of these configurations are self explanatory, we will mention only a few here for now.
@@ -191,18 +181,16 @@ and generate a JEDI Config YAML. This could be useful while debugging problems.
 
 `marine_models`: JEDI/SOCA interface is designed to handle multiple marine model outputs. Currently in SWELL,
 `mom6` and `cice6` model interfaces are supported. `mom6` should always be active for `SOCA` however `cice6` is
-optional. If `cice6` model is not active one should take out sea-ice related observations and variables from the `experiment.yaml` and from the `analysis_variables`.
+optional. If `cice6` model is not active users should take out sea-ice related observations and variables from the `experiment.yaml` and from the `analysis_variables`.
 
 If you would like to change any of these parameters, it is suggested to copy `experiment.yaml`
 to `override.yaml` and make desired configuration changes. Afterwards, create the experiment again:
 
 ```bash
-swell create 3dvar -o override.yaml
+swell create 3dvar_marine -o override.yaml
 ```
 
-However, most of these settings, especially the ones pertaining the DA windows, are tied to the way
-observation and background files are organized within the R2D2 (database) folders. So, making these changes will
-likely break things until these observation or background files are replaced.
+However, most of these settings, especially the ones pertaining the DA windows are tied to the way observation and background files are organized within the R2D2 (database) folders. So, making these changes will likely break things until these observation or background files are replaced.
 
 ## Launch the experiment:
 
@@ -282,7 +270,7 @@ Analysis and increment files: `ocn.test001.an.2021-07-01T12:00:00Z.nc` and `ocn.
 MOM6 outputs (MOM_parameter_*).
 
 
-## SMOS (SSS) Increment for the default 3DVar Test:
+## SMOS (SSS) Increment for the default 3DVAR_marine Test:
 
 The test should produce the following plot in observation space within the cycle directory, under `eva/sss_smos_esa`:
 
