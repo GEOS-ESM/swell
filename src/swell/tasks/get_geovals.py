@@ -11,7 +11,7 @@
 import os
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 from r2d2 import fetch
 
 
@@ -20,6 +20,10 @@ from r2d2 import fetch
 class GetGeovals(taskBase):
 
     def execute(self) -> None:
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Parse config
         # ------------
