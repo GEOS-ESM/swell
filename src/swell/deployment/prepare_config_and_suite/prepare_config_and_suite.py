@@ -12,7 +12,7 @@ import copy
 import os
 from ruamel.yaml import YAML
 from collections.abc import Mapping
-from typing import Union, Tuple, Optional
+from typing import Tuple, Optional
 
 from swell.swell_path import get_swell_path
 from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
