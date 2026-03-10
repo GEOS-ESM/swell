@@ -14,7 +14,7 @@ import subprocess
 
 from swell.swell_path import get_swell_path
 from swell.utilities.jinja2 import template_string_jinja2
-from swell.utilities.logger import get_logger, Logger
+from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
 
