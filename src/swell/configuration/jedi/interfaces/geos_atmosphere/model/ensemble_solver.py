@@ -28,7 +28,7 @@ def ensemble_solver(template_dict: Mapping) -> Mapping:
         'vertical localization': {
             'fraction of retained variance': frac_retained_variance,
             'lengthscale': vertical_localization_lengthscale,
-            'lengthscale units': vert_loc_units
+            'lengthscale units': vert_loc_unit
         },
         'inflation': {
             'rtps': local_ensemble_inflation_rtps,

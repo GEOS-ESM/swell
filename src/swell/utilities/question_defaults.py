@@ -1466,7 +1466,7 @@ class QuestionDefaults():
     @dataclass
     class vertical_localization_unit (TaskQuestion):
         default_value: str = "defer_to_model"
-        question_name: str = "vertical_localization__unit"
+        question_name: str = "vertical_localization_unit"
         ask_question: bool = True
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
