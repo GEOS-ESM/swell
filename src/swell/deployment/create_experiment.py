@@ -89,7 +89,7 @@ def prepare_config(
     platform: str,
     override: dict,
     advanced: bool,
-    slurm: str,
+    slurm: str
 ) -> str:
 
     # Create a logger
