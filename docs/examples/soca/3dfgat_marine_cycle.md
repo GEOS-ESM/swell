@@ -1,18 +1,18 @@
-## Create a Swell 3DFGAT_cycle experiment:
+## Create a Swell 3DFGAT_marine_cycle experiment:
 
 3DFGAT is a particular flavor of 3DVar which uses multiple background states. Hence, in SWELL universe, the `window_type`
 is defined as 4D. However, **B** is not propagated as in it would in a proper 4DVar application.
 
-To create a 3dfgat_cycle suite, run the following command:
+To create a 3dfgat_marine_cycle suite, run the following command:
 
 ```bash
-swell create 3dfgat_cycle
+swell create 3dfgat_marine_cycle
 ```
 
 For this tutorial, we will use the override option (`-o` or `--override`):
 
 ```bash
-swell create 3dfgat_cycle -o override.yaml
+swell create 3dfgat_marine_cycle -o override.yaml
 ```
 
 Where the `override.yaml` contains the following keys to override defaults:
@@ -34,7 +34,7 @@ Before launching the experiment, let's take a look at the `experiment.yaml`.
 The `experiment.yaml` is located at:
 `/discover/nobackup/dardag/test_folder/fgat_test/fgat_test-suite/experiment.yaml`
 
-For `3dfgat_cycle` defaults (with the experiment root and id override and `slurmfile.yaml`), this is the `experiment.yaml`:
+For `3dfgat_marine_cycle` defaults (with the experiment root and id override and `slurmfile.yaml`), this is the `experiment.yaml`:
 
 ```yaml
 # What is the experiment id?
@@ -53,7 +53,7 @@ final_cycle_point: '2021-07-02T12:00:00Z'
 model_components:
 - geos_marine
 
-# Since this suite is non-cycling choose how many hours the workflow can run ahead?
+# Set the Cylc runahead limit: the maximum number of cycles that may be active ahead of the current cycle (e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).
 runahead_limit: P2
 
 # Do you want to use an existing JEDI build or create a new build?
@@ -63,34 +63,34 @@ jedi_build_method: use_existing
 geos_build_method: use_existing
 
 # What is the path to the existing GEOS build directory?
-existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/install-SLES15
-
-# What is the path to the existing GEOS source code directory?
-existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/
-
-# What is the path to the existing JEDI build directory?
-existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025/build-intel-release
-
-# What is the path to the existing JEDI source code directory?
-existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_04152025
-
-# GEOS forecast duration
-forecast_duration: PT12H
-
-# What is the path to the GEOS restarts directory?
-geos_experiment_directory: 5deg_0701
-
-# Which GEOS tag do you wish to clone?
-geos_gcm_tag: v11.6.0
-
-# What is the path to the GEOS restarts directory?
-geos_restarts_directory: restarts_20210701_210000_5deg
+existing_geos_gcm_build_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/install
 
 # What is the path to the Swell Static files directory?
 swell_static_files: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
 # What is the path to the user provided Swell Static Files directory?
 swell_static_files_user: None
+
+# What is the location for the HOME Directory (HOMDIR in gcm_run and gcm_setup) that contains model settings and RC files?
+geos_homdir: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
+
+# Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, different than your GEOS HOME Directory?
+geos_expdir_different: false
+
+# GEOS forecast duration
+forecast_duration: PT12H
+
+# What is the path to the existing JEDI build directory?
+existing_jedi_build_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/build-intel-release/
+
+# What is the path to the existing GEOS source code directory?
+existing_geos_gcm_source_path: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/
+
+# What is the path to the existing JEDI source code directory?
+existing_jedi_source_directory: /discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/
+
+# How should initial GEOS restarts be obtained?
+initial_restarts_method: geos_expdir
 
 # Configurations for the model components.
 models:
@@ -110,11 +110,14 @@ models:
     - mom6
     - cice6
 
-    # Enter the window type for this model.
-    window_type: 4D
+    # Provide the log naming convention (e.g. 'variational', 'fgat').
+    comparison_log_type: fgat
 
-    # What is the duration from the middle of the window when forecasts start?
-    analysis_forecast_window_offset: -PT3H
+    # Do you wish to use IAU for MOM6?
+    mom6_iau: true
+
+    # What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?
+    mom6_iau_nhours: PT3H
 
     # What are the analysis variables?
     analysis_variables:
@@ -126,48 +129,11 @@ models:
     - sea_ice_thickness
     - sea_ice_snow_thickness
 
-    # Which background error model do you want to use?
-    background_error_model: explicit_diffusion
-
-    # What is the frequency of the background files?
-    background_frequency: PT3H
-
-    # How long before the middle of the analysis window did the background providing forecast begin?
-    background_time_offset: PT9H
-
-    # Provide a list of patterns that you wish to remove from the cycle directory.
-    clean_patterns:
-    - '*.nc4'
-    - '*.txt'
-    - '*.rc'
-    - '*.bin'
-
-    # What value of gradient norm reduction for convergence?
-    gradient_norm_reduction: 1e-10
-
-    # What is the horizontal resolution for the forecast model and backgrounds?
-    horizontal_resolution: 72x36
+    # Do you want to use a 3D or 4D (including FGAT) window?
+    window_type: 4D
 
     # What forecast model should be used within JEDI for 4D window propagation?
     jedi_forecast_model: NA
-
-    # Which data assimilation minimizer do you wish to use?
-    minimizer: RPCG
-
-    # Do you wish to use IAU for MOM6?
-    mom6_iau: true
-
-    # What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
-    number_of_iterations:
-    - 10
-
-    # What is the database providing the observations?
-    obs_experiment: s2s_v1
-
-    # Which group(s) provide the observations?
-    obs_provider:
-    - odas
-    - gdas_marine
 
     # Which observations do you want to include?
     observations:
@@ -192,14 +158,49 @@ models:
     # What is the number of processors for JEDI?
     total_processors: 6
 
-    # What is the vertical resolution for the forecast model and background?
-    vertical_resolution: '50'
-
     # What is the duration for the data assimilation window?
     window_length: PT6H
 
-    # What is the duration between the middle of the window and the beginning?
-    window_offset: PT3H
+    # How long before the middle of the analysis window did the background providing forecast begin?
+    background_time_offset: PT9H
+
+    # Provide a list of patterns that you wish to remove from the cycle directory.
+    clean_patterns:
+    - '*.nc4'
+    - '*.txt'
+    - '*.rc'
+    - '*.bin'
+
+    # What is the horizontal resolution for the forecast model and backgrounds?
+    horizontal_resolution: 72x36
+
+    # What is the database providing the observations?
+    obs_experiment: s2s_v1
+
+    # What is the vertical resolution for the forecast model and background?
+    vertical_resolution: '50'
+
+    # Which background error model do you want to use?
+    background_error_model: explicit_diffusion
+
+    # What value of gradient norm reduction for convergence?
+    gradient_norm_reduction: 1e-10
+
+    # Which data assimilation minimizer do you wish to use?
+    minimizer: RPCG
+
+    # What number of iterations do you wish to use for each outer loop? Provide a list of integers the same length as the number of outer loops.
+    number_of_iterations:
+    - 10
+
+    # What is the frequency of the background files?
+    background_frequency: PT3H
+
+    # Perform check for observations? Set to false for debugging purposes.
+    check_for_obs: true
+
+    # Treat observations as 'local' to the directory?
+    set_obs_as_local: false
 
 # Generate JEDI executable YAML and exit?
 generate_yaml_and_exit: false
@@ -208,13 +209,14 @@ generate_yaml_and_exit: false
 r2d2_local_path: /discover/nobackup/dardag/R2D2DataStore/Local
 
 # Datetime this file was created (auto added)
-datetime_created: 20250310_145335Z
+datetime_created: 20260223_121331Z
 
 # Computing platform to run the experiment
 platform: nccs_discover_sles15
 
 # Record of the suite being executed
-suite_to_run: 3dfgat_cycle
+suite_to_run: 3dfgat_marine_cycle
+
 slurm_directives_tasks:
   RunJediConvertStateSoca2ciceExecutable:
     geos_marine:
@@ -228,7 +230,7 @@ slurm_directives_tasks:
     geos_marine:
       nodes: 6
       ntasks-per-node: 126
-  RunGeosExecutable:
+  RunGeos:
     all:
       nodes: 10
       ntasks-per-node: 126
@@ -245,16 +247,20 @@ and generate a JEDI Config YAML. This could be useful while debugging problems b
   Unless the user specifies their own `swell_static_files_user`, SWELL will use the default static
 folder for GEOS restarts and experiment directory:
 
-- `geos_experiment_directory`: For this example, `swell_static_files` is set as the default;
-`/discover/nobackup/projects/gmao/advda/SwellStaticFiles`. So SWELL will look for `/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/run_dirs/5deg_0701` for GEOS experiment setup.
+- `geos_homdir`: For this example, `swell_static_files` is set as the NCCS Discover default;
+`/discover/nobackup/projects/gmao/advda/SwellStaticFiles`. So SWELL will look for `/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg` for GEOS experiment setup. This could be any external GEOS experiment setup.
 
-- `geos_restarts_directory`: Same as `geos_experiment_directory`. SWELL will look in `/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/run_dirs/restarts_20210701_210000_5deg` to obtain coupled restarts. There is no cold start option in SWELL, hence restart files are expected.
+- `geos_expdir_different`: In some rare GEOSgcm setups, homdir and expdir are different. This switch allows this difference to be handled within SWELL. The default is `False` and `geos_homdir` and `geos_expdir` are identical.
+
+- `geos_expdir`: SWELL will look into this folder to obtain coupled restarts. Depending on the `geos_expdir_different` switch this folder may be different or identical to `geos_homdir`. In this SOCA setup coupled restarts will be copied, such as `*_rst` files, `MOM.res.nc`, and `iced.nc`. If hotstart option is chosen for `initial_restarts_method`, restart files in experiment `forecast` directory will be used so no copying will occur.
 
 - `marine_models`: JEDI/SOCA interface is designed to handle multiple marine model outputs. Currently in SWELL,
 `mom6` and `cice6` model interfaces are supported. `mom6` should always be active for `SOCA` however `cice6` is
 optional. If `cice6` model is not active one should take out sea-ice related observations and variables from the `experiment.yaml` and from the `analysis_variables`.
 
 - `mom6_iau`: This is optional, however highly recommended for model stability. See [MOM6 settings](configs/model_configurations/mom6.md) for details.
+
+- `mom6_iau_nhours`: This number is set in `MOM_oda_incupd` module, which is augmented to `MOM_input` file. Now it is possible to manually adjust this value. Recommended values for 6h and 1-day DA windows are 3h and 18h, respectively.
 
 - `obs_provider`: For marine observations, two providers are used `odas` (GMAO) and `gdas_marine` (NOAA-EMC). R2D2 will
 scan `Local` (as highlighted in `r2d2_local_path`) and `Shared` (GMAO-wide) locations for these two providers.
@@ -265,12 +271,10 @@ If you would like to change any of these parameters, it is suggested to copy `ex
 to `override.yaml` and make desired configuration changes. Afterwards, create the experiment again:
 
 ```bash
-swell create 3dfgat_cycle -o override.yaml
+swell create 3dfgat_marine_cycle -o override.yaml
 ```
 
-However, most of these settings, especially the ones pertaining the DA windows, are tied to the way
-observation and background files are organized within the R2D2 (database) folders. So, making these changes will
-likely break things until relevant observation or background files are created.
+However, most of these settings, especially the ones pertaining the DA windows, are tied to the way observation and background files are organized within the R2D2 (database) folders. So, making these changes will likely break things until relevant observation or background files are created.
 
 ## Launch the experiment:
 
@@ -297,12 +301,18 @@ fgat_test/
 ├── configuration
 ├── fgat_test-suite/
 ├── GEOSgcm
+│   ├── build -> /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/install
+│   ├── forecast
+│   ├── GEOS_homdir -> /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
+│   └── source -> /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/
 ├── jedi_bundle
 └── run
 ```
 
-- `GEOSgcm`: Simply points (links) to an existing GEOS build/source folders using the `existing_geos_gcm_build_path` and
-`existing_geos_gcm_source_path` entries. Users can also choose to build their own build by changing the `geos_build_method` in the `experiment.yaml`. However building GEOS from scratch could take up to an hour and requires significant IOnodes and storage space.
+- `GEOSgcm`: Hosts all GEOS related folders including links to an existing GEOS build/source folders using the `existing_geos_gcm_build_path` and `existing_geos_gcm_source_path` entries. It also contains the `GEOS_homdir`, where an
+additional link is created for an existing GEOS experiment, defined with `geos_homdir` key. Finally, `forecast` folder here contains the deterministic forecast folder, where the `RunGeos` task will execute. During model execution, `scratch` directory will be created under the `forecast` directory and typical GEOS experiment outputs (e.g, MAPL HISTORY) will be stored here.
+
+Users can also choose to build their own build by changing the `geos_build_method` in the `experiment.yaml`. However building GEOS from scratch could take up to an hour and requires significant IOnodes and storage space.
 
 - `jedi_bundle`: Simply points (links) to an existing JEDI build/source folders. Users can also choose to
 build their own bundle by changing the `jedi_build_method` in the `experiment.yaml`. However building JEDI from scratch could
@@ -314,7 +324,6 @@ folders under the `run` folder. In an active cycle, a time stamped folder will b
     ```bash
     run
     └── 20210701T060000Z
-        |── forecast
         └── geos_marine
             ├── background_error_model/
             ├── INPUT/
@@ -322,7 +331,6 @@ folders under the `run` folder. In an active cycle, a time stamped folder will b
             ├── soca/
             └── ...
     ```
-    forecast folder here is the `scratch` directory analogue for GEOSgcm while it's running. If all goes well, the run will complete successfully and `forecast` folders will get purged after two succesful cycles.
 
 ## After the run is complete:
 
@@ -354,7 +362,7 @@ Some of the other files located in the cycle directory:
 
 `cycle_done`: Indicates succesful execution of a particular cycle.
 
-`jedi_fgat_config.yaml`: JEDI configuration file, created right before the 3dfgat_cycle application is executed.
+`jedi_fgat_config.yaml`: JEDI configuration file, created right before the 3dfgat_marine_cycle application is executed.
 
 `jedi_fgat_log.log`: Output of the JEDI execution, contains important information pertaining cost functions, number of observations assimilated, and iterations.
 
@@ -363,15 +371,15 @@ Analysis and increment files:
 1) `ocn.fgat_test.an.2021-07-01T12:00:00Z.nc` and `ocn.fgat_test.inc.2021-07-01T12:00:00Z.nc`
 2) `ice.fgat_test.an.2021-07-01T12:00:00Z.nc` and `ice.fgat_test.inc.2021-07-01T12:00:00Z.nc`
 
->⚠️ **NOTE:** Currently, ocean increment file is combined with `h` variable from analysis to create `mom6_increment.nc` then this file is used in MOM6 IAU for the next forward cycle. `save_restart.py` task saves these increments under the local (i.e., user's `$NOBACKUP`) R2D2 folder.
+>⚠️ **NOTE:** Currently, ocean increment file is combined with `h` variable from analysis to create `mom6_increment.nc` then this file is used in MOM6 IAU for the next forward cycle. Work is underway to save these increments to R2D2.
 
-## NOAA-20 (SST) and analysis increments for the default 3dfgat_cycle test:
+## NOAA-20 (SST) and analysis increments for the default 3dfgat_marine_cycle test:
 
 The test should produce the NOAA-20 SST increment for 2021/07/02 at 06Z:
 
 ![Temperature increment](../../_media/20210702T060000Z_increment_n20.png)
 
-The test also should produce the following increments in the cycle directory, under `eva/increment`. Notice these plots are in state space (5-deg) hence they are very low resolution plots:
+The test also should produce the following increments in the cycle directory under `eva/increment`. Notice these plots are in state space (5-deg) hence these results are for demonstration purposes only:
 
 ![Temperature increment](../../_media/20210702T060000Z_inc_Temp.png)
 ![Sea-ice increment (south pole)](../../_media/20210702T060000Z_inc_aice_h.png)

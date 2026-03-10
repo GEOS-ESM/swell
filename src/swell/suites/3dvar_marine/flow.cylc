@@ -36,8 +36,8 @@
             BuildJediByLinking:fail? => BuildJedi
 
             {% for model_component in model_components %}
-            # Clone geos ana for generating observing system records
-            CloneGeosMksi-{{model_component}}
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}}
             {% endfor %}
         """
 
@@ -45,37 +45,23 @@
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-
             # Task triggers for: {{model_component}}
             # ------------------
-            # Generate satellite channel records
-            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
-
-            # Get background, provide a way to get background directly from GEOS experiment
-            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
-
-            # Get observations
-            {% if cycling_varbc %}
-            # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
-            {% else %}
-
-            # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            {% endif %}
+            # GenerateBClimatology, for ocean it is cycle dependent
+            GetBackground-{{model_component}} => GenerateBClimatology-{{model_component}}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
             # Run Jedi variational executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
-            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJedi-{{model_component}}[^] => RunJediVariationalExecutable-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -85,10 +71,11 @@
 
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
-
-	    {% if not save_r2d2 %}
+            
+            {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
             {% endif %}
 
             # Clean up large files
@@ -132,27 +119,27 @@
         {%- endfor %}
 
     {% for model_component in model_components %}
-
-    [[CloneGeosMksi-{{model_component}}]]
-        script = "swell task CloneGeosMksi $config -m {{model_component}}"
-
-    [[GenerateObservingSystemRecords-{{model_component}}]]
-        script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
-
-    [[GetObsNotInR2d2-{{model_component}}]]
-        script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
+    [[StageJedi-{{model_component}}]]
+        script = "swell task StageJedi $config -m {{model_component}}"
 
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[GetBackground-{{model_component}} ]]
+    [[ GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
-
-    [[GetBackgroundGeosExperiment-{{model_component}} ]]
-        script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+
+    [[GenerateBClimatology-{{model_component}}]]
+        script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
+        execution retry delays = 2*PT1M
+        [[[directives]]]
+        {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"

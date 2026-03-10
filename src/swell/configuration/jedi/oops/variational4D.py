@@ -42,7 +42,7 @@ class variational4D(OopsConfig):
                 'iterations': [{
                     'geometry': self.interface_model('geometry_inner'),
                     'gradient norm reduction': float(self.template_dict['gradient_norm_reduction']),
-                    'ninner': str(self.template_dict['number_of_iterations']),
+                    'ninner': self.template_dict['number_of_iterations'],
                     'linear model': {
                         'name': 'Identity',
                         'increment variables': self.template_dict['analysis_variables'],
