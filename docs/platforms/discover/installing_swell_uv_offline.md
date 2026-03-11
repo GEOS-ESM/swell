@@ -25,7 +25,7 @@ We will download all the required packages on local with the corresponding pytho
     cd swell    # your SWELL repo
 
     #assume you now have installed uv 
-    uv venv --python=python[python3_version]  # e.g., uv venv --python=python3.11.7
+    uv venv --python=python[python3_version]  # e.g., uv venv --python=python3.11.11
     source .venv/bin/activate
     python --version # check if this gives the same [python_version] as on Discover
 

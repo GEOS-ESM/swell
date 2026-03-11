@@ -19,7 +19,7 @@ ln -s $NOBACKUP/.cache ~/.cache
 2) Create an alias to load spack-stack modules in `~/.cshrc`:
 
 ```csh
-alias mod_swell 'module purge; source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_intel'
+alias mod_swell 'module purge; source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_2.0_intel'
 ```
 
 After creating this alias, reload your shell or run `source ~/.cshrc` for it to be available.

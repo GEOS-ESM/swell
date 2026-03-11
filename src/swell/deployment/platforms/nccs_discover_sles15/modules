@@ -9,12 +9,10 @@ module purge
 # Spack stack modules
 # -------------------
 module use /discover/swdev/jcsda/spack-stack/scu17/modulefiles
-module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-1.9.0/envs/ue-intel-2021.10.0/install/modulefiles/Core
-module load stack-intel/2021.10.0
-module load stack-intel-oneapi-mpi/2021.10.0
-module load stack-python/3.11.7
+module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-2.0.0/envs/ue-oneapi-2024.2.0/modules/Core
+module load stack-intel-oneapi-compilers/2024.2.0
+module load stack-intel-oneapi-mpi/2021.13
 module load git-lfs/3.4.0
-module load py-pip/23.1.2
 module load jedi-fv3-env
 module load soca-env
 module load gmao-swell-env/1.0.0
@@ -37,16 +35,16 @@ module load other/mepo
 # Load r2d2 modules
 # -----------------
 module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load r2d2-client/112025
+module load r2d2-client/sles15_spack_2.0
 
 # Load eva and jedi_bundle
 # ------------------------
-module load eva/sles15_milan_1.6.5
-module load jedi_bundle/sles15_skylab9
+module load eva/sles15_spack_2.0
+module load jedi_bundle/sles15_spack_2.0
 
-# Load sp
+# Load ip
 # -------
-module load sp/2.5.0
+module load ip/5.4.0
 
 # Remove any r2d2 v2 paths from PYTHONPATH to prevent conflicts
 export PYTHONPATH=$(echo $PYTHONPATH | tr ':' '\n' | grep -v "/r2d2/sles15_spack19/" | tr '\n' ':' | sed 's/:$//')
@@ -61,5 +59,4 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
-
 

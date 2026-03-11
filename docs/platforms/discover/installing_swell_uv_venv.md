@@ -13,11 +13,11 @@ and then create a symlink in your `$HOME`:
 ln -s $NOBACKUP/.cache ~/.cache
 ```
 
-2) Load JEDI modules (spack v1.9), you can either create the following function or use the command directly:
+2) Load JEDI modules (spack v2.0), you can either create the following function or use the command directly:
 ```bash
 mod_swell() {
   module purge
-  source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_1.9_intel
+  source /discover/nobackup/projects/gmao/advda/swell/jedi_modules/spackstack_2.0_intel
 }
 ```
 This can be put in `~/.bashrc` to ensure it is always active every time the user logins to Discover or in an alternate location, such as `~/.bash_functions` but the user needs to activate these functions via `source ~/.bash_functions`.

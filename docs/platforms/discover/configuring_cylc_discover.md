@@ -37,11 +37,9 @@ source $MODULESHOME/init/bash
 # Load python dependencies
 echo "Using SLES15 modules"
 module use /discover/swdev/jcsda/spack-stack/scu17/modulefiles
-module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-1.9.0/envs/ue-intel-2021.10.0/install/modulefiles/Core
-module load stack-intel/2021.10.0
-module load stack-intel-oneapi-mpi/2021.10.0
-module load stack-python/3.11.7
-module load py-pip/23.1.2
+module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-2.0.0/envs/ue-oneapi-2024.2.0/modules/Core
+module load stack-intel-oneapi-compilers/2024.2.0
+module load stack-intel-oneapi-mpi/2021.13
 
 # Load the cylc module
 module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core/
