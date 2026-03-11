@@ -18,7 +18,7 @@ from datetime import datetime
 import requests
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 import r2d2
 
@@ -68,6 +68,10 @@ class IngestObs(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Get list of observations to ingest (strings)
         obs_to_ingest = self.config.obs_to_ingest([])
