@@ -30,6 +30,10 @@ class SaveRestart(taskBase):
         Does not handle 4d backgrounds properly
         """
 
+        self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
+                         'for coupled models yet')
+        return
+
         # Parse config
         window_type = self.config.window_type()
         window_length = self.config.window_length()
@@ -68,7 +72,7 @@ class SaveRestart(taskBase):
                   step=window_length,
                   resolution=self.config.horizontal_resolution(),
                   type='fc',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Loop over an
         for an in r2d2_dict['store']['an']:
@@ -79,7 +83,7 @@ class SaveRestart(taskBase):
                   fc_date_rendering='analysis',
                   resolution=self.config.horizontal_resolution(),
                   type='an',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Oceanstats needs special handling from the forecast folder. It is produced at the end of
         # the forecast and could be saved as a good metric. We are replicating the same structure as
@@ -93,7 +97,7 @@ class SaveRestart(taskBase):
         dst_date = dt.strftime(forecast_start_time, datetime_formats['iso_format'])
 
         # Oceanstats is produced at the end of the forecast
-        src_stats = os.path.join(self.forecast_dir(), 'ocean.stats.nc')
+        src_stats = self.forecast_dir(['scratch', 'ocean.stats.nc'])
         dst_stats = os.path.join(mainf, forecast_start_time.strftime('%Y-%m-%d'),
                                  f'mom6_cice6_UFS.{self.experiment_id()}.fc.global.MOM.oceanstats.'
                                  + dst_date + '.' + forecast_duration + '.nc')
