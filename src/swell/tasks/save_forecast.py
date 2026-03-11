@@ -16,6 +16,7 @@ from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------
@@ -32,6 +33,10 @@ class StoreBackground(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Current cycle time object
         # -------------------------

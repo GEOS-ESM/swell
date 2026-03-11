@@ -9,7 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import get_r2d2_model_name
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials, get_r2d2_model_name
 
 import isodate
 import os
@@ -27,6 +27,10 @@ class GetBackground(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------

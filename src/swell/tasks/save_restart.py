@@ -15,7 +15,7 @@ from r2d2 import store
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.file_system_operations import copy_to_dst_dir
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 
@@ -33,6 +33,10 @@ class SaveRestart(taskBase):
         self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
                          'for coupled models yet')
         return
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Parse config
         window_type = self.config.window_type()

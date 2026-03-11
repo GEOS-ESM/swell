@@ -17,6 +17,7 @@ from typing import Union
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 from swell.utilities.r2d2 import get_r2d2_model_name
@@ -89,6 +90,10 @@ class GetObservations(taskBase):
         --------------
         "tlapse" files need to be fetched.
         """
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Parse config
         # ------------
