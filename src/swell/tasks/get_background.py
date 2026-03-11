@@ -17,15 +17,6 @@ import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',  # 'mom6_cice6_UFS'
-    'geos_cf': 'geos_cf',
-}
-
-
-# --------------------------------------------------------------------------------------------------
-
 class GetBackground(taskBase):
 
     def execute(self) -> None:
@@ -122,12 +113,14 @@ class GetBackground(taskBase):
 
         # Loop over fc
         # ------------
-        for fc in r2d2_dict['fetch']['fc']:
+        fc_list = r2d2_dict['fetch']['fc']
+        for fc in fc_list:
 
-            # Reset target file
-            # --------------------
+            # Get file metadata from r2d2 config
+            # -----------------------------------
             file_type = fc['file_type']
             target_file_template = fc['filename']
+            r2d2_model = fc.get('r2d2_model', get_r2d2_model_name(model_component))
 
             # Loop over background steps
             # --------------------
@@ -146,7 +139,7 @@ class GetBackground(taskBase):
                 r2d2.fetch(
                     item='forecast',
                     target_file=target_file,
-                    model=get_r2d2_model_name(model_component),
+                    model=r2d2_model,
                     experiment=background_experiment,
                     file_extension=file_extension,
                     resolution=horizontal_resolution,

@@ -74,8 +74,15 @@ def load_r2d2_module(logger: Logger, platform: str) -> None:
 # ----------------------------------------------------------------------------------------------
 
 
+def get_r2d2_models(swell_model):
+    """Returns list of all R2D2 model names."""
+    models = R2D2_MODEL_MAP.get(swell_model, [swell_model])
+    return models if isinstance(models, list) else [models]
+
+
 def get_r2d2_model_name(swell_model):
-    return R2D2_MODEL_MAP.get(swell_model, swell_model)
+    """Returns the first R2D2 model name."""
+    return get_r2d2_models(swell_model)[0]
 
 
 # Lifetime is set when registering an experiment with r2d2.register_experiment(),
