@@ -9,7 +9,7 @@
 
 import r2d2
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
@@ -22,6 +22,10 @@ class SaveObsDiags(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Parse config
         # ------------
@@ -81,7 +85,7 @@ class SaveObsDiags(taskBase):
             try:
                 r2d2.store(
                     item='feedback',
-                    experiment=self.experiment_id(),
+                    experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
                     window_length='PT6H',
