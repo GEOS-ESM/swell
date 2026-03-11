@@ -15,7 +15,7 @@ from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------
@@ -55,7 +55,10 @@ class SaveForecast(taskBase):
         self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_length)
         self.background_experiment = self.experiment_id()
         self.horizontal_resolution = self.config.horizontal_resolution()
-        self.r2d2_local_path = self.config.r2d2_local_path()
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         if self.window_type == '4D' or 'fgat' in self.suite_name():
             self.background_frequency = self.config.background_frequency()
