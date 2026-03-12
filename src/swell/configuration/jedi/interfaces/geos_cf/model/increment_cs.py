@@ -19,8 +19,8 @@ def increment_cs(template_dict: Mapping) -> Mapping:
         'state component': {
             'states': [{
                 'filetype': 'cube sphere history',
-                 'datapath': f'{cycle_dir}',
-                 'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4' 
+                'datapath': f'{cycle_dir}',
+                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4'
             }]
         }
     }
