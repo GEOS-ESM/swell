@@ -10,7 +10,7 @@
 
 import copy
 import os
-import yaml
+from ruamel.yaml import YAML
 from collections.abc import Mapping
 from typing import Union, Tuple, Optional
 
@@ -23,7 +23,6 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import AllSuites
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -231,7 +230,9 @@ class PrepareExperimentConfigAndSuite:
         if 'cycle_times' in self.question_dictionary_model_ind.keys():
             if not self.suite_needs_model_components:
                 self.question_dictionary_model_ind['cycle_times'].pop('models')
-                self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
+                if self.question_dictionary_model_ind['cycle_times']['default_value'] == \
+                   'defer_to_model':
+                    self.question_dictionary_model_ind['cycle_times']['default_value'] = 'T00'
 
         # At this point we can return if there are no model components
         if not self.suite_needs_model_components:
@@ -272,18 +273,23 @@ class PrepareExperimentConfigAndSuite:
 
         # Perform a platform override on the model_ind dictionary
         # -------------------------------------------------------
+        yaml = YAML(typ='safe')
         platform_defaults = {}
         for suite_task in ['suite', 'task']:
             platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
                                               self.platform, f'{suite_task}_questions.yaml')
             with open(platform_dict_file, 'r') as ymlfile:
-                platform_defaults.update(yaml.safe_load(ymlfile))
+                platform_defaults.update(yaml.load(ymlfile))
 
         # Loop over the keys in self.question_dictionary_model_ind and update with platform_defaults
         # if that dictionary shares the key
-        for key, val in self.question_dictionary_model_ind.items():
-            if key in platform_defaults.keys():
-                self.question_dictionary_model_ind[key].update(platform_defaults[key])
+        for question_name, question in self.question_dictionary_model_ind.items():
+            if question_name in platform_defaults.keys():
+                for key, val in question.items():
+                    if val == 'defer_to_platform' and \
+                       key in platform_defaults[question_name]:
+                        self.question_dictionary_model_ind[question_name][key] = platform_defaults[
+                                question_name][key]
 
         # Perform a model override on the model_dep dictionary
         # ----------------------------------------------------
@@ -297,7 +303,7 @@ class PrepareExperimentConfigAndSuite:
                                                    'interfaces', model,
                                                    f'{suite_task}_questions.yaml')
                     with open(model_dict_file, 'r') as ymlfile:
-                        model_defaults.update(yaml.safe_load(ymlfile))
+                        model_defaults.update(yaml.load(ymlfile))
 
                 # Loop over the keys in self.question_dictionary_model_ind and update with
                 # model_defaults or platform_defaults if that dictionary shares the key
@@ -318,13 +324,15 @@ class PrepareExperimentConfigAndSuite:
 
                     if question_name in platform_defaults.keys():
                         for key, val in question.items():
-                            if val == 'defer_to_platform':
+                            if val == 'defer_to_platform' and \
+                               key in platform_defaults[question_name]:
                                 model_dict[question_name][key] = platform_defaults[
                                         question_name][key]
 
         # Look for defer_to_code in the model_ind dictionary
         # --------------------------------------------------
         for key, val in self.question_dictionary_model_ind.items():
+
             if key == 'model_components':
                 if val['default_value'] == 'defer_to_code':
                     val['default_value'] = self.possible_model_components
@@ -333,6 +341,13 @@ class PrepareExperimentConfigAndSuite:
 
             if key == 'experiment_id' and val['default_value'] == 'defer_to_code':
                 val['default_value'] = f'swell-{self.suite}'
+
+            if key == 'r2d2_experiment_id' and val['default_value'] == 'defer_to_code':
+                swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
+                if swell_id == 'defer_to_code':
+                    swell_id = f'swell-{self.suite}'
+                    self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
+                val['default_value'] = swell_id
 
     # ----------------------------------------------------------------------------------------------
 
@@ -348,8 +363,9 @@ class PrepareExperimentConfigAndSuite:
                 override_dict.update_dict(override_dict, self.override)
 
             elif isinstance(self.override, str):
+                yaml = YAML(typ='safe')
                 with open(self.override, 'r') as ymlfile:
-                    override_dict = update_dict(override_dict, yaml.safe_load(ymlfile))
+                    override_dict = update_dict(override_dict, yaml.load(ymlfile))
             else:
                 self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
 

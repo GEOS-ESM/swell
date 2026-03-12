@@ -9,7 +9,7 @@
 import importlib
 import os
 import re
-import yaml
+from ruamel.yaml import YAML
 
 from importlib import resources
 
@@ -37,8 +37,9 @@ def prepare_scheduling_dict(
         raise err
 
     logger.info(f'Loading SLURM user configuration for the "{platform}" platform')
+    yaml = YAML(typ='safe')
     with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
-        global_defaults = yaml.safe_load(yaml_file)
+        global_defaults = yaml.load(yaml_file)
 
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
@@ -74,8 +75,10 @@ def prepare_scheduling_dict(
         'BuildJedi',
         'BuildGeos',
         'EvaObservations',
+        'EvaComparisonObservations',
         'EvaTimeseries',
         'GenerateBClimatology',
+        'RunGeos',
         'RunJediEnsembleMeanVariance',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',
@@ -85,7 +88,6 @@ def prepare_scheduling_dict(
         'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
-        'RunGeosExecutable'
         }
 
     # Throw an error if a user tries to set SLURM directives for a task that
@@ -131,7 +133,6 @@ def prepare_scheduling_dict(
         # Set model_agnostic directives
         validate_directives(directives)
         scheduling_dict[slurm_task] = {"directives": {"all": directives}}
-
         # Now, add model component-specific logic. The inheritance here is more
         # complicated:
         # - Experiment global defaults (`experiment_globals`)
@@ -182,7 +183,6 @@ def prepare_scheduling_dict(
         if slurm_task in experiment_task_directives.keys():
             x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
         scheduling_dict[slurm_task]['execution_time_limit'] = x
-
     return scheduling_dict
 
 
@@ -220,8 +220,9 @@ def slurm_global_defaults(
     user_globals = {}
     if os.path.exists(yaml_path):
         logger.info(f"Loading SLURM user configuration from {yaml_path}")
+        yaml = YAML(typ='safe')
         with open(yaml_path, "r") as yaml_file:
-            user_globals = yaml.safe_load(yaml_file)
+            user_globals = yaml.load(yaml_file)
     return user_globals
 
 

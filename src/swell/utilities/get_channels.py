@@ -7,7 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import yaml
+from ruamel.yaml import YAML
 import os
 from datetime import datetime as dt
 from itertools import groupby
@@ -90,8 +90,9 @@ def get_channels(
         observation + '_channel_info.yaml'
 
     if os.path.isfile(path_to_observing_sys_config):
+        yaml_config = YAML(typ='safe')
         with open(path_to_observing_sys_config, 'r') as file:
-            data = yaml.safe_load(file)
+            data = yaml_config.load(file)
             available_channels = get_channel_list(data['available'], dt_cycle_time)
             active_channels = get_channel_list(data['active'], dt_cycle_time)
 
@@ -129,8 +130,9 @@ def num_active_channels(
         observation + '_channel_info.yaml'
 
     if os.path.isfile(path_to_observing_sys_config):
+        yaml_config = YAML(typ='safe')
         with open(path_to_observing_sys_config, 'r') as file:
-            data = yaml.safe_load(file)
+            data = yaml_config.load(file)
             active_channels = get_channel_list(data['active'], dt_cycle_time)
 
         active_channels_list = process_channel_lists(active_channels)

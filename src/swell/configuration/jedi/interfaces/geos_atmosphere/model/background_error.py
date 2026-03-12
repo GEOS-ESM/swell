@@ -42,6 +42,7 @@ def background_error(template_dict: Mapping) -> Mapping:
 
     background_error = {
         'covariance model': 'SABER',
+        'covariance type': 'gsi hybrid covariance',
         'saber central block': {
             'saber block name': 'gsi hybrid covariance',
             'read': {

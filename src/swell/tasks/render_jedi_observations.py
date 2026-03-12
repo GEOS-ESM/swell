@@ -51,11 +51,6 @@ class RenderJediObservations(taskBase):
 
         cwd = os.getcwd()
 
-        # Replace cycle_dir with './' if specified
-        if self.config.set_obs_as_local(False):
-            self.jedi_rendering.add_key('cycle_dir', '.')
-            os.chdir(self.cycle_dir())
-
         observations = []
 
         # Iterate through list
@@ -83,6 +78,7 @@ class RenderJediObservations(taskBase):
         jedi_observations_file = os.path.join(self.cycle_dir(), 'obs.yaml')
 
         yaml = YAML()
+        yaml.default_flow_style = False
 
         with open(jedi_observations_file, 'w') as f:
             yaml.dump(observations, f)
