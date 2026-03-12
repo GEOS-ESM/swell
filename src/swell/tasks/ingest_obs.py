@@ -158,7 +158,8 @@ class IngestObs(taskBase):
         provider = get_provider_for_observation(
             obs_name, self.ioda_names_list, self.logger)
 
-        retrieval_method = config.get('retrieval_method')  # cp or s3
+        # where the files are located
+        retrieval_method = config.get('retrieval_method')
 
         # Determine source pattern based on method
         source_pattern = config.get(

@@ -66,6 +66,7 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
         return None, None
 
     # Platform-specific R2D2 configurations
+    # Note: ~/.swell/r2d2_credentials.yaml overrides these values if specified
     platform_configs = {
         'nccs_discover_sles15': {
             'host': 'discover-gmao',
@@ -74,10 +75,6 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
         'nccs_discover_cascade': {
             'host': 'discover-gmao',
             'compiler': 'intel'
-        },
-        'aws': {
-            'host': 'aws-gmao',
-            'compiler': 'intel'  # or 'gnu' depending on AWS setup
         },
         'generic': {
             'host': None,
@@ -140,13 +137,13 @@ def load_r2d2_credentials(
 
     if 'r2d2_server_host' in credentials and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_SERVER_HOST'] = credentials['r2d2_server_host']
-    
+
     if 'r2d2_server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
         os.environ['R2D2_SERVER_PORT'] = str(credentials['r2d2_server_port'])
-    
+
     if 'aws_access_key_id' in credentials and 'AWS_ACCESS_KEY_ID' not in os.environ:
         os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
-    
+
     if 'aws_secret_access_key' in credentials and 'AWS_SECRET_ACCESS_KEY' not in os.environ:
         os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
 
@@ -156,7 +153,8 @@ def load_r2d2_credentials(
     # Set host and compiler (YAML config takes precedence over platform detection)
     if 'r2d2_host' in credentials and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_HOST'] = credentials['r2d2_host']
-        logger.info(f"Using platform host '{r2d2_host}' (overriding YAML '{credentials['r2d2_host']}')")
+        logger.info(f"Using platform host '{r2d2_host}' \
+                    (overriding YAML '{credentials['r2d2_host']}')")
         logger.warning("Using host from YAML file")
 
     elif r2d2_host and 'R2D2_HOST' not in os.environ:
