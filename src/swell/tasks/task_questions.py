@@ -464,7 +464,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.dry_run(),
             qd.obs_to_ingest(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -761,7 +760,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_duration(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path()
         ]
     )
 

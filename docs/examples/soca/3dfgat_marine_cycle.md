@@ -205,9 +205,6 @@ models:
 # Generate JEDI executable YAML and exit?
 generate_yaml_and_exit: false
 
-# What is the path to the R2D2 local directory?
-r2d2_local_path: /discover/nobackup/dardag/R2D2DataStore/Local
-
 # Datetime this file was created (auto added)
 datetime_created: 20260223_121331Z
 
@@ -263,7 +260,7 @@ optional. If `cice6` model is not active one should take out sea-ice related obs
 - `mom6_iau_nhours`: This number is set in `MOM_oda_incupd` module, which is augmented to `MOM_input` file. Now it is possible to manually adjust this value. Recommended values for 6h and 1-day DA windows are 3h and 18h, respectively.
 
 - `obs_provider`: For marine observations, two providers are used `odas` (GMAO) and `gdas_marine` (NOAA-EMC). R2D2 will
-scan `Local` (as highlighted in `r2d2_local_path`) and `Shared` (GMAO-wide) locations for these two providers.
+scan Local and Shared (GMAO-wide) locations for these two providers.
 
 ### Making changes with `override.yaml`:
 
