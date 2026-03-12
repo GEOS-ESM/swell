@@ -166,8 +166,6 @@
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
 
-    # ---------------------------------------------------------------------------------------------
-
     {% for observation in models[model_component]['observations'] %}
     [[GetObservations-{{observation}}-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
