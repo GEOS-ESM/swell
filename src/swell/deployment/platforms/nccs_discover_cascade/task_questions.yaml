@@ -19,11 +19,8 @@ existing_jedi_source_directory:
 existing_jedi_source_directory_pinned:
   default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles/current_pinned_jedi_bundle/source/
 
-geos_experiment_directory:
-  default_value: 5deg_0701
-
-geos_restarts_directory:
-  default_value: restarts_20210701_210000_5deg
+geos_homdir:
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
 
 r2d2_local_path:
   default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
