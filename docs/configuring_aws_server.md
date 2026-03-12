@@ -42,7 +42,7 @@ swell task IngestObs /discover/nobackup/fgoktas/SwellExperiments/swell-ingest_ob
   -m geos_marine
 ```
 
-## 3. Verify it stored
+## 2. Verify it stored
 
 ```python
 python3 -c "
@@ -57,7 +57,7 @@ for r in results:
 "
 ```
 
-## 4. Test fetch
+## 3. Test fetch
 
 ```python
 python3 -c "
@@ -75,7 +75,7 @@ print('Fetch OK')
 "
 ```
 
-## 5. Full workflow test
+## 4. Full workflow test
 
 ```bash
 swell create ingest_obs_marine
@@ -86,7 +86,7 @@ swell launch /path/to/suite/swell-ingest_obs/swell-ingest_obs-suite
 
 This runs `IngestObs` for every cycle time across the date range.
 
-## 2. To test outside of Swell:
+# To test outside of Swell:
 
 #### a. Set up your environment
 
