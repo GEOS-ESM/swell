@@ -26,12 +26,14 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
         }}
     ]
 
-    # Only link NICAS files if saber_central_block is bump_nicas
-    if template_dict.get('saber_central_block') == 'bump_nicas':
+    
+    # Only link NICAS files when the central block corresponds to BUMP_NICAS
+    central_block_select = template_dict.get('saber_central_block', 'none')
+    if central_block_select == 'bump_nicas':
         stage_cycle.append({
             'link_files': {
                 'directories': [
-                    [f'{swell_static_files}/jedi/interfaces/geos_cf/nicas/layout_{npx_proc}x{npy_proc}x6/*', f'{cycle_dir}/nicas/']
+                    [f'{swell_static_files}/jedi/interfaces/geos_cf/nicas/layout_{npx_proc}x{npy_proc}x6/*', f'{cycle_dir}/']
                 ]
             }
         })
