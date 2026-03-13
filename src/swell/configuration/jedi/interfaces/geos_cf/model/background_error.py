@@ -10,11 +10,9 @@ from collections.abc import Mapping
 from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
         field_io_names
 
-# --------------------------------------------------------------------------------------------------
 
 # Central block builders
 # --------------------------------------------------------------------------------------------------
-
 
 def _build_identity_central_block(template_dict: Mapping) -> Mapping:
     """Identity covariance central block"""
@@ -34,10 +32,7 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
         'saber block name': 'BUMP_NICAS',
         'read': {
             'io': {
-                'files prefix': template_dict.get(
-                    'bump_files_prefix',
-                    'Data/bump/fv3jedi_bumpparameters_nicas_geos_cf'
-                ),
+                'files prefix': template_dict['cycle_dir'],
                 'alias': field_aliases
             },
             'drivers': {
@@ -46,7 +41,6 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
             }
         }
     }
-
 
 # Outer block builders
 # --------------------------------------------------------------------------------------------------
@@ -92,7 +86,6 @@ def _build_stddev_fixed_values(template_dict: Mapping) -> Mapping:
 
 # Main assembler
 # --------------------------------------------------------------------------------------------------
-
 
 def background_error(template_dict: Mapping) -> Mapping:
     """
