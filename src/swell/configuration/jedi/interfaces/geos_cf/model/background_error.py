@@ -61,6 +61,7 @@ def _build_stddev_bkg_scaled(template_dict: Mapping) -> Mapping:
                 'datetime': template_dict['local_background_time_iso'],
                 'set datetime on read': True,
                 'filetype': 'cube sphere history',
+                'max allowable geometry difference': 0.1,
                 'datapath': template_dict['cycle_dir'],
                 'filename': 'bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4',
                 'field io names': field_io_names,
