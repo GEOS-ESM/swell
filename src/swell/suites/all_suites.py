@@ -58,11 +58,16 @@ def construct_suite_enum():
                 suite_configs = suite_container.get_all()
 
                 for config in suite_configs:
+                    g = getattr(suite_container, config)
+                    print( f'config = {config}')
+                    print( f'getattr =  {g}')
+                    
                     enum_dict[format_config_name(config)] = getattr(suite_container, config)
                     config_suite_map[format_config_name(config)] = suite
             else:
                 enum_dict[suite] = SuiteQuestions.all_suites
                 config_suite_map[suite] = suite
+
 
         # Set the map dictionary to a hidden attribute
         enum_dict['__config_suite_map__'] = config_suite_map

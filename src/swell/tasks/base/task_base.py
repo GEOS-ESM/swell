@@ -298,10 +298,11 @@ class taskFactory():
         # Try to import model-independent task
         if task_class is None:
 
+            print (f' task, task_lower = {task}  {task_lower}')
             # Import class based on user selected task
             task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
-
+            exit()
         # Return task object
         return task_class(config, datetime, model, ensemblePacket, task)
 
@@ -338,12 +339,21 @@ def task_wrapper(
 ) -> None:
 
     # Create the object
-    constrc_start = time.perf_counter()
-    creator = taskFactory()
+#    constrc_start = time.perf_counter()
+    print( f'nail 0')
+#    creator = taskFactory()
+    print( f'nail 1')
+    exit()
+    
     task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
-    constrc_final = time.perf_counter()
-    constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
+    print( f'nail 2')
+    
+#    constrc_final = time.perf_counter()
+#    constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 
+    print( f'constrc_time = {constrc_time}')
+    exit()
+    
     # Execute task
     execute_start = time.perf_counter()
     task_object.execute()

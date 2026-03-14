@@ -181,6 +181,7 @@ def prepare_config(
     if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
             and not experiment_dict['skip_r2d2']:
 
+        print( f'---------->>>>   skip_r2d2 in  prepare_config')
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
         load_r2d2_module(logger, platform)
@@ -262,7 +263,9 @@ def create_experiment_directory(
     # ------------------------------------------------
     experiment_dict_str = prepare_config(suite, suite_config, method, platform,
                                          override_dict, advanced, slurm)
-
+#    print(f' experiment_dict_str = {experiment_dict_str}')
+#    exit()
+    
     # Load the string using yaml
     # --------------------------
     yaml = YAML()

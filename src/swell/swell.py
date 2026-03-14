@@ -17,14 +17,14 @@ from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
-from swell.suites.all_suites import AllSuites
+## from swell.suites.all_suites import AllSuites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 
 
 # --------------------------------------------------------------------------------------------------
 
-
+print(' test L27')
 @click.group()
 def swell_driver() -> None:
     """
@@ -87,9 +87,10 @@ skip_r2d2_help = """Skip registering this experiment and storing products in R2D
 
 # --------------------------------------------------------------------------------------------------
 
-
+print(' test L90')
 @swell_driver.command()
-@click.argument('suite', type=click.Choice(AllSuites.config_names()))
+##@click.argument('suite', type=click.Choice(AllSuites.config_names()))
+@click.argument('suite', type=click.Choice(['localensembleda', '3dvar_atmos']))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
@@ -118,12 +119,15 @@ def create(
     """
 
     # Create the experiment directory
+    print ( ' nail  swell create create_experiment_directory  -1 ')
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
-
+    print ( ' nail  swell create create_experiment_directory   1')
 
 # --------------------------------------------------------------------------------------------------
 
 
+print ( ' test L129')
+    
 @swell_driver.command()
 @click.argument('configuration')
 @click.argument('experiment_id')
@@ -155,6 +159,7 @@ def clone(
     # Create the experiment directory
     create_experiment_directory(experiment_dict_str)
 
+print ( ' test L162')    
 
 # --------------------------------------------------------------------------------------------------
 
@@ -182,7 +187,7 @@ def launch(
 
 # --------------------------------------------------------------------------------------------------
 
-
+print(' test L190')
 @swell_driver.command()
 @click.argument('task', type=click.Choice(get_tasks()))
 @click.argument('config')
@@ -206,8 +211,9 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
-
+    print ( 'nail -1')
+#    task_wrapper(task, config, datetime, model, ensemblePacket)
+    print ( 'nail end  task_wrapper')
 
 # --------------------------------------------------------------------------------------------------
 
@@ -298,7 +304,7 @@ def main() -> None:
     This function is the entry point for swell. It writes a welcome message and
     sets up the driver group.
     """
-    write_welcome_message()
+##    write_welcome_message()
     swell_driver()
 
 
