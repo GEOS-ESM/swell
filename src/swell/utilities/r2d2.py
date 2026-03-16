@@ -190,7 +190,7 @@ def load_r2d2_credentials(
     if 'api_key' in credentials and 'R2D2_API_KEY' not in os.environ:
         os.environ['R2D2_API_KEY'] = credentials['api_key']
 
-    if 'r2d2_server_host' in credentials and 'R2D2_HOST' not in os.environ:
+    if 'r2d2_server_host' in credentials and 'R2D2_SERVER_HOST' not in os.environ:
         os.environ['R2D2_SERVER_HOST'] = credentials['r2d2_server_host']
     
     if 'r2d2_server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:

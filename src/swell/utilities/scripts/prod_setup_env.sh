@@ -12,7 +12,7 @@ source venv_client/bin/activate
 
 echo “  R2D2 Production environment:”
 echo “  R2D2_API_KEY:  [set]”
-echo “  R2D2_SERVER_HOST: $R2D2_SERVER_HOST '(should be empty)'”
-echo “  R2D2_SERVER_PORT:  $R2D2_SERVER_PORT '(should be empty)'”
+echo “  R2D2_SERVER_HOST: $R2D2_SERVER_HOST ”
+echo “  R2D2_SERVER_PORT:  $R2D2_SERVER_PORT ”
 echo “  R2D2_HOST: $R2D2_HOST”
 echo “  R2D2_COMPILER: $R2D2_COMPILER”

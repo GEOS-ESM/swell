@@ -37,12 +37,12 @@ swell create ingest_obs_marine
 #   - obs_to_ingest: ['adt_cryosat2n']
 
 # Run the task
-swell task IngestObs /discover/nobackup/fgoktas/SwellExperiments/swell-ingest_obs/swell-ingest_obs-suite/experiment.yaml \
+swell task IngestObs <experiment_root>/swell-ingest_obs/swell-ingest_obs-suite/experiment.yaml \
   -d 2021-07-02T06:00:00Z \
   -m geos_marine
 ```
 
-## 3. Verify it stored
+## 3. Verify it is stored
 
 ```python
 python3 -c "
