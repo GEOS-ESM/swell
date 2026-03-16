@@ -8,8 +8,6 @@ export R2D2_COMPILER="intel"
 export R2D2_SERVER_HOST="http://13.217.72.149"
 export R2D2_SERVER_PORT="8080"
 
-source venv_client/bin/activate
-
 echo “  R2D2 Production environment:”
 echo “  R2D2_API_KEY:  [set]”
 echo “  R2D2_SERVER_HOST: $R2D2_SERVER_HOST ”

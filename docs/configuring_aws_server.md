@@ -49,7 +49,9 @@ python3 -c "
 import r2d2
 results = r2d2.search(
     item='observation',
-    observation_type='adt_cryosat2n'
+    observation_type='adt_cryosat2n',
+    window_start='20210702T060000Z',
+    window_length='PT6H'
 )
 print(f'Found {len(results)} records')
 for r in results:

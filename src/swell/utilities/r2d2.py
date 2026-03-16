@@ -189,13 +189,13 @@ def load_r2d2_credentials(
 
     if 'r2d2_server_host' in credentials and 'R2D2_SERVER_HOST' not in os.environ:
         os.environ['R2D2_SERVER_HOST'] = credentials['r2d2_server_host']
-    
+
     if 'r2d2_server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
         os.environ['R2D2_SERVER_PORT'] = str(credentials['r2d2_server_port'])
-    
+
     if 'aws_access_key_id' in credentials and 'AWS_ACCESS_KEY_ID' not in os.environ:
         os.environ['AWS_ACCESS_KEY_ID'] = credentials['aws_access_key_id']
-    
+
     if 'aws_secret_access_key' in credentials and 'AWS_SECRET_ACCESS_KEY' not in os.environ:
         os.environ['AWS_SECRET_ACCESS_KEY'] = credentials['aws_secret_access_key']
 
