@@ -14,8 +14,8 @@ Add your observation name to the list and set the date range:
 
 ```python
 qd.obs_to_ingest(['adt_cryosat2n', 'my_obs'])   # Add yours here
-qd.start_cycle_point("2021-07-02T06:00:00Z")    # When to start
-qd.final_cycle_point("2021-07-03T06:00:00Z")    # When to stop
+qd.start_cycle_point("2023-07-02T06:00:00Z")    # When to start
+qd.final_cycle_point("2023-07-03T06:00:00Z")    # When to stop
 ```
 
 ### Step 2: Make sure your observation is registered
