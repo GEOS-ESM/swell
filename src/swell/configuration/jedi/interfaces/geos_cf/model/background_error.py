@@ -32,7 +32,8 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
         'saber block name': 'BUMP_NICAS',
         'read': {
             'io': {
-                'files prefix': template_dict['cycle_dir'],
+                'data directory': f"{template_dict['cycle_dir']}/",
+                'files prefix': 'geos_cf',
                 'alias': field_aliases
             },
             'drivers': {
