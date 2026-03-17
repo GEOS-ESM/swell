@@ -9,6 +9,9 @@ background_error_model:
   options:
   - identity
 
+swell_static_files:
+  default_value: /discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles
+
 background_experiment:
   default_value: swell_test
   options:
