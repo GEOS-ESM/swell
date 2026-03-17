@@ -148,9 +148,6 @@ models:
     # Which background error model do you want to use?
     background_error_model: explicit_diffusion
 
-# What is the path to the R2D2 local directory?
-r2d2_local_path: /discover/nobackup/dardag/R2D2DataStore/Local
-
 # What is the path to the Swell Static files directory?
 swell_static_files: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
