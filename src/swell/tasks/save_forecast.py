@@ -16,7 +16,7 @@ from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
+from swell.utilities.r2d2 import load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------
@@ -51,7 +51,6 @@ class StoreBackground(taskBase):
         window_length = self.config.window_length()
         background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency()
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Position relative to center of the window where forecast starts
         forecast_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
@@ -60,10 +59,6 @@ class StoreBackground(taskBase):
         window_length_dur = isodate.parse_duration(window_length)
         window_offset_dur = self.da_window_params.window_offset(window_length, dto=True)
         forecast_offset_dur = isodate.parse_duration(forecast_offset)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Depending on window type get the time of the background
         if window_type == "3D":

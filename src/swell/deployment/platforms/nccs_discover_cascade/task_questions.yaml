@@ -22,9 +22,6 @@ existing_jedi_source_directory_pinned:
 geos_homdir:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
 
-r2d2_local_path:
-  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
-
 swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 

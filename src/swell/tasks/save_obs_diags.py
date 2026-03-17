@@ -9,7 +9,7 @@
 
 import r2d2
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
+from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
@@ -33,7 +33,6 @@ class SaveObsDiags(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observations = self.config.observations()
         window_length = self.config.window_length()
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -47,10 +46,6 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Loop over observation operators
         # -------------------------------

@@ -7,15 +7,15 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from datetime import datetime as dt
-import isodate
-import os
-from r2d2 import store
+# from datetime import datetime as dt
+# import isodate
+# import os
+# from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.file_system_operations import copy_to_dst_dir
-from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
+# from swell.utilities.datetime_util import datetime_formats
+# from swell.utilities.file_system_operations import copy_to_dst_dir
+# from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,7 +43,6 @@ class SaveRestart(taskBase):
         window_length = self.config.window_length()
         forecast_duration = self.config.forecast_duration()
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Position relative to center of the window where forecast starts
         background_time_offset = self.config.background_time_offset()
@@ -58,10 +57,6 @@ class SaveRestart(taskBase):
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Get r2d2 dictionary
         r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
