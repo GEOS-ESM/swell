@@ -7,23 +7,23 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-def stage_cycle(template_dict: Mapping) -> Mapping:
+def analysis(template_dict: Mapping) -> Mapping:
+    analysis = {
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath': template_dict['cycle_dir'],
+        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'first': 'PT0H',
+        'frequency': 'PT1H',
+        'field io names': field_io_names,
+    }
 
-    cycle_dir = template_dict['cycle_dir']
-    swell_static_files = template_dict['swell_static_files']
-
-    stage_cycle = [
-        {'copy_files': {
-            'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*', f'{cycle_dir}/']
-            ]
-        }}
-    ]
-
-    return stage_cycle
+    return analysis
 
 # --------------------------------------------------------------------------------------------------

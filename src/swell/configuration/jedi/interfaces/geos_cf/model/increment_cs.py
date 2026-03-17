@@ -11,19 +11,20 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 
-def stage_cycle(template_dict: Mapping) -> Mapping:
+def increment_cs(template_dict: Mapping) -> Mapping:
 
     cycle_dir = template_dict['cycle_dir']
-    swell_static_files = template_dict['swell_static_files']
 
-    stage_cycle = [
-        {'copy_files': {
-            'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*', f'{cycle_dir}/']
-            ]
-        }}
-    ]
+    output = {
+        'state component': {
+            'states': [{
+                'filetype': 'cube sphere history',
+                'datapath': f'{cycle_dir}',
+                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+            }]
+        }
+    }
 
-    return stage_cycle
+    return output
 
 # --------------------------------------------------------------------------------------------------

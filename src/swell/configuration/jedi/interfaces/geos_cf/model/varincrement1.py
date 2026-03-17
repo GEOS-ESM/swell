@@ -7,23 +7,29 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-def stage_cycle(template_dict: Mapping) -> Mapping:
+def varincrement1(template_dict: Mapping) -> Mapping:
 
-    cycle_dir = template_dict['cycle_dir']
-    swell_static_files = template_dict['swell_static_files']
+    experiment_id = template_dict['experiment_id']
 
-    stage_cycle = [
-        {'copy_files': {
-            'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*', f'{cycle_dir}/']
-            ]
-        }}
-    ]
+    varincrement1 = {
+        'write increment': True,
+        'increment': {
+            'state component': {
+                'filetype': 'auxgrid',
+                'gridtype': 'latlon',
+                'datapath': './',
+                'filename': f'{experiment_id}.increment-iter1.',
+                'field io names': field_io_names,
+            }
+        }
+    }
 
-    return stage_cycle
+    return varincrement1
 
 # --------------------------------------------------------------------------------------------------
