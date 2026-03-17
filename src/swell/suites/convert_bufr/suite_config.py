@@ -37,6 +37,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "gsi_bcs/*.txt",
             ]),
             qd.bufr_obs_classes([
+               "ncep_mhs_bufr",
                "ncep_1bamua_bufr",
                "ncep_mtiasi_bufr",
             ]),
