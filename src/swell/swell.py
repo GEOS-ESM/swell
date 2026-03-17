@@ -1,34 +1,17 @@
-#import pkgutil
 import importlib
 import sys
-#import swell.commands
-
-#COMMANDS = {
-#    name: f"swell.commands.{name}"
-#    for _, name, _ in pkgutil.iter_modules(swell.commands.__path__)
-#}
+from swell.utilities.welcome_message import write_welcome_message
 
 COMMANDS = {
    "clone":   "swell.commands.clone",
    "create":  "swell.commands.create",
-   "extract": "swell.commands.extract",
    "launch":  "swell.commands.launch",
    "t1test":  "swell.commands.t1test",
    "t2test":  "swell.commands.t2test",
    "task":    "swell.commands.task",
-   "test": "swell.commands.test",
+   "test":    "swell.commands.test",
    "utility": "swell.commands.utility",
 }
-   
-
-#COMMANDS = {
-#    "create": "swell.commands.create",
-#    "task": "swell.commands.task",
-#    "t2test": "swell.commands.t2test",
-#    "launch": "swell.commands.launch",
-#    # Add other commands here as needed
-#}
-
 
 def main():
     if len(sys.argv) < 2:
@@ -43,6 +26,7 @@ def main():
 
     module = importlib.import_module(COMMANDS[cmd])
 
+    write_welcome_message()
     module.main(sys.argv[2:])
 
 
