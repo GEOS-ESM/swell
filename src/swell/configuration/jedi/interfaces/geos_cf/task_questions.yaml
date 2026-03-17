@@ -16,6 +16,9 @@ saber_outer_block:
   - stddev_bkg_scaled
   - stddev_fixed_values
 
+swell_static_files:
+  default_value: /discover/nobackup/jbarre/geosdev/SwellStaticFiles
+
 background_experiment:
   default_value: swell_test
   options:
