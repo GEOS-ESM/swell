@@ -1,0 +1,323 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+import math
+import os
+import shutil
+import tarfile
+from multiprocessing import Pool
+
+import isodate
+import netCDF4 as nc
+import numpy as np
+import xarray as xr
+from scipy.interpolate import griddata
+from scipy.ndimage import gaussian_filter
+
+from swell.tasks.base.task_base import taskBase
+from swell.utilities.shell_commands import run_subprocess
+
+# --------------------------------------------------------------------------------------------------
+
+
+class PrepForecast(taskBase):
+
+    # ----------------------------------------------------------------------------------------------
+
+    def execute(self) -> None:
+
+        """
+        Prepares scratch directory for running the model by creating the directory
+        within the run directory and updating the .rc files.
+        """
+
+        # Create scratch directory under the current cycle run directory
+        # ------------------------------------------------------------------------------------
+        cycle_dir = self.cycle_dir()
+        self.scratch_dir = os.path.join(cycle_dir, 'scratch')
+
+        self.logger.info(f'Creating scratch directory: {self.scratch_dir}')
+        os.makedirs(self.scratch_dir, 0o755, exist_ok=True)
+
+        # Gather config values
+        # --------------------
+        self.expid = self.experiment_id()
+        print("expid=")
+        print(self.expid)
+        self.window_length = self.config.window_length()
+        self.forecast_length = self.config.forecast_length()
+        self.resolution = self.config.horizontal_resolution()
+        self.an_vars_long = self.config.analysis_variables()
+
+        #self.geos_cf_run_dir = self.config.geos_cf_run_dir()
+        self.geos_cf_run_dir = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
+        #self.geos_cf_install_dir = self.config.geos_cf_install_dir()
+        self.geos_cf_install_dir = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
+        #self.namelists_dir = self.config.geos_cf_namelists_dir()
+        self.namelists_dir = "/discover/nobackup/mabdiosk/SWELL_uv/swell/src/swell/configuration/jedi/interfaces/geos_cf/namelists"
+
+        self.fp_exp = self.config.geosfp_exp()
+        self.fp_loc = self.config.geosfp_path()
+
+        self.fp_exp = "f5295_fp"
+        self.fp_loc = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
+
+        #self.emis_inv = self.config.emis_inv(False)
+        #self.replay_emis = self.config.replay_emis(False)
+        #self.clip_val = float(self.config.scalfac_clip(10.0))
+        #self.io_map = self.config.io_emissions([])
+
+        # Derive window times
+        # -------------------
+        self.parse_andate = self.cycle_time_dto()
+        self.parse_wbegin = self.da_window_params.window_begin(self.window_length, dto=True)
+        self.parse_wend = self.da_window_params.window_end_iso(self.window_length, dto=True)
+        self.parse_wlen = isodate.parse_duration(self.window_length)
+        self.parse_fclen = isodate.parse_duration(self.forecast_length)
+
+        # Determine analysis variables for GEOS-CF (NO2 and CO)
+        # -------------------------------------------------------
+        an_vars_long_tg = ['volume_mixing_ratio_of_no2', 'volume_mixing_ratio_of_co']
+        self.an_vars_compo = []
+        for an_var in an_vars_long_tg:
+            if an_var in self.an_vars_long:
+                self.an_vars_compo.append(an_var.split('_')[-1].upper())
+
+        # Section 2: Create GEOS-CF increment files
+        # ------------------------------------------
+        self.logger.info('Creating GEOS-CF increment files')
+        self.create_geos_cf_increments()
+
+        # Section 3: Get GEOS FP analysis files for replay
+        # -----------------------------------------------
+        self.logger.info('Fetching GEOS FP analysis files for replay')
+        self.get_geosfp_replay_files()
+
+        # Section 4: Copy and update GEOS-CF namelist files
+        # ---------------------------------------------------
+        self.logger.info('Copying and updating GEOS-CF namelist/RC files')
+        self.prepare_namelists()
+
+    # ----------------------------------------------------------------------------------------------
+
+    def replace_string(self, filename: str, string1: str, string2: str) -> None:
+        """Replace string1 with string2 in-place in filename."""
+
+        with open(filename, 'r') as f:
+            content = f.read()
+        with open(filename, 'w') as f:
+            f.write(content.replace(string1, string2))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def create_geos_cf_increments(self) -> None:
+        """Convert JEDI increment files to GEOS-CF format using the increment template."""
+
+        #inc_template = self.config.inc_template()
+        inc_template = '/discover/nobackup/mabdiosk/rundir/handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
+
+        tstring_date = (self.parse_andate.strftime('%Y-%m-%d') + ' ' +
+                        self.parse_andate.strftime('%H:%M:%S'))
+        tstring = f'minutes since {tstring_date}'
+
+        # jedi.inc.%y4%m2%d2.%h2z.nc
+        output_date = (self.parse_andate.strftime('%Y%m%d') + '.' +
+                       self.parse_andate.strftime('%H') + 'z')
+
+        jedi_date = self.parse_andate.strftime('%Y%m%d_%H%M%Sz')
+        #jedifile = os.path.join(self.scratch_dir, f'{self.expid}.inc.{jedi_date}.bkg.nc')
+        # make sure the filename is correct
+        #swell-3dvar_cf_cycle.increment-iter1.20230805_180000z.nc4
+        # .inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
+        #jedifile = os.path.join(self.cycle_dir(), f'{self.expid}.increment-iter1.{jedi_date}.nc4')
+        jedifile = os.path.join(self.cycle_dir(), f'{self.expid}.inc.{jedi_date}.nc4')
+        jedigeosfile = os.path.join(self.scratch_dir, f'jedi.inc.{output_date}.nc')
+
+        if not os.path.exists(jedifile):
+            self.logger.info(f'Increment file {jedifile} not found, skipping increment creation')
+            return
+
+        inc = xr.open_dataset(jedifile)
+        template_ds = xr.open_dataset(inc_template)
+        out = template_ds.copy()
+        for var in self.an_vars_compo:
+            if var in inc and var in out:
+                out[var].values[:] = inc[var].values[:]
+        out.to_netcdf(jedigeosfile)
+
+        run_subprocess(self.logger, ['/bin/bash', '-c',
+                                     f'ncatted -O -a units,time,o,c,"{tstring}" {jedigeosfile}'])
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_geosfp_replay_files(self) -> None:
+        """Fetch GEOS FP analysis files needed for replay over the forecast length."""
+
+        n_win_step = math.ceil(self.parse_fclen / self.parse_wlen)
+        ensemble_packet = self.get_ensemble_packet()
+
+        for wstep in range(n_win_step):
+            fc_date = self.parse_andate + wstep * self.parse_wlen
+            anYYYY = fc_date.strftime('%Y')
+            anMM = fc_date.strftime('%m')
+            anDD = fc_date.strftime('%d')
+            anHH = fc_date.strftime('%H')
+            date_path = f'Y{anYYYY}/M{anMM}'
+            wend_date = self.parse_wend + wstep * self.parse_wlen
+
+            if ensemble_packet is not None:
+                num_mem = int(ensemble_packet) + 1
+                str_mem = f'mem{int(num_mem):03}'
+                weHH = wend_date.strftime('%H')
+                fp_path = f'{self.fp_loc}/{self.fp_exp}/atmens/{date_path}'
+                fp_arch = (f'{self.fp_exp}.atmens_eana.'
+                           f'{anYYYY}{anMM}{anDD}_{weHH}z.tar')
+                fp_file = (f'{self.fp_exp}.ana.eta.'
+                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
+                fp_arch_path = (f'{self.fp_exp}.atmens_eana.'
+                                f'{anYYYY}{anMM}{anDD}_{weHH}z/{str_mem}/{fp_file}')
+                shutil.copy(f'{fp_path}/{fp_arch}', self.scratch_dir)
+                arch_local = os.path.join(self.scratch_dir, fp_arch)
+                with tarfile.open(arch_local, 'r') as tar:
+                    tar_mem = tar.getmember(fp_arch_path)
+                    tar_mem.name = os.path.basename(tar_mem.name)
+                    tar.extract(tar_mem, path=self.scratch_dir)
+                os.remove(arch_local)
+            else:
+                fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
+                fp_file = (f'{self.fp_exp}.ana.eta.'
+                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
+                shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def prepare_namelists(self) -> None:
+        """Copy GEOS-CF namelist/RC files into scratch_dir and update placeholders."""
+
+        scratchdir = self.scratch_dir
+        namelists_dir = self.namelists_dir
+        resolution = self.resolution
+        fp_exp = self.fp_exp
+        parse_wbegin = self.parse_wbegin
+        parse_wend = self.parse_wend
+        parse_fclen = self.parse_fclen
+
+        # Copy RC/ directory from GEOS-CF run directory to scratch
+        # --------------------------------------------------------
+#        rc_dst = os.path.join(scratchdir, 'RC')
+#        if os.path.isdir(rc_dst):
+#            shutil.rmtree(rc_dst)
+#        shutil.copytree(os.path.join(self.geos_cf_run_dir, 'RC'), rc_dst)
+
+        # Copy all files in RC/ directory in GEOS-CF run directory to scratch
+        # --------------------------------------------------------
+        src_rc = os.path.join(self.geos_cf_run_dir, 'RC')
+        
+        for item in os.listdir(src_rc):
+            src = os.path.join(src_rc, item)
+            dst = os.path.join(scratchdir, item)
+        
+            if os.path.isdir(src):
+                shutil.copytree(src, dst, dirs_exist_ok=True)
+            else:
+                shutil.copy2(src, dst)
+
+        # Copy template namelist files
+        # --------------------------
+        for fname in ['cap_restart', 'logging.yaml', 'GEOSCHEMchem_ExtData.yaml',
+                      'HEMCO_Config.rc', 'geoschem_config.yml']:
+
+            src = os.path.join(namelists_dir, fname)
+            if os.path.exists(src):
+                shutil.copy(src, scratchdir)
+
+        shutil.copy(os.path.join(namelists_dir, f'AGCM_{resolution}.rc'),
+                    os.path.join(scratchdir, 'AGCM.rc'))
+        shutil.copy(os.path.join(namelists_dir, f'HISTORY_{resolution}.rc'),
+                    os.path.join(scratchdir, 'HISTORY.rc'))
+
+        # Update AGCM.rc placeholders
+        # ---------------------------
+        agcm_rc = os.path.join(scratchdir, 'AGCM.rc')
+        self.replace_string(agcm_rc, '>>SWELL_FP_EXP<<', fp_exp)
+        self.replace_string(agcm_rc, '>>SWELL_SCRATCHDIR<<', scratchdir)
+
+        weYYYY = parse_wend.strftime('%Y')
+        weMM = parse_wend.strftime('%m')
+        weDD = parse_wend.strftime('%d')
+        weHH = parse_wend.strftime('%H')
+        self.replace_string(agcm_rc, '>>SWELL_FC6H_DATE<<', f'{weYYYY}{weMM}{weDD}')
+        self.replace_string(agcm_rc, '>>SWELL_FC6H_H<<', f'{weHH}0000')
+
+        # Update GEOSCHEMchem_ExtData.yaml
+        # Related to emission update
+        # ---------------------------------
+        #geoschem_yaml = os.path.join(scratchdir, 'GEOSCHEMchem_ExtData.yaml')
+        #if os.path.exists(geoschem_yaml):
+        #    self.replace_string(geoschem_yaml, '>>SWELL_SCRATCHDIR<<', scratchdir)
+
+        # Update GEOSCHEMchem_GridComp.rc
+        # --------------------------------
+        num_an_vars = len(self.an_vars_compo)
+        gridcomp_src = os.path.join(namelists_dir, 'GEOSCHEMchem_GridComp.rc')
+        gridcomp_dst = os.path.join(scratchdir, 'GEOSCHEMchem_GridComp.rc')
+        shutil.copy(gridcomp_src, gridcomp_dst)
+        self.replace_string(gridcomp_dst, '>>SWELL_NUM_AN_VARS<<', str(num_an_vars))
+
+        for index, an_var in enumerate(self.an_vars_compo):
+            self.replace_string(gridcomp_dst,
+                                f'#Analysis_Settings_Spec00{index + 1}:',
+                                f'Analysis_Settings_Spec00{index + 1}: '
+                                f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
+
+        # Update GEOSCHEMchem_AnaSettings_<var>.rc files
+        # -----------------------------------------------
+        for an_var in self.an_vars_compo:
+            ana_src = os.path.join(namelists_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
+            ana_dst = os.path.join(scratchdir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
+            if os.path.exists(ana_src):
+                shutil.copy(ana_src, ana_dst)
+                self.replace_string(ana_dst, '>>SWELL_RUNDIR<<', scratchdir)
+
+        # Write cap_restart with window begin date
+        # -----------------------------------------
+        cap_restart = os.path.join(scratchdir, 'cap_restart')
+        forecast_date = (parse_wbegin.strftime('%Y%m%d') + ' ' +
+                         parse_wbegin.strftime('%H%M%S'))
+        with open(cap_restart, 'w') as f:
+            f.write(forecast_date)
+
+        # Create collection directory
+        # ------------------------
+        # TODO: make this dynamic
+        collection_dir = os.path.join(scratchdir, 'geoscf_jedi')
+        os.makedirs(collection_dir, 0o755, exist_ok=True)
+
+        # Copy and configure gcm_run.j
+        # -----------------------------
+        gcm_run_src = os.path.join(namelists_dir, f'gcm_run_geoscf_{resolution}.j')
+        gcm_run_dst = os.path.join(scratchdir, 'gcm_run_geoscf.j')
+        shutil.copy(gcm_run_src, gcm_run_dst)
+        self.replace_string(gcm_run_dst, '>>SWELL_CYCLEDIR<<', scratchdir)
+        # /discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install
+        self.replace_string(gcm_run_dst, '>>SWELL_GEOSINSTALL<<', self.geos_cf_install_dir)
+        self.replace_string(gcm_run_dst, '>>SWELL_GEOSRUN<<', self.geos_cf_run_dir)
+        os.chmod(gcm_run_dst, 0o755)
+
+        # Update CAP.rc with forecast length
+        # ------------------------------------
+        fc_days = str(parse_fclen.days).zfill(8)
+        fc_secs = str(int(parse_fclen.total_seconds()) % 86400 // 3600).zfill(2) + '0000'
+        fc_len_geoscf = f'{fc_days} {fc_secs}'
+        cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
+        cap_dst = os.path.join(scratchdir, 'CAP.rc')
+        shutil.copy(cap_src, cap_dst)
+        self.replace_string(cap_dst, '>>SWELL_FC_LENGTH<<', fc_len_geoscf)
+
+# --------------------------------------------------------------------------------------------------

@@ -279,6 +279,20 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_experiment(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_experiment"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the name of the name of the experiment providing the restart files?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
@@ -535,6 +549,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class emis_inv(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "emis_inv"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Apply DA increments to CEDS emission scaling factors (emission inversion)?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class gmao_perllib_tag(TaskQuestion):
         default_value: str = 'g1.0.1'
         question_name: str = 'gmao_perllib_tag'
@@ -549,6 +580,19 @@ class QuestionDefaults():
         question_name: str = "forecast_duration"
         ask_question: bool = True
         prompt: str = "GEOS forecast duration"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class forecast_length(TaskQuestion):
+        default_value: str = "PT12H"
+        question_name: str = "forecast_length"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Duration of the GEOS-CF forecast (ISO 8601 duration, e.g. PT12H)"
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
@@ -612,6 +656,71 @@ class QuestionDefaults():
         prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
                        "output and restart files), if it is different than your GEOS HOME "
                        "Directory?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_install_dir(TaskQuestion):
+        default_value: str = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
+        question_name: str = "geos_cf_install_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF install directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_namelists_dir(TaskQuestion):
+        default_value: str = "/discover/nobackup/mabdiosk/SWELL_uv/swell/src/swell/configuration/jedi/interfaces/geos_cf/namelists"
+        question_name: str = "geos_cf_namelists_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF namelists directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_run_dir(TaskQuestion):
+        default_value: str = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
+        question_name: str = "geos_cf_run_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF model run directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_exp(TaskQuestion):
+        default_value: str = "f5295_fp"
+        question_name: str = "geosfp_exp"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the GEOS FP experiment ID used for IAU analysis files?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_path(TaskQuestion):
+        default_value: str = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
+        question_name: str = "geosfp_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS FP archive?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -839,6 +948,49 @@ class QuestionDefaults():
         prompt: str = (
             "Provide a path that contains observation files not in r2d2.")
         widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class iau(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "iau"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Use Incremental Analysis Update (IAU) in the GEOS-CF forecast?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class inc_template(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "inc_template"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the increment template NetCDF file?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class io_emissions(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "io_emissions"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Provide the JEDI-to-GEOS-CF emissions variable mapping list."
+        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1298,6 +1450,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class replay_emis(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "replay_emis"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Replay a run using analyzed emissions instead of applying DA increments?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
@@ -1341,6 +1510,20 @@ class QuestionDefaults():
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
         widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class scalfac_clip(TaskQuestion):
+        default_value: float = 10.0
+        question_name: str = "scalfac_clip"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Clipping value for emission scaling factors (max ratio applied/removed)."
+        widget_type: WType = WType.FLOAT
+
 
     # --------------------------------------------------------------------------------------------------
 

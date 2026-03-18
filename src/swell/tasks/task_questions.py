@@ -311,6 +311,17 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetRestart = QuestionList(
+        list_name="GetRestart",
+        questions=[
+            window_questions,
+            qd.rst_experiment(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetBackgroundGeosExperiment = QuestionList(
         list_name="GetBackgroundGeosExperiment",
         questions=[
@@ -551,6 +562,30 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    PrepForecast = QuestionList(
+        list_name="PrepForecast",
+        questions=[
+            qd.analysis_variables(),
+            qd.emis_inv(),
+            qd.forecast_length(),
+            qd.geos_cf_install_dir(),
+            qd.geos_cf_namelists_dir(),
+            qd.geos_cf_run_dir(),
+            qd.geosfp_exp(),
+            qd.geosfp_path(),
+            qd.horizontal_resolution(),
+            qd.iau(),
+            qd.inc_template(),
+            qd.io_emissions(),
+            qd.replay_emis(),
+            qd.scalfac_clip(),
+            qd.window_length(),
+            qd.rst_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     PrepCoupledGeosRunDir = QuestionList(
         list_name="PrepCoupledGeosRunDir",
         questions=[
@@ -779,13 +814,13 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    StoreBackground = QuestionList(
-        list_name="StoreBackground",
+    SaveForecast = QuestionList(
+        list_name="SaveForecast",
         questions=[
-            window_questions,
-            qd.background_experiment(),
-            qd.background_frequency(),
+            qd.forecast_length(),
             qd.horizontal_resolution(),
+            qd.r2d2_experiment_id(),
+            qd.window_length(),
         ]
     )
 

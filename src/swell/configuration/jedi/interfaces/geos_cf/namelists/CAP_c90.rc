@@ -1,0 +1,34 @@
+
+MAPLROOT_COMPNAME: GCM
+        ROOT_NAME: GCM
+ROOT_CF: AGCM.rc
+HIST_CF: HISTORY.rc
+
+# doesn't matter, cap_restart
+BEG_DATE:     20000101 000000
+# can cap your run
+END_DATE:     29990302 210000 
+
+# length of a sigle segment/job 1day
+JOB_SGMT:     >>SWELL_FC_LENGTH<<
+# number of times you run the job/seg
+NUM_SGMT:     1
+HEARTBEAT_DT:       900
+
+USE_SHMEM: 0
+
+# Parameters for Cycled REPLAY Forecasts
+# --------------------------------------
+ BEG_REPDATE: YYYYMMDD
+ END_REPDATE: YYYYMMDD
+FCST_SEGMENT: 00000000
+
+#PERPETUAL_YEAR:   YYYY
+#PERPETUAL_MONTH:    MM
+#PERPETUAL_DAY:      DD
+
+MAPL_ENABLE_TIMERS: NO
+MAPL_ENABLE_MEMUTILS: NO
+PRINTSPEC: 0  # (0: OFF, 1: IMPORT & EXPORT, 2: IMPORT, 3: EXPORT)
+
+USE_EXTDATA2G: .TRUE.

@@ -22,11 +22,11 @@ from swell.utilities.r2d2 import load_r2d2_credentials
 # --------------------------------------------------------------------------------------------------
 
 
-class StoreBackground(taskBase):
+class SaveForecast(taskBase):
 
     def execute(self) -> None:
 
-        """Store background files for a given experiment and cycle in R2D2
+        """Store forecast files produced by RunForecast task in R2D2
 
            Parameters
            ----------
@@ -38,106 +38,48 @@ class StoreBackground(taskBase):
         # ---------------------
         load_r2d2_credentials(self.logger, self.platform())
 
-        # Current cycle time object
-        # -------------------------
-        current_cycle_dto = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
-
-        # Get duration into forecast for first background file
-        # ----------------------------------------------------
-        bkg_steps = []
-
         # Parse config
-        window_type = self.config.window_type()
+        # ------------
         window_length = self.config.window_length()
-        background_experiment = self.config.background_experiment()
-        background_frequency = self.config.background_frequency()
+        forecast_length = self.config.forecast_length()
+        expid = self.config.r2d2_experiment_id()
 
-        # Position relative to center of the window where forecast starts
-        forecast_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
+        cycle_dir = self.cycle_dir()
+        scratch_dir = os.path.join(cycle_dir, 'scratch')
 
-        # Convert to datetime durations
-        window_length_dur = isodate.parse_duration(window_length)
-        window_offset_dur = self.da_window_params.window_offset(window_length, dto=True)
-        forecast_offset_dur = isodate.parse_duration(forecast_offset)
+        # Forecast starts at window begin
+        # --------------------------------
+        forecast_start = self.da_window_params.window_begin(window_length, dto=True)
 
-        # Depending on window type get the time of the background
-        if window_type == "3D":
-            # Single background at the middle of the window
-            fcst_length = window_length_dur - forecast_offset_dur
-            forecast_start_time = current_cycle_dto - fcst_length
-        elif window_type == "4D":
-            # Background at the start of the window
-            fcst_length = window_length_dur - forecast_offset_dur - window_offset_dur
-            forecast_start_time = current_cycle_dto - window_offset_dur - fcst_length
+        # Build list of forecast steps at PT1H frequency up to forecast_length
+        # ----------------------------------------------------------------------
+        forecast_length_dur = isodate.parse_duration(forecast_length)
+        forecast_frequency_dur = isodate.parse_duration('PT1H')
 
-        # Convert to ISO duration string
-        fcst_length_iso = isodate.duration_isoformat(fcst_length)
-        bkg_steps.append(fcst_length_iso)
+        step_dur = forecast_frequency_dur
 
-        # If background is provided though files get all backgrounds
-        # ----------------------------------------------------------
-        if window_type == "4D":
+        while step_dur <= forecast_length_dur:
+            step = isodate.duration_isoformat(step_dur)
 
-            bkg_freq_dur = isodate.parse_duration(background_frequency)
+            # CF2.geoscf_jedi.20230809T220000Z.nc4 
+            file_time = forecast_start + step_dur
+            fname = f"CF2.geoscf_jedi.{file_time.strftime('%Y%m%dT%H%M%SZ')}.nc4"
+            source_file = os.path.join(scratch_dir, fname)
+            if not os.path.isfile(source_file):
+                self.logger.abort(f'Expected forecast file not found: {source_file}')
 
-            # Check for a sensible frequency
-            if (window_length_dur/bkg_freq_dur) % 2:
-                self.logger.abort('Window length not divisible by background frequency')
+            self.logger.info(f'Storing {fname} at step {step}')
 
-            # Loop over window
-            start_date = current_cycle_dto - window_offset_dur
-            final_date = current_cycle_dto + window_offset_dur
-
-            loop_date = start_date + bkg_freq_dur
-
-            while loop_date <= final_date:
-                duration_in = loop_date - start_date + fcst_length
-                bkg_steps.append(isodate.duration_isoformat(duration_in))
-                loop_date += bkg_freq_dur
-
-        # Loop over background files in the R2D2 config and store
-        # -------------------------------------------------------
-        self.logger.info('Background steps being fetched: '+' '.join(str(e) for e in bkg_steps))
-
-        # Background dictionary from config
-        background_dict = self.jedi_rendering.render_interface_model('background')
-
-        # Get r2d2 dictionary
-        r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
-
-        # Loop over fc
-        for fc in r2d2_dict['store']['fc']:
-
-            # Reset target file
-            target_file_template = os.path.split(background_dict['filename'])[1]
-
-            # Datetime format to use
-            user_date_format = fc['user_date_format']
-
-            # Loop over file types
-            for file_type in fc['file_type']:
-
-                # Replace filetype in target_file_template
-                target_file_type_template = target_file_template.replace("$(file_type)", file_type)
-
-                # Looop over background steps
-                for bkg_step in bkg_steps:
-
-                    # Set the datetime format for the output files
-                    background_time = forecast_start_time + isodate.parse_duration(bkg_step)
-                    valid_time_str = background_time.strftime(user_date_format)
-
-                    # Set the target file name
-                    target_file = target_file_type_template.replace("$(valid_date)", valid_time_str)
-                    target_file = os.path.join(self.cycle_dir(), target_file)
-
-                    # Perform the store
-                    store(date=forecast_start_time,
-                          source_file=target_file,
-                          model='geos',
-                          file_type='bkg',
-                          fc_date_rendering='analysis',
-                          step=bkg_step,
-                          resolution=self.config.horizontal_resolution(),
-                          type='fc',
-                          experiment=background_experiment)
+            store(
+                model='geos_cf',
+                item='forecast',
+                step=step,
+                experiment=expid,
+                resolution=self.config.horizontal_resolution(),
+                date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
+                source_file=source_file,
+                file_extension='nc',
+                file_type='bkg',
+                store_as_symlink=False,
+            )
+            step_dur += forecast_frequency_dur
