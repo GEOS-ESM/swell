@@ -22,5 +22,3 @@ def t2test(
     """
     from swell.test.suite_tests.suite_tests import run_suite, TestSuite
     run_suite(suite, platform, TestSuite.TIER2)
-
-    

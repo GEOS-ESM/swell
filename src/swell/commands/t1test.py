@@ -9,10 +9,9 @@ from typing import Optional, Literal
               default="nccs_discover_sles15", help=platform_help())
 @click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
                                             "localensembleda", "3dvar_cycle")))
-
 def t1test(
-    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: Optional[str] = "nccs_discover_sles15"
+        suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+        platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
@@ -22,4 +21,3 @@ def t1test(
     """
     from swell.test.suite_tests.suite_tests import run_suite, TestSuite
     run_suite(suite, platform, TestSuite.TIER1)
-

@@ -1,6 +1,7 @@
 import click
 from swell.commands.help_strings import no_detach_help, log_path_help
 
+
 @click.command()
 @click.argument('suite_path')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False, help=no_detach_help)

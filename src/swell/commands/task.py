@@ -5,8 +5,10 @@ from typing import Union, Optional
 from swell.swell_path import get_swell_path
 from swell.commands.help_strings import datetime_help, model_help, ensemble_help
 
+
 def snake_case_to_camel_case(name: str) -> str:
     return ''.join(word.capitalize() for word in name.split('_'))
+
 
 class TaskChoice(click.ParamType):
     """Click parameter type for dynamically listing tasks."""
@@ -29,7 +31,9 @@ class TaskChoice(click.ParamType):
             if "__" not in os.path.basename(f)
         )
 
+
 TASK = TaskChoice()
+
 
 @click.command()
 @click.argument('task', type=TASK)
@@ -37,13 +41,12 @@ TASK = TaskChoice()
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
-
 def task(
-    task: str,
-    config: str,
-    datetime: Optional[str],
-    model: Optional[str],
-    ensemblePacket: Optional[str]
+        task: str,
+        config: str,
+        datetime: Optional[str],
+        model: Optional[str],
+        ensemblePacket: Optional[str]
 ) -> None:
     """
     Run a workflow task

@@ -1,6 +1,7 @@
 import click
 from swell.utilities.scripts.utility_driver import get_utilities
 
+
 @click.command()
 @click.argument('utility', type=click.Choice(get_utilities()))
 def utility(utility: str) -> None:

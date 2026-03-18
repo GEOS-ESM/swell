@@ -6,8 +6,10 @@ from swell.deployment.platforms.platforms import get_platforms
 from swell.commands.help_strings import (input_method_help, platform_help,
                                          override_help, advanced_help, slurm_help, skip_r2d2_help)
 
+
 class LazySuiteChoice(click.ParamType):
     name = "suite"
+
     def convert(self, value, param, ctx):
         suites_dir = os.path.join(get_swell_path(), 'suites')
         suite_names = [
@@ -30,7 +32,6 @@ class LazySuiteChoice(click.ParamType):
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
 @click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
-
 def create(
     suite: str,
     input_method: str,

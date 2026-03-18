@@ -1,6 +1,7 @@
 import click
 from swell.commands.help_strings import input_method_help, platform_help, advanced_help
 
+
 @click.command()
 @click.argument('configuration')
 @click.argument('experiment_id')

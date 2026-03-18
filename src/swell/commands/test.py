@@ -1,6 +1,7 @@
 import click
 from swell.test.test_driver import valid_tests
 
+
 @click.command()
 @click.argument('test', type=click.Choice(valid_tests))
 def test(test: str) -> None:
