@@ -15,6 +15,3 @@ def utility(utility: str) -> None:
     """
     from swell.utilities.scripts.utility_driver import utility_wrapper
     utility_wrapper(utility)
-
-def main(args):
-    utility.main(args=args)

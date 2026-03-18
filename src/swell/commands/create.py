@@ -51,7 +51,3 @@ def create(
     """
     from swell.deployment.create_experiment import create_experiment_directory
     create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
-
-def main(args):
-    create.main(args=args)
-

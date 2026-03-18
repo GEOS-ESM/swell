@@ -57,7 +57,3 @@ def task(
     """
     from swell.tasks.base.task_base import task_wrapper
     task_wrapper(task, config, datetime, model, ensemblePacket)
-
-
-def main(args):
-    task.main(args=args)

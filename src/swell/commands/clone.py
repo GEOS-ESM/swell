@@ -1,12 +1,12 @@
 import click
-import swell.commands.help_strings
+from swell.commands.help_strings import input_method_help, platform_help, advanced_help
 
 @click.command()
 @click.argument('configuration')
 @click.argument('experiment_id')
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
-@click.option('-p', '--platform', 'platform', default=None, help=platform_help)
+@click.option('-p', '--platform', 'platform', default=None, help=platform_help())
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 def clone(
     configuration: str,
@@ -33,7 +33,3 @@ def clone(
 
     # Create the experiment directory
     create_experiment_directory(experiment_dict_str)
-
-
-def main(args):
-    clone.main(args=args)

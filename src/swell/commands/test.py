@@ -15,7 +15,3 @@ def test(test: str) -> None:
     """
     from swell.test.test_driver import test_wrapper
     test_wrapper(test)
-
-
-def main(args):
-    test.main(args=args)
