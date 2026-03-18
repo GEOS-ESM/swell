@@ -23,9 +23,6 @@ geos_homdir:
   default_value:
   - /home/geos/
 
-r2d2_local_path:
-  default_value: $HOME/R2D2DataStore/Local
-
 swell_static_files:
   default_value: This would need to be provided by user
 

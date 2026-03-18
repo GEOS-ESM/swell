@@ -17,17 +17,10 @@ from typing import Union
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-
-# --------------------------------------------------------------------------------------------------
-
-# R2D2 model name mapping
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',
-}
+from swell.utilities.r2d2 import get_r2d2_model_name
 
 # --------------------------------------------------------------------------------------------------
 
@@ -98,6 +91,10 @@ class GetObservations(taskBase):
         "tlapse" files need to be fetched.
         """
 
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
         # Parse config
         # ------------
         obs_experiment = self.config.obs_experiment()
@@ -106,12 +103,11 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_length = self.config.window_length()
-        r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
 
-        # Get model component
+        # Get model component and translate to R2D2 model name
         model_component = self.get_model()
-        r2d2_model = r2d2_model_dict.get(model_component, model_component)
+        r2d2_model = get_r2d2_model_name(model_component)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -139,10 +135,6 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Read observation ioda names
         ioda_names_list = get_ioda_names_list()

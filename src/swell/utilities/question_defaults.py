@@ -1307,15 +1307,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class r2d2_local_path(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "r2d2_local_path"
-        prompt: str = "What is the path to the R2D2 local directory?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
