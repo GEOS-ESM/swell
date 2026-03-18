@@ -1,5 +1,5 @@
-import importlib
 import sys
+import importlib
 from swell.utilities.welcome_message import write_welcome_message
 
 COMMANDS = {
@@ -24,11 +24,9 @@ def main():
         print(f"Unknown command: {cmd}")
         sys.exit(1)
 
-    module = importlib.import_module(COMMANDS[cmd])
-
     write_welcome_message()
+    module = importlib.import_module(COMMANDS[cmd])
     module.main(sys.argv[2:])
-
 
 if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ class LazySuiteChoice(click.ParamType):
             self.fail(f"{value} is not a valid suite", param, ctx)
         return value
 
-    
+
 @click.command()
 @click.argument('suite', type=LazySuiteChoice())
 @click.option('-m', '--input_method', 'input_method', default='defaults',
@@ -50,7 +50,7 @@ def create(
 
     """
     from swell.deployment.create_experiment import create_experiment_directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)    
+    create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
 
 def main(args):
     create.main(args=args)
