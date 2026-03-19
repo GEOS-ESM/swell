@@ -61,6 +61,18 @@ class SaveRestart(taskBase):
             checkpoint_time_str = next_window_begin.strftime('%Y%m%d_%H%Mz')
 
             rst_file_types = self.config.rst_file_types()
+            rst_store_interval = self.config.rst_store_interval(None)
+
+            # Determine whether to store as a symlink for this cycle
+            # --------------------------------------------------------
+            store_as_symlink = True
+            if rst_store_interval is not None:
+                cycle_duration = isodate.parse_duration(window_length)
+                elapsed = window_begin - self.start_cycle_point_dto()
+                cycle_number = round(elapsed / cycle_duration) + 1
+                store_as_symlink = (cycle_number % rst_store_interval != 0)
+                self.logger.info(f'Cycle number: {cycle_number}, rst_store_interval: '
+                                 f'{rst_store_interval}, store_as_symlink: {store_as_symlink}')
 
             for file_type in rst_file_types:
                 fname = f'{file_type}_checkpoint.{checkpoint_time_str}.nc4'
@@ -81,7 +93,7 @@ class SaveRestart(taskBase):
                     source_file=source_file,
                     file_extension='nc',
                     file_type=file_type,
-                    store_as_symlink=True,
+                    store_as_symlink=store_as_symlink,
                 )
 
 

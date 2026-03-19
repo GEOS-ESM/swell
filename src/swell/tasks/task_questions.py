@@ -793,6 +793,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.horizontal_resolution(),
             qd.marine_models(),
             qd.rst_file_types(),
+            qd.rst_store_interval(),
         ]
     )
 

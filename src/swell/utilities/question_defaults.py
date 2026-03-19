@@ -307,6 +307,21 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class rst_store_interval(TaskQuestion):
+        default_value: str = None
+        question_name: str = "rst_store_interval"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = ("After how many cycles should restart files be stored as real files "
+                       "(not symlinks)? E.g. 28 means every 28th cycle (and multiples) stores "
+                       "real files. Leave unset to always store as symlinks.")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "bufr_obs_classes"
