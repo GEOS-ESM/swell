@@ -21,6 +21,7 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    runahead limit = 'P0'
 
     [[graph]]
         R1 = """
@@ -67,6 +68,9 @@
 
             # Save forecast
             RunForecast-{{model_component}} => SaveForecast-{{model_component}}
+
+            # Save restart files to R2D2
+            RunForecast-{{model_component}} => SaveRestart-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -152,6 +156,9 @@
 
     [[SaveForecast-{{model_component}}]]
         script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestart-{{model_component}}]]
+        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"

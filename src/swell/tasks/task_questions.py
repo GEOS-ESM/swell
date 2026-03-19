@@ -566,7 +566,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="PrepForecast",
         questions=[
             qd.analysis_variables(),
-            qd.emis_inv(),
             qd.forecast_length(),
             qd.geos_cf_install_dir(),
             qd.geos_cf_namelists_dir(),
@@ -576,9 +575,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.horizontal_resolution(),
             qd.iau(),
             qd.inc_template(),
-            qd.io_emissions(),
-            qd.replay_emis(),
-            qd.scalfac_clip(),
             qd.window_length(),
             qd.rst_experiment()
         ]
@@ -819,7 +815,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.forecast_length(),
             qd.horizontal_resolution(),
-            qd.r2d2_experiment_id(),
             qd.window_length(),
         ]
     )

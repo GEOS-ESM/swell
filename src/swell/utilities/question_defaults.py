@@ -163,7 +163,7 @@ class QuestionDefaults():
 
     @dataclass
     class runahead_limit(SuiteQuestion):
-        default_value: str = "P4"
+        default_value: str = "P0"
         question_name: str = "runahead_limit"
         ask_question: bool = True
         prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
@@ -545,23 +545,6 @@ class QuestionDefaults():
         question_name: str = 'existing_perllib_path'
         prompt: str = "Provide a path to an existing location for GMAO_perllib."
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class emis_inv(TaskQuestion):
-        default_value: bool = False
-        question_name: str = "emis_inv"
-        ask_question: bool = True
-        options: List[bool] = mutable_field([
-            True,
-            False
-        ])
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "Apply DA increments to CEDS emission scaling factors (emission inversion)?"
-        widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
 
@@ -976,21 +959,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the path to the increment template NetCDF file?"
+        prompt: str = "What is the path to the GEOS-CF increment template NetCDF file?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class io_emissions(TaskQuestion):
-        default_value: list = mutable_field([])
-        question_name: str = "io_emissions"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "Provide the JEDI-to-GEOS-CF emissions variable mapping list."
-        widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1450,23 +1420,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class replay_emis(TaskQuestion):
-        default_value: bool = False
-        question_name: str = "replay_emis"
-        ask_question: bool = True
-        options: List[bool] = mutable_field([
-            True,
-            False
-        ])
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "Replay a run using analyzed emissions instead of applying DA increments?"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
@@ -1499,6 +1452,9 @@ class QuestionDefaults():
     class swell_static_files(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
         prompt: str = "What is the path to the Swell Static files directory?"
         widget_type: WType = WType.STRING
 
@@ -1510,20 +1466,6 @@ class QuestionDefaults():
         question_name: str = "swell_static_files_user"
         prompt: str = "What is the path to the user provided Swell Static Files directory?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class scalfac_clip(TaskQuestion):
-        default_value: float = 10.0
-        question_name: str = "scalfac_clip"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "Clipping value for emission scaling factors (max ratio applied/removed)."
-        widget_type: WType = WType.FLOAT
-
 
     # --------------------------------------------------------------------------------------------------
 

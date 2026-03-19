@@ -31,7 +31,7 @@ class GetRestart(taskBase):
 
         """
 
-        # Read from somewhere
+        # TODO: user input
         rst_file_types = ['achem_internal', 'aiau_import', 'cabc_internal', 'cabr_internal', 'caoc_internal', 'catch_internal', 'du_internal', 'fvcore_internal', 'geoschemchem_import', 'geoschemchem_internal', 'gocart_import', 'gocart_internal', 'gwd_import', 'hemco_import', 'hemco_internal', 'irrad_internal', 'lake_internal', 'landice_internal', 'moist_import', 'moist_internal', 'ni_internal', 'openwater_internal', 'pchem_internal', 'saltwater_import', 'seaicethermo_internal', 'solar_internal', 'ss_internal', 'su_internal', 'surf_import', 'tr_import', 'tr_internal', 'turb_import', 'turb_internal']
 
 
@@ -40,8 +40,8 @@ class GetRestart(taskBase):
         model = self.__model__
 
         #print(self.config)
-        for k, v in vars(self.config).items():
-            print(k, v)
+        #for k, v in vars(self.config).items():
+        #    print(k, v)
 
 
         horizontal_resolution = self.config.horizontal_resolution()
@@ -52,12 +52,16 @@ class GetRestart(taskBase):
         print(isodate.parse_duration(window_length))
 
         window_begin_prev = window_begin - isodate.parse_duration(window_length)
-        #window_begin_prev = window_begin - window_length
-        print(window_length)
         rst_step = window_length
 
-        #rst_exp = self.config.rst_experiment()
-        rst_exp = 'swell_test'
+        # Use rst_experiment for first cycle
+        if self.cycle_time_dto() == self.start_cycle_point_dto():
+            rst_exp = self.config.rst_experiment()
+            #rst_exp = 'swell_test'
+        else:
+            rst_exp = self.config.r2d2_experiment_id()
+
+        self.logger.info(f'Fetching rst from experiment {rst_exp}')         
  
         for file_type in rst_file_types:
             base =  os.path.join(scratch_dir,file_type)

@@ -48,30 +48,25 @@ class PrepForecast(taskBase):
         # Gather config values
         # --------------------
         self.expid = self.experiment_id()
-        print("expid=")
-        print(self.expid)
         self.window_length = self.config.window_length()
         self.forecast_length = self.config.forecast_length()
         self.resolution = self.config.horizontal_resolution()
         self.an_vars_long = self.config.analysis_variables()
 
-        #self.geos_cf_run_dir = self.config.geos_cf_run_dir()
-        self.geos_cf_run_dir = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
-        #self.geos_cf_install_dir = self.config.geos_cf_install_dir()
-        self.geos_cf_install_dir = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
-        #self.namelists_dir = self.config.geos_cf_namelists_dir()
-        self.namelists_dir = "/discover/nobackup/mabdiosk/SWELL_uv/swell/src/swell/configuration/jedi/interfaces/geos_cf/namelists"
+        self.geos_cf_run_dir = self.config.geos_cf_run_dir()
+        #self.geos_cf_run_dir = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
+        self.geos_cf_install_dir = self.config.geos_cf_install_dir()
+        #self.geos_cf_install_dir = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
+
+        self.namelists_dir = os.path.join(self.experiment_config_path(),
+                                          'jedi', 'interfaces', 'geos_cf', 'namelists')
+
 
         self.fp_exp = self.config.geosfp_exp()
         self.fp_loc = self.config.geosfp_path()
 
-        self.fp_exp = "f5295_fp"
-        self.fp_loc = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
-
-        #self.emis_inv = self.config.emis_inv(False)
-        #self.replay_emis = self.config.replay_emis(False)
-        #self.clip_val = float(self.config.scalfac_clip(10.0))
-        #self.io_map = self.config.io_emissions([])
+        #self.fp_exp = "f5295_fp"
+        #self.fp_loc = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
 
         # Derive window times
         # -------------------
@@ -200,8 +195,9 @@ class PrepForecast(taskBase):
     def prepare_namelists(self) -> None:
         """Copy GEOS-CF namelist/RC files into scratch_dir and update placeholders."""
 
-        scratchdir = self.scratch_dir
+        scratch_dir = self.scratch_dir
         namelists_dir = self.namelists_dir
+
         resolution = self.resolution
         fp_exp = self.fp_exp
         parse_wbegin = self.parse_wbegin
@@ -210,7 +206,7 @@ class PrepForecast(taskBase):
 
         # Copy RC/ directory from GEOS-CF run directory to scratch
         # --------------------------------------------------------
-#        rc_dst = os.path.join(scratchdir, 'RC')
+#        rc_dst = os.path.join(scratch_dir, 'RC')
 #        if os.path.isdir(rc_dst):
 #            shutil.rmtree(rc_dst)
 #        shutil.copytree(os.path.join(self.geos_cf_run_dir, 'RC'), rc_dst)
@@ -218,10 +214,11 @@ class PrepForecast(taskBase):
         # Copy all files in RC/ directory in GEOS-CF run directory to scratch
         # --------------------------------------------------------
         src_rc = os.path.join(self.geos_cf_run_dir, 'RC')
-        
+        self.logger.info(f'Copy files from {src_rc} to {scratch_dir}')
+
         for item in os.listdir(src_rc):
             src = os.path.join(src_rc, item)
-            dst = os.path.join(scratchdir, item)
+            dst = os.path.join(scratch_dir, item)
         
             if os.path.isdir(src):
                 shutil.copytree(src, dst, dirs_exist_ok=True)
@@ -234,19 +231,21 @@ class PrepForecast(taskBase):
                       'HEMCO_Config.rc', 'geoschem_config.yml']:
 
             src = os.path.join(namelists_dir, fname)
+            self.logger.info(f'Copy {src} to {scratch_dir}')
+
             if os.path.exists(src):
-                shutil.copy(src, scratchdir)
+                shutil.copy(src, scratch_dir)
 
         shutil.copy(os.path.join(namelists_dir, f'AGCM_{resolution}.rc'),
-                    os.path.join(scratchdir, 'AGCM.rc'))
+                    os.path.join(scratch_dir, 'AGCM.rc'))
         shutil.copy(os.path.join(namelists_dir, f'HISTORY_{resolution}.rc'),
-                    os.path.join(scratchdir, 'HISTORY.rc'))
+                    os.path.join(scratch_dir, 'HISTORY.rc'))
 
         # Update AGCM.rc placeholders
         # ---------------------------
-        agcm_rc = os.path.join(scratchdir, 'AGCM.rc')
+        agcm_rc = os.path.join(scratch_dir, 'AGCM.rc')
         self.replace_string(agcm_rc, '>>SWELL_FP_EXP<<', fp_exp)
-        self.replace_string(agcm_rc, '>>SWELL_SCRATCHDIR<<', scratchdir)
+        self.replace_string(agcm_rc, '>>SWELL_SCRATCHDIR<<', scratch_dir)
 
         weYYYY = parse_wend.strftime('%Y')
         weMM = parse_wend.strftime('%m')
@@ -255,18 +254,11 @@ class PrepForecast(taskBase):
         self.replace_string(agcm_rc, '>>SWELL_FC6H_DATE<<', f'{weYYYY}{weMM}{weDD}')
         self.replace_string(agcm_rc, '>>SWELL_FC6H_H<<', f'{weHH}0000')
 
-        # Update GEOSCHEMchem_ExtData.yaml
-        # Related to emission update
-        # ---------------------------------
-        #geoschem_yaml = os.path.join(scratchdir, 'GEOSCHEMchem_ExtData.yaml')
-        #if os.path.exists(geoschem_yaml):
-        #    self.replace_string(geoschem_yaml, '>>SWELL_SCRATCHDIR<<', scratchdir)
-
-        # Update GEOSCHEMchem_GridComp.rc
-        # --------------------------------
+        # Update GEOSCHEMchem_GridComp.rc placeholders
+        # --------------------------------------------
         num_an_vars = len(self.an_vars_compo)
         gridcomp_src = os.path.join(namelists_dir, 'GEOSCHEMchem_GridComp.rc')
-        gridcomp_dst = os.path.join(scratchdir, 'GEOSCHEMchem_GridComp.rc')
+        gridcomp_dst = os.path.join(scratch_dir, 'GEOSCHEMchem_GridComp.rc')
         shutil.copy(gridcomp_src, gridcomp_dst)
         self.replace_string(gridcomp_dst, '>>SWELL_NUM_AN_VARS<<', str(num_an_vars))
 
@@ -276,18 +268,18 @@ class PrepForecast(taskBase):
                                 f'Analysis_Settings_Spec00{index + 1}: '
                                 f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
 
-        # Update GEOSCHEMchem_AnaSettings_<var>.rc files
-        # -----------------------------------------------
+        # Update GEOSCHEMchem_AnaSettings_<var>.rc files placeholders
+        # -----------------------------------------------------------
         for an_var in self.an_vars_compo:
             ana_src = os.path.join(namelists_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
-            ana_dst = os.path.join(scratchdir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
+            ana_dst = os.path.join(scratch_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
             if os.path.exists(ana_src):
                 shutil.copy(ana_src, ana_dst)
-                self.replace_string(ana_dst, '>>SWELL_RUNDIR<<', scratchdir)
+                self.replace_string(ana_dst, '>>SWELL_RUNDIR<<', scratch_dir)
 
         # Write cap_restart with window begin date
         # -----------------------------------------
-        cap_restart = os.path.join(scratchdir, 'cap_restart')
+        cap_restart = os.path.join(scratch_dir, 'cap_restart')
         forecast_date = (parse_wbegin.strftime('%Y%m%d') + ' ' +
                          parse_wbegin.strftime('%H%M%S'))
         with open(cap_restart, 'w') as f:
@@ -296,16 +288,15 @@ class PrepForecast(taskBase):
         # Create collection directory
         # ------------------------
         # TODO: make this dynamic
-        collection_dir = os.path.join(scratchdir, 'geoscf_jedi')
-        os.makedirs(collection_dir, 0o755, exist_ok=True)
+        #collection_dir = os.path.join(scratch_dir, 'geoscf_jedi')
+        #os.makedirs(collection_dir, 0o755, exist_ok=True)
 
         # Copy and configure gcm_run.j
         # -----------------------------
         gcm_run_src = os.path.join(namelists_dir, f'gcm_run_geoscf_{resolution}.j')
-        gcm_run_dst = os.path.join(scratchdir, 'gcm_run_geoscf.j')
+        gcm_run_dst = os.path.join(scratch_dir, 'gcm_run_geoscf.j')
         shutil.copy(gcm_run_src, gcm_run_dst)
-        self.replace_string(gcm_run_dst, '>>SWELL_CYCLEDIR<<', scratchdir)
-        # /discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install
+        self.replace_string(gcm_run_dst, '>>SWELL_CYCLEDIR<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>SWELL_GEOSINSTALL<<', self.geos_cf_install_dir)
         self.replace_string(gcm_run_dst, '>>SWELL_GEOSRUN<<', self.geos_cf_run_dir)
         os.chmod(gcm_run_dst, 0o755)
@@ -316,7 +307,7 @@ class PrepForecast(taskBase):
         fc_secs = str(int(parse_fclen.total_seconds()) % 86400 // 3600).zfill(2) + '0000'
         fc_len_geoscf = f'{fc_days} {fc_secs}'
         cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
-        cap_dst = os.path.join(scratchdir, 'CAP.rc')
+        cap_dst = os.path.join(scratch_dir, 'CAP.rc')
         shutil.copy(cap_src, cap_dst)
         self.replace_string(cap_dst, '>>SWELL_FC_LENGTH<<', fc_len_geoscf)
 
