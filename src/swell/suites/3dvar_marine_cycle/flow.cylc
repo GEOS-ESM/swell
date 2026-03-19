@@ -99,7 +99,7 @@
             {% endif %}
 
             # Move restart to next cycle and then erase current forecast folder
-            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
             {% if skip_r2d2 %}
             # Save analysis output
