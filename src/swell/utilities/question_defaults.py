@@ -294,6 +294,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class rst_file_types(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_file_types"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What are the restart file types to fetch/store from R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "bufr_obs_classes"

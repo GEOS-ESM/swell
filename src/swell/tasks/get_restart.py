@@ -31,8 +31,7 @@ class GetRestart(taskBase):
 
         """
 
-        # TODO: user input
-        rst_file_types = ['achem_internal', 'aiau_import', 'cabc_internal', 'cabr_internal', 'caoc_internal', 'catch_internal', 'du_internal', 'fvcore_internal', 'geoschemchem_import', 'geoschemchem_internal', 'gocart_import', 'gocart_internal', 'gwd_import', 'hemco_import', 'hemco_internal', 'irrad_internal', 'lake_internal', 'landice_internal', 'moist_import', 'moist_internal', 'ni_internal', 'openwater_internal', 'pchem_internal', 'saltwater_import', 'seaicethermo_internal', 'solar_internal', 'ss_internal', 'su_internal', 'surf_import', 'tr_import', 'tr_internal', 'turb_import', 'turb_internal']
+        rst_file_types = self.config.rst_file_types()
 
 
         cycle_dir = self.cycle_dir()

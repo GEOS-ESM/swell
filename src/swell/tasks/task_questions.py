@@ -316,6 +316,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             window_questions,
             qd.rst_experiment(),
+            qd.rst_file_types(),
             qd.horizontal_resolution(),
         ]
     )
@@ -791,6 +792,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_duration(),
             qd.horizontal_resolution(),
             qd.marine_models(),
+            qd.rst_file_types(),
         ]
     )
 
