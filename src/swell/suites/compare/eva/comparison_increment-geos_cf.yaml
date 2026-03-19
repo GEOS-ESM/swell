@@ -1,0 +1,100 @@
+datasets:
+
+- group: increment
+  type: LatLon
+  filename: {{increment_file_path_1}}
+  name: experiment_increment_1
+  variables: [NO2, lat, lon]
+
+- group: increment
+  type: LatLon
+  filename: {{increment_file_path_2}}
+  name: experiment_increment_2
+  variables: [NO2, lat, lon]
+
+graphics:
+
+  plotting_backend: Emcpy
+  figure_list:
+
+  #map plot for NO2 increment (near surface)
+  - batch figure:
+      variables: [NO2]
+    figure:
+      figure size: [20,10]
+      layout: [1,1]
+      title: 'NO2 Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_surface.png'
+    plots:
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: NO2 Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::NO2
+            slices: '[71,...]'
+          label: "{{experiment_tag_1}} NO2 increment (surface level)"
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1e-10
+          vmax: 1e-10
+
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: NO2 Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::increment::lon
+          latitude:
+            variable: experiment_increment_2::increment::lat
+          data:
+            variable: experiment_increment_2::increment::NO2
+            slices: '[71,...]'
+          label: "{{experiment_tag_2}} NO2 increment (surface level)"
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1e-10
+          vmax: 1e-10
+
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: NO2 Increment
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::NO2_diff
+            slices: '[71,...]'
+          label: "{{experiment_tag_1}} NO2 increment diff (surface level)"
+          colorbar: true
+          cmap: 'bwr'
+          vmin: -1e-11
+          vmax: 1e-11
+
+transforms:
+- equals: experiment_increment_1::increment::NO2-experiment_increment_2::increment::N02
+  for:
+    variable: NO2
+  new name: experiment_increment_1::increment::NO2_diff
+  transform: arithmetic
