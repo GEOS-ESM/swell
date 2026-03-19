@@ -20,8 +20,7 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
-    runahead limit = {{runahead_limit}}
-    runahead limit = 'P0'
+    runahead limit = P0
 
     [[graph]]
         R1 = """
@@ -43,6 +42,9 @@
         {% if cycle_time[model_component] %}
             # Task triggers for: {{model_component}}
             # ------------------
+            # Ensure previous cycle completes before starting this one
+            CleanCycle-{{model_component}}[-{{models[model_component]["window_length"]}}] => GetBackground-{{model_component}}
+
             # Generate background error covariance
             GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
