@@ -52,7 +52,7 @@ class GetBackground(taskBase):
         else:
             background_experiment = self.config.background_experiment()
 
-        self.logger.info(f'Fetching background from experiment {rst_exp}')  
+        self.logger.info(f'Fetching background from experiment {background_experiment}')  
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
