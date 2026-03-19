@@ -21,10 +21,11 @@ graphics:
   - batch figure:
       variables: [NO2]
     figure:
-      figure size: [20,10]
-      layout: [1,1]
+      figure size: [60,10]
+      layout: [3,1]
       title: 'NO2 Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_surface.png'
+      tight_layout: true 
     plots:
       - mapping:
           projection: plcarr
@@ -33,6 +34,7 @@ graphics:
         add_colorbar:
           label: NO2 Increment
         add_grid:
+        add_title: '{{experiment_tag_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -55,6 +57,7 @@ graphics:
         add_colorbar:
           label: NO2 Increment
         add_grid:
+        add_title: '{{experiment_tag_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -77,6 +80,7 @@ graphics:
         add_colorbar:
           label: NO2 Increment
         add_grid:
+        add_title: '{{experiment_tag_1}} - {{experiment_tag_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -93,7 +97,7 @@ graphics:
           vmax: 1e-11
 
 transforms:
-- equals: experiment_increment_1::increment::NO2-experiment_increment_2::increment::N02
+- equals: experiment_increment_1::increment::NO2-experiment_increment_2::increment::NO2
   for:
     variable: NO2
   new name: experiment_increment_1::increment::NO2_diff

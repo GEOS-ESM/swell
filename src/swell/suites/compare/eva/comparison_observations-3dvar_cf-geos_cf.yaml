@@ -35,13 +35,13 @@ transforms:
 # Generate Increment for JEDI
 - transform: arithmetic
   new name: experiment_1::increment::${variable}
-  equals: experiment_1::ombg::${variable}-experiment::oman::${variable}
+  equals: experiment_1::ombg::${variable}-experiment_1::oman::${variable}
   for:
     variable: *variables
 
 - transform: arithmetic
   new name: experiment_2::increment::${variable}
-  equals: experiment_2::ombg::${variable}-experiment::oman::${variable}
+  equals: experiment_2::ombg::${variable}-experiment_2::oman::${variable}
   for:
     variable: *variables
 
@@ -143,6 +143,7 @@ graphics:
       layout: [2,1]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
+      tight_layout:
     plots:
       - add_xlabel: 'Observation Value'
         add_ylabel: 'JEDI h(x)'
@@ -201,12 +202,13 @@ graphics:
       variables: *variables
     dynamic options:
       - type: histogram_bins
-        data variable: experiment::omanPassedQc::${variable}
+        data variable: experiment_1::omanPassedQc::${variable}
         number of bins rule: 'rice'
     figure:
       layout: [2,1]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/ombg_oman_{{instrument}}_${variable}.png'
+      tight_layout:
     plots:
       - add_xlabel: 'Difference'
         add_ylabel: 'Count'
@@ -313,6 +315,7 @@ graphics:
       layout: [4,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/ombg_oman_{{instrument}}_${variable}.png'
+      tight_layout:
     plots:
       - mapping:
           projection: plcarr
@@ -322,7 +325,6 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_l
         layers:
         - type: MapScatter
           longitude:
@@ -346,7 +348,6 @@ graphics:
         add_colorbar:
           label: ObsValue
         add_grid:
-        add_l
         layers:
         - type: MapScatter
           longitude:
@@ -418,6 +419,7 @@ graphics:
       layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/effectiveQC_{{instrument}}_${variable}.png'
+      tight_layout:
     plots:
       - mapping:
           projection: plcarr
@@ -469,12 +471,13 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::increment::${variable}
+        data variable: experiment_1::increment::${variable}
     figure:
       figure size: [40,10]
       layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/increment_{{instrument}}_${variable}.png'
+      tight_layout: 
     plots:
       - mapping:
           projection: plcarr

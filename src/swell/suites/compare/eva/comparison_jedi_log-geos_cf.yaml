@@ -52,7 +52,7 @@ graphics:
             variable: JediLogTest_2::convergence::total_iteration
           y:
             variable: JediLogTest_2::convergence::residual_norm
-          color: 'blue'
+          color: 'red'
           label: '{{experiment_tag_2}} Residual norm'
 
       - add_xlabel: 'Total inner iteration number'
@@ -64,7 +64,7 @@ graphics:
             variable: JediLogTest_1::convergence::total_iteration
           y:
             variable: JediLogTest_1::convergence::norm_reduction
-          color: 'black'
+          color: 'blue'
           label: '{{experiment_tag_1}} Norm reduction'
 
         - type: LinePlot
@@ -72,7 +72,7 @@ graphics:
             variable: JediLogTest_2::convergence::total_iteration
           y:
             variable: JediLogTest_2::convergence::norm_reduction
-          color: 'blue'
+          color: 'green'
           label: '{{experiment_tag_2}} Norm reduction'
 
       - add_xlabel: 'Total inner iteration number'
@@ -84,7 +84,7 @@ graphics:
             variable: JediLogTest_1::convergence::total_iteration
           y:
             variable: JediLogTest_1::convergence::residual_norm_log
-          color: 'red'
+          color: 'black'
           label: '{{experiment_tag_1}} Log(residual norm)'
         - type: LinePlot
           x:
@@ -106,5 +106,5 @@ graphics:
             variable: JediLogTest_2::convergence::total_iteration
           y:
             variable: JediLogTest_2::convergence::norm_reduction_log
-          color: 'blue'
+          color: 'green'
           label: '{{experiment_tag_2}} Log norm reduction'
