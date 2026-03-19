@@ -5,7 +5,7 @@ analysis_variables:
   - volume_mixing_ratio_of_no2
 
 saber_central_block:
-  default_value: identity
+  default_value: bump_nicas
   options:
   - identity
   - bump_nicas
@@ -15,9 +15,6 @@ saber_outer_block:
   options:
   - stddev_bkg_scaled
   - stddev_fixed_values
-
-swell_static_files:
-  default_value: /discover/nobackup/jbarre/geosdev/SwellStaticFiles
 
 background_experiment:
   default_value: swell_test
@@ -109,4 +106,8 @@ number_of_iterations:
   - 5
 
 gradient_norm_reduction:
+<<<<<<< HEAD
   default_value: 1e-10
+=======
+  default_value: 1e-10
+>>>>>>> develop

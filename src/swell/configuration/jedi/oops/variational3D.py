@@ -62,6 +62,11 @@ class variational3D(OopsConfig):
             'output': self.interface_model('analysis')
         }
 
+        # TODO: Implement this more cleanly in the OOPS schema
+        if self.jedi_interface == 'geos_cf':
+            oops['final']['increment'] = {'geometry': self.interface_model('geometry'),
+                                          'output': self.interface_model('increment_cs')}
+
         return oops
 
 

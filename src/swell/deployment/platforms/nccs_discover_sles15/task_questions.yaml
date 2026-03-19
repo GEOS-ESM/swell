@@ -31,9 +31,6 @@ gmao_perllib_path:
 path_to_bufr:
   default_value: None
 
-r2d2_local_path:
-  default_value: /discover/nobackup/${USER}/R2D2DataStore/Local
-
 swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
