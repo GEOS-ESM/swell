@@ -21,7 +21,7 @@ graphics:
   - batch figure:
       variables: [NO2]
     figure:
-      figure size: [60,10]
+      figure size: [60,30]
       layout: [3,1]
       title: 'NO2 Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_surface.png'

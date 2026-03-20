@@ -141,6 +141,7 @@ graphics:
       variables: *variables
     figure:
       layout: [2,1]
+      figure size: [60,30]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
       tight_layout:
@@ -206,6 +207,7 @@ graphics:
         number of bins rule: 'rice'
     figure:
       layout: [2,1]
+      figure size: [60,30]
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/histogram/${variable}/ombg_oman_{{instrument}}_${variable}.png'
       tight_layout:
@@ -311,7 +313,7 @@ graphics:
       - type: vminvmaxcmap
         data variable: experiment_1::ombgPassedQc::${variable}
     figure:
-      figure size: [60,10]
+      figure size: [60,30]
       layout: [4,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/ombg_oman_{{instrument}}_${variable}.png'
@@ -415,7 +417,7 @@ graphics:
       - type: vminvmaxcmap
         data variable: experiment_1::EffectiveQC1::${variable}
     figure:
-      figure size: [40,10]
+      figure size: [40,20]
       layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/effectiveQC_{{instrument}}_${variable}.png'
@@ -473,7 +475,7 @@ graphics:
       - type: vminvmaxcmap
         data variable: experiment_1::increment::${variable}
     figure:
-      figure size: [40,10]
+      figure size: [40,20]
       layout: [2,1]
       title: '{{instrument_title}} | Passed QC'
       output name: '{{cycle_dir}}/eva/{{instrument}}/map_plots/${variable}/increment_{{instrument}}_${variable}.png'
