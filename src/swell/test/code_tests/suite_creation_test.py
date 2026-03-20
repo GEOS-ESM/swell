@@ -10,33 +10,42 @@
 import tempfile
 import os
 from ruamel.yaml import YAML
+import unittest
 
+from swell.suites.all_suites import get_suites
 from swell.deployment.create_experiment import create_experiment_directory
 
 # --------------------------------------------------------------------------------------------------
 
-def suite_creation_test(suite: str) -> None:
+class SuiteCreationTest(unittest.TestCase):
 
-    tempdir = tempfile.mkdtemp()
+    def run_suite_creation_test(self) -> None:
 
-    override_dict = {}
+        suites = get_suites()
 
-    override_dict['experiment_root'] = tempdir
+        for suite in suites:
+            self.suite_creation_test(suite)
 
-    create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
-                                override_dict, False, None)
-    
-    experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite', 'experiment.yaml')
+    def suite_creation_test(self, suite: str) -> None:
 
-    yaml = YAML(typ='safe')
+        tempdir = tempfile.mkdtemp()
 
-    with open(experiment_yaml, 'r') as f:
-        experiment_yaml_str = yaml(f)
+        override_dict = {}
 
-    assert 'defer_to_model' not in experiment_yaml_str
-    assert 'defer_to_platform' not in experiment_yaml_str
+        override_dict['experiment_root'] = tempdir
+        override_dict['skip_r2d2'] = True
+
+        create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
+                                    override_dict, False, None)
+        
+        experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite', 'experiment.yaml')
+
+        yaml = YAML(typ='safe')
+
+        with open(experiment_yaml, 'r') as f:
+            experiment_yaml_str = yaml.load(f)
+
+        assert 'defer_to_model' not in experiment_yaml_str
+        assert 'defer_to_platform' not in experiment_yaml_str
 
 # --------------------------------------------------------------------------------------------------
-
-if __name__ == '__main__':
-    suite_creation_test('3dvar_marine')
