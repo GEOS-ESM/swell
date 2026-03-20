@@ -14,6 +14,7 @@ from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
 # Central block builders
 # --------------------------------------------------------------------------------------------------
 
+
 def _build_identity_central_block(template_dict: Mapping) -> Mapping:
     """Identity covariance central block"""
     return {'saber block name': 'ID'}
@@ -46,6 +47,7 @@ def _build_bump_nicas_central_block(template_dict: Mapping) -> Mapping:
 # Outer block builders
 # --------------------------------------------------------------------------------------------------
 
+
 def _build_stddev_bkg_scaled(template_dict: Mapping) -> Mapping:
     """Standard deviation outer block"""
     return {
@@ -64,22 +66,23 @@ def _build_stddev_bkg_scaled(template_dict: Mapping) -> Mapping:
         }
     }
 
+
 def _build_stddev_fixed_values(template_dict: Mapping) -> Mapping:
     """Standard deviation outer block with fixed values from analysis variables"""
     # Get the stddev values for each analysis variable
     # Example: {'volume_mixing_ratio_of_no2': 5e-9, 'volume_mixing_ratio_of_o3': 1e-8}
     stddev_dict = {
-        'volume_mixing_ratio_of_no2': 5e-9, 
+        'volume_mixing_ratio_of_no2': 5e-9,
         'volume_mixing_ratio_of_o3': 1e-8,
         'volume_mixing_ratio_of_co': 5e-8,
     }
-    
+
     # Build the standard deviations list
     standard_deviations = [
         {'variable': var, 'stddev': value}
         for var, value in stddev_dict.items()
     ]
-    
+
     return {
         'saber block name': 'StdDev',
         'standard deviations': standard_deviations
@@ -87,6 +90,7 @@ def _build_stddev_fixed_values(template_dict: Mapping) -> Mapping:
 
 # Main assembler
 # --------------------------------------------------------------------------------------------------
+
 
 def background_error(template_dict: Mapping) -> Mapping:
     """
@@ -97,7 +101,7 @@ def background_error(template_dict: Mapping) -> Mapping:
     template_dict : Mapping
         Dictionary containing configuration parameters including:
         - central_block: Type of central block ('identity', 'bump_nicas', 'diffusion')
-        - outer_block: add StdDev outer block 
+        - outer_block: add StdDev outer block
 
 
     Returns
@@ -105,7 +109,7 @@ def background_error(template_dict: Mapping) -> Mapping:
     Mapping
         JEDI-compatible background error covariance configuration
     """
-    
+
     # Select central block builder
     central_block_select = template_dict.get('saber_central_block', 'identity')
 
@@ -122,7 +126,7 @@ def background_error(template_dict: Mapping) -> Mapping:
         )
 
     central_block = central_block_types[central_block_select](template_dict)
-    
+
     # Assemble base configuration
     background_error_config = {
         'covariance model': 'SABER',
