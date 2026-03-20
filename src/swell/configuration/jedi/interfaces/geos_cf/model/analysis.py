@@ -7,35 +7,23 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-def r2d2(template_dict: Mapping) -> Mapping:
-
-    cycle_dir = template_dict['cycle_dir']
-
-    r2d2 = {
-        'fetch': {
-            'an': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos',
-                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4'}
-            ],
-            'fc': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos',
-                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4'}
-            ]
-        },
-        'store': {
-            'fc': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos'}
-            ]
-        }
+def analysis(template_dict: Mapping) -> Mapping:
+    analysis = {
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath': template_dict['cycle_dir'],
+        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'first': 'PT0H',
+        'frequency': 'PT1H',
+        'field io names': field_io_names,
     }
 
-    return r2d2
+    return analysis
 
 # --------------------------------------------------------------------------------------------------
