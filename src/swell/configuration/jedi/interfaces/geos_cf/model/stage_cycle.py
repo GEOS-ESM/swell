@@ -22,7 +22,7 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
         {'copy_files': {
             'directories': [
                 [
-                    f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*', 
+                    f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*',
                     f'{cycle_dir}/'
                 ]
             ]
@@ -37,7 +37,7 @@ def stage_cycle(template_dict: Mapping) -> Mapping:
                 'directories': [
                     [
                         f'{swell_static_files}/jedi/interfaces/geos_cf/nicas/'
-                        f'layout_{npx_proc}x{npy_proc}x6/*', 
+                        f'layout_{npx_proc}x{npy_proc}x6/*',
                         f'{cycle_dir}/'
                     ]
                 ]
