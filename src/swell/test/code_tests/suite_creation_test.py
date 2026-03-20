@@ -1,0 +1,42 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+import tempfile
+import os
+from ruamel.yaml import YAML
+
+from swell.deployment.create_experiment import create_experiment_directory
+
+# --------------------------------------------------------------------------------------------------
+
+def suite_creation_test(suite: str) -> None:
+
+    tempdir = tempfile.mkdtemp()
+
+    override_dict = {}
+
+    override_dict['experiment_root'] = tempdir
+
+    create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
+                                override_dict, False, None)
+    
+    experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite', 'experiment.yaml')
+
+    yaml = YAML(typ='safe')
+
+    with open(experiment_yaml, 'r') as f:
+        experiment_yaml_str = yaml(f)
+
+    assert 'defer_to_model' not in experiment_yaml_str
+    assert 'defer_to_platform' not in experiment_yaml_str
+
+# --------------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    suite_creation_test('3dvar_marine')
