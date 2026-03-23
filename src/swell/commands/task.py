@@ -1,7 +1,7 @@
 import os
 import glob
 import click
-from typing import Union, Optional
+from typing import Optional
 from swell.swell_path import get_swell_path
 from swell.commands.help_strings import datetime_help, model_help, ensemble_help
 
