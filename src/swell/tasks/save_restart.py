@@ -25,18 +25,15 @@ class SaveRestart(taskBase):
     def execute(self):
 
         """
-        Moving background and increment files to R2D2DataStore
-        This is a temporary solution until we have a proper v3 data storage
-        Does not handle 4d backgrounds properly
+        Store GEOS-CF checkpoint restart files to R2D2 as symlinks or actual files.
+        Saves checkpoint files that are valid at the beginning of the next DA window so they
+        can be retrieved by GetRestart in the subsequent cycle.
+ 
+        For other models skip (old code for the other models can be removed)
         """
 
         model = self.__model__
         if model == 'geos_cf':
-
-            # Store GEOS-CF checkpoint restart files to R2D2.
-            # Saves checkpoint files that are valid at the beginning of the next DA window so they
-            # can be retrieved by GetRestart in the subsequent cycle.
-            # Checkpoint file format: {rst_file_type}_checkpoint.yyyymmdd_hhmz.nc4
                     
             # Load R2D2 credentials
             # ---------------------

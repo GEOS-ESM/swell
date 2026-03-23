@@ -288,7 +288,7 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "geos_cf"
         ])
-        prompt: str = "What is the name of the name of the experiment providing the restart files?"
+        prompt: str = "What is the name of the experiment providing the restart files in R2D2?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

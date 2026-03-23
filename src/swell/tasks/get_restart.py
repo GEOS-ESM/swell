@@ -38,17 +38,10 @@ class GetRestart(taskBase):
         scratch_dir = os.path.join(cycle_dir, 'scratch')
         model = self.__model__
 
-        #print(self.config)
-        #for k, v in vars(self.config).items():
-        #    print(k, v)
-
-
         horizontal_resolution = self.config.horizontal_resolution()
 
         window_length = self.config.window_length()
         window_begin = self.da_window_params.window_begin(window_length, dto=True)
-        print(window_begin)
-        print(isodate.parse_duration(window_length))
 
         window_begin_prev = window_begin - isodate.parse_duration(window_length)
         rst_step = window_length
@@ -56,11 +49,10 @@ class GetRestart(taskBase):
         # Use rst_experiment for first cycle
         if self.cycle_time_dto() == self.start_cycle_point_dto():
             rst_exp = self.config.rst_experiment()
-            #rst_exp = 'swell_test'
         else:
             rst_exp = self.config.r2d2_experiment_id()
 
-        self.logger.info(f'Fetching rst from experiment {rst_exp}')         
+        self.logger.info(f'Fetching rst files from experiment {rst_exp}') 
  
         for file_type in rst_file_types:
             base =  os.path.join(scratch_dir,file_type)
