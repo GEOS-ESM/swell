@@ -12,36 +12,16 @@ import tempfile
 from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
-from swell.deployment.create_experiment import create_experiment_directory
-from swell.tasks.base.task_base import task_wrapper
+from swell.utilities.render_jedi_config import render_jedi_config
 
 # --------------------------------------------------------------------------------------------------
 
-def test_jedi_config(suite: str,
-                     model: str,
-                     datetime: str,
-                     executable_type: str) -> None:
+def run_test(suite: str,
+             model: str,
+             datetime: str,
+             executable_type: str) -> None:
 
-    tempdir = tempfile.mkdtemp()
-
-    override_dict = {'models': {}}
-    override_dict['experiment_root'] = tempdir
-    override_dict['models'][model] = {'check_for_obs': False,
-                                      'generate_yaml_and_exit': True}
-    
-    create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
-                                override_dict, 'defaults', None)
-    
-    experiment_yaml = os.path.join(tempdir, f'swell-{suite}',
-                                   f'swell-{suite}-suite', 'experiment.yaml')
-
-    task_wrapper('RenderJediObservations', experiment_yaml, datetime,
-                 model, ensemblePacket=None)
-
-    task_wrapper(f'RunJedi{executable_type.upper()}Executable', experiment_yaml, datetime,
-                 model, ensemblePacket=None)
-    
-    cycle_dir = os.path.join(tempdir, f'swell-{suite}', 'run', datetime, model)
+    render_jedi_config(suite, model, datetime, executable_type)
 
     config_file = os.path.join(cycle_dir, f'jedi_{executable_type}_config.yaml')
 
@@ -61,6 +41,6 @@ def test_jedi_config(suite: str,
 
 
 if __name__ == '__main__':
-    test_jedi_config('3dvar_marine')
+    run_test('3dvar_marine', 'geos_marine', '20210701T120000Z', 'variational')
 
 # --------------------------------------------------------------------------------------------------
