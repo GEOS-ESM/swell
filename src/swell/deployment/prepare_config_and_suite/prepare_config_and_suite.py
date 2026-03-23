@@ -360,7 +360,7 @@ class PrepareExperimentConfigAndSuite:
             override_dict = {}
 
             if isinstance(self.override, Mapping):
-                override_dict.update_dict(override_dict, self.override)
+                override_dict = update_dict(override_dict, self.override)
 
             elif isinstance(self.override, str):
                 yaml = YAML(typ='safe')
