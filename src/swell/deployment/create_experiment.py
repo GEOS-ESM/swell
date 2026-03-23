@@ -251,6 +251,8 @@ def create_experiment_directory(
     # ------------------
     if isinstance(override, str):
         override_dict = read_override_file(override)
+    elif override is None:
+        override_dict = {}
     else:
         override_dict = override
 
