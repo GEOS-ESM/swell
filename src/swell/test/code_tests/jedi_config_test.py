@@ -21,16 +21,15 @@ def run_test(suite: str,
              datetime: str,
              executable_type: str) -> None:
 
-    render_jedi_config(suite, model, datetime, executable_type)
-
-    config_file = os.path.join(cycle_dir, f'jedi_{executable_type}_config.yaml')
+    config_file = render_jedi_config(suite, model, datetime, executable_type)
 
     yaml = YAML(typ='safe')
 
     with open(config_file, 'r') as f:
         config_dict = yaml.load(f)
 
-    comparison_config = os.path.join(get_swell_path(), 'test', f'jedi_config_{suite}.yaml')
+    comparison_config = os.path.join(get_swell_path(), 'test', 'jedi_yamls',
+                                     f'jedi_config_{suite}.yaml')
 
     with open(comparison_config, 'r') as f:
         comparison_dict = yaml.load(f)

@@ -26,11 +26,11 @@ def render_jedi_config(suite: str,
 
     override_dict = {'models': {}}
     override_dict['experiment_root'] = tempdir
-    override_dict['models'][model] = {'check_for_obs': False,
-                                      'generate_yaml_and_exit': True}
+    override_dict['generate_yaml_and_exit'] = True
+    override_dict['models'][model] = {'check_for_obs': False}
     
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
-                                override=override_dict, advanced=False, slurm=None)
+                                override=override_dict, advanced=False, slurm=None, skip_r2d2=True)
 
     experiment_yaml = os.path.join(tempdir, f'swell-{suite}',
                                    f'swell-{suite}-suite', 'experiment.yaml')
@@ -38,7 +38,7 @@ def render_jedi_config(suite: str,
     task_wrapper('RenderJediObservations', experiment_yaml, datetime,
                  model, ensemblePacket=None)
 
-    task_wrapper(f'RunJedi{executable_type.upper()}Executable', experiment_yaml, datetime,
+    task_wrapper(f'RunJedi{executable_type.capitalize()}Executable', experiment_yaml, datetime,
                  model, ensemblePacket=None)
 
     cycle_dir = os.path.join(tempdir, f'swell-{suite}', 'run', datetime, model)
