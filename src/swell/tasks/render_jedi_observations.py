@@ -51,6 +51,9 @@ class RenderJediObservations(taskBase):
 
         cwd = os.getcwd()
 
+        if self.config.mock_cycle_dir(False):
+            self.jedi_rendering.add_key('cycle_dir', './')
+
         observations = []
 
         # Iterate through list

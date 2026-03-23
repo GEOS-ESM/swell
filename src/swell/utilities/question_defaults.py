@@ -810,6 +810,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class mock_cycle_dir(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "mock_cycle_dir"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Dry-run option for comparing configs."
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
         question_name: str = "obs_to_ingest"
