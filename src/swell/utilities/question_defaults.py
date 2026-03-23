@@ -1445,7 +1445,35 @@ class QuestionDefaults():
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
-        widget_type: WType = WType.INTEGER
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class vertical_localization_frac_retained_variance(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_frac_retained_variance"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the fraction of vertical retained variance for GETKF?"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class vertical_localization_unit (TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "vertical_localization_unit"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "What is the vertical localization unit for GETKF?"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
