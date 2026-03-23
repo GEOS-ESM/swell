@@ -26,8 +26,8 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             ingest_obs,
             sq.marine,
-            qd.start_cycle_point("2021-07-02T06:00:00Z"),
-            qd.final_cycle_point("2021-07-03T06:00:00Z"),
+            qd.start_cycle_point("2023-07-02T06:00:00Z"),
+            qd.final_cycle_point("2023-07-03T06:00:00Z"),
             qd.model_components(['geos_marine']),
             qd.runahead_limit("P5"),
         ],

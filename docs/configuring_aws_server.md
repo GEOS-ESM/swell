@@ -24,7 +24,7 @@ aws_session_token : "<session_token>"
 
 ```
 
-#### b. Quick test
+#### b. Full workflow test
 
 Run `IngestObs` directly without launching a full workflow:
 
@@ -36,11 +36,14 @@ swell create ingest_obs_marine
 #   - dry_run: false
 #   - obs_to_ingest: ['adt_cryosat2n']
 
-# Run the task
-swell task IngestObs <experiment_root>/swell-ingest_obs/swell-ingest_obs-suite/experiment.yaml \
-  -d 2021-07-02T06:00:00Z \
-  -m geos_marine
+```bash
+swell create ingest_obs_marine
+# Edit experiment.yaml: dry_run: false
+# Run the suite
+swell launch /path/to/suite/swell-ingest_obs/swell-ingest_obs-suite
 ```
+
+This runs `IngestObs` for every cycle time across the date range.
 
 ### Verify it is stored
 
@@ -77,16 +80,6 @@ print('Fetch OK')
 "
 ```
 
-### Full workflow test
-
-```bash
-swell create ingest_obs_marine
-# Edit experiment.yaml: dry_run: false
-# Run the suite
-swell launch /path/to/suite/swell-ingest_obs/swell-ingest_obs-suite
-```
-
-This runs `IngestObs` for every cycle time across the date range.
 
 ## 2. To test outside of Swell:
 
