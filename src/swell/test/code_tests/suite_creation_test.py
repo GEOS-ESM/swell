@@ -19,7 +19,7 @@ from swell.deployment.create_experiment import create_experiment_directory
 
 class SuiteCreationTest(unittest.TestCase):
 
-    def run_suite_creation_test(self) -> None:
+    def runTest(self) -> None:
 
         suites = get_suites()
 
