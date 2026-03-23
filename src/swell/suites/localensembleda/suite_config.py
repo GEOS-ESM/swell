@@ -57,12 +57,12 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_ensemble_increments(False),
             qd.obs_thinning_rej_fraction(0.9),
             qd.observations([
-                "sfcship",
                 "sondes",
+                "sfcship",
                 "atms_n20",
             ]),
-            qd.change_vbc_to_sbc(False),
             qd.window_type("3D"),
+            qd.change_vbc_to_sbc(False),
             qd.clean_patterns(['*.txt'])
         ]
     )
@@ -104,12 +104,12 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.local_ensemble_save_posterior_ensemble_increments(False),
             qd.obs_thinning_rej_fraction(0.75),
             qd.observations([
-                "sfcship",
                 "sondes",
+                "sfcship",
                 "atms_n20",
             ]),
-            qd.change_vbc_to_sbc(False),
             qd.window_type("3D"),
+            qd.change_vbc_to_sbc(False),
             qd.clean_patterns(['*.txt'])
         ]
     )
