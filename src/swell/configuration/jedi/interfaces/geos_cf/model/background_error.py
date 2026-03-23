@@ -11,31 +11,15 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 
-def r2d2(template_dict: Mapping) -> Mapping:
+def background_error(template_dict: Mapping) -> Mapping:
 
-    cycle_dir = template_dict['cycle_dir']
-
-    r2d2 = {
-        'fetch': {
-            'an': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos',
-                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4'}
-            ],
-            'fc': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos',
-                 'filename': f'{cycle_dir}/bkg.%Y%m%dT%H%M%SZ.nc4'}
-            ]
-        },
-        'store': {
-            'fc': [
-                {'file_type': 'bkg',
-                 'r2d2_model': 'geos'}
-            ]
-        }
+    background_error = {
+        'covariance model': 'SABER',
+        'saber central block': {
+            'saber block name': 'ID'
+            },
     }
 
-    return r2d2
+    return background_error
 
 # --------------------------------------------------------------------------------------------------
