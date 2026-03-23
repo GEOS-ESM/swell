@@ -73,7 +73,6 @@ USE_NCAR_GWD: .FALSE.
 # This is only used if USE_NCAR_GWD is .TRUE.
 BERES_FILE_NAME: ExtData/g5gcm/gwd/newmfspectra40_dc25.nc
 
-
 # Ocean Model Configuration Parameters
 # ------------------------------------
       OGCM.GRID_TYPE: LatLon
@@ -127,7 +126,6 @@ BKG_FREQUENCY: 0
 # --------------------------------------------
 ANA_GRIDNAME: PC360x2160-DC 
 ANA_LM: 72   
-
 
 # Restart Record Parameters
 # -------------------------

@@ -1,9 +1,12 @@
 
 # Atmospheric Model Configuration Parameters
 # ------------------------------------------
+
            NX: 12
            NY: 72
+
 IOSERVER_NODES: 0
+
 
       AGCM_IM: 90
       AGCM_JM: 540
