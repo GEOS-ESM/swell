@@ -17,8 +17,6 @@ import isodate
 import netCDF4 as nc
 import numpy as np
 import xarray as xr
-from scipy.interpolate import griddata
-from scipy.ndimage import gaussian_filter
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
@@ -54,6 +52,7 @@ class PrepForecast(taskBase):
         self.expid = self.experiment_id()
         self.window_length = self.config.window_length()
         self.forecast_length = self.config.forecast_length()
+        self.forecast_output_frequency = self.config.forecast_output_frequency()
         self.resolution = self.config.horizontal_resolution()
         self.an_vars_long = self.config.analysis_variables()
 
@@ -262,6 +261,14 @@ class PrepForecast(taskBase):
             grid_label = 'PE360x2160-CF'
 
         self.replace_string(history_dst, '>>SWELL_GEOSCF_JEDI_GRID<<', grid_label)
+
+        freq_dur = isodate.parse_duration(self.forecast_output_frequency)
+        freq_total_secs = int(freq_dur.total_seconds())
+        freq_hh = freq_total_secs // 3600
+        freq_mm = (freq_total_secs % 3600) // 60
+        freq_ss = freq_total_secs % 60
+        freq_geoscf = f'{freq_hh:02d}{freq_mm:02d}{freq_ss:02d}'
+        self.replace_string(history_dst, '>>SWELL_FC_OUTPUT_FREQ<<', freq_geoscf)
 
         # Update GEOSCHEMchem_GridComp.rc placeholders
         # --------------------------------------------

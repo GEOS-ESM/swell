@@ -568,6 +568,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.analysis_variables(),
             qd.forecast_length(),
+            qd.forecast_output_frequency(),
             qd.geos_cf_install_dir(),
             qd.geos_cf_namelists_dir(),
             qd.geos_cf_run_dir(),
@@ -817,6 +818,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="SaveForecast",
         questions=[
             qd.forecast_length(),
+            qd.forecast_output_frequency(),
             qd.horizontal_resolution(),
             qd.window_length(),
         ]

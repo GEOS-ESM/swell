@@ -609,6 +609,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class forecast_output_frequency(TaskQuestion):
+        default_value: str = "PT1H"
+        question_name: str = "forecast_output_frequency"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Frequency of forecast output files (ISO 8601 duration, e.g. PT1H)"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class generate_yaml_and_exit(TaskQuestion):
         default_value: bool = False
         question_name: str = "generate_yaml_and_exit"

@@ -42,6 +42,7 @@ class SaveForecast(taskBase):
         # ------------
         window_length = self.config.window_length()
         forecast_length = self.config.forecast_length()
+        forecast_output_frequency = self.config.forecast_output_frequency()
         expid = self.config.r2d2_experiment_id()
 
         cycle_dir = self.cycle_dir()
@@ -54,7 +55,7 @@ class SaveForecast(taskBase):
         # Build list of forecast steps at PT1H frequency up to forecast_length
         # ----------------------------------------------------------------------
         forecast_length_dur = isodate.parse_duration(forecast_length)
-        forecast_frequency_dur = isodate.parse_duration('PT1H')
+        forecast_frequency_dur = isodate.parse_duration(forecast_output_frequency)
 
         step_dur = forecast_frequency_dur
 
