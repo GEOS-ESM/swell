@@ -27,7 +27,8 @@ def render_jedi_config(suite: str,
     override_dict = {'models': {}}
     override_dict['experiment_root'] = tempdir
     override_dict['generate_yaml_and_exit'] = True
-    override_dict['models'][model] = {'check_for_obs': False}
+    override_dict['models'][model] = {'check_for_obs': False,
+                                      'mock_experiment_directory': True}
     
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
                                 override=override_dict, advanced=False, slurm=None, skip_r2d2=True)

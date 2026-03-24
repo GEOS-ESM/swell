@@ -810,9 +810,9 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class mock_cycle_dir(TaskQuestion):
+    class mock_experiment_directory(TaskQuestion):
         default_value: bool = False
-        question_name: str = "mock_cycle_dir"
+        question_name: str = "mock_experiment_directory"
         ask_question: bool = False
         models: List[str] = mutable_field([
             "all_models"
