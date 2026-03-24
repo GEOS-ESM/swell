@@ -700,7 +700,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.vertical_localization_method(),
             qd.perhost(),
             qd.comparison_log_type('localensembleda'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
