@@ -21,20 +21,25 @@ def run_test(suite: str,
              datetime: str,
              executable_type: str) -> None:
 
+    # Create the mock jedi config
     config_file = mock_jedi_config(suite, model, datetime, executable_type)
 
+    # Read the file
     yaml = YAML(typ='safe')
-
     with open(config_file, 'r') as f:
         config_dict = yaml.load(f)
 
+    # Open the comparison yaml for the suite
     comparison_config = os.path.join(get_swell_path(), 'test', 'jedi_yamls',
                                      f'jedi_config_{suite}.yaml')
-
     with open(comparison_config, 'r') as f:
         comparison_dict = yaml.load(f)
 
-    assert config_dict == comparison_dict
+    if config_dict != comparison_dict:
+        raise AssertionError(f'Rendered JEDI config for suite {suite}, {config_file} '
+                             f'did not match comparison version {comparison_config}. '
+                             'Please check the file diff. If these differences are intentional, '
+                             'create a mock file using `swell utility mock_jedi_config <suite>')
 
 # --------------------------------------------------------------------------------------------------
 
