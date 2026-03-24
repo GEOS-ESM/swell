@@ -16,25 +16,6 @@ from swell.deployment.create_experiment import create_experiment_directory
 
 # --------------------------------------------------------------------------------------------------
 
-defaults_dict = {}
-
-marine_default_datetime = '20210701T120000Z'
-atmosphere_default_datetime = '20231010T000000Z'
-
-defaults_dict['3dvar_marine'] = {'datetime': marine_default_datetime,
-                                 'model': 'geos_marine',
-                                 'executable_type': 'variational'}
-
-defaults_dict['3dvar_marine_cycle'] = defaults_dict['3dvar_marine'].copy()
-
-defaults_dict['3dfgat_marine_cycle'] = {'datetime': marine_default_datetime,
-                                        'model': 'geos_marine',
-                                        'executable_type': 'fgat'}
-
-defaults_dict['3dvar_atmos'] = {'datetime'
-
-# --------------------------------------------------------------------------------------------------
-
 def mock_jedi_config(suite: str,
                      model: str,
                      datetime: str,
