@@ -59,14 +59,14 @@
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
-            # Get restart files from R2D2
-            RunJediVariationalExecutable-{{model_component}} => GetRestart-{{model_component}} 
-
             # Prepare forecast task, Update RC files, and create scratch directory
             RunJediVariationalExecutable-{{model_component}} => PrepForecast-{{model_component}}
 
+            # Get restart files from R2D2
+            PrepForecast-{{model_component}} => GetRestart-{{model_component}}
+
             # Run forecast
-            PrepForecast-{{model_component}} & GetRestart-{{model_component}} => RunForecast-{{model_component}}
+            GetRestart-{{model_component}} => RunForecast-{{model_component}}
 
             # Save forecast
             RunForecast-{{model_component}} => SaveForecast-{{model_component}}

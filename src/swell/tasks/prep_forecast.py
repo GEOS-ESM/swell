@@ -42,8 +42,12 @@ class PrepForecast(taskBase):
         cycle_dir = self.cycle_dir()
         self.scratch_dir = os.path.join(cycle_dir, 'scratch')
 
+        if os.path.isdir(self.scratch_dir):
+            shutil.rmtree(self.scratch_dir)
+            self.logger.info(f'Remove existing {self.scratch_dir}')
+
+        os.makedirs(self.scratch_dir, mode=0o755)
         self.logger.info(f'Creating scratch directory: {self.scratch_dir}')
-        os.makedirs(self.scratch_dir, 0o755, exist_ok=True)
 
         # Gather config values
         # --------------------
@@ -54,19 +58,13 @@ class PrepForecast(taskBase):
         self.an_vars_long = self.config.analysis_variables()
 
         self.geos_cf_run_dir = self.config.geos_cf_run_dir()
-        #self.geos_cf_run_dir = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
         self.geos_cf_install_dir = self.config.geos_cf_install_dir()
-        #self.geos_cf_install_dir = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
 
         self.namelists_dir = os.path.join(self.experiment_config_path(),
                                           'jedi', 'interfaces', 'geos_cf', 'namelists')
 
-
         self.fp_exp = self.config.geosfp_exp()
         self.fp_loc = self.config.geosfp_path()
-
-        #self.fp_exp = "f5295_fp"
-        #self.fp_loc = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
 
         # Derive window times
         # -------------------
@@ -155,7 +153,7 @@ class PrepForecast(taskBase):
         """Fetch GEOS FP analysis files needed for replay over the forecast length."""
 
         n_win_step = math.ceil(self.parse_fclen / self.parse_wlen)
-        ensemble_packet = self.get_ensemble_packet()
+        #ensemble_packet = self.get_ensemble_packet()
 
         for wstep in range(n_win_step):
             fc_date = self.parse_andate + wstep * self.parse_wlen
@@ -166,29 +164,35 @@ class PrepForecast(taskBase):
             date_path = f'Y{anYYYY}/M{anMM}'
             wend_date = self.parse_wend + wstep * self.parse_wlen
 
-            if ensemble_packet is not None:
-                num_mem = int(ensemble_packet) + 1
-                str_mem = f'mem{int(num_mem):03}'
-                weHH = wend_date.strftime('%H')
-                fp_path = f'{self.fp_loc}/{self.fp_exp}/atmens/{date_path}'
-                fp_arch = (f'{self.fp_exp}.atmens_eana.'
-                           f'{anYYYY}{anMM}{anDD}_{weHH}z.tar')
-                fp_file = (f'{self.fp_exp}.ana.eta.'
-                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
-                fp_arch_path = (f'{self.fp_exp}.atmens_eana.'
-                                f'{anYYYY}{anMM}{anDD}_{weHH}z/{str_mem}/{fp_file}')
-                shutil.copy(f'{fp_path}/{fp_arch}', self.scratch_dir)
-                arch_local = os.path.join(self.scratch_dir, fp_arch)
-                with tarfile.open(arch_local, 'r') as tar:
-                    tar_mem = tar.getmember(fp_arch_path)
-                    tar_mem.name = os.path.basename(tar_mem.name)
-                    tar.extract(tar_mem, path=self.scratch_dir)
-                os.remove(arch_local)
-            else:
-                fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
-                fp_file = (f'{self.fp_exp}.ana.eta.'
-                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
-                shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
+            fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
+            fp_file = (f'{self.fp_exp}.ana.eta.'
+                       f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
+            shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
+
+
+#            if ensemble_packet is not None:
+#                num_mem = int(ensemble_packet) + 1
+#                str_mem = f'mem{int(num_mem):03}'
+#                weHH = wend_date.strftime('%H')
+#                fp_path = f'{self.fp_loc}/{self.fp_exp}/atmens/{date_path}'
+#                fp_arch = (f'{self.fp_exp}.atmens_eana.'
+#                           f'{anYYYY}{anMM}{anDD}_{weHH}z.tar')
+#                fp_file = (f'{self.fp_exp}.ana.eta.'
+#                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
+#                fp_arch_path = (f'{self.fp_exp}.atmens_eana.'
+#                                f'{anYYYY}{anMM}{anDD}_{weHH}z/{str_mem}/{fp_file}')
+#                shutil.copy(f'{fp_path}/{fp_arch}', self.scratch_dir)
+#                arch_local = os.path.join(self.scratch_dir, fp_arch)
+#                with tarfile.open(arch_local, 'r') as tar:
+#                    tar_mem = tar.getmember(fp_arch_path)
+#                    tar_mem.name = os.path.basename(tar_mem.name)
+#                    tar.extract(tar_mem, path=self.scratch_dir)
+#                os.remove(arch_local)
+#            else:
+#                fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
+#                fp_file = (f'{self.fp_exp}.ana.eta.'
+#                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
+#                shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -204,15 +208,9 @@ class PrepForecast(taskBase):
         parse_wend = self.parse_wend
         parse_fclen = self.parse_fclen
 
-        # Copy RC/ directory from GEOS-CF run directory to scratch
-        # --------------------------------------------------------
-#        rc_dst = os.path.join(scratch_dir, 'RC')
-#        if os.path.isdir(rc_dst):
-#            shutil.rmtree(rc_dst)
-#        shutil.copytree(os.path.join(self.geos_cf_run_dir, 'RC'), rc_dst)
 
-        # Copy all files in RC/ directory in GEOS-CF run directory to scratch
-        # --------------------------------------------------------
+        # Copy all static files in RC/ in GEOS-CF run directory to scratch
+        # ----------------------------------------------------------------
         src_rc = os.path.join(self.geos_cf_run_dir, 'RC')
         self.logger.info(f'Copy files from {src_rc} to {scratch_dir}')
 
@@ -238,8 +236,6 @@ class PrepForecast(taskBase):
 
         shutil.copy(os.path.join(namelists_dir, f'AGCM_{resolution}.rc'),
                     os.path.join(scratch_dir, 'AGCM.rc'))
-        shutil.copy(os.path.join(namelists_dir, f'HISTORY_{resolution}.rc'),
-                    os.path.join(scratch_dir, 'HISTORY.rc'))
 
         # Update AGCM.rc placeholders
         # ---------------------------
@@ -253,6 +249,19 @@ class PrepForecast(taskBase):
         weHH = parse_wend.strftime('%H')
         self.replace_string(agcm_rc, '>>SWELL_FC6H_DATE<<', f'{weYYYY}{weMM}{weDD}')
         self.replace_string(agcm_rc, '>>SWELL_FC6H_H<<', f'{weHH}0000')
+
+        # Update HISTORY.rc placeholders
+        # ------------------------------
+        history_src = os.path.join(namelists_dir, 'HISTORY.rc')
+        history_dst = os.path.join(scratch_dir, 'HISTORY.rc')
+        shutil.copy(history_src, history_dst)
+
+        if resolution == 'c90':
+            grid_label = 'PE90x540-CF'
+        elif resolution == 'c360':
+            grid_label = 'PE360x2160-CF'
+
+        self.replace_string(history_dst, '>>SWELL_GEOSCF_JEDI_GRID<<', grid_label)
 
         # Update GEOSCHEMchem_GridComp.rc placeholders
         # --------------------------------------------
@@ -285,11 +294,6 @@ class PrepForecast(taskBase):
         with open(cap_restart, 'w') as f:
             f.write(forecast_date)
 
-        # Create collection directory
-        # ------------------------
-        # TODO: make this dynamic
-        #collection_dir = os.path.join(scratch_dir, 'geoscf_jedi')
-        #os.makedirs(collection_dir, 0o755, exist_ok=True)
 
         # Copy and configure gcm_run.j
         # -----------------------------
@@ -298,6 +302,8 @@ class PrepForecast(taskBase):
         shutil.copy(gcm_run_src, gcm_run_dst)
         self.replace_string(gcm_run_dst, '>>SWELL_CYCLEDIR<<', scratch_dir)
         self.replace_string(gcm_run_dst, '>>SWELL_GEOSINSTALL<<', self.geos_cf_install_dir)
+
+        # used in handling Saltwater Restart only
         self.replace_string(gcm_run_dst, '>>SWELL_GEOSRUN<<', self.geos_cf_run_dir)
         os.chmod(gcm_run_dst, 0o755)
 

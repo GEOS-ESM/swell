@@ -26,7 +26,7 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             sq.common,
             qd.start_cycle_point("2023-08-10T00:00:00Z"),
-            qd.final_cycle_point("2023-08-11T00:00:00Z"),
+            qd.final_cycle_point("2023-08-10T00:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
