@@ -12,7 +12,7 @@ import tempfile
 from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
-from swell.utilities.render_jedi_config import render_jedi_config
+from swell.utilities.mock_jedi_config import mock_jedi_config
 
 # --------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ def run_test(suite: str,
              datetime: str,
              executable_type: str) -> None:
 
-    config_file = render_jedi_config(suite, model, datetime, executable_type)
+    config_file = mock_jedi_config(suite, model, datetime, executable_type)
 
     yaml = YAML(typ='safe')
 

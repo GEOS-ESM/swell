@@ -71,6 +71,13 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
 
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+
         # Jedi configuration file
         # -----------------------
         jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')

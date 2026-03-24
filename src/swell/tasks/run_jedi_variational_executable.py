@@ -96,7 +96,9 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        if self.config.mock_experiment_directory(False):
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')

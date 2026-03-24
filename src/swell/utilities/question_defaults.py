@@ -131,6 +131,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class mock_experiment(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "mock_experiment"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Dry-run option for comparing configs."
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class model_components(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "model_components"
@@ -805,19 +818,6 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "Dry-run mode: preview what would be ingested before storing to R2D2"
-        widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class mock_experiment_directory(TaskQuestion):
-        default_value: bool = False
-        question_name: str = "mock_experiment_directory"
-        ask_question: bool = False
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Dry-run option for comparing configs."
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

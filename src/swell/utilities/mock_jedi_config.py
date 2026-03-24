@@ -16,11 +16,11 @@ from swell.deployment.create_experiment import create_experiment_directory
 
 # --------------------------------------------------------------------------------------------------
 
-def render_jedi_config(suite: str,
-                       model: str,
-                       datetime: str,
-                       executable_type: str,
-                       copy_to_wd: bool = False) -> str:
+def mock_jedi_config(suite: str,
+                     model: str,
+                     datetime: str,
+                     executable_type: str,
+                     copy_to_wd: bool = False) -> str:
     
     tempdir = tempfile.mkdtemp()
 

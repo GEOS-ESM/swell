@@ -573,7 +573,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.observing_system_records_path(),
             qd.observations(),
             qd.window_length(),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -591,7 +591,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.window_length(),
             qd.window_type(),
             qd.comparison_log_type('convert_state_soca2cice'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -609,7 +609,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.observations(),
             qd.observing_system_records_path(),
             qd.comparison_log_type('ensmeanvariance'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -621,7 +621,7 @@ class TaskQuestions(QuestionContainer, Enum):
             run_jedi_executable,
             qd.marine_models(),
             qd.comparison_log_type('fgat'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -641,7 +641,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.jedi_forecast_model(),
             qd.total_processors(),
             qd.comparison_log_type('hofx'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -659,7 +659,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.save_geovals(),
             qd.total_processors(),
             qd.comparison_log_type('ensemblehofx'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -719,7 +719,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.total_processors(),
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -733,7 +733,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.single_observations(),
             qd.window_length(),
             qd.comparison_log_type('ufo_tests'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
@@ -745,7 +745,7 @@ class TaskQuestions(QuestionContainer, Enum):
             run_jedi_executable,
             qd.perhost(),
             qd.comparison_log_type('variational'),
-            qd.mock_experiment_directory()
+            qd.mock_experiment()
         ]
     )
 
