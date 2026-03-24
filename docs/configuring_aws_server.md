@@ -53,7 +53,7 @@ import r2d2
 results = r2d2.search(
     item='observation',
     observation_type='adt_cryosat2n',
-    window_start='20210702T060000Z',
+    window_start='20230702T060000Z',
     window_length='PT6H'
 )
 print(f'Found {len(results)} records')
@@ -72,7 +72,7 @@ r2d2.fetch(
     provider='odas',
     observation_type='adt_cryosat2n',
     file_extension='nc',
-    window_start='20210702T090000Z',
+    window_start='20230702T090000Z',
     window_length='PT6H',
     target_file='./test_fetch.nc'
 )
