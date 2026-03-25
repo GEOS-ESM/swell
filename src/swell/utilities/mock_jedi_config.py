@@ -16,20 +16,35 @@ from swell.deployment.create_experiment import create_experiment_directory
 
 # --------------------------------------------------------------------------------------------------
 
+
 def mock_jedi_config(suite: str,
                      model: str,
                      datetime: str,
                      executable_type: str,
-                     copy_to_wd: bool = False) -> str:
-    
+                     copy_dir: str | None = None) -> str:
+
+    '''Generate a mock jedi config using the settings for a particular suite. Configs are generated
+    in a 'dry-run' mode, without checking for existence of observations. Filepaths are replaced
+    with placeholders
+
+    Parameters:
+    suite: String of suite within swell
+    model: Name of model component for the suite to run (e.g. geos_marine)
+    datetime: Cycle that is config is generated for (e.g. 20210701T120000Z)
+    executable_type: JEDI executable type (e.g. variational, hofx, fgat)
+    copy_dir: Directory to copy rendered file to
+
+    Rendered file is placed under a temporary experiment directory
+    '''
+
     tempdir = tempfile.mkdtemp()
 
     override_dict = {'models': {}}
     override_dict['experiment_root'] = tempdir
     override_dict['generate_yaml_and_exit'] = True
-    override_dict['mock_experiment_directory'] = True
+    override_dict['mock_experiment'] = True
     override_dict['models'][model] = {'check_for_obs': False}
-    
+
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
                                 override=override_dict, advanced=False, slurm=None, skip_r2d2=True)
 
@@ -39,7 +54,12 @@ def mock_jedi_config(suite: str,
     task_wrapper('RenderJediObservations', experiment_yaml, datetime,
                  model, ensemblePacket=None)
 
-    task_wrapper(f'RunJedi{executable_type.capitalize()}Executable', experiment_yaml, datetime,
+    if executable_type == 'localensembleda':
+        executable_name = 'LocalEnsembleDa'
+    else:
+        executable_name = executable_type.capitalize()
+
+    task_wrapper(f'RunJedi{executable_name}Executable', experiment_yaml, datetime,
                  model, ensemblePacket=None)
 
     cycle_dir = os.path.join(tempdir, f'swell-{suite}', 'run', datetime, model)
@@ -47,8 +67,8 @@ def mock_jedi_config(suite: str,
     filename = f'jedi_{executable_type}_config.yaml'
     config_file = os.path.join(cycle_dir, filename)
 
-    if copy_to_wd:
-        new_path = os.path.join(os.getcwd(), f'jedi_{suite}_config.yaml')
+    if copy_dir is not None:
+        new_path = os.path.join(copy_dir, f'jedi_{suite}_config.yaml')
         shutil.copy(config_file, new_path)
         config_file = new_path
 

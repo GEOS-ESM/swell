@@ -9,22 +9,34 @@
 
 import tempfile
 import os
-from ruamel.yaml import YAML
 import unittest
 
 from swell.suites.all_suites import get_suites
 from swell.deployment.create_experiment import create_experiment_directory
+from swell.utilities.logger import get_logger
 
 # --------------------------------------------------------------------------------------------------
+
 
 class SuiteCreationTest(unittest.TestCase):
 
     def runTest(self) -> None:
 
+        '''Test generating all suites to make sure they are configured correctly.
+
+        Checks that templates `defer_to_model` and `defer_to_platform` are filled.
+
+        '''
+
         suites = get_suites()
 
+        self.logger = get_logger('SuiteCreationTest')
+
         for suite in suites:
-            self.suite_creation_test(suite)
+            try:
+                self.suite_creation_test(suite)
+            except Exception as e:
+                raise Exception(f'Error generating {suite} experiment: {e}')
 
     def suite_creation_test(self, suite: str) -> None:
 
@@ -36,16 +48,20 @@ class SuiteCreationTest(unittest.TestCase):
         override_dict['skip_r2d2'] = True
 
         create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
-                                    override_dict, False, None)
-        
-        experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite', 'experiment.yaml')
+                                    override_dict, advanced=False, slurm=None, skip_r2d2=True)
 
-        yaml = YAML(typ='safe')
+        experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite',
+                                       'experiment.yaml')
 
         with open(experiment_yaml, 'r') as f:
-            experiment_yaml_str = yaml.load(f)
+            experiment_yaml_str = f.read()
 
-        assert 'defer_to_model' not in experiment_yaml_str
-        assert 'defer_to_platform' not in experiment_yaml_str
+        if 'defer_to_model' in experiment_yaml_str:
+            raise AssertionError(f'Improperly filled template, `defer_to_model`'
+                                 'present in experiment yaml')
+
+        if 'defer_to_platform' in experiment_yaml_str:
+            raise AssertionError(f'Improperly filled template, `defer_to_platform`'
+                                 'present in experiment.yaml')
 
 # --------------------------------------------------------------------------------------------------

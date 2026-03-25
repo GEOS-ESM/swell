@@ -135,9 +135,6 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "mock_experiment"
         ask_question: bool = False
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
         prompt: str = "Dry-run option for comparing configs."
         widget_type: WType = WType.BOOLEAN
 

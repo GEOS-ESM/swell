@@ -80,6 +80,9 @@ observations:
   - tropomi_s5p_no2_tropo
   - tempo_no2_total
 
+obs_experiment:
+  default_value: None
+
 observing_system_records_path:
   default_value: None
 

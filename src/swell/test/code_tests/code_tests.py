@@ -18,6 +18,7 @@ from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
 from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
 from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
 from swell.test.code_tests.suite_creation_test import SuiteCreationTest
+from swell.test.code_tests.jedi_config_test import JEDIConfigTest
 
 
 # --------------------------------------------------------------------------------------------------
@@ -55,6 +56,9 @@ def code_tests() -> None:
 
     # Load Suite Creation Test
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SuiteCreationTest))
+
+    # Load Suite Creation Test
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(JEDIConfigTest))
 
     # Create a test runner
     test_runner = unittest.TextTestRunner()

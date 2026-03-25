@@ -1,0 +1,179 @@
+cost function:
+  cost type: 3D-Var
+  jb evaluation: false
+  time window:
+    begin: '2023-08-05T15:00:00Z'
+    end: '2023-08-05T21:00:00Z'
+    bound to include: begin
+  geometry:
+    fms initialization:
+      namelist filename: cycle_dir/fmsmpp.nml
+      field table filename: cycle_dir/field_table_gmao
+    akbk: cycle_dir/akbk72.nc4
+    layout:
+    - 2
+    - 2
+    npx: 91
+    npy: 91
+    npz: 72
+  analysis variables:
+  - volume_mixing_ratio_of_no2
+  background:
+    datetime: '2023-08-05T18:00:00Z'
+    filetype: cube sphere history
+    provider: geos
+    max allowable geometry difference: 0.1
+    datapath: cycle_dir
+    filename: bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4
+    state variables:
+    - air_pressure_thickness
+    - air_pressure_at_surface
+    - volume_mixing_ratio_of_no2
+    - volume_mixing_ratio_of_no
+    - volume_mixing_ratio_of_o3
+    - volume_mixing_ratio_of_co
+    field io names: &id001
+      eastward_wind: ua
+      northward_wind: va
+      air_temperature: T
+      air_pressure_at_surface: PS
+      air_pressure_thickness: DELP
+      volume_mixing_ratio_of_no2: NO2
+      volume_mixing_ratio_of_no: "NO"
+      volume_mixing_ratio_of_o3: O3
+      volume_mixing_ratio_of_co: CO
+  background error:
+    covariance model: SABER
+    saber central block:
+      saber block name: ID
+  observations:
+    get values:
+    observers:
+    - obs space:
+        name: tempo_no2_tropo
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/tempo_no2_tropo.20230805T150000Z.nc4
+        obsdataout:
+          engine:
+            type: H5File
+            allow overwrite: true
+            obsfile: cycle_dir/experiment_id.tempo_no2_tropo.20230805T150000Z.nc4
+        simulated variables:
+        - nitrogendioxideColumn
+        observed variables:
+        - nitrogendioxideColumn
+      monitoring only: false
+      obs filters:
+      - filter: RejectList
+        where:
+        - variable:
+            name: MetaData/cloud_fraction
+          minvalue: 0.15
+      - filter: RejectList
+        where:
+        - variable:
+            name: MetaData/solar_zenith_angle
+          minvalue: 70
+      obs operator:
+        name: ColumnRetrieval
+        nlayers_retrieval: 72
+        tracer variables:
+        - volume_mixing_ratio_of_no2
+        isApriori: false
+        isAveragingKernel: true
+        stretchVertices: topbottom
+      observation_name: tempo_no2_tropo
+    - obs space:
+        name: tropomi_s5p_no2_tropo
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/tropomi_s5p_no2_tropo.20230805T150000Z.nc4
+        obsdataout:
+          engine:
+            type: H5File
+            allow overwrite: true
+            obsfile: cycle_dir/experiment_id.tropomi_s5p_no2_tropo.20230805T150000Z.nc4
+        simulated variables:
+        - nitrogendioxideColumn
+        observed variables:
+        - nitrogendioxideColumn
+      obs filters:
+      - filter: Domain Check
+        filter variables:
+        - name: nitrogendioxideColumn
+        where:
+        - variable:
+            name: MetaData/latitude
+          minvalue: -65
+          maxvalue: 65
+      obs operator:
+        name: ColumnRetrieval
+        nlayers_retrieval: 34
+        tracer variables:
+        - volume_mixing_ratio_of_no2
+        isApriori: false
+        isAveragingKernel: true
+        stretchVertices: topbottom
+      observation_name: tropomi_s5p_no2_tropo
+variational:
+  minimizer:
+    algorithm: DRPCG
+  iterations:
+  - geometry:
+      fms initialization:
+        namelist filename: cycle_dir/fmsmpp.nml
+        field table filename: cycle_dir/field_table_gmao
+      akbk: cycle_dir/akbk72.nc4
+      layout:
+      - 2
+      - 2
+      npx: 91
+      npy: 91
+      npz: 72
+    gradient norm reduction: 1e-10
+    ninner: 5
+    diagnostics:
+      departures: ombg
+    online diagnostics:
+      write increment: true
+      increment:
+        state component:
+          filetype: auxgrid
+          gridtype: latlon
+          datapath: ./
+          filename: experiment_id.increment-iter1.
+          field io names: *id001
+final:
+  diagnostics:
+    departures: oman
+  prints:
+    frequency: PT3H
+  increment:
+    geometry:
+      fms initialization:
+        namelist filename: cycle_dir/fmsmpp.nml
+        field table filename: cycle_dir/field_table_gmao
+      akbk: cycle_dir/akbk72.nc4
+      layout:
+      - 2
+      - 2
+      npx: 91
+      npy: 91
+      npz: 72
+    output:
+      state component:
+        states:
+        - filetype: cube sphere history
+          datapath: cycle_dir
+          filename: experiment_id.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
+output:
+  filetype: cube sphere history
+  provider: geos
+  datapath: cycle_dir
+  filename: experiment_id.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4
+  first: PT0H
+  frequency: PT1H
+  field io names: *id001
