@@ -18,17 +18,21 @@ def r2d2(template_dict: Mapping) -> Mapping:
     analysis_time_iso = template_dict['analysis_time_iso']
 
     fc_list = [{'file_type': 'MOM.res',
+                'r2d2_model': 'mom6',
                 'filename': f'{cycle_dir}/MOM6.res.{local_background_time}.nc'}]
 
     if 'cice6' in template_dict['marine_models']:
         fc_list.append({'file_type': 'cice.res',
+                        'r2d2_model': 'cice6',
                         'filename': f'{cycle_dir}/cice.res.{local_background_time}.nc'})
 
     an_list = [{'file_type': 'ocn.incr',
+                'r2d2_model': 'mom6',
                 'filename': f'{cycle_dir}/mom6_increment.nc'}]
 
     if 'cice6' in template_dict['marine_models']:
         an_list.append({'file_type': 'ice.incr',
+                        'r2d2_model': 'cice6',
                         'filename': f'{cycle_dir}/ice.{experiment_id}.incr.{analysis_time_iso}.nc'})
 
     r2d2 = {
