@@ -14,7 +14,7 @@ import os
 import r2d2
 import shutil
 from typing import Union
-from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
@@ -42,7 +42,6 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     **r2d2_dict['fetch_empty']: bool whether fetching empty obs file is appropriate
     **r2d2_dict['cycle_dir']: Experiment cycle directory
     **r2d2_dict['logger']: Swell logger
-    (specified this way for multiprocessing)
 
     These values will be popped from the dictionary before running the fetch command
     """
@@ -344,10 +343,10 @@ class GetObservations(taskBase):
 
         # Run through all files to fetch
         # ------------------------------
-        number_of_workers = 4
+        number_of_workers = 10
         self.logger.info(f'Fetching observations in parallel with {number_of_workers} workers')
-        with Pool(processes=number_of_workers) as pool:
-            pool.map(run_r2d2_fetch, r2d2_fetch_dicts)
+        with ThreadPoolExecutor(max_workers=number_of_workers) as executor:
+            list(executor.map(run_r2d2_fetch, r2d2_fetch_dicts))
 
         # Iterate through observation files to read and combine
         # -----------------------------------------------------
