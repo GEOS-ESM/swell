@@ -47,7 +47,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "tempo_no2_tropo",
                 "tropomi_s5p_no2_tropo",
             ]),
-            qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
+            qd.clean_patterns(['*.txt', 'logfile.*.out']),
         ]
     )
 
