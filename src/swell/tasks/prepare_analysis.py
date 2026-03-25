@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import glob
+import isodate
 import netCDF4 as nc
 import os
 import shutil
@@ -27,6 +28,12 @@ class PrepareAnalysis(taskBase):
 
         """
         Updates variables in restart files with analysis variables.
+
+        For FV3-jedi:
+            - None
+        For SOCA:
+            - MOM6: This is handled here where IAU method is actively used and supported.
+            - CICE6: This is handled by soca2cice script
         """
 
         self.logger.info('Preparing analysis and updating restarts')
@@ -37,19 +44,18 @@ class PrepareAnalysis(taskBase):
         self.jedi_rendering.add_key('mom6_iau', self.config.mom6_iau(False))
 
         model_component_meta = self.jedi_rendering.render_interface_meta()
-        self.SOCA_dict = model_component_meta['variables']
 
         # Current and restart time objects
         # --------------------------------
-        self.current_cycle = os.path.basename(self.forecast_dir())
         self.cc_dto = self.cycle_time_dto()
 
         window_length = self.config.window_length()
 
         # GEOS restarts have seconds in their filename
-        # --------------------------------------------
+        # We want to use rst_dto at the beginning of the DA window (window offset is negative)
+        # ---------------------------------------------------------
         an_fcst_offset = self.da_window_params.analysis_forecast_window_offset(window_length)
-        rst_dto = self.geos.adjacent_cycle(an_fcst_offset, return_date=True)
+        rst_dto = self.cc_dto + isodate.parse_duration(an_fcst_offset)
         seconds = str(rst_dto.hour * 3600 + rst_dto.minute * 60 + rst_dto.second)
 
         # Determine which models require analysis (code will fail if executed
@@ -62,6 +68,7 @@ class PrepareAnalysis(taskBase):
         # Below is SOCA specific
         # Generic analysis and increment file format independent of exp_id
         # ---------------------------------------------------------------
+        self.SOCA_dict = model_component_meta['variables']
         ana_path = self.at_cycledir(['ocn.*' + self.cc_dto.strftime('.an.%Y-%m-%dT%H:%M:%SZ.nc')])
         incr_path = self.at_cycledir(['ocn.*' +
                                       self.cc_dto.strftime('.incr.%Y-%m-%dT%H:%M:%SZ.nc')])
@@ -72,15 +79,15 @@ class PrepareAnalysis(taskBase):
 
         # Generic rst file format
         # ------------------------
-        f_rst = self.forecast_dir(['RESTART', 'MOM.res.nc'])
+        f_rst = self.forecast_dir(['scratch', 'RESTART', 'MOM.res.nc'])
 
         # This alternate restart format corresponds to optional use of Restart Record
         # parameters in AGCM.rc
         # -------------------------------------------------------------------------
-        agcm_dict = self.geos.parse_rc(self.forecast_dir('AGCM.rc'))
+        agcm_dict = self.geos.parse_rc(self.forecast_dir(['scratch', 'AGCM.rc']))
 
         if 'RECORD_FREQUENCY' in agcm_dict:
-            f_rst = self.forecast_dir(['RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
+            f_rst = self.forecast_dir(['scratch', 'RESTART', rst_dto.strftime('MOM.res_Y%Y_D%j_S')
                                        + seconds + '.nc'])
 
         self.soca_ana = self.config.analysis_variables()
@@ -94,6 +101,16 @@ class PrepareAnalysis(taskBase):
     # ----------------------------------------------------------------------------------------
 
     def at_cycledir(self, paths: Union[list, str] = []) -> str:
+        """
+        Get the absolute path to the model cycle directory for the given relative paths.
+
+        Args:
+            paths (Union[list, str]): Relative path or list of relative paths to join with the cycle
+                                      directory. Defaults to [].
+
+        Returns:
+            str: The absolute path to the joined directory/file.
+        """
 
         # Ensure what we have is a list (paths should be a list)
         # ------------------------------------------------------
@@ -109,10 +126,12 @@ class PrepareAnalysis(taskBase):
 
     def mom6_increment(self, f_rst: str, ana_path: str, incr_path: str) -> None:
 
-        # This method prepares MOM6 increment file for IAU during next cycle.
-        # SOCA increment does not contain layer thickness (h) variable. Hence,
-        # SOCA incr needs to be combined with the h variable from
-        # the SOCA analysis file.
+        '''
+        This method prepares MOM6 increment file for IAU during next cycle.
+        SOCA increment does not contain layer thickness (h) variable. Hence,
+        SOCA incr needs to be combined with the h variable from
+        the SOCA analysis file.
+        '''
 
         for filepath in list(glob.glob(ana_path)):
             f_ana = filepath
@@ -138,10 +157,15 @@ class PrepareAnalysis(taskBase):
 
     def replace_ocn(self, f_rst: str, ana_pth: str) -> None:
 
+        '''
+        Not-recommended
+        Non-IAU method to update analysis variables in MOM6 restart file.
+        '''
+
         # TODO: This will fail for multiple restart files and no IAU
         # ----------------------------------------------------------
 
-        for filepath in list(glob.glob(ana_path)):
+        for filepath in list(glob.glob(ana_pth)):
             f_ana = filepath
 
         # Open read and write and rename dimensions
@@ -164,6 +188,6 @@ class PrepareAnalysis(taskBase):
         ds_ana.close()
         ds_rst.close()
 
-        shutil.move(f_rst, self.forecast_dir(['RESTART', 'MOM.res.nc']))
+        shutil.move(f_rst, self.forecast_dir(['scratch', 'RESTART', 'MOM.res.nc']))
 
 # --------------------------------------------------------------------------------------------------

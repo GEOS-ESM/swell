@@ -20,16 +20,13 @@ def copy_to_dst_dir(logger: Logger, src: str, dst_dir: str) -> None:
     """ Source could be a directory or single file which necesitates different handling
     """
 
-    try:
-        if not os.path.isfile(src):
-            logger.info(' Copying files from: '+src)
-            shutil.copytree(src, dst_dir, dirs_exist_ok=True)
-        else:
-            logger.info(' Copying file: '+src)
-            shutil.copy(src, dst_dir)
+    if not os.path.isfile(src):
+        logger.info(' Copying files from: '+src)
+        shutil.copytree(src, dst_dir, dirs_exist_ok=True)
+    else:
+        logger.info(' Copying file: '+src)
+        shutil.copy(src, dst_dir)
 
-    except Exception:
-        logger.abort('Copying failed, see if source files exists')
 
 # --------------------------------------------------------------------------------------------------
 
@@ -62,7 +59,8 @@ def link_all_files_from_first_in_hierarchy_of_sources(
     # Check that at least one path was found
     if not any(found_paths):
         logger.abort(f'In link_all_files_from_first_in_hierarchy_of_sources none of the ' +
-                     f'directories being searched were found to exist. Directories: {source_paths}')
+                     f'directories being searched were found to exist. Directories: {source_paths}',
+                     FileNotFoundError)
 
     # Second sweep to establish if directories contain files
     found_files = False
@@ -77,7 +75,8 @@ def link_all_files_from_first_in_hierarchy_of_sources(
     # Check that at least one path contains some files
     if not found_files:
         logger.abort(f'In link_all_files_from_first_in_hierarchy_of_sources none of the ' +
-                     f'directories being searched contained any files. Directories: {source_paths}')
+                     f'directories being searched contained any files. Directories: {source_paths}',
+                     FileNotFoundError)
 
     # Link all the files from the first directory searched that contains files
     source_files = os.listdir(source_path)
@@ -138,7 +137,7 @@ def link_file_existing_link_ok(
             logger.abort(f'In link_file_with_overwrite when linking source file ' +
                          f'{source_path_file} to {target_path_file} a file was already found ' +
                          f'that is not a symbolic link. This code will not replace concrete ' +
-                         f'files with symbolic links.')
+                         f'files with symbolic links.', FileExistsError)
 
     # Create symbolic link
     logger.info(f'Linking {source_path_file} to {target_path_file}')
@@ -149,11 +148,7 @@ def link_file_existing_link_ok(
 
 def move_files(logger: Logger, src_dir: str, dst_dir: str) -> None:
 
-    try:
-        logger.info(' Moving file(s) from: '+src_dir)
-        shutil.move(src_dir, dst_dir)
-
-    except Exception:
-        logger.abort('Moving failed, see if source files exist')
+    logger.info(' Moving file(s) from: '+src_dir)
+    shutil.move(src_dir, dst_dir)
 
 # ----------------------------------------------------------------------------------------------
