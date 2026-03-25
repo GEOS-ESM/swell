@@ -146,7 +146,8 @@ class TaskQuestions(QuestionContainer, Enum):
     CleanCycle = QuestionList(
         list_name="CleanCycle",
         questions=[
-            qd.clean_patterns()
+            qd.clean_patterns(),
+            qd.window_length()
         ]
     )
 

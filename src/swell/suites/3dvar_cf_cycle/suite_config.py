@@ -26,7 +26,7 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             sq.common,
             qd.start_cycle_point("2023-08-10T00:00:00Z"),
-            qd.final_cycle_point("2023-08-10T00:00:00Z"),
+            qd.final_cycle_point("2023-08-10T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
@@ -84,7 +84,7 @@ class SuiteConfig(QuestionContainer, Enum):
             # mom6_iau is available. I don't know if we want run 3dvar without iau
             qd.iau(True),
             qd.forecast_length('PT12H'), ## can be hardcoded for now. make sure the name is correct
-            qd.forecast_output_frequency('PT1H'),
+            qd.forecast_output_frequency('PT3H'),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
             qd.swell_static_files('/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles'),
         ]
