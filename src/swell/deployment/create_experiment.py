@@ -15,7 +15,7 @@ import os
 import shutil
 import sys
 from ruamel.yaml import YAML
-from typing import Union, Optional
+from typing import Optional
 
 from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
@@ -27,6 +27,19 @@ from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_scheduling_dict
 from swell.utilities.check_da_params import check_da_params
 
+
+# --------------------------------------------------------------------------------------------------
+
+
+def read_override_file(override_path: str | None) -> dict:
+
+    yaml = YAML(typ='safe')
+
+    if override_path is None:
+        return {}
+    else:
+        with open(override_path, 'r') as f:
+            return yaml.load(f)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -74,7 +87,7 @@ def prepare_config(
     suite_config: str,
     method: str,
     platform: str,
-    override: Union[dict, str, None],
+    override: dict,
     advanced: bool,
     slurm: str
 ) -> str:
@@ -165,7 +178,8 @@ def prepare_config(
 
     # Register the experiment in R2D2
     # -------------------------------
-    if 'r2d2_experiment_id' in experiment_dict:
+    if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
+            and not experiment_dict['skip_r2d2']:
 
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
@@ -221,7 +235,8 @@ def create_experiment_directory(
     platform: str,
     override: str,
     advanced: bool,
-    slurm: Optional[str]
+    slurm: str | None,
+    skip_r2d2: bool
 ) -> None:
 
     # Get the base name of the suite
@@ -232,10 +247,21 @@ def create_experiment_directory(
     # ---------------
     logger = get_logger('SwellCreateExperiment')
 
+    # Read override file
+    # ------------------
+    override_dict = read_override_file(override)
+
+    # Specify whether to skip registering and storing in R2D2
+    # -------------------------------------------------------
+    if skip_r2d2:
+
+        # Only override this if it is true, otherwise let the suite decide
+        override_dict['skip_r2d2'] = skip_r2d2
+
     # Call the experiment config and suite generation
     # ------------------------------------------------
     experiment_dict_str = prepare_config(suite, suite_config, method, platform,
-                                         override, advanced, slurm)
+                                         override_dict, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------
