@@ -74,6 +74,7 @@ swell = [
     'deployment/platforms/*/*.yaml',
     'suites/**',
     'test/suite_tests/*.yaml',
+    'test/jedi_configs/*.yaml',
     'configuration/**',
     'utilities/pinned_versions/*.yaml'
 ]
