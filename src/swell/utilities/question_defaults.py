@@ -163,7 +163,7 @@ class QuestionDefaults():
 
     @dataclass
     class runahead_limit(SuiteQuestion):
-        default_value: str = "P0"
+        default_value: str = "P4"
         question_name: str = "runahead_limit"
         ask_question: bool = True
         prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
@@ -693,19 +693,6 @@ class QuestionDefaults():
             "geos_cf"
         ])
         prompt: str = "What is the path to the GEOS-CF install directory?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class geos_cf_namelists_dir(TaskQuestion):
-        default_value: str = "/discover/nobackup/mabdiosk/SWELL_uv/swell/src/swell/configuration/jedi/interfaces/geos_cf/namelists"
-        question_name: str = "geos_cf_namelists_dir"
-        ask_question: bool = True
-        models: List[str] = mutable_field([
-            "geos_cf"
-        ])
-        prompt: str = "What is the path to the GEOS-CF namelists directory?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
