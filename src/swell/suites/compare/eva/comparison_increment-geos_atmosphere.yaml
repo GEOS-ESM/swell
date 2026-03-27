@@ -89,8 +89,8 @@ graphics:
           label: PS increment Diff
           colorbar: true
           cmap: 'bwr'
-          vmin: -100
-          vmax: 100
+          vmin: -20
+          vmax: 20
 
   #map plot for temperature increment (lowest level)
   - batch figure:
@@ -168,8 +168,8 @@ graphics:
           label: T increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -246,8 +246,8 @@ graphics:
           label: T increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -326,8 +326,8 @@ graphics:
           label: T increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -406,8 +406,8 @@ graphics:
           label: T increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for temperature increment
   - batch figure:
@@ -487,8 +487,8 @@ graphics:
           label: T increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for temperature increment
   - batch figure:
@@ -568,8 +568,8 @@ graphics:
           label: T increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Zonal Wind increment (lowest level)
   - batch figure:
@@ -649,8 +649,8 @@ graphics:
           label: U increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
   #map plot for Zonal Wind increment
   - batch figure:
       variables: [ua]
@@ -729,8 +729,8 @@ graphics:
           label: U increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Zonal Wind increment
   - batch figure:
@@ -810,8 +810,8 @@ graphics:
           label: U increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Zonal Wind increment
   - batch figure:
@@ -891,8 +891,8 @@ graphics:
           label: U increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Zonal Wind increment
   - batch figure:
@@ -972,8 +972,8 @@ graphics:
           label: U increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Zonal Wind increment
   - batch figure:
@@ -1053,8 +1053,8 @@ graphics:
           label: U increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: -0.2
+          vmax: 0.2
 
   #map plot for Meridional Wind increment (lowest level)
   - batch figure:
@@ -1134,8 +1134,8 @@ graphics:
           label: V increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: &vmin_diff_va -0.2
+          vmax: &vmax_diff_va 0.2
 
   #map plot for Meridional Wind increment
   - batch figure:
@@ -1215,8 +1215,8 @@ graphics:
           label: V increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: &vmin_diff_va
+          vmax: &vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
@@ -1296,8 +1296,8 @@ graphics:
           label: V increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: &vmin_diff_va
+          vmax: &vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
@@ -1378,8 +1378,8 @@ graphics:
           label: V increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: &vmin_diff_va
+          vmax: &vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
