@@ -96,6 +96,8 @@ graphics:
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_ave_ssh_diff -0.05
+          vmax: &vmax_ave_ssh_diff 0.05
 
   - batch figure:
       variables: [Temp]
@@ -174,6 +176,8 @@ graphics:
           label: SST increment Diff
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_temp -0.6
+          vmax: &vmax_temp 0.6
 
   - batch figure:
       variables: [Salt]
@@ -252,6 +256,8 @@ graphics:
           label: SSS increment Diff
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_salt_diff -0.2
+          vmax: &vmax_salt_diff 0.2
 
 # ssh diff
 transforms:
