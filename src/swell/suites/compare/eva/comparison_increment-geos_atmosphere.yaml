@@ -1411,8 +1411,8 @@ graphics:
           label: V increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: &vmin_va -1
-          vmax: &vmax_va 1
+          vmin: *vmin_va
+          vmax: *vmax_va
 
       # Experiment 2
       - mapping:
@@ -1459,8 +1459,8 @@ graphics:
           label: V increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va_diff
-          vmax: *vmax_va_diff
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
@@ -1540,8 +1540,8 @@ graphics:
           label: V increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va_diff
-          vmax: *vmax_va_diff
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
 
   #map plot for Specific Humidity increment (lowest level)
