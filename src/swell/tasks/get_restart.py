@@ -57,7 +57,7 @@ class GetRestart(taskBase):
         for file_type in rst_file_types:
             base =  os.path.join(scratch_dir,file_type)
             target_file=f'{base}_rst'
-            print(target_file)
+            self.logger.info(f'Fetching {file_type} to {target_file}')
             r2d2.fetch(
                 model=model,
                 item='forecast',

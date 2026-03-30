@@ -86,7 +86,11 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.forecast_length('PT12H'), ## can be hardcoded for now. make sure the name is correct
             qd.forecast_output_frequency('PT3H'),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
+            qd.inc_template('/discover/nobackup/mabdiosk/rundir/handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'),
+            qd.geos_cf_install_dir('/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install'),
+            qd.geos_cf_run_dir('/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab'),
             qd.swell_static_files('/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles'),
+            qd.geosfp_path('discover/nobackup/projects/gmao/geos_cf_dev/jbarre')
         ]
     )
 

@@ -686,7 +686,7 @@ class QuestionDefaults():
 
     @dataclass
     class geos_cf_install_dir(TaskQuestion):
-        default_value: str = "/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install"
+        default_value: str = "defer_to_platform"
         question_name: str = "geos_cf_install_dir"
         ask_question: bool = True
         models: List[str] = mutable_field([
@@ -699,7 +699,7 @@ class QuestionDefaults():
 
     @dataclass
     class geos_cf_run_dir(TaskQuestion):
-        default_value: str = "/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab"
+        default_value: str = "defer_to_platform"
         question_name: str = "geos_cf_run_dir"
         ask_question: bool = True
         models: List[str] = mutable_field([
@@ -725,7 +725,7 @@ class QuestionDefaults():
 
     @dataclass
     class geosfp_path(TaskQuestion):
-        default_value: str = "/discover/nobackup/projects/gmao/geos_cf_dev/jbarre"
+        default_value: str = "defer_to_platform"
         question_name: str = "geosfp_path"
         ask_question: bool = True
         models: List[str] = mutable_field([

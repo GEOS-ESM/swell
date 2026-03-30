@@ -44,9 +44,9 @@ class GetBackground(taskBase):
         window_type = self.config.window_type()
 
 
-        # Use background_experiment for first cycle of cycling experiment
-        # An experiment is a cycling experiment if it has cycle in its suite name
-
+        # For experiments with cycle in the suite name:
+        # for the first cycle, use background_experiment in config as the experiment id for fetching from r2d2
+        # for cycles after the first one, use the current experiment id for fetching from r2d2
         if self.cycle_time_dto() != self.start_cycle_point_dto() and 'cycle' in self.suite_name():
             background_experiment = self.config.r2d2_experiment_id()
         else:

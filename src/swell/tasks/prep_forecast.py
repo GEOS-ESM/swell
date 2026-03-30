@@ -111,8 +111,7 @@ class PrepForecast(taskBase):
     def create_geos_cf_increments(self) -> None:
         """Convert JEDI increment files to GEOS-CF format using the increment template."""
 
-        #inc_template = self.config.inc_template()
-        inc_template = '/discover/nobackup/mabdiosk/rundir/handle_inc/GCC_c90_FPens.geoscf_jedi.20210805_0600z.nc4'
+        inc_template = self.config.inc_template()
 
         tstring_date = (self.parse_andate.strftime('%Y-%m-%d') + ' ' +
                         self.parse_andate.strftime('%H:%M:%S'))
@@ -259,6 +258,8 @@ class PrepForecast(taskBase):
             grid_label = 'PE90x540-CF'
         elif resolution == 'c360':
             grid_label = 'PE360x2160-CF'
+        else:
+            raise ValueError(f'Unsupported horizontal resolution for HISTORY.rc grid label: {resolution}')
 
         self.replace_string(history_dst, '>>SWELL_GEOSCF_JEDI_GRID<<', grid_label)
 
@@ -317,8 +318,11 @@ class PrepForecast(taskBase):
         # Update CAP.rc with forecast length
         # ------------------------------------
         fc_days = str(parse_fclen.days).zfill(8)
-        fc_secs = str(int(parse_fclen.total_seconds()) % 86400 // 3600).zfill(2) + '0000'
-        fc_len_geoscf = f'{fc_days} {fc_secs}'
+        sub_day_secs = int(parse_fclen.total_seconds()) % 86400
+        fc_hh = sub_day_secs // 3600
+        fc_mm = (sub_day_secs % 3600) // 60
+        fc_ss = sub_day_secs % 60
+        fc_len_geoscf = f'{fc_days} {fc_hh:02d}{fc_mm:02d}{fc_ss:02d}'
         cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
         cap_dst = os.path.join(scratch_dir, 'CAP.rc')
         shutil.copy(cap_src, cap_dst)
