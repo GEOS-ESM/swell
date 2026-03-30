@@ -52,7 +52,7 @@ class variational3D(OopsConfig):
                 },
                 'prints': {
                     'frequency': 'PT3H'
-                },
+                }
             },
             'output': self.interface_model('analysis')
         }
