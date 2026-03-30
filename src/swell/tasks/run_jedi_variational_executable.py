@@ -99,7 +99,6 @@ class RunJediVariationalExecutable(taskBase):
         # Add placeholder names if mock experiment
         # ----------------------------------------
         if self.config.mock_experiment(False):
-            print('MOCK EXPERIMENT')
             self.jedi_rendering.add_key('experiment_root', 'experiment_root')
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
