@@ -186,6 +186,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class skip_r2d2(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "skip_r2d2"
+        prompt: str = "Skip registering and storing results of this experiment in R2D2?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class start_cycle_point(SuiteQuestion):
         default_value: str = "2023-10-10T00:00:00Z"
         question_name: str = "start_cycle_point"
@@ -1294,15 +1303,6 @@ class QuestionDefaults():
         prompt: str = ("When running the ncdiag to ioda converted do you "
                        "want to produce GeoVaLs files?")
         widget_type: WType = WType.BOOLEAN
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class r2d2_local_path(TaskQuestion):
-        default_value: str = "defer_to_platform"
-        question_name: str = "r2d2_local_path"
-        prompt: str = "What is the path to the R2D2 local directory?"
-        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 

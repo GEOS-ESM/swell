@@ -6,7 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-# Cylc suite for executing JEDI-based h(x)
+# Cylc suite for executing JEDI-based non-cycling variational data assimilation
 
 # --------------------------------------------------------------------------------------------------
 
@@ -34,44 +34,47 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
-
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-
             # Task triggers for: {{model_component}}
             # ------------------
-
-            # Get background
-            GetBackground-{{model_component}}
-
-            # Get observations
-            GetObservations-{{model_component}}
+            # Generate background error covariance
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
-            # Run Jedi hofx executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediHofxExecutable-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediHofxExecutable-{{model_component}}
-            GetBackground-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            # Run Jedi variational executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
 
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            RenderJediObservations-{{model_component}} => RunJediHofxExecutable-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # EvaIncrement
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
             {% if not skip_r2d2 %}
             # Save observations
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
             {% endif %}
 
             # Clean up large files
-            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
+            CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -109,7 +112,6 @@
         {%- endfor %}
 
     {% for model_component in model_components %}
-
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
@@ -122,14 +124,20 @@
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediHofxExecutable-{{model_component}}]]
-        script = "swell task RunJediHofxExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediVariationalExecutable-{{model_component}}]]
+        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediHofxExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["RunJediHofxExecutable"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[EvaJediLog-{{model_component}}]]
+        script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
 
     [[EvaObservations-{{model_component}}]]
         script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
