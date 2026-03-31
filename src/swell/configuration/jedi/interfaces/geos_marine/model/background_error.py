@@ -50,10 +50,12 @@ def background_error(template_dict: Mapping) -> Mapping:
             'read': {
                 'groups': [
                     {'variables': [
-                        'sea_water_potential_temperature', 'sea_water_salinity'
+                        'sea_water_potential_temperature',
+                        'sea_water_salinity'
                         ],
                      'horizontal': {
-                        'filepath': 'background_error_model/hz_rossby'
+                        # 'filepath': 'background_error_model/hz_rossby'
+                        'filepath': 'background_error_model/new_corr_1p0'
                         },
                      'vertical': {
                          'levels': vertical_resolution,
@@ -63,7 +65,8 @@ def background_error(template_dict: Mapping) -> Mapping:
                      },
                     {'variables': variables,
                         'horizontal': {
-                            'filepath': 'background_error_model/hz_rossby_1p5'
+                            # 'filepath': 'background_error_model/hz_rossby_1p5'
+                            'filepath': 'background_error_model/new_corr_1p5'
                         }
                      },
                 ]
@@ -83,7 +86,10 @@ def background_error(template_dict: Mapping) -> Mapping:
                      },
                  },
              'unbalanced salinity': {},
-             'unbalanced ssh': {}}
+             'unbalanced ssh': {},
+             # 'save diagnostics': {'filepath': 'parametric_ocean_stddev_diags'}
+             }
+
         ],
         'linear variable change': {
             'input variables': template_dict['analysis_variables'],
