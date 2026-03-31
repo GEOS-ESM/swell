@@ -57,7 +57,7 @@ def code_tests() -> None:
     # Load Suite Creation Test
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SuiteCreationTest))
 
-    # Load Suite Creation Test
+    # Load JEDI config test
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(JEDIConfigTest))
 
     # Create a test runner

@@ -14,6 +14,7 @@ import unittest
 from swell.swell_path import get_swell_path
 from swell.utilities.mock_jedi_config import mock_jedi_config
 from swell.utilities.scripts.create_mock_configs import defaults_dict
+from swell.utilities.test_cache import get_test_cache
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,8 +41,10 @@ class JEDIConfigTest(unittest.TestCase):
             datetime = defaults['datetime']
             executable_type = defaults['executable_type']
 
+            cache_location = get_test_cache()
+
             # Create the mock jedi config
-            config_file = mock_jedi_config(suite, model, datetime, executable_type)
+            config_file = mock_jedi_config(suite, model, datetime, executable_type, cache_location)
 
             # Read the file
             yaml = YAML(typ='safe')
@@ -60,6 +63,6 @@ class JEDIConfigTest(unittest.TestCase):
                                      f'did not match comparison version {comparison_config}. '
                                      'Please check the file diffs. If these differences '
                                      'are intentional, new mock test files can be generated using '
-                                     '`swell utility MockJediConfigs`')
+                                     '`swell utility CreateMockConfigs`')
 
 # --------------------------------------------------------------------------------------------------

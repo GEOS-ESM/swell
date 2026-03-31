@@ -21,6 +21,7 @@ def mock_jedi_config(suite: str,
                      model: str,
                      datetime: str,
                      executable_type: str,
+                     work_dir: str | None = None,
                      copy_dir: str | None = None) -> str:
 
     '''Generate a mock jedi config using the settings for a particular suite. Configs are generated
@@ -37,7 +38,10 @@ def mock_jedi_config(suite: str,
     Rendered file is placed under a temporary experiment directory
     '''
 
-    tempdir = tempfile.mkdtemp()
+    if work_dir is None:
+        tempdir = tempfile.mkdtemp()
+    else:
+        tempdir = work_dir
 
     override_dict = {'models': {}}
     override_dict['experiment_root'] = tempdir

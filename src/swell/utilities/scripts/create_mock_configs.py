@@ -11,6 +11,7 @@ import os
 
 from swell.swell_path import get_swell_path
 from swell.utilities.mock_jedi_config import mock_jedi_config
+from swell.utilities.test_cache import get_test_cache
 
 # --------------------------------------------------------------------------------------------------
 
@@ -63,9 +64,10 @@ def main() -> None:
         datetime = defaults['datetime']
         executable_type = defaults['executable_type']
 
+        work_dir = get_test_cache()
         copy_dir = os.path.join(get_swell_path(), 'test', 'jedi_configs')
 
-        mock_jedi_config(suite, model, datetime, executable_type, copy_dir)
+        mock_jedi_config(suite, model, datetime, executable_type, work_dir, copy_dir)
 
 
 # --------------------------------------------------------------------------------------------------
