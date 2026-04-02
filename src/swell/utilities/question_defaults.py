@@ -1319,7 +1319,6 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
-
     @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
