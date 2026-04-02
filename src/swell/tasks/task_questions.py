@@ -418,6 +418,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetObservations",
         questions=[
             background_crtm_obs,
+            qd.cache_fetch(),
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
