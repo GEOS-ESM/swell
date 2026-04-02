@@ -18,10 +18,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-from swell.utilities.r2d2 import get_r2d2_model_name
 
 # ----------------------------------------------------------------------------------------------
 
@@ -42,8 +41,14 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
     cycle_dir = r2d2_dict.pop('cycle_dir')
     logger = r2d2_dict.pop('logger')
+    cache_fetch = r2d2_dict.pop('cache_fetch', True)
 
     target_file = r2d2_dict['target_file']
+
+    # Skip fetch if caching is enabled and the file already exists
+    if cache_fetch and os.path.exists(target_file) and os.path.getsize(target_file) > 0:
+        logger.info(f"Cache exists, skipping R2D2 fetch: {target_file}")
+        return
 
     try:
         r2d2.fetch(**r2d2_dict)
@@ -156,7 +161,7 @@ class GetObservations(taskBase):
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_length = self.config.window_length()
         cycling_varbc = self.config.cycling_varbc(None)
-
+        cache_fetch = self.config.cache_fetch(True)
         # Get model component and translate to R2D2 model name
         model_component = self.get_model()
         r2d2_model = get_r2d2_model_name(model_component)
@@ -351,6 +356,7 @@ class GetObservations(taskBase):
         for fetch_dict in r2d2_fetch_dicts:
             fetch_dict['logger'] = self.logger
             fetch_dict['cycle_dir'] = self.cycle_dir()
+            fetch_dict['cache_fetch'] = cache_fetch
 
         # Run through all files to fetch
         # ------------------------------

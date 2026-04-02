@@ -1307,6 +1307,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class cache_fetch(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "cache_fetch"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Use cached observation files if they already exist?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+
+    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
