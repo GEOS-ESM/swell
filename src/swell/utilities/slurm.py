@@ -78,6 +78,7 @@ def prepare_scheduling_dict(
         'EvaComparisonObservations',
         'EvaTimeseries',
         'GenerateBClimatology',
+        'RunGeos',
         'RunJediEnsembleMeanVariance',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',
@@ -87,7 +88,6 @@ def prepare_scheduling_dict(
         'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
-        'RunGeosExecutable'
         }
 
     # Throw an error if a user tries to set SLURM directives for a task that
@@ -133,7 +133,6 @@ def prepare_scheduling_dict(
         # Set model_agnostic directives
         validate_directives(directives)
         scheduling_dict[slurm_task] = {"directives": {"all": directives}}
-
         # Now, add model component-specific logic. The inheritance here is more
         # complicated:
         # - Experiment global defaults (`experiment_globals`)
@@ -184,7 +183,6 @@ def prepare_scheduling_dict(
         if slurm_task in experiment_task_directives.keys():
             x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
         scheduling_dict[slurm_task]['execution_time_limit'] = x
-
     return scheduling_dict
 
 

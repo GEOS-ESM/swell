@@ -9,55 +9,95 @@
 
 import os
 from ruamel.yaml import YAML
+import random
+import subprocess
 
-from swell.swell_path import get_swell_path
-from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
+
+# --------------------------------------------------------------------------------------------------
+# R2D2 Model Name Mapping
+# --------------------------------------------------------------------------------------------------
+# To add a new model:
+#   1. Register the model in R2D2 (with r2d2.register_model())
+#   2. Add it to the dictionary below
+
+R2D2_MODEL_MAP = {
+    'geos_atmosphere': ['geos'],
+    'geos_marine': ['mom6', 'cice6'],
+    'geos_cf': ['geos_cf'],
+}
+
+# Platform-specific R2D2 module config
+_R2D2_MODULE_CONFIG = {
+    'nccs_discover_sles15': {
+        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
+        'module_name': 'r2d2-client/112025',
+    },
+    'nccs_discover_cascade': {
+        'module_path': '/discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core',
+        'module_name': 'r2d2-client/112025',
+    },
+}
 
 # --------------------------------------------------------------------------------------------------
 
 
-def create_r2d2_config(
-    logger: Logger,
-    platform: str,
-    cycle_dir: str,
-    r2d2_local_path: str
-) -> None:
-
-    # Load R2D2 v3 credentials from ~/.swell/r2d2_credentials.yaml
-    # -----------------------------------------------------------
-    load_r2d2_credentials(logger, platform)
-
-    # R2D2 config file that will be created
-    r2d2_config_file = os.path.join(cycle_dir, 'r2d2_config.yaml')
-
-    # Set the environment variable R2D2_CONFIG
-    os.environ["R2D2_CONFIG"] = r2d2_config_file
-
-    # If the file already exists then return
-    if os.path.isfile(r2d2_config_file):
+def load_r2d2_module(logger: Logger, platform: str) -> None:
+    """Load R2D2 module via bash, capture env, apply to current process."""
+    if platform not in _R2D2_MODULE_CONFIG:
         return
+    config = _R2D2_MODULE_CONFIG[platform]
+    cmd = (
+        f'source /usr/share/lmod/lmod/init/bash && '
+        f'module use -a {config["module_path"]} && '
+        f'module load {config["module_name"]} && env'
+    )
+    try:
+        result = subprocess.run(['bash', '-c', cmd], capture_output=True, text=True, timeout=30)
+        if result.returncode != 0:
+            logger.warning(f'Failed to load R2D2 module: {result.stderr}')
+            return
+        for line in result.stdout.strip().split('\n'):
+            if '=' in line:
+                key, _, value = line.partition('=')
+                os.environ[key] = value
+                # PYTHONPATH needs to be added to sys.path for import to work
+                if key == 'PYTHONPATH':
+                    import sys
+                    for p in value.split(':'):
+                        if p and p not in sys.path:
+                            sys.path.insert(0, p)
+        logger.info(f'Loaded R2D2 module: {config["module_name"]}')
+    except Exception as e:
+        logger.warning(f'Could not load R2D2 module: {e}')
 
-    # Read R2D2 config file template that will be read
-    r2d2_config_file_template = os.path.join(get_swell_path(), 'deployment', 'platforms', platform,
-                                             'r2d2_config.yaml')
+# ----------------------------------------------------------------------------------------------
 
-    with open(r2d2_config_file_template, 'r') as f:
-        r2d2_config_file_template_str = f.read()
 
-    # Create a dictionary containing r2d2_local_path
-    r2d2_config_dict = {'r2d2_local_path': r2d2_local_path}
+def get_r2d2_models(swell_model):
+    """Returns list of all R2D2 model names."""
+    models = R2D2_MODEL_MAP.get(swell_model, [swell_model])
+    return models if isinstance(models, list) else [models]
 
-    # Replace the template with the dictionary
-    r2d2_config_file_template_str = template_string_jinja2(logger, r2d2_config_file_template_str,
-                                                           r2d2_config_dict)
 
-    # Expand environment variables in templated file
-    r2d2_config_file_template_str = os.path.expandvars(r2d2_config_file_template_str)
+def get_r2d2_model_name(swell_model):
+    """Returns the first R2D2 model name."""
+    return get_r2d2_models(swell_model)[0]
 
-    # Write the config file
-    with open(r2d2_config_file, 'w') as f:
-        f.write(r2d2_config_file_template_str)
+
+# Lifetime is set when registering an experiment with r2d2.register_experiment(),
+# All data stored under an experiment inherits its lifetime.
+#
+# Valid values:
+#   - 'debug':       Short-term
+#   - 'science':     Medium-term
+#   - 'publication': Long-term
+#   - 'release':     Permanent
+#
+# Ex: r2d2.register_experiment(name='exp_name', ..., lifetime='science')
+# --------------------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------------------
 
 
 def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
@@ -94,6 +134,8 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
     else:
         logger.warning(f"Unknown platform '{platform}', cannot determine R2D2 host/compiler")
         return None, None
+
+# --------------------------------------------------------------------------------------------------
 
 
 def load_r2d2_credentials(
@@ -161,5 +203,42 @@ def load_r2d2_credentials(
 
     logger.info("R2D2 v3 credentials loaded successfully")
 
+# ----------------------------------------------------------------------------------------------
+
+
+def random_hex_id(swell_id: str, length: int = 8):
+    return f"{swell_id}-{random.randrange(16**length):0{length}x}"
 
 # ----------------------------------------------------------------------------------------------
+
+
+def experiment_exists(r2d2_id: str):
+    import r2d2
+
+    try:
+        r2d2.get(item='experiment', name=r2d2_id)
+    except Exception as e:
+        if '400 Client Error' in str(e):
+            return False
+
+    return True
+
+# ----------------------------------------------------------------------------------------------
+
+
+def unique_r2d2_id(swell_id: str, platform: str) -> str:
+
+    # Just use the ID if it doesn't exist
+    if not experiment_exists(swell_id):
+        return swell_id
+
+    # If not, append an unused hex id
+    # Only try this 10 times
+    for i in range(10):
+        temp_id = random_hex_id(swell_id, length=8)
+        if not experiment_exists(temp_id):
+            return temp_id
+
+    raise Exception('Could not find a valid experiment_id for R2D2')
+
+# --------------------------------------------------------------------------------------------------
