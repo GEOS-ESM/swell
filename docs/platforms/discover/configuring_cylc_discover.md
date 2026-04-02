@@ -42,8 +42,8 @@ module load stack-intel-oneapi-compilers/2024.2.0
 module load stack-intel-oneapi-mpi/2021.13
 
 # Load the cylc module
-module use -a /discover/nobackup/projects/gmao/advda/swell/dev/modulefiles/core/
-module load cylc/sles15_8.4.0
+module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
+module load cylc-flow/8.4.5_spack_2.0
 
 # Run cylc command
 cylc "$@"
