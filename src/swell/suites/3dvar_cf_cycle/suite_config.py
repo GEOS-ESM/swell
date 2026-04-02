@@ -90,7 +90,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.geos_cf_install_dir('/discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install'),
             qd.geos_cf_run_dir('/discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab'),
             qd.swell_static_files('/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles'),
-            qd.geosfp_path('discover/nobackup/projects/gmao/geos_cf_dev/jbarre')
+            qd.geosfp_path('/discover/nobackup/projects/gmao/geos_cf_dev/jbarre')
         ]
     )
 
