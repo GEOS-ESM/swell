@@ -57,7 +57,7 @@ def execute_cylc(argv=sys.argv) -> None:
 
     # Location for Discover cylc installation
     if platform in [SwellPlatform.NCCS_DISCOVER_CASCADE, SwellPlatform.NCCS_DISCOVER_SLES15]:
-        opt = '/discover/nobackup/projects/gmao/advda/swell/dev/core/cylc/sles15_8.4.0/'
+        opt = '/discover/nobackup/projects/gmao/advda/JediOpt/core/cylc-flow/8.4.5_spack_2.0'
         python_ver = 'python3.11'
 
         append_env = {'PATH': os.path.join(opt, 'bin'),
