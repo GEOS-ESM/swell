@@ -213,10 +213,10 @@ def random_hex_id(swell_id: str, length: int = 8):
 
 
 def experiment_exists(r2d2_id: str):
-    import r2d2
+    import swell.utilities.r2d2_utils as r2d2_utils
 
     try:
-        r2d2.get(item='experiment', name=r2d2_id)
+        r2d2_utils.get(item='experiment', name=r2d2_id)
     except Exception as e:
         if '400 Client Error' in str(e):
             return False

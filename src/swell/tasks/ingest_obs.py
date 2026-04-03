@@ -18,7 +18,7 @@ from datetime import datetime
 import requests
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 import r2d2
 

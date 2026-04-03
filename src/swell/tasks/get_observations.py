@@ -17,10 +17,10 @@ from collections.abc import Iterator
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-from swell.utilities.r2d2 import get_r2d2_model_name
+from swell.utilities.r2d2_utils import get_r2d2_model_name
 
 # --------------------------------------------------------------------------------------------------
 

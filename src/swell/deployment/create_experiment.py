@@ -188,7 +188,7 @@ def prepare_config(
     if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
             and not experiment_dict['skip_r2d2']:
 
-        from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+        from swell.utilities.r2d2_utils import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
         load_r2d2_module(logger, platform)
         load_r2d2_credentials(logger, platform)
