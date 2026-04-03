@@ -265,7 +265,7 @@ def test(test: str) -> None:
                                             "localensembleda", "3dvar_cycle")))
 def t1test(
     suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: str | None = "nccs_discover_sles15"
+    platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.

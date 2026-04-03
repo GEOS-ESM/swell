@@ -10,6 +10,7 @@
 import io
 from ruamel.yaml import YAML
 from collections.abc import Hashable
+from typing import Any
 
 from swell.utilities.logger import Logger
 
@@ -20,7 +21,7 @@ def dict_get(
     logger: Logger,
     dictionary: dict,
     key: str,
-    default: str = 'NODEFAULT'
+    default: Any = 'NODEFAULT'
 ) -> str:
 
     if key in dictionary.keys():

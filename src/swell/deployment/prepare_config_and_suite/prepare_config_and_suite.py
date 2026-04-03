@@ -75,8 +75,8 @@ class PrepareExperimentConfigAndSuite:
 
         # Big dictionary that contains all user responses as well a dictionary containing the
         # questions that were asked
-        self.experiment_dict = {}
-        self.questions_dict = {}
+        self.experiment_dict: dict = {}
+        self.questions_dict: dict = {}
 
         # Get list of all possible models
         self.possible_model_components = os.listdir(os.path.join(get_swell_path(), 'configuration',
@@ -579,7 +579,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def question_not_been_asked(self, question_key: str, model: str) -> bool:
+    def question_not_been_asked(self, question_key: str, model: str | None) -> bool:
         # See if a question has been answered in the experiment dict
 
         # Check model independent keys

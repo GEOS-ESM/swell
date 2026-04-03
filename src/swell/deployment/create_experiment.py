@@ -62,6 +62,8 @@ def clone_config(
         yaml = YAML()
         override_dict = yaml.load(f)
 
+    suite_config = override_dict['suite_to_run']
+
     # Check that override_dict has a suite key and get the suite name
     if 'suite_to_run' not in override_dict:
         logger.abort('The provided configuration file does not have a \'suite_to_run\' key')
@@ -75,7 +77,13 @@ def clone_config(
     override_dict['experiment_id'] = experiment_id
 
     # First create the configuration for the experiment.
-    return prepare_config(suite, method, override_dict['platform'], override_dict, advanced)
+    return prepare_config(suite,
+                          suite_config=suite_config,
+                          method=method,
+                          platform=override_dict['platform'],
+                          override=override_dict,
+                          advanced=advanced,
+                          slurm=None)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -88,7 +96,7 @@ def prepare_config(
     platform: str,
     override: dict,
     advanced: bool,
-    slurm: str
+    slurm: str | None
 ) -> str:
 
     # Create a logger
@@ -392,6 +400,8 @@ def template_modules_file(
         # Swell bin path
         # --------------
         swell_bin_path = shutil.which("swell")
+        if swell_bin_path is None:
+            raise ModuleNotFoundError(f'Could not find swell executable')
         swell_bin_path = os.path.split(swell_bin_path)[0]
 
         # Swell lib path
@@ -517,7 +527,7 @@ def prepare_cylc_suite_jinja2(
         # Since cycle times are used, the render_dictionary will need to include cycle_times
         # If there are different model components then process each to gather cycle times
         if len(model_components) > 0:
-            cycle_times = []
+            cycle_times : list = []
             for model_component in model_components:
                 cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
                 cycle_times = list(set(cycle_times + cycle_times_mc))
