@@ -9,7 +9,6 @@
 
 
 from dataclasses import dataclass
-from typing import List, Dict
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -40,7 +39,7 @@ class QuestionDefaults():
         question_name: str = "cycle_times"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the cycle times for this model."
@@ -53,7 +52,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "cycling_varbc"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Do you want to use cycling VarBC option?"
@@ -65,7 +64,7 @@ class QuestionDefaults():
     class ensemble_hofx_packets(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_packets"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the number of ensemble packets."
@@ -77,7 +76,7 @@ class QuestionDefaults():
     class ensemble_hofx_strategy(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_hofx_strategy"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the ensemble hofx strategy."
@@ -122,7 +121,7 @@ class QuestionDefaults():
         question_name: str = "marine_models"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_marine"
         ])
         prompt: str = "Select the active SOCA models for this model."
@@ -147,7 +146,7 @@ class QuestionDefaults():
         question_name: str = "parser_options"
         ask_question: bool = True
         options: list = mutable_field(['fgrep_residual_norm'])
-        prompt: str = "List the test types to run on the JEDI oops log."
+        prompt: str = "list the test types to run on the JEDI oops log."
         widget_type: WType = WType.STRING_DROP_LIST
 
     # --------------------------------------------------------------------------------------------------
@@ -177,7 +176,7 @@ class QuestionDefaults():
     class skip_ensemble_hofx(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "skip_ensemble_hofx"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter if skip ensemble hofx."
@@ -208,11 +207,11 @@ class QuestionDefaults():
     class window_type(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_type"
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "3D",
             "4D"
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Enter the window type for this model."
@@ -227,7 +226,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "analysis_variables"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What are the analysis variables?"
@@ -240,7 +239,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "background_error_model"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which background error model do you want to use?"
@@ -253,7 +252,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "background_experiment"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the name of the name of the experiment providing the backgrounds?"
@@ -265,10 +264,10 @@ class QuestionDefaults():
     class background_frequency(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_frequency"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "window_type": "4D"
         })
         prompt: str = "What is the frequency of the background files?"
@@ -280,7 +279,7 @@ class QuestionDefaults():
     class background_time_offset(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_time_offset"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = ("How long before the middle of the analysis window did"
@@ -294,7 +293,7 @@ class QuestionDefaults():
         question_name: str = "bufr_obs_classes"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What BUFR observation classes will be used?"
@@ -304,7 +303,7 @@ class QuestionDefaults():
 
     @dataclass
     class bundles(TaskQuestion):
-        default_value: List[str] = mutable_field([
+        default_value: list[str] = mutable_field([
             "fv3-jedi",
             "soca",
             "iodaconv",
@@ -312,7 +311,7 @@ class QuestionDefaults():
         ])
         question_name: str = "bundles"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "fv3-jedi",
             "soca",
             "iodaconv",
@@ -321,7 +320,7 @@ class QuestionDefaults():
             "oops",
             "saber"
         ])
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "jedi_build_method": "create"
         })
         prompt: str = "Which JEDI bundles do you wish to build?"
@@ -333,8 +332,8 @@ class QuestionDefaults():
     class check_for_obs(TaskQuestion):
         default_value: bool = True
         question_name: str = "check_for_obs"
-        options: List[bool] = mutable_field([True, False])
-        models: List[str] = mutable_field([
+        options: list[bool] = mutable_field([True, False])
+        models: list[str] = mutable_field([
             'all_models'
         ])
         prompt: str = "Perform check for observations? Set to false for debugging purposes."
@@ -347,7 +346,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "clean_patterns"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Provide a list of patterns that you wish to remove from the cycle directory."
@@ -359,11 +358,11 @@ class QuestionDefaults():
     class comparison_log_type(TaskQuestion):
         default_value: str = "variational"
         question_name: str = "comparison_log_type"
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             'variational',
             'fgat',
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Provide the log naming convention (e.g. 'variational', 'fgat')."
@@ -375,7 +374,7 @@ class QuestionDefaults():
     class crtm_coeff_dir(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "crtm_coeff_dir"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
@@ -389,7 +388,7 @@ class QuestionDefaults():
         question_name: str = "ensemble_hofx_packets"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Enter number of packets in which ensemble observers should be computed."
@@ -403,7 +402,7 @@ class QuestionDefaults():
         question_name: str = "ensemble_hofx_strategy"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Enter hofx strategy."
@@ -416,7 +415,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_num_members"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "How many members comprise the ensemble?"
@@ -428,11 +427,11 @@ class QuestionDefaults():
     class ensmean_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmean_only"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean only?"
@@ -444,11 +443,11 @@ class QuestionDefaults():
     class ensmeanvariance_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmeanvariance_only"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
@@ -461,7 +460,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_build_path"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS build directory?"
@@ -474,7 +473,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_source_path"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "geos_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing GEOS source code directory?"
@@ -487,7 +486,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI build directory?"
@@ -500,7 +499,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_build_directory_pinned"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI build directory?"
@@ -513,7 +512,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_source_directory"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "jedi_build_method": "use_existing"
         })
         prompt: str = "What is the path to the existing JEDI source code directory?"
@@ -526,7 +525,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "existing_jedi_source_directory_pinned"
         ask_question: bool = True
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "jedi_build_method": "use_pinned_existing"
         })
         prompt: str = "What is the path to the existing pinned JEDI source code directory?"
@@ -576,7 +575,7 @@ class QuestionDefaults():
         default_value: str = "create"
         question_name: str = "geos_build_method"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "use_existing",
             "create"
         ])
@@ -601,7 +600,7 @@ class QuestionDefaults():
         default_value: str = False
         question_name: str = "geos_expdir_different"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
@@ -615,7 +614,7 @@ class QuestionDefaults():
     class geos_expdir(TaskQuestion):
         default_value: str = "/dev/null/"
         question_name: str = "geos_expdir"
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "geos_expdir_different": True
         })
         prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
@@ -629,7 +628,7 @@ class QuestionDefaults():
     class geos_gcm_tag(TaskQuestion):
         default_value: str = "v11.6.0"
         question_name: str = "geos_gcm_tag"
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "geos_build_method": "create"
         })
         prompt: str = "Which GEOS tag do you wish to clone?"
@@ -642,11 +641,11 @@ class QuestionDefaults():
         default_value: str = "/dev/null/"
         question_name: str = "geos_x_background_directory"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "/dev/null/",
             "/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the path to the GEOS X-backgrounds directory?"
@@ -659,11 +658,11 @@ class QuestionDefaults():
         default_value: str = "/dev/null/"
         question_name: str = "geos_x_ensemble_directory"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "/dev/null/",
             "/gpfsm/dnb05/projects/p139/rtodling/archive/"
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the GEOS X-backgrounds directory?"
@@ -676,7 +675,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "geovals_experiment"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 experiment providing the GeoVaLs?"
@@ -688,7 +687,7 @@ class QuestionDefaults():
     class geovals_provider(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "geovals_provider"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the name of the R2D2 database providing the GeoVaLs?"
@@ -700,7 +699,7 @@ class QuestionDefaults():
     class gradient_norm_reduction(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gradient_norm_reduction"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What value of gradient norm reduction for convergence?"
@@ -712,7 +711,7 @@ class QuestionDefaults():
     class gsibec_configuration(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gsibec_configuration"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which GSIBEC climatological or hybrid?"
@@ -724,7 +723,7 @@ class QuestionDefaults():
     class gsibec_nlats(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gsibec_nlats"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "How many number of latutides in GSIBEC grid?"
@@ -736,7 +735,7 @@ class QuestionDefaults():
     class gsibec_nlons(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "gsibec_nlons"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "How many number of longitudes in GSIBEC grid?"
@@ -748,7 +747,7 @@ class QuestionDefaults():
     class horizontal_localization_lengthscale(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_lengthscale"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for horizontal covariance localization?"
@@ -760,7 +759,7 @@ class QuestionDefaults():
     class horizontal_localization_max_nobs(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_max_nobs"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("What is the maximum number of observations to consider"
@@ -774,7 +773,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_localization_method"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the horizontal?"
@@ -788,7 +787,7 @@ class QuestionDefaults():
         question_name: str = "horizontal_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the horizontal resolution for the forecast model and backgrounds?"
@@ -801,7 +800,7 @@ class QuestionDefaults():
         default_value: bool = True
         question_name: str = "dry_run"
         ask_question: bool = False
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Dry-run mode: preview what would be ingested before storing to R2D2"
@@ -815,7 +814,7 @@ class QuestionDefaults():
         question_name: str = "obs_to_ingest"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which observations do you want to ingest to R2D2?"
@@ -827,7 +826,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "initial_restarts_method"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "geos_expdir",
             "r2d2",
             "hotstart",
@@ -842,7 +841,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "ioda_locations_not_in_r2d2"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = (
@@ -856,7 +855,7 @@ class QuestionDefaults():
         default_value: str = "create"
         question_name: str = "jedi_build_method"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "use_existing",
             "use_pinned_existing",
             "create",
@@ -873,10 +872,10 @@ class QuestionDefaults():
         question_name: str = "jedi_forecast_model"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
-        depends: Dict = mutable_field({
+        depends: dict = mutable_field({
             "window_type": "4D"
         })
         prompt: str = "What forecast model should be used within JEDI for 4D window propagation?"
@@ -888,7 +887,7 @@ class QuestionDefaults():
     class local_ensemble_inflation_mult(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_mult"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the multiplicative prior inflation coefficient (0 inf]."
@@ -900,7 +899,7 @@ class QuestionDefaults():
     class local_ensemble_inflation_rtpp(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtpp"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Perturbation (RTPP) coefficient (0 1]."
@@ -912,7 +911,7 @@ class QuestionDefaults():
     class local_ensemble_inflation_rtps(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "local_ensemble_inflation_rtps"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Specify the Relaxation To Prior Spread (RTPS) coefficient (0 1]."
@@ -924,11 +923,11 @@ class QuestionDefaults():
     class local_ensemble_save_posterior_ensemble(TaskQuestion):
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble members?"
@@ -941,11 +940,11 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_ensemble_increments"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble member increments?"
@@ -958,11 +957,11 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "local_ensemble_save_posterior_mean"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean?"
@@ -975,11 +974,11 @@ class QuestionDefaults():
         default_value: bool = True
         question_name: str = "local_ensemble_save_posterior_mean_increment"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Save the posterior ensemble mean increment?"
@@ -993,7 +992,7 @@ class QuestionDefaults():
         question_name: str = "local_ensemble_solver"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
@@ -1007,7 +1006,7 @@ class QuestionDefaults():
         question_name: str = "local_ensemble_use_linear_observer"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which local ensemble solver type should be implemented?"
@@ -1020,7 +1019,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "minimizer"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which data assimilation minimizer do you wish to use?"
@@ -1032,11 +1031,11 @@ class QuestionDefaults():
     class mom6_iau(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "mom6_iau"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_marine",
         ])
         prompt: str = "Do you wish to use IAU for MOM6?"
@@ -1048,12 +1047,12 @@ class QuestionDefaults():
     class mom6_iau_nhours(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "mom6_iau_nhours"
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             'PT3H',
             'PT12H'
         ])
         depends: dict = mutable_field({'mom6_iau': True})
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_marine",
         ])
         prompt: str = "What is the IAU length (ODA_INCUPD_NHOURS) for MOM6?"
@@ -1065,8 +1064,8 @@ class QuestionDefaults():
     class ncdiag_experiments(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ncdiag_experiments"
-        options: List[str] = "defer_to_model"
-        models: List[str] = mutable_field([
+        options: list[str] = "defer_to_model"
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which previously run experiments do you wish to use for the NCdiag?"
@@ -1079,7 +1078,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npx_proc"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere",
             "geos_cf"
         ])
@@ -1093,7 +1092,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npy_proc"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere",
             "geos_cf"
         ])
@@ -1107,7 +1106,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npx"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the x-direction on each cube face?"
@@ -1120,7 +1119,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "npy"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the y-direction on each cube face?"
@@ -1132,7 +1131,7 @@ class QuestionDefaults():
     class number_of_iterations(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "number_of_iterations"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = (
@@ -1147,7 +1146,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "obs_experiment"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the database providing the observations?"
@@ -1159,7 +1158,7 @@ class QuestionDefaults():
     class obs_thinning_rej_fraction(TaskQuestion):
         default_value: float = 0.75
         question_name: str = "obs_thinning_rej_fraction"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the rejection fraction for obs thinning?"
@@ -1173,7 +1172,7 @@ class QuestionDefaults():
         question_name: str = "observations"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which observations do you want to include?"
@@ -1185,7 +1184,7 @@ class QuestionDefaults():
     class observing_system_records_mksi_path(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_mksi_path"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the GSI formatted observing system records?"
@@ -1197,7 +1196,7 @@ class QuestionDefaults():
     class observing_system_records_mksi_path_tag(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_mksi_path_tag"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the GSI formatted observing system records tag?"
@@ -1209,7 +1208,7 @@ class QuestionDefaults():
     class observing_system_records_path(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "observing_system_records_path"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to the Swell formatted observing system records?"
@@ -1222,7 +1221,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere",
             "geos_marine"
         ])
@@ -1236,7 +1235,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_geos_adas_background"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = (
@@ -1250,7 +1249,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_gsi_bc_coefficients"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the location where GSI bias correction files can be found?"
@@ -1263,7 +1262,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "path_to_gsi_nc_diags"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the path to where the GSI ncdiags are stored?"
@@ -1276,11 +1275,11 @@ class QuestionDefaults():
         default_value: str = None
         question_name: str = "perhost"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the number of processors per host?"
@@ -1293,11 +1292,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "produce_geovals"
         ask_question: bool = True
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("When running the ncdiag to ioda converted do you "
@@ -1310,7 +1309,7 @@ class QuestionDefaults():
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
@@ -1323,11 +1322,11 @@ class QuestionDefaults():
     class single_observations(TaskQuestion):
         default_value: bool = False
         question_name: str = "single_observations"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Is it a single-observation test?"
@@ -1358,7 +1357,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "total_processors"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_marine",
         ])
         prompt: str = "What is the number of processors for JEDI?"
@@ -1370,11 +1369,11 @@ class QuestionDefaults():
     class vertical_localization_apply_log_transform(TaskQuestion):
         default_value: bool = True
         question_name: str = "vertical_localization_apply_log_transform"
-        options: List[bool] = mutable_field([
+        options: list[bool] = mutable_field([
             True,
             False
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("Should a log (base 10) transformation be applied "
@@ -1389,7 +1388,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_function"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which localization scheme should be applied in the vertical?"
@@ -1402,7 +1401,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_ioda_vertical_coord"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "Which coordinate should be used in constructing vertical localization?"
@@ -1415,7 +1414,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_ioda_vertical_coord_group"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("Which vertical coordinate group should be used "
@@ -1428,7 +1427,7 @@ class QuestionDefaults():
     class vertical_localization_lengthscale(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_lengthscale"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = "What is the length scale for vertical covariance localization?"
@@ -1441,7 +1440,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "vertical_localization_method"
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "geos_atmosphere"
         ])
         prompt: str = ("What localization scheme should be applied in "
@@ -1456,7 +1455,7 @@ class QuestionDefaults():
         question_name: str = "vertical_resolution"
         ask_question: bool = True
         options: str = "defer_to_model"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the vertical resolution for the forecast model and background?"
@@ -1468,7 +1467,7 @@ class QuestionDefaults():
     class window_length(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "window_length"
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "What is the duration for the data assimilation window?"
@@ -1481,11 +1480,11 @@ class QuestionDefaults():
         question_name: str = "window_type"
         default_value: str = "defer_to_model"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "3D",
             "4D"
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"

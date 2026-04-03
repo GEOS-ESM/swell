@@ -16,7 +16,6 @@ import importlib
 import os
 import time
 from datetime import datetime as dt
-from typing import Union, Optional
 
 # swell imports
 from swell.swell_path import get_swell_path
@@ -38,9 +37,9 @@ class taskBase(ABC):
     def __init__(
         self,
         config_input: str,
-        datetime_input: Optional[str],
+        datetime_input: str | None,
         model: str,
-        ensemblePacket: Optional[str],
+        ensemblePacket: str | None,
         task_name: str
     ) -> None:
 
@@ -163,7 +162,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_ensemble_packet(self) -> Optional[str]:
+    def get_ensemble_packet(self) -> str | None:
         return self.__ensemble_packet__
 
     # ----------------------------------------------------------------------------------------------
@@ -173,7 +172,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model_components(self) -> Union[str, list]:
+    def get_model_components(self) -> str | list:
         return self.__model_components__
 
     # ----------------------------------------------------------------------------------------------
@@ -201,7 +200,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
+    def forecast_dir(self, paths: str | list[str] = []) -> str | None:
 
         '''
         Method to provide "forecast" directory to geos class
@@ -272,9 +271,9 @@ class taskFactory():
         self,
         task: str,
         config: str,
-        datetime: Union[str, dt, None],
+        datetime: str | dt | None,
         model: str,
-        ensemblePacket: Optional[str]
+        ensemblePacket: str | None
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -332,9 +331,9 @@ def get_tasks() -> list:
 def task_wrapper(
     task: str,
     config: str,
-    datetime: Union[str, dt, None],
-    model: Optional[str],
-    ensemblePacket: Optional[str]
+    datetime: str | dt | None,
+    model: str | None,
+    ensemblePacket: str | None
 ) -> None:
 
     # Create the object

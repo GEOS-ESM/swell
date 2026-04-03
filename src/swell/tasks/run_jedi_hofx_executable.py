@@ -11,7 +11,6 @@
 import glob
 import os
 from ruamel.yaml import YAML
-from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
@@ -252,7 +251,7 @@ class RunJediHofxExecutable(taskBase):
         observations: list,
         jedi_config_dict: dict,
         window_begin: str,
-        mem: Optional[str] = None
+        mem: str | None = None
     ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will

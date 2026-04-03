@@ -3,7 +3,6 @@ from ruamel.yaml import YAML
 import pandas as pd
 import numpy as np
 import datetime as dt
-from typing import Optional
 
 from swell.utilities.logger import get_logger
 from swell.utilities.gsi_record_parser import GSIRecordParser
@@ -151,7 +150,7 @@ class ObservingSystemRecords:
     def save_yamls(
         self,
         output_dir: str,
-        observation_list: Optional[list] = None
+        observation_list: list | None = None
     ) -> None:
 
         '''

@@ -12,7 +12,6 @@ import isodate
 import netCDF4 as nc
 import os
 import shutil
-from typing import Union
 
 from swell.utilities.shell_commands import run_subprocess
 from swell.tasks.base.task_base import taskBase
@@ -100,7 +99,7 @@ class PrepareAnalysis(taskBase):
 
     # ----------------------------------------------------------------------------------------
 
-    def at_cycledir(self, paths: Union[list, str] = []) -> str:
+    def at_cycledir(self, paths: list | str = []) -> str:
         """
         Get the absolute path to the model cycle directory for the given relative paths.
 

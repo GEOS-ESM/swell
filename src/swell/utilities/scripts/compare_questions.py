@@ -8,7 +8,6 @@
 
 
 import os
-from typing import Optional, Tuple
 import importlib
 import re
 from enum import StrEnum, auto
@@ -63,7 +62,7 @@ def get_all_tasks(suite: str) -> list:
 # --------------------------------------------------------------------------------------------------
 
 
-def get_question_names(config: QuestionList, model: Optional[str] = None) -> list:
+def get_question_names(config: QuestionList, model: str | None = None) -> list:
     """ Get a list of question names from a QuestionList object. """
     return [q['question_name'] for q in config.expand_question_list(model)]
 
@@ -101,7 +100,7 @@ def questions_in_cylc(suite: str) -> list:
 # --------------------------------------------------------------------------------------------------
 
 
-def compare_used_and_set_questions() -> Tuple[dict, dict]:
+def compare_used_and_set_questions() -> tuple[dict, dict]:
     """
     Finds the questions which are set in the suite/task configuration,
     and those that are actually used by the suite.

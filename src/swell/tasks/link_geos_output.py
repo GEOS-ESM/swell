@@ -13,7 +13,6 @@ import os
 from netCDF4 import Dataset
 import numpy as np
 import xarray as xr
-from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
@@ -201,7 +200,7 @@ class LinkGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_cice6_restart(self) -> Tuple[str, str]:
+    def prepare_cice6_restart(self) -> tuple[str, str]:
         # CICE6 input in SOCA requires aggregation of multiple variables and
         # time dimension added to the dataset.
         # SOCA needs icea area (aicen), ice volume (vicen), and snow area (vsnon)

@@ -10,7 +10,6 @@
 import io
 from ruamel.yaml import YAML
 from collections.abc import Hashable
-from typing import Union
 
 from swell.utilities.logger import Logger
 
@@ -40,7 +39,7 @@ def dict_get(
 # --------------------------------------------------------------------------------------------------
 
 
-def remove_matching_keys(d: Union[dict, list], key: str) -> None:
+def remove_matching_keys(d: dict | list, key: str) -> None:
     """
     Recursively locates and removes all dictionary items matching the supplied key.
     Parameters

@@ -15,7 +15,6 @@ import os
 import shutil
 import sys
 from ruamel.yaml import YAML
-from typing import Optional
 
 from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
@@ -355,7 +354,7 @@ def copy_eva_files(
 def copy_platform_files(
     logger: Logger,
     exp_suite_path: str,
-    platform: Optional[str] = None
+    platform: str | None = None
 ) -> None:
 
     # Copy platform related files to the suite directory

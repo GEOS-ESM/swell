@@ -9,9 +9,9 @@
 
 import os
 from ruamel.yaml import YAML
-from typing import Union, Optional, Any
 from importlib import import_module
 from collections.abc import Mapping
+from typing import Any
 
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.get_channels import get_channels
@@ -28,9 +28,9 @@ class JediConfigRendering():
         logger: Logger,
         experiment_root: str,
         experiment_id: str,
-        cycle_dir: Optional[str],
-        cycle_time: Optional[Datetime],
-        jedi_interface: Optional[str] = None
+        cycle_dir: str | None,
+        cycle_time: Datetime | None,
+        jedi_interface: str | None = None
     ) -> None:
 
         # Keep a copy of the logger
@@ -194,8 +194,8 @@ class JediConfigRendering():
     # Prepare path to oops file and call rendering
     def render_oops_file(self,
                          config_name: str,
-                         window_type: Optional[str] = None,
-                         jedi_forecast_model: Optional[str] = None) -> dict:
+                         window_type: str | None = None,
+                         jedi_forecast_model: str | None = None) -> dict:
 
         # Import the module
         module = import_module(f'swell.configuration.jedi.oops.{config_name}')
@@ -286,7 +286,7 @@ class JediConfigRendering():
 
     # Prepare path to interface metadata file and call rendering
 
-    def render_interface_meta(self, model_component_in: Union[str, dict, None] = None) -> dict:
+    def render_interface_meta(self, model_component_in: str | dict | None = None) -> dict:
 
         # Optionally open a different model interface
         model_component = self.jedi_interface

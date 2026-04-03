@@ -12,7 +12,6 @@ import copy
 import os
 from ruamel.yaml import YAML
 from collections.abc import Mapping
-from typing import Tuple, Optional
 
 from swell.swell_path import get_swell_path
 from swell.deployment.prepare_config_and_suite.question_and_answer_cli import GetAnswerCli
@@ -374,7 +373,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def ask_questions_and_configure_suite(self) -> Tuple[dict, dict]:
+    def ask_questions_and_configure_suite(self) -> tuple[dict, dict]:
 
         """
         This is where we ask all the questions and as we go configure the suite file. The process
@@ -530,7 +529,7 @@ class PrepareExperimentConfigAndSuite:
         self,
         full_question_dictionary: dict,
         question_key: str,
-        model: Optional[str] = None
+        model: str | None = None
     ) -> None:
 
         # Set flag for whether the question should be asked

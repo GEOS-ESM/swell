@@ -9,7 +9,7 @@
 
 
 import click
-from typing import Union, Optional, Literal
+from typing import Literal
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -102,7 +102,7 @@ def create(
     suite: str,
     input_method: str,
     platform: str,
-    override: Union[dict, str, None],
+    override: dict | str | None,
     advanced: bool,
     slurm: str,
     skip_r2d2: bool
@@ -192,9 +192,9 @@ def launch(
 def task(
     task: str,
     config: str,
-    datetime: Optional[str],
-    model: Optional[str],
-    ensemblePacket: Optional[str]
+    datetime: str | None,
+    model: str | None,
+    ensemblePacket: str | None
 ) -> None:
     """
     Run a workflow task
@@ -255,7 +255,7 @@ def test(test: str) -> None:
                                             "localensembleda", "3dvar_cycle")))
 def t1test(
     suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: Optional[str] = "nccs_discover_sles15"
+    platform: str | None = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
@@ -277,7 +277,7 @@ def t1test(
 def t2test(
     suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
-        platform: Optional[str] = "nccs_discover_sles15"
+        platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 2 tests.

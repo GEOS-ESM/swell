@@ -12,7 +12,6 @@ import f90nml
 import glob
 import isodate
 import os
-from typing import Tuple, Optional
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
@@ -32,7 +31,7 @@ class Geos():
     def __init__(
         self,
         logger: Logger,
-        forecast_dir: Optional[str],
+        forecast_dir: str | None,
     ) -> None:
         """
         Initializes the Geos class. The intention is to share methods between forecast-only
@@ -53,7 +52,7 @@ class Geos():
         iso_duration: str,
         half: bool = False,
         agcm: bool = False,
-    ) -> Tuple[str, int, datetime.timedelta]:
+    ) -> tuple[str, int, datetime.timedelta]:
         """
         Converts an ISO 8601 duration string to various time representations.
 

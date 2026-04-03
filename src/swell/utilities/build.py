@@ -9,7 +9,6 @@
 
 import os
 import shutil
-from typing import Tuple
 
 from swell.utilities.logger import get_logger
 from jedi_bundle.utils.yaml import load_yaml
@@ -21,7 +20,7 @@ from swell.utilities.pinned_versions.check_hashes import get_pinned_vers_path
 # --------------------------------------------------------------------------------------------------
 
 
-def build_and_source_dirs(package_path: str) -> Tuple[str, str]:
+def build_and_source_dirs(package_path: str) -> tuple[str, str]:
 
     # Make package directory
     # ----------------------

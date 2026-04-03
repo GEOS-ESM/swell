@@ -9,7 +9,6 @@
 
 import datetime
 import isodate
-from typing import Union, Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
@@ -142,7 +141,7 @@ class DataAssimilationWindowParams():
                               window_length,
                               window_type,
                               dto=False
-                              ) -> Union[str, Tuple[str, datetime.datetime]]:
+                              ) -> str | tuple[str, datetime.datetime]:
 
         local_background_time = self.__get_local_background_time__(window_type, window_length)
 
@@ -155,7 +154,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_length: str, dto: bool = False) -> Union[str, datetime.datetime]:
+    def window_begin(self, window_length: str, dto: bool = False) -> str | datetime.datetime:
 
         window_begin_dto = self.__get_window_begin_dto__(window_length)
 

@@ -13,7 +13,7 @@ import numpy as np
 import os
 import r2d2
 import shutil
-from typing import Union
+from collections.abc import Iterator
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
@@ -316,7 +316,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict: dict) -> Union[None, int]:
+    def get_tlapse_files(self, observation_dict: dict) -> Iterator[int | None]:
 
         # Function to locate instances of tlapse in the obs operator config
 

@@ -63,10 +63,9 @@ import glob
 import copy
 import datetime as dt
 from shutil import copyfile
-from typing import Union, Optional, Any
 
 
-def get_file_handler(config: list, **kwargs) -> Union[StageFileHandler, GetDataFileHandler]:
+def get_file_handler(config: list, **kwargs) -> StageFileHandler | GetDataFileHandler:
     """Factory for determining the file handler type for retrieving data.
 
        This method uses a heuristic algorithm to determine the staging
@@ -114,7 +113,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------------
 
-    def is_ready(self, fc: Optional[FileCollection] = None) -> bool:
+    def is_ready(self, fc: FileCollection | None = None) -> bool:
         """Determines if the file collection meets the criteria for
            readiness (e.g. minimum file count etc.)
 
@@ -156,7 +155,7 @@ class FileHandler(object):
 
 # ------------------------------------------------------------------------
 
-    def get(self, fc: Optional[FileCollection] = None) -> None:
+    def get(self, fc: FileCollection | None = None) -> None:
         """Retrieves the files in the specified file collection.
 
            Parameters
@@ -374,7 +373,7 @@ class GetDataFileHandler(FileHandler):
 
 class FileCollection(object):
 
-    def __init__(self, config: dict[Any, Any]) -> None:
+    def __init__(self, config: dict) -> None:
 
         self.config = copy.deepcopy(config)
 
