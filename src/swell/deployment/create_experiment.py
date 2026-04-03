@@ -232,7 +232,7 @@ def create_experiment_directory(
     suite_config: str,
     method: str,
     platform: str,
-    override: str,
+    override: str | dict | None,
     advanced: bool,
     slurm: str | None,
     skip_r2d2: bool

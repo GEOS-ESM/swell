@@ -10,6 +10,7 @@
 
 import click
 from typing import Literal
+from ruamel.yaml import YAML
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -151,10 +152,14 @@ def clone(
     # Create experiment configuration by cloning from existing experiment
     experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform,
                                        advanced)
+    
+    yaml = YAML(typ='safe')
+    experiment_override = yaml.load(experiment_dict_str)
+    suite = experiment_override['suite_to_run']
 
     # Create the experiment directory
-    create_experiment_directory(experiment_dict_str)
-
+    create_experiment_directory(suite, method=input_method, platform=platform,
+                                override=experiment_override, advanced=advanced)
 
 # --------------------------------------------------------------------------------------------------
 
