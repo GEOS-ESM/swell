@@ -132,12 +132,16 @@ def create(
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default=None, help=platform_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def clone(
     configuration: str,
     experiment_id: str,
     input_method: str,
     platform: str,
-    advanced: bool
+    advanced: bool,
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Clone an existing experiment
@@ -159,7 +163,8 @@ def clone(
 
     # Create the experiment directory
     create_experiment_directory(suite, method=input_method, platform=platform,
-                                override=experiment_override, advanced=advanced)
+                                override=experiment_override, advanced=advanced, slurm=slurm,
+                                skip_r2d2=skip_r2d2)
 
 # --------------------------------------------------------------------------------------------------
 
