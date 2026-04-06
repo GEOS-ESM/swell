@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dvar_atmos",
         questions=[
             sq.common,
-            qd.start_cycle_point("2023-10-10T00:00:00Z"),
-            qd.final_cycle_point("2023-10-10T06:00:00Z"),
+            qd.start_cycle_point("2025-11-30T00:00:00Z"),
+            qd.final_cycle_point("2025-11-30T06:00:00Z"),
             qd.runahead_limit("P2"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),

@@ -41,10 +41,11 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0050
+  default_value: x0054
   options:
   - x0048
   - x0050
+  - x0054
 
 background_frequency:
   default_value: PT1H
@@ -126,10 +127,11 @@ ensemble_num_members:
   options: None
 
 geovals_experiment:
-  default_value: x0050-geovals
+  default_value: x0054-geovals
   options:
   - x0048v3-geovals
   - x0050-geovals
+  - x0054-geovals
 
 geovals_provider:
   default_value: ncdiag
@@ -210,9 +212,10 @@ minimizer:
   - DRPCG
 
 ncdiag_experiments:
-  default_value: x0050_fgat
+  default_value: x0054_fgat
   options:
   - x0050_fgat
+  - x0054_fgat
 
 npx_proc:
   default_value: 4
@@ -225,10 +228,11 @@ number_of_iterations:
   - 5
 
 obs_experiment:
-  default_value: x0050
+  default_value: x0054
   options:
   - x0048v3
   - x0050
+  - x0054
 
 observations:
   default_value:
