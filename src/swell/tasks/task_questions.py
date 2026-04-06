@@ -595,6 +595,32 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediConvertStateFv3Executable = QuestionList(
+        list_name="RunJediConvertStateFv3Executable",
+        questions=[
+            np_proc_resolution,
+            qd.background_window_times(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.target_horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    TarBackgroundGeosConvertState = QuestionList(
+        list_name="TarBackgroundGeosConvertState",
+        questions=[
+            qd.background_experiment(),
+            qd.background_time_offset(),
+            qd.background_window_times(),
+            qd.target_background_experiment(),
+            qd.target_horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediEnsembleMeanVariance = QuestionList(
         list_name="RunJediEnsembleMeanVariance",
         questions=[
