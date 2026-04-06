@@ -21,7 +21,7 @@ def check_obs(
     path_to_observing_sys_yamls: str | None,
     observation: str,
     obs_dict: dict,
-    cycle_time: str | None,
+    cycle_time: str | datetime | None,
     input_and_output: bool | None = False
 ) -> bool:
 

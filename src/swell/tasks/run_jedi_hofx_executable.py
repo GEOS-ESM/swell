@@ -24,7 +24,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members: Optional[list] = None) -> None:
+    def execute(self, ensemble_members: list | None = None) -> None:
 
         # Jedi application name
         # ---------------------

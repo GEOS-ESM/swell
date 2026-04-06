@@ -187,13 +187,9 @@ class taskBase(ABC):
 
     def cycle_dir(self) -> str:
 
-        # Check that model is set
-        self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
-                                 'should not be called if the task does not receive model.')
-
         # Combine datetime string (directory format) with the model
         cycle_dir = os.path.join(self.experiment_path(), 'run',
-                                 self.__datetime__.string_directory(), self.__model__)
+                                 self.__dto__().string_directory(), self.__model_str__())
 
         # Return
         return cycle_dir
@@ -206,6 +202,9 @@ class taskBase(ABC):
         Method to provide "forecast" directory to geos class
         If paths are provided, it is combined with the forecast directory and returned
         '''
+
+        if self.str_forecast_dir is None:
+            raise ValueError('str_forecast_dir is None')
 
         # Make sure forecast directory exists
         # -----------------------------------
@@ -222,15 +221,31 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def __dto__(self) -> Datetime:
+        if self.__datetime__ is None:
+            raise ValueError('Trying to call cycle datetime, but task was called without cyle time')
+
+        return self.__datetime__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def __model_str__(self) -> str:
+        if self.__model__ is None:
+            raise ValueError('Trying to call the model component, but task was not called with one')
+
+        return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
     def cycle_time_dto(self) -> dt:
 
-        return self.__datetime__.dto()
+        return self.__dto__().dto()
 
     # ----------------------------------------------------------------------------------------------
 
     def cycle_time(self) -> str:
 
-        return self.__datetime__.string_iso()
+        return self.__dto__().string_iso()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -272,7 +287,7 @@ class taskFactory():
         task: str,
         config: str,
         datetime: str | dt | None,
-        model: str,
+        model: str | None,
         ensemblePacket: str | None
     ) -> taskBase:
 
