@@ -19,7 +19,7 @@ class Logger(logging.Logger):
     # --------------------------------------------------------------------------------------------------
 
     def abort(self, msg: str,
-              exception: Exception = Exception, *args, **kwargs) -> None:
+              exception: Exception = type[Exception], *args, **kwargs) -> None:
 
         formatted_msg = '  Swell called ABORT: ' + msg
 

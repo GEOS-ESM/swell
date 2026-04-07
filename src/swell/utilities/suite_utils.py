@@ -31,31 +31,6 @@ def get_suites() -> list:
 
 # --------------------------------------------------------------------------------------------------
 
-
-def get_suite_configs() -> list:
-
-    suites = get_suites()
-
-    # List of suites and associated sub-suites
-    suite_config_list = []
-
-    for suite in suites:
-        suite_sub_list = []
-        suite_module = importlib.import_module(f'swell.suites.{suite}.suite_config')
-        suite_configs = getattr(suite_module, 'SuiteConfig')
-
-        [suite_sub_list.append(suite_config[1:] if suite_config[0] == '_' else suite_config)
-         for suite_config in suite_configs.get_all()]
-
-        suite_config_list.extend(sorted(suite_sub_list))
-
-    # List all directories in platform_directory
-    return suite_config_list
-
-
-# --------------------------------------------------------------------------------------------------
-
-
 def get_suite_tests() -> list:
 
     # Path to platforms

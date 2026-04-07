@@ -10,7 +10,7 @@
 
 import os
 from dataclasses import dataclass, asdict, field
-from typing import List, Optional, Self, Union, Literal
+from typing import Self, Literal, Any
 from enum import Enum
 from isodate import parse_datetime, parse_duration, ISO8601Error
 
@@ -52,6 +52,8 @@ class WidgetType(Enum):
             return float
         if 'iso-' in self.value:
             return str
+        
+        raise TypeError('Could not deduce widget type')
 
     def validate_value(self, value) -> bool:
         """ Validate that the value matches the type and format of the widget type. """
@@ -96,13 +98,13 @@ class WidgetType(Enum):
 @dataclass
 class SwellQuestion:
     """Basic dataclass for defining Swell questions for suites and tasks"""
-    default_value: str
+    default_value: Any
     question_name: str
     widget_type: WidgetType
     prompt: str
-    question_type: str = None
+    question_type: str | None = None
     ask_question: bool = False
-    options: Optional[str] = None
+    options: list | str | None = None
 
 # --------------------------------------------------------------------------------------------------
 
@@ -125,7 +127,7 @@ class QuestionContainer:
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
     list_name: str
-    questions: List[Union[SwellQuestion, Self]]
+    questions: list[SwellQuestion | Self]
 
     geos_atmosphere: list = field(default_factory=lambda: [])
     geos_cf: list = field(default_factory=lambda: [])
@@ -133,7 +135,7 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_all_question_names(self, suite_task: Optional[Literal['suite', 'task']] = None) -> None:
+    def get_all_question_names(self, suite_task: Literal['suite', 'task'] | None = None) -> list:
         question_list = []
         for model in [None] + os.listdir(os.path.join(get_swell_path(),
                                                       'configuration', 'jedi', 'interfaces')):
@@ -149,7 +151,7 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def expand_question_list(self, model: Optional[str] = None):
+    def expand_question_list(self, model: str | None = None):
         question_list = []
 
         # Loop through the items in the questions list

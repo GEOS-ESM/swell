@@ -9,15 +9,16 @@ module purge
 # Spack stack modules
 # -------------------
 module use /discover/swdev/jcsda/spack-stack/scu17/modulefiles
-module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-2.0.0/envs/ue-oneapi-2024.2.0/modules/Core
+module use /gpfsm/dswdev/jcsda/spack-stack/scu17/spack-stack-2.1.0/envs/ue-oneapi-2024.2.0/modules/Core
 module load stack-intel-oneapi-compilers/2024.2.0
 module load stack-intel-oneapi-mpi/2021.13
-module load git-lfs/3.4.0
+module load git-lfs/3.7.1
 module load jedi-fv3-env
 module load soca-env
 module load gmao-swell-env/1.0.0
 module unload gsibec crtm fms
-module load fms/2024.02
+module load fms/2025.03-geos-constants
+module unload py-netcdf4 
 
 # JEDI Python Path
 # ----------------
