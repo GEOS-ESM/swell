@@ -151,20 +151,35 @@ class GetObservations(taskBase):
             # ----------------------------------------------
             obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
 
+            # Determine the file extension stored in R2D2
+            obs_file_extension = 'nc4'
+            try:
+                search_results = r2d2.search(
+                    item='observation',
+                    provider=obs_provider,
+                    observation_type=observation,
+                )
+                if search_results:
+                    obs_file_extension = search_results[0].get('file_extension', 'nc4')
+            except Exception:
+                pass
+
             # Fetch observation files
             # -----------------------
             combine_input_files = []
             # Here, we are fetching
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                target_file = os.path.join(
+                    self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
+                )
                 combine_input_files.append(target_file)
 
                 fetch_criteria = {
                     'item': 'observation',               # Required for r2d2 v3
                     'provider': obs_provider,            # What we registered with
                     'observation_type': observation,     # From filename
-                    'file_extension': 'nc4',
+                    'file_extension': obs_file_extension,
                     'window_start': obs_window_begin,    # From filename timestamp
                     'window_length': obs_window_length,  # From filename
                     'target_file': target_file,          # Where to save
