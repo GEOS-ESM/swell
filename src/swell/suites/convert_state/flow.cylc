@@ -64,10 +64,8 @@
             # After JEDI is available and backgrounds are staged, convert each
             # background file in parallel (one task per background_window_times entry).
             {% for bkg_idx in range(background_window_times | length) %}
-            BuildJediByLinking[^]? | BuildJedi[^] => \
-                RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}} => \
-                RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^] => RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}} => RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
             {% endfor %}
 
             # Once all conversions are done, assemble the output tarball.

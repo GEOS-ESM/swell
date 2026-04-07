@@ -68,6 +68,8 @@ class GetBackgroundGeosExperiment(taskBase):
         # Get the background experiment start time
         # -----------------------------------------
         bkgr_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
+        print(f'self.cycle_time_dto()={self.cycle_time_dto()}')
+        print(f'background_time_offset_dur={background_time_offset_dur}')
         bkgr_exp_start_geos = bkgr_exp_start_dto.strftime(datetime_formats['gsi_nc_diag_format'])
 
         # Create cycle directory if needed
@@ -78,6 +80,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # Define the source tar folder and file
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
+        print(f'tar_file_name is={bkgr_tar_file}')
         bkgr_tar = os.path.join(geos_x_background_directory,
                                 horizontal_resolution,
                                 background_experiment,

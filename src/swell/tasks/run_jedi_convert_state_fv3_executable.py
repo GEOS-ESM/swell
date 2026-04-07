@@ -62,6 +62,9 @@ class RunJediConvertStateFv3Executable(taskBase):
         self.logger.info(f' Converting background file for time: {bkg_time_iso}'
                          f' (offset {bkg_time_offset_str}, index {bkg_idx})')
 
+        self.logger.info(vars(self.config))
+
+
         # Populate jedi interface template dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('background_time_iso', bkg_time_iso)
