@@ -11,6 +11,7 @@
 import os
 import glob
 import shutil
+from pathlib import Path
 
 from swell.tasks.base.task_base import taskBase
 
@@ -31,10 +32,9 @@ class PublishComparisons(taskBase):
 
         # Skip this task if there is no publish directory
         if publish_directory is None:
-            print('Skipping')
+            self.logger.info('Skipping publish')
             return
 
-        print('Not skipped')
         # For CI tests - contain results under the run ID
         github_run_id = os.environ.get('GITHUB_RUN_ID')
         experiment_id = self.experiment_id()
@@ -42,9 +42,11 @@ class PublishComparisons(taskBase):
             experiment_id = os.path.join(github_run_id, experiment_id)
 
         # Name the location after the experiment ID
-        publish_location = os.path.join(self.config.publish_directory(), experiment_id)
+        publish_location = Path(self.config.publish_directory()) / experiment_id
 
-        os.makedirs(publish_location, exist_ok=True)
+        self.logger.info(f'Copying comparison test results to {publish_location}')
+
+        publish_location.mkdir(exist_ok=True, parents=True)
 
         # Copy the JEDI log file comparison
         log_file = os.path.join(self.experiment_path(), 'jedi_log_comparison.txt')
@@ -55,10 +57,9 @@ class PublishComparisons(taskBase):
             # Copy eva png files
             files = glob.glob(os.path.join(self.cycle_dir(), 'eva', '**', '*.png'), recursive=True)
 
-            out_path = os.path.join(publish_location, self.__datetime__.string_directory(),
-                                    self.get_model())
+            out_path = publish_location / self.__datetime__.string_directory() / self.get_model()
 
-            os.makedirs(out_path, exist_ok=True)
+            out_path.mkdir(exist_ok=True, parents=True)
 
             for file in files:
                 shutil.copy(file, out_path)
