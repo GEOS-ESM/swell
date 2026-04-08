@@ -44,8 +44,11 @@ def get_suite_configs() -> list:
         suite_module = importlib.import_module(f'swell.suites.{suite}.suite_config')
         suite_configs = getattr(suite_module, 'SuiteConfig')
 
-        [suite_sub_list.append(suite_config[1:] if suite_config[0] == '_' else suite_config)
-         for suite_config in suite_configs.get_all()]
+        for suite_config in suite_configs.get_all():
+            if suite_config[0] == '_':
+                suite_sub_list.append(suite_config[1:])
+            else:
+                suite_sub_list.append(suite_config)
 
         suite_config_list.extend(sorted(suite_sub_list))
 

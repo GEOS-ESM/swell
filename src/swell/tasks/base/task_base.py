@@ -196,7 +196,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self, paths: str | list[str] = []) -> str | list:
+    def forecast_dir(self, paths: str | list[str] = []) -> list:
 
         '''
         Method to provide "forecast" directory to geos class

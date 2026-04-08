@@ -59,31 +59,7 @@ class QuestionDefaults():
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ensemble_hofx_packets(SuiteQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "ensemble_hofx_packets"
-        models: list[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Enter the number of ensemble packets."
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ensemble_hofx_strategy(SuiteQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "ensemble_hofx_strategy"
-        models: list[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Enter the ensemble hofx strategy."
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
+    
     @dataclass
     class experiment_id(SuiteQuestion):
         default_value: str = "defer_to_code"
@@ -597,7 +573,7 @@ class QuestionDefaults():
 
     @dataclass
     class geos_expdir_different(TaskQuestion):
-        default_value: str = False
+        default_value: bool = False
         question_name: str = "geos_expdir_different"
         ask_question: bool = True
         options: list[bool] = mutable_field([
@@ -1064,7 +1040,7 @@ class QuestionDefaults():
     class ncdiag_experiments(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ncdiag_experiments"
-        options: list[str] = "defer_to_model"
+        options: list[str] | str = "defer_to_model"
         models: list[str] = mutable_field([
             "all_models"
         ])
@@ -1272,7 +1248,7 @@ class QuestionDefaults():
 
     @dataclass
     class perhost(TaskQuestion):
-        default_value: str = None
+        default_value: str | None = None
         question_name: str = "perhost"
         ask_question: bool = True
         options: list[bool] = mutable_field([

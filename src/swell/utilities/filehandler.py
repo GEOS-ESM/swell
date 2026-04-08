@@ -63,6 +63,7 @@ import glob
 import copy
 import datetime as dt
 from shutil import copyfile
+from abc import ABC, abstractmethod
 
 
 def get_file_handler(config: list, **kwargs) -> StageFileHandler | GetDataFileHandler:
@@ -103,7 +104,7 @@ def get_file_handler(config: list, **kwargs) -> StageFileHandler | GetDataFileHa
 # ------------------------------------------------------------------------------
 
 
-class FileHandler(object):
+class FileHandler(ABC):
 
     def __init__(self, config: list, **kwargs) -> None:
 
@@ -226,6 +227,11 @@ class FileHandler(object):
 
 # ---------------------------------------------------------------------------
 
+    @abstractmethod
+    def list(self, force: bool = False) -> list:
+        return []
+
+# ---------------------------------------------------------------------------
 
 class StageFileHandler(FileHandler):
 

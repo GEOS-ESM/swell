@@ -204,7 +204,6 @@ class RunJediHofxExecutable(taskBase):
                 jedi_config_dict = \
                     self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                          window_type,
-                                                         observations,
                                                          jedi_forecast_model)
 
                 # Continue with the yaml edits below some of which need to be
