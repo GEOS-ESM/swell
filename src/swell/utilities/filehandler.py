@@ -108,7 +108,7 @@ class FileHandler(ABC):
 
     def __init__(self, config: list, **kwargs) -> None:
 
-        self.listing = []
+        self.listing: list = []
         self.config = copy.deepcopy(config)
         self.strict = kwargs.get('strict', True)
 
@@ -233,6 +233,7 @@ class FileHandler(ABC):
 
 # ---------------------------------------------------------------------------
 
+
 class StageFileHandler(FileHandler):
 
     def list(self, force: bool = False) -> list:
@@ -346,7 +347,7 @@ class GetDataFileHandler(FileHandler):
                         srcfile = args[0]
 
                     filelist = glob.glob(srcfile)
-                    found = found or filelist
+                    found = found or len(filelist) > 0
 
                     for srcfile in filelist:
 
@@ -383,7 +384,7 @@ class FileCollection(object):
 
         self.config = copy.deepcopy(config)
 
-        self.listing = []
+        self.listing: list = []
         self.link = config.get('link', False)
         self.min_count = config.get('min_count', 1)
         self.min_age = config.get('min_age', 0)

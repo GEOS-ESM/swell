@@ -152,4 +152,3 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     launch_experiment(suite_path, True, log_path)
 
     # TODO: Check the outputs
-

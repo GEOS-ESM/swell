@@ -50,8 +50,8 @@ class EvaIncrement(taskBase):
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
-        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
-            self.config.window_length(), self.config.window_type(), dto=True)
+        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time_dto(
+            self.config.window_length(), self.config.window_type())
         local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path

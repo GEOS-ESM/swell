@@ -59,7 +59,7 @@ class QuestionDefaults():
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
-    
+
     @dataclass
     class experiment_id(SuiteQuestion):
         default_value: str = "defer_to_code"

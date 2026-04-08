@@ -188,7 +188,8 @@ def prepare_config(
     if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
             and not experiment_dict['skip_r2d2']:
 
-        from swell.utilities.r2d2_utils import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
+        from swell.utilities.r2d2_utils import load_r2d2_credentials, load_r2d2_module, \
+                unique_r2d2_id
 
         load_r2d2_module(logger, platform)
         load_r2d2_credentials(logger, platform)
@@ -527,7 +528,7 @@ def prepare_cylc_suite_jinja2(
         # Since cycle times are used, the render_dictionary will need to include cycle_times
         # If there are different model components then process each to gather cycle times
         if len(model_components) > 0:
-            cycle_times : list = []
+            cycle_times: list = []
             for model_component in model_components:
                 cycle_times_mc = experiment_dict['models'][model_component]['cycle_times']
                 cycle_times = list(set(cycle_times + cycle_times_mc))

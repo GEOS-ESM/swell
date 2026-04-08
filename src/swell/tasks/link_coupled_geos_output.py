@@ -43,10 +43,9 @@ class LinkCoupledGeosOutput(taskBase):
         if self.window_type == '4D' or 'fgat' in self.suite_name():
             self.background_frequency = self.config.background_frequency()
 
-        self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time(
+        self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time_dto(
             self.window_length,
-            self.window_type,
-            dto=True)
+            self.window_type)
 
         # Create source and destination files for linking model output to cycle directories
         # -----------------------------------------------------------------------------------

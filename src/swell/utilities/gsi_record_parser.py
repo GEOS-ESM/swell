@@ -18,10 +18,10 @@ def check_end_time(end_time: str) -> str:
 class GSIRecordParser:
 
     def __init__(self) -> None:
-        self.instr_df = None
-        self.return_df = None
-        self.sat = None
-        self.instr = None
+        self.instr_df = pd.DataFrame()
+        self.return_df = pd.DataFrame()
+        self.sat = ''
+        self.instr = ''
 
     def get_channel_list(self, start: int) -> list:
         channel_list = []

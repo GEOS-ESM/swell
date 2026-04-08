@@ -156,7 +156,7 @@ def clone(
     # Create experiment configuration by cloning from existing experiment
     experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform,
                                        advanced)
-    
+
     yaml = YAML(typ='safe')
     experiment_override = yaml.load(experiment_dict_str)
     suite = experiment_override['suite_to_run']

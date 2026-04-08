@@ -47,6 +47,14 @@ class Geos():
 
     # ----------------------------------------------------------------------------------------------
 
+    def get_forecast_dir(self) -> str:
+        if self.forecast_dir is None:
+            raise ValueError('Trying to call forecast dir but it has not been set')
+
+        return self.forecast_dir
+
+    # ----------------------------------------------------------------------------------------------
+
     def iso_to_time_str(
         self,
         iso_duration: str,
@@ -108,7 +116,7 @@ class Geos():
         self,
         src: str,
         dst: str,
-        dst_dir: str = None
+        dst_dir: str | None = None
     ) -> None:
         """
         Creates a symbolic link from a source file to a destination.
@@ -123,7 +131,7 @@ class Geos():
         # Link files from BC directories
         # ------------------------------
         if dst_dir is None:
-            dst_dir = self.forecast_dir
+            dst_dir = self.get_forecast_dir()
 
         dst = os.path.basename(dst)
 
@@ -324,7 +332,7 @@ class Geos():
         """
 
         # Make sure input.nml is set up properly for hot/cold restart
-        nml_comb = f90nml.read(os.path.join(self.forecast_dir, 'input.nml'))
+        nml_comb = f90nml.read(os.path.join(self.get_forecast_dir(), 'input.nml'))
 
         if not cold_restart:
             self.logger.info('Hot start, Swell will expect rst/checkpoint files')
@@ -335,10 +343,10 @@ class Geos():
 
         if combine_fvcore:
             self.logger.info('Combining fvcore with input.nml')
-            nml2 = f90nml.read(os.path.join(self.forecast_dir, 'fvcore_layout.rc'))
+            nml2 = f90nml.read(os.path.join(self.get_forecast_dir(), 'fvcore_layout.rc'))
             nml_comb.update(nml2)
 
-        with open(os.path.join(self.forecast_dir, 'input.nml'), 'w') as f:
+        with open(os.path.join(self.get_forecast_dir(), 'input.nml'), 'w') as f:
             f90nml.write(nml_comb, f, sort=False)
 
     # --------------------------------------------------------------------------------------------------

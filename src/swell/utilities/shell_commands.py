@@ -20,7 +20,7 @@ from swell.utilities.logger import Logger
 
 def run_track_log_subprocess(
     logger: Logger,
-    command: list[str] | str | None,
+    command: list[str] | str,
     output_log: str | None = None,
     **kwargs
 ) -> None:
