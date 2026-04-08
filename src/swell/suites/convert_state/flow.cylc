@@ -70,8 +70,7 @@
 
             # Once all conversions are done, assemble the output tarball.
             {% for bkg_idx in range(background_window_times | length) %}
-            RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}} => \
-                TarBackgroundGeosConvertState-{{model_component}}
+            RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}} => TarBackgroundGeosConvertState-{{model_component}}
             {% endfor %}
 
         {% endif %}
@@ -120,11 +119,9 @@
     # The -p index selects which entry in background_window_times to process.
     {% for bkg_idx in range(background_window_times | length) %}
     [[RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}]]
-        script = "swell task RunJediConvertStateFv3Executable $config -d $datetime \
--m {{model_component}} -p {{bkg_idx}}"
+        script = "swell task RunJediConvertStateFv3Executable $config -d $datetime -m {{model_component}} -p {{bkg_idx}}"
         platform = {{platform}}
-        execution time limit = \
-{{scheduling["RunJediConvertStateFv3Executable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediConvertStateFv3Executable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediConvertStateFv3Executable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
@@ -133,8 +130,7 @@
 
     # Collect all converted files and write the output tarball.
     [[TarBackgroundGeosConvertState-{{model_component}}]]
-        script = "swell task TarBackgroundGeosConvertState $config -d $datetime \
--m {{model_component}}"
+        script = "swell task TarBackgroundGeosConvertState $config -d $datetime -m {{model_component}}"
 
     {% endfor %}
 

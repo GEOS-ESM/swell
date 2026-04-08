@@ -1155,6 +1155,7 @@ class QuestionDefaults():
         question_name: str = "npx"
         ask_question: bool = True
         models: List[str] = mutable_field([
+            "geos_atmosphere",
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the x-direction on each cube face?"
@@ -1168,6 +1169,7 @@ class QuestionDefaults():
         question_name: str = "npy"
         ask_question: bool = True
         models: List[str] = mutable_field([
+            "geos_atmosphere",
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the y-direction on each cube face?"
