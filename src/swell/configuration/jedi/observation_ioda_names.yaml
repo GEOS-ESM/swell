@@ -3,6 +3,9 @@ ioda instrument names:
     full name: ABI (GOES-16)
     provider : ncdiag
     inst type: radiance
+  - ioda name: abi_g18
+    full name: ABI (GOES-18)
+    inst type: radiance
   - ioda name: ahi_himawari8
     full name: AHI (Himawari-8)
     provider : ncdiag
@@ -285,12 +288,12 @@ ioda instrument names:
     full name: AMSR2 (SST)
     provider : gdas_marine
     inst type: conventional
-  - ioda name: sst_avhrr_ma_l3u
-    full name: Metop-A (SST)
+  - ioda name: sst_avhrrf_mb_l3u
+    full name: Metop-B (SST)
     provider : gdas_marine
     inst type: avhrr (IR)
-  - ioda name: sst_avhrr_mb_l3u
-    full name: Metop-B (SST)
+  - ioda name: sst_avhrrf_mc_l3u
+    full name: Metop-C (SST)
     provider : gdas_marine
     inst type: avhrr (IR)
   - ioda name: sst_gmi_l3u
@@ -338,3 +341,20 @@ ioda instrument names:
     full name: MERRA2 (Ice Concentration)
     provider : odas
     inst type: conventional
+  # Compo
+  - ioda name: tempo_no2_tropo
+    full name: TEMPO tropospheric column NO2
+    inst type: no2
+    provider :  nasa_VCD
+  - ioda name: tempo_no2_total
+    full name: TEMPO total column NO2
+    inst type: no2
+    provider : nasa_VCD
+  - ioda name: tropomi_s5p_no2_tropo
+    full name: TROPOMI tropospheric column NO2
+    inst type: no2
+    provider : esa
+  - ioda name: tropomi_s5p_co_tropo
+    full name: TROPOMI tropospheric column CO
+    inst type: co
+    provider : esa

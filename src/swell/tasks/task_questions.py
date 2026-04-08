@@ -56,6 +56,16 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.window_type()
         ]
     )
+    # --------------------------------------------------------------------------------------------------
+
+    geos_gcm_questions = QuestionList(
+        list_name="geos_gcm_questions",
+        questions=[
+            qd.geos_homdir(),
+            qd.geos_expdir_different(),
+            qd.geos_expdir(),
+        ]
+    )
 
     # --------------------------------------------------------------------------------------------------
 
@@ -296,7 +306,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_frequency(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
         ]
     )
 
@@ -318,6 +327,16 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetBufr",
         questions=[
             qd.bufr_obs_classes()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    GetCoupledGeosRestart = QuestionList(
+        list_name="GetCoupledGeosRestart",
+        questions=[
+            geos_gcm_questions,
+            qd.initial_restarts_method(),
         ]
     )
 
@@ -349,7 +368,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.geovals_experiment(),
             qd.geovals_provider(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -360,16 +378,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetGeosAdasBackground",
         questions=[
             qd.path_to_geos_adas_background()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    GetGeosRestart = QuestionList(
-        list_name="GetGeosRestart",
-        questions=[
-            swell_static_file_questions,
-            qd.geos_restarts_directory()
         ]
     )
 
@@ -400,7 +408,6 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.ncdiag_experiments(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -414,7 +421,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
     )
@@ -453,6 +459,17 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    IngestObs = QuestionList(
+        list_name="IngestObs",
+        questions=[
+            qd.dry_run(),
+            qd.obs_to_ingest(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     JediLogComparison = QuestionList(
         list_name="JediComparisonLog",
         questions=[
@@ -472,12 +489,32 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    LinkCoupledGeosOutput = QuestionList(
+        list_name="LinkCoupledGeosOutput",
+        questions=[
+            window_questions,
+            qd.background_frequency(),
+            qd.marine_models()
+        ]
+    )
+    # --------------------------------------------------------------------------------------------------
+
     LinkGeosOutput = QuestionList(
         list_name="LinkGeosOutput",
         questions=[
             window_questions,
             qd.background_frequency(),
             qd.marine_models()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    MoveEraseDaRestart = QuestionList(
+        list_name="MoveEraseDaRestart",
+        questions=[
+            qd.mom6_iau(),
+            qd.window_length()
         ]
     )
 
@@ -524,13 +561,13 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    PrepGeosRunDir = QuestionList(
-        list_name="PrepGeosRunDir",
+    PrepCoupledGeosRunDir = QuestionList(
+        list_name="PrepCoupledGeosRunDir",
         questions=[
             swell_static_file_questions,
+            geos_gcm_questions,
             qd.existing_geos_gcm_build_path(),
             qd.forecast_duration(),
-            qd.geos_experiment_directory(),
             qd.mom6_iau_nhours()
         ]
     )
@@ -545,7 +582,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_time_offset(),
             qd.observing_system_records_path(),
             qd.observations(),
-            qd.set_obs_as_local(),
             qd.window_length()
         ]
     )
@@ -720,7 +756,6 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             background_crtm_obs,
             qd.window_length(),
-            qd.r2d2_local_path(),
             qd.marine_models()
         ]
     )
@@ -735,7 +770,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_duration(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path()
         ]
     )
 
@@ -762,7 +796,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.background_experiment(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
-            qd.r2d2_local_path(),
         ]
     )
 

@@ -20,17 +20,23 @@
 
   - [Description](examples/description.md)
   - **SOCA**
-    -  [3DVAR](examples/soca/3dvar.md)
-    -  [3DFGAT_cycle](examples/soca/3dfgat_cycle.md)
+    -  [3DVAR_marine](examples/soca/3dvar_marine.md)
+    -  [3DVAR_marine_cycle_tier2]((examples/soca/3dfgat_marine_cycle_tier2.md))
+    -  [3DFGAT_marine_cycle]((examples/soca/3dfgat_marine_cycle.md))
+  - **R2D2 - Storing Data**
+    - [Storing Observations to R2D2](examples/r2d2/ingest_obs.md)
+  - **SWELL Generic Suites**
+    - [Comparing two SWELL experiment outputs](examples/comparison_workflows.md)
 
 - Configuration files in swell
 
-  - [Observation configuration](configs/observation_configuration.md)
-  - [SLURM configuration](configs/slurm_configuration.md)
-  - Model configuration:
+  - Model configurations:
     - [CICE6](configs/model_configurations/cice6.md)
     - [MOM6](configs/model_configurations/mom6.md)
     - [History Outputs](configs/model_configurations/history_outputs.md)
+  - [Observation configuration](configs/observation_configuration.md)
+  - [R2D2 configuration](configs/r2d2_v3_credentials.md)
+  - [SLURM configuration](configs/slurm_configuration.md)
 
 - Code test before pull request
 
