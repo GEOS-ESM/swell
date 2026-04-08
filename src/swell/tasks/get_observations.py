@@ -217,18 +217,10 @@ class GetObservations(taskBase):
             # ----------------------------------------------
             obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
 
-            # Determine the file extension stored in R2D2
-            obs_file_extension = 'nc4'
-            try:
-                search_results = r2d2.search(
-                    item='observation',
-                    provider=obs_provider,
-                    observation_type=observation,
-                )
-                if search_results:
-                    obs_file_extension = search_results[0].get('file_extension', 'nc4')
-            except Exception:
-                pass
+            # Derive the file extension from the obsfile template in the obs YAML
+            # this is the single source of truth for what format JEDI expects.
+            obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
             # Fetch observation files
             # -----------------------
@@ -375,9 +367,13 @@ class GetObservations(taskBase):
             # -----------------------
             combine_input_files = []
 
+            obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                target_file = os.path.join(
+                    self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
+                )
                 combine_input_files.append(target_file)
 
             # Check how many of the combine_input_files exist in the cycle directory.
