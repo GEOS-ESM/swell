@@ -168,7 +168,7 @@ Use_GMI_O3_PL:        0
 
 # Analysis options
 ANAPHASE: 2
-Analysis_nSpecies: >>SWELL_NUM_AN_VARS<<
+Analysis_nSpecies: >>>SWELL_NUM_AN_VARS<<<
 #Analysis_Settings_Spec001:
 #Analysis_Settings_Spec002:
 

@@ -131,8 +131,8 @@ ANA_LM: 72
 # -------------------------
 RECORD_FINAL:  NO
 RECORD_FREQUENCY: 000000       000000
-RECORD_REF_DATE: >>SWELL_FC6H_DATE<< 21220215
-RECORD_REF_TIME: >>SWELL_FC6H_H<< 120000
+RECORD_REF_DATE: >>>SWELL_FC6H_DATE<<< 21220215
+RECORD_REF_TIME: >>>SWELL_FC6H_H<<< 120000
 
 
 ###################################################################################################
@@ -256,10 +256,10 @@ RECORD_REF_TIME: >>SWELL_FC6H_H<< 120000
  
 # Typical MERRA-2 Regular REPLAY Configuration
 # --------------------------------------------
-    REPLAY_ANA_EXPID: >>SWELL_FP_EXP<< 
-    REPLAY_ANA_LOCATION: >>SWELL_SCRATCHDIR<<
+    REPLAY_ANA_EXPID: >>>SWELL_FP_EXP<<<
+    REPLAY_ANA_LOCATION: >>>SWELL_SCRATCHDIR<<<
     REPLAY_MODE: Regular
-    REPLAY_FILE: >>SWELL_FP_EXP<<.ana.eta.%y4%m2%d2_%h200z.nc4
+    REPLAY_FILE: >>>SWELL_FP_EXP<<<.ana.eta.%y4%m2%d2_%h200z.nc4
 
     #REPLAY_ANA_EXPID:   d5294_geosit_jan18
     #REPLAY_ANA_LOCATION: /home/dao_ops/d5294_geosit_jan18/run/.../archive

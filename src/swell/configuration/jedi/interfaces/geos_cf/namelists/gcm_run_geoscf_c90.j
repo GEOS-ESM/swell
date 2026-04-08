@@ -32,7 +32,7 @@ setenv SITE             NCCS
 #setenv GEOSUTIL         /discover/nobackup/projects/gmao/geos-cf-v2/CFv2_code/GEOSgcm_rc1_t15/install_mil
 
 #setenv GEOSDIR          /discover/nobackup/mabdiosk/GEOS-mil/GEOSgcm/install
-setenv GEOSDIR          >>SWELL_GEOSINSTALL<<
+setenv GEOSDIR          >>>SWELL_GEOSINSTALL<<<
 #setenv GEOSDIR          /discover/nobackup/vshah5/cf2/CFv2_code/GEOSgcm_rc1_t15/build_mil
 setenv GEOSBIN          $GEOSDIR/bin
 setenv GEOSETC          $GEOSDIR/etc
@@ -53,7 +53,7 @@ echo   VERSION: $GCMVER
 
 setenv  EXPID   GCv14.0_GCMv1.17_c90
 #setenv  EXPDIR  /discover/nobackup/mabdiosk/rundir/GCv14.0_GCMv1.17_c90_Skylab 
-setenv  EXPDIR  >>SWELL_GEOSRUN<<
+setenv  EXPDIR  >>>SWELL_GEOSRUN<<<
 # EXPDIR and EXPID have to be the same 
 setenv  HOMDIR  $EXPDIR
 
@@ -64,7 +64,7 @@ set RUN_GSI = 0
 #                 Create Experiment Sub-Directories
 #######################################################################
 echo "  Create Experiment Sub-Directories "
-setenv CYCLEDIR >>SWELL_CYCLEDIR<< # current_cycle
+setenv CYCLEDIR >>>SWELL_CYCLEDIR<<< # current_cycle
 
 
 #if (! -e $CYCLEDIR/restarts   ) mkdir -p $CYCLEDIR/restarts

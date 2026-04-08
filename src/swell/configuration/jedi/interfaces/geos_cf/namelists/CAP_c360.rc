@@ -10,7 +10,7 @@ BEG_DATE:     20000101 000000
 END_DATE:     29990302 210000 
 
 # length of a sigle segment/job 1day
-JOB_SGMT:     >>SWELL_FC_LENGTH<<
+JOB_SGMT:     >>>SWELL_FC_LENGTH<<<
 # number of times you run the job/seg
 NUM_SGMT:     1
 HEARTBEAT_DT:       300

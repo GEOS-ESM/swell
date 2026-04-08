@@ -4,7 +4,7 @@ AnalysisFreq: 1
 AnalysisHour: 0
 AnalysisMinute: 0
 ForwardLooking: 0
-FileTemplate: >>SWELL_RUNDIR<</jedi.inc.%y4%m2%d2.%h2z.nc
+FileTemplate: >>>SWELL_RUNDIR<<</jedi.inc.%y4%m2%d2.%h2z.nc
 FileVarName: NO2
 FileVarUnit: v/v
 UseObsHour: 0

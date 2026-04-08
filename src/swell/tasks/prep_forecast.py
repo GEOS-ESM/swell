@@ -75,7 +75,7 @@ class PrepForecast(taskBase):
 
         # Determine analysis variables for GEOS-CF (NO2 and CO)
         # -------------------------------------------------------
-        an_vars_long_tg = ['volume_mixing_ratio_of_no2', 'volume_mixing_ratio_of_co']
+        an_vars_long_tg = ['volume_mixing_ratio_of_no2', 'volume_mixing_ratio_of_co', 'volume_mixing_ratio_of_o3']
         self.an_vars_compo = []
         for an_var in an_vars_long_tg:
             if an_var in self.an_vars_long:
@@ -223,7 +223,7 @@ class PrepForecast(taskBase):
 
         # Copy template namelist files
         # --------------------------
-        for fname in ['cap_restart', 'logging.yaml', 'GEOSCHEMchem_ExtData.yaml',
+        for fname in ['logging.yaml', 'GEOSCHEMchem_ExtData.yaml',
                       'HEMCO_Config.rc', 'geoschem_config.yml']:
 
             src = os.path.join(namelists_dir, fname)
@@ -238,15 +238,15 @@ class PrepForecast(taskBase):
         # Update AGCM.rc placeholders
         # ---------------------------
         agcm_rc = os.path.join(scratch_dir, 'AGCM.rc')
-        self.replace_string(agcm_rc, '>>SWELL_FP_EXP<<', fp_exp)
-        self.replace_string(agcm_rc, '>>SWELL_SCRATCHDIR<<', scratch_dir)
+        self.replace_string(agcm_rc, '>>>SWELL_FP_EXP<<<', fp_exp)
+        self.replace_string(agcm_rc, '>>>SWELL_SCRATCHDIR<<<', scratch_dir)
 
         weYYYY = parse_wend.strftime('%Y')
         weMM = parse_wend.strftime('%m')
         weDD = parse_wend.strftime('%d')
         weHH = parse_wend.strftime('%H')
-        self.replace_string(agcm_rc, '>>SWELL_FC6H_DATE<<', f'{weYYYY}{weMM}{weDD}')
-        self.replace_string(agcm_rc, '>>SWELL_FC6H_H<<', f'{weHH}0000')
+        self.replace_string(agcm_rc, '>>>SWELL_FC6H_DATE<<<', f'{weYYYY}{weMM}{weDD}')
+        self.replace_string(agcm_rc, '>>>SWELL_FC6H_H<<<', f'{weHH}0000')
 
         # Update HISTORY.rc placeholders
         # ------------------------------
@@ -261,7 +261,7 @@ class PrepForecast(taskBase):
         else:
             raise ValueError(f'Unsupported horizontal resolution for HISTORY.rc grid label: {resolution}')
 
-        self.replace_string(history_dst, '>>SWELL_GEOSCF_JEDI_GRID<<', grid_label)
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_JEDI_GRID<<<', grid_label)
 
         freq_dur = isodate.parse_duration(self.forecast_output_frequency)
         freq_total_secs = int(freq_dur.total_seconds())
@@ -269,7 +269,7 @@ class PrepForecast(taskBase):
         freq_mm = (freq_total_secs % 3600) // 60
         freq_ss = freq_total_secs % 60
         freq_geoscf = f'{freq_hh:02d}{freq_mm:02d}{freq_ss:02d}'
-        self.replace_string(history_dst, '>>SWELL_FC_OUTPUT_FREQ<<', freq_geoscf)
+        self.replace_string(history_dst, '>>>SWELL_FC_OUTPUT_FREQ<<<', freq_geoscf)
 
         # Update GEOSCHEMchem_GridComp.rc placeholders
         # --------------------------------------------
@@ -277,7 +277,7 @@ class PrepForecast(taskBase):
         gridcomp_src = os.path.join(namelists_dir, 'GEOSCHEMchem_GridComp.rc')
         gridcomp_dst = os.path.join(scratch_dir, 'GEOSCHEMchem_GridComp.rc')
         shutil.copy(gridcomp_src, gridcomp_dst)
-        self.replace_string(gridcomp_dst, '>>SWELL_NUM_AN_VARS<<', str(num_an_vars))
+        self.replace_string(gridcomp_dst, '>>>SWELL_NUM_AN_VARS<<<', str(num_an_vars))
 
         for index, an_var in enumerate(self.an_vars_compo):
             self.replace_string(gridcomp_dst,
@@ -292,7 +292,7 @@ class PrepForecast(taskBase):
             ana_dst = os.path.join(scratch_dir, f'GEOSCHEMchem_AnaSettings_{an_var}.rc')
             if os.path.exists(ana_src):
                 shutil.copy(ana_src, ana_dst)
-                self.replace_string(ana_dst, '>>SWELL_RUNDIR<<', scratch_dir)
+                self.replace_string(ana_dst, '>>>SWELL_RUNDIR<<<', scratch_dir)
 
         # Write cap_restart with window begin date
         # -----------------------------------------
@@ -308,11 +308,11 @@ class PrepForecast(taskBase):
         gcm_run_src = os.path.join(namelists_dir, f'gcm_run_geoscf_{resolution}.j')
         gcm_run_dst = os.path.join(scratch_dir, 'gcm_run_geoscf.j')
         shutil.copy(gcm_run_src, gcm_run_dst)
-        self.replace_string(gcm_run_dst, '>>SWELL_CYCLEDIR<<', scratch_dir)
-        self.replace_string(gcm_run_dst, '>>SWELL_GEOSINSTALL<<', self.geos_cf_install_dir)
+        self.replace_string(gcm_run_dst, '>>>SWELL_CYCLEDIR<<<', scratch_dir)
+        self.replace_string(gcm_run_dst, '>>>SWELL_GEOSINSTALL<<<', self.geos_cf_install_dir)
 
         # used in handling Saltwater Restart only
-        self.replace_string(gcm_run_dst, '>>SWELL_GEOSRUN<<', self.geos_cf_run_dir)
+        self.replace_string(gcm_run_dst, '>>>SWELL_GEOSRUN<<<', self.geos_cf_run_dir)
         os.chmod(gcm_run_dst, 0o755)
 
         # Update CAP.rc with forecast length
@@ -326,6 +326,6 @@ class PrepForecast(taskBase):
         cap_src = os.path.join(namelists_dir, f'CAP_{resolution}.rc')
         cap_dst = os.path.join(scratch_dir, 'CAP.rc')
         shutil.copy(cap_src, cap_dst)
-        self.replace_string(cap_dst, '>>SWELL_FC_LENGTH<<', fc_len_geoscf)
+        self.replace_string(cap_dst, '>>>SWELL_FC_LENGTH<<<', fc_len_geoscf)
 
 # --------------------------------------------------------------------------------------------------

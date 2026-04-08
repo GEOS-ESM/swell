@@ -46,9 +46,9 @@ PC360x181-DC.LM: 72
   geoscf_jedi.format:    'CFIO',
   geoscf_jedi.mode:      'instantaneous' ,
   #geoscf_jedi.frequency:  010000,
-  geoscf_jedi.frequency:  >>SWELL_FC_OUTPUT_FREQ<<,
+  geoscf_jedi.frequency:  >>>SWELL_FC_OUTPUT_FREQ<<<,
   geoscf_jedi.ref_time:   000000,
-  geoscf_jedi.grid_label: >>SWELL_GEOSCF_JEDI_GRID<<
+  geoscf_jedi.grid_label: >>>SWELL_GEOSCF_JEDI_GRID<<<
   geoscf_jedi.fields:     'T'                       , 'DYN'           ,
                           'U_DGRID;V_DGRID'         , 'DYN'           , 'ud;vd' ,
                           'U;V'                     , 'DYN'           , 'ua;va' ,
