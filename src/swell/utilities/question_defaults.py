@@ -178,22 +178,6 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DATETIME
 
     # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class window_type(SuiteQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "window_type"
-        options: list[str] = mutable_field([
-            "3D",
-            "4D"
-        ])
-        models: list[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Enter the window type for this model."
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
     # Task question defaults go here
     # --------------------------------------------------------------------------------------------------
 
