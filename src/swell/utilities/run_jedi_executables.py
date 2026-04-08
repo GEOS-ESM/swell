@@ -10,6 +10,7 @@
 
 import os
 import netCDF4 as nc
+import datetime
 
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.logger import Logger
@@ -21,7 +22,7 @@ def check_obs(
     path_to_observing_sys_yamls: str | None,
     observation: str,
     obs_dict: dict,
-    cycle_time: str | datetime | None,
+    cycle_time: str | datetime.datetime | None,
     input_and_output: bool | None = False
 ) -> bool:
 
