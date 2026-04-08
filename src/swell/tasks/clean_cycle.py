@@ -104,6 +104,18 @@ class CleanCycle(taskBase):
                 self.logger.info(f'Removing previous cycle scratch directory: {prev_scratch_dir}')
                 shutil.rmtree(prev_scratch_dir)
 
+        # If this is the last cycle of the experiment, also remove the current cycle's scratch dir
+        if self.cycle_time_dto() == self.final_cycle_point_dto():
+            curr_scratch_dir = os.path.join(
+                self.experiment_path(), 'run',
+                self.cycle_time_dto().strftime(datetime_formats['directory_format']),
+                self.__model__, 'scratch'
+            )
+            if os.path.isdir(curr_scratch_dir):
+                self.logger.info(f'Removing the last cycle scratch directory: '
+                                 f'{curr_scratch_dir}')
+                shutil.rmtree(curr_scratch_dir)
+
         # Have date information for the cycle done file
         time_short = dt.today().strftime(datetime_formats['directory_format'])
 
