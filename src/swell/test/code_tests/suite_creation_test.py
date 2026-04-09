@@ -7,13 +7,13 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import tempfile
 import os
 import unittest
 
 from swell.suites.all_suites import get_suites
 from swell.deployment.create_experiment import create_experiment_directory
 from swell.utilities.logger import get_logger
+from swell.utilities.test_cache import get_test_cache
 
 # --------------------------------------------------------------------------------------------------
 
@@ -40,17 +40,18 @@ class SuiteCreationTest(unittest.TestCase):
 
     def suite_creation_test(self, suite: str) -> None:
 
-        tempdir = tempfile.mkdtemp()
+        cache_location = get_test_cache()
 
         override_dict = {}
 
-        override_dict['experiment_root'] = tempdir
+        override_dict['experiment_id'] = experiment_id = f'{suite}-creation'
+        override_dict['experiment_root'] = cache_location
         override_dict['skip_r2d2'] = True
 
         create_experiment_directory(suite, 'defaults', 'nccs_discover_sles15',
                                     override_dict, advanced=False, slurm=None, skip_r2d2=True)
 
-        experiment_yaml = os.path.join(tempdir, f'swell-{suite}', f'swell-{suite}-suite',
+        experiment_yaml = os.path.join(cache_location, experiment_id, f'{experiment_id}-suite',
                                        'experiment.yaml')
 
         with open(experiment_yaml, 'r') as f:

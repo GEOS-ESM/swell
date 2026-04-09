@@ -44,6 +44,7 @@ def mock_jedi_config(suite: str,
         tempdir = work_dir
 
     override_dict = {'models': {}}
+    override_dict['experiment_id'] = experiment_id = f'{suite}-config'
     override_dict['experiment_root'] = tempdir
     override_dict['generate_yaml_and_exit'] = True
     override_dict['mock_experiment'] = True
@@ -52,8 +53,8 @@ def mock_jedi_config(suite: str,
     create_experiment_directory(suite, method='defaults', platform='nccs_discover_sles15',
                                 override=override_dict, advanced=False, slurm=None, skip_r2d2=True)
 
-    experiment_yaml = os.path.join(tempdir, f'swell-{suite}',
-                                   f'swell-{suite}-suite', 'experiment.yaml')
+    experiment_yaml = os.path.join(tempdir, experiment_id,
+                                   f'{experiment_id}-suite', 'experiment.yaml')
 
     task_wrapper('RenderJediObservations', experiment_yaml, datetime,
                  model, ensemblePacket=None)
@@ -66,7 +67,7 @@ def mock_jedi_config(suite: str,
     task_wrapper(f'RunJedi{executable_name}Executable', experiment_yaml, datetime,
                  model, ensemblePacket=None)
 
-    cycle_dir = os.path.join(tempdir, f'swell-{suite}', 'run', datetime, model)
+    cycle_dir = os.path.join(tempdir, experiment_id, 'run', datetime, model)
 
     filename = f'jedi_{executable_type}_config.yaml'
     config_file = os.path.join(cycle_dir, filename)
