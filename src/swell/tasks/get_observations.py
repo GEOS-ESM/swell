@@ -370,7 +370,6 @@ class GetObservations(taskBase):
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
             for obs_num, obs_time in enumerate(obs_list_dto):
-                obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
                 target_file = os.path.join(
                     self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
                 )
