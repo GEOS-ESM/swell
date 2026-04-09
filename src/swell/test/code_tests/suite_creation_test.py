@@ -9,6 +9,7 @@
 
 import os
 import unittest
+import tempfile
 
 from swell.suites.all_suites import get_suites
 from swell.deployment.create_experiment import create_experiment_directory
@@ -41,6 +42,8 @@ class SuiteCreationTest(unittest.TestCase):
     def suite_creation_test(self, suite: str) -> None:
 
         cache_location = get_test_cache()
+        if cache_location is None:
+            cache_location = tempfile.mkdtemp()
 
         override_dict = {}
 
