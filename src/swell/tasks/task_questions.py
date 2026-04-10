@@ -86,6 +86,8 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.number_of_iterations(),
             qd.total_processors(),
+            qd.saber_central_block(),
+            qd.saber_outer_block(),
         ]
     )
 
@@ -769,10 +771,13 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="StageJedi",
         questions=[
             swell_static_file_questions,
+            qd.npx_proc(),
+            qd.npy_proc(),
             qd.gsibec_configuration(),
             qd.gsibec_nlats(),
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
+            qd.saber_central_block(),
             qd.vertical_resolution()
         ]
     )
