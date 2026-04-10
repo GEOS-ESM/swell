@@ -195,9 +195,10 @@ def load_r2d2_credentials(
     # Set host and compiler (YAML config takes precedence over platform detection)
     if 'r2d2_host' in credentials and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_HOST'] = credentials['r2d2_host']
-        logger.info(f"Using platform host '{r2d2_host}' \
-                    (overriding YAML '{credentials['r2d2_host']}')")
-        logger.warning("Using host from YAML file")
+        logger.info(
+            f"YAML r2d2_host ({credentials['r2d2_host']!r}) overrides "
+            f"platform default ({r2d2_host!r})"
+        )
 
     elif r2d2_host and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_HOST'] = r2d2_host
@@ -206,9 +207,10 @@ def load_r2d2_credentials(
     # Set compiler
     if 'r2d2_compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
         os.environ['R2D2_COMPILER'] = credentials['r2d2_compiler']
-        logger.info(f"Using platform compiler '{r2d2_compiler}' \
-                    (overriding YAML '{credentials['r2d2_compiler']}')")
-        logger.warning("Using compiler from YAML file")
+        logger.info(
+            f"YAML r2d2_compiler ({credentials['r2d2_compiler']!r}) overrides "
+            f"platform default ({r2d2_compiler!r})"
+        )
 
     elif r2d2_compiler and 'R2D2_COMPILER' not in os.environ:
         os.environ['R2D2_COMPILER'] = r2d2_compiler
