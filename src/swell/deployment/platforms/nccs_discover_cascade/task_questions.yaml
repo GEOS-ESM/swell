@@ -20,7 +20,7 @@ existing_jedi_source_directory_pinned:
   default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles/current_pinned_jedi_bundle/source/
 
 geos_homdir:
-  default_value: /discover/nobackup/projects/gmao/advda/versions/v0.0.0/SwellStaticFiles/geos/homdirs/coupled_5deg
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0/geos/homdirs/coupled_5deg
 
 swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/versions/v0.0.0/SwellStaticFiles/
