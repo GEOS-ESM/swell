@@ -3,11 +3,11 @@
 ## Table of Contents
 
 1. [What is R2D2?](#what-is-r2d2)
-3. [How R2D2 Works](#how-r2d2-works)
-4. [R2D2 Concepts](#r2d2-concepts)
-5. [How Swell Uses R2D2](#how-swell-uses-r2d2)
-6. [Store & Fetch Quick Reference](#store--fetch-quick-reference)
-7. [Storing Observations to R2D2](examples/ingest_obs.md)
+2. [How R2D2 Works](#how-r2d2-works)
+3. [R2D2 Concepts](#r2d2-concepts)
+4. [How Swell Uses R2D2](#how-swell-uses-r2d2)
+5. [Store & Fetch Quick Reference](#store--fetch-quick-reference)
+6. [Storing Observations to R2D2](../examples/r2d2/ingest_obs.md)
 
 ---
 

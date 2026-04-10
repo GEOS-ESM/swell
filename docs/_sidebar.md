@@ -25,7 +25,7 @@
     -  [3DFGAT_marine_cycle]((examples/soca/3dfgat_marine_cycle.md))
   - **R2D2 - Storing Data**
        - [Understanding R2D2](examples/r2d2_intro.md)
-       - [Storing Observations to R2D2](examples/ingest_obs.md)
+       - [Storing Observations to R2D2](examples/r2d2/ingest_obs.md)
 
 - Configuration files in swell
 

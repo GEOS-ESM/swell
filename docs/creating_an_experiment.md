@@ -12,7 +12,7 @@ The first step is to create an experiment which is done with
 swell create <suite> <options>
 ```
 
-**During `swell create`**: Credentials are loaded, and the experiment are registered in R2D2 automatically. The experiment ID is stored in `experiment.yaml` and used by STORE operations such as SaveRestart and SaveObsDiags.
+**During `swell create`**: Credentials are loaded, and the experiment is registered in R2D2 automatically. The experiment ID is stored in `experiment.yaml` and used by STORE operations such as SaveRestart and SaveObsDiags.
 
 This will create a directory with your experiment ID in the experiment root.
 
