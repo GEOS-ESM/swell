@@ -46,17 +46,23 @@ class StageJedi(taskBase):
                 swell_static_files = swell_static_files_user
 
         vertical_resolution = self.config.vertical_resolution()
+        npx_proc = self.config.npx_proc(None)
+        npy_proc = self.config.npy_proc(None)
         gsibec_configuration = self.config.gsibec_configuration(None)
         gsibec_nlats = self.config.gsibec_nlats(None)
         gsibec_nlons = self.config.gsibec_nlons(None)
+        saber_central_block = self.config.saber_central_block(None)
 
         # Add jedi interface template keys
         self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
         self.jedi_rendering.add_key('swell_static_files', swell_static_files)
         self.jedi_rendering.add_key('vertical_resolution', vertical_resolution)
+        self.jedi_rendering.add_key('npx_proc', npx_proc)
+        self.jedi_rendering.add_key('npy_proc', npy_proc)
         self.jedi_rendering.add_key('gsibec_configuration', gsibec_configuration)
         self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
         self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
+        self.jedi_rendering.add_key('saber_central_block', saber_central_block)
 
         # Open the stage configuration file
         # ---------------------------------
