@@ -38,3 +38,22 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.dry_run(True),
         ]
     )
+
+    ingest_obs_cf = QuestionList(
+        list_name="ingest_obs_cf",
+        questions=[
+            ingest_obs,
+            qd.start_cycle_point("2024-01-01T00:00:00Z"),
+            qd.final_cycle_point("2024-01-02T00:00:00Z"),
+            qd.model_components(['geos_cf']),
+            qd.runahead_limit("P5"),
+        ],
+        geos_cf=[
+            qd.window_length("PT6H"),
+            qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
+            qd.obs_to_download(['omps_nm']),
+            qd.earthdata_token_path(''),
+            qd.obs_to_ingest(['omps_nm']),
+            qd.dry_run(True),
+        ]
+    )

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/maryamabdi/Work/JEDI/playground/skylab/models/geos_cf/tasks/**)",
+      "Bash(git ls-tree -r --name-only develop)",
+      "Bash(git checkout develop -- docs/examples/soca/3dfgat_marine_cycle.md docs/examples/soca/3dvar_marine.md docs/examples/soca/3dvar_marine_cycle_tier2.md src/swell/configuration/jedi/interfaces/geos_atmosphere/model/r2d2.py src/swell/configuration/jedi/interfaces/geos_cf/model/r2d2.py src/swell/configuration/jedi/interfaces/geos_cf/model/stage_cycle.py src/swell/configuration/jedi/interfaces/geos_cf/task_questions.yaml src/swell/configuration/jedi/interfaces/geos_marine/model/r2d2.py src/swell/configuration/jedi/oops/variational3D.py src/swell/deployment/platforms/generic/r2d2_config.yaml src/swell/deployment/platforms/generic/task_questions.yaml src/swell/deployment/platforms/nccs_discover_cascade/r2d2_config.yaml src/swell/deployment/platforms/nccs_discover_cascade/task_questions.yaml src/swell/deployment/platforms/nccs_discover_sles15/r2d2_config.yaml src/swell/deployment/platforms/nccs_discover_sles15/suite_questions.yaml src/swell/deployment/platforms/nccs_discover_sles15/task_questions.yaml src/swell/suites/hofx_cf/suite_config.py src/swell/tasks/get_background.py src/swell/tasks/get_geovals.py src/swell/tasks/get_ncdiags.py src/swell/tasks/get_observations.py src/swell/tasks/get_restart.py src/swell/tasks/ingest_obs.py src/swell/tasks/run_jedi_variational_executable.py src/swell/tasks/save_obs_diags.py src/swell/tasks/save_restart.py src/swell/utilities/r2d2.py)",
+      "Bash(git checkout develop -- docs/examples/soca/3dfgat_marine_cycle.md docs/examples/soca/3dvar_marine.md docs/examples/soca/3dvar_marine_cycle_tier2.md src/swell/configuration/jedi/interfaces/geos_atmosphere/model/r2d2.py src/swell/configuration/jedi/interfaces/geos_cf/model/r2d2.py src/swell/configuration/jedi/interfaces/geos_cf/model/stage_cycle.py src/swell/configuration/jedi/interfaces/geos_cf/task_questions.yaml src/swell/configuration/jedi/interfaces/geos_marine/model/r2d2.py src/swell/configuration/jedi/oops/variational3D.py src/swell/deployment/platforms/generic/r2d2_config.yaml src/swell/deployment/platforms/generic/task_questions.yaml src/swell/deployment/platforms/nccs_discover_cascade/r2d2_config.yaml src/swell/deployment/platforms/nccs_discover_cascade/task_questions.yaml src/swell/deployment/platforms/nccs_discover_sles15/r2d2_config.yaml src/swell/deployment/platforms/nccs_discover_sles15/suite_questions.yaml src/swell/deployment/platforms/nccs_discover_sles15/task_questions.yaml src/swell/suites/hofx_cf/suite_config.py src/swell/tasks/get_background.py src/swell/tasks/get_geovals.py src/swell/tasks/get_ncdiags.py src/swell/tasks/get_observations.py src/swell/tasks/ingest_obs.py src/swell/tasks/run_jedi_variational_executable.py src/swell/tasks/save_obs_diags.py src/swell/tasks/save_restart.py src/swell/utilities/r2d2.py)",
+      "Bash(grep -l \"RunForecast\\\\|run_forecast\" /Users/maryamabdi/Work/JEDI/swell/src/swell/suites/*/flow.cylc)",
+      "Bash(gh pr:*)",
+      "Bash(python3 -c \"import swell.suites.base.suite_attributes\")",
+      "Bash(grep -E \"\\\\.\\(yaml|yml\\)$\")",
+      "Bash(grep -n \"def render_oops_file\" /Users/maryamabdi/Work/JEDI/swell/src/swell/utilities/*.py)",
+      "Bash(ls /Users/maryamabdi/Work/JEDI/swell/src/swell/*.py)",
+      "Read(//Users/maryamabdi/Downloads/**)",
+      "Read(//Users/maryamabdi/Work/JEDI/playground/**)",
+      "Bash(grep -r \"class.*Task\" /Users/maryamabdi/Work/JEDI/swell/src/swell/tasks/*.py)"
+    ]
+  }
+}

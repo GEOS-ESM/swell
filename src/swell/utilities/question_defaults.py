@@ -822,6 +822,33 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_download(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_download"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to download from remote servers?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class earthdata_token_path(TaskQuestion):
+        default_value: str = ""
+        question_name: str = "earthdata_token_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Path to file containing NASA Earthdata Bearer token"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class initial_restarts_method(TaskQuestion):
         default_value: str = "defer_to_platform"
