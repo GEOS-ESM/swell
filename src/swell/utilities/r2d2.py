@@ -201,6 +201,15 @@ def load_r2d2_credentials(
         os.environ['R2D2_COMPILER'] = r2d2_compiler
         logger.info(f"Set R2D2_COMPILER={r2d2_compiler} from platform configuration")
 
+    # Set custom server connection (only needed for non-JCSDA servers)
+    if 'server_host' in credentials and 'R2D2_SERVER_HOST' not in os.environ:
+        os.environ['R2D2_SERVER_HOST'] = credentials['server_host']
+        logger.info(f"Set R2D2_SERVER_HOST={credentials['server_host']} from credentials file")
+
+    if 'server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
+        os.environ['R2D2_SERVER_PORT'] = str(credentials['server_port'])
+        logger.info(f"Set R2D2_SERVER_PORT={credentials['server_port']} from credentials file")
+
     logger.info("R2D2 v3 credentials loaded successfully")
 
 # ----------------------------------------------------------------------------------------------
