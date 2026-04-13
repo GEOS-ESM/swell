@@ -41,6 +41,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npx_proc(2),
             qd.npy_proc(2),
             qd.vertical_resolution(72),
+            qd.saber_central_block('bump_nicas'),
+            qd.saber_outer_block('stddev_bkg_scaled'),
             qd.analysis_variables(["volume_mixing_ratio_of_no2"]),
             qd.background_experiment("swell_test"),
             qd.observations([

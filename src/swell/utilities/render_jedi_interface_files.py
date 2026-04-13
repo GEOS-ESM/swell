@@ -118,6 +118,8 @@ class JediConfigRendering():
             'obs_filenames',
             'packet_ensemble_members',
             'perhost',
+            'saber_central_block',
+            'saber_outer_block',
             'skip_ensemble_hofx',
             'swell_static_files',
             'start_cycle_point',
