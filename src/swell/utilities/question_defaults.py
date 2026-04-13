@@ -195,6 +195,17 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class bufr_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "bufr_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the BUFR conversion pipeline "
+                       "(GetBufr -> BufrToIoda) before ingesting to R2D2?")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class start_cycle_point(SuiteQuestion):
         default_value: str = "2023-10-10T00:00:00Z"
         question_name: str = "start_cycle_point"

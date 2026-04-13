@@ -332,6 +332,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    BufrToIoda = QuestionList(
+        list_name="BufrToIoda",
+        questions=[
+            qd.bufr_obs_classes(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetCoupledGeosRestart = QuestionList(
         list_name="GetCoupledGeosRestart",
         questions=[
