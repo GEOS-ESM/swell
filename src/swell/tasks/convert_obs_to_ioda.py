@@ -5,11 +5,11 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 """
-Task for converting downloaded native observation files to IODA format.
+Task for converting downloaded raw observation files to IODA format.
 
 Runs an ioda-converters Python script installed in the JEDI bundle's bin
-directory against the raw files produced by DownloadObs, writing a single
-IODA-formatted NetCDF file per cycle into the cycle's ioda/ directory.
+directory against the raw files produced by DownloadObs task, writing a
+single IODA-formatted NetCDF file per cycle into the cycle's directory.
 """
 
 import glob
@@ -23,7 +23,7 @@ from swell.tasks.base.task_base import taskBase
 
 
 class ConvertObsToIoda(taskBase):
-    """Convert downloaded native observation files to IODA format.
+    """Convert downloaded raw observation files to IODA format.
 
     For each observation in ``obs_to_download``, this task:
 
@@ -94,6 +94,31 @@ class ConvertObsToIoda(taskBase):
     # Private helpers
     # ------------------------------------------------------------------
 
+    def _input_glob_from_download_config(self, obs_name: str) -> str:
+        """Derive a glob pattern from the download config's filename_pattern.
+
+        Replaces all date/time placeholders (YYYY, MM, DD, JJJ, HH) with '*'
+        so that every file downloaded for this obs matches regardless of timestamp.
+        Falls back to '*' if no download config is found.
+        """
+        download_config_path = os.path.join(
+            self.experiment_path(),
+            'configuration', 'jedi', 'interfaces',
+            self.get_model(),
+            'download_observations',
+            f'{obs_name}.yaml')
+
+        if not os.path.exists(download_config_path):
+            return '*'
+
+        with open(download_config_path, 'r') as fh:
+            dl_config = yaml.safe_load(fh)
+
+        pattern = dl_config.get('filename_pattern', '*')
+        for placeholder in ('YYYY', 'MM', 'DD', 'JJJ', 'HH'):
+            pattern = pattern.replace(placeholder, '*')
+        return pattern
+
     def _run_converter(
         self,
         obs_name: str,
@@ -104,9 +129,11 @@ class ConvertObsToIoda(taskBase):
     ) -> None:
         """Build and run the ioda-converter command for one observation type."""
 
-        # Collect all downloaded input files
+        # Collect all downloaded input files using the filename pattern from
+        # the download config rather than a separate input_glob in the convert config.
         download_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
-        input_pattern = os.path.join(download_dir, conv_config.get('input_glob', '*.h5'))
+        file_glob = self._input_glob_from_download_config(obs_name)
+        input_pattern = os.path.join(download_dir, file_glob)
         input_files = sorted(glob.glob(input_pattern))
 
         if not input_files:

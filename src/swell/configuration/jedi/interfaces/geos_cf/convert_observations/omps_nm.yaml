@@ -11,9 +11,6 @@
 # Python script name installed in the JEDI bundle bin directory
 converter_script: omps_o3_nm_h52ioda.py
 
-# Glob pattern for selecting input files from <cycle_dir>/download/omps_nm/
-input_glob: "*.h5"
-
 # Output filename template (strftime placeholders: %Y %m %d %H)
 output_filename_template: "omps_nm_%Y%m%d%H.nc"
 

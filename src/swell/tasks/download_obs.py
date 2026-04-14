@@ -248,7 +248,7 @@ class DownloadObs(taskBase):
     def _download_file(
         self, session: requests.Session, url: str, dest_path: str
     ) -> None:
-        """Stream a remote file to ``dest_path``."""
+        """Stream a remote file to ``dest_path``. Writing in 1 MB chuncks"""
         with session.get(url, stream=True, timeout=120) as response:
             response.raise_for_status()
             with open(dest_path, 'wb') as fh:
