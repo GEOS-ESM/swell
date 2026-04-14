@@ -15,14 +15,34 @@ def stage_cycle(template_dict: Mapping) -> Mapping | list:
 
     cycle_dir = template_dict['cycle_dir']
     swell_static_files = template_dict['swell_static_files']
+    npx_proc = template_dict['npx_proc']
+    npy_proc = template_dict['npy_proc']
 
     stage_cycle = [
         {'copy_files': {
             'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*', f'{cycle_dir}/']
+                [
+                    f'{swell_static_files}/jedi/interfaces/geos_cf/fv3_files/*',
+                    f'{cycle_dir}/'
+                ]
             ]
         }}
     ]
+
+    # Only link NICAS files when the central block corresponds to BUMP_NICAS
+    central_block_select = template_dict.get('saber_central_block', 'none')
+    if central_block_select == 'bump_nicas':
+        stage_cycle.append({
+            'link_files': {
+                'directories': [
+                    [
+                        f'{swell_static_files}/jedi/interfaces/geos_cf/nicas/'
+                        f'layout_{npx_proc}x{npy_proc}x6/*',
+                        f'{cycle_dir}/'
+                    ]
+                ]
+            }
+        })
 
     return stage_cycle
 
