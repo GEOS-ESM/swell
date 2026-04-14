@@ -194,6 +194,18 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+    
+    DownloadObs = QuestionList(
+        list_name="DownloadObs",
+        questions=[
+            qd.dry_run(),
+            qd.earthdata_token_path(),
+            qd.obs_to_download(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
 
     EvaComparisonJediLog = QuestionList(
         list_name="EvaJediLog",

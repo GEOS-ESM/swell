@@ -11,11 +11,7 @@
         {% for cycle_time in cycle_times %}
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
-                {% if obs_to_download is defined and obs_to_download %}
                 DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
-                {% else %}
-                IngestObs-{{model_component}}
-                {% endif %}
                 {% endfor %}
             """
         {% endfor %}
@@ -29,7 +25,6 @@
             config = $CYLC_SUITE_DEF_PATH/experiment.yaml
 
     {% for model_component in model_components %}
-    {% if obs_to_download is defined and obs_to_download %}
     [[DownloadObs-{{model_component}}]]
         script = "swell task DownloadObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT30M
@@ -38,7 +33,6 @@
         script = "swell task ConvertObsToIoda $config -d $datetime -m {{model_component}}"
         execution time limit = PT15M
 
-    {% endif %}
     [[IngestObs-{{model_component}}]]
         script = "swell task IngestObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT10M

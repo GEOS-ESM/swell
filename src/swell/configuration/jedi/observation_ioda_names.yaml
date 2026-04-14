@@ -358,3 +358,7 @@ ioda instrument names:
     full name: TROPOMI tropospheric column CO
     inst type: co
     provider : esa
+  - ioda name: omps_o3_nm
+    full name: OMPS total column O3 (Nadir Mapping)
+    inst type: o3
+    provider : nasa

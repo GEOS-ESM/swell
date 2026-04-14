@@ -3,4 +3,4 @@
 # Path uses strftime placeholders (%Y, %m, %d, %H).
 
 retrieval_method: local
-source: ioda/omps_nm/omps_nm_%Y%m%d%H.nc # in CYCLE_DIR
+source: ioda/omps_o3_nm/omps_o3_nm_%Y%m%d%H.nc # in CYCLE_DIR
