@@ -65,7 +65,9 @@ class DownloadObs(taskBase):
 
         # Load Earthdata token (may be absent for non-Earthdata sources)
         earthdata_token_path = self.config.earthdata_token_path('')
+        print(f'loading earthdata token: {earthdata_token_path}')
         earthdata_token = self._load_token(earthdata_token_path)
+        print(earthdata_token)
 
         # DA window bounds
         window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
@@ -112,12 +114,24 @@ class DownloadObs(taskBase):
     def _load_token(self, token_path: str) -> str:
         """Return the Earthdata Bearer token string, or empty string."""
         if not token_path:
+            self.logger.warning('earthdata_token_path is not set.')
             return ''
         if not os.path.exists(token_path):
             self.logger.warning(f'Earthdata token file not found: {token_path}')
             return ''
         with open(token_path, 'r') as fh:
             return fh.read().strip()
+
+    def _earthdata_netrc_auth(self) -> tuple:
+        """Return (login, password) from ~/.netrc for urs.earthdata.nasa.gov, or (None, None)."""
+        try:
+            creds = netrc_module.netrc().authenticators('urs.earthdata.nasa.gov')
+            if creds:
+                return creds[0], creds[2]
+        except Exception:
+            pass
+        return None, None
+
 
     def _download_obs(
         self,
@@ -151,10 +165,48 @@ class DownloadObs(taskBase):
         if not dry_run:
             os.makedirs(dest_dir, exist_ok=True)
 
-        # HTTP session with optional Earthdata auth
-        session = requests.Session()
+        # HTTP session with optional Earthdata auth.
+        # requests strips the Authorization header on cross-domain redirects
+        # (a security feature), but NASA GES DISC redirects through
+        # urs.earthdata.nasa.gov during auth, which drops the token.
+        # Re-attach it via a response hook so every redirect retains auth.
         if earthdata_token:
-            session.headers.update({'Authorization': f'Bearer {earthdata_token}'})
+            class BearerAuth(requests.auth.AuthBase):
+                def __init__(self, earthdata_token):
+                    self.earthdata_token = earthdata_token
+            
+                def __call__(self, r):
+                    r.headers['Authorization'] = f'Bearer {self.earthdata_token}'
+                    return r
+            
+            session = requests.Session()
+            #session.auth = BearerAuth(earthdata_token)
+
+        else:
+            # Fall back to ~/.netrc credentials (same mechanism wget uses).
+            # requests.Session picks up netrc automatically when no explicit
+            # auth is set, but only if allow_redirects keeps credentials across
+            # hops.  Force it by using a redirect hook that re-injects netrc
+            # credentials after cross-domain hops.
+            import netrc as _netrc
+            import urllib.parse as _urlparse
+ 
+ 
+            def _reattach_netrc(response, *_):
+                if response.is_redirect:
+                    loc = response.headers.get('Location', '')
+                    host = _urlparse.urlparse(loc).hostname or ''
+                    try:
+                        creds = _netrc.netrc().authenticators(host)
+                    except Exception:
+                        creds = None
+                    if creds:
+                        login, _, password = creds
+                        response.request.prepare_auth(
+                            requests.auth.HTTPBasicAuth(login, password))
+ 
+ 
+            session.hooks['response'].append(_reattach_netrc)
 
         downloaded = 0
         failed = 0
@@ -240,7 +292,8 @@ class DownloadObs(taskBase):
 
     def _list_remote_dir(self, session: requests.Session, url: str) -> list[str]:
         """Return filenames found in an HTML directory listing at ``url``."""
-        response = session.get(url, timeout=30)
+        #response = session.get(url, timeout=30)
+        response = session.get(url)
         response.raise_for_status()
         # Extract hrefs that look like filenames (no leading slash = not a parent link)
         return re.findall(r'href="([^"/][^"]*)"', response.text)
@@ -249,7 +302,8 @@ class DownloadObs(taskBase):
         self, session: requests.Session, url: str, dest_path: str
     ) -> None:
         """Stream a remote file to ``dest_path``. Writing in 1 MB chuncks"""
-        with session.get(url, stream=True, timeout=120) as response:
+        #with session.get(url, stream=True, timeout=120) as response:
+        with session.get(url, stream=True) as response:
             response.raise_for_status()
             with open(dest_path, 'wb') as fh:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):

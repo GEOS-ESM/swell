@@ -66,6 +66,7 @@ class ConvertObsToIoda(taskBase):
 
         jedi_bin = os.path.join(
             self.experiment_path(), 'jedi_bundle', 'build', 'bin')
+        jedi_bin = '/discover/nobackup/projects/jcsda/s2127/maryamao/jedi-bundle/build-intel-1.9/bin/'
 
         cycle_time_dto = self.cycle_time_dto()
 
