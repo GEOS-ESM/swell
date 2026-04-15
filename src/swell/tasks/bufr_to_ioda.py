@@ -222,6 +222,7 @@ class BufrToIoda(taskBase):
 
             try:
                 self.logger.info('Running '+jedi_executable_path+' with '+bufr2ioda_conv_yaml+'.')
+                self.logger.info(f'Execution cli line: {jedi_executable_path}, {bufr_path_file}, {bufr2ioda_conv_yaml}, {ioda_file_target_path}')
                 subprocess.run([jedi_executable_path, bufr_path_file, bufr2ioda_conv_yaml, ioda_file_target_path])
             except FileNotFoundError:
                 self.logger.info(f'Error: File "{bufr2ioda_conv_yaml}" not found.')
