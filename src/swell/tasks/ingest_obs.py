@@ -21,7 +21,8 @@ from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import load_r2d2_credentials
+
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
 # --------------------------------------------------------------------------------------------------
@@ -72,8 +73,6 @@ class IngestObs(taskBase):
             - ``window_length``: Length of the DA window as an ISO-8601 duration
               (e.g. ``"PT6H"``).
             - ``dry_run``: If ``True``, only log which files would be ingested.
-            - ``r2d2_local_path``: Optional local cache path used when writing
-              R2D2 configuration (non–dry run).
 
     Example:
         In a Cylc suite:
@@ -91,6 +90,10 @@ class IngestObs(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
         # Get list of observations to ingest (strings)
         obs_to_ingest = self.config.obs_to_ingest([])
@@ -113,13 +116,6 @@ class IngestObs(taskBase):
         if dry_run:
             self.logger.info(
                 "DRY RUN MODE - No files will be ingested to R2D2")
-        else:
-            create_r2d2_config(
-                self.logger,
-                self.platform(),
-                self.cycle_dir(),
-                self.config.r2d2_local_path()
-            )
 
         total_ingested = 0
         total_failed = 0
@@ -235,7 +231,7 @@ class IngestObs(taskBase):
                         target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file
+                    source_file=target_file,
                 )
             except (ValueError, KeyError, FileNotFoundError,
                     OSError, requests.RequestException) as e:

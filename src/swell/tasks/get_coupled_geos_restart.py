@@ -1,0 +1,200 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+import os
+import glob
+
+from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_attributes import task_attributes
+from swell.tasks.base.task_setup import TaskSetup
+from  swell.configuration import question_defaults as qd
+from swell.utilities.file_system_operations import copy_to_dst_dir
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetCoupledGeosRestart'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.geos_homdir(),
+            qd.geos_expdir_different(),
+            qd.geos_expdir(),
+            qd.initial_restarts_method()
+        ]
+
+# --------------------------------------------------------------------------------------------------
+
+class GetCoupledGeosRestart(taskBase):
+
+    # ----------------------------------------------------------------------------------------------
+
+    def execute(self) -> None:
+        """Copies coupled GEOS restart files to the forecast directory.
+
+        The files copied include:
+        - *_rst files (including atmosphere and tile interface files)
+        - iced.nc (CICE6 restart)
+        - MOM.res.nc (MOM6 restart)
+        - mom6_increment.nc (optional)
+
+        Restart files are retrieved via one of the following methods:
+        1) From a previous GEOS experiment (geos_expdir).
+        2) R2D2 retrieval (not yet implemented).
+        3) External GEOS folder (if geos_expdir is different).
+        4) Hotstart, just use the existing restarts in the forecast directory (e.g., from a
+           previous run or manually placed there).
+
+        This task also creates the necessary internal GEOS directory structure
+        (HOMDIR and EXPDIR) within the swell experiment path.
+        """
+
+        self.logger.info('Obtaining GEOS restarts for a coupled simulation')
+
+        # Get experiment directory where GEOS HOMDIR and EXPDIR will be cloned/linked
+        # ---------------------------------------------------
+        swell_exp_path = self.experiment_path()
+
+        # Obtain GEOS HOMDIR from user input
+        self.geos_homdir = self.config.geos_homdir()
+        self.logger.info(f'GEOS HOME directory: {self.geos_homdir}')
+
+        # Create GEOSgcm directory in the experiment folder if it doesn't exist yet
+        geos_gcm_path = os.path.join(swell_exp_path, 'GEOSgcm')
+        os.makedirs(geos_gcm_path, 0o755, exist_ok=True)
+
+        # Link GEOS HOME directory
+        geos_homdir_path = os.path.join(geos_gcm_path, 'GEOS_homdir')
+        if not os.path.exists(self.geos_homdir):
+            self.logger.abort(f'GEOS_homdir does not exist: {self.geos_homdir}')
+
+        if os.path.lexists(geos_homdir_path):
+            os.unlink(geos_homdir_path)
+
+        self.logger.info(f'Linking GEOS HOME directory to {geos_homdir_path}')
+        os.symlink(self.geos_homdir, geos_homdir_path)
+
+        # Initialize geos_expdir_path with geos_homdir_path
+        geos_expdir_path = geos_homdir_path
+
+        # If GEOS expdir is set to be different to homdir, create a link to expdir
+        if self.config.geos_expdir_different():
+            self.geos_expdir = self.config.geos_expdir()
+            self.logger.info(f'GEOS EXPERIMENT directory: {self.geos_expdir}')
+
+            if not os.path.exists(self.geos_expdir):
+                self.logger.abort(f'GEOS_expdir does not exist: {self.geos_expdir}')
+
+            geos_expdir_path = os.path.join(geos_gcm_path, 'GEOS_expdir')
+            if os.path.lexists(geos_expdir_path):
+                os.unlink(geos_expdir_path)
+
+            self.logger.info(f'Linking GEOS EXPDIR to {geos_expdir_path}')
+            os.symlink(self.geos_expdir, geos_expdir_path)
+        else:
+            self.logger.info('GEOS EXPERIMENT directory is the same as GEOS HOME directory.')
+
+        # Create forecast_dir and RESTART
+        # ----------------------------
+        os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
+
+        # Restarts should be in the EXPDIR or HOMDIR
+        # -----------------------------------------
+        self.initial_restarts(geos_expdir_path)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def initial_restarts(self, geos_expdir_path: str) -> None:
+        """Determines the method for obtaining initial restarts and executes it.
+
+        Args:
+            geos_expdir_path (str): Path to the source GEOS experiment directory.
+        """
+
+        # Coupled GEOS restarts can be obtained from:
+        # 1) a GEOS experiment directory
+        # 2) (Inactive) Via R2D2
+        # 3) Hotstart, just use the existing restarts in the forecast directory (e.g., from a
+        # previous run or manually placed there)
+        # ----------------------------------------------------
+        initial_restarts_method = self.config.initial_restarts_method('geos_expdir')
+
+        if initial_restarts_method == 'geos_expdir':
+            self.initial_restarts_from_directory(geos_expdir_path)
+        elif initial_restarts_method == 'r2d2':
+            self.initial_restarts_from_r2d2()
+        elif initial_restarts_method == 'hotstart':
+            self.logger.info('Using existing restarts in the forecast directory (hotstart)')
+        else:
+            self.logger.abort(f'Unknown method for initial restarts: {initial_restarts_method}')
+
+    # ----------------------------------------------------------------------------------------------
+
+    def initial_restarts_from_directory(self, geos_expdir_path: str) -> None:
+        """Copies GEOS restarts from an existing GEOS experiment directory.
+
+        Args:
+            geos_expdir_path (str): Path to the source GEOS experiment directory.
+        """
+
+        # GEOS forecast checkpoint files are created in advance
+        # -------------------------------------------------------------------
+        self.logger.info('GEOS restarts are copied from an existing GEOS experiment directory')
+
+        src = os.path.join(geos_expdir_path, '*_rst')
+
+        for filepath in list(glob.glob(src)):
+            filename = os.path.basename(filepath)
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(filename))
+
+        # Create a dictionary of src/dst for the single files
+        # Special handling of CICE6 and MOM6 outputs
+        # ---------------------------------------------------
+        src_dst = {'RESTART/iced.nc': '',
+                   }
+
+        # Create a dictionary for optional src/dst for the single files, and combine them with the
+        # src_dst dictionary if they exist
+        src_dst_optional = {'RESTART/mom6_increment.nc': ''
+                            }
+
+        for src, dst in src_dst_optional.items():
+            if os.path.isfile(os.path.join(geos_expdir_path, src)):
+                self.logger.info(' Found optional file: ' + src)
+                src_dst.update({src: dst})
+
+        for src, dst in src_dst.items():
+            dst = os.path.join(dst, src)
+            copy_to_dst_dir(self.logger, os.path.join(geos_expdir_path, src),
+                            self.forecast_dir(dst))
+
+        # Consider the case of multiple MOM restarts
+        # -------------------------------------------
+        src = os.path.join(geos_expdir_path, 'RESTART', 'MOM.res*nc')
+
+        for filepath in list(glob.glob(src)):
+            filename = os.path.basename(filepath)
+            copy_to_dst_dir(self.logger, filepath, self.forecast_dir(['RESTART', filename]))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def initial_restarts_from_r2d2(self) -> None:
+        """Obtains GEOS restarts from R2D2 (not yet implemented)."""
+
+        # GEOS restarts can be obtained from R2D2
+        # --------------------------------------
+        self.logger.info('Obtaining GEOS restarts from R2D2')
+        self.logger.abort('R2D2 retrieval not implemented yet')
+
+# --------------------------------------------------------------------------------------------------

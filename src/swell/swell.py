@@ -84,17 +84,11 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
-test_iteration_help = """
-(For diagnostic tasks only) - Set the number that is associated with the particular experiment
-that is being compared. """
-
-test_output_help = """
-(For diagnostic tasks only) - Define the output directory that diagnostics tests will send
-their results. Used in comparison suites. """
-
 cwd_help = """
 For task configs, set flag to create directory at the user's cwd, otherwise directory will be
 created in default experiment_root."""
+
+skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
 # --------------------------------------------------------------------------------------------------
 
@@ -108,13 +102,15 @@ created in default experiment_root."""
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def create(
     suite: str,
     input_method: str,
     platform: str,
     override: Union[dict, str, None],
     advanced: bool,
-    slurm: str
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Create a new experiment
@@ -125,8 +121,9 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
+
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -302,17 +299,17 @@ def test(test: str) -> None:
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "3dvar_atmos", "localensembleda",
-                                            "3dvar_cycle")))
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
+                                            "localensembleda", "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, 3dvar_atmos, localensembleda)
+        suite (str): Name of the suite to run (e.g., 3dvar_marine, 3dvar_atmos, localensembleda)
     """
     run_suite(suite, platform, TestSuite.TIER1)
 
@@ -323,10 +320,10 @@ def t1test(
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "ufo_testing",
                                             "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
 def t2test(
-    suite: Literal["hofx", "3dvar", "ufo_testing",
+    suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
         platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
@@ -334,7 +331,7 @@ def t2test(
     Run a particular swell suite from the tier 2 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar_marine, ufo_testing)
     """
     run_suite(suite, platform, TestSuite.TIER2)
 

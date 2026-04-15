@@ -16,6 +16,7 @@ from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
 from swell.utilities.r2d2 import create_r2d2_config
 
+from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 
@@ -48,6 +49,10 @@ class GetGeovals(taskBase):
 
         from r2d2 import fetch
 
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
         # Parse config
         # ------------
         geovals_experiment = self.config.geovals_experiment()
@@ -56,15 +61,10 @@ class GetGeovals(taskBase):
         observations = self.config.observations()
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window begin time
         window_begin = self.da_window_params.window_begin(window_length)
         background_time = self.da_window_params.background_time(background_time_offset)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Add to JEDI template rendering dictionary
         self.jedi_rendering.add_key('background_time', background_time)

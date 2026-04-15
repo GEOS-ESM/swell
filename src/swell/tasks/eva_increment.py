@@ -71,6 +71,10 @@ class EvaIncrement(taskBase):
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
+        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
+            self.config.window_length(), self.config.window_type(), dto=True)
+        local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
+
         # Define the increment filename and path
         # For 3D-Var and 3D-FGAT, the increment file is in the middle of the DA window
         # For 3D-FGAT atmos, the increment is at the beginning of the DA window. This
@@ -84,7 +88,7 @@ class EvaIncrement(taskBase):
         iter_no = 1
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
         if self.suite_name() == 'localensembleda':
-            incr_file = f'geos.mean-inc.{window_begin}.nc4'
+            incr_file = f'geos.mean-inc.{local_bkg_time}.nc4'
         if window_type == '4D' and 'atmos' in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 

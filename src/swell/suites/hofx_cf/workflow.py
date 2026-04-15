@@ -76,12 +76,13 @@ template_str = '''
             # EvaObservations
             RunJediHofxExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
-            # Save feedback
-            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            {% if not skip_r2d2 %}
+            # Save observations
+            RunJediHofxExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
             # Clean up large files
-            EvaObservations-{{model_component}} & SaveObsDiags-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}

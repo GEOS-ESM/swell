@@ -45,7 +45,7 @@ def read_sat_db(path_to_sat_db: str, column_names: list[str]) -> pd.DataFrame:
                     'start': [''],
                     'end': [''],
                     'instr': [''],
-                    'channel_num': [0],
+                    'channel_num': ['0'],
                     'channels': [''],
                     'comments': ['']})
 

@@ -60,19 +60,6 @@ class Setup(TaskSetup):
 
 class GenerateBClimatology(taskBase):
 
-    def jedi_dictionary_iterator(self, jedi_config_dict: dict) -> None:
-
-        # Loop over dictionary and replace if value is a dictionary
-        # ---------------------------------------------------------
-        for key, value in jedi_config_dict.items():
-            if isinstance(value, dict):
-                self.jedi_dictionary_iterator(value)
-            else:
-                if 'TASKFILL' in value:
-                    value_file = value.replace('TASKFILL', '')
-                    value_dict = self.jedi_rendering.render_interface_model(value_file)
-                    jedi_config_dict[key] = value_dict
-
     # ----------------------------------------------------------------------------------------------
 
     def generate_jedi_config(self) -> dict:

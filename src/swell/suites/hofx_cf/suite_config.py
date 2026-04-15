@@ -27,7 +27,6 @@ hofx_cf = QuestionList(
         qd.model_components(['geos_cf']),
         qd.check_for_obs(False)  # don't check empty for empty obs
     ],
-
     geos_cf=[
     ]
 )

@@ -9,7 +9,6 @@
 
 import os
 import glob
-from typing import Union
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -39,9 +38,11 @@ class MoveForecastRestart(taskBase):
     # ----------------------------------------------------------------------------------------------
 
     def execute(self) -> None:
+        """Moves restart files to the next forecast cycle.
 
-        """
-        Moving restart files (i.e., _checkpoint) to the next cycle geosdir.
+        This involves moving _checkpoint files and marine model restarts
+        from the scratch directory to the forecast directory, and
+        renaming them as necessary.
         """
 
         self.logger.info('Moving GEOS restarts for the next forecast cycle')
@@ -49,65 +50,55 @@ class MoveForecastRestart(taskBase):
         # Next cycle folder name
         # -----------------------
         self.forecast_duration = self.config.forecast_duration()
-        self.next_forecast_dir = self.geos.adjacent_cycle(self.forecast_duration)
 
-        # Create cycle_dir and INPUT
+        # Create cycle_dir and RESTART
         # ----------------------------
-        if not os.path.exists(self.at_next_fcst_dir('INPUT')):
-            os.makedirs(self.at_next_fcst_dir('INPUT'), 0o755, exist_ok=True)
+        if not os.path.exists(self.forecast_dir('RESTART')):
+            os.makedirs(self.forecast_dir('RESTART'), 0o755, exist_ok=True)
 
-        # Move and rename files
-        # ----------------------
-        self.cycling_restarts()
-        self.geos.rename_checkpoints(self.next_forecast_dir)
-
-    # ----------------------------------------------------------------------------------------------
-
-    def at_next_fcst_dir(self, paths: Union[str, list]) -> str:
-
-        # Ensure what we have is a list (paths should be a list)
-        # ------------------------------------------------------
-        if isinstance(paths, str):
-            paths = [paths]
-
-        # Combining list of paths with cycle dir for script brevity
-        # ---------------------------------------------------------
-        full_path = os.path.join(self.next_forecast_dir, *paths)
-        return full_path
+        # Move and rename files in the next forecast directory
+        # ----------------------------------------------
+        self.move_restarts()
+        self.move_marine_restarts()
+        self.geos.rename_checkpoints(self.forecast_dir())
 
     # ----------------------------------------------------------------------------------------------
 
-    def cycling_restarts(self) -> None:
+    def move_restarts(self) -> None:
+        """Moves GEOS checkpoint restarts from scratch to the forecast directory."""
 
         # Move restarts (checkpoints) in the current cycle dir
         # ------------------------------------------------------
         self.logger.info('GEOS restarts are being moved to the next forecast dir')
         self.logger.info('Finding _checkpoint restarts')
 
-        src = self.forecast_dir('*_checkpoint')
+        src = self.forecast_dir(['scratch', '*_checkpoint'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath).split('.')[0]
-            move_files(self.logger, filepath, self.at_next_fcst_dir(filename))
+            move_files(self.logger, filepath, self.forecast_dir(filename))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def move_marine_restarts(self) -> None:
+        """Moves marine model restart files to the next forecast directory."""
 
         # Create a dictionary of src/dst for the single files
         # ---------------------------------------------------
-        src_dst = {'tile.bin': '',
-                   'RESTART/iced.nc': 'INPUT',
+        src_dst = {'scratch/tile.bin': '',
+                   'scratch/RESTART/iced.nc': 'RESTART',
                    }
 
         for src, dst in src_dst.items():
             dst = os.path.join(dst, os.path.basename(src))
-            move_files(self.logger, self.forecast_dir(src), self.at_next_fcst_dir(dst))
+            move_files(self.logger, self.forecast_dir(src), self.forecast_dir(dst))
 
         # Consider the case of multiple MOM restarts
-        # TODO: this could be forced to be a single file (MOM_input option)
-        # so wildcard character can be omitted.
         # -----------------------------------------------------------------
-        src = self.forecast_dir(['RESTART', 'MOM.res*nc'])
+        src = self.forecast_dir(['scratch', 'RESTART', 'MOM.res*nc'])
 
         for filepath in list(glob.glob(src)):
             filename = os.path.basename(filepath)
-            move_files(self.logger, filepath, self.at_next_fcst_dir(['INPUT', filename]))
+            move_files(self.logger, filepath, self.forecast_dir(['RESTART', filename]))
 
 # --------------------------------------------------------------------------------------------------

@@ -37,7 +37,9 @@ common = QuestionList(
         qd.start_cycle_point(),
         qd.final_cycle_point(),
         qd.model_components(),
-        qd.runahead_limit()
+        qd.runahead_limit(),
+        qd.r2d2_experiment_id(),
+        qd.skip_r2d2()
     ]
 )
 

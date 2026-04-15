@@ -52,15 +52,24 @@ class SaveRestart(taskBase):
         Does not handle 4d backgrounds properly
         """
 
+
         from swell.utilities.r2d2 import create_r2d2_config
         from r2d2 import store
+        
+        self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
+                         'for coupled models yet')
+        return
+
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
 
         # Parse config
         window_type = self.config.window_type()
         window_length = self.config.window_length()
         forecast_duration = self.config.forecast_duration()
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Position relative to center of the window where forecast starts
         background_time_offset = self.config.background_time_offset()
@@ -76,10 +85,6 @@ class SaveRestart(taskBase):
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
-
         # Get r2d2 dictionary
         r2d2_dict = self.jedi_rendering.render_interface_model('r2d2')
 
@@ -93,7 +98,7 @@ class SaveRestart(taskBase):
                   step=window_length,
                   resolution=self.config.horizontal_resolution(),
                   type='fc',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Loop over an
         for an in r2d2_dict['store']['an']:
@@ -104,7 +109,7 @@ class SaveRestart(taskBase):
                   fc_date_rendering='analysis',
                   resolution=self.config.horizontal_resolution(),
                   type='an',
-                  experiment=self.experiment_id())
+                  experiment=self.config.r2d2_experiment_id())
 
         # Oceanstats needs special handling from the forecast folder. It is produced at the end of
         # the forecast and could be saved as a good metric. We are replicating the same structure as
@@ -118,7 +123,7 @@ class SaveRestart(taskBase):
         dst_date = dt.strftime(forecast_start_time, datetime_formats['iso_format'])
 
         # Oceanstats is produced at the end of the forecast
-        src_stats = os.path.join(self.forecast_dir(), 'ocean.stats.nc')
+        src_stats = self.forecast_dir(['scratch', 'ocean.stats.nc'])
         dst_stats = os.path.join(mainf, forecast_start_time.strftime('%Y-%m-%d'),
                                  f'mom6_cice6_UFS.{self.experiment_id()}.fc.global.MOM.oceanstats.'
                                  + dst_date + '.' + forecast_duration + '.nc')

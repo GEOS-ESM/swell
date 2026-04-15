@@ -87,8 +87,11 @@ class RunJediVariationalExecutable(taskBase):
 
         gsibec_nlats = self.config.gsibec_nlats(None)
         gsibec_nlons = self.config.gsibec_nlons(None)
+        gsibec_configuration = self.config.gsibec_configuration(None)
         npx_proc = self.config.npx_proc(None)
         npy_proc = self.config.npy_proc(None)
+        npx = self.config.npx(None)
+        npy = self.config.npy(None)
 
         # Compute data assimilation window parameters
         # --------------------------------------------
@@ -110,6 +113,8 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('minimizer', self.config.minimizer())
         self.jedi_rendering.add_key('number_of_iterations', number_of_iterations[0])
         self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
+        self.jedi_rendering.add_key('saber_central_block', self.config.saber_central_block())
+        self.jedi_rendering.add_key('saber_outer_block', self.config.saber_outer_block())
         self.jedi_rendering.add_key('gradient_norm_reduction',
                                     self.config.gradient_norm_reduction())
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
@@ -127,6 +132,8 @@ class RunJediVariationalExecutable(taskBase):
         self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
         self.jedi_rendering.add_key('npx_proc', npx_proc)
         self.jedi_rendering.add_key('npy_proc', npy_proc)
+        self.jedi_rendering.add_key('npx', npx)
+        self.jedi_rendering.add_key('npy', npy)
         self.jedi_rendering.add_key('total_processors', self.config.total_processors(None))
 
         # Observations
@@ -137,8 +144,8 @@ class RunJediVariationalExecutable(taskBase):
 
         # Atmosphere background error model
         # ---------------------------------
-        if npx_proc is not None and npy_proc is not None:
-            self.jedi_rendering.add_key('gsibec_configuration', self.config.gsibec_configuration())
+        if gsibec_configuration is not None:
+            self.jedi_rendering.add_key('gsibec_configuration', gsibec_configuration)
             self.jedi_rendering.add_key('gsibec_nlats', gsibec_nlats)
             self.jedi_rendering.add_key('gsibec_nlons', gsibec_nlons)
             self.jedi_rendering.add_key('gsibec_npx_proc', npx_proc)

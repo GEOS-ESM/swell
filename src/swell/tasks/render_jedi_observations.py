@@ -75,11 +75,6 @@ class RenderJediObservations(taskBase):
 
         cwd = os.getcwd()
 
-        # Replace cycle_dir with './' if specified
-        if self.config.set_obs_as_local(False):
-            self.jedi_rendering.add_key('cycle_dir', '.')
-            os.chdir(self.cycle_dir())
-
         observations = []
 
         # Iterate through list

@@ -11,7 +11,7 @@
 import os
 from ruamel.yaml import YAML
 from collections.abc import Mapping
-from typing import Union, Optional
+from typing import Optional
 import datetime
 
 from swell.swell_path import get_swell_path
@@ -23,7 +23,6 @@ from swell.utilities.logger import Logger
 from swell.utilities.dictionary import update_dict, add_dict
 from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.swell_questions import QuestionType
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -59,7 +58,7 @@ class PrepareExperimentConfigAndSuite:
         suite_config: str,
         platform: str,
         config_client: str,
-        override: Union[str, dict, None]
+        override: dict
     ) -> None:
 
         # Store local copy of the inputs
@@ -324,15 +323,26 @@ class PrepareExperimentConfigAndSuite:
                         'default_value'] == 'defer_to_code':
                     question['default_value'] = f'swell-{self.suite}'
 
+            if key == 'r2d2_experiment_id' and val['default_value'] == 'defer_to_code':
+                swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
+                if swell_id == 'defer_to_code':
+                    swell_id = f'swell-{self.suite}'
+                    self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
+                val['default_value'] = swell_id
+
     # ----------------------------------------------------------------------------------------------
 
     def override_with_external(self, suite_task: QuestionType) -> None:
 
-        # Append with any user provide overrides
-        if self.override is not None:
+        # In this case the user is sending in a dictionary that looks like the experiment
+        # dictionary that they will ultimately be looking at. This means the dictionary does
+        # not contain default_value or options and the override cannot be performed.
 
-            # Create an override dictionary
-            override_dict = {}
+        # Iterate over the model_ind dictionary and override
+        # --------------------------------------------------
+        for key, val in self.question_dictionary_model_ind.items():
+            if key in self.override:
+                val['default_value'] = self.override[key]
 
             if isinstance(self.override, Mapping):
                 override_dict = update_dict(override_dict, self.override)
