@@ -8,8 +8,8 @@
 Task for downloading raw observation files from remote servers.
 
 Downloads native observation files (e.g. HDF5) from HTTPS servers such as
-NASA GES DISC prior to ingestion into R2D2. Authenticates via a NASA Earthdata
-Bearer token when required.
+NASA GES DISC prior to ingestion into R2D2. Authentication is handled via
+~/.netrc (same mechanism used by wget/curl).
 """
 
 import os
@@ -43,8 +43,6 @@ class DownloadObs(taskBase):
             - ``obs_to_download``: list of YAML filenames with names matching the obs name
               in ``download_observations/``.
             - ``window_length``: ISO-8601 duration (e.g. ``"PT6H"``).
-            - ``earthdata_token_path``: path to a file containing a NASA
-              Earthdata Bearer token (plain text, one line).
             - ``dry_run``: if ``True``, skip actual downloads.
 
     Example:
@@ -55,7 +53,6 @@ class DownloadObs(taskBase):
 
     def execute(self) -> None:
 
-        # Configuration
         obs_to_download = self.config.obs_to_download([])
         window_length = self.config.window_length()
         dry_run = self.config.dry_run(True)
@@ -63,13 +60,6 @@ class DownloadObs(taskBase):
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be downloaded')
 
-        # Load Earthdata token (may be absent for non-Earthdata sources)
-        earthdata_token_path = self.config.earthdata_token_path('')
-        print(f'loading earthdata token: {earthdata_token_path}')
-        earthdata_token = self._load_token(earthdata_token_path)
-        print(earthdata_token)
-
-        # DA window bounds
         window_begin_dto = self.da_window_params.window_begin_iso(window_length, dto=True)
         window_end_dto = self.da_window_params.window_end_iso(window_length, dto=True)
 
@@ -97,7 +87,7 @@ class DownloadObs(taskBase):
             downloaded, failed = self._download_obs(
                 obs_config, obs_name,
                 window_begin_dto, window_end_dto,
-                earthdata_token, dry_run)
+                dry_run)
 
             total_downloaded += downloaded
             total_failed += failed
@@ -111,35 +101,12 @@ class DownloadObs(taskBase):
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _load_token(self, token_path: str) -> str:
-        """Return the Earthdata Bearer token string, or empty string."""
-        if not token_path:
-            self.logger.warning('earthdata_token_path is not set.')
-            return ''
-        if not os.path.exists(token_path):
-            self.logger.warning(f'Earthdata token file not found: {token_path}')
-            return ''
-        with open(token_path, 'r') as fh:
-            return fh.read().strip()
-
-    def _earthdata_netrc_auth(self) -> tuple:
-        """Return (login, password) from ~/.netrc for urs.earthdata.nasa.gov, or (None, None)."""
-        try:
-            creds = netrc_module.netrc().authenticators('urs.earthdata.nasa.gov')
-            if creds:
-                return creds[0], creds[2]
-        except Exception:
-            pass
-        return None, None
-
-
     def _download_obs(
         self,
         obs_config: dict,
         obs_name: str,
         window_begin_dto: datetime.datetime,
         window_end_dto: datetime.datetime,
-        earthdata_token: str,
         dry_run: bool,
     ) -> tuple[int, int]:
         """Download all files for one observation type.
@@ -157,56 +124,14 @@ class DownloadObs(taskBase):
         search_start = window_begin_dto - max_orbit_dur
         search_end = window_end_dto
 
-        # Build the list of (date, hour) pairs to search
         hour_slots = self._hour_slots(search_start, search_end)
 
-        # Destination directory
         dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
         if not dry_run:
             os.makedirs(dest_dir, exist_ok=True)
 
-        # HTTP session with optional Earthdata auth.
-        # requests strips the Authorization header on cross-domain redirects
-        # (a security feature), but NASA GES DISC redirects through
-        # urs.earthdata.nasa.gov during auth, which drops the token.
-        # Re-attach it via a response hook so every redirect retains auth.
-        if earthdata_token:
-            class BearerAuth(requests.auth.AuthBase):
-                def __init__(self, earthdata_token):
-                    self.earthdata_token = earthdata_token
-            
-                def __call__(self, r):
-                    r.headers['Authorization'] = f'Bearer {self.earthdata_token}'
-                    return r
-            
-            session = requests.Session()
-            #session.auth = BearerAuth(earthdata_token)
-
-        else:
-            # Fall back to ~/.netrc credentials (same mechanism wget uses).
-            # requests.Session picks up netrc automatically when no explicit
-            # auth is set, but only if allow_redirects keeps credentials across
-            # hops.  Force it by using a redirect hook that re-injects netrc
-            # credentials after cross-domain hops.
-            import netrc as _netrc
-            import urllib.parse as _urlparse
- 
- 
-            def _reattach_netrc(response, *_):
-                if response.is_redirect:
-                    loc = response.headers.get('Location', '')
-                    host = _urlparse.urlparse(loc).hostname or ''
-                    try:
-                        creds = _netrc.netrc().authenticators(host)
-                    except Exception:
-                        creds = None
-                    if creds:
-                        login, _, password = creds
-                        response.request.prepare_auth(
-                            requests.auth.HTTPBasicAuth(login, password))
- 
- 
-            session.hooks['response'].append(_reattach_netrc)
+        # requests.Session uses ~/.netrc automatically for authentication.
+        session = requests.Session()
 
         downloaded = 0
         failed = 0
@@ -215,7 +140,6 @@ class DownloadObs(taskBase):
             remote_path = self._resolve_path(remote_path_template, slot_date)
             file_glob = self._resolve_filename(filename_pattern, slot_date, slot_hour)
 
-            # Convert shell glob to regex for matching
             file_regex = re.compile(
                 '^' + re.escape(file_glob).replace(r'\*', '.*') + '$')
 
@@ -226,7 +150,6 @@ class DownloadObs(taskBase):
                     f'  [DRY RUN] Would list {listing_url} for pattern {file_glob}')
                 continue
 
-            # Fetch directory listing and find matching filenames
             try:
                 names = self._list_remote_dir(session, listing_url)
             except requests.RequestException as exc:
@@ -292,17 +215,14 @@ class DownloadObs(taskBase):
 
     def _list_remote_dir(self, session: requests.Session, url: str) -> list[str]:
         """Return filenames found in an HTML directory listing at ``url``."""
-        #response = session.get(url, timeout=30)
         response = session.get(url)
         response.raise_for_status()
-        # Extract hrefs that look like filenames (no leading slash = not a parent link)
         return re.findall(r'href="([^"/][^"]*)"', response.text)
 
     def _download_file(
         self, session: requests.Session, url: str, dest_path: str
     ) -> None:
-        """Stream a remote file to ``dest_path``. Writing in 1 MB chuncks"""
-        #with session.get(url, stream=True, timeout=120) as response:
+        """Stream a remote file to ``dest_path`` in 1 MB chunks."""
         with session.get(url, stream=True) as response:
             response.raise_for_status()
             with open(dest_path, 'wb') as fh:

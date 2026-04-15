@@ -210,7 +210,6 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="DownloadObs",
         questions=[
             qd.dry_run(),
-            qd.earthdata_token_path(),
             qd.obs_to_download(),
             qd.window_length(),
         ]
