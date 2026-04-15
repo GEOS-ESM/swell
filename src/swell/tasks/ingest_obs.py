@@ -23,7 +23,6 @@ from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
 from swell.utilities.r2d2 import create_r2d2_config
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -175,6 +174,9 @@ class IngestObs(taskBase):
         window_length: str,
         dry_run: bool,
     ) -> tuple[list[str], list[tuple[str, str]]]:
+
+        import r2d2
+
         """Process a single observation configuration file."""
         ingested = []
         failed = []
