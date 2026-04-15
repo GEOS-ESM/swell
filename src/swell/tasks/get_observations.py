@@ -81,6 +81,7 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
 # --------------------------------------------------------------------------------------------------
 
+
 class GetObservations(taskBase):
 
     def execute(self) -> None:
