@@ -48,6 +48,9 @@ class ConvertObsToIoda(taskBase):
 
             - ``obs_to_download``: list of obs names — reuses the same list
               set for ``DownloadObs`` so no extra config key is needed.
+            - ``converter_path``: path to directory containing ioda-converter
+              scripts. Falls back to ``<experiment>/jedi_bundle/build/bin`` if
+              not set.
             - ``dry_run``: if ``True``, log the command but do not run it.
 
     Example:
@@ -64,9 +67,12 @@ class ConvertObsToIoda(taskBase):
         if dry_run:
             self.logger.info('DRY RUN MODE - No converters will be run')
 
-        jedi_bin = os.path.join(
-            self.experiment_path(), 'jedi_bundle', 'build', 'bin')
-        jedi_bin = '/discover/nobackup/projects/jcsda/s2127/maryamao/jedi-bundle/build-intel-1.9/bin/'
+        converter_path = self.config.converter_path('')
+        if converter_path:
+            converter_bin = converter_path
+        else:
+            converter_bin = os.path.join(
+                self.experiment_path(), 'jedi_bundle', 'build', 'bin')
 
         cycle_time_dto = self.cycle_time_dto()
 
@@ -89,7 +95,7 @@ class ConvertObsToIoda(taskBase):
                 conv_config = yaml.safe_load(fh)
 
             self._run_converter(
-                obs_name, conv_config, jedi_bin, cycle_time_dto, dry_run)
+                obs_name, conv_config, converter_bin, cycle_time_dto, dry_run)
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -124,7 +130,7 @@ class ConvertObsToIoda(taskBase):
         self,
         obs_name: str,
         conv_config: dict,
-        jedi_bin: str,
+        converter_bin: str,
         cycle_time_dto: datetime,
         dry_run: bool,
     ) -> None:
@@ -155,7 +161,7 @@ class ConvertObsToIoda(taskBase):
 
         # Locate the converter script in the JEDI bundle bin directory
         script_name = conv_config['converter_script']
-        script_path = os.path.join(jedi_bin, script_name)
+        script_path = os.path.join(converter_bin, script_name)
 
         if not dry_run and not os.path.exists(script_path):
             self.logger.error(f'Converter script not found: {script_path}')

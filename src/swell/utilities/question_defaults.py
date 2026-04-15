@@ -838,6 +838,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class converter_path(TaskQuestion):
+        default_value: str = ""
+        question_name: str = "converter_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Path to directory containing ioda-converter scripts (leave blank to use jedi_bin)"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class initial_restarts_method(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "initial_restarts_method"
