@@ -56,7 +56,6 @@ class SaveForecast(taskBase):
         """
 
         from r2d2 import store
-        from swell.utilities.r2d2 import create_r2d2_config
 
         # Load R2D2 credentials
         # ---------------------

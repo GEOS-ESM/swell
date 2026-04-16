@@ -15,7 +15,7 @@ from swell.suites.base.suite_questions import marine
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = '3dvar'
+suite_name = '3dvar_marine'
 
 _3dvar_tier1 = QuestionList(
     questions=[
@@ -55,63 +55,15 @@ _3dvar_tier1 = QuestionList(
     ]
 )
 
-<<<<<<< HEAD:src/swell/suites/3dvar/suite_config.py
 suite_configs.register(suite_name, '3dvar_tier1', _3dvar_tier1)
-=======
-    _3dvar_marine = QuestionList(
-        list_name="3dvar_marine",
-        questions=[
-            sq.marine,
-            qd.start_cycle_point("2021-07-01T12:00:00Z"),
-            qd.final_cycle_point("2021-07-01T12:00:00Z"),
-            qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_marine']),
-        ],
-        geos_marine=[
-            qd.cycle_times(['T12']),
-            qd.marine_models(['mom6']),
-            qd.window_length("P1D"),
-            qd.horizontal_resolution("72x36"),
-            qd.vertical_resolution("50"),
-            qd.total_processors(6),
-            qd.obs_experiment("s2s_v1"),
-            qd.observations([
-                "adt_cryosat2n",
-                "adt_jason3",
-                "adt_saral",
-                "adt_sentinel3a",
-                "adt_sentinel3b",
-                "insitu_profile_argo",
-                "sst_ostia",
-                "sss_smos",
-                "sss_smapv5",
-                "sst_abi_g16_l3c",
-                "sst_gmi_l3u",
-                "sst_viirs_n20_l3u",
-                "temp_profile_xbt"
-            ]),
-            qd.background_time_offset("PT18H"),
-            qd.clean_patterns(['*.nc4', '*.txt']),
-        ]
-    )
->>>>>>> develop:src/swell/suites/3dvar_marine/suite_config.py
 
 # --------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD:src/swell/suites/3dvar/suite_config.py
 _3dvar = QuestionList(
     questions=[
         _3dvar_tier1
     ]
 )
-=======
-    _3dvar_marine_tier1 = QuestionList(
-        list_name="3dvar_marine_tier1",
-        questions=[
-            _3dvar_marine
-        ]
-    )
->>>>>>> develop:src/swell/suites/3dvar_marine/suite_config.py
 
 suite_configs.register(suite_name, '3dvar', _3dvar)
 

@@ -51,7 +51,6 @@ class GetNcdiags(taskBase):
         # Import modules
         # --------------
         from r2d2 import fetch
-        from swell.utilities.r2d2 import create_r2d2_config
 
         # Load R2D2 credentials
         # ---------------------

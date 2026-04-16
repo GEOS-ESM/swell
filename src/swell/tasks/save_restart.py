@@ -52,8 +52,6 @@ class SaveRestart(taskBase):
         Does not handle 4d backgrounds properly
         """
 
-
-        from swell.utilities.r2d2 import create_r2d2_config
         from r2d2 import store
         
         self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
