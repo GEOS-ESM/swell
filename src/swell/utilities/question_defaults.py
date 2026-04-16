@@ -1520,3 +1520,11 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class wget_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "wget_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
+                       "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+        widget_type: WType = WType.BOOLEAN

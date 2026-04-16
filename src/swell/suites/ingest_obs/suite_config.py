@@ -43,17 +43,17 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="ingest_obs_cf",
         questions=[
             ingest_obs,
-            #qd.start_cycle_point("2024-01-01T00:00:00Z"),
-            qd.start_cycle_point("2024-01-02T00:00:00Z"),
-            qd.final_cycle_point("2024-01-02T06:00:00Z"),
+            qd.start_cycle_point("2023-08-10T00:00:00Z"),
+            qd.final_cycle_point("2023-08-11T00:00:00Z"),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
+            qd.wget_pipeline(True),
         ],
         geos_cf=[
             qd.window_length("PT6H"),
-            qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
             qd.obs_to_download(['omps_o3_nm']),
             qd.obs_to_ingest(['omps_o3_nm']),
+            qd.converter_path('/discover/nobackup/projects/jcsda/s2127/maryamao/jedi-bundle/build-intel-1.9/bin/'),
             qd.dry_run(False),
         ]
     )
