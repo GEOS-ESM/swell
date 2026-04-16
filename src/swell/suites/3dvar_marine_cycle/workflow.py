@@ -11,6 +11,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
+from swell.suites.forecast_coupled_geos.workflow import RunGeos
 
 # --------------------------------------------------------------------------------------------------
 
@@ -170,7 +171,7 @@ class Workflow_3dvar_cycle(CylcWorkflow):
         self.tasks.append(ta.BuildGeos())
         self.tasks.append(ta.GetGeosRestart())
         self.tasks.append(ta.PrepGeosRunDir())
-        self.tasks.append(ta.RunGeosExecutable())
+        self.tasks.append(ta.RunGeos())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.StageJedi(model=model))

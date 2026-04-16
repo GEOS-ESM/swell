@@ -6,26 +6,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD:src/swell/tasks/remove_forecast_dir.py
-import shutil
-
-from swell.tasks.base.task_base import taskBase
-from swell.tasks.base.task_setup import TaskSetup
-from swell.tasks.base.task_attributes import task_attributes
-
-# --------------------------------------------------------------------------------------------------
-
-task_name = 'RemoveForecastDir'
-
-
-@task_attributes.register(task_name)
-class Setup(TaskSetup):
-    def set_defaults(self):
-        self.base_name = task_name
-        self.is_cycling = True
-=======
 from collections.abc import Mapping
->>>>>>> develop:src/swell/configuration/jedi/interfaces/geos_cf/model/increment_cs.py
 
 # --------------------------------------------------------------------------------------------------
 
