@@ -47,7 +47,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.final_cycle_point("2023-08-11T00:00:00Z"),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
-            qd.wget_pipeline(True),
+            qd.download_convert_pipeline(True),
         ],
         geos_cf=[
             qd.window_length("PT6H"),

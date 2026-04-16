@@ -1521,9 +1521,9 @@ class QuestionDefaults():
 
 # --------------------------------------------------------------------------------------------------
     @dataclass
-    class wget_pipeline(SuiteQuestion):
+    class download_convert_pipeline(SuiteQuestion):
         default_value: bool = False
-        question_name: str = "wget_pipeline"
+        question_name: str = "download_convert_pipeline"
         ask_question: bool = False
         prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
                        "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
