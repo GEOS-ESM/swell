@@ -15,7 +15,7 @@ from swell.suites.base.suite_attributes import suite_configs
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = 'forecast_geos'
+suite_name = 'forecast_coupled_geos'
 
 forecast_geos_tier1 = QuestionList(
     questions=[
@@ -36,7 +36,7 @@ forecast_geos_tier1 = QuestionList(
     ],
 )
 
-suite_configs.register(suite_name, 'forecast_geos_tier1', forecast_geos_tier1)
+suite_configs.register(suite_name, 'forecast_coupled_geos_tier1', forecast_geos_tier1)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -46,6 +46,6 @@ forecast_geos = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, 'forecast_geos', forecast_geos)
+suite_configs.register(suite_name, 'forecast_coupled_geos', forecast_geos)
 
 # --------------------------------------------------------------------------------------------------

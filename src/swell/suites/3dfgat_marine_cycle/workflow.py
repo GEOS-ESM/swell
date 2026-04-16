@@ -11,6 +11,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
+from swell.suites.forecast_coupled_geos.workflow import RunGeos
 
 # --------------------------------------------------------------------------------------------------
 
@@ -136,7 +137,6 @@ template_str = '''
     # Task defaults
     # -------------
 
-<<<<<<<< HEAD:src/swell/suites/3dfgat_marine_cycle/workflow.py
 '''  # noqa
 
 # --------------------------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
 
         self.tasks.append(ta.GetGeosRestart())
         self.tasks.append(ta.PrepGeosRunDir())
-        self.tasks.append(ta.RunGeosExecutable())
+        self.tasks.append(ta.RunGeos())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.RunJediFgatExecutable(model=model))
@@ -191,136 +191,5 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
-========
-        [[[environment]]]
-            datetime = $CYLC_TASK_CYCLE_POINT
-            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
-
-    # Tasks
-    # -----
-    [[CloneGeos]]
-        script = "swell task CloneGeos $config"
-
-    [[BuildGeosByLinking]]
-        script = "swell task BuildGeosByLinking $config"
-
-    [[BuildGeos]]
-        script = "swell task BuildGeos $config"
-        platform = {{platform}}
-        execution time limit = {{scheduling["BuildGeos"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["BuildGeos"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    [[CloneJedi]]
-        script = "swell task CloneJedi $config"
-
-    [[BuildJediByLinking]]
-        script = "swell task BuildJediByLinking $config"
-
-    [[BuildJedi]]
-        script = "swell task BuildJedi $config"
-        platform = {{platform}}
-        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    [[RunGeos]]
-        script = "{{experiment_path}}/GEOSgcm/forecast/gcm_run.j"
-        platform = {{platform}}
-        [[[directives]]]
-        {%- for key, value in scheduling["RunGeos"]["directives"]["all"].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    [[PrepCoupledGeosRunDir]]
-        script = "swell task PrepCoupledGeosRunDir $config -d $datetime"
-
-    [[GetCoupledGeosRestart]]
-        script = "swell task GetCoupledGeosRestart $config -d $datetime"
-
-    {% for model_component in model_components %}
-
-    [[LinkCoupledGeosOutput-{{model_component}}]]
-        script = "swell task LinkCoupledGeosOutput $config -d $datetime -m {{model_component}}"
-
-    [[MoveDaRestart-{{model_component}}]]
-        script = "swell task MoveDaRestart $config -d $datetime -m {{model_component}}"
-
-    [[StageJedi-{{model_component}}]]
-        script = "swell task StageJedi $config -m {{model_component}}"
-
-    [[StageJediCycle-{{model_component}}]]
-        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
-
-    [[GetObservations-{{model_component}}]]
-        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
-
-    [[GenerateBClimatology-{{model_component}}]]
-        script = "swell task GenerateBClimatology $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["GenerateBClimatology"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["GenerateBClimatology"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    {% if 'cice6' in models["geos_marine"]["marine_models"] %}
-
-    [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
-        script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    {% endif %}
-
-    [[RenderJediObservations-{{model_component}}]]
-        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
-
-    [[RunJediFgatExecutable-{{model_component}}]]
-        script = "swell task RunJediFgatExecutable $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunJediFgatExecutable"]["execution_time_limit"]}}
-        execution retry delays = 1*PT10M
-        [[[directives]]]
-        {%- for key, value in scheduling["RunJediFgatExecutable"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    [[EvaJediLog-{{model_component}}]]
-        script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
-
-    [[EvaIncrement-{{model_component}}]]
-        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
-
-    [[EvaObservations-{{model_component}}]]
-        script = "swell task EvaObservations $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["EvaObservations"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["EvaObservations"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
-
-    [[SaveObsDiags-{{model_component}}]]
-        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
-
-    [[PrepareAnalysis-{{model_component}}]]
-        script = "swell task PrepareAnalysis $config -d $datetime -m {{model_component}}"
-
-    [[CleanCycle-{{model_component}}]]
-        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
-    {% endfor %}
->>>>>>>> develop:src/swell/suites/3dfgat_marine_cycle/flow.cylc
 
 # --------------------------------------------------------------------------------------------------
