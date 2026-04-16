@@ -1,5 +1,7 @@
 # OMPS Nadir Mapper Total Ozone L2 — IODA converter configuration
-# Converter: omps_o3_nm_h52ioda.py (installed by ioda-converters into jedi_bundle/build/bin/)
+# Converter: omps_o3_nm_h52ioda.py (Must be available either in
+#            `converter_path`, set in suite_config.py or
+#            or in jedi_bundle/build/bin/)
 #
 # Invocation (one call per cycle, all granules passed together):
 #   python3 <jedi_bundle>/build/bin/omps_o3_nm_h52ioda.py
@@ -8,13 +10,14 @@
 #       -q 128
 #       -e atbd
 
-# Python script name installed in the JEDI bundle bin directory
+# name of the IODA-converterPython
 converter_script: omps_o3_nm_h52ioda.py
 
-# Output filename template (strftime placeholders: %Y %m %d %H)
+# Output filename template (must be the same as 
+# source in ingest_observations/omps_o3_nm.yaml)
 output_filename_template: "omps_o3_nm_%Y%m%d%H.nc"
 
-# Additional CLI flags passed verbatim after -i and -o
+# Additional IODA converter flags passed verbatim after -i and -o
 extra_flags:
   -q: 128      # quality flag threshold
   -e: atbd     # error estimation method
