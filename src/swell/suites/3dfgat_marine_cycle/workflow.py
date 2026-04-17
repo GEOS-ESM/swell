@@ -142,7 +142,7 @@ template_str = '''
 # --------------------------------------------------------------------------------------------------
 
 
-@workflows.register('3dfgat_cycle')
+@workflows.register('3dfgat_marine_cycle')
 class Workflow_3dfgat_cycle(CylcWorkflow):
 
     def get_workflow_string(self):

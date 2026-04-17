@@ -144,7 +144,7 @@ template_str = '''
 # --------------------------------------------------------------------------------------------------
 
 
-@workflows.register('3dvar_cycle')
+@workflows.register('3dvar_marine_cycle')
 class Workflow_3dvar_cycle(CylcWorkflow):
 
     def get_workflow_string(self):
