@@ -39,7 +39,6 @@ class Setup(TaskSetup):
             qd.background_frequency(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
         ]
 
 # --------------------------------------------------------------------------------------------------
@@ -59,6 +58,7 @@ class GetBackground(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
+        import r2d2
         load_r2d2_credentials(self.logger, self.platform())
 
         # Get duration into forecast for first background file

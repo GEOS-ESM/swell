@@ -20,7 +20,7 @@ from swell.deployment.prepare_config_and_suite.question_and_answer_cli import Ge
 from swell.deployment.prepare_config_and_suite.question_and_answer_defaults import GetAnswerDefaults
 from swell.utilities.dictionary import dict_get
 from swell.utilities.logger import Logger
-from swell.utilities.dictionary import update_dict, add_dict
+from swell.utilities.dictionary import add_dict
 from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.swell_questions import QuestionType
 
@@ -323,12 +323,12 @@ class PrepareExperimentConfigAndSuite:
                         'default_value'] == 'defer_to_code':
                     question['default_value'] = f'swell-{self.suite}'
 
-            if key == 'r2d2_experiment_id' and val['default_value'] == 'defer_to_code':
-                swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
-                if swell_id == 'defer_to_code':
-                    swell_id = f'swell-{self.suite}'
-                    self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
-                val['default_value'] = swell_id
+                if question_name == 'r2d2_experiment_id' and question['default_value'] == 'defer_to_code':
+                    swell_id = self.question_dictionary_model_ind['experiment_id']['default_value']
+                    if swell_id == 'defer_to_code':
+                        swell_id = f'swell-{self.suite}'
+                        self.question_dictionary_model_ind['experiment_id']['default_value'] = swell_id
+                    question['default_value'] = swell_id
 
     # ----------------------------------------------------------------------------------------------
 
@@ -340,41 +340,21 @@ class PrepareExperimentConfigAndSuite:
 
         # Iterate over the model_ind dictionary and override
         # --------------------------------------------------
-        for key, val in self.question_dictionary_model_ind.items():
-            if key in self.override:
-                val['default_value'] = self.override[key]
-
-            if isinstance(self.override, Mapping):
-                override_dict = update_dict(override_dict, self.override)
-
-            elif isinstance(self.override, str):
-                yaml = YAML(typ='safe')
-                with open(self.override, 'r') as ymlfile:
-                    override_dict = update_dict(override_dict, yaml.load(ymlfile))
-            else:
-                self.logger.abort(f'Override must be a dictionary or a path to a yaml file.')
-
-            # In this case the user is sending in a dictionary that looks like the experiment
-            # dictionary that they will ultimately be looking at. This means the dictionary does
-            # not contain default_value or options and the override cannot be performed.
-
-            # Iterate over the model_ind dictionary and override
-            # --------------------------------------------------
-            for question_name, question in self.question_dictionary_model_ind.items():
-                if question['question_type'] == suite_task:
-                    if question_name in override_dict:
-                        question['default_value'] = override_dict[question_name]
-
-            # Iterate over the model_dep dictionary and override
-            # --------------------------------------------------
-            if self.suite_needs_model_components and 'models' in override_dict.keys():
-                for model, model_dict in self.question_dictionary_model_dep.items():
-                    for question_name, question in model_dict.items():
-                        if question['question_type'] == suite_task:
-                            if model in override_dict['models']:
-                                if question_name in override_dict['models'][model]:
-                                    question['default_value'] = override_dict[
-                                            'models'][model][question_name]
+        for question_name, question in self.question_dictionary_model_ind.items():
+            if question['question_type'] == suite_task:
+                if question_name in self.override:
+                    question['default_value'] = self.override[question_name]
+                
+        # Iterate over the model_dep dictionary and override
+        # --------------------------------------------------
+        if self.suite_needs_model_components and 'models' in self.override.keys():
+            for model, model_dict in self.question_dictionary_model_dep.items():
+                for question_name, question in model_dict.items():
+                    if question['question_type'] == suite_task:
+                        if model in self.override['models']:
+                            if question_name in self.override['models'][model]:
+                                question['default_value'] = self.override[
+                                        'models'][model][question_name]
 
     # ----------------------------------------------------------------------------------------------
 

@@ -293,7 +293,7 @@ def create_experiment_directory(
     # ------------------------------------------------
 
     experiment_dict_str, workflow_str = prepare_config(suite, suite_config, method, platform,
-                                                       override, advanced, slurm)
+                                                       override_dict, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------

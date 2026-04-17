@@ -32,7 +32,6 @@ class Setup(TaskSetup):
             qd.crtm_coeff_dir(),
             qd.observations(),
             qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
             qd.window_length(),
             qd.marine_models()
         ]

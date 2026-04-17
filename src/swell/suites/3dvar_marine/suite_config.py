@@ -55,7 +55,7 @@ _3dvar_tier1 = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, '3dvar_tier1', _3dvar_tier1)
+suite_configs.register(suite_name, '3dvar_marine_tier1', _3dvar_tier1)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -65,6 +65,6 @@ _3dvar = QuestionList(
     ]
 )
 
-suite_configs.register(suite_name, '3dvar', _3dvar)
+suite_configs.register(suite_name, '3dvar_marine', _3dvar)
 
 # --------------------------------------------------------------------------------------------------

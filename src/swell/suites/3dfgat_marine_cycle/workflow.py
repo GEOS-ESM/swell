@@ -170,7 +170,7 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
 
         self.tasks.append(ta.GetGeosRestart())
         self.tasks.append(ta.PrepGeosRunDir())
-        self.tasks.append(ta.RunGeos())
+        self.tasks.append(RunGeos())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.RunJediFgatExecutable(model=model))

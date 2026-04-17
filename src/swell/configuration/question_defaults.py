@@ -168,6 +168,15 @@ class parser_options(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+@dataclass
+class r2d2_experiment_id(SuiteQuestion):
+    default_value: str = "defer_to_code"
+    question_name: str = "r2d2_experiment_id"
+    prompt: str = "What experiment_id should r2d2 reference for experiment?"
+    widget_type: WType = WType.STRING
+
+# -------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class runahead_limit(SuiteQuestion):
@@ -178,17 +187,8 @@ class runahead_limit(SuiteQuestion):
                     "that may be active ahead of the current cycle "
                     "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
     widget_type: WType = WType.STRING
-
+    
 # --------------------------------------------------------------------------------------------------
-
-@dataclass
-class r2d2_experiment_id(SuiteQuestion):
-    default_value: str = "defer_to_code"
-    question_name: str = "r2d2_experiment_id"
-    prompt: str = "What experiment_id should r2d2 reference for experiment?"
-    widget_type: WType = WType.STRING
-
-# -------------------------------------------------------------------------------------------------
 
 @dataclass
 class skip_ensemble_hofx(SuiteQuestion):
@@ -219,15 +219,6 @@ class start_cycle_point(SuiteQuestion):
     ask_question: bool = True
     prompt: str = "What is the time of the first cycle (middle of the window)?"
     widget_type: WType = WType.ISO_DATETIME
-
-# --------------------------------------------------------------------------------------------------
-
-@dataclass
-class skip_r2d2(SuiteQuestion):
-    default_value: bool = False
-    question_name: str = "skip_r2d2"
-    prompt: str = "Skip registering and storing results of this experiment in R2D2?"
-    widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
 
@@ -669,14 +660,19 @@ class geos_build_method(TaskQuestion):
 
 
 @dataclass
-class geos_experiment_directory(TaskQuestion):
-    default_value: str = "defer_to_platform"
-    question_name: str = "geos_experiment_directory"
-    ask_question: bool = True
-    prompt: str = "What is the path to the GEOS restarts directory?"
+class geos_expdir(TaskQuestion):
+    default_value: str = "/dev/null/"
+    question_name: str = "geos_expdir"
+    depends: Dict = mutable_field({
+        "geos_expdir_different": True
+    })
+    prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
+                    "output and restart files), if it is different than your GEOS HOME "
+                    "Directory?")
     widget_type: WType = WType.STRING
-
+    
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_expdir_different(TaskQuestion):
@@ -693,19 +689,16 @@ class geos_expdir_different(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
-@dataclass
-class geos_expdir(TaskQuestion):
-    default_value: str = "/dev/null/"
-    question_name: str = "geos_expdir"
-    depends: Dict = mutable_field({
-        "geos_expdir_different": True
-    })
-    prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
-                    "output and restart files), if it is different than your GEOS HOME "
-                    "Directory?")
-    widget_type: WType = WType.STRING
 
-    # --------------------------------------------------------------------------------------------------
+@dataclass
+class geos_experiment_directory(TaskQuestion):
+    default_value: str = "defer_to_platform"
+    question_name: str = "geos_experiment_directory"
+    ask_question: bool = True
+    prompt: str = "What is the path to the GEOS restarts directory?"
+    widget_type: WType = WType.STRING
+    
+# --------------------------------------------------------------------------------------------------
 
 @dataclass
 class geos_gcm_tag(TaskQuestion):

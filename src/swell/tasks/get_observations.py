@@ -43,7 +43,6 @@ class Setup(TaskSetup):
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
 
@@ -61,6 +60,8 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     These values will be popped from the dictionary before running the fetch command
     """
+
+    import r2d2
 
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
     cycle_dir = r2d2_dict.pop('cycle_dir')
@@ -172,10 +173,6 @@ class GetObservations(taskBase):
         --------------
         "tlapse" files need to be fetched.
         """
-
-        # # Local import because module is not loaded until experiment launch
-        # --------------
-        import r2d2
 
         # Load R2D2 credentials
         # ---------------------
