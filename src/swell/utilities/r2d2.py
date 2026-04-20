@@ -269,11 +269,12 @@ def experiment_exists(r2d2_id: str):
 
     try:
         r2d2.get(item='experiment', name=r2d2_id)
+        return True
     except Exception as e:
-        if '400 Client Error' in str(e):
+        err = str(e)
+        if '400 Client Error' in err or '404 Not Found' in err or '404 Client Error' in err:
             return False
-
-    return True
+        raise
 
 # ----------------------------------------------------------------------------------------------
 
