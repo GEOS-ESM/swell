@@ -31,7 +31,11 @@ class GetBackground(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_datastore=self.config.r2d2_datastore(default=None),
+        )
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------

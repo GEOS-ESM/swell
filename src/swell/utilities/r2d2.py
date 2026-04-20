@@ -138,37 +138,65 @@ def _get_platform_r2d2_config(logger: Logger, platform: str = None) -> tuple:
 def load_r2d2_credentials(
     logger: Logger,
     platform: str = None,
-    yaml_path: str = "~/.swell/r2d2_credentials.yaml"
+    yaml_path: str = "~/.swell/r2d2_credentials.yaml",
+    r2d2_datastore: str | None = None,
 ) -> None:
     """
-    Load R2D2 v3 credentials from YAML file and set environment variables.
+    Load R2D2 credentials from YAML file and set environment variables.
     Host and compiler are automatically determined from platform configuration or YAML file.
 
     Args:
         logger: SWELL logger instance
         platform: Platform name (e.g., 'nccs_discover_sles15')
         yaml_path: Path to R2D2 credentials YAML file
+        r2d2_datastore: Datastore name in the credentials YAML.
+            If set, use that named entry.
+            If not set, use ``R2D2_DATASTORE`` if available.
+            If neither is set, use the root of the YAML file.
     """
     yaml_path = os.path.expanduser(yaml_path)
+
+    datastore_name = None if r2d2_datastore is None else str(r2d2_datastore).strip() or None
+    if datastore_name is None:
+        env_datastore_name = os.environ.get('R2D2_DATASTORE')
+        if isinstance(env_datastore_name, str):
+            datastore_name = env_datastore_name.strip() or None
 
     # Determine platform-specific host and compiler
     r2d2_host, r2d2_compiler = _get_platform_r2d2_config(logger, platform)
 
     # Load credentials from YAML file if it exists
-    credentials = {}
+    credentials_yaml = {}
     if os.path.exists(yaml_path):
-        logger.info(f"Loading R2D2 v3 credentials from {yaml_path}")
+        logger.info(f"Loading R2D2 credentials from {yaml_path}")
         try:
             yaml = YAML(typ='safe')
             with open(yaml_path, 'r') as yaml_file:
-                credentials = yaml.load(yaml_file)
+                credentials_yaml = yaml.load(yaml_file) or {}
         except Exception as e:
             logger.error(f"Error loading R2D2 credentials from {yaml_path}: {e}")
             logger.info("Continuing with existing environment variables...")
-            credentials = {}
+            credentials_yaml = {}
     else:
         logger.info(f"R2D2 credentials file not found at {yaml_path}")
-        logger.info("R2D2 v3 will use existing environment variables if set")
+        logger.info("R2D2 will use existing environment variables if set")
+
+    if not isinstance(credentials_yaml, dict):
+        logger.error("R2D2 credentials file must contain a YAML mapping at the root.")
+        credentials = {}
+    elif datastore_name:
+        datastore_credentials = credentials_yaml.get(datastore_name)
+        if isinstance(datastore_credentials, dict):
+            credentials = datastore_credentials
+            logger.info(f"Using R2D2 credentials for datastore name: {datastore_name!r}")
+        else:
+            logger.error(
+                f"R2D2 credentials for datastore name: {datastore_name!r} not found or not a mapping; "
+                f"skipping credential values from file."
+            )
+            credentials = {}
+    else:
+        credentials = credentials_yaml
 
     # Set user credentials from YAML file
     if 'user' in credentials and 'R2D2_USER' not in os.environ:

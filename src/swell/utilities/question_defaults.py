@@ -162,6 +162,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_datastore(SuiteQuestion):
+        default_value: str = ""
+        question_name: str = "r2d2_datastore"
+        ask_question: bool = False
+        prompt: str = (
+            "Datastore name in ~/.swell/r2d2_credentials.yaml, "
+            "needed when using more than one datastore."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
