@@ -196,7 +196,16 @@ def load_r2d2_credentials(
             )
             credentials = {}
     else:
-        credentials = credentials_yaml
+        # Select the first server name
+        all_named = bool(credentials_yaml) and all(
+            isinstance(v, dict) for v in credentials_yaml.values()
+        )
+        if all_named:
+            server_name = next(iter(credentials_yaml))
+            credentials = credentials_yaml[server_name]
+            logger.info(f"No r2d2_server set, auto-selected first profile: {server_name!r}")
+        else:
+            credentials = credentials_yaml
 
     # Set user credentials from YAML file
     if 'user' in credentials and 'R2D2_USER' not in os.environ:

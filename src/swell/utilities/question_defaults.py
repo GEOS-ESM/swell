@@ -165,7 +165,7 @@ class QuestionDefaults():
     class r2d2_server(SuiteQuestion):
         default_value: str = ""
         question_name: str = "r2d2_server"
-        ask_question: bool = True
+        ask_question: bool = False
         prompt: str = (
             "Server/profile name in ~/.swell/r2d2_credentials.yaml "
             "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
