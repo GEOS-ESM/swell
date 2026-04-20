@@ -28,8 +28,10 @@ class SaveObsDiags(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_datastore=self.config.r2d2_datastore(default=None),
+            r2d2_server=self.config.r2d2_server(default=None),
         )
+
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
 
         # Parse config
         # ------------
@@ -82,7 +84,7 @@ class SaveObsDiags(taskBase):
             # ---------------
 
             try:
-                r2d2.store(
+                store_kwargs = dict(
                     item='feedback',
                     experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
@@ -92,6 +94,9 @@ class SaveObsDiags(taskBase):
                     source_file=obs_path_file,
                     member=-9999,
                 )
+                if r2d2_datastore:
+                    store_kwargs['data_store'] = r2d2_datastore
+                r2d2.store(**store_kwargs)
                 self.logger.info(f'Successfully stored feedback file for {observation}')
 
             except Exception as e:

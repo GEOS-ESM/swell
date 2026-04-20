@@ -162,13 +162,29 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_server(SuiteQuestion):
+        default_value: str = ""
+        question_name: str = "r2d2_server"
+        ask_question: bool = False
+        prompt: str = (
+            "Server/profile name in ~/.swell/r2d2_credentials.yaml "
+            "(e.g. 'gmao', 'jcsda'). Leave empty to use root-level credentials."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class r2d2_datastore(SuiteQuestion):
         default_value: str = ""
         question_name: str = "r2d2_datastore"
         ask_question: bool = False
         prompt: str = (
-            "Datastore name in ~/.swell/r2d2_credentials.yaml, "
-            "needed when using more than one datastore."
+            "Datastore name passed to R2D2 fetch and store operations "
+            "(e.g. a Discover directory store or an S3 bucket store). "
+            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
+            "Leave empty to let R2D2 pick the highest-priority writable datastore "
+            "for your compute host."
         )
         widget_type: WType = WType.STRING
 

@@ -139,7 +139,7 @@ def load_r2d2_credentials(
     logger: Logger,
     platform: str = None,
     yaml_path: str = "~/.swell/r2d2_credentials.yaml",
-    r2d2_datastore: str | None = None,
+    r2d2_server: str | None = None,
 ) -> None:
     """
     Load R2D2 credentials from YAML file and set environment variables.
@@ -149,18 +149,18 @@ def load_r2d2_credentials(
         logger: SWELL logger instance
         platform: Platform name (e.g., 'nccs_discover_sles15')
         yaml_path: Path to R2D2 credentials YAML file
-        r2d2_datastore: Datastore name in the credentials YAML.
-            If set, use that named entry.
-            If not set, use ``R2D2_DATASTORE`` if available.
-            If neither is set, use the root of the YAML file.
+        r2d2_server: Server/profile name in the credentials YAML
+            (e.g. 'gmao', 'jcsda'). Selects which named credential block to load.
+            If not set, uses ``R2D2_SERVER`` env var if available.
+            If neither is set, uses the root of the YAML file.
     """
     yaml_path = os.path.expanduser(yaml_path)
 
-    datastore_name = None if r2d2_datastore is None else str(r2d2_datastore).strip() or None
-    if datastore_name is None:
-        env_datastore_name = os.environ.get('R2D2_DATASTORE')
-        if isinstance(env_datastore_name, str):
-            datastore_name = env_datastore_name.strip() or None
+    server_name = None if r2d2_server is None else str(r2d2_server).strip() or None
+    if server_name is None:
+        env_server_name = os.environ.get('R2D2_SERVER')
+        if isinstance(env_server_name, str):
+            server_name = env_server_name.strip() or None
 
     # Determine platform-specific host and compiler
     r2d2_host, r2d2_compiler = _get_platform_r2d2_config(logger, platform)
@@ -184,14 +184,14 @@ def load_r2d2_credentials(
     if not isinstance(credentials_yaml, dict):
         logger.error("R2D2 credentials file must contain a YAML mapping at the root.")
         credentials = {}
-    elif datastore_name:
-        datastore_credentials = credentials_yaml.get(datastore_name)
-        if isinstance(datastore_credentials, dict):
-            credentials = datastore_credentials
-            logger.info(f"Using R2D2 credentials for datastore name: {datastore_name!r}")
+    elif server_name:
+        server_credentials = credentials_yaml.get(server_name)
+        if isinstance(server_credentials, dict):
+            credentials = server_credentials
+            logger.info(f"Using R2D2 credentials for server: {server_name!r}")
         else:
             logger.error(
-                f"R2D2 credentials for datastore name: {datastore_name!r} not found or not a mapping; "
+                f"R2D2 credentials for server {server_name!r} not found or not a mapping; "
                 f"skipping credential values from file."
             )
             credentials = {}

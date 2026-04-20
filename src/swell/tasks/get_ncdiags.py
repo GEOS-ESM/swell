@@ -28,7 +28,7 @@ class GetNcdiags(taskBase):
         load_r2d2_credentials(
             self.logger,
             self.platform(),
-            r2d2_datastore=self.config.r2d2_datastore(default=None),
+            r2d2_server=self.config.r2d2_server(default=None),
         )
 
         # Parse config
