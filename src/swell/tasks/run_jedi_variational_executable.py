@@ -56,6 +56,8 @@ class Setup(TaskSetup):
             qd.total_processors(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
+            qd.saber_central_block(),
+            qd.saber_outer_block(),
         ]
 
 # --------------------------------------------------------------------------------------------------
