@@ -209,7 +209,7 @@ class IngestObs(taskBase):
                         target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file
+                    source_file=target_file,
                 )
             except (ValueError, KeyError, FileNotFoundError,
                     OSError, requests.RequestException) as e:

@@ -7,22 +7,29 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
+def varincrement1(template_dict: Mapping) -> Mapping:
 
-    cycle_dir = template_dict['cycle_dir']
+    experiment_id = template_dict['experiment_id']
 
-    ensemble_mean_increment_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.mean-inc.',
-        'field io names': field_io_names_ensemble
+    varincrement1 = {
+        'write increment': True,
+        'increment': {
+            'state component': {
+                'filetype': 'auxgrid',
+                'gridtype': 'latlon',
+                'datapath': './',
+                'filename': f'{experiment_id}.increment-iter1.',
+                'field io names': field_io_names,
+            }
+        }
     }
 
-    return ensemble_mean_increment_output
+    return varincrement1
 
 # --------------------------------------------------------------------------------------------------

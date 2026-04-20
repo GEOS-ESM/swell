@@ -43,6 +43,7 @@ class SuiteQuestions(QuestionContainer, Enum):
             qd.runahead_limit(),
             qd.r2d2_experiment_id(),
             qd.r2d2_datastore(),
+            qd.skip_r2d2(),
         ]
     )
 

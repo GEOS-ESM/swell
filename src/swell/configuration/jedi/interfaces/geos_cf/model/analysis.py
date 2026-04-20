@@ -7,22 +7,23 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
+from swell.configuration.jedi.interfaces.geos_cf.model.shared import \
+        field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
-
-    cycle_dir = template_dict['cycle_dir']
-
-    ensemble_mean_increment_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.mean-inc.',
-        'field io names': field_io_names_ensemble
+def analysis(template_dict: Mapping) -> Mapping:
+    analysis = {
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath': template_dict['cycle_dir'],
+        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'first': 'PT0H',
+        'frequency': 'PT1H',
+        'field io names': field_io_names,
     }
 
-    return ensemble_mean_increment_output
+    return analysis
 
 # --------------------------------------------------------------------------------------------------

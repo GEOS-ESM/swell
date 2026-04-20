@@ -199,6 +199,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class skip_r2d2(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "skip_r2d2"
+        prompt: str = "Skip registering and storing results of this experiment in R2D2?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class start_cycle_point(SuiteQuestion):
         default_value: str = "2023-10-10T00:00:00Z"
         question_name: str = "start_cycle_point"
@@ -249,6 +258,34 @@ class QuestionDefaults():
         ])
         prompt: str = "Which background error model do you want to use?"
         widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_central_block(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_central_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber central block do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_outer_block(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_outer_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber outer blocks do you want to use?"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1306,6 +1343,19 @@ class QuestionDefaults():
         ])
         prompt: str = ("When running the ncdiag to ioda converted do you "
                        "want to produce GeoVaLs files?")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class cache_fetch(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "cache_fetch"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Use cached observation files if they already exist?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

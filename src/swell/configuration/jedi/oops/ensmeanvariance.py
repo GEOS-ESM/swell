@@ -18,8 +18,8 @@ class ensmeanvariance(OopsConfig):
         oops = {
             'geometry': self.interface_model('geometry'),
             'ensemble': self.interface_model('ensemble_block'),
-            'variance output': self.interface_model('ensemble_cube_variance_output'),
-            'mean output': self.interface_model('ensemble_cube_mean_output')
+            'variance output': self.interface_model('ensemble_latlon_prior_variance_output'),
+            'mean output': self.interface_model('ensemble_latlon_prior_mean_output')
         }
 
         return oops

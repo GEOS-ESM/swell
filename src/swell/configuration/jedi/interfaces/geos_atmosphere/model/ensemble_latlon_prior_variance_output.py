@@ -12,17 +12,17 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
+def ensemble_latlon_prior_variance_output(template_dict: Mapping) -> Mapping:
 
-    cycle_dir = template_dict['cycle_dir']
-
-    ensemble_mean_increment_output = {
+    ensemble_latlon_prior_variance_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
-        'filename': f'{cycle_dir}/geos.mean-inc.',
+        'datapath': template_dict['cycle_dir'],
+        'filename': 'geos.prior.variance.',
         'field io names': field_io_names_ensemble
     }
 
-    return ensemble_mean_increment_output
+    return ensemble_latlon_prior_variance_output
+
 
 # --------------------------------------------------------------------------------------------------
