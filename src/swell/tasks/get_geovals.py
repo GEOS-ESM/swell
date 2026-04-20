@@ -35,7 +35,6 @@ class Setup(TaskSetup):
             qd.observing_system_records_path(),
             qd.geovals_experiment(),
             qd.geovals_provider(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
 

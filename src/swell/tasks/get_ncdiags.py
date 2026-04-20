@@ -33,7 +33,6 @@ class Setup(TaskSetup):
             qd.observing_system_records_path(),
             qd.ncdiag_experiments(),
             qd.marine_models(),
-            qd.r2d2_local_path(),
             qd.window_length(),
         ]
 

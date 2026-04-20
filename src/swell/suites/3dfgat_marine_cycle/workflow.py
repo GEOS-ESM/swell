@@ -156,6 +156,9 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
+        workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict,
+                                              allow_unresolved=False)
+
         return workflow_str
 
     def set_tasks(self) -> None:
@@ -167,9 +170,8 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
         self.tasks.append(ta.BuildJedi())
         self.tasks.append(ta.BuildGeos())
         self.tasks.append(ta.BuildGeosByLinking())
-
-        self.tasks.append(ta.GetGeosRestart())
-        self.tasks.append(ta.PrepGeosRunDir())
+        self.tasks.append(ta.GetCoupledGeosRestart())
+        self.tasks.append(ta.PrepCoupledGeosRunDir())
         self.tasks.append(RunGeos())
 
         for model in self.experiment_dict['model_components']:
@@ -177,7 +179,7 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.MoveDaRestart(model=model))
-            self.tasks.append(ta.LinkGeosOutput(model=model))
+            self.tasks.append(ta.LinkCoupledGeosOutput(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
@@ -189,7 +191,6 @@ class Workflow_3dfgat_cycle(CylcWorkflow):
             self.tasks.append(ta.SaveRestart(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
-            self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
 
 # --------------------------------------------------------------------------------------------------

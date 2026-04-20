@@ -56,10 +56,10 @@ template_str = '''
             BuildJediByLinking:fail? => BuildJedi
 
             # Need first set of restarts to run model
-            GetGeosRestart => PrepGeosRunDir
+            GetCoupledGeosRestart => PrepCoupledGeosRunDir
 
             # Model cannot run without code
-            BuildGeosByLinking? | BuildGeos => RunGeosExecutable
+            BuildGeosByLinking? | BuildGeos => RunGeos
 
             {% for model_component in model_components %}
 
@@ -76,18 +76,17 @@ template_str = '''
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
 
-            # Model things
+            # Model preperation
             # Run the forecast through two windows (need to output restarts at the end of the
             # first window and backgrounds for the second window)
-            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepGeosRunDir
-            PrepGeosRunDir => RunGeosExecutable
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepCoupledGeosRunDir
+            PrepCoupledGeosRunDir => RunGeos
 
             # Run the analysis
-            # RunGeosExecutable => StageJediCycle-{{model_component}}
-            RunGeosExecutable => LinkGeosOutput-{{model_component}}
-            LinkGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+            RunGeos => LinkCoupledGeosOutput-{{model_component}}
+            LinkCoupledGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
 
-            # Data assimilation things
+            # Data assimilation preperation
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
@@ -111,27 +110,25 @@ template_str = '''
             PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
             {% endif %}
 
-            # Move restart to next cycle
-            # SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
+            # Move restart to next cycle and then erase current forecast folder
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
 
+            {% if not skip_r2d2 %}
             # Save analysis output
             # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
 
-            # Remove Run Directory
-            # MoveDaRestart-{{model_component}} & MoveBackground-{{model_component}} => RemoveForecastDir
-            MoveDaRestart-{{model_component}} => RemoveForecastDir
-
             # Clean up large files
-            # EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & SaveObsDiags-{{model_component}} & RemoveForecastDir =>
-            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}}  & SaveObsDiags-{{model_component}} =>
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
             CleanCycle-{{model_component}}
         {% endfor %}
         """
         {% endfor %}
+
 # --------------------------------------------------------------------------------------------------
 
 [runtime]
@@ -158,6 +155,9 @@ class Workflow_3dvar_cycle(CylcWorkflow):
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
+        workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict,
+                                              allow_unresolved=False)
+
         return workflow_str
 
     def set_tasks(self) -> list:
@@ -169,26 +169,26 @@ class Workflow_3dvar_cycle(CylcWorkflow):
         self.tasks.append(ta.BuildGeosByLinking())
         self.tasks.append(ta.BuildJedi())
         self.tasks.append(ta.BuildGeos())
-        self.tasks.append(ta.GetGeosRestart())
-        self.tasks.append(ta.PrepGeosRunDir())
+        self.tasks.append(ta.GetCoupledGeosRestart())
+        self.tasks.append(ta.PrepCoupledGeosRunDir())
         self.tasks.append(RunGeos())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.StageJedi(model=model))
             self.tasks.append(ta.StageJediCycle(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
-            self.tasks.append(ta.LinkGeosOutput(model=model))
+            self.tasks.append(ta.LinkCoupledGeosOutput(model=model))
             self.tasks.append(ta.GenerateBClimatology(model=model))
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
             self.tasks.append(ta.MoveDaRestart(model=model))
-            self.tasks.append(ta.RemoveForecastDir(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.SaveRestart(model=model))
 
 # --------------------------------------------------------------------------------------------------

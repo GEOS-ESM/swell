@@ -36,7 +36,6 @@ class Setup(TaskSetup):
             qd.forecast_duration(),
             qd.horizontal_resolution(),
             qd.marine_models(),
-            qd.r2d2_local_path()
         ]
 
 # --------------------------------------------------------------------------------------------------

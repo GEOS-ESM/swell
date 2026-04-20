@@ -76,10 +76,10 @@ template_str = '''
 '''
 
 class RunGeos(TaskSetup):
-    def set_attributes(self):
+    def set_defaults(self):
         self.base_name = 'RunGeos'
         self.is_cycling = True
-        self.script = '{{experiment_path}}/GEOSgcm/forecast/gcm_run.j'
+        self.script = '{{experiment_root}}/{{experiment_id}}/GEOSgcm/forecast/gcm_run.j'
         self.slurm = {}
 
 # --------------------------------------------------------------------------------------------------

@@ -193,7 +193,6 @@ def prepare_config(
     # Ask the task questions
     # ----------------------
     experiment_dict, comment_dict = prepare_config_and_suite.configure_and_ask_task_questions()
-
     if 'start_cycle_point' in suite_dict:
         experiment_dict['start_cycle_point'] = suite_dict['start_cycle_point']
         experiment_dict['final_cycle_point'] = suite_dict['final_cycle_point']
