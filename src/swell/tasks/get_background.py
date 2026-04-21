@@ -9,7 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 
 import isodate
 import os
@@ -17,13 +17,6 @@ import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',  # 'mom6_cice6_UFS'
-}
-
-
-# --------------------------------------------------------------------------------------------------
 
 class GetBackground(taskBase):
 
@@ -36,6 +29,10 @@ class GetBackground(taskBase):
              See the taskBase constructor for more information.
         """
 
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
@@ -46,7 +43,6 @@ class GetBackground(taskBase):
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_type = self.config.window_type()
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
@@ -57,10 +53,6 @@ class GetBackground(taskBase):
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Convert to datetime durations
         # -----------------------------
@@ -126,12 +118,14 @@ class GetBackground(taskBase):
 
         # Loop over fc
         # ------------
-        for fc in r2d2_dict['fetch']['fc']:
+        fc_list = r2d2_dict['fetch']['fc']
+        for fc in fc_list:
 
-            # Reset target file
-            # --------------------
+            # Get file metadata from r2d2 config
+            # -----------------------------------
             file_type = fc['file_type']
             target_file_template = fc['filename']
+            r2d2_model = fc.get('r2d2_model', get_r2d2_model_name(model_component))
 
             # Loop over background steps
             # --------------------
@@ -150,7 +144,7 @@ class GetBackground(taskBase):
                 r2d2.fetch(
                     item='forecast',
                     target_file=target_file,
-                    model=r2d2_model_dict[model_component],  # 'mom6' need to be registered mom6
+                    model=r2d2_model,
                     experiment=background_experiment,
                     file_extension=file_extension,
                     resolution=horizontal_resolution,

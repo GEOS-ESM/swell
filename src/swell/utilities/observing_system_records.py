@@ -1,5 +1,5 @@
 import os
-import yaml
+from ruamel.yaml import YAML
 import pandas as pd
 import numpy as np
 import datetime as dt
@@ -45,7 +45,7 @@ def read_sat_db(path_to_sat_db: str, column_names: list[str]) -> pd.DataFrame:
                     'start': [''],
                     'end': [''],
                     'instr': [''],
-                    'channel_num': [0],
+                    'channel_num': ['0'],
                     'channels': [''],
                     'comments': ['']})
 
@@ -211,5 +211,6 @@ class ObservingSystemRecords:
                         self.logger.abort(f'Record type {self.record_type} not supported. \
                                      Use channel or level')
 
+                    yaml_config = YAML(typ='safe')
                     with open(output_dir + '/' + instr + '_' + sat + output_ext_name, 'w') as file:
-                        yaml.dump(sat_dict, file)
+                        yaml_config.dump(sat_dict, file)

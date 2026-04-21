@@ -7,10 +7,9 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import os
 import r2d2
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
 
 # --------------------------------------------------------------------------------------------------
@@ -24,13 +23,16 @@ class SaveObsDiags(taskBase):
 
     def execute(self) -> None:
 
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
         # Parse config
         # ------------
         background_time_offset = self.config.background_time_offset()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         observations = self.config.observations()
         window_length = self.config.window_length()
-        r2d2_local_path = self.config.r2d2_local_path()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -45,10 +47,6 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
-
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -61,50 +59,18 @@ class SaveObsDiags(taskBase):
             self.logger.info(f'Checking input observation file: {input_obs_file}')
 
             use_obs = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                observation_dict, self.cycle_time_dto())
+                                observation_dict, self.cycle_time_dto(), input_and_output=True)
 
-            self.logger.info(f'Checking observation {observation}: use_obs = {use_obs}')
+            # use_obs is false when obs input file (or feedback file) doesn't exist or is empty.
+            # The case when the feedback file is listed in yaml but doesn't exit never happens,
+            # as JEDI execution fails when input obs file is missing.
 
             if not use_obs:
-                self.logger.info(f'Input observation file analysis for {observation}:')
-                self.logger.info(f'  Expected file: {input_obs_file}')
-                # Check if file exists and is readable
-                # ---------------------------------------
-                try:
-                    import netCDF4 as nc
-                    dataset = nc.Dataset(input_obs_file, 'r')
-                    dims = {dim_name: dim.size for dim_name, dim in dataset.dimensions.items()}
-                    self.logger.info(f'  File exists but dimensions: {dims}')
-                    dataset.close()
-                except Exception as e:
-                    self.logger.info(f'  File exists but error reading: {str(e)}')
-
-                self.logger.info(f'  Skipping {observation}')
+                self.logger.info(f'Empty feedback (obs diag) {input_obs_file} file. Skip saving.')
                 continue
-
-            # Store diagnostic/feedback files produced by JEDI executables
-            # (e.g., variational, hofx, localensembleda).
-            # --------------------------------------------------------------
 
             name = observation_dict['obs space']['name']
             obs_path_file = observation_dict['obs space']['obsdataout']['engine']['obsfile']
-
-            self.logger.info(f'Looking for diagnostic output file: {obs_path_file}')
-
-            # Check for need to add 0000 to the file
-            if not os.path.exists(obs_path_file):
-                obs_path_file_name, obs_path_file_ext = os.path.splitext(obs_path_file)
-                obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
-                self.logger.info(f'Primary file not found, checking: {obs_path_file_0000}')
-
-                if not os.path.exists(obs_path_file_0000):
-                    self.logger.info(f'Diagnostic output files not found for {observation}:')
-                    self.logger.info(f'  Expected: {obs_path_file}')
-                    self.logger.info(f'  Expected: {obs_path_file_0000}')
-                    self.logger.info(f'  RunJediVariationalExecutable did not run successfully')
-                    self.logger.info(f'  Skipping storage of {observation} diagnostic file')
-                    continue
-                obs_path_file = obs_path_file_0000
 
             self.logger.info(f'Found diagnostic output file: {obs_path_file}')
 
@@ -114,7 +80,7 @@ class SaveObsDiags(taskBase):
             try:
                 r2d2.store(
                     item='feedback',
-                    experiment=self.experiment_id(),
+                    experiment=self.config.r2d2_experiment_id(),
                     observation_type=name,
                     file_extension=obs_path_file.split('.')[-1],
                     window_length='PT6H',

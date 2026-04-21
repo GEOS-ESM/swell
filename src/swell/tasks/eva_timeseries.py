@@ -12,7 +12,7 @@ from multiprocessing import Pool
 from datetime import datetime as dt
 import isodate
 import os
-import yaml
+from ruamel.yaml import YAML
 
 from eva.eva_driver import eva
 
@@ -97,6 +97,8 @@ class EvaTimeseries(taskBase):
         # This should be configurable once we do the eva refactoring.
         # -------------------------------------------------------------
         channels_to_plot = {
+            'abi_g16': [8, 10],
+            'abi_g18': [8, 9, 10],
             'airs_aqua': [15, 92, 128, 156, 172, 175, 190, 215, 252, 262, 310, 362, 497, 672, 914,
                           1088, 1329, 1449, 1766, 1800, 1869, 1918],
             'cris-fsr_n20': [59, 69, 82, 86, 92, 102, 107, 114, 130, 141, 153, 158, 164, 167, 168,
@@ -115,6 +117,8 @@ class EvaTimeseries(taskBase):
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+
+        yaml = YAML(typ='safe')
 
         for observation in self.config.observations():
 
@@ -178,7 +182,7 @@ class EvaTimeseries(taskBase):
                 eva_override['channel'] = ''
 
             eva_str = template_string_jinja2(self.logger, eva_str_template, eva_override)
-            eva_dict = yaml.safe_load(eva_str)
+            eva_dict = yaml.load(eva_str)
 
             # Remove channel keys if not needed
             # ---------------------------------
@@ -192,7 +196,7 @@ class EvaTimeseries(taskBase):
             conf_output = os.path.join(self.cycle_dir(), 'eva', ioda_name, ioda_name+'_eva.yaml')
             os.makedirs(os.path.dirname(conf_output), exist_ok=True)
             with open(conf_output, 'w') as outfile:
-                yaml.dump(eva_dict, outfile, default_flow_style=False, sort_keys=False)
+                yaml.dump(eva_dict, outfile)
 
             # Add eva dictionary to list
             # --------------------------

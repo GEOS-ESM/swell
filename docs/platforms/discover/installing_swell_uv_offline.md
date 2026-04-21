@@ -33,8 +33,9 @@ We will download all the required packages on local with the corresponding pytho
     which pip3  # make sure that the path of pip3 is the one under your venv
 
     mkdir ../downloaded  # where offline packages will be saved to
-    pip3 download "setuptools>=40.8.0" -d ../downloaded
-    pip3 download -r requirements.txt -d ../downloaded  
+    pip3 download "setuptools>=68.0.0" -d ../downloaded
+    pip3 download "wheel>=0.46.3" -d ../downloaded
+    pip3 download . -d ../downloaded
 ```
 3. Upload the packages under `downloaded` to a Discover directory, `[discover_offline_pkg_path]`
 4. On a milan node from Discover, install the packages by
@@ -53,14 +54,13 @@ We will download all the required packages on local with the corresponding pytho
     source .venv/bin/activate
     which pip3    # ensure pip3 points to the same dir as python under your venv
     # (optional_end)
-    pip3 install --no-index --find-links=[discover_offline_pkg_path] -r requirements.txt
 ```
 5. Install SWELL in editable mode 
 ```
     deactivate 
     mod_swell
     source .venv/bin/activate
-    python -m pip install -e .
+    python -m pip install --no-index --find-links=[discover_offline_pkg_path] -e .
 ```
 #### Reuse SWELL and launch SWELL jobs
 Log into a **Milan** node on Discover, run 

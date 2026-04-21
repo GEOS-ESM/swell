@@ -90,14 +90,15 @@ class taskBase(ABC):
         self.__model_components__ = self.config.__model_components__
 
         # Create cycle and forecast directories
+        # Forecast directory is in the experiment/GEOSgcm level. This allows time independent
+        # templating in flow.cylc.
         # -------------------------------------
         cycle_dir = None
-        self.cycle_forecast_dir = None
+        self.str_forecast_dir = None
 
         if datetime_input is not None:
-            # Name of directory where cycle forecast files will be staged
-            self.cycle_forecast_dir = os.path.join(self.experiment_path(), 'run',
-                                                   self.__datetime__.string_directory(), 'forecast')
+            # Name of directory where forecast files are staged
+            self.str_forecast_dir = os.path.join(self.experiment_path(), 'GEOSgcm', 'forecast')
 
             if model is not None:
                 cycle_dir = self.cycle_dir()
@@ -109,9 +110,9 @@ class taskBase(ABC):
                                                   self.__experiment_id__, cycle_dir,
                                                   self.__datetime__, self.__model__)
 
-        # Add GEOS utils
+        # Add methods to GEOS utils
         # --------------
-        self.geos = Geos(self.logger, self.cycle_forecast_dir)
+        self.geos = Geos(self.logger, self.str_forecast_dir)
 
         # Create some extra helpers available when the datetime is present
         # ----------------------------------------------------------------
@@ -202,13 +203,14 @@ class taskBase(ABC):
 
     def forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
 
+        '''
+        Method to provide "forecast" directory to geos class
+        If paths are provided, it is combined with the forecast directory and returned
+        '''
+
         # Make sure forecast directory exists
         # -----------------------------------
-        os.makedirs(self.cycle_forecast_dir, 0o755, exist_ok=True)
-
-        # Combine datetime string (directory format) with the model
-        # ------------------------------------------------------
-        forecast_dir = self.cycle_forecast_dir
+        os.makedirs(self.str_forecast_dir, 0o755, exist_ok=True)
 
         if len(paths) > 0:
             # If paths (which should be a list) is not empty, combine with forecast_dir
@@ -216,11 +218,8 @@ class taskBase(ABC):
             if isinstance(paths, str):
                 paths = [paths]
 
-            # Combining list of paths with forecast dir for code brevity
-            # ---------------------------------------------------------
-            forecast_dir = os.path.join(forecast_dir, *paths)
-
-        return forecast_dir
+        # Combine list of paths with forecast dir for code brevity
+        return os.path.join(self.str_forecast_dir, *paths)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -278,22 +277,30 @@ class taskFactory():
         ensemblePacket: Optional[str]
     ) -> taskBase:
 
-        # Load R2D2 credentials before importing any task modules
-        # -------------------------------------------------------
-        from swell.utilities.config import Config
-        from swell.utilities.r2d2 import load_r2d2_credentials
-        from swell.utilities.logger import get_logger
-
-        # Get platform info from config to load credentials
-        temp_logger = get_logger('R2D2Setup')
-        temp_config = Config(config, temp_logger, task, model)
-        load_r2d2_credentials(temp_logger, temp_config.__platform__)
-
         # Convert camel case string to snake case
         task_lower = camel_case_to_snake_case(task)
 
-        # Import class based on user selected task
-        task_class = getattr(importlib.import_module('swell.tasks.' + task_lower), task)
+        task_class = None
+
+        factory_logger = get_logger('TaskFactory')
+
+        # Try to use the model-specific task if it exists
+        if model is not None:
+            try:
+                task_class = getattr(importlib.import_module(
+                    f'swell.tasks.{model}.{task_lower}-{model}'), task)
+                factory_logger.info(f'Using model-specific version of {task} in '
+                                    f'<swell.tasks.{model}.{task_lower}-{model}>')
+            except ModuleNotFoundError:
+                factory_logger.info(f'Could not find model-specific version of {task}.'
+                                    ' Looking for generic version.')
+
+        # Try to import model-independent task
+        if task_class is None:
+
+            # Import class based on user selected task
+            task_class = getattr(importlib.import_module('swell.tasks.'+task_lower), task)
+            factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket, task)

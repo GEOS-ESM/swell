@@ -8,28 +8,79 @@
 # --------------------------------------------------------------------------------------------------
 
 import isodate
+import netCDF4 as nc
 import numpy as np
 import os
 import r2d2
-import netCDF4 as nc
+import shutil
 from typing import Union
+from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import create_r2d2_config
+from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
+# ----------------------------------------------------------------------------------------------
+
+
+def run_r2d2_fetch(r2d2_dict: dict) -> None:
+
+    """Runs fetch command for all types of obs files
+
+    Arguments:
+    r2d2_dict: Dictionary of r2d2 fetch parameters, ALSO including additional information including:
+    **r2d2_dict['fetch_empty']: bool whether fetching empty obs file is appropriate
+    **r2d2_dict['cycle_dir']: Experiment cycle directory
+    **r2d2_dict['logger']: Swell logger
+
+    These values will be popped from the dictionary before running the fetch command
+    """
+
+    fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
+    cycle_dir = r2d2_dict.pop('cycle_dir')
+    logger = r2d2_dict.pop('logger')
+    cache_fetch = r2d2_dict.pop('cache_fetch', True)
+
+    target_file = r2d2_dict['target_file']
+
+    # Skip fetch if caching is enabled and the file already exists
+    if cache_fetch and os.path.exists(target_file) and os.path.getsize(target_file) > 0:
+        logger.info(f"Cache exists, skipping R2D2 fetch: {target_file}")
+        return
+
+    try:
+        r2d2.fetch(**r2d2_dict)
+        logger.info(f"Successfully fetched {target_file}")
+    except Exception as e:
+        # If this can be an empty obs file, fetch or copy empty file to the target file
+        if fetch_empty_obs:
+            logger.info(f"Failed to fetch {target_file}. Fetch empty observation instead.")
+            empty_obs_file = os.path.join(cycle_dir, 'empty_obs.nc4')
+            if not os.path.exists(empty_obs_file):
+                # fetch empty obs, if it doesn't exist
+                r2d2.fetch(
+                    item='observation',
+                    provider='empty_provider',
+                    observation_type='empty_type',
+                    file_extension='nc4',
+                    window_start='19700101T030000Z',
+                    window_length='PT6H',
+                    target_file=empty_obs_file,
+                )
+
+            # Copy the empty file to the target file directory
+            shutil.copy(empty_obs_file, target_file)
+
+        else:
+            raise Exception(e)
+
+    # Change the permissions
+    os.chmod(target_file, 0o644)
+
+
 # --------------------------------------------------------------------------------------------------
-
-# R2D2 model name mapping
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',
-}
-
-# --------------------------------------------------------------------------------------------------
-
 
 class GetObservations(taskBase):
 
@@ -97,6 +148,10 @@ class GetObservations(taskBase):
         "tlapse" files need to be fetched.
         """
 
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
+
         # Parse config
         # ------------
         obs_experiment = self.config.obs_experiment()
@@ -105,12 +160,11 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
         window_length = self.config.window_length()
-        r2d2_local_path = self.config.r2d2_local_path()
         cycling_varbc = self.config.cycling_varbc(None)
-
-        # Get model component
+        cache_fetch = self.config.cache_fetch(True)
+        # Get model component and translate to R2D2 model name
         model_component = self.get_model()
-        r2d2_model = r2d2_model_dict.get(model_component, model_component)
+        r2d2_model = get_r2d2_model_name(model_component)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -139,12 +193,16 @@ class GetObservations(taskBase):
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
-
         # Read observation ioda names
         ioda_names_list = get_ioda_names_list()
+
+        # Create a dictionary of all fetch criteria
+        # -----------------------------------------
+        r2d2_fetch_dicts = []
+
+        # Dictionary tracking all observation files
+        # -----------------------------------------
+        observation_dicts = {}
 
         # Loop over observation operators
         # -------------------------------
@@ -152,11 +210,17 @@ class GetObservations(taskBase):
 
             # Open the observation operator dictionary
             # ----------------------------------------
-            observation_dict = self.jedi_rendering.render_interface_observations(observation)
+            observation_dicts[observation] = observation_dict = \
+                    self.jedi_rendering.render_interface_observations(observation)
 
             # Get the set obs providers for each observation
             # ----------------------------------------------
             obs_provider = get_provider_for_observation(observation, ioda_names_list, self.logger)
+
+            # Derive the file extension from the obsfile template in the obs YAML
+            # this is the single source of truth for what format JEDI expects.
+            obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
             # Fetch observation files
             # -----------------------
@@ -164,43 +228,23 @@ class GetObservations(taskBase):
             # Here, we are fetching
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
-                target_file = os.path.join(self.cycle_dir(), f'{observation}.{obs_num}.nc4')
+                target_file = os.path.join(
+                    self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
+                )
                 combine_input_files.append(target_file)
 
                 fetch_criteria = {
                     'item': 'observation',               # Required for r2d2 v3
                     'provider': obs_provider,            # What we registered with
                     'observation_type': observation,     # From filename
-                    'file_extension': 'nc4',
+                    'file_extension': obs_file_extension,
                     'window_start': obs_window_begin,    # From filename timestamp
                     'window_length': obs_window_length,  # From filename
                     'target_file': target_file,          # Where to save
+                    'fetch_empty': True
                 }
 
-                try:
-                    r2d2.fetch(**fetch_criteria)
-                    self.logger.info(f"Successfully fetched {target_file}")
-                except Exception as e:
-                    self.logger.info(f"Failed to fetch {target_file}: {str(e)}")
-
-            # Check how many of the combine_input_files exist in the cycle directory.
-            # If all of them are missing proceed without creating an observation input
-            # file since bias correction files still need to be propagated to the next cycle
-            # for cycling VarBC.
-            # -----------------------------------------------------------------------
-            if not any([os.path.exists(f) for f in combine_input_files]):
-                self.logger.info(f'None of the {observation} files exist for this cycle!')
-            else:
-                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
-                self.logger.info(f'Processing observation file {jedi_obs_file}')
-                # If obs_list_dto has one member, then just rename the file
-                # ---------------------------------------------------------
-                if len(obs_list_dto) == 1:
-                    os.rename(combine_input_files[0], jedi_obs_file)
-                else:
-                    self.read_and_combine(combine_input_files, jedi_obs_file)
-                # Change permission
-                os.chmod(jedi_obs_file, 0o644)
+                r2d2_fetch_dicts.append(fetch_criteria)
 
             # Otherwise there is only work to do if the observation operator has bias correction
             # ----------------------------------------------------------------------------------
@@ -254,32 +298,29 @@ class GetObservations(taskBase):
                 if fetch_required:
                     # Fetch coefficients file (.acftbias or .satbias)
                     self.logger.info(f'Processing bias file {target_bccoef}')
-                    r2d2.fetch(
-                        item='bias_correction',
-                        target_file=target_bccoef,
-                        model=r2d2_model,
-                        experiment=obs_experiment,
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=bias_file_ext,
-                        file_type=bias_file_type,
-                        date=background_time_iso
-                    )
+                    r2d2_fetch_dicts.append({
+                        'item': 'bias_correction',
+                        'target_file': target_bccoef,
+                        'model': r2d2_model,
+                        'experiment': obs_experiment,
+                        'provider': 'gsi',
+                        'observation_type': observation,
+                        'file_extension': bias_file_ext,
+                        'file_type': bias_file_type,
+                        'date': background_time_iso
+                    })
 
-                    r2d2.fetch(
-                        item='bias_correction',
-                        target_file=target_bccovr,
-                        model=r2d2_model,
-                        experiment=obs_experiment,
-                        provider='gsi',
-                        observation_type=observation,
-                        file_extension=bias_file_ext + '_cov',
-                        file_type=bias_err_type,         # obsbias_coeff_errors Official JCSDA enum
-                        date=background_time_iso
-                    )
-                # Change permission
-                os.chmod(target_bccoef, 0o644)
-                os.chmod(target_bccovr, 0o644)
+                    r2d2_fetch_dicts.append({
+                        'item': 'bias_correction',
+                        'target_file': target_bccovr,
+                        'model': r2d2_model,
+                        'experiment': obs_experiment,
+                        'provider': 'gsi',
+                        'observation_type': observation,
+                        'file_extension': bias_file_ext + '_cov',
+                        'file_type': bias_err_type,  # obsbias_coeff_errors Official JCSDA enum
+                        'date': background_time_iso
+                    })
 
             # Skip time lapse part for aircraft observations
             # ----------------------------------------------
@@ -292,20 +333,66 @@ class GetObservations(taskBase):
 
                 self.logger.info(f'Processing satellite time lapse file {target_file}')
 
-                r2d2.fetch(
-                    item='bias_correction',
-                    target_file=target_file,
-                    model=r2d2_model,
-                    experiment=obs_experiment,
-                    provider='gsi',
-                    observation_type=observation,
-                    file_extension='tlapse',
-                    file_type='obsbias_tlapse',  # Official JCSDA enum
-                    date=background_time_iso
-                )
+                r2d2_fetch_dicts.append({
+                    'item': 'bias_correction',
+                    'target_file': target_file,
+                    'model': r2d2_model,
+                    'experiment': obs_experiment,
+                    'provider': 'gsi',
+                    'observation_type': observation,
+                    'file_extension': 'tlapse',
+                    'file_type': 'obsbias_tlapse',  # Official JCSDA enum
+                    'date': background_time_iso
+                })
 
+        for fetch_dict in r2d2_fetch_dicts:
+            fetch_dict['logger'] = self.logger
+            fetch_dict['cycle_dir'] = self.cycle_dir()
+            fetch_dict['cache_fetch'] = cache_fetch
+
+        # Run through all files to fetch
+        # ------------------------------
+        number_of_workers = 10
+        self.logger.info(f'Fetching observations in parallel with {number_of_workers} workers')
+        with ThreadPoolExecutor(max_workers=number_of_workers) as executor:
+            list(executor.map(run_r2d2_fetch, r2d2_fetch_dicts))
+
+        # Iterate through observation files to read and combine
+        # -----------------------------------------------------
+        for observation in observations:
+
+            observation_dict = observation_dicts[observation]
+
+            # Fetch observation files
+            # -----------------------
+            combine_input_files = []
+
+            obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+            obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
+            for obs_num, obs_time in enumerate(obs_list_dto):
+                target_file = os.path.join(
+                    self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
+                )
+                combine_input_files.append(target_file)
+
+            # Check how many of the combine_input_files exist in the cycle directory.
+            # If all of them are missing proceed without creating an observation input
+            # file since bias correction files still need to be propagated to the next cycle
+            # for cycling VarBC.
+            # -----------------------------------------------------------------------
+            if not any([os.path.exists(f) for f in combine_input_files]):
+                self.logger.info(f'None of the {observation} files exist for this cycle!')
+            else:
+                jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
+                self.logger.info(f'Processing observation file {jedi_obs_file}')
+                # If obs_list_dto has one member, then just rename the file
+                # ---------------------------------------------------------
+                if len(obs_list_dto) == 1:
+                    os.rename(combine_input_files[0], jedi_obs_file)
+                else:
+                    self.read_and_combine(combine_input_files, jedi_obs_file)
                 # Change permission
-                os.chmod(target_file, 0o644)
+                os.chmod(jedi_obs_file, 0o644)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -441,85 +528,106 @@ class GetObservations(taskBase):
         existing_files = [f for f in input_filenames if os.path.exists(f)]
         input_filenames = existing_files
 
-        # Loop through the input files and get the total dimension size for each dimension
-        # Location requires special handling to get the cumulative sum of the dimension size
-        # ---------------------------------------------------------------------------------
-        out_dim_size = {'Location': 0}
-        for input_filename in input_filenames:
-            with nc.Dataset(input_filename, 'r') as ds:
-                for dim_name, dim in ds.dimensions.items():
-                    if dim_name == 'Location':
-                        out_dim_size[dim_name] += dim.size
+        # Remove empty files from input_filenames
+        # -------------------------------------------------------------
+        valid_files = []
+
+        for fname in input_filenames:
+            try:
+                with nc.Dataset(fname, 'r') as ds:
+                    if 'Location' in ds.dimensions and ds.dimensions['Location'].size > 0:
+                        valid_files.append(fname)
                     else:
-                        out_dim_size[dim_name] = dim.size
+                        empty_template = fname
+            except OSError:
+                continue
 
-        with nc.Dataset(output_filename, 'w') as out_ds:
-            # Open the input NetCDF files for reading
-            # ---------------------------------------
-            self.logger.info(f"Combining files {input_filenames} ")
+        input_filenames = valid_files
 
-            # Create an output file template based on the first input file
-            # ------------------------------------------------------------
-            with nc.Dataset(input_filenames[0], 'r') as ds:
-                # Access groups and create dimensions
-                # -----------------------------------
-                input_groups = ds.groups.keys()
+        if input_filenames:
+            # Loop through the input files and get the total dimension size for each dimension
+            # Location requires special handling to get the cumulative sum of the dimension size
+            # ---------------------------------------------------------------------------------
+            out_dim_size = {'Location': 0}
+            for input_filename in input_filenames:
+                with nc.Dataset(input_filename, 'r') as ds:
+                    for dim_name, dim in ds.dimensions.items():
+                        if dim_name == 'Location':
+                            out_dim_size[dim_name] += dim.size
+                        else:
+                            out_dim_size[dim_name] = dim.size
 
-                for dim_name, dim in ds.dimensions.items():
-                    out_ds.createDimension(dim_name, out_dim_size[dim_name])
+            with nc.Dataset(output_filename, 'w') as out_ds:
+                # Open the input NetCDF files for reading
+                # ---------------------------------------
+                self.logger.info(f"Combining files {input_filenames} ")
 
-                # Loop through groups and process variables
-                # -----------------------------------------
-                for group_name in input_groups:
-                    group = ds[group_name]
+                # Create an output file template based on the first input file
+                # ------------------------------------------------------------
+                with nc.Dataset(input_filenames[0], 'r') as ds:
+                    # Access groups and create dimensions
+                    # -----------------------------------
+                    input_groups = ds.groups.keys()
 
-                    # Create the groups in output file
-                    # --------------------------------
-                    out_group = out_ds.createGroup(group_name)
+                    for dim_name, dim in ds.dimensions.items():
+                        out_ds.createDimension(dim_name, out_dim_size[dim_name])
 
-                    # Access variables within a group
-                    # -------------------------------
-                    variables_in_group = group.variables.keys()
+                    # Loop through groups and process variables
+                    # -----------------------------------------
+                    for group_name in input_groups:
+                        group = ds[group_name]
 
-                    # Loop over variables from input files, combine, and write to the new file
-                    # ------------------------------------------------------------------------
-                    for var_name in variables_in_group:
-                        list_data = []
-
-                        # Get the dimensions of the variable
-                        # ----------------------------------
-                        var_dims = group[var_name].dimensions
-
-                        # Loop over all the files and combine the variable data into a list
-                        # Channel dimensions remain the same, so we can break the loop
-                        # ----------------------------------------------------------------
-                        for input_file in input_filenames:
-                            list_data.append(self.get_data(input_file, group_name, var_name))
-                            # Only break if the first dimension is Channel
-                            if var_dims[0] == 'Channel':
-                                break
-
-                        # Concatenate the masked arrays along the first dimension
-                        # --------------------------------------------------------
-                        variable_data = np.ma.concatenate(list_data, axis=0)
-
-                        # Fill value needs to be assigned while creating variables
-                        # --------------------------------------------------------
-                        subset_var = out_group.createVariable(
-                            var_name,
-                            variable_data.dtype,
-                            var_dims,
-                            fill_value=group[var_name].getncattr('_FillValue')
-                        )
-                        for attr_name in group[var_name].ncattrs():
-                            if attr_name == '_FillValue':
-                                continue
-                            subset_var.setncattr(
-                                attr_name, group[var_name].getncattr(attr_name)
-                            )
-
-                        # Write subset data to the new file
+                        # Create the groups in output file
                         # --------------------------------
-                        subset_var[:] = variable_data
+                        out_group = out_ds.createGroup(group_name)
 
+                        # Access variables within a group
+                        # -------------------------------
+                        variables_in_group = group.variables.keys()
+
+                        # Loop over variables from input files, combine, and write to the new file
+                        # ------------------------------------------------------------------------
+                        for var_name in variables_in_group:
+                            list_data = []
+
+                            # Get the dimensions of the variable
+                            # ----------------------------------
+                            var_dims = group[var_name].dimensions
+
+                            # Loop over all the files and combine the variable data into a list
+                            # Channel dimensions remain the same, so we can break the loop
+                            # ----------------------------------------------------------------
+                            for input_file in input_filenames:
+                                list_data.append(self.get_data(input_file, group_name, var_name))
+                                # Only break if the first dimension is Channel
+                                if var_dims[0] == 'Channel':
+                                    break
+
+                            # Concatenate the masked arrays along the first dimension
+                            # --------------------------------------------------------
+                            variable_data = np.ma.concatenate(list_data, axis=0)
+
+                            # Fill value needs to be assigned while creating variables
+                            # --------------------------------------------------------
+                            subset_var = out_group.createVariable(
+                                var_name,
+                                variable_data.dtype,
+                                var_dims,
+                                fill_value=group[var_name].getncattr('_FillValue')
+                            )
+                            for attr_name in group[var_name].ncattrs():
+                                if attr_name == '_FillValue':
+                                    continue
+                                subset_var.setncattr(
+                                    attr_name, group[var_name].getncattr(attr_name)
+                                )
+
+                            # Write subset data to the new file
+                            # --------------------------------
+                            subset_var[:] = variable_data
+
+        else:
+
+            # If all the files are empty copy of them as the output file
+            shutil.copyfile(empty_template, output_filename)
 # ----------------------------------------------------------------------------------------------

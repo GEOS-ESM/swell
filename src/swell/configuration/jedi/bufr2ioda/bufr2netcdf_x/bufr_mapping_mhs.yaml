@@ -14,7 +14,18 @@ bufr:
       query: "*/CLON"
     brightnessTemp:
       query: "*/BRITCSTC/TMBR"
-
+      
+  splits:
+    satId:
+      category:
+        variable: satelliteIdentifier
+        map:
+          _3: metop-b
+          _4: metop-a
+          _5: metop-c
+          _209: noaa-18
+          _223: noaa-19
+          
 encoder:
   dimensions:
     - name: Channel

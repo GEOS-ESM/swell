@@ -11,7 +11,7 @@
 import glob
 import os
 import subprocess
-import yaml
+from ruamel.yaml import YAML, YAMLError
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.jinja2 import template_string_jinja2
@@ -153,9 +153,36 @@ class BufrToIoda(taskBase):
         # Copy the yaml file
         try:
             subprocess.run(['cp', yaml_file_source, yaml_file_target])
+            self.logger.info(f'Copied YAML file: from {yaml_file_source} to {yaml_file_target}')
+
+            # Dardag's changes. Old method of editing the yaml contents. For Bufr-query, yaml is copied because it does not need edits. Can delete?
+            # -------------------------------------------------------------------------------------------------------------------------------------
+            # # Load the YAML template file
+            # with open(yaml_file_source, 'r') as file:
+            #     yaml_str = file.read()
+
+            # # Construct dictionary to fill yaml file
+            # template_dictionary = {'obsdatain': obsdatain,
+            #                        'obsdataout': obsdataout}
+
+            # # Apply the replacements for input and output file paths
+            # yaml_str = template_string_jinja2(self.logger,
+            #                                   templated_string=yaml_str,
+            #                                   dictionary_of_templates=template_dictionary)
+
+            # # Load and write the dictionary using rt mode (preserves formatting)
+            # yaml_config = YAML()
+            # yaml_content = yaml_config.load(yaml_str)
+
+            # # Write the updated content to the target yaml file
+            # with open(yaml_file_target, 'w') as file:
+            #     yaml_config.dump(yaml_content, file)
+            #     self.logger.info(f'Updated YAML file content: {yaml_file_target}')
+            # -------------------------------------------------------------------------------------------------------------------------------------
+            
         except FileNotFoundError:
             self.logger.info(f'Error: File "{yaml_file_source}" not found.')
-        except yaml.YAMLError as e:
+        except YAMLError as e:
             self.logger.info(f'Error processing YAML file: {e}')
         # returns the path of the yaml file the function generated
         return yaml_file_target
@@ -226,7 +253,7 @@ class BufrToIoda(taskBase):
                 subprocess.run([jedi_executable_path, bufr_path_file, bufr2ioda_conv_yaml, ioda_file_target_path])
             except FileNotFoundError:
                 self.logger.info(f'Error: File "{bufr2ioda_conv_yaml}" not found.')
-            except yaml.YAMLError as e:
+            except YAMLError as e:
                 self.logger.info(f'Error processing YAML file: {e}')
             else:
                 self.logger.info('Conversion to ioda complete, now exiting.') 
