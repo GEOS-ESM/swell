@@ -133,6 +133,8 @@ class Workflow_hofx_cf(CylcWorkflow):
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
             self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.EvaIncrement(model=model))
+            self.tasks.append(ta.EvaJediLog(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
