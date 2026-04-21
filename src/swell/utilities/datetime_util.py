@@ -10,6 +10,7 @@
 
 import re
 import datetime as pydatetime
+from isodate import parse_duration, parse_datetime, ISO8601Error
 
 # --------------------------------------------------------------------------------------------------
 
@@ -57,5 +58,22 @@ class Datetime:
 
     # ----------------------------------------------------------------------------------------------
 
+def is_duration(dt_str: str) -> bool:
+    try:
+        parse_duration(dt_str)
+    except ISO8601Error:
+        return False
+
+    return True
+
+# --------------------------------------------------------------------------------------------------
+
+def is_datetime(dt_str: str) -> bool:
+    try:
+        parse_datetime(dt_str)
+    except ISO8601Error:
+        return False
+
+    return True
 
 # --------------------------------------------------------------------------------------------------
