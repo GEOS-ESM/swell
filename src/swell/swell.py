@@ -86,8 +86,8 @@ or for task-model combinations.
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
 cylc_timeout_help = """
-Set the cylc stall timeout manually for experiment. If unset, defaults to user value in 
-~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
+Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
+ ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
 
 # --------------------------------------------------------------------------------------------------
 

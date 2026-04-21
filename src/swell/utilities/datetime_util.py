@@ -56,7 +56,8 @@ class Datetime:
 
         return self.__datetime__.strftime(datetime_formats['directory_format'])
 
-    # ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
+
 
 def is_duration(dt_str: str) -> bool:
     try:
@@ -67,6 +68,7 @@ def is_duration(dt_str: str) -> bool:
     return True
 
 # --------------------------------------------------------------------------------------------------
+
 
 def is_datetime(dt_str: str) -> bool:
     try:

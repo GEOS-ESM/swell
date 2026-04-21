@@ -591,11 +591,11 @@ def prepare_cylc_suite_jinja2(
 
     # Set jinja templated string to use upon runtime
     # ----------------------------------------------
-    render_dictionary['scheduling']['stall_timeout'] = \
-            ("    {% if environ['SWELL_CYLC_TIMEOUT'] != 'unset' %}"
-             "\n    [[events]]"
-             "\n        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}"
-             "\n    {% endif %}")
+    render_dictionary['scheduling']['stall_timeout'] = (
+            "    {% if environ['SWELL_CYLC_TIMEOUT'] != 'unset' %}"
+            "\n    [[events]]"
+            "\n        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}"
+            "\n    {% endif %}")
 
     # Render the template
     # -------------------
