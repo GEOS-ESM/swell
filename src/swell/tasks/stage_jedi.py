@@ -33,6 +33,8 @@ class Setup(TaskSetup):
         self.questions = [
             qd.swell_static_files(),
             qd.swell_static_files_user(),
+            qd.npx_proc(),
+            qd.npy_proc(),
             qd.gsibec_configuration(),
             qd.gsibec_nlats(),
             qd.gsibec_nlons(),
