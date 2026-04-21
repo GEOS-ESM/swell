@@ -2,6 +2,8 @@
     UTC mode = True
     allow implicit tasks = False
 
+{{scheduling['stall_timeout']}}
+
 [scheduling]
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}

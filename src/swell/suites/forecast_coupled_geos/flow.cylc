@@ -14,6 +14,8 @@
     UTC mode = True
     allow implicit tasks = False
 
+{{scheduling['stall_timeout']}}
+
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
