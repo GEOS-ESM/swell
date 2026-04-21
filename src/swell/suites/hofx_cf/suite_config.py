@@ -21,6 +21,7 @@ suite_name = 'hofx_cf'
 hofx_cf = QuestionList(
     questions=[
         common,
+        qd.swell_static_files("/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles"),
         qd.start_cycle_point("2023-08-05T18:00:00Z"),
         qd.final_cycle_point("2023-08-05T18:00:00Z"),
         qd.jedi_build_method("use_existing"),
