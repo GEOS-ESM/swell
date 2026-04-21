@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../..', 'src'))
 
 from swell.utilities.r2d2 import load_r2d2_module, load_r2d2_credentials
 from swell.utilities.logger import Logger

@@ -163,7 +163,7 @@ class QuestionDefaults():
 
     @dataclass
     class r2d2_server(SuiteQuestion):
-        default_value: str = ""
+        default_value: str = "gmao_server"
         question_name: str = "r2d2_server"
         ask_question: bool = False
         prompt: str = (
@@ -176,7 +176,7 @@ class QuestionDefaults():
 
     @dataclass
     class r2d2_datastore(SuiteQuestion):
-        default_value: str = ""
+        default_value: str = "r2d2-experiments-prod-us-east-1"
         question_name: str = "r2d2_datastore"
         ask_question: bool = False
         prompt: str = (
