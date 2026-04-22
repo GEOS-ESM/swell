@@ -102,11 +102,11 @@
             # Move restart to next cycle and then erase current forecast folder
             SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}}
 
-            {% if not save_r2d2 %}
-            # Save analysis output
-            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
-            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
-            {% endif %}
+#            {% if not save_r2d2 %}
+#            # Save analysis output
+#            # RunJediFgatExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+#            RunJediFgatExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+#            {% endif %}
 
             # Save model output
             # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
