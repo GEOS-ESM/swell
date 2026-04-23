@@ -56,6 +56,7 @@ class Setup(TaskSetup):
             qd.total_processors(),
             qd.marine_models(),
             qd.comparison_log_type('fgat'),
+            qd.mock_experiment()
         ]
 
 # --------------------------------------------------------------------------------------------------
@@ -148,6 +149,13 @@ class RunJediFgatExecutable(taskBase):
         # ------------------------------------------------------------------------
         background_frequency = self.config.background_frequency()
         self.jedi_rendering.add_key('background_frequency', background_frequency)
+
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
         # Use GEOS utility to generate states
         # -----------------------------------

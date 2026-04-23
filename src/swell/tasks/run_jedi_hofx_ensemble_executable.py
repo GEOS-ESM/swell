@@ -52,6 +52,7 @@ class Setup(TaskSetup):
             qd.jedi_forecast_model(),
             qd.total_processors(),
             qd.comparison_log_type('hofx'),
+            qd.mock_experiment()
         ]
 
 # --------------------------------------------------------------------------------------------------
@@ -145,6 +146,13 @@ class RunJediHofxEnsembleExecutable(RunJediHofxExecutable, taskBase):
         # -----------------------------------------------------------------
         self.jedi_rendering.add_key('ensemble_hofx_packets', ensemble_hofx_packets)
         self.jedi_rendering.add_key('packet_ensemble_members', packet_ensemble_members)
+
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
         # Jedi configuration file
         # -----------------------

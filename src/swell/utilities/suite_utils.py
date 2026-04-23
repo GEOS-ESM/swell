@@ -9,6 +9,7 @@
 
 
 import os
+from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
 
@@ -23,5 +24,17 @@ def get_model_components() -> list:
 
     # Get models
     return os.listdir(interface_directory)
+
+# --------------------------------------------------------------------------------------------------
+
+
+def read_override_file(override_path: str | None) -> dict:
+
+    if override_path is None:
+        return {}
+    else:
+        yaml = YAML(typ='safe')
+        with open(override_path, 'r') as f:
+            return yaml.load(f)
 
 # --------------------------------------------------------------------------------------------------

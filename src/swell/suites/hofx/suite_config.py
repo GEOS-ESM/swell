@@ -21,8 +21,7 @@ suite_name = 'hofx'
 hofx_tier1 = QuestionList(
     questions=[
         marine,
-        qd.cycling_varbc(),
-        qd.window_type(),
+        qd.window_type('4D'),
         qd.jedi_build_method("use_existing"),
         qd.save_geovals(True),
         qd.model_components(['geos_atmosphere']),

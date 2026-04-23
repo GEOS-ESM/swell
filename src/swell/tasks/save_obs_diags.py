@@ -47,7 +47,6 @@ class SaveObsDiags(taskBase):
 
     def execute(self) -> None:
 
-
         # Local import because module is not loaded until experiment launch
         import r2d2
 

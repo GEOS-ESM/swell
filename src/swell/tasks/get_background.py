@@ -55,7 +55,6 @@ class GetBackground(taskBase):
              See the taskBase constructor for more information.
         """
 
-
         # Load R2D2 credentials
         # ---------------------
         import r2d2

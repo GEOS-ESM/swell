@@ -75,6 +75,7 @@ template_str = '''
 
 '''
 
+
 class RunGeos(TaskSetup):
     def set_defaults(self):
         self.base_name = 'RunGeos'
@@ -85,8 +86,8 @@ class RunGeos(TaskSetup):
 # --------------------------------------------------------------------------------------------------
 
 
-@workflows.register('forecast_geos')
-class Workflow_forecast_geos(CylcWorkflow):
+@workflows.register('forecast_coupled_geos')
+class Workflow_forecast_coupled_geos(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
@@ -107,12 +108,10 @@ class Workflow_forecast_geos(CylcWorkflow):
         self.tasks.append(ta.CloneGeos())
         self.tasks.append(ta.BuildGeosByLinking())
         self.tasks.append(ta.BuildGeos())
-        self.tasks.append(ta.GetGeosRestart())
         self.tasks.append(ta.PrepCoupledGeosRunDir())
         self.tasks.append(ta.GetCoupledGeosRestart())
         self.tasks.append(ta.MoveForecastRestart())
         self.tasks.append(ta.SaveRestart())
-        self.tasks.append(ta.RemoveForecastDir())
         self.tasks.append(RunGeos())
 
 # --------------------------------------------------------------------------------------------------

@@ -146,6 +146,17 @@ class marine_models(SuiteQuestion):
 
 
 @dataclass
+class mock_experiment(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "mock_experiment"
+    ask_question: bool = False
+    prompt: str = "Dry-run option for comparing configs."
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
 class model_components(SuiteQuestion):
     default_value: str = "defer_to_code"
     question_name: str = "model_components"
@@ -168,6 +179,7 @@ class parser_options(SuiteQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class r2d2_experiment_id(SuiteQuestion):
     default_value: str = "defer_to_code"
@@ -184,11 +196,12 @@ class runahead_limit(SuiteQuestion):
     question_name: str = "runahead_limit"
     ask_question: bool = True
     prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
-                    "that may be active ahead of the current cycle "
-                    "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
+                   "that may be active ahead of the current cycle "
+                   "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
     widget_type: WType = WType.STRING
-    
+
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class skip_ensemble_hofx(SuiteQuestion):
@@ -201,6 +214,7 @@ class skip_ensemble_hofx(SuiteQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class skip_r2d2(SuiteQuestion):
@@ -221,6 +235,7 @@ class start_cycle_point(SuiteQuestion):
     widget_type: WType = WType.ISO_DATETIME
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class use_cycle_dir(SuiteQuestion):
@@ -367,6 +382,7 @@ class bundles(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class cache_fetch(TaskQuestion):
     default_value: bool = True
     question_name: str = "cache_fetch"
@@ -378,6 +394,7 @@ class cache_fetch(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class check_for_obs(TaskQuestion):
@@ -667,10 +684,10 @@ class geos_expdir(TaskQuestion):
         "geos_expdir_different": True
     })
     prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
-                    "output and restart files), if it is different than your GEOS HOME "
-                    "Directory?")
+                   "output and restart files), if it is different than your GEOS HOME "
+                   "Directory?")
     widget_type: WType = WType.STRING
-    
+
 # --------------------------------------------------------------------------------------------------
 
 
@@ -684,7 +701,7 @@ class geos_expdir_different(TaskQuestion):
         False
     ])
     prompt: str = ("Is your GEOS EXPERIMENT Directory, where restarts and scratch is located, "
-                    "different than your GEOS HOME Directory?")
+                   "different than your GEOS HOME Directory?")
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
@@ -697,7 +714,8 @@ class geos_experiment_directory(TaskQuestion):
     ask_question: bool = True
     prompt: str = "What is the path to the GEOS restarts directory?"
     widget_type: WType = WType.STRING
-    
+
+
 # --------------------------------------------------------------------------------------------------
 
 @dataclass
@@ -712,16 +730,18 @@ class geos_gcm_tag(TaskQuestion):
 
 # -------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class geos_homdir(TaskQuestion):
     default_value: str = "defer_to_platform"
     question_name: str = "geos_homdir"
     ask_question: bool = True
     prompt: str = ("What is the location for the HOME Directory (HOMDIR in gcm_run and "
-                    "gcm_setup) that contains model settings and RC files?")
+                   "gcm_setup) that contains model settings and RC files?")
     widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class geos_restarts_directory(TaskQuestion):
@@ -914,6 +934,7 @@ class horizontal_resolution(TaskQuestion):
 
 # ------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class initial_restarts_method(TaskQuestion):
     default_value: str = "defer_to_platform"
@@ -926,8 +947,9 @@ class initial_restarts_method(TaskQuestion):
     ])
     prompt: str = "How should initial GEOS restarts be obtained?"
     widget_type: WType = WType.STRING_DROP_LIST
-    
+
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class ioda_locations_not_in_r2d2(TaskQuestion):
@@ -1472,6 +1494,7 @@ class saber_central_block(TaskQuestion):
 
 # --------------------------------------------------------------------------------------------------
 
+
 @dataclass
 class saber_outer_block(TaskQuestion):
     default_value: str = "defer_to_model"
@@ -1485,6 +1508,7 @@ class saber_outer_block(TaskQuestion):
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class save_geovals(TaskQuestion):
@@ -1515,6 +1539,7 @@ class single_observations(TaskQuestion):
     widget_type: WType = WType.BOOLEAN
 
 # --------------------------------------------------------------------------------------------------
+
 
 @dataclass
 class swell_static_files(TaskQuestion):

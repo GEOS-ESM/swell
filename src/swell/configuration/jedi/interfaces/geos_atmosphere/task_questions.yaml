@@ -105,6 +105,12 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+cycling_varbc:
+  default_value: false
+  options:
+  - true
+  - false
+
 ensemble_hofx_packets:
   default_value: 2
   options: None
@@ -323,6 +329,12 @@ produce_geovals:
   options:
   - true
   - false
+
+saber_central_block:
+  default_value: None
+
+saber_outer_block:
+  default_value: None
 
 skip_ensemble_hofx:
   default_value: true

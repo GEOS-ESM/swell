@@ -13,7 +13,7 @@ import glob
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_attributes import task_attributes
 from swell.tasks.base.task_setup import TaskSetup
-from  swell.configuration import question_defaults as qd
+from swell.configuration import question_defaults as qd
 from swell.utilities.file_system_operations import copy_to_dst_dir
 
 # --------------------------------------------------------------------------------------------------
@@ -35,6 +35,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 class GetCoupledGeosRestart(taskBase):
 

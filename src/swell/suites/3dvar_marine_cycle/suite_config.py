@@ -88,7 +88,7 @@ _3dvar_marine_cycle_tier2 = QuestionList(
         qd.final_cycle_point("2023-07-02T18:00:00Z"),
         qd.forecast_duration("PT12H"),
         qd.geos_homdir("/discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/"
-                        "dataatm_025")
+                       "dataatm_025")
     ],
     geos_marine=[
         qd.cycle_times([

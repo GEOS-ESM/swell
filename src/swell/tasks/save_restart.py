@@ -52,7 +52,7 @@ class SaveRestart(taskBase):
         """
 
         from r2d2 import store
-        
+
         self.logger.info('Skipping this task as R2D2v3 restart storage is not implemented ' +
                          'for coupled models yet')
         return
@@ -60,7 +60,6 @@ class SaveRestart(taskBase):
         # Load R2D2 credentials
         # ---------------------
         load_r2d2_credentials(self.logger, self.platform())
-
 
         # Parse config
         window_type = self.config.window_type()

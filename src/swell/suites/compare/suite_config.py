@@ -56,6 +56,18 @@ suite_configs.register(suite_name, 'compare_variational_atmosphere', compare_var
 
 # --------------------------------------------------------------------------------------------------
 
+compare_variational_cf = QuestionList(
+    questions=[
+        compare,
+        qd.comparison_log_type('variational'),
+        qd.model_components(['geos_cf']),
+    ]
+)
+
+suite_configs.register(suite_name, 'compare_variational_cf', compare_variational_cf)
+
+# --------------------------------------------------------------------------------------------------
+
 compare_fgat_marine = QuestionList(
     questions=[
         compare,

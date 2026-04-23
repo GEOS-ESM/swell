@@ -29,6 +29,7 @@ from swell.utilities.observations import get_ioda_names_list, get_provider_for_o
 
 task_name = 'GetObservations'
 
+
 @task_attributes.register(task_name)
 class Setup(TaskSetup):
     def set_defaults(self):
@@ -47,6 +48,7 @@ class Setup(TaskSetup):
         ]
 
 # --------------------------------------------------------------------------------------------------
+
 
 def run_r2d2_fetch(r2d2_dict: dict) -> None:
 

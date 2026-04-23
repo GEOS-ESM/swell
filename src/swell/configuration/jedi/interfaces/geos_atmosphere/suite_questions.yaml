@@ -4,9 +4,7 @@ cycle_times:
 
 cycling_varbc:
   default_value: false
-  options:
-  - true
-  - false
+  options: [true, false]
 
 ensemble_hofx_strategy:
   default_value: 'serial'
