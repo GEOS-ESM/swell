@@ -57,6 +57,17 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    compare_variational_cf = QuestionList(
+        list_name="compare_variational_cf",
+        questions=[
+            compare,
+            qd.comparison_log_type('variational'),
+            qd.model_components(['geos_cf']),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     compare_fgat_marine = QuestionList(
         list_name="compare_fgat_marine",
         questions=[
