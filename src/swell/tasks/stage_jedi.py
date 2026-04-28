@@ -82,6 +82,8 @@ class StageJedi(taskBase):
         # Open file and template it
         stage_dict = self.jedi_rendering.render_interface_model(stage_file)
 
+        print (f'stage_dict =  {stage_dict}')
+
         # Run the file handler
         # --------------------
         try:
