@@ -611,6 +611,7 @@ class TaskQuestions(QuestionContainer, Enum):
     TarBackgroundGeosConvertState = QuestionList(
         list_name="TarBackgroundGeosConvertState",
         questions=[
+            np_proc_resolution,
             qd.background_experiment(),
             qd.background_time_offset(),
             qd.background_window_times(),

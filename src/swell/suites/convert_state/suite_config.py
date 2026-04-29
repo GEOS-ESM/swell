@@ -36,7 +36,7 @@ class SuiteConfig(QuestionContainer, Enum):
 
             # Source GEOS experiment providing the bkgcrst tar archive
             qd.background_experiment("x0050"),
-            qd.background_time_offset("PT3H"),
+            qd.background_time_offset("PT9H"),
             qd.geos_x_background_directory(
                 "/discover/nobackup/projects/gmao/dadev/rtodling/archive/Restarts/JEDI/541x"
             ),

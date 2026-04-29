@@ -61,6 +61,9 @@
             # bkg_name_mapping.json for original-name recovery.
             GetBackgroundGeosExperiment-{{model_component}}
 
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
             # After JEDI is available and backgrounds are staged, convert each
             # background file in parallel (one task per background_window_times entry).
             {% for bkg_idx in range(background_window_times | length) %}
@@ -114,6 +117,9 @@
     # Writes bkg_name_mapping.json alongside the extracted files.
     [[GetBackgroundGeosExperiment-{{model_component}}]]
         script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
     # One convert-state task per background file, running in parallel.
     # The -p index selects which entry in background_window_times to process.
