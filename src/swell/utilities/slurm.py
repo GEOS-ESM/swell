@@ -16,6 +16,12 @@ from importlib import resources
 from swell.utilities.logger import Logger
 
 
+_SRUN_RESOURCE_KEYS = {
+    'nodes', 'ntasks', 'ntasks-per-node', 'cpus-per-task',
+    'mem', 'mem-per-cpu', 'gres',
+}
+
+
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
@@ -40,6 +46,8 @@ def prepare_scheduling_dict(
     yaml = YAML(typ='safe')
     with resources.open_text(path_import, 'slurm.yaml') as yaml_file:
         global_defaults = yaml.load(yaml_file)
+
+    platform_persistent_workers = global_defaults.pop('persistent_workers', False)
 
     # Hard-coded SLURM defaults for certain tasks
     # -------------------------------------------
@@ -183,6 +191,38 @@ def prepare_scheduling_dict(
         if slurm_task in experiment_task_directives.keys():
             x = experiment_task_directives[slurm_task].get('execution_time_limit', x)
         scheduling_dict[slurm_task]['execution_time_limit'] = x
+
+    # Build persistent-worker when enabled.
+    persistent_workers = experiment_dict.get('persistent_workers', platform_persistent_workers)
+    if persistent_workers:
+        salloc = {}
+        for task, task_info in scheduling_dict.items():
+            for key, val in task_info['directives']['all'].items():
+                if key == 'job-name':
+                    # job-name is set at run time via CYLC_WORKFLOW_NAME
+                    continue
+                if key in _SRUN_RESOURCE_KEYS and isinstance(val, (int, float)):
+                    salloc[key] = max(salloc.get(key, 0), val)
+                elif key not in salloc:
+                    salloc[key] = val
+        scheduling_dict['salloc_directives'] = salloc
+
+        for task in slurm_tasks:
+            task_dir = scheduling_dict[task]['directives']['all']
+            srun_directives = {}
+            for k, v in task_dir.items():
+                if k in _SRUN_RESOURCE_KEYS:
+                    srun_directives[k] = v
+            scheduling_dict[task]['srun_directives'] = srun_directives
+            for model_component in model_components:
+                mc_dir = scheduling_dict[task]['directives'].get(model_component, {})
+                srun_directives = {}
+                for k, v in mc_dir.items():
+                    if k in _SRUN_RESOURCE_KEYS:
+                        srun_directives[k] = v
+                scheduling_dict[task].setdefault('srun_directives_by_model', {})
+                scheduling_dict[task]['srun_directives_by_model'][model_component] = srun_directives
+
     return scheduling_dict
 
 

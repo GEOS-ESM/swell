@@ -3,3 +3,4 @@ nodes: 1
 ntasks-per-node: 64
 constraint: mil
 no-requeue: ''
+persistent_workers: false

@@ -589,6 +589,14 @@ def prepare_cylc_suite_jinja2(
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
+    # Persistent worker mode
+    # -----------------------
+    persistent_workers = 'salloc_directives' in render_dictionary['scheduling']
+    render_dictionary['persistent_workers'] = persistent_workers
+    if persistent_workers:
+        render_dictionary['salloc_directives'] = \
+            render_dictionary['scheduling']['salloc_directives']
+
     # Render the template
     # -------------------
     new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
