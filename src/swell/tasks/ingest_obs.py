@@ -34,7 +34,7 @@ class IngestObs(taskBase):
 
     The observation YAML files are copied from the swell source code to the
     experiment directory during ``swell create``. Users should modify these files
-    in their experiment directory to change file paths or retrieval methods
+    in their experiment directory to change file paths or acquisition methods
     without touching the source code.
 
     The task can run in a "dry run" mode where it only logs which files it would
@@ -153,16 +153,16 @@ class IngestObs(taskBase):
         provider = get_provider_for_observation(
             obs_name, self.ioda_names_list, self.logger)
 
-        retrieval_method = config.get('retrieval_method')  # 'cp', 's3', or 'local'
+        acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 
         dt = datetime.strptime(cycle_time, "%Y-%m-%dT%H:%M:%SZ")
 
-        if retrieval_method == 'local':
+        if acquisition_method == 'local':
             # File was produced locally for this cycle (e.g. by ConvertObsToIoda).
             # 'source' is a path relative to cycle_dir using strftime placeholders.
             source = config.get('source')
             if not source:
-                msg = f"No 'source' key in {obs_name}.yaml for retrieval_method 'local'."
+                msg = f"No 'source' key in {obs_name}.yaml for acquisition_method 'local'."
                 self.logger.error(msg)
                 raise ValueError(msg)
             target_file = os.path.join(self.cycle_dir(), dt.strftime(source))
@@ -172,11 +172,11 @@ class IngestObs(taskBase):
 
         else:
             # Remote/static path: 'cp_source' or 's3_source' with Skylab-style placeholders.
-            source_pattern = config.get(f'{retrieval_method}_source')
+            source_pattern = config.get(f'{acquisition_method}_source')
             if not source_pattern:
                 msg = (
-                    f"No source pattern found for method '{retrieval_method}' in "
-                    f"{obs_name}.yaml (expected key '{retrieval_method}_source')."
+                    f"No source pattern found for method '{acquisition_method}' in "
+                    f"{obs_name}.yaml (expected key '{acquisition_method}_source')."
                 )
                 self.logger.error(msg)
                 raise ValueError(msg)
@@ -196,7 +196,7 @@ class IngestObs(taskBase):
             self.logger.info(f"  [DRY RUN] Would ingest:")
             self.logger.info(f"    Obs Name: {obs_name}")
             self.logger.info(f"    Provider: {provider}")
-            self.logger.info(f"    Method: {retrieval_method}")
+            self.logger.info(f"    Method: {acquisition_method}")
             self.logger.info(f"    Source: {target_file}")
             ingested.append(target_file)
         else:
