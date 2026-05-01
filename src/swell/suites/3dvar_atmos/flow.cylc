@@ -232,7 +232,7 @@
     {% if persistent_workers %}
     [[Allocate]]
         script = """
-            SALLOC_ARGS="{% for key, value in salloc_directives.items() %} --{{key}}={{value}}{% endfor %}"
+            SALLOC_ARGS="{% for key, value in salloc_directives.items() %}{% if value %} --{{key}}={{value}}{% else %} --{{key}}{% endif %}{% endfor %}"
             salloc --no-shell -J swell_${CYLC_WORKFLOW_NAME} $SALLOC_ARGS &
             SALLOC_PID=$!
             # Poll until the allocation appears in the queue (max 300 s)
