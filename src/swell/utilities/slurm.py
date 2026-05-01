@@ -198,6 +198,10 @@ def prepare_scheduling_dict(
     # Build persistent-worker when enabled.
     persistent_workers = experiment_dict.get('persistent_workers', platform_persistent_workers)
     if persistent_workers:
+        # P{N} runahead -> N+1 cycles active at once; scale node count accordingly.
+        m = re.match(r'^P(\d+)$', str(experiment_dict.get('runahead_limit', 'P1')))
+        max_concurrent = int(m.group(1)) + 1 if m else 1
+
         salloc = {}
         for task, task_info in scheduling_dict.items():
             for key, val in task_info['directives']['all'].items():
@@ -207,6 +211,10 @@ def prepare_scheduling_dict(
                     salloc[key] = max(salloc.get(key, 0), val)
                 elif key not in salloc:
                     salloc[key] = val
+
+        if 'nodes' in salloc:
+            salloc['nodes'] *= max_concurrent
+
         scheduling_dict['salloc_directives'] = salloc
 
         for task in slurm_tasks:
