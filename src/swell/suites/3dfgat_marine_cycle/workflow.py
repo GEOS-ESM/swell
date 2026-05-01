@@ -143,21 +143,17 @@ template_str = '''
 
 
 @workflows.register('3dfgat_marine_cycle')
-class Workflow_3dfgat_cycle(CylcWorkflow):
+class Workflow_3dfgat_marine_cycle(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
-        workflow_str += template_string_jinja2(logger=self.logger,
-                                               templated_string=template_str,
-                                               dictionary_of_templates=self.experiment_dict,
-                                               allow_unresolved=True)
 
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
         workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict,
-                                              allow_unresolved=False)
+                                              allow_unresolved=True)
 
         return workflow_str
 
