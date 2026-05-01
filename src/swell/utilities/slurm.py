@@ -25,6 +25,12 @@ _SRUN_RESOURCE_KEYS = {
 _SALLOC_EXCLUDED_KEYS = {'no-requeue'}
 
 
+def _iso8601_to_minutes(duration: str) -> int:
+    h = re.search(r'(\d+)H', duration)
+    m = re.search(r'(\d+)M', duration)
+    return (int(h.group(1)) * 60 if h else 0) + (int(m.group(1)) if m else 0)
+
+
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
@@ -207,6 +213,27 @@ def prepare_scheduling_dict(
                     salloc[key] = max(salloc.get(key, 0), val)
                 elif key not in salloc:
                     salloc[key] = val
+
+        # Set salloc walltime if not already provided via slurm_directives_global.
+        # Without an explicit --time, SLURM uses the partition max (e.g. 12h on
+        # Discover) and the job is ineligible for backfill scheduling, causing
+        # multi-hour queue waits even for small allocations.
+        if 'time' not in salloc:
+            # Exclude one-shot build tasks — they run at most once and often not
+            # at all (BuildJediByLinking succeeds), so they shouldn't inflate the
+            # per-cycle estimate that determines salloc duration.
+            build_tasks = {t for t in slurm_tasks if t.startswith('Build')}
+            cycle_tasks = slurm_tasks - build_tasks
+            max_task_minutes = max(
+                _iso8601_to_minutes(scheduling_dict[t].get('execution_time_limit', 'PT1H'))
+                for t in cycle_tasks
+            ) if cycle_tasks else 60
+            # 2× the longest per-cycle task covers a few cycles; cap at 12h.
+            salloc_minutes = min(max(max_task_minutes * 2, 60), 12 * 60)
+            h, m = divmod(salloc_minutes, 60)
+            salloc['time'] = f'{h:02d}:{m:02d}:00'
+            logger.info(f'salloc walltime auto-set to {salloc["time"]} '
+                        '(override via slurm_directives_global.time)')
 
         scheduling_dict['salloc_directives'] = salloc
 
