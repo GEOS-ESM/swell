@@ -79,7 +79,7 @@ def run_executable(
     if perhost is None:
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
         if persistent_job_id:
-            command = ['srun', '--jobid', persistent_job_id, '-n', str(np),
+            command = ['srun', '--jobid', persistent_job_id, '--exclusive', '-n', str(np),
                        jedi_executable_path, jedi_config_file]
         else:
             command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
@@ -88,7 +88,7 @@ def run_executable(
             f"Running {jedi_executable_path} with {str(np)} processors & perhost {str(perhost)}"
         )
         if persistent_job_id:
-            command = ['srun', '--jobid', persistent_job_id, '-n', str(np),
+            command = ['srun', '--jobid', persistent_job_id, '--exclusive', '-n', str(np),
                        '--ntasks-per-node', str(perhost),
                        jedi_executable_path, jedi_config_file]
         else:
