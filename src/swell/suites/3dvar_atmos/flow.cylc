@@ -140,8 +140,7 @@
         {% if persistent_workers %}
         platform = localhost
         script = """
-            SRUN_ARGS="{% for key, value in scheduling["BuildJedi"]["srun_directives"].items() %} --{{key}}={{value}}{% endfor %}"
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
             swell task BuildJedi $config
         """
         {% else %}
@@ -184,8 +183,7 @@
         {% if persistent_workers %}
         platform = localhost
         script = """
-            SRUN_ARGS="{% for key, value in scheduling["RunJediVariationalExecutable"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
             swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}
         """
         {% else %}
@@ -208,8 +206,7 @@
         {% if persistent_workers %}
         platform = localhost
         script = """
-            SRUN_ARGS="{% for key, value in scheduling["EvaObservations"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
             swell task EvaObservations $config -d $datetime -m {{model_component}}
         """
         {% else %}
