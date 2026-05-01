@@ -15,8 +15,6 @@ import os
 import yaml
 from datetime import datetime
 
-import requests
-
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
@@ -171,6 +169,7 @@ class IngestObs(taskBase):
     ) -> tuple[list[str], list[tuple[str, str]]]:
 
         import r2d2
+        import requests
 
         """Process a single observation configuration file."""
         ingested = []
