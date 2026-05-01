@@ -140,9 +140,11 @@ def slurm_global_defaults(
         with open(yaml_path, "r") as yaml_file:
             user_globals['slurm_directives_global'] = yaml.safe_load(yaml_file)
     '''
-    yaml = YAML(typ='safe')
-    with open(yaml_path, 'r') as yaml_file:
-        user_globals = yaml.load(yaml_file)
+    user_globals = {}
+    if os.path.exists(yaml_path):
+        yaml = YAML(typ='safe')
+        with open(yaml_path, 'r') as yaml_file:
+            user_globals = yaml.load(yaml_file)
     return user_globals
 
 # --------------------------------------------------------------------------------------------------
