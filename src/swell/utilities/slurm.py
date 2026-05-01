@@ -21,6 +21,9 @@ _SRUN_RESOURCE_KEYS = {
     'mem', 'mem-per-cpu', 'gres',
 }
 
+# sbatch-only flags that salloc does not accept.
+_SALLOC_EXCLUDED_KEYS = {'no-requeue'}
+
 
 def prepare_scheduling_dict(
     logger: Logger,
@@ -198,8 +201,7 @@ def prepare_scheduling_dict(
         salloc = {}
         for task, task_info in scheduling_dict.items():
             for key, val in task_info['directives']['all'].items():
-                if key == 'job-name':
-                    # job-name is set at run time via CYLC_WORKFLOW_NAME
+                if key in ('job-name', *_SALLOC_EXCLUDED_KEYS):
                     continue
                 if key in _SRUN_RESOURCE_KEYS and isinstance(val, (int, float)):
                     salloc[key] = max(salloc.get(key, 0), val)
