@@ -139,8 +139,8 @@
     [[BuildJedi]]
         {% if persistent_workers %}
         script = """
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) \
-            {%- for key, value in scheduling["BuildJedi"]["srun_directives"].items() %} --{{key}}={{value}} {%- endfor %} \
+            SRUN_ARGS="{% for key, value in scheduling["BuildJedi"]["srun_directives"].items() %} --{{key}}={{value}}{% endfor %}"
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
             swell task BuildJedi $config
         """
         {% else %}
@@ -182,8 +182,8 @@
     [[RunJediVariationalExecutable-{{model_component}}]]
         {% if persistent_workers %}
         script = """
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) \
-            {%- for key, value in scheduling["RunJediVariationalExecutable"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}} {%- endfor %} \
+            SRUN_ARGS="{% for key, value in scheduling["RunJediVariationalExecutable"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
             swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}
         """
         {% else %}
@@ -205,8 +205,8 @@
     [[EvaObservations-{{model_component}}]]
         {% if persistent_workers %}
         script = """
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) \
-            {%- for key, value in scheduling["EvaObservations"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}} {%- endfor %} \
+            SRUN_ARGS="{% for key, value in scheduling["EvaObservations"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
             swell task EvaObservations $config -d $datetime -m {{model_component}}
         """
         {% else %}
