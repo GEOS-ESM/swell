@@ -138,6 +138,7 @@
 
     [[BuildJedi]]
         {% if persistent_workers %}
+        platform = localhost
         script = """
             SRUN_ARGS="{% for key, value in scheduling["BuildJedi"]["srun_directives"].items() %} --{{key}}={{value}}{% endfor %}"
             srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
@@ -181,6 +182,7 @@
 
     [[RunJediVariationalExecutable-{{model_component}}]]
         {% if persistent_workers %}
+        platform = localhost
         script = """
             SRUN_ARGS="{% for key, value in scheduling["RunJediVariationalExecutable"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
             srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
@@ -204,6 +206,7 @@
 
     [[EvaObservations-{{model_component}}]]
         {% if persistent_workers %}
+        platform = localhost
         script = """
             SRUN_ARGS="{% for key, value in scheduling["EvaObservations"]["srun_directives_by_model"][model_component].items() %} --{{key}}={{value}}{% endfor %}"
             srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) $SRUN_ARGS \
@@ -229,9 +232,8 @@
     {% if persistent_workers %}
     [[Allocate]]
         script = """
-            salloc --no-shell \
-                -J swell_${CYLC_WORKFLOW_NAME} \
-            {%- for key, value in salloc_directives.items() %} --{{key}}={{value}} {%- endfor %} &
+            SALLOC_ARGS="{% for key, value in salloc_directives.items() %} --{{key}}={{value}}{% endfor %}"
+            salloc --no-shell -J swell_${CYLC_WORKFLOW_NAME} $SALLOC_ARGS &
             SALLOC_PID=$!
             # Poll until the allocation appears in the queue (max 300 s)
             WAITED=0
