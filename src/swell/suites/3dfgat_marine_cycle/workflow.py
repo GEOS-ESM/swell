@@ -147,7 +147,7 @@ class Workflow_3dfgat_marine_cycle(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
-
+        workflow_str += template_str
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
