@@ -74,23 +74,23 @@ def run_executable(
 
     # Run the JEDI executable
     # -----------------------
-    in_slurm = 'SLURM_JOB_ID' in os.environ
+    persistent_job_id = os.environ.get('SWELL_PERSISTENT_JOB_ID')
 
     if perhost is None:
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
-        if in_slurm:
-            command = ['srun', '-n', str(np), jedi_executable_path, jedi_config_file]
+        if persistent_job_id:
+            command = ['srun', '--jobid', persistent_job_id, '-n', str(np),
+                       jedi_executable_path, jedi_config_file]
         else:
             command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
     else:
         logger.info(
             f"Running {jedi_executable_path} with {str(np)} processors & perhost {str(perhost)}"
         )
-        if in_slurm:
-            command = [
-                'srun', '-n', str(np), '--ntasks-per-node', str(perhost),
-                jedi_executable_path, jedi_config_file
-            ]
+        if persistent_job_id:
+            command = ['srun', '--jobid', persistent_job_id, '-n', str(np),
+                       '--ntasks-per-node', str(perhost),
+                       jedi_executable_path, jedi_config_file]
         else:
             command = [
                 'mpirun', '-np', str(np), '-perhost', str(perhost),

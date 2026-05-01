@@ -183,7 +183,7 @@
         {% if persistent_workers %}
         platform = localhost
         script = """
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
+            export SWELL_PERSISTENT_JOB_ID=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid)
             swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}
         """
         {% else %}
