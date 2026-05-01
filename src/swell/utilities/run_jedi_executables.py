@@ -89,6 +89,7 @@ def run_executable(
         command = [
             'mpirun',
             '-np', str(np),
+            '--bind-to core:overload-allowed',  '--map-by core',
             '-perhost', str(perhost),
             jedi_executable_path,
             jedi_config_file
@@ -101,3 +102,5 @@ def run_executable(
     run_track_log_subprocess(logger, command, output_log=output_log, cwd=cycle_dir)
 
 # --------------------------------------------------------------------------------------------------
+
+#             '--bind-to core:overload-allowed', '--map-by core',
