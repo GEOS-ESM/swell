@@ -230,17 +230,25 @@
     [[Allocate]]
         script = """
             SALLOC_ARGS="{% for key, value in salloc_directives.items() %}{% if value %} --{{key}}={{value}}{% else %} --{{key}}{% endif %}{% endfor %}"
-            salloc --no-shell -J swell_${CYLC_WORKFLOW_NAME} $SALLOC_ARGS &
+            SALLOC_LOG=$(mktemp)
+            salloc --no-shell -J swell_${CYLC_WORKFLOW_NAME} $SALLOC_ARGS > "$SALLOC_LOG" 2>&1 &
             SALLOC_PID=$!
-            # Poll until the allocation appears in the queue (max 300 s)
+            # Read job ID from salloc's own output instead of polling squeue by
+            # name — eliminates cross-run interference when multiple experiments
+            # with the same workflow name run concurrently.
             WAITED=0
             while true; do
-                JOB_ID=$(squeue -u "$USER" -n "swell_${CYLC_WORKFLOW_NAME}" \
-                    --noheader --format=%i 2>/dev/null | head -n1)
+                JOB_ID=$(grep -oP '(?<=job allocation )\d+' "$SALLOC_LOG" 2>/dev/null | head -n1)
                 [ -n "$JOB_ID" ] && break
-                sleep 5; WAITED=$((WAITED+5))
-                [ $WAITED -ge 300 ] && echo "Timed out waiting for salloc" >&2 && exit 1
+                if ! kill -0 $SALLOC_PID 2>/dev/null; then
+                    echo "salloc exited unexpectedly:" >&2 && cat "$SALLOC_LOG" >&2
+                    rm -f "$SALLOC_LOG" && exit 1
+                fi
+                sleep 2; WAITED=$((WAITED+2))
+                [ $WAITED -ge 60 ] && echo "Timed out getting salloc job ID" >&2 \
+                    && cat "$SALLOC_LOG" >&2 && rm -f "$SALLOC_LOG" && exit 1
             done
+            rm -f "$SALLOC_LOG"
             mkdir -p "$CYLC_WORKFLOW_RUN_DIR/share"
             echo "$JOB_ID" > "$CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid"
             wait $SALLOC_PID || true
