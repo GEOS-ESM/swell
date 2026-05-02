@@ -184,6 +184,13 @@
         platform = localhost
         script = """
             export SWELL_PERSISTENT_JOB_ID=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid)
+            {% set _srun = scheduling["RunJediVariationalExecutable"].get("srun_directives_by_model", {}).get(model_component, scheduling["RunJediVariationalExecutable"]["srun_directives"]) -%}
+            {% if 'ntasks-per-node' in _srun -%}
+            export SWELL_SRUN_NTASKS_PER_NODE={{ _srun['ntasks-per-node'] }}
+            {% endif -%}
+            {% if 'nodes' in _srun -%}
+            export SWELL_SRUN_NODES={{ _srun['nodes'] }}
+            {% endif -%}
             swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}
         """
         {% else %}
@@ -238,7 +245,7 @@
             # with the same workflow name run concurrently.
             WAITED=0
             while true; do
-                JOB_ID=$(grep -oP '(?<=job allocation )\d+' "$SALLOC_LOG" 2>/dev/null | head -n1)
+                JOB_ID=$(sed -n 's/.*job allocation \([0-9]*\).*/\1/p' "$SALLOC_LOG" 2>/dev/null | head -n1)
                 [ -n "$JOB_ID" ] && break
                 if ! kill -0 $SALLOC_PID 2>/dev/null; then
                     echo "salloc exited unexpectedly:" >&2 && cat "$SALLOC_LOG" >&2

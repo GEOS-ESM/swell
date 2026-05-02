@@ -79,8 +79,14 @@ def run_executable(
     if perhost is None:
         logger.info(f"Running {jedi_executable_path} with {str(np)} processors.")
         if persistent_job_id:
-            command = ['srun', '--jobid', persistent_job_id, '--exclusive', '-n', str(np),
-                       jedi_executable_path, jedi_config_file]
+            ntasks_per_node = os.environ.get('SWELL_SRUN_NTASKS_PER_NODE')
+            nodes = os.environ.get('SWELL_SRUN_NODES')
+            command = ['srun', '--jobid', persistent_job_id, '--exclusive', '-n', str(np)]
+            if ntasks_per_node:
+                command += ['--ntasks-per-node', ntasks_per_node]
+            if nodes:
+                command += ['--nodes', nodes]
+            command += [jedi_executable_path, jedi_config_file]
         else:
             command = ['mpirun', '-np', str(np), jedi_executable_path, jedi_config_file]
     else:
@@ -88,9 +94,14 @@ def run_executable(
             f"Running {jedi_executable_path} with {str(np)} processors & perhost {str(perhost)}"
         )
         if persistent_job_id:
+            nodes = os.environ.get('SWELL_SRUN_NODES') or (
+                str(np // perhost) if np % perhost == 0 else None
+            )
             command = ['srun', '--jobid', persistent_job_id, '--exclusive', '-n', str(np),
-                       '--ntasks-per-node', str(perhost),
-                       jedi_executable_path, jedi_config_file]
+                       '--ntasks-per-node', str(perhost)]
+            if nodes:
+                command += ['--nodes', nodes]
+            command += [jedi_executable_path, jedi_config_file]
         else:
             command = [
                 'mpirun', '-np', str(np), '-perhost', str(perhost),
