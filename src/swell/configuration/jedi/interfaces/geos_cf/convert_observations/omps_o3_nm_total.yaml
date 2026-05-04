@@ -14,8 +14,8 @@
 converter_script: omps_o3_nm_h52ioda.py
 
 # Output filename template (must be the same as 
-# source in ingest_observations/omps_o3_nm.yaml)
-output_filename_template: "omps_o3_nm_%Y%m%d%H.nc"
+# source in ingest_observations/omps_o3_nm_total.yaml)
+output_filename_template: "omps_o3_nm_total_%Y%m%d%H.nc"
 
 # Additional IODA converter flags passed verbatim after -i and -o
 extra_flags:

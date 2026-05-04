@@ -215,7 +215,7 @@ class DownloadObs(taskBase):
 
     def _list_remote_dir(self, session: requests.Session, url: str) -> list[str]:
         """Return filenames found in an HTML directory listing at ``url``."""
-        response = session.get(url)
+        response = session.get(url, timeout=(5, 30))
         response.raise_for_status()
         return re.findall(r'href="([^"/][^"]*)"', response.text)
 
@@ -223,7 +223,7 @@ class DownloadObs(taskBase):
         self, session: requests.Session, url: str, dest_path: str
     ) -> None:
         """Stream a remote file to ``dest_path`` in 1 MB chunks."""
-        with session.get(url, stream=True) as response:
+        with session.get(url, stream=True, timeout=(5, 30)) as response:
             response.raise_for_status()
             with open(dest_path, 'wb') as fh:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
