@@ -26,8 +26,8 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             sq.common,
             qd.swell_static_files("/discover/nobackup/projects/gmao/geos_cf_dev/SwellStaticFiles"),
-            qd.start_cycle_point("2023-08-06T12:00:00Z"),
-            qd.final_cycle_point("2023-08-06T18:00:00Z"),
+            qd.start_cycle_point("2023-08-05T18:00:00Z"),
+            qd.final_cycle_point("2023-08-05T18:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_cf']),
             qd.check_for_obs(False)
@@ -45,7 +45,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.background_experiment("swell_test"),
             qd.observations([
                 "tempo_no2_tropo",
-                #"tropomi_s5p_no2_tropo",
+                "tropomi_s5p_no2_tropo",
             ]),
             qd.clean_patterns(['*.nc4', '*.txt', 'logfile.*.out']),
         ]
