@@ -212,10 +212,9 @@
         {% if persistent_workers %}
         platform = localhost
         script = """
-            {% set _eva_srun = scheduling["EvaObservations"]["srun_directives"] -%}
-            {% set _eva_cpus = _eva_srun.get('ntasks-per-node', 1) -%}
-            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) --ntasks=1 \
-            --cpus-per-task={{ _eva_cpus }} \
+            {% set _eva_cpus = scheduling["EvaObservations"]["srun_directives_by_model"].get(model_component, scheduling["EvaObservations"]["srun_directives"]).get('ntasks-per-node', 1) -%}
+            srun --jobid=$(cat $CYLC_WORKFLOW_RUN_DIR/share/persistent_jobid) \
+            --ntasks=1 --cpus-per-task={{ _eva_cpus }} \
             swell task EvaObservations $config -d $datetime -m {{model_component}}
         """
         {% else %}
