@@ -834,7 +834,6 @@ class QuestionDefaults():
         prompt: str = "Which observations do you want to download from remote servers?"
         widget_type: WType = WType.STRING_CHECK_LIST
 
-
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
@@ -845,7 +844,8 @@ class QuestionDefaults():
         models: List[str] = mutable_field([
             "all_models"
         ])
-        prompt: str = "Path to directory containing ioda-converter scripts (leave blank to use jedi_bin)"
+        prompt: str = ("Path to directory containing ioda-converter scripts"
+                       " (leave blank to use jedi_bin)")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

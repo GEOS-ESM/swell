@@ -8,8 +8,8 @@
 Task for converting downloaded raw observation files to IODA format.
 
 Runs an ioda-converters Python script installed in the JEDI bundle's bin
-directory or available in converter_path against the raw files produced 
-by DownloadObs task, writing a single IODA-formatted NetCDF 
+directory or available in converter_path against the raw files produced
+by DownloadObs task, writing a single IODA-formatted NetCDF
 file per cycle into the cycle's directory.
 """
 
@@ -32,7 +32,7 @@ class ConvertObsToIoda(taskBase):
        ``convert_observations/<obs_name>.yaml`` in the experiment's
        configuration directory.
     2. Collects all raw files from ``<cycle_dir>/download/<obs_name>/``.
-    3. Runs the ioda-converters Python script by passing all 
+    3. Runs the ioda-converters Python script by passing all
        input files in a single invocation.
     4. Writes the converted IODA file to
        ``<cycle_dir>/ioda/<obs_name>/<output_filename>``.
