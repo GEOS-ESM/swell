@@ -49,6 +49,15 @@
             # Clone geos ana for generating observing system records
             CloneGeosMksi-{{model_component}}
             {% endfor %}
+
+            {% if persistent_workers %}
+            # Deallocate only after every cycle's CleanCycle has finished
+            {% for ct in cycle_times %}
+            {% for mc in model_components %}
+            CleanCycle-{{mc}}[{{ct.cycle_time}}] => Deallocate
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
         """
 
         {% for cycle_time in cycle_times %}
@@ -105,10 +114,6 @@
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
             EvaObservations-{{model_component}} =>
             CleanCycle-{{model_component}}
-
-            {% if persistent_workers %}
-            CleanCycle-{{model_component}} => Deallocate
-            {% endif %}
 
         {% endif %}
         {% endfor %}
