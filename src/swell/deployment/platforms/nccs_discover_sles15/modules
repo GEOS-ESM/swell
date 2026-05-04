@@ -61,9 +61,3 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
-
-# add pyioda to pythonpath
-# -------------------------
-#PYTHON_VERSION=`python3 -c 'import sys; version=sys.version_info[:2]; print("{0}.{1}".format(*version))'`
-#JEDI_BUILD=/discover/nobackup/projects/gmao/advda/swell/JediBundles/fv3_soca_SLES15_01152026/build-intel-release/
-#export PYTHONPATH=${JEDI_BUILD}/lib/python${PYTHON_VERSION}:${PYTHONPATH}
