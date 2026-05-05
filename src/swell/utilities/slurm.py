@@ -88,6 +88,7 @@ def prepare_scheduling_dict(
         'RunJediObsfiltersExecutable',
         'RunJediUfoTestsExecutable',
         'RunJediVariationalExecutable',
+        'RunJediCtests'
         }
 
     # Throw an error if a user tries to set SLURM directives for a task that

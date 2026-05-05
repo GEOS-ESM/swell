@@ -358,6 +358,27 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class bundles_to_run_ctests(TaskQuestion):
+        default_value: list[str] = mutable_field([
+            "fv3-jedi"
+        ])
+        question_name: str = "bundles_to_run_ctests"
+        ask_question: bool = True
+        options: list[str] = mutable_field([
+            "fv3-jedi",
+            "soca",
+            "iodaconv",
+            "ufo",
+            "ioda",
+            "oops",
+            "saber"
+        ])
+        prompt: str = "Which JEDI bundles to you wish to run ctests on?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class check_for_obs(TaskQuestion):
         default_value: bool = True
         question_name: str = "check_for_obs"

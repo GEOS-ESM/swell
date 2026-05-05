@@ -197,6 +197,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CompareJediCtests = QuestionList(
+        list_name="CompareJediCtests",
+        questions=[
+            qd.bundles_to_run_ctests(),
+            qd.comparison_experiment_paths()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     EvaComparisonJediLog = QuestionList(
         list_name="EvaJediLog",
         questions=[
@@ -593,6 +603,15 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.window_length(),
             qd.window_type(),
             qd.comparison_log_type('convert_state_soca2cice'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    RunJediCtests = QuestionList(
+        list_name="RunJediCtests",
+        questions=[
+            qd.bundles_to_run_ctests()
         ]
     )
 
