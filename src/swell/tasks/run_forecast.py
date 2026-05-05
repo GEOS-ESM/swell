@@ -9,23 +9,29 @@
 
 import os
 
+from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
+
 class RunForecast(taskBase):
 
+    def execute(self) -> None:
+        """Submits gcm_run_geoscf.j via geoscf-run.sh, capturing the SLURM job log."""
 
-   def execute(self) -> None:
-       """Runs the GCM forecast job script directly."""
+        cycle_dir = self.cycle_dir()
+        scratch_dir = os.path.join(cycle_dir, 'scratch')
 
+        geoscf_run_sh = os.path.join(get_swell_path(), 'tasks', 'geoscf-run.sh')
 
-       cycle_dir = self.cycle_dir()
-       gcm_run_script = os.path.join(cycle_dir, 'scratch', 'gcm_run_geoscf.j')
+        self.logger.info(f'Running forecast via: {geoscf_run_sh}')
+        self.logger.info(f'Scratch directory: {scratch_dir}')
 
+        env = os.environ.copy()
+        env['SCRATCH_DIR'] = scratch_dir
 
-       self.logger.info(f'Running forecast job: {gcm_run_script}')
-       run_subprocess(self.logger, ['/bin/csh', gcm_run_script])
+        run_subprocess(self.logger, ['/bin/bash', geoscf_run_sh], env=env)
 
 # --------------------------------------------------------------------------------------------------

@@ -10,12 +10,8 @@
 import math
 import os
 import shutil
-import tarfile
-from multiprocessing import Pool
 
 import isodate
-import netCDF4 as nc
-import numpy as np
 import xarray as xr
 
 from swell.tasks.base.task_base import taskBase
@@ -75,7 +71,9 @@ class PrepForecast(taskBase):
 
         # Determine analysis variables for GEOS-CF (NO2 and CO)
         # -------------------------------------------------------
-        an_vars_long_tg = ['volume_mixing_ratio_of_no2', 'volume_mixing_ratio_of_co', 'volume_mixing_ratio_of_o3']
+        an_vars_long_tg = ['volume_mixing_ratio_of_no2',
+                           'volume_mixing_ratio_of_co',
+                           'volume_mixing_ratio_of_o3']
         self.an_vars_compo = []
         for an_var in an_vars_long_tg:
             if an_var in self.an_vars_long:
@@ -122,11 +120,6 @@ class PrepForecast(taskBase):
                        self.parse_andate.strftime('%H') + 'z')
 
         jedi_date = self.parse_andate.strftime('%Y%m%d_%H%M%Sz')
-        #jedifile = os.path.join(self.scratch_dir, f'{self.expid}.inc.{jedi_date}.bkg.nc')
-        # make sure the filename is correct
-        #swell-3dvar_cf_cycle.increment-iter1.20230805_180000z.nc4
-        # .inc.%yyyy%mm%dd_%hh%MM%ssz.nc4
-        #jedifile = os.path.join(self.cycle_dir(), f'{self.expid}.increment-iter1.{jedi_date}.nc4')
         jedifile = os.path.join(self.cycle_dir(), f'{self.expid}.inc.{jedi_date}.nc4')
         jedigeosfile = os.path.join(self.scratch_dir, f'jedi.inc.{output_date}.nc')
 
@@ -151,8 +144,6 @@ class PrepForecast(taskBase):
         """Fetch GEOS FP analysis files needed for replay over the forecast length."""
 
         n_win_step = math.ceil(self.parse_fclen / self.parse_wlen)
-        #ensemble_packet = self.get_ensemble_packet()
-
         for wstep in range(n_win_step):
             fc_date = self.parse_andate + wstep * self.parse_wlen
             anYYYY = fc_date.strftime('%Y')
@@ -160,37 +151,11 @@ class PrepForecast(taskBase):
             anDD = fc_date.strftime('%d')
             anHH = fc_date.strftime('%H')
             date_path = f'Y{anYYYY}/M{anMM}'
-            wend_date = self.parse_wend + wstep * self.parse_wlen
 
             fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
             fp_file = (f'{self.fp_exp}.ana.eta.'
                        f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
             shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
-
-
-#            if ensemble_packet is not None:
-#                num_mem = int(ensemble_packet) + 1
-#                str_mem = f'mem{int(num_mem):03}'
-#                weHH = wend_date.strftime('%H')
-#                fp_path = f'{self.fp_loc}/{self.fp_exp}/atmens/{date_path}'
-#                fp_arch = (f'{self.fp_exp}.atmens_eana.'
-#                           f'{anYYYY}{anMM}{anDD}_{weHH}z.tar')
-#                fp_file = (f'{self.fp_exp}.ana.eta.'
-#                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
-#                fp_arch_path = (f'{self.fp_exp}.atmens_eana.'
-#                                f'{anYYYY}{anMM}{anDD}_{weHH}z/{str_mem}/{fp_file}')
-#                shutil.copy(f'{fp_path}/{fp_arch}', self.scratch_dir)
-#                arch_local = os.path.join(self.scratch_dir, fp_arch)
-#                with tarfile.open(arch_local, 'r') as tar:
-#                    tar_mem = tar.getmember(fp_arch_path)
-#                    tar_mem.name = os.path.basename(tar_mem.name)
-#                    tar.extract(tar_mem, path=self.scratch_dir)
-#                os.remove(arch_local)
-#            else:
-#                fp_path = f'{self.fp_loc}/{self.fp_exp}/ana/{date_path}'
-#                fp_file = (f'{self.fp_exp}.ana.eta.'
-#                           f'{anYYYY}{anMM}{anDD}_{anHH}00z.nc4')
-#                shutil.copy(f'{fp_path}/{fp_file}', self.scratch_dir)
 
     # ----------------------------------------------------------------------------------------------
 
@@ -206,7 +171,6 @@ class PrepForecast(taskBase):
         parse_wend = self.parse_wend
         parse_fclen = self.parse_fclen
 
-
         # Copy all static files in RC/ in GEOS-CF run directory to scratch
         # ----------------------------------------------------------------
         src_rc = os.path.join(self.geos_cf_run_dir, 'RC')
@@ -215,7 +179,7 @@ class PrepForecast(taskBase):
         for item in os.listdir(src_rc):
             src = os.path.join(src_rc, item)
             dst = os.path.join(scratch_dir, item)
-        
+
             if os.path.isdir(src):
                 shutil.copytree(src, dst, dirs_exist_ok=True)
             else:
@@ -259,7 +223,10 @@ class PrepForecast(taskBase):
         elif resolution == 'c360':
             grid_label = 'PE360x2160-CF'
         else:
-            raise ValueError(f'Unsupported horizontal resolution for HISTORY.rc grid label: {resolution}')
+            raise ValueError(
+                f'Unsupported horizontal resolution for '
+                f'HISTORY.rc grid label: {resolution}'
+            )
 
         self.replace_string(history_dst, '>>>SWELL_GEOSCF_JEDI_GRID<<<', grid_label)
 
@@ -301,7 +268,6 @@ class PrepForecast(taskBase):
                          parse_wbegin.strftime('%H%M%S'))
         with open(cap_restart, 'w') as f:
             f.write(forecast_date)
-
 
         # Copy and configure gcm_run.j
         # -----------------------------

@@ -31,8 +31,11 @@ class GetRestart(taskBase):
 
         """
 
-        rst_file_types = self.config.rst_file_types()
+        # Load R2D2 credentials
+        # ---------------------
+        load_r2d2_credentials(self.logger, self.platform())
 
+        rst_file_types = self.config.rst_file_types()
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')
@@ -52,11 +55,11 @@ class GetRestart(taskBase):
         else:
             rst_exp = self.config.r2d2_experiment_id()
 
-        self.logger.info(f'Fetching rst files from experiment {rst_exp}') 
- 
+        self.logger.info(f'Fetching rst files from experiment {rst_exp}')
+
         for file_type in rst_file_types:
-            base =  os.path.join(scratch_dir,file_type)
-            target_file=f'{base}_rst'
+            base = os.path.join(scratch_dir, file_type)
+            target_file = f'{base}_rst'
             self.logger.info(f'Fetching {file_type} to {target_file}')
             r2d2.fetch(
                 model=model,

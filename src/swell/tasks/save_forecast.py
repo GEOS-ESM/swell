@@ -8,14 +8,12 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from datetime import datetime as dt
 import isodate
 import os
 from r2d2 import store
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 
@@ -62,7 +60,6 @@ class SaveForecast(taskBase):
         while step_dur <= forecast_length_dur:
             step = isodate.duration_isoformat(step_dur)
 
-            # CF2.geoscf_jedi.20230809T220000Z.nc4 
             file_time = forecast_start + step_dur
             fname = f"CF2.geoscf_jedi.{file_time.strftime('%Y%m%dT%H%M%SZ')}.nc4"
             source_file = os.path.join(scratch_dir, fname)
