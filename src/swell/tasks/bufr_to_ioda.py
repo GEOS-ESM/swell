@@ -181,7 +181,7 @@ class BufrToIoda(taskBase):
 
         # Copy the yaml file
         try:
-            subprocess.run(['cp', yaml_file_source, yaml_file_target])
+            shutil.copy(yaml_file_source, yaml_file_target)
             self.logger.info(f'Copied YAML file: from {yaml_file_source} to {yaml_file_target}')
 
             # Dardag's changes. Old method of editing the yaml contents.
