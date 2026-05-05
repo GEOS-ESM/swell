@@ -69,19 +69,3 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
 # --------------------------------------------------------------------------------------------------
-
-            #    "disc_airs_bufr",
-            #    "disc_amsua_bufr",
-            #    "gmao_amsr2_bufr",
-            #    "gmao_gmi_bufr",
-            #    "gmao_mlst_bufr",
-            #    "m2scr_n21_ompslp_nc",
-            #    "mls_nrt_nc",
-            #    "ncep_acftpfl_bufr",
-            #    "ncep_aura_omi_bufr",
-            #    "ncep_goesfv_bufr",
-            #    "ncep_gpsro_bufr",
-            #    "ncep_satwnd_bufr",
-            #    "ncep_tcvitals",
-            #    "npp_ompsnm_bufr",
-            #    "r21c_npp_ompslp_nc",
