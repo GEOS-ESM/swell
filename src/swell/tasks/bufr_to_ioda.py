@@ -12,8 +12,6 @@ import glob
 import os
 import subprocess
 import shutil
-from ruamel.yaml import YAML
-# import filecmp
 
 from swell.tasks.base.task_base import taskBase
 
