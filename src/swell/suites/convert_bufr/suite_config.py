@@ -35,6 +35,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.clean_patterns([
                 "gsi_bcs/*.nc4",
                 "gsi_bcs/*.txt",
+                "ioda/*/temporary*.nc",
             ]),
             qd.bufr_obs_classes([
                "ncep_1bamua_bufr",
@@ -43,8 +44,8 @@ class SuiteConfig(QuestionContainer, Enum):
                "ncep_avcspm_bufr",
                "ncep_mhs_bufr",
                "ncep_mtiasi_bufr",
-               "ncep_ssmis_bufr",
                "ncep_gpsro_bufr",
+               # "ncep_ssmis_bufr",
                # "ncep_crisfsr_bufr",  DNE in 2023
                # "ncep_acftpfl_bufr",
                # "disc_airs_bufr",

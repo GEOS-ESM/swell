@@ -12,6 +12,7 @@ import glob
 import os
 import subprocess
 import shutil
+from ruamel.yaml import YAML
 # import filecmp
 
 from swell.tasks.base.task_base import taskBase
@@ -48,6 +49,7 @@ bufr2ioda_obs_type_dict = {
 
     'mtiasi': 'spoc_radiance_mtiasi.yaml',
     'ssmis': 'spoc_radiance_ssmis.yaml',
+    # 'ssmisu': 'spoc_radiance_ssmis.yaml',
 
     # gpsro
     'ncep_gpsro_bufr': 'spoc_gnssro.yaml',
@@ -101,11 +103,14 @@ class BufrToIoda(taskBase):
             if part in bufr2ioda_obs_type_dict:
                 self.logger.info(f"Match found: {part}")
                 return part
-        self.logger.info("No match found.")
+
+        valid_obs_types = list(bufr2ioda_obs_type_dict.keys())
+        self.logger.info(f"No match found in filename '{filename}'. "
+                         f"A valid obs_type part must be one of {valid_obs_types}")
+
         return None
 
     # --------------------------------------------------------------------------------------------------
-
     def get_bufr_mapping_yaml(self,
                               bufr_file_source_path,
                               ioda_file_target_path,
@@ -119,102 +124,62 @@ class BufrToIoda(taskBase):
         yaml_file_source: yaml file to use to replicate the structure for the specific obs_type
         yaml_file_target:
         '''
+        
+        # Log a summary of all input variables
+        self.logger.info(
+            f"\n"
+            f"--- get_bufr_mapping_yaml Input Summary ---\n"
+            f"  bufr_file_source_path           : {bufr_file_source_path}\n"
+            f"  ioda_file_target_path           : {ioda_file_target_path}\n"
+            f"  path_to_ioda_conv_yaml_tmpl_dir : {path_to_ioda_conv_yaml_tmpl_dir}\n"
+            f"  yaml_file_source                : {yaml_file_source}\n"
+            f"  yaml_file_target                : {yaml_file_target}\n"
+            f"-------------------------------------------"
+        )
 
-        # Copy the yaml file
-        try:
-            # Value to insert into the yaml file as the value for 'obsdatain'.
-            # Source file ~ bufr file to be converted
-            obsdatain = bufr_file_source_path
+        # Find the obs type from file name 
+        # -----------------------------------
+        bufr_file_obs_type = self.find_obstype_match(bufr_file_source_path)
+        
+        if bufr_file_obs_type is None:
+            self.logger.abort(f"Cannot determine obs type for {bufr_file_source_path}")
 
-            # Value to insert into the yaml file as the value for 'obsdataout'.
-            # Target file ~ conversion output file name
-            obsdataout = ioda_file_target_path
-
-            # find the obs type from file name
-            bufr_file_obs_type = self.find_obstype_match(obsdatain)
-        except FileNotFoundError:
-            self.logger.info(f'bufr_file_source_path:  {bufr_file_source_path}')
-            self.logger.info(f'obsdatain:  {obsdatain}')
-            self.logger.info(f'obsdataout:  {obsdataout}')
-            self.logger.info(f'ioda_file_target_path:  {ioda_file_target_path}')
-            self.logger.info(f'bufr_file_obs_type:  {bufr_file_obs_type}')
-        except yaml.YAMLError as e:
-            self.logger.info(f'Error processing find_obstype_match: {e}')
-
-        # Determine the target path of the generated yaml file
-        # ----------------------------------------------------
-        if yaml_file_target is None:
-            # Overwrite original if no output file is specified
-            # yaml_file_target = os.path.join(self.cycle_dir(),
-            #                                f'bufr_mapping_{bufr_file_obs_type}.yaml')
-            yaml_file_target = os.path.join(self.cycle_dir(),
-                                            f'spoc_radiance_{bufr_file_obs_type}.yaml')
-
-            self.logger.info(f'bufr_file_obs_type:  {bufr_file_obs_type}.')
-            self.logger.info(f'YAML template used:  {self.cycle_dir()}.')
-            self.logger.info(f'yaml_file_source:  {yaml_file_source}.')
-            self.logger.info(f'yaml_file_target {yaml_file_target}.')
-
-        # -----------------------------------------------------------------------------------------
-        # Copy the yaml file
-        try:
-            if yaml_file_source is None:
-                # Path to use as the yaml template
-                yaml_file_source = os.path.join(path_to_ioda_conv_yaml_tmpl_dir,
-                                                f'{bufr2ioda_obs_type_dict[bufr_file_obs_type]}')
-        except FileNotFoundError:
-            self.logger.info(f'Error: File "{yaml_file_source}" not found.')
-            self.logger.info(f'Error:  "{bufr2ioda_obs_type_dict}" not found.')
-            self.logger.info(f'Error:  "{path_to_ioda_conv_yaml_tmpl_dir}" not found.')
-            self.logger.info(f'Error:  "{bufr_file_obs_type}" not found.')
-        except yaml.YAMLError as e:
-            self.logger.info(f'Error processing YAML file: {e}')
+        # Determine the source YAML file path based on obs_type
+        # yaml_file_source ~ default location: src/swell/configuration/jedi/bufr2ioda/bufr2netcdf_x/
+        # ------------------------------------------------------------------------------------------
+        if yaml_file_source is None:
+            try:
+                yaml_template_name = bufr2ioda_obs_type_dict[bufr_file_obs_type]
+                yaml_file_source = os.path.join(path_to_ioda_conv_yaml_tmpl_dir, yaml_template_name)
+            except KeyError:
+                valid_obs_types = list(bufr2ioda_obs_type_dict.keys())
+                self.logger.abort(f"Error: '{bufr_file_obs_type}' not found in bufr2ioda_obs_type_dict. "
+                                  f"obs_type must be one of {valid_obs_types}", 
+                                  exception=KeyError)
 
         # Determine the target path of the generated yaml file
-        # ----------------------------------------------------
-        if yaml_file_target is None:
-            yaml_file_target = os.path.join(self.cycle_dir(),
-                                            f'spoc_radiance_{bufr_file_obs_type}.yaml')
+        # yaml_file_target ~ location in the cycle_dir to copy the yaml_file_source to
+        # ----------------------------------------------------------------------------
+        # if yaml_file_target is None:
+        yaml_file_target = os.path.join(self.cycle_dir(), f'spoc_radiance_{bufr_file_obs_type}.yaml')
 
-        self.logger.info(f'YAML template used:  {yaml_file_source}.')
-        self.logger.info(f'YAML file saved as {yaml_file_target}.')
+        self.logger.info(f'bufr_file_obs_type: {bufr_file_obs_type}')
+        self.logger.info(f'YAML template used: {yaml_file_source}')
+        self.logger.info(f'YAML file will be saved as: {yaml_file_target}')
 
-        # Copy the yaml file
+        # Copy the yaml file yaml_file_source to yaml_file_target
         try:
             shutil.copy(yaml_file_source, yaml_file_target)
-            self.logger.info(f'Copied YAML file: from {yaml_file_source} to {yaml_file_target}')
-
-            # Dardag's changes. Old method of editing the yaml contents.
-            # For Bufr-query, yaml is copied because it does not need edits. Can delete?
-            # ------------------------------------------------------------------------------------
-            # # Load the YAML template file
-            # with open(yaml_file_source, 'r') as file:
-            #     yaml_str = file.read()
-
-            # # Construct dictionary to fill yaml file
-            # template_dictionary = {'obsdatain': obsdatain,
-            #                        'obsdataout': obsdataout}
-
-            # # Apply the replacements for input and output file paths
-            # yaml_str = template_string_jinja2(self.logger,
-            #                                   templated_string=yaml_str,
-            #                                   dictionary_of_templates=template_dictionary)
-
-            # # Load and write the dictionary using rt mode (preserves formatting)
-            # yaml_config = YAML()
-            # yaml_content = yaml_config.load(yaml_str)
-
-            # # Write the updated content to the target yaml file
-            # with open(yaml_file_target, 'w') as file:
-            #     yaml_config.dump(yaml_content, file)
-            #     self.logger.info(f'Updated YAML file content: {yaml_file_target}')
-            # -------------------------------------------------------------------------------------------------------------------------------------
-
+            self.logger.info(f'Successfully copied YAML file to {yaml_file_target}')
+            
         except FileNotFoundError:
-            self.logger.info(f'Error: File "{yaml_file_source}" not found.')
-        except YAMLError as e:
-            self.logger.info(f'Error processing YAML file: {e}')
-        # returns the path of the yaml file the function generated
+            # If the source file doesn't actually exist on disk, abort cleanly
+            self.logger.abort(f'Error: Source YAML file "{yaml_file_source}" not found.', 
+                              exception=FileNotFoundError)
+        except PermissionError:
+            self.logger.abort(f'Error: Permission denied when copying to "{yaml_file_target}".', 
+                              exception=PermissionError)
+
         return yaml_file_target
 
     # --------------------------------------------------------------------------------------------------
@@ -245,7 +210,8 @@ class BufrToIoda(taskBase):
                                  f'files found in the source directory ' +
                                  f'\'{bufr_path_files_pattern}\'')
 
-        # 3. Convert Bufr Files (one by one)
+
+        # Convert Bufr Files (one by one)
         # ------------------------------------------------------------------------------------------
         for bufr_path_file in bufr_path_files:
 
@@ -254,7 +220,6 @@ class BufrToIoda(taskBase):
             self.logger.info("\n" + "=" * 85)
             self.logger.info(f"PROCESSING FILE: {bufr_file_source_path}")
 
-            # self.logger.info(f'bufr_file_source_path: {bufr_file_source_path}')
             # Target file ~ conversion output file name (should end in .nc4).
             # Use the same name but replace the suffix.
 
@@ -262,6 +227,7 @@ class BufrToIoda(taskBase):
             # find the obs type from file name
             bufr_file_obs_type = self.find_obstype_match(bufr_file_source_path)
 
+            # -----------------------------------------------------
             # --- CHECK: Skip if no matching obs type was found ---
             if bufr_file_obs_type is None:
                 self.logger.info(f'SKIPPING: No valid observation type mapping'
@@ -282,18 +248,15 @@ class BufrToIoda(taskBase):
                 # Use the full name for files like gdas1.20231010.t00z.prepbufr.acft_profiles
                 bufr_file_parts = bufr_file_source_path
                 base_name = bufr_file_source_path
-
-            self.logger.info(f'bufr_file_parts: {bufr_file_parts}')
-            self.logger.info(f'bufr_file_parts[0]: {bufr_file_parts[0]}')
+  
             ioda_file_target_name = bufr_file_parts[0] + '.{splits/satId}.tm00.nc4'
             ioda_file_target_path = os.path.join(ioda_dir, ioda_file_target_name)
             ioda_file_target_path_quoted = f"'{ioda_file_target_path}'"
-            self.logger.info(f'ioda_file_target_path_quoted: {ioda_file_target_path_quoted}')
-
+            
+            # --------------------------------------------------------------------
             # --- CHECK: Skip if output files already exist for this bufr file ---
-            # Check if any .nc4 files matching the base filename (which includes date) exist
-            # in obs_type_dir
-            existing_files_pattern = os.path.join(obs_type_dir, base_name)  # f"{bufr_file_parts[0]}.*.nc4")  # noqa
+            # Check if any .nc4 files matching the base filename already exist in obs_type_dir
+            existing_files_pattern = os.path.join(obs_type_dir, f"{base_name}*")  # f"{bufr_file_parts[0]}.*.nc4")  # noqa
             self.logger.info(f'Checking existing_files_pattern: {existing_files_pattern}')
             existing_files = glob.glob(existing_files_pattern)
 
@@ -306,43 +269,58 @@ class BufrToIoda(taskBase):
                                                              path_to_ioda_conv_yaml_tmpl_dir)
             self.logger.info(f'bufr_path_file: {bufr_path_file}')
             self.logger.info(f'bufr2ioda_conv_yaml: {bufr2ioda_conv_yaml}')
-            # self.logger.info(f"ioda_file_target_path: {ioda_file_target_path}")
 
+            # Execute CLI Conversion 
+            # --------------------------------------------------------------------------------------
+            
             # Jedi executable name (IODA Converter Name)
-            # --------------------
-            jedi_executable_path = 'bufr2netcdf.x'
+            # ------------------------------------------
+            jedi_executable = 'bufr2netcdf.x'
+            cli_execution_line = f"{jedi_executable} --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}"
 
-            # CLI Command
-            # ------------
-            # bufr2netcdf.x [bufr file] [bufr_mapping.yaml]
+            # Log a summary of the execution variables for this specific file
+            self.logger.info(
+                f"\n"
+                f"--- Conversion Execution Summary ---\n"
+                f"  obs_type              : {bufr_file_obs_type}\n"
+                f"  jedi_executable       : {jedi_executable}\n"
+                f"  input_bufr_file       : {bufr_path_file}\n"
+                f"  mapping_yaml_file     : {bufr2ioda_conv_yaml}\n"
+                f"  ioda_target_path      : {ioda_file_target_path}\n"
+                f"  full_cli_execution    : {cli_execution_line}\n"
+                f"------------------------------------"
+            )
+
+            # CLI Command Structure
+            # ---------------------
+            # bufr2netcdf.x [bufr file] [bufr_mapping.yaml]     <---- omitting the target path
             # bufr2netcdf.x bufr_path_file bufr2ioda_conv_yaml
-            # cli_command = [jedi_executable_path, bufr_path_file, bufr2ioda_conv_yaml]
-
-            # will make the ioda files in the current directory
-            # later on, bufr_to_ioda.py will move them to the run directory and rename them.
-            # current work around for {splits/satid} functionality
 
             try:
-                self.logger.info(f'Converting {bufr_file_obs_type} bufr files')
-                self.logger.info(f'Running {jedi_executable_path} with {bufr2ioda_conv_yaml}')
-                self.logger.info(f"Execution cli line: {jedi_executable_path}"
-                                 f" --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}")
-                subprocess.run([jedi_executable_path, '--no-gather', bufr_path_file,
-                                bufr2ioda_conv_yaml])
-            except FileNotFoundError:
-                self.logger.info(f'Error: File jedi_executable_path = '
-                                 f'"{jedi_executable_path}" not found.')
-                self.logger.info(f'Error: File bufr_path_file = "{bufr_path_file}" not found.')
-                self.logger.info(f'Error: File bufr2ioda_conv_yaml = '
-                                 f'"{bufr2ioda_conv_yaml}" not found.')
-            except YAMLError as e:
-                self.logger.info(f'Error processing YAML file: {e}')
-            else:
-                self.logger.info('Conversion to ioda complete, now exiting.')
-                self.logger.info(
-                    f"Execution cli line: "
-                    f"{jedi_executable_path} --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}")
+                # self.logger.info(f'Converting {bufr_file_obs_type} bufr files')
+                # self.logger.info(f"Execution cli line: {jedi_executable}"
+                #                  f" --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}")
 
+                subprocess.run([jedi_executable, '--no-gather', bufr_path_file,
+                                bufr2ioda_conv_yaml], check=True)
+                
+            except FileNotFoundError:
+                # This ONLY triggers if 'bufr2netcdf.x' is not found in the system PATH
+                self.logger.abort(f'Error: Executable "{jedi_executable}" not found.',
+                                  exception=FileNotFoundError)
+                
+            except subprocess.CalledProcessError as e:
+                # This triggers if bufr2netcdf.x crashes, or if it can't find the bufr/yaml files passed to it
+                self.logger.abort(f'Conversion failed! {jedi_executable} returned exit status {e.returncode}.',
+                                  exception=subprocess.CalledProcessError)
+                
+            else:
+                self.logger.info(f'Conversion to ioda complete for {bufr_file_obs_type}.')
+                    
+            # Rename converted output files 
+            # from bufr2netcdf.x standard name to name based on the input bufr file.
+            # current work around for {splits/satid} functionality
+            # --------------------------------------------------------------------------------------
             try:
                 # moving the output to ioda/{obs_type_dir}
                 temporary_files_pattern = os.path.join(os.getcwd(), 'temporary_*.nc')
@@ -359,37 +337,57 @@ class BufrToIoda(taskBase):
                 temporary_ioda_files = glob.glob(temporary_files_pattern)
                 for temporary_ioda_file in temporary_ioda_files:
                     if os.path.exists(temporary_ioda_file):
-                        split_satid = temporary_ioda_file.rsplit('_', 2)[1]
-                        # ex: ['temporary', 'n18', '1777056876.nc']
-                        # ['...{cycle_dir}/geos_atmosphere/temporary', 'metop-a', '1777056876.nc']
-                        self.logger.info(f'bufr_file_parts:  {bufr_file_parts} ')
-                        self.logger.info(f'bufr_file_parts[0]:  {bufr_file_parts[0]} ')
+
+                        base_temp_name = os.path.basename(temporary_ioda_file)                        
+                        
+                        # Example: 'temporary_cosmic2_755_1778082291.nc' 
+                        # Becomes: ['temporary', 'cosmic2', '755', '1778082291.nc']
+                        parts = base_temp_name.split('_')
+                        split_satid = '_'.join(parts[1:-1]) # 'cosmic2', '755',
+                        
+                        # Construct the new filename
                         new_filename = bufr_file_parts[0] + '.' + split_satid + '.tm00.nc4'
-                        self.logger.info(f'new_filename:  {new_filename} ')
-                        new_filename = os.path.join(obs_type_dir, new_filename)
-                        self.logger.info(f'new_filename as full path:  {new_filename} ')
-                        if not os.path.exists(new_filename):
-                            os.rename(temporary_ioda_file, new_filename)
+                        new_file_path = os.path.join(obs_type_dir, new_filename)    
+                        
+                        # Log a summary of the renaming variables for this file
+                        self.logger.info(
+                            f"\n"
+                            f"--- File Renaming Summary ---\n"
+                            f"  temp_file_source : {temporary_ioda_file}\n"
+                            f"  extracted_satid  : {split_satid}\n"
+                            f"  base_bufr_name   : {bufr_file_parts[0]}\n"
+                            f"  obs_type_dir    : {obs_type_dir}\n"
+                            f"  new_filename    : {new_filename}\n"
+                            f"  new_file_path    : {new_file_path}\n"
+                            f"-----------------------------"
+                        )
+
+                        # Rename or remove if already exists
+                        if not os.path.exists(new_file_path):
+                            os.rename(temporary_ioda_file, new_file_path)
                             self.logger.info(
                                 f'File {temporary_ioda_file} renamed to {new_filename}.')
                         else:
                             self.logger.info(
-                                f'File already exists {new_filename}. File will not be renamed.')
-                    else:
-                        self.logger.info(f'File {temporary_ioda_file} not found')
+                                f'File already exists {new_file_path}. File will not be renamed.')
+                            
+                            # Clean up the orphaned temporary file so it doesn't take up space
+                            try:
+                                os.remove(temporary_ioda_file)
+                                self.logger.info(f'Cleaned up orphaned temporary file: {temporary_ioda_file}')
+                            except OSError as e:
+                                self.logger.info(f'Failed to delete temporary file {temporary_ioda_file}: {e}')
 
             except FileNotFoundError:
                 self.logger.info(
-                    f'Error: File jedi_executable_path = "{jedi_executable_path}" not found.')
-            except YAMLError as e:
-                self.logger.info(f'Error processing YAML file: {e}')
+                    f'Error: File jedi_executable = "{jedi_executable}" not found.')
             else:
                 self.logger.info('Conversion to ioda complete, now exiting.')
-                self.logger.info(f"RUNNING CONVERSION CLI EXECUTION: {jedi_executable_path} "
+                self.logger.info(f"RUNNING CONVERSION CLI EXECUTION: {jedi_executable} "
                                  f"--no-gather {bufr_path_file} {bufr2ioda_conv_yaml}")
                 self.logger.info(
                     f"\n"
-                    "Current bufr_to_ioda workflow: {jedi_executable_path} --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}. "  # noqa
+                    "Current bufr_to_ioda workflow: {jedi_executable} --no-gather {bufr_path_file} {bufr2ioda_conv_yaml}. "  # noqa
                     "Will make the ioda files in the current directory. bufr_to_ioda.py will then move them to the run directory and rename them. "  # noqa
                     "This current method is a work around for {{splits/satid}} functionality."
                     "\n --------- "
