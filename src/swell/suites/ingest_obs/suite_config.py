@@ -17,6 +17,7 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="ingest_obs",
         questions=[
             sq.common,
+            qd.download_convert_pipeline(False)
         ],
     )
     # This name should be unique and not conflict with other suites
