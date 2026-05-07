@@ -25,7 +25,6 @@ _SRUN_RESOURCE_KEYS = {
 _SALLOC_EXCLUDED_KEYS = {'no-requeue'}
 
 
-
 def prepare_scheduling_dict(
     logger: Logger,
     experiment_dict: dict,
@@ -211,9 +210,10 @@ def prepare_scheduling_dict(
 
         # Without an explicit --time, SLURM uses the partition max (e.g. 12h)
         # and excludes the job from backfill scheduling, causing long queue waits.
-        # Default to 4h; override via slurm_directives_global if runs need longer.
+        # Default to 40 min based on observed workflow runtimes; you can override via
+        # slurm_directives_global.time if runs need longer.
         if 'time' not in salloc:
-            salloc['time'] = '04:00:00'
+            salloc['time'] = '00:40:00'
 
         scheduling_dict['salloc_directives'] = salloc
 
