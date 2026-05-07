@@ -1,0 +1,144 @@
+bufr:
+  group_by_variable: ozoneLayer
+  variables:
+    # MetaData
+    timestamp:
+      datetime:
+        year: "*/YEAR"
+        month: "*/MNTH"
+        day: "*/DAYS"
+        hour: "*/HOUR"
+        minute: "*/MINU"
+        second: "*/SECO"
+
+    latitude:
+      query: "*/CLAT"
+
+    longitude:
+      query: "*/CLON"
+
+    satelliteId:
+      query: "*/SAID"
+
+    solarZenithAngle:
+      query: "*/SOZA"
+
+    topLevelPressure:
+      query: "*/OZOPQLSQ/PRLC[2]"
+      type: float
+
+    bottomLevelPressure:
+      query: "*/OZOPQLSQ/PRLC[1]"
+      type: float
+
+    # Quality Information 
+    totalOzoneQuality:
+      query: "*/SBUVTOQ"
+
+    profileOzoneQuality:
+      query: "*/SBUVPOQ"
+
+    # ObsValue
+    ozoneLayer:
+      query: "*/OZOPQLSQ/OZOP[2]"
+      type: float
+
+  splits:
+    satId:
+      category:
+        variable: satelliteId
+        map:
+          _224: npp
+          _225: n20
+          _226: n21
+
+encoder:
+  globals:
+    - name: "description"
+      type: string
+      value: "Ozone profiles derived from the measurements made by the OMPS Nadir Profiler and the OMPS Nadir Mapper sensors on Suomi-NPP and JPSS. The data contains layer ozone amounts derived from the ratio of the observed backscattered spectral radiance to the incoming solar spectral irradiance for all solar zenith angle viewing conditions less than or equal to 80 degrees"
+
+    - name: "platformCommonName"
+      type: string
+      value: "JPSS"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "Joint Polar Satellite System"
+
+    - name: "sensorCommonName"
+      type: string
+      value: "OMPSNP"
+
+    - name: "sensorLongDescription"
+      type: string
+      value: "Ozone Mapping and Profiler Suite - Nadir Profiler"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centers for Environmental Prediction (NCEP))"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP BUFR Dump - ompsn8 NC008017"
+
+    - name: "processingLevel"
+      type: string
+      value: "Level-2"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+    # MetaData
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Datetime"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degree_north"
+      range: [-90, 90]
+
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degree_east"
+
+    - name: "MetaData/satelliteIdentifier"
+      source: variables/satelliteId
+      longName: "Satellite Identifier"
+
+    - name: "MetaData/solarZenithAngle"
+      source: variables/solarZenithAngle
+      longName: "Solar Zenith Angle"
+      units: "degree"
+      range: [0, 180]
+
+    - name: "MetaData/topLevelPressure"
+      source: variables/topLevelPressure
+      longName: "Top Level Pressure of a Layer"
+      units: "Pa"
+
+    - name: "MetaData/bottomLevelPressure"
+      source: variables/bottomLevelPressure
+      longName: "Bottom Level Pressure of a Layer"
+      units: "Pa"
+
+    # Quality Information
+    - name: "MetaData/totalOzoneQuality"
+      source: variables/totalOzoneQuality
+      longName: "Total Ozone Quality"
+
+    - name: "MetaData/profileOzoneQuality"
+      source: variables/profileOzoneQuality
+      longName: "Profile Ozone Quality"
+
+    # ObsValue
+    - name: "ObsValue/ozoneLayer"
+      source: variables/ozoneLayer
+      longName: "Layer Ozone"
+      units: "DU"
