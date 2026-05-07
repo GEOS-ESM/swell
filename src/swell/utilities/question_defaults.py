@@ -1344,6 +1344,7 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
+    @dataclass
     class cache_fetch(TaskQuestion):
         default_value: bool = True
         question_name: str = "cache_fetch"

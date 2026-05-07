@@ -7,9 +7,7 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
 import os
-import glob
 import shutil
 from pathlib import Path
 
@@ -37,9 +35,9 @@ class PublishComparisons(taskBase):
 
         # For CI tests - contain results under the run ID
         github_run_id = os.environ.get('GITHUB_RUN_ID')
-        experiment_id = self.experiment_id()
+        experiment_id = Path(self.experiment_id())
         if github_run_id is not None:
-            experiment_id = os.path.join(github_run_id, experiment_id)
+            experiment_id = github_run_id / experiment_id
 
         # Name the location after the experiment ID
         publish_location = Path(self.config.publish_directory()) / experiment_id
@@ -49,13 +47,15 @@ class PublishComparisons(taskBase):
         publish_location.mkdir(exist_ok=True, parents=True)
 
         # Copy the JEDI log file comparison
-        log_file = os.path.join(self.experiment_path(), 'jedi_log_comparison.txt')
+        log_file = Path(self.experiment_path()) / 'jedi_log_comparison.txt'
         shutil.copy(log_file, publish_location)
 
-        if os.path.isdir(os.path.join(self.cycle_dir(), 'eva')):
+        eva_path = Path(self.cycle_dir()) / 'eva'
+
+        if eva_path.is_dir():
 
             # Copy eva png files
-            files = glob.glob(os.path.join(self.cycle_dir(), 'eva', '**', '*.png'), recursive=True)
+            files = eva_path.rglob('**/*.png')
 
             out_path = publish_location / self.__datetime__.string_directory() / self.get_model()
 
