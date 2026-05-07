@@ -182,19 +182,17 @@ def load_r2d2_credentials(
         logger.info("R2D2 will use existing environment variables if set")
 
     if not isinstance(credentials_yaml, dict):
-        logger.error("R2D2 credentials file must contain a YAML mapping at the root.")
-        credentials = {}
-    elif server_name:
+        raise TypeError("R2D2 credentials file must contain a YAML mapping at the root.")
+
+    if server_name is not None:
         server_credentials = credentials_yaml.get(server_name)
         if isinstance(server_credentials, dict):
             credentials = server_credentials
             logger.info(f"Using R2D2 credentials for server: {server_name!r}")
         else:
-            logger.error(
-                f"R2D2 credentials for server {server_name!r} not found or not a mapping; "
-                f"skipping credential values from file."
+            raise ValueError(
+                f"R2D2 credentials for server {server_name!r} not found or not a mapping."
             )
-            credentials = {}
     else:
         # Select the first server name
         all_named = bool(credentials_yaml) and all(

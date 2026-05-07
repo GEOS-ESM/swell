@@ -164,6 +164,7 @@ class QuestionDefaults():
     @dataclass
     class r2d2_server(SuiteQuestion):
         default_value: str = "gmao_server"
+        default_value: str | None = None
         question_name: str = "r2d2_server"
         ask_question: bool = False
         prompt: str = (
