@@ -224,12 +224,17 @@ pipeline. Requires Earthdata credentials in `~/.netrc`.
 Suite configuration:
 ```python
 qd.download_convert_pipeline(True)
-qd.obs_to_download(['omps_o3_nm'])
-qd.obs_to_ingest(['omps_o3_nm'])
+qd.obs_to_download(['omps_o3_nm_total'])
+qd.obs_to_ingest(['omps_o3_nm_total'])
 qd.converter_path('/path/to/jedi-bundle/build/bin/')
 qd.window_length("PT6H")
 qd.dry_run(False)
 ```
+
+If you are developing a new built-in observation configuration, update
+`suite_config.py` and the source configuration files below. If you are running
+from an installed/static Swell environment, prefer an override YAML or edit the
+copied configuration in your experiment directory after `swell create`.
 
 ---
 

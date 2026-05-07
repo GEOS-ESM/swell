@@ -90,7 +90,6 @@ class ConvertObsToIoda(taskBase):
             if not os.path.exists(config_path):
                 self.logger.error(
                     f'Converter config not found for {obs_name} at {config_path}')
-                continue
 
             with open(config_path, 'r') as fh:
                 conv_config = yaml.safe_load(fh)
@@ -145,11 +144,13 @@ class ConvertObsToIoda(taskBase):
         input_files = sorted(glob.glob(input_pattern))
 
         if not input_files:
-            self.logger.warning(
-                f'No input files found for {obs_name} in {download_dir}')
-            return
+            msg = f'No input files found for {obs_name} in {download_dir}'
+            if dry_run:
+                self.logger.warning(msg)
+            else:
+                self.logger.abort(msg)
 
-        self.logger.info(f'  Found {len(input_files)} input file(s)')
+        self.logger.info(f'Found {len(input_files)} input file(s)')
 
         # Build output path
         ioda_dir = os.path.join(self.cycle_dir(), 'ioda', obs_name)
@@ -161,12 +162,13 @@ class ConvertObsToIoda(taskBase):
             os.makedirs(ioda_dir, exist_ok=True)
 
         # Locate the converter script
-        script_name = conv_config['converter_script']
+        script_name = conv_config.get('converter_script')
+        if not script_name:
+            self.logger.abort(f"No 'converter_script' key found for {obs_name}")
         script_path = os.path.join(converter_bin, script_name)
 
         if not dry_run and not os.path.exists(script_path):
-            self.logger.error(f'Converter script not found: {script_path}')
-            return
+            self.logger.abort(f'Converter not found: {script_path}')
 
         # Build command: python3 <script> -i <files...> -o <output> [extra flags]
         cmd = [sys.executable, script_path,
@@ -186,7 +188,7 @@ class ConvertObsToIoda(taskBase):
         result = subprocess.run(cmd, check=False)
 
         if result.returncode != 0:
-            self.logger.error(
+            self.logger.abort(
                 f'Converter exited with code {result.returncode} for {obs_name}')
-        else:
-            self.logger.info(f'  Converted output: {output_file}')
+
+        self.logger.info(f'  Converted output: {output_file}')

@@ -21,6 +21,7 @@
     final cycle point = {{final_cycle_point}}
 
     [[graph]]
+        {% if download_convert_pipeline %}
         R1 = """
             # Triggers for non cycle time dependent tasks
             # -------------------------------------------
@@ -34,7 +35,8 @@
             BuildJediByLinking:fail? => BuildJedi
 
         """
-        
+        {% endif %}
+
         {% for cycle_time in cycle_times %}
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
@@ -61,6 +63,7 @@
 
     # Tasks
     # -----
+    {% if download_convert_pipeline %}
     [[CloneJedi]]
         script = "swell task CloneJedi $config"
 
@@ -76,6 +79,7 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
+    {% endif %}
 
     {% for model_component in model_components %}
 
