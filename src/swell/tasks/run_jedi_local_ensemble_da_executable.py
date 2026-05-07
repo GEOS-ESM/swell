@@ -15,6 +15,7 @@ from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.yaml_utils import replace_key
 from swell.utilities.run_jedi_executables import run_executable
+import subprocess
 
 # --------------------------------------------------------------------------------------------------
 
@@ -243,12 +244,28 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             else:
                 run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                                jedi_config_file, output_log_file, perhost=perhost)
+
+##                local_MPI_options = os.environ.get('local_MPI_options')
+##                mpi_cmd = f"cd {}; "
+##                mpi_cmd += "mpirun"
+##                if not (perhost is None or perhost == "None"):
+##                    mpi_cmd += f" -perhost {perhost}"
+##                mpi_cmd += f" -np {np} {local_MPI_options} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+##                print(f'intended mpi_cmd = {mpi_cmd}')
+##                try:
+##                    # This runs the command and waits for it to finish
+##                    result = subprocess.run(mpi_cmd, shell=True)
+####                    print("Output:", result.stdout)
+##                except subprocess.CalledProcessError as e:
+##                    print("Error occurred:", e.stderr)
+##
+
         else:
-            mpi_command = "mpirun"
+            mpi_cmd = "mpirun"
             if not (perhost is None or perhost == "None"):
-                mpi_command += f" -perhost {perhost}"
-            mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
-            print(f'intended mpi_command = {mpi_command}')
+                mpi_cmd += f" -perhost {perhost}"
+            mpi_cmd += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
+            print(f'intended mpi_cmd = {mpi_cmd}')
             self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

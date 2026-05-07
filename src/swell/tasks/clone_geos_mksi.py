@@ -33,6 +33,7 @@ class CloneGeosMksi(taskBase):
         # ------------
         path_to_geos_mksi = self.config.observing_system_records_mksi_path()
         tag = self.config.observing_system_records_mksi_path_tag()
+        ## tag = 'feature/ygyu/atms_n20_avail_chan'
 
         # If observing_system_records_mksi_path is None, clone GEOS_mksi repo to experiment
         # directory
