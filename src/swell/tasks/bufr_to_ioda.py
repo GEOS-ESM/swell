@@ -372,12 +372,8 @@ class BufrToIoda(taskBase):
                                                  f'{temporary_ioda_file}: {e}')
 
             except FileNotFoundError:
-                self.logger.info(
-                    f'Error: File jedi_executable = "{jedi_executable}" not found.')
+                self.logger.info(f'Error: executable = "{jedi_executable}" not found.')
             else:
-                self.logger.info('Conversion to ioda complete, now exiting.')
-                self.logger.info(f"RUNNING CONVERSION CLI EXECUTION: {jedi_executable} "
-                                 f"--no-gather {bufr_path_file} {bufr2ioda_conv_yaml}")
                 self.logger.info(
                     "\n"
                     f"Current bufr_to_ioda workflow: {jedi_executable} --no-gather "
