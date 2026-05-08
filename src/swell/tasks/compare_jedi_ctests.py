@@ -112,6 +112,11 @@ class CompareJediCtests(taskBase):
             results_str += experiment_tag_1 + ' ' * (width_col_1 - len(experiment_tag_1))
             results_str += experiment_tag_2 + ' ' * (width_col_2 - len(experiment_tag_2))
             results_str += '\n'
+
+            # Specify if all tests have passed
+            if len(results_dict[bundle].keys()) == 0:
+                results_str += 'All tests passed.\n'
+
             for test in results_dict[bundle].keys():
                 results_str += test + ' ' * (max_width - len(test))
                 result_1 = results_dict[bundle][test][experiment_tag_1]

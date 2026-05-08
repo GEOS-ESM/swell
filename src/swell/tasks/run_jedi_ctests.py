@@ -33,7 +33,7 @@ class RunJediCtests(taskBase):
             # Run the ctests
             cwd = os.getcwd()
             os.chdir(bundle_dir)
-            command = ['ctest', '-V', '-I']
+            command = ['ctest', '-V']
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # Record the output
