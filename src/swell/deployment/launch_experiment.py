@@ -55,8 +55,6 @@ class DeployWorkflow():
         # Tell cylc to exit a stall quickly
         if self.cylc_timeout is not None:
             os.environ['SWELL_CYLC_TIMEOUT'] = self.cylc_timeout
-        else:
-            os.environ['SWELL_CYLC_TIMEOUT'] = 'unset'
 
         # Install the suite
         if self.log_path:
