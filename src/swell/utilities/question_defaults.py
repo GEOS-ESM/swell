@@ -850,6 +850,34 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_download(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_download"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to download from remote servers?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class converter_path(TaskQuestion):
+        default_value: str = ""
+        question_name: str = "converter_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Path to directory containing ioda-converter scripts"
+                       " (leave blank to use jedi_bin)")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class initial_restarts_method(TaskQuestion):
         default_value: str = "defer_to_platform"
@@ -1543,3 +1571,11 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class download_convert_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "download_convert_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
+                       "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+        widget_type: WType = WType.BOOLEAN

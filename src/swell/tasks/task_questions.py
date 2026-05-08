@@ -197,6 +197,29 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    ConvertObsToIoda = QuestionList(
+        list_name="ConvertObsToIoda",
+        questions=[
+            qd.converter_path(),
+            qd.dry_run(),
+            qd.obs_to_download(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    DownloadObs = QuestionList(
+        list_name="DownloadObs",
+        questions=[
+            qd.dry_run(),
+            qd.obs_to_download(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     EvaComparisonJediLog = QuestionList(
         list_name="EvaJediLog",
         questions=[
