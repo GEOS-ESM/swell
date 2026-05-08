@@ -61,5 +61,3 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
-
-

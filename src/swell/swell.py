@@ -20,6 +20,7 @@ from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import AllSuites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.utilities.suite_utils import read_override_file
 
 
 # --------------------------------------------------------------------------------------------------
@@ -117,8 +118,12 @@ def create(
 
     """
 
+    # Read override file
+    override_dict = read_override_file(override)
+
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
+    create_experiment_directory(suite, input_method, platform, override_dict,
+                                advanced, slurm, skip_r2d2)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -303,6 +308,3 @@ def main() -> None:
 
 
 # --------------------------------------------------------------------------------------------------
-
-if __name__ == '__main__':
-    test('code_tests')
