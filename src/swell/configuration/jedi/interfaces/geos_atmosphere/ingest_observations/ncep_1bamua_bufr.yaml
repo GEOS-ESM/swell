@@ -1,0 +1,2 @@
+acquisition_method: local
+source: ioda/1bamua/*.nc4

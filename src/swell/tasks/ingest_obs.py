@@ -158,17 +158,46 @@ class IngestObs(taskBase):
         dt = datetime.strptime(cycle_time, "%Y-%m-%dT%H:%M:%SZ")
 
         if acquisition_method == 'local':
-            # File was produced locally for this cycle (e.g. by ConvertObsToIoda).
-            # 'source' is a path relative to cycle_dir using strftime placeholders.
+            # File was produced locally for this cycle (e.g. by ConvertObsToIoda or BufrToIoda).
+            # 'source' is a path relative to cycle_dir, supports strftime and glob patterns.
             source = config.get('source')
             if not source:
                 msg = f"No 'source' key in {obs_name}.yaml for acquisition_method 'local'."
                 self.logger.error(msg)
                 raise ValueError(msg)
-            target_file = os.path.join(self.cycle_dir(), dt.strftime(source))
-            if not os.path.exists(target_file):
-                self.logger.warning(f"Local file not found: {target_file}")
+            expanded = os.path.join(self.cycle_dir(), dt.strftime(source))
+            matched_files = glob.glob(expanded)
+            if not matched_files:
+                self.logger.warning(f"Local file(s) not found: {expanded}")
                 return ingested, [(obs_name, "File not found")]
+
+            for target_file in matched_files:
+                if dry_run:
+                    self.logger.info(f"  [DRY RUN] Would ingest:")
+                    self.logger.info(f"    Obs Name: {obs_name}")
+                    self.logger.info(f"    Provider: {provider}")
+                    self.logger.info(f"    Method: {acquisition_method}")
+                    self.logger.info(f"    Source: {target_file}")
+                    ingested.append(target_file)
+                else:
+                    try:
+                        r2d2.store(
+                            item='observation',
+                            provider=provider,
+                            observation_type=obs_name,
+                            file_extension=os.path.splitext(target_file)[1][1:],
+                            window_start=window_start,
+                            window_length=window_length,
+                            source_file=target_file,
+                        )
+                    except (ValueError, KeyError, FileNotFoundError,
+                            OSError, requests.RequestException) as e:
+                        self.logger.error(f"Failed to ingest {obs_name}: {e}")
+                        failed.append((obs_name, str(e)))
+                    else:
+                        ingested.append(target_file)
+                        self.logger.info(f"Successfully ingested {obs_name} from {target_file}")
+            return ingested, failed
 
         else:
             # Remote/static path: 'cp_source' or 's3_source' with Skylab-style placeholders.

@@ -185,7 +185,9 @@ class BufrToIoda(taskBase):
     def execute(self) -> None:
 
         # Set Bufr File Directory (Input)
-        bufr_dir = os.path.join(self.cycle_dir(), 'bufr')
+        bufr_dir_config = self.config.bufr_dir(None)
+        bufr_dir = (self.cycle_time_dto().strftime(bufr_dir_config)
+                    if bufr_dir_config else os.path.join(self.cycle_dir(), 'bufr'))
 
         # Set Ioda File Directory (Output) and create if needed
         ioda_dir = os.path.join(self.cycle_dir(), 'ioda')
