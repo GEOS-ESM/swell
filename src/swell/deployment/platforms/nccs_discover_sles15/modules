@@ -41,7 +41,7 @@ module load r2d2-client/112025
 
 # Load eva and jedi_bundle
 # ------------------------
-module load eva/sles15_milan_1.6.5
+module load eva/sles15_1.6.7
 module load jedi_bundle/sles15_skylab9
 
 # Load sp
@@ -61,5 +61,3 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
-
-
