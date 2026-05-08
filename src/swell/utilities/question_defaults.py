@@ -1335,6 +1335,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class publish_directory(TaskQuestion):
+        default_value: str = None
+        question_name: str = "publish_directory"
+        ask_question: bool = False
+        prompt: str = "Provide an external directory to publish relevant results to."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class cache_fetch(TaskQuestion):
         default_value: bool = True
         question_name: str = "cache_fetch"
