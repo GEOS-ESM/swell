@@ -8,7 +8,7 @@
 
 
 import os
-from ruamel.yaml import YAML
+from ruamel.yaml import YAML, YAMLError
 import random
 import subprocess
 
@@ -173,7 +173,7 @@ def load_r2d2_credentials(
             yaml = YAML(typ='safe')
             with open(yaml_path, 'r') as yaml_file:
                 credentials_yaml = yaml.load(yaml_file) or {}
-        except Exception as e:
+        except (OSError, YAMLError) as e:
             logger.error(f"Error loading R2D2 credentials from {yaml_path}: {e}")
             logger.info("Continuing with existing environment variables...")
             credentials_yaml = {}
