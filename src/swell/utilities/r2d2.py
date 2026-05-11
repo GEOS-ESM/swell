@@ -235,6 +235,10 @@ def load_r2d2_credentials(
             f"platform default ({r2d2_host!r})"
         )
 
+    elif 'host' in credentials and 'R2D2_HOST' not in os.environ:
+        logger.warning("Credentials key 'host' is deprecated; rename it to 'r2d2_host'.")
+        os.environ['R2D2_HOST'] = credentials['host']
+
     elif r2d2_host and 'R2D2_HOST' not in os.environ:
         os.environ['R2D2_HOST'] = r2d2_host
         logger.info(f"Set R2D2_HOST={r2d2_host} from platform configuration")
@@ -246,6 +250,10 @@ def load_r2d2_credentials(
             f"YAML r2d2_compiler ({credentials['r2d2_compiler']!r}) overrides "
             f"platform default ({r2d2_compiler!r})"
         )
+
+    elif 'compiler' in credentials and 'R2D2_COMPILER' not in os.environ:
+        logger.warning("Credentials key 'compiler' is deprecated; rename it to 'r2d2_compiler'.")
+        os.environ['R2D2_COMPILER'] = credentials['compiler']
 
     elif r2d2_compiler and 'R2D2_COMPILER' not in os.environ:
         os.environ['R2D2_COMPILER'] = r2d2_compiler
