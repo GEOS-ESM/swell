@@ -330,6 +330,12 @@ produce_geovals:
   - true
   - false
 
+saber_central_block:
+  default_value: None
+
+saber_outer_block:
+  default_value: None
+
 skip_ensemble_hofx:
   default_value: true
   options:
