@@ -825,7 +825,7 @@ class QuestionDefaults():
         default_value: list = mutable_field([])
         question_name: str = "obs_to_download"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Which observations do you want to download from remote servers?"
@@ -838,7 +838,7 @@ class QuestionDefaults():
         default_value: str = ""
         question_name: str = "converter_path"
         ask_question: bool = True
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = ("Path to directory containing ioda-converter scripts"
