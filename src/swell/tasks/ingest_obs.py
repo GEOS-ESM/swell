@@ -34,7 +34,7 @@ class IngestObs(taskBase):
 
     The observation YAML files are copied from the swell source code to the
     experiment directory during ``swell create``. Users should modify these files
-    in their experiment directory to change file paths or retrieval methods
+    in their experiment directory to change file paths or acquisition methods
     without touching the source code.
 
     The task can run in a "dry run" mode where it only logs which files it would
@@ -153,44 +153,50 @@ class IngestObs(taskBase):
         provider = get_provider_for_observation(
             obs_name, self.ioda_names_list, self.logger)
 
-        retrieval_method = config.get('retrieval_method')  # cp or s3
+        acquisition_method = config.get('acquisition_method')  # 'cp', 's3', or 'local'
 
-        # Determine source pattern based on method
-        source_pattern = config.get(
-            f'{retrieval_method}_source')  # cp_source or s3_source
-
-        if not source_pattern:
-            msg = (
-                f"No source pattern found for method '{retrieval_method}' in "
-                f"{obs_name}.yaml (expected key '{retrieval_method}_source')."
-            )
-            self.logger.error(msg)
-            raise ValueError(msg)
-
-        # Use cycle_time to construct file path
         dt = datetime.strptime(cycle_time, "%Y-%m-%dT%H:%M:%SZ")
 
-        # Basic support for Skylab-style placeholders
-        final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
-                                      .replace('YYYY', '%Y') \
-                                      .replace('MM', '%m') \
-                                      .replace('DD', '%d') \
-                                      .replace('HH', '%H')
+        if acquisition_method == 'local':
+            # File was produced locally for this cycle (e.g. by ConvertObsToIoda).
+            # 'source' is a path relative to cycle_dir using strftime placeholders.
+            source = config.get('source')
+            if not source:
+                msg = f"No 'source' key in {obs_name}.yaml for acquisition_method 'local'."
+                self.logger.error(msg)
+                raise ValueError(msg)
+            target_file = os.path.join(self.cycle_dir(), dt.strftime(source))
+            if not os.path.exists(target_file):
+                self.logger.warning(f"Local file not found: {target_file}")
+                return ingested, [(obs_name, "File not found")]
 
-        expected_file = dt.strftime(final_pattern)
+        else:
+            # Remote/static path: 'cp_source' or 's3_source' with Skylab-style placeholders.
+            source_pattern = config.get(f'{acquisition_method}_source')
+            if not source_pattern:
+                msg = (
+                    f"No source pattern found for method '{acquisition_method}' in "
+                    f"{obs_name}.yaml (expected key '{acquisition_method}_source')."
+                )
+                self.logger.error(msg)
+                raise ValueError(msg)
 
-        # Match file path using glob
-        files_found = glob.glob(expected_file)
-        if not files_found:
-            self.logger.warning(f"No files matched pattern: {expected_file}")
-            return ingested, [(obs_name, "No files found")]
-        target_file = files_found[0]
+            final_pattern = source_pattern.replace('YYYYMMDDHH', '%Y%m%d%H') \
+                                          .replace('YYYY', '%Y') \
+                                          .replace('MM', '%m') \
+                                          .replace('DD', '%d') \
+                                          .replace('HH', '%H')
+            files_found = glob.glob(dt.strftime(final_pattern))
+            if not files_found:
+                self.logger.warning(f"No files matched pattern: {dt.strftime(final_pattern)}")
+                return ingested, [(obs_name, "No files found")]
+            target_file = files_found[0]
 
         if dry_run:
             self.logger.info(f"  [DRY RUN] Would ingest:")
             self.logger.info(f"    Obs Name: {obs_name}")
             self.logger.info(f"    Provider: {provider}")
-            self.logger.info(f"    Method: {retrieval_method}")
+            self.logger.info(f"    Method: {acquisition_method}")
             self.logger.info(f"    Source: {target_file}")
             ingested.append(target_file)
         else:
