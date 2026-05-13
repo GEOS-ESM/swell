@@ -19,14 +19,14 @@ existing_jedi_source_directory:
 existing_jedi_source_directory_pinned:
   default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles_sles15/current_pinned_jedi_bundle/source/
 
+existing_perllib_path:
+  default_value: /discover/nobackup/projects/gmao/advda/perllib_opt/GMAO_perllib/g1.0.1/
+
 geos_homdir:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
 
 initial_restarts_method:
   default_value: geos_expdir
-
-gmao_perllib_path:
-  default_value: /discover/nobackup/projects/gmao/advda/perllib_opt/GMAO_perllib/g1.0.1/
 
 path_to_bufr:
   default_value: None
