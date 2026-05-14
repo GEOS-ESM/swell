@@ -186,7 +186,7 @@ class QuestionDefaults():
 
     @dataclass
     class r2d2_datastore(SuiteQuestion):
-        default_value: str = "r2d2-experiments-prod-us-east-1"
+        default_value: str | None = None
         question_name: str = "r2d2_datastore"
         ask_question: bool = False
         prompt: str = (
