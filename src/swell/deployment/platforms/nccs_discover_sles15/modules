@@ -20,6 +20,7 @@ module load soca-env
 module load gmao-swell-env/1.0.0
 module unload gsibec crtm fms
 module load fms/2024.02
+module unload bufr-query
 
 # JEDI Python Path
 # ----------------
