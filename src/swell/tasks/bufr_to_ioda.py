@@ -271,7 +271,7 @@ class BufrToIoda(taskBase):
 
             # Jedi executable name (IODA Converter Name)
             # ------------------------------------------
-            jedi_executable = 'bufr2netcdf.x'
+            jedi_executable = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin', 'bufr2netcdf.x')
             cli_execution_line = (f"{jedi_executable} --no-gather "
                                   f"{bufr_path_file} {bufr2ioda_conv_yaml}")
 
