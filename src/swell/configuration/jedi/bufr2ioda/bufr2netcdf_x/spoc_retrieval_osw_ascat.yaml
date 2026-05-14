@@ -1,0 +1,132 @@
+bufr:
+  subsets:
+    - NC012122
+
+  variables:
+    # MetaData
+    timestamp:
+      datetime:
+        year: "*/YEAR"
+        month: "*/MNTH"
+        day: "*/DAYS"
+        hour: "*/HOUR"
+        minute: "*/MINU"
+        second: "*/SECO"
+
+    dataReceiptTime:
+      datetime:
+        year: "*/RCYR"
+        month: "*/RCMO"
+        day: "*/RCDY"
+        hour: "*/RCHR"
+        minute: "*/RCMI"
+
+    latitude:
+      query: "*/CLAT"
+
+    longitude:
+      query: "*/CLON"
+
+    satelliteId:
+      query: "*/SAID"
+
+    qualityFlags:
+      query: "*/WVCQ"
+
+    # ObsValue - Wind Direction
+    windDirectionAt10M:
+      query: '*/WD10'
+      type: float
+
+    # ObsValue - Wind Speed
+    windSpeedAt10M:
+      query: '*/WS10'
+
+  splits:
+    satId:
+      category:
+        variable: satelliteId
+        map:
+          _3: metop-b 
+          _4: metop-a 
+          _5: metop-c 
+
+encoder:
+  globals:
+    - name: "description"
+      type: string
+      value: "Level-2 ocean surface wind vector retrievals and derived wind components from ASCAT on MetOp satellites, sampled at 50 km resolution"
+
+    - name: "platformCommonName"
+      type: string
+      value: "MetOp"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "Meteorological Operational Satellite"
+
+    - name: "sensorCommonName"
+      type: string
+      value: "ASCAT"
+
+    - name: "sensorLongDescription"
+      type: string
+      value: "Advanced Scatterometer"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centres for Environmental Prediction (NCEP))"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP BUFR Dump NC012122 - ascatw"
+
+    - name: "processingLevel"
+      type: string
+      value: "Level-2"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+    # MetaData 
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Observation Time"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/dataReceiptTime"
+      source: variables/dataReceiptTime
+      longName: "Observation Receipt Time"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degrees_north"
+      range: [ -90, 90 ]
+
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degrees_east"
+      range: [ -180, 180 ]
+
+    - name: "MetaData/satelliteIdentifier"
+      source: variables/satelliteId
+      longName: "Satellite Identifier"
+
+    - name: "MetaData/qualityFlags"
+      source: variables/qualityFlags
+      longName: "Quality Flags"
+
+    - name: "ObsValue/windDirection"
+      source: variables/windDirectionAt10M
+      longName: "10-meter Wind Direction"
+      units: "degree"
+
+    - name: "ObsValue/windSpeed"
+      source: variables/windSpeedAt10M
+      longName: "10-meter Wind Speed"
+      units: "m s-1"

@@ -1,0 +1,5 @@
+# OMPS Nadir Mapper Total Ozone L2 — R2D2 ingestion configuration
+# Source: output of ConvertObsToIoda, relative to the cycle work directory.
+
+acquisition_method: local
+source: ioda/omps_o3_nm_total/omps_o3_nm_total_%Y%m%d%H.nc # in CYCLE_DIR
