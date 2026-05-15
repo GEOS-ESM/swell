@@ -11,6 +11,10 @@ datasets:
     - name: EffectiveQC
     - name: MetaData
 
+{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tropomi_s5p_no2_tropo'] and 'nitrogendioxideColumn' in simulated_variables %}
+{% set no2_column_conversion = 211936.47557841247 %}
+{% set no2_column_units = '1e-15 molec cm-2' %}
+
 transforms:
 
 # Generate omb for JEDI
@@ -39,6 +43,33 @@ transforms:
   for:
     variable: *variables
 
+{% if convert_no2_column %}
+# Convert NO2 column from mol m-2 to 1e-15 molec cm-2 for plotting.
+- transform: arithmetic
+  new name: experiment::ObsValueConverted::${variable}
+  equals: experiment::ObsValue::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::hofxConverted::${variable}
+  equals: experiment::hofx::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::hofxPassedQcConverted::${variable}
+  equals: experiment::hofxPassedQc::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+
+- transform: arithmetic
+  new name: experiment::ObsValueMinusHofxConverted::${variable}
+  equals: experiment::ObsValueMinusHofx::${variable}*{{no2_column_conversion}}
+  for:
+    variable: *variables
+{% endif %}
+
 
 graphics:
 
@@ -56,25 +87,25 @@ graphics:
       title: 'Observations vs. JEDI h(x) | {{instrument_title}} | ${variable_title}'
       output name: '{{cycle_dir}}/eva/{{instrument}}/correlation_scatter/${variable}/jedi_hofx_vs_obs_{{instrument}}_${variable}.png'
     plots:
-      - add_xlabel: 'Observation Value'
-        add_ylabel: 'JEDI h(x)'
+      - add_xlabel: 'Observation Value{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
+        add_ylabel: 'JEDI h(x){% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
         add_grid:
         add_legend:
           loc: 'upper left'
         layers:
         - type: Scatter
           x:
-            variable: experiment::ObsValue::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
           y:
-            variable: experiment::hofx::${variable}
+            variable: experiment::{% if convert_no2_column %}hofxConverted{% else %}hofx{% endif %}::${variable}
           markersize: 5
           color: 'black'
           label: 'JEDI h(x) versus obs (all obs)'
         - type: Scatter
           x:
-            variable: experiment::ObsValue::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
           y:
-            variable: experiment::hofxPassedQc::${variable}
+            variable: experiment::{% if convert_no2_column %}hofxPassedQcConverted{% else %}hofxPassedQc{% endif %}::${variable}
           markersize: 5
           color: 'red'
           label: 'JEDI h(x) versus obs (passed QC in JEDI)'
@@ -86,7 +117,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::ObsValue::${variable}
+        data variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -98,7 +129,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: ObsValue
+          label: 'ObsValue{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
         add_grid:
         layers:
         - type: MapScatter
@@ -107,7 +138,7 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::ObsValue::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
           markersize: 2
           label: ObsValue
           colorbar: true
@@ -120,7 +151,7 @@ graphics:
       variables: *variables
     dynamic options:
       - type: vminvmaxcmap
-        data variable: experiment::ObsValueMinusHofx::${variable}
+        data variable: experiment::{% if convert_no2_column %}ObsValueMinusHofxConverted{% else %}ObsValueMinusHofx{% endif %}::${variable}
     figure:
       figure size: [20,10]
       layout: [1,1]
@@ -132,7 +163,7 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: '${variable}'
+          label: '${variable}{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
         add_grid:
         layers:
         - type: MapScatter
@@ -141,7 +172,7 @@ graphics:
           latitude:
             variable: experiment::MetaData::latitude
           data:
-            variable: experiment::ObsValueMinusHofx::${variable}
+            variable: experiment::{% if convert_no2_column %}ObsValueMinusHofxConverted{% else %}ObsValueMinusHofx{% endif %}::${variable}
           markersize: 2
           label: '${variable}'
           colorbar: true
