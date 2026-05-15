@@ -701,9 +701,26 @@ class DownloadObs(taskBase):
     def _download_file(
         self, session: requests.Session, url: str, dest_path: str
     ) -> None:
-        """Stream a remote file to ``dest_path`` in 1 MB chunks."""
+        """Stream a remote file to ``dest_path`` in 1 MB chunks.
+
+        Verifies the number of bytes written against the Content-Length 
+        in the response header.  If they do not match (truncated download), 
+        the partial file is deleted and a requests.RequestException is raised
+        so the caller can record the failure and the file will be
+        re-attempted on the next run.
+        """
         with session.get(url, stream=True, timeout=(5, 30)) as response:
             response.raise_for_status()
+            expected = int(response.headers.get('Content-Length', 0))
+            written = 0
             with open(dest_path, 'wb') as fh:
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     fh.write(chunk)
+                    written += len(chunk)
+
+        if expected and written != expected:
+            os.remove(dest_path)
+            raise requests.RequestException(
+                f'Incomplete download: got {written} of {expected} bytes for '
+                f'{os.path.basename(dest_path)}'
+            )
