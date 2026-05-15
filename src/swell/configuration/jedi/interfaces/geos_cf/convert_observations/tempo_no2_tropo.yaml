@@ -19,4 +19,4 @@ output_filename_template: "tempo_no2_tropo_%Y%m%d%H.nc"
 # Additional flags passed verbatim to the converter after -i and -o.
 extra_flags:
   -c: troposphere   # retrieval layer: troposphere column
-  -v: no2           # variable: nitrogen dioxide
+  -v: NO2           # variable: nitrogen dioxide
