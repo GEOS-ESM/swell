@@ -417,45 +417,48 @@ class DownloadObs(taskBase):
         auth_encoded = base64.b64encode(
             f'{username}:{password}'.encode()).decode()
 
+        # Use a single session so cookies are shared across all steps,
+        # matching the behaviour of curl's --cookie-jar (-c/-b) flags in
+        # the reference ewok bash script.
+        session = requests.Session()
+
         # Step 1 — GET the credentials URL; Cumulus redirects to the
         #           Earthdata URS authorization endpoint.
-        login_resp = requests.get(CREDENTIALS_URL, allow_redirects=False, timeout=30)
-        login_resp.raise_for_status()
-        authorize_url = login_resp.headers.get('location', '').strip()
+        r1 = session.get(CREDENTIALS_URL, allow_redirects=False, timeout=30)
+        r1.raise_for_status()
+        authorize_url = r1.headers.get('location', '').strip()
         if not authorize_url:
             raise ValueError(
                 'No redirect received from Cumulus credentials endpoint. '
-                f'Response status: {login_resp.status_code}')
+                f'Response status: {r1.status_code}')
 
         # Step 2 — POST base64-encoded credentials to URS to get a
         #           grant-code redirect.
-        auth_redirect = requests.post(
+        r2 = session.post(
             authorize_url,
             data={'credentials': auth_encoded},
             headers={'Origin': DISTRIBUTION_URL},
             allow_redirects=False,
             timeout=30,
         )
-        auth_redirect.raise_for_status()
-        redirect_url = auth_redirect.headers.get('location', '').strip()
+        r2.raise_for_status()
+        redirect_url = r2.headers.get('location', '').strip()
         if not redirect_url:
             raise ValueError(
                 'No redirect received after posting Earthdata credentials. '
-                f'Response status: {auth_redirect.status_code}')
+                f'Response status: {r2.status_code}')
 
-        # Step 3 — Follow the grant-code redirect to obtain the
-        #           accessToken cookie (do NOT follow further redirects).
-        final = requests.get(redirect_url, allow_redirects=False, timeout=30)
+        # Step 3 — Follow the full redirect chain from the grant-code URL.
+        #           The session cookie jar captures the accessToken cookie
+        #           regardless of which hop in the chain sets it.
+        session.get(redirect_url, allow_redirects=True, timeout=30)
 
-        # Step 4 — Re-request the credentials URL passing the accessToken
-        #           cookie; Cumulus returns JSON with temporary AWS keys.
-        results = requests.get(
-            CREDENTIALS_URL,
-            cookies={'accessToken': final.cookies['accessToken']},
-            timeout=30,
-        )
-        results.raise_for_status()
-        creds = results.json()
+        # Step 4 — Re-request the credentials URL; the session now carries
+        #           the accessToken cookie and Cumulus returns JSON with
+        #           temporary AWS keys.
+        r4 = session.get(CREDENTIALS_URL, timeout=30)
+        r4.raise_for_status()
+        creds = r4.json()
 
         required_keys = {'accessKeyId', 'secretAccessKey', 'sessionToken'}
         if not required_keys.issubset(creds):
