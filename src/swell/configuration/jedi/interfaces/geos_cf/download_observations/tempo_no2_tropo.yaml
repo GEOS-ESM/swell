@@ -9,18 +9,18 @@
 #   TEMPO_NO2_L2_V03_YYYYMMDDTHHMMSSz_YYYYMMDDTHHMMSSz_S<scan>G<granule>.nc
 # The filename_pattern uses YYYYMMDDTHH to match files by granule start hour.
 #
-# Note: the same data is also available via direct S3 access for workflows
-# running inside AWS us-west-2 (in-region access only):
+# Note: for workflows running inside AWS us-west-2, direct S3 access is also
+# available (faster, no directory listing required):
 #   retrieval_method: s3_secure
 #   s3_source: "s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD"
-# The HTTPS endpoint below works from any network (e.g. Discover/HPC).
 
 remote_host: https://data.asdc.earthdata.nasa.gov
 remote_path_template: /TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD/
 filename_pattern: "TEMPO_NO2_L2_V03_YYYYMMDDTHH*.nc"
 
-# Maximum duration of a single TEMPO scan granule. Used to extend the file
-# search window backwards so that granules starting before window_begin but
-# containing data within the DA window are not missed.
-# TEMPO scans roughly one hemisphere per hour; PT2H provides a safe margin.
+# Use the Earthdata OAuth session (accessToken cookie) instead of basic auth.
+# Required for ASDC Cumulus endpoints which do not support ~/.netrc basic auth.
+earthdata_auth: true
+
+# Maximum duration of a single TEMPO scan granule.
 max_orbit_duration: PT2H

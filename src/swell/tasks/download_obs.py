@@ -163,8 +163,17 @@ class DownloadObs(taskBase):
         if not dry_run:
             os.makedirs(dest_dir, exist_ok=True)
 
-        # requests.Session uses ~/.netrc automatically for authentication.
-        session = requests.Session()
+        # requests.Session uses ~/.netrc automatically for basic-auth
+        # endpoints (e.g. GES DISC).  For ASDC Cumulus endpoints that use
+        # OAuth, set earthdata_auth: true in the obs YAML to get a fully
+        # authenticated session with the accessToken cookie instead.
+        if obs_config.get('earthdata_auth', False):
+            try:
+                session = self._create_earthdata_session()
+            except Exception as exc:
+                self.logger.abort(f'Failed to create Earthdata session: {exc}')
+        else:
+            session = requests.Session()
 
         downloaded = 0
         failed = 0
@@ -370,6 +379,73 @@ class DownloadObs(taskBase):
 
         return downloaded, failed
 
+    def _create_earthdata_session(self) -> requests.Session:
+        """Return an authenticated ``requests.Session`` for NASA Earthdata
+        protected HTTPS endpoints (e.g. ``data.asdc.earthdata.nasa.gov``).
+
+        Reads Earthdata credentials from ``~/.netrc`` for
+        ``urs.earthdata.nasa.gov`` and performs the four-step Cumulus OAuth
+        redirect chain, leaving the session's cookie jar populated with the
+        ``accessToken`` cookie that ASDC requires for both HTTPS file access
+        and the ``/s3credentials`` endpoint.
+
+        Raises:
+            ValueError: if ``~/.netrc`` has no entry for Earthdata or if
+                the credential exchange fails.
+        """
+        DISTRIBUTION_URL = 'https://data.asdc.earthdata.nasa.gov'
+        CREDENTIALS_URL = f'{DISTRIBUTION_URL}/s3credentials'
+        EARTHDATA_HOST = 'urs.earthdata.nasa.gov'
+
+        # Read username/password from ~/.netrc.
+        try:
+            nrc = netrc.netrc()
+            auth_info = nrc.authenticators(EARTHDATA_HOST)
+        except FileNotFoundError:
+            raise ValueError('~/.netrc not found. Please create it with '
+                             f'credentials for {EARTHDATA_HOST}.')
+        if auth_info is None:
+            raise ValueError(
+                f'No credentials found for {EARTHDATA_HOST} in ~/.netrc. '
+                'Add a line: machine urs.earthdata.nasa.gov login <user> password <pass>')
+
+        username, _, password = auth_info
+        auth_encoded = base64.b64encode(
+            f'{username}:{password}'.encode()).decode()
+
+        session = requests.Session()
+
+        # Step 1 — GET the credentials URL; Cumulus redirects to URS.
+        r1 = session.get(CREDENTIALS_URL, allow_redirects=False, timeout=30)
+        r1.raise_for_status()
+        authorize_url = r1.headers.get('location', '').strip()
+        if not authorize_url:
+            raise ValueError(
+                'No redirect received from Cumulus credentials endpoint. '
+                f'Response status: {r1.status_code}')
+
+        # Step 2 — POST credentials to URS to get a grant-code redirect.
+        r2 = session.post(
+            authorize_url,
+            data={'credentials': auth_encoded},
+            headers={'Origin': DISTRIBUTION_URL},
+            allow_redirects=False,
+            timeout=30,
+        )
+        r2.raise_for_status()
+        redirect_url = r2.headers.get('location', '').strip()
+        if not redirect_url:
+            raise ValueError(
+                'No redirect received after posting Earthdata credentials. '
+                f'Response status: {r2.status_code}')
+
+        # Step 3 — Follow the full redirect chain; session captures the
+        #           accessToken cookie regardless of which hop sets it.
+        session.get(redirect_url, allow_redirects=True, timeout=30)
+
+        self.logger.info('Obtained Earthdata session (accessToken cookie set)')
+        return session
+
     def _get_earthdata_s3_credentials(self) -> dict:
         """Obtain temporary AWS credentials via the NASA Earthdata Cumulus
         S3 distribution endpoint.
@@ -397,61 +473,11 @@ class DownloadObs(taskBase):
         Reference:
             https://data.asdc.earthdata.nasa.gov/s3credentialsREADME
         """
-        DISTRIBUTION_URL = 'https://data.asdc.earthdata.nasa.gov'
-        CREDENTIALS_URL = f'{DISTRIBUTION_URL}/s3credentials'
-        EARTHDATA_HOST = 'urs.earthdata.nasa.gov'
+        CREDENTIALS_URL = 'https://data.asdc.earthdata.nasa.gov/s3credentials'
 
-        # Read username/password from ~/.netrc.
-        try:
-            nrc = netrc.netrc()
-            auth_info = nrc.authenticators(EARTHDATA_HOST)
-        except FileNotFoundError:
-            raise ValueError('~/.netrc not found. Please create it with '
-                             f'credentials for {EARTHDATA_HOST}.')
-        if auth_info is None:
-            raise ValueError(
-                f'No credentials found for {EARTHDATA_HOST} in ~/.netrc. '
-                'Add a line: machine urs.earthdata.nasa.gov login <user> password <pass>')
-
-        username, _, password = auth_info
-        auth_encoded = base64.b64encode(
-            f'{username}:{password}'.encode()).decode()
-
-        # Use a single session so cookies are shared across all steps,
-        # matching the behaviour of curl's --cookie-jar (-c/-b) flags in
-        # the reference ewok bash script.
-        session = requests.Session()
-
-        # Step 1 — GET the credentials URL; Cumulus redirects to the
-        #           Earthdata URS authorization endpoint.
-        r1 = session.get(CREDENTIALS_URL, allow_redirects=False, timeout=30)
-        r1.raise_for_status()
-        authorize_url = r1.headers.get('location', '').strip()
-        if not authorize_url:
-            raise ValueError(
-                'No redirect received from Cumulus credentials endpoint. '
-                f'Response status: {r1.status_code}')
-
-        # Step 2 — POST base64-encoded credentials to URS to get a
-        #           grant-code redirect.
-        r2 = session.post(
-            authorize_url,
-            data={'credentials': auth_encoded},
-            headers={'Origin': DISTRIBUTION_URL},
-            allow_redirects=False,
-            timeout=30,
-        )
-        r2.raise_for_status()
-        redirect_url = r2.headers.get('location', '').strip()
-        if not redirect_url:
-            raise ValueError(
-                'No redirect received after posting Earthdata credentials. '
-                f'Response status: {r2.status_code}')
-
-        # Step 3 — Follow the full redirect chain from the grant-code URL.
-        #           The session cookie jar captures the accessToken cookie
-        #           regardless of which hop in the chain sets it.
-        session.get(redirect_url, allow_redirects=True, timeout=30)
+        # Reuse the shared OAuth exchange — session already has the
+        # accessToken cookie after this call.
+        session = self._create_earthdata_session()
 
         # Step 4 — Re-request the credentials URL; the session now carries
         #           the accessToken cookie and Cumulus returns JSON with
