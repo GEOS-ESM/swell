@@ -1,30 +1,23 @@
 # TEMPO NO2 Tropospheric Column L2 — download configuration
 # Instrument: TEMPO (Tropospheric Emissions: Monitoring of Pollution)
-# Product:    TEMPO_NO2_L2 V03 (NRT)
-# Source:     NASA ASDC S3 bucket via Earthdata Cumulus
+# Product:    TEMPO_NO2_L2 V03
+# Source:     NASA ASDC Cumulus HTTPS distribution endpoint
 #             (Earthdata authentication required in ~/.netrc for
 #              urs.earthdata.nasa.gov)
 #
 # Files are named:
 #   TEMPO_NO2_L2_V03_YYYYMMDDTHHMMSSz_YYYYMMDDTHHMMSSz_S<scan>G<granule>.nc
-# where field 4 (0-based, split on '_') is the granule start timestamp.
+# The filename_pattern uses YYYYMMDDTHH to match files by granule start hour.
 #
-# Available versions:
-#   V03 (NRT):     s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD
-#   V04 (current): s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V04/YYYY.MM.DD
-# Change s3_source below to switch versions.
+# Note: the same data is also available via direct S3 access for workflows
+# running inside AWS us-west-2 (in-region access only):
+#   retrieval_method: s3_secure
+#   s3_source: "s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD"
+# The HTTPS endpoint below works from any network (e.g. Discover/HPC).
 
-retrieval_method: s3_secure
-
-# S3 URI template — YYYY, MM, DD are resolved at runtime.
-s3_source: "s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD"
-
-# Index (0-based) of the start-time token in the filename when split on '_'.
-# TEMPO_NO2_L2_V03_20231015T180000Z_... → field 4 = '20231015T180000Z'
-filename_datetime_field: 4
-
-# strptime format for the start-time token above.
-filename_datetime_format: "%Y%m%dT%H%M%SZ"
+remote_host: https://data.asdc.earthdata.nasa.gov
+remote_path_template: /TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD/
+filename_pattern: "TEMPO_NO2_L2_V03_YYYYMMDDTHH*.nc"
 
 # Maximum duration of a single TEMPO scan granule. Used to extend the file
 # search window backwards so that granules starting before window_begin but
