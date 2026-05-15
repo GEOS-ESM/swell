@@ -11,9 +11,14 @@ datasets:
     - name: EffectiveQC
     - name: MetaData
 
-{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tropomi_s5p_no2_tropo'] and 'nitrogendioxideColumn' in simulated_variables %}
-{% set no2_column_conversion = 211936.47557841247 %}
+{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tempo_no2_total', 'tropomi_s5p_no2_tropo', 'tropomi_s5p_no2_total'] and 'nitrogendioxideColumn' in simulated_variables %}
+{% set no2_column_conversion = 211936.46 %}
 {% set no2_column_units = '1e-15 molec cm-2' %}
+{% set no2_column_vmin = 0 %}
+{% set no2_column_vmax = 25 %}
+{% set no2_column_omb_vmin = -15 %}
+{% set no2_column_omb_vmax = 15 %}
+{% set map_domain = 'conus' if instrument.startswith('tempo') else 'global' %}
 
 transforms:
 
@@ -126,10 +131,11 @@ graphics:
     plots:
       - mapping:
           projection: plcarr
-          domain: global
+          domain: {{map_domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: 'ObsValue{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
+          fontsize: 14
         add_grid:
         layers:
         - type: MapScatter
@@ -139,12 +145,18 @@ graphics:
             variable: experiment::MetaData::latitude
           data:
             variable: experiment::{% if convert_no2_column %}ObsValueConverted{% else %}ObsValue{% endif %}::${variable}
-          markersize: 2
+          markersize: 1
           label: ObsValue
           colorbar: true
-          cmap: ${dynamic_cmap}
+          # tropomi has negative obs values so use hardcoded cmap instead of dynamic
+          cmap: viridis
+          {% if convert_no2_column %}
+          vmin: {{no2_column_vmin}}
+          vmax: {{no2_column_vmax}}
+          {% else %}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
+          {% endif %}
 
   # omb jedi
   - batch figure:
@@ -160,10 +172,11 @@ graphics:
     plots:
       - mapping:
           projection: plcarr
-          domain: global
+          domain: {{map_domain}}
         add_map_features: ['coastline']
         add_colorbar:
           label: '${variable}{% if convert_no2_column %} ({{no2_column_units}}){% endif %}'
+          fontsize: 14
         add_grid:
         layers:
         - type: MapScatter
@@ -173,9 +186,14 @@ graphics:
             variable: experiment::MetaData::latitude
           data:
             variable: experiment::{% if convert_no2_column %}ObsValueMinusHofxConverted{% else %}ObsValueMinusHofx{% endif %}::${variable}
-          markersize: 2
+          markersize: 1
           label: '${variable}'
           colorbar: true
           cmap: ${dynamic_cmap}
+          {% if convert_no2_column %}
+          vmin: {{no2_column_omb_vmin}}
+          vmax: {{no2_column_omb_vmax}}
+          {% else %}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}
+          {% endif %}
