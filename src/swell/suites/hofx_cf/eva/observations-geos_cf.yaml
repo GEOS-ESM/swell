@@ -11,13 +11,15 @@ datasets:
     - name: EffectiveQC
     - name: MetaData
 
+
+# Convert NO2 column from mol m-2 to 1e-15 molec cm-2 for plotting.
 {% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tempo_no2_total', 'tropomi_s5p_no2_tropo', 'tropomi_s5p_no2_total'] and 'nitrogendioxideColumn' in simulated_variables %}
-{% set no2_column_conversion = 211936.46 %}
+{% set no2_column_conversion = 60221.4076 %}
 {% set no2_column_units = '1e-15 molec cm-2' %}
 {% set no2_column_vmin = 0 %}
-{% set no2_column_vmax = 25 %}
-{% set no2_column_omb_vmin = -15 %}
-{% set no2_column_omb_vmax = 15 %}
+{% set no2_column_vmax = 15 %}
+{% set no2_column_omb_vmin = -10 %}
+{% set no2_column_omb_vmax = 10 %}
 {% set map_domain = 'conus' if instrument.startswith('tempo') else 'global' %}
 
 transforms:
