@@ -1,26 +1,23 @@
 # TEMPO NO2 Tropospheric Column L2 — download configuration
 # Instrument: TEMPO (Tropospheric Emissions: Monitoring of Pollution)
 # Product:    TEMPO_NO2_L2 V03
-# Source:     NASA ASDC Cumulus HTTPS distribution endpoint
+# Source:     NASA CMR search API + ASDC Cumulus HTTPS download
 #             (Earthdata authentication required in ~/.netrc for
 #              urs.earthdata.nasa.gov)
 #
-# Files are named:
-#   TEMPO_NO2_L2_V03_YYYYMMDDTHHMMSSz_YYYYMMDDTHHMMSSz_S<scan>G<granule>.nc
-# The filename_pattern uses YYYYMMDDTHH to match files by granule start hour.
+# Files are discovered via the NASA CMR API and downloaded from:
+#   https://data.asdc.earthdata.nasa.gov/TEMPO/TEMPO_NO2_L2_V03/...
 #
 # Note: for workflows running inside AWS us-west-2, direct S3 access is also
-# available (faster, no directory listing required):
+# available (faster, no CMR query required):
 #   retrieval_method: s3_secure
 #   s3_source: "s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD"
 
-remote_host: https://data.asdc.earthdata.nasa.gov
-remote_path_template: /TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD/
-filename_pattern: "TEMPO_NO2_L2_V03_YYYYMMDDTHH*.nc"
+retrieval_method: cmr
+cmr_short_name: TEMPO_NO2_L2
+cmr_version: V03
 
-# Use the Earthdata OAuth session (accessToken cookie) instead of basic auth.
-# Required for ASDC Cumulus endpoints which do not support ~/.netrc basic auth.
-earthdata_auth: true
-
-# Maximum duration of a single TEMPO scan granule.
+# Maximum duration of a single TEMPO scan granule. Used to extend the
+# temporal search window backwards so granules starting before window_begin
+# but containing data within the DA window are not missed.
 max_orbit_duration: PT2H

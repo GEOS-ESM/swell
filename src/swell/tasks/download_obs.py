@@ -143,6 +143,10 @@ class DownloadObs(taskBase):
             return self._download_obs_s3_secure(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
+        if retrieval_method == 'cmr':
+            return self._download_obs_cmr(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
         # ------------------------------------------------------------------
         # Default: HTTPS directory listing
         # ------------------------------------------------------------------
@@ -376,6 +380,129 @@ class DownloadObs(taskBase):
                         self.logger.error(
                             f'  Failed to download {filename}: {exc}')
                         failed += 1
+
+        return downloaded, failed
+
+    def _download_obs_cmr(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Download files for one observation type by querying the NASA CMR
+        API for granule download URLs, then fetching each file via
+        authenticated HTTPS.
+
+        The ``obs_config`` dict must contain:
+
+        - ``cmr_short_name``: CMR collection short name, e.g. ``TEMPO_NO2_L2``.
+
+        Optional keys:
+
+        - ``cmr_version``: collection version string, e.g. ``V03``.
+        - ``max_orbit_duration``: ISO-8601 duration; extends the temporal
+          search backwards (default ``PT0H``).
+
+        Returns ``(n_downloaded, n_failed)``.
+        """
+        CMR_GRANULES_URL = 'https://cmr.earthdata.nasa.gov/search/granules.json'
+        DATA_LINK_REL = 'http://esipfed.org/ns/fedsearch/1.1/data#'
+        SKIP_SUFFIXES = ('.met', '.dmrpp', '.xml', '.md5')
+
+        cmr_short_name = obs_config['cmr_short_name']
+        cmr_version = obs_config.get('cmr_version', '')
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+
+        # Extend window backwards for instruments with long scan durations.
+        utc = datetime.timezone.utc
+        search_start = window_begin_dto - max_orbit_dur
+        search_end = window_end_dto
+        if search_start.tzinfo is None:
+            search_start = search_start.replace(tzinfo=utc)
+        if search_end.tzinfo is None:
+            search_end = search_end.replace(tzinfo=utc)
+
+        temporal = (f'{search_start.strftime("%Y-%m-%dT%H:%M:%SZ")},'
+                    f'{search_end.strftime("%Y-%m-%dT%H:%M:%SZ")}')
+
+        if dry_run:
+            self.logger.info(
+                f'  [DRY RUN] Would query CMR: short_name={cmr_short_name} '
+                f'version={cmr_version} temporal={temporal}')
+            return 0, 0
+
+        # CMR search is public — no auth required.
+        params = {'short_name': cmr_short_name,
+                  'temporal[]': temporal,
+                  'page_size': 2000}
+        if cmr_version:
+            params['version'] = cmr_version
+
+        self.logger.info(
+            f'  Querying CMR: short_name={cmr_short_name} '
+            f'version={cmr_version} temporal={temporal}')
+
+        try:
+            cmr_resp = requests.get(CMR_GRANULES_URL, params=params, timeout=30)
+            cmr_resp.raise_for_status()
+        except requests.RequestException as exc:
+            self.logger.abort(f'CMR query failed: {exc}')
+
+        granules = cmr_resp.json().get('feed', {}).get('entry', [])
+        self.logger.info(f'  CMR returned {len(granules)} granule(s)')
+
+        if not granules:
+            self.logger.info('  No granules found for this window — nothing to download')
+            return 0, 0
+
+        # Authenticated session for ASDC HTTPS downloads.
+        try:
+            session = self._create_earthdata_session()
+        except Exception as exc:
+            self.logger.abort(f'Failed to create Earthdata session: {exc}')
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        os.makedirs(dest_dir, exist_ok=True)
+
+        downloaded = 0
+        failed = 0
+
+        for granule in granules:
+            # Find the primary HTTPS data link for this granule.
+            data_url = None
+            for link in granule.get('links', []):
+                if DATA_LINK_REL in link.get('rel', '') and \
+                        link.get('href', '').startswith('https://'):
+                    data_url = link['href']
+                    break
+
+            if not data_url:
+                self.logger.warning(
+                    f'  No HTTPS data link found for granule: '
+                    f'{granule.get("id", "unknown")}')
+                continue
+
+            filename = os.path.basename(data_url)
+
+            if filename.endswith(SKIP_SUFFIXES):
+                continue
+
+            dest_path = os.path.join(dest_dir, filename)
+            if os.path.exists(dest_path):
+                self.logger.info(f'  Already exists, skipping: {filename}')
+                downloaded += 1
+                continue
+
+            try:
+                self._download_file(session, data_url, dest_path)
+                self.logger.info(f'  Downloaded: {filename}')
+                downloaded += 1
+            except requests.RequestException as exc:
+                self.logger.error(f'  Failed to download {filename}: {exc}')
+                failed += 1
 
         return downloaded, failed
 
