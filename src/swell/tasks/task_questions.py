@@ -825,6 +825,17 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediEdaExecutable = QuestionList(
+        list_name="RunJediEdaExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveObsDiags = QuestionList(
         list_name="SaveObsDiags",
         questions=[

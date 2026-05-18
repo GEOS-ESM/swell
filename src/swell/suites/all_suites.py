@@ -56,7 +56,8 @@ def construct_suite_enum():
                 suite_container = getattr(
                         import_module(f'swell.suites.{suite}.suite_config'), 'SuiteConfig')
                 suite_configs = suite_container.get_all()
-
+                print ( f'nail :  suite_configs = {suite_configs}' )
+                
                 for config in suite_configs:
                     enum_dict[format_config_name(config)] = getattr(suite_container, config)
                     config_suite_map[format_config_name(config)] = suite
@@ -67,9 +68,17 @@ def construct_suite_enum():
         # Set the map dictionary to a hidden attribute
         enum_dict['__config_suite_map__'] = config_suite_map
 
+        print ( f'config_suite_map = {config_suite_map} /n' )
+        print ( f'suite_config_enum = {suite_config_enum} /n' )
+        print ( f'suite_config_enum.__name__ = {suite_config_enum.__name__} /n')
+
+        
         # Override with manually specified keys in enum
         for item in suite_config_enum:
             enum_dict[item.name] = item.value
+            print ( f' item.name, item.value' )
+            print ( f' {item.name}, {item.value}' )            
+
 
         # Build the enum
         enum_cls = Enum(suite_config_enum.__name__, enum_dict)
