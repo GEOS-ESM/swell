@@ -821,7 +821,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlats(),
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
-            qd.saber_central_block(),
             qd.vertical_resolution()
         ]
     )
