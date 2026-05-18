@@ -1,0 +1,6 @@
+# Data availability period (for reference only):
+# time_begin: '2019-01-01T00:00:00Z'
+# time_end: '2999-12-31T23:59:59Z'
+
+retrieval_method: 'cp'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_saral/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_saral.nc'
