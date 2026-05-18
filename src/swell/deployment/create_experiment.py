@@ -15,7 +15,7 @@ import os
 import shutil
 import sys
 from ruamel.yaml import YAML
-from typing import Union, Optional
+from typing import Optional
 
 from swell.suites.all_suites import AllSuites
 from swell.deployment.prepare_config_and_suite.prepare_config_and_suite import \
@@ -74,7 +74,7 @@ def prepare_config(
     suite_config: str,
     method: str,
     platform: str,
-    override: Union[dict, str, None],
+    override: dict,
     advanced: bool,
     slurm: str
 ) -> str:
@@ -165,7 +165,8 @@ def prepare_config(
 
     # Register the experiment in R2D2
     # -------------------------------
-    if 'r2d2_experiment_id' in experiment_dict:
+    if 'r2d2_experiment_id' in experiment_dict and 'skip_r2d2' in experiment_dict \
+            and not experiment_dict['skip_r2d2']:
 
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
@@ -219,9 +220,10 @@ def create_experiment_directory(
     suite_config: str,
     method: str,
     platform: str,
-    override: str,
+    override: dict,
     advanced: bool,
-    slurm: Optional[str]
+    slurm: str | None,
+    skip_r2d2: bool
 ) -> None:
 
     # Get the base name of the suite
@@ -231,6 +233,13 @@ def create_experiment_directory(
     # Create a logger
     # ---------------
     logger = get_logger('SwellCreateExperiment')
+
+    # Specify whether to skip registering and storing in R2D2
+    # -------------------------------------------------------
+    if skip_r2d2:
+
+        # Only override this if it is true, otherwise let the suite decide
+        override['skip_r2d2'] = skip_r2d2
 
     # Call the experiment config and suite generation
     # ------------------------------------------------

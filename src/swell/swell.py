@@ -20,6 +20,7 @@ from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import AllSuites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.utilities.suite_utils import read_override_file
 
 
 # --------------------------------------------------------------------------------------------------
@@ -82,6 +83,8 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
+skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -95,13 +98,15 @@ or for task-model combinations.
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def create(
     suite: str,
     input_method: str,
     platform: str,
     override: Union[dict, str, None],
     advanced: bool,
-    slurm: str
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Create a new experiment
@@ -113,8 +118,12 @@ def create(
 
     """
 
+    # Read override file
+    override_dict = read_override_file(override)
+
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite, input_method, platform, override_dict,
+                                advanced, slurm, skip_r2d2)
 
 
 # --------------------------------------------------------------------------------------------------

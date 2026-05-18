@@ -11,19 +11,30 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 
-def stage(template_dict: Mapping) -> Mapping:
+def geometry_inner(template_dict: Mapping) -> Mapping:
+
+    npx_proc = template_dict['npx_proc']
+    npy_proc = template_dict['npy_proc']
+
+    npx = template_dict['npx']
+    npy = template_dict['npy']
+
+    vertical_resolution = template_dict['vertical_resolution']
 
     cycle_dir = template_dict['cycle_dir']
-    swell_static_files = template_dict['swell_static_files']
 
-    stage = {
-        'copy_files': {
-            'directories': [
-                [f'{swell_static_files}/jedi/interfaces/geos_cf/namelists/*', f'{cycle_dir}/']
-            ]
-        }
+    geometry_inner = {
+        'fms initialization': {
+            'namelist filename': f'{cycle_dir}/fmsmpp.nml',
+            'field table filename': f'{cycle_dir}/field_table_gmao'
+        },
+        'akbk': f'{cycle_dir}/akbk{vertical_resolution}.nc4',
+        'layout': [npx_proc, npy_proc],
+        'npx': npx,
+        'npy': npy,
+        'npz': vertical_resolution
     }
 
-    return stage
+    return geometry_inner
 
 # --------------------------------------------------------------------------------------------------
