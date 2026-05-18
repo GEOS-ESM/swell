@@ -13,7 +13,7 @@ datasets:
 
 
 # Convert NO2 column from mol m-2 to 1e-15 molec cm-2 for plotting.
-{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tempo_no2_total', 'tropomi_s5p_no2_tropo', 'tropomi_s5p_no2_total'] and 'nitrogendioxideColumn' in simulated_variables %}
+{% set convert_no2_column = instrument in ['tempo_no2_tropo', 'tempo_no2_total', 'tropomi_s5p_no2_tropo', 'tropomi_s5p_no2_total'] and ('nitrogendioxideColumn' in simulated_variables or 'nitrogendioxideTotal' in simulated_variables) %}
 {% set no2_column_conversion = 60221.4076 %}
 {% set no2_column_units = '1e-15 molec cm-2' %}
 {% set no2_column_vmin = 0 %}
