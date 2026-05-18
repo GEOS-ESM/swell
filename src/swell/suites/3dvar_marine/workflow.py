@@ -112,7 +112,7 @@ template_str = '''
 
 
 @workflows.register('3dvar_marine')
-class Workflow_3dvar(CylcWorkflow):
+class Workflow_3dvar_marine(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
