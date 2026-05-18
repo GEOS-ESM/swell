@@ -2,5 +2,5 @@
 # time_begin: '2023-01-01T00:00:00Z'
 # time_end: '2024-12-31T23:59:59Z'
 
-retrieval_method: 'cp'
+acquisition_method: 'cp'
 cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/gdas_obs/gdas_YYYY/gdas.YYYYMMDD/HH/ocean/insitu/gdas.tHHz.insitu_temp_profile_tesac.nc'
