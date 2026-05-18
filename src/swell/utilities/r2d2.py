@@ -12,11 +12,20 @@ from ruamel.yaml import YAML
 import random
 import subprocess
 
-from swell.swell_path import get_swell_path
-from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger
 
 # --------------------------------------------------------------------------------------------------
+# R2D2 Model Name Mapping
+# --------------------------------------------------------------------------------------------------
+# To add a new model:
+#   1. Register the model in R2D2 (with r2d2.register_model())
+#   2. Add it to the dictionary below
+
+R2D2_MODEL_MAP = {
+    'geos_atmosphere': ['geos'],
+    'geos_marine': ['mom6', 'cice6'],
+    'geos_cf': ['geos_cf'],
+}
 
 # Platform-specific R2D2 module config
 _R2D2_MODULE_CONFIG = {
@@ -65,47 +74,28 @@ def load_r2d2_module(logger: Logger, platform: str) -> None:
 # ----------------------------------------------------------------------------------------------
 
 
-def create_r2d2_config(
-    logger: Logger,
-    platform: str,
-    cycle_dir: str,
-    r2d2_local_path: str
-) -> None:
+def get_r2d2_models(swell_model):
+    """Returns list of all R2D2 model names."""
+    models = R2D2_MODEL_MAP.get(swell_model, [swell_model])
+    return models if isinstance(models, list) else [models]
 
-    # Load R2D2 v3 credentials from ~/.swell/r2d2_credentials.yaml
-    # -----------------------------------------------------------
-    load_r2d2_credentials(logger, platform)
 
-    # R2D2 config file that will be created
-    r2d2_config_file = os.path.join(cycle_dir, 'r2d2_config.yaml')
+def get_r2d2_model_name(swell_model):
+    """Returns the first R2D2 model name."""
+    return get_r2d2_models(swell_model)[0]
 
-    # Set the environment variable R2D2_CONFIG
-    os.environ["R2D2_CONFIG"] = r2d2_config_file
 
-    # If the file already exists then return
-    if os.path.isfile(r2d2_config_file):
-        return
-
-    # Read R2D2 config file template that will be read
-    r2d2_config_file_template = os.path.join(get_swell_path(), 'deployment', 'platforms', platform,
-                                             'r2d2_config.yaml')
-
-    with open(r2d2_config_file_template, 'r') as f:
-        r2d2_config_file_template_str = f.read()
-
-    # Create a dictionary containing r2d2_local_path
-    r2d2_config_dict = {'r2d2_local_path': r2d2_local_path}
-
-    # Replace the template with the dictionary
-    r2d2_config_file_template_str = template_string_jinja2(logger, r2d2_config_file_template_str,
-                                                           r2d2_config_dict)
-
-    # Expand environment variables in templated file
-    r2d2_config_file_template_str = os.path.expandvars(r2d2_config_file_template_str)
-
-    # Write the config file
-    with open(r2d2_config_file, 'w') as f:
-        f.write(r2d2_config_file_template_str)
+# Lifetime is set when registering an experiment with r2d2.register_experiment(),
+# All data stored under an experiment inherits its lifetime.
+#
+# Valid values:
+#   - 'debug':       Short-term
+#   - 'science':     Medium-term
+#   - 'publication': Long-term
+#   - 'release':     Permanent
+#
+# Ex: r2d2.register_experiment(name='exp_name', ..., lifetime='science')
+# --------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------------------------------
 
@@ -210,6 +200,15 @@ def load_r2d2_credentials(
     elif r2d2_compiler and 'R2D2_COMPILER' not in os.environ:
         os.environ['R2D2_COMPILER'] = r2d2_compiler
         logger.info(f"Set R2D2_COMPILER={r2d2_compiler} from platform configuration")
+
+    # Set custom server connection (only needed for non-JCSDA servers)
+    if 'server_host' in credentials and 'R2D2_SERVER_HOST' not in os.environ:
+        os.environ['R2D2_SERVER_HOST'] = credentials['server_host']
+        logger.info(f"Set R2D2_SERVER_HOST={credentials['server_host']} from credentials file")
+
+    if 'server_port' in credentials and 'R2D2_SERVER_PORT' not in os.environ:
+        os.environ['R2D2_SERVER_PORT'] = str(credentials['server_port'])
+        logger.info(f"Set R2D2_SERVER_PORT={credentials['server_port']} from credentials file")
 
     logger.info("R2D2 v3 credentials loaded successfully")
 

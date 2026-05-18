@@ -15,20 +15,10 @@ from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.datetime_util import datetime_formats
-from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
+from swell.utilities.r2d2 import load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------
-
-
-r2d2_model_dict = {
-    'geos_atmosphere': 'geos',
-    'geos_marine': 'mom6',
-    'geos_cf': 'geos_cf',
-}
-
-# --------------------------------------------------------------------------------------------------
-
 
 class SaveForecast(taskBase):
 
@@ -60,7 +50,9 @@ class SaveForecast(taskBase):
         # ---------------------
         load_r2d2_credentials(self.logger, self.platform())
 
-        if self.window_type == '4D' or 'fgat' in self.suite_name():
+        is_4d = self.window_type == '4D' or 'fgat' in self.suite_name()
+
+        if is_4d:
             self.background_frequency = self.config.background_frequency()
 
         self.local_background_time, self.local_background_time_dto = self.da_window_params.local_background_time(
@@ -69,10 +61,6 @@ class SaveForecast(taskBase):
             dto=True)
 
         analysis_time_iso = self.da_window_params.analysis_time_iso()
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), self.r2d2_local_path)
 
         # Populate jedi_rendering template dictionary before rendering
         # (mirrors run_jedi_variational_executable.py)
@@ -86,7 +74,7 @@ class SaveForecast(taskBase):
         self.jedi_rendering.add_key('horizontal_resolution', self.horizontal_resolution)
         self.jedi_rendering.add_key('analysis_time_iso', analysis_time_iso)
 
-        if self.window_type == '4D' or 'fgat' in self.suite_name():
+        if is_4d:
             self.jedi_rendering.add_key('background_frequency', self.background_frequency)
 
         # Render r2d2 interface dict once, shared by all store methods
@@ -98,23 +86,24 @@ class SaveForecast(taskBase):
         model_component = self.get_model()
 
         if model_component == 'geos_atmosphere':
-            if self.window_type == '4D' or 'fgat' in self.suite_name():
+            if is_4d:
                 self.store_atmosphere_4d()
             else:
                 self.store_atmosphere_3d()
 
         elif model_component == 'geos_marine':
-            if self.window_type == '4D' or 'fgat' in self.suite_name():
-                self.store_mom6_4d()
-                if 'cice6' in self.marine_models:
-                    self.store_cice6_4d()
-            else:
-                self.store_mom6_3d()
-                if 'cice6' in self.marine_models:
-                    self.store_cice6_3d()
+            marine_model_configs = [('mom6', 'ocn_filename', 'MOM.res')]
+            if 'cice6' in self.marine_models:
+                marine_model_configs.append(('cice6', 'ice_filename', 'cice.res'))
+
+            for model_name, filename_key, file_type in marine_model_configs:
+                if is_4d:
+                    self._store_marine_4d(model_name, filename_key, file_type)
+                else:
+                    self._store_fc_dict(model_name, self.local_background_time_dto, step='PT0H')
 
         elif model_component == 'geos_cf':
-            if self.window_type == '4D' or 'fgat' in self.suite_name():
+            if is_4d:
                 self.store_cf_4d()
             else:
                 self.store_cf_3d()
@@ -185,6 +174,8 @@ class SaveForecast(taskBase):
         """
 
         for fc in self.r2d2_dict['store']['fc']:
+            if fc.get('r2d2_model') != model_name:
+                continue
             file_type = fc['file_type']
             source_file = bkg_dto.strftime(fc['filename'])
             self._store_forecast(model_name, bkg_dto, source_file, file_type, step)
@@ -210,29 +201,29 @@ class SaveForecast(taskBase):
         self.logger.abort('Storing the window-begin atmospheric forecast is not ready yet.')
 
     # ----------------------------------------------------------------------------------------------
-    # Marine (MOM6) store methods
+    # Marine store methods
     # ----------------------------------------------------------------------------------------------
 
-    def store_mom6_3d(self) -> None:
-        """Store a single MOM6 ocean forecast at the middle of a 3D window."""
+    def _store_marine_4d(self, model_name: str, filename_key: str, file_type: str) -> None:
+        """Store marine forecasts across a 4D (or FGAT) window for one model component.
 
-        self._store_fc_dict(r2d2_model_dict['geos_marine'], self.local_background_time_dto, step='PT0H')
+        Stores the window-begin forecast from r2d2_dict and then each subsequent
+        state file from states_generator at its own exact valid datetime.
 
-    # ----------------------------------------------------------------------------------------------
-
-    def store_mom6_4d(self) -> None:
-        """Store MOM6 ocean forecasts across a 4D (or FGAT) window.
-
-        Stores the window-begin forecast (from r2d2_dict['store']['fc']) and then
-        each subsequent state file enumerated by states_generator, each at its own
-        exact valid datetime.
+        Parameters
+        ----------
+        model_name : str
+            R2D2 model identifier (e.g. 'mom6', 'cice6').
+        filename_key : str
+            Key in the states_generator dict for the source filename (e.g. 'ocn_filename').
+        file_type : str
+            R2D2 file_type label (e.g. 'MOM.res', 'cice.res').
         """
 
         # Store the window-begin forecast defined in the r2d2 dict (step = PT0H)
-        self._store_fc_dict(r2d2_model_dict['geos_marine'], self.local_background_time_dto, step='PT0H')
+        self._store_fc_dict(model_name, self.local_background_time_dto, step='PT0H')
 
         # Store subsequent state forecasts from states_generator
-        # ocn_filename format: "ocn.fc.<window_begin_iso>.<step>.nc" — step embedded in filename
         states = self.geos.states_generator(
             self.background_frequency, self.window_length,
             self.window_begin_iso, self.get_model(), self.marine_models)
@@ -240,42 +231,8 @@ class SaveForecast(taskBase):
         for state in states:
             state_dto = dt.strptime(state['date'], datetime_formats['iso_format'])
             step = isodate.duration_isoformat(state_dto - self.local_background_time_dto)
-            source_file = os.path.join(self.cycle_dir(), state['ocn_filename'])
-            self._store_forecast(r2d2_model_dict['geos_marine'], state_dto,
-                                  source_file, 'MOM.res', step=step)
-
-    # ----------------------------------------------------------------------------------------------
-    # Marine (CICE6) store methods
-    # ----------------------------------------------------------------------------------------------
-
-    def store_cice6_3d(self) -> None:
-        """Store a single CICE6 sea-ice forecast at the middle of a 3D window."""
-
-        self._store_fc_dict('cice6', self.local_background_time_dto, step='PT0H')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def store_cice6_4d(self) -> None:
-        """Store CICE6 sea-ice forecasts across a 4D (or FGAT) window.
-
-        Mirrors store_mom6_4d: stores the window-begin forecast from r2d2_dict and
-        then each subsequent state file from states_generator at its own valid datetime.
-        """
-
-        # Store the window-begin forecast defined in the r2d2 dict (step = PT0H)
-        self._store_fc_dict('cice6', self.local_background_time_dto, step='PT0H')
-
-        # Store subsequent state forecasts from states_generator
-        # ice_filename format: "ice.fc.<window_begin_iso>.<step>.nc" — step embedded in filename
-        states = self.geos.states_generator(
-            self.background_frequency, self.window_length,
-            self.window_begin_iso, self.get_model(), self.marine_models)
-
-        for state in states:
-            state_dto = dt.strptime(state['date'], datetime_formats['iso_format'])
-            step = isodate.duration_isoformat(state_dto - self.local_background_time_dto)
-            source_file = os.path.join(self.cycle_dir(), state['ice_filename'])
-            self._store_forecast('cice6', state_dto, source_file, 'cice.res', step=step)
+            source_file = os.path.join(self.cycle_dir(), state[filename_key])
+            self._store_forecast(model_name, state_dto, source_file, file_type, step=step)
 
     # ----------------------------------------------------------------------------------------------
     # GEOS-CF store methods

@@ -1,0 +1,175 @@
+bufr:
+  subsets:
+    - NC005080
+    - NC005081
+
+  variables:
+    # MetaData
+    timestamp:
+      datetime:
+        year: "*/YEAR"
+        month: "*/MNTH"
+        day: "*/DAYS"
+        hour: "*/HOUR"
+        minute: "*/MINU"
+        second: "*/SECO"
+
+    latitude:
+      # [NESDIS, EUMETSAT]
+      query: "[*/CLAT, */CLATH]"
+
+    longitude:
+      # [NESDIS, EUMETSAT]
+      query: "[*/CLON, */CLONH]"
+
+    satelliteId:
+      query: "*/SAID"
+
+    satelliteZenithAngle:
+      query: "*/SAZA"
+
+    sensorCentralFrequency:
+      query: "*/SCCF"
+      type: float
+
+    pressure:
+      # [NESDIS, EUMETSAT]
+      query: "[*/PRLC, */PRLC[1]]"
+      type: float
+
+    # Processing Center
+    dataProviderOrigin:
+      # [EUMETSAT, NESDIS] - ordered to provide unique search term first
+      query: "[*/OGCE[1], */OGCE]"
+    
+    # Generating Application - contains multiple types
+    generatingApplication:
+      # [NESDIS, EUMETSAT]
+      query: "[*/GQCPRMS/GNAP, */AMVQIC/GNAPS]"
+
+    # Quality Information - contains multiple types
+    qualityInformation:
+      # [NESDIS, EUMETSAT]
+      query: "[*/GQCPRMS/PCCF, */AMVQIC/PCCF]"
+      type: float
+
+    # Wind Retrieval Method Information - Computation 
+    windComputationMethod:
+      query: '*/SWCM'
+
+    # ObsValue - Wind Direction
+    windDirection:
+      query: '*/WDIR'
+      type: float
+
+    # ObsValue - Wind Speed
+    windSpeed:
+      query: '*/WSPD'
+
+  splits:
+    satId:
+      category:
+        variable: satelliteId
+        map:
+          _3: metop-b
+          _4: metop-a
+          _5: metop-c
+          _206: n15
+          _209: n18
+          _223: n19
+
+encoder:
+  globals:
+    - name: "description"
+      type: string
+      value: "Atmospheric Motion Vectors (AMVs) derived from AVHRR using longwave IR (LWIR) spectral band"
+
+    - name: "platformCommonName"
+      type: string
+      value: "EUMETSAT MetOp and NESDIS NOAA series"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "Low-Earth Orbiting Operational Satellites - MetOp and NOAA series"
+
+    - name: "sensorCommonName"
+      type: string
+      value: "AVHRR"
+
+    - name: "sensorLongDescription"
+      type: string
+      value: "Advanced Very High Resolution Radiometer with 6-channel radiometer covering VIS, NIR, SWIR, MWIR and TIR; cross-scanning"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centres for Environmental Prediction (NCEP))"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP BUFR Dump - satwnd (before 2023): NC005080 (NOAA, MetOp); satwnd(after 2023): NC005080 (NOAA), NC005081 (MetOp)"
+
+    - name: "processingLevel"
+      type: string
+      value: "Level-2"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+
+    # MetaData 
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Datetime"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degrees_north"
+      range: [ -90, 90 ]
+
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degrees_east"
+      range: [ -180, 180 ]
+
+    - name: "MetaData/satelliteIdentifier"
+      source: variables/satelliteId
+      longName: "Satellite Identifier"
+
+    - name: "MetaData/satelliteZenithAngle"
+      source: variables/satelliteZenithAngle
+      longName: "Satellite Zenith Angle"
+      units: "degree"
+      range: [ 0, 90 ]
+
+    - name: "MetaData/sensorCentralFrequency"
+      source: variables/sensorCentralFrequency
+      longName: "Satellite Channel Center Frequency"
+      units: "Hz"
+
+    - name: "MetaData/dataProviderOrigin"
+      source: variables/dataProviderOrigin
+      longName: "Identification of Originating/Generating Center"
+
+    - name: "MetaData/windComputationMethod"
+      source: variables/windComputationMethod
+      longName: "Satellite-derived Wind Computation Method"
+
+    - name: "MetaData/pressure"
+      source: variables/pressure
+      longName: "Pressure"
+      units: "Pa"
+
+    - name: "ObsValue/windDirection"
+      source: variables/windDirection
+      longName: "Wind Direction"
+      units: "degree"
+
+    - name: "ObsValue/windSpeed"
+      source: variables/windSpeed
+      longName: "Wind Speed"
+      units: "m s-1"

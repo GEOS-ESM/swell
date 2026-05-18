@@ -12,16 +12,17 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_cube_mean_output(template_dict: Mapping) -> Mapping:
+def ensemble_latlon_prior_mean_output(template_dict: Mapping) -> Mapping:
 
-    ensemble_cube_mean_output = {
-        'filetype': 'cube sphere history',
-        'provider': 'geos',
+    ensemble_latlon_prior_mean_output = {
+        'filetype': 'auxgrid',
+        'gridtype': 'latlon',
         'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.ensemblevariance.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'filename': 'geos.prior.mean.',
         'field io names': field_io_names_ensemble
     }
 
-    return ensemble_cube_mean_output
+    return ensemble_latlon_prior_mean_output
+
 
 # --------------------------------------------------------------------------------------------------
