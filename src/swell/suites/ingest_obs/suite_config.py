@@ -76,4 +76,3 @@ ingest_obs_cf = QuestionList(
 suite_configs.register(suite_name, 'ingest_obs_cf', ingest_obs_cf)
 
 # --------------------------------------------------------------------------------------------------
-

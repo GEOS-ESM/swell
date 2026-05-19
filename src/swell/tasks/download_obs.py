@@ -40,6 +40,7 @@ class Setup(TaskSetup):
 
 # --------------------------------------------------------------------------------------------------
 
+
 class DownloadObs(taskBase):
     """Download raw observation files from a remote HTTPS server.
 

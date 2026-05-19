@@ -69,7 +69,7 @@ class download_convert_pipeline(SuiteQuestion):
                    "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
     widget_type: WType = WType.BOOLEAN
 
-# --------------------------------------------------------------------------------------------------  
+# --------------------------------------------------------------------------------------------------
 
 
 @dataclass
