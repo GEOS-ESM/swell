@@ -38,3 +38,14 @@ def read_override_file(override_path: str | None) -> dict:
             return yaml.load(f)
 
 # --------------------------------------------------------------------------------------------------
+
+def read_override_file(override_path: str | None) -> dict:
+
+    if override_path is None:
+        return {}
+    else:
+        yaml = YAML(typ='safe')
+        with open(override_path, 'r') as f:
+            return yaml.load(f)
+
+# --------------------------------------------------------------------------------------------------

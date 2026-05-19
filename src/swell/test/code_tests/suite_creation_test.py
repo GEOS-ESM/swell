@@ -66,6 +66,6 @@ class SuiteCreationTest(unittest.TestCase):
 
         if 'defer_to_platform' in experiment_yaml_str:
             raise AssertionError(f'Improperly filled template for {suite}, `defer_to_platform`'
-                                 'present in experiment.yaml')
+                                 'present in experiment yaml')
 
 # --------------------------------------------------------------------------------------------------

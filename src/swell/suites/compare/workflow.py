@@ -44,9 +44,9 @@ template_str = '''
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
             JediLogComparison-{{model_component}}?
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}}
-            JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => comparison_fail
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -95,6 +95,7 @@ class Workflow_compare(CylcWorkflow):
                 self.experiment_dict['models'][model]['number_of_iterations'] = num_of_iterations
 
         self.tasks.append(ta.root())
+        self.tasks.append(ta.PublishComparisons())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.EvaComparisonObservations(model=model))

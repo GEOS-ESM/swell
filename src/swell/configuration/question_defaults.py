@@ -61,6 +61,18 @@ class cycling_varbc(SuiteQuestion):
 
 
 @dataclass
+class download_convert_pipeline(SuiteQuestion):
+    default_value: bool = False
+    question_name: str = "download_convert_pipeline"
+    ask_question: bool = False
+    prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
+                   "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+    widget_type: WType = WType.BOOLEAN
+
+# --------------------------------------------------------------------------------------------------  
+
+
+@dataclass
 class email_address(SuiteQuestion):
     default_value: str = "defer_to_user"
     question_name: str = "email_address"
@@ -436,6 +448,21 @@ class comparison_log_type(TaskQuestion):
         "all_models"
     ])
     prompt: str = "Provide the log naming convention (e.g. 'variational', 'fgat')."
+    widget_type: WType = WType.STRING
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class converter_path(TaskQuestion):
+    default_value: str = ""
+    question_name: str = "converter_path"
+    ask_question: bool = True
+    models: List[str] = mutable_field([
+        "all_models"
+    ])
+    prompt: str = ("Path to directory containing ioda-converter scripts"
+                   " (leave blank to use jedi_bin)")
     widget_type: WType = WType.STRING
 
 # --------------------------------------------------------------------------------------------------
@@ -1300,6 +1327,20 @@ class obs_thinning_rej_fraction(TaskQuestion):
     ])
     prompt: str = "What is the rejection fraction for obs thinning?"
     widget_type: WType = WType.FLOAT
+
+# --------------------------------------------------------------------------------------------------
+
+
+@dataclass
+class obs_to_download(TaskQuestion):
+    default_value: list = mutable_field([])
+    question_name: str = "obs_to_download"
+    ask_question: bool = True
+    models: List[str] = mutable_field([
+        "all_models"
+    ])
+    prompt: str = "Which observations do you want to download from remote servers?"
+    widget_type: WType = WType.STRING_CHECK_LIST
 
 # --------------------------------------------------------------------------------------------------
 
