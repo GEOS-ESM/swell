@@ -28,7 +28,7 @@ class eda3D(OopsConfig):
                 'background': self.interface_model('background'),
                 'background error': self.interface_model('background_error_hybrid'),
                 'observations': {
-                    'obs perturbations': true,
+                    'obs perturbations': True,
                     'get values': self.interface_model('getvalues'),
                     'observers': self.special_observations(),
                 }
@@ -63,7 +63,16 @@ class eda3D(OopsConfig):
             oops['final']['increment'] = {'geometry': self.interface_model('geometry'),
                                           'output': self.interface_model('increment_cs')}
 
+        # === FORCE | BLOCK STYLE ONLY FOR 'background error' ===
+        fields_to_make_literal = ['background error']
+
+        # Use ruamel.yaml's native literal string wrapper
+        from ruamel.yaml.scalarstring import LiteralScalarString
+
+        # Apply the special type only to the chosen fields
+        for field in fields_to_make_literal:
+            section = oops.get('cost function', {})
+            if field in section and isinstance(section[field], str):
+                section[field] = LiteralScalarString(section[field].strip())
+
         return oops
-
-
-# --------------------------------------------------------------------------------------------------

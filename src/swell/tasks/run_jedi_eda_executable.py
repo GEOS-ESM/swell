@@ -25,7 +25,7 @@ class RunJediEdaExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'variational'
+        jedi_application = 'eda'
 
         # Parse configuration
         # -------------------
@@ -114,11 +114,11 @@ class RunJediEdaExecutable(taskBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_log.log')
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -143,7 +143,7 @@ class RunJediEdaExecutable(taskBase):
 
         # Jedi executable name
         # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}{window_type}']
+        jedi_executable = model_component_meta['executables'][f'variational{window_type}']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
