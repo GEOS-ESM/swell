@@ -206,9 +206,8 @@ class IngestObs(taskBase):
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
-                    file_extension='nc4',
-                    # file_extension=os.path.splitext(
-                    #     target_file)[1][1:],  # 'nc' from '.nc'
+                    file_extension=os.path.splitext(
+                        target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
                     source_file=target_file,
