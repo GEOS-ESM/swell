@@ -27,15 +27,30 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             ingest_obs,
             sq.marine,
-            qd.start_cycle_point("2021-07-02T06:00:00Z"),
-            qd.final_cycle_point("2021-07-03T06:00:00Z"),
+            qd.start_cycle_point("2023-07-01T00:00:00Z"),
+            qd.final_cycle_point("2023-07-02T12:00:00Z"),
             qd.model_components(['geos_marine']),
             qd.runahead_limit("P5"),
         ],
         geos_marine=[
             qd.window_length("PT6H"),
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
-            qd.obs_to_ingest(['adt_cryosat2n']),  # List of obs names
+            qd.obs_to_ingest(['adt_cryosat2n',
+                              'adt_jason3n',
+                              'adt_saral',
+                              'adt_sentinel3a',
+                              'adt_sentinel3b',
+                              'adt_sentinel6a',
+                              'adt_swot_nadir',
+                              'insitu_profile_argo',
+                              'insitu_profile_ctd',
+                              'insitu_profile_pirata',
+                              'insitu_profile_rama',
+                              'insitu_profile_tao',
+                              'sss_smapv5',
+                              'sss_smos',
+                              'temp_profile_xbt',
+                              ]),
             qd.dry_run(True),
         ]
     )
