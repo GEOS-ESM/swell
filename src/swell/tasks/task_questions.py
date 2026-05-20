@@ -829,6 +829,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="RunJediEdaExecutable",
         questions=[
             run_jedi_executable,
+            qd.ensemble_num_members(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
         ]

@@ -58,7 +58,7 @@
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
 
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            RunJediEdaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
@@ -69,26 +69,26 @@
             StageJediCycle-{{model_component}}
 
             # Run Jedi variational executable
-            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
+            BuildJediByLinking[^]? | BuildJedi[^]  => RunJediEdaExecutable-{{model_component}}
             CloneJedi[^] => StageJediCycle-{{model_component}}
-            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetEnsembleGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            StageJediCycle-{{model_component}} => RunJediEdaExecutable-{{model_component}}
+            GetEnsembleGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediEdaExecutable-{{model_component}}
             GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediEdaExecutable-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RunJediEdaExecutable-{{model_component}}
 
             # EvaObservations
-            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediEdaExecutable-{{model_component}} => EvaObservations-{{model_component}}
 
             # EvaJediLog
-            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediEdaExecutable-{{model_component}} => EvaJediLog-{{model_component}}
 
             # EvaIncrement
-            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+            RunJediEdaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
 	    {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            RunJediEdaExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
             {% endif %}
 
             # Clean up large files
@@ -157,12 +157,12 @@
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
-    [[RunJediVariationalExecutable-{{model_component}}]]
-        script = "swell task RunJediVariationalExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediEdaExecutable-{{model_component}}]]
+        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediVariationalExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 

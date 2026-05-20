@@ -5,10 +5,12 @@
 # which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
 
 # --------------------------------------------------------------------------------------------------
-import yaml
+from ruamel.yaml import YAML
 from jinja2 import Environment
 ##from typing import Mapping
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
+    field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
@@ -17,7 +19,7 @@ state_variables_to_inverse = [
     'northward_wind',
     'air_temperature',
     'air_pressure_at_surface',
-    'air_pressure_levels',
+#    'air_pressure_levels',
     'water_vapor_mixing_ratio_wrt_moist_air',
     'cloud_liquid_ice',
     'cloud_liquid_water',
@@ -44,7 +46,7 @@ components:
       read:
         gsi akbk: ./fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4
         gsi error covariance file: ./fv3-jedi/gsibec/gsi-coeffs-gmao-global-l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nc4
-        gsi berror namelist file: ./fv3-jedi/gsibec/{gsibec_configuration}_l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nml
+        gsi berror namelist file: ./fv3-jedi/gsibec/{{gsibec_configuration}}_l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nml
         processor layout x direction: {{gsibec_npx_proc}}
         processor layout y direction: {{gsibec_npy_proc}}
         debugging mode: false
@@ -63,12 +65,13 @@ components:
         local interpolator type: oops unstructured grid interpolator
       inverse interpolator:
         local interpolator type: oops unstructured grid interpolator
-      state variables to inverse: &id001
-        {{ state_variables_to_inverse | tojson }}
+      state variables to inverse: &bvar
+        {%- for var in state_variables_to_inverse %}
+          - {{ var }}
+        {%- endfor %}
     linear variable change:
       linear variable change name: Control2Analysis
-      input variables: *id001
-      output variables: {{analysis_variables}}
+      input variables: *bvar
   weight:
     value: 0.1
 
@@ -79,19 +82,18 @@ components:
         datetime: {{ local_background_time_iso }}
         filetype: cube sphere history
         provider: geos
-        state variables: *id001
+        state variables: *bvar
         datapath: ./ebkg/mem%mem%
-        filename: ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4
-        field io names: *id003
+        filename: geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4
         max allowable geometry difference: 1.e-4
       pattern: '%mem%'
-      nmembers: {{ ensemble_num_member }}
+      nmembers: {{ ensemble_num_members }}
       zero padding: 3
     localization:
       localization method: SABER
       saber central block:
         saber block name: BUMP_NICAS
-        active variables: *id001
+        active variables: *bvar
         read:
           general:
             universe length-scale: 2500.0e3
@@ -185,8 +187,7 @@ components:
               value: 1.23
     linear variable change:
       linear variable change name: Control2Analysis
-      input variables: *id001
-      output variables: {{ analysis_variables }}
+      input variables: *bvar
   weight:
     value: 0.9
 """
@@ -195,7 +196,8 @@ components:
 def background_error_hybrid(template_dict: Mapping) -> Mapping:
     render_context = {
         **template_dict,
-        'state_variables_to_inverse': state_variables_to_inverse
+        'state_variables_to_inverse': state_variables_to_inverse,
+        'field_io_names': field_io_names
     }
 
     # initialize Jinja and render the template
@@ -204,12 +206,16 @@ def background_error_hybrid(template_dict: Mapping) -> Mapping:
 
     # pass the combined dictionary here
     rendered_yaml_string = template.render(**render_context)
+    # Use ruamel.yaml to load the string instead of standard pyyaml
+    ruamel_yaml = YAML()
+    background_error = ruamel_yaml.load(rendered_yaml_string)
+    cov_template = background_error['components'][1]['covariance']['members from template']['template']
+    cov_template['field io names'] = field_io_names
+    a = background_error['components'][0]['covariance']['linear variable change']
+    a['output variables'] = template_dict['analysis_variables']
+    a = background_error['components'][1]['covariance']['linear variable change']
+    a['output variables'] = template_dict['analysis_variables']
 
-#    # 4. Parse the rendered YAML string back into a Python dictionary
-#    background_error = yaml.safe_load(rendered_yaml_string)
-#    return background_error
-#    print( f'rendered_yaml_string = ' )
-#    print( f'{rendered_yaml_string}' )    
+    return background_error
 
-    return rendered_yaml_string
 # --------------------------------------------------------------------------------------------------

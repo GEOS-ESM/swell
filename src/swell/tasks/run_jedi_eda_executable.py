@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import copy
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
@@ -59,6 +60,9 @@ class RunJediEdaExecutable(taskBase):
         window_begin = self.da_window_params.window_begin(window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
+        nmember = self.config.ensemble_num_members()
+        imember = self.get_ensemble_imember()
+###        print( f' imember = {imember}' )
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -80,6 +84,8 @@ class RunJediEdaExecutable(taskBase):
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
+        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
+        self.jedi_rendering.add_key('ensemble_imember', imember)
 
         # Geometry
         # --------
@@ -112,9 +118,10 @@ class RunJediEdaExecutable(taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
+
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config.yaml')
+        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config_mem{imember:03d}.yaml')
 
         # Output log file
         # ---------------
@@ -125,6 +132,30 @@ class RunJediEdaExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                                 window_type,
                                                                 jedi_forecast_model)
+
+        # imember: specify yaml
+        # ----------------------------------------------------
+
+        if imember == 1:
+            jedi_config_dict['cost function']['observations'].pop('obs perturbations', None)
+        else:
+            jedi_config_dict['cost function']['observations'].update({'obs perturbations': True})
+
+        for observer in jedi_config_dict['cost function']['observations']['observers']:
+            # Get observation name
+            observation = observer['observation_name']
+            if imember > 1:
+                observer['obs space'].update({'obs perturbations seed': imember})
+                observer['obs error'].update({'obs perturbations amplitude': 0.5})
+            hxout = observer['obs space']['obsdataout']['engine']['obsfile']
+            dir1, fname = os.path.split(hxout)
+            hxout = os.path.join(dir1, f'diag/mem{imember:003d}', fname)
+            observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
+            print (f'hxout = {hxout}')
+
+        for it in jedi_config_dict['variational']['iterations']:
+            it['online diagnostics']['increment']['state component']['filename'] = f'eda.mem{imember:03d}.increment-iter1.'
+        jedi_config_dict['output']['filename'] = f'eda.mem{imember:03d}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False

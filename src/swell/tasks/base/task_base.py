@@ -41,6 +41,7 @@ class taskBase(ABC):
         datetime_input: Optional[str],
         model: str,
         ensemblePacket: Optional[str],
+        imember: Optional[int],
         task_name: str
     ) -> None:
 
@@ -65,6 +66,7 @@ class taskBase(ABC):
         # Keep copy of ensemblePacket
         # ---------------------------
         self.__ensemble_packet__ = ensemblePacket
+        self.__ensemble_imember__ = imember
 
         # Keep copy of model directive
         # ----------------------------
@@ -165,6 +167,11 @@ class taskBase(ABC):
 
     def get_ensemble_packet(self) -> Optional[str]:
         return self.__ensemble_packet__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_ensemble_imember(self) -> int | None:
+        return self.__ensemble_imember__
 
     # ----------------------------------------------------------------------------------------------
 
@@ -274,7 +281,8 @@ class taskFactory():
         config: str,
         datetime: Union[str, dt, None],
         model: str,
-        ensemblePacket: Optional[str]
+        ensemblePacket: Optional[str],
+        imember: Optional[int]
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -303,7 +311,7 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, task)
+        return task_class(config, datetime, model, ensemblePacket, imember, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -334,13 +342,14 @@ def task_wrapper(
     config: str,
     datetime: Union[str, dt, None],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    ensemblePacket: Optional[str],
+    imember: Optional[int]
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
-    task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
+    task_object = creator.create_task(task, config, datetime, model, ensemblePacket, imember)
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 
