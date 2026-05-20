@@ -358,6 +358,10 @@ ioda instrument names:
     full name: TROPOMI tropospheric column CO
     inst type: retrieval
     provider : esa
+  - ioda name: tropomi_s5p_co_total
+    full name: TROPOMI S5P total column CO (NRTI L2)
+    inst type: retrieval
+    provider : esa
   - ioda name: omps_o3_nm_total
     full name: OMPS total column O3 (Nadir Mapper)
     inst type: retrieval

@@ -1,0 +1,26 @@
+# TROPOMI S5P NO2 Tropospheric Column L2 — IODA converter configuration
+# Converter: tropomi_no2_co_nc2ioda.py (must be available in `converter_path`
+#            or in jedi_bundle/build/bin/)
+#
+# Invocation (one call per cycle, all granules passed together):
+#   python3 <jedi_bundle>/build/bin/tropomi_no2_co_nc2ioda.py
+#       -i <granule1.nc> <granule2.nc> ...
+#       -o <cycle_dir>/ioda/tropomi_s5p_no2_tropo/tropomi_s5p_no2_tropo_YYYYMMDDHH.nc
+#       -v no2
+#       -c troposphere
+#       -n 0.0
+#       -q 0.75
+
+# Name of the ioda-converters Python script.
+converter_script: tropomi_no2_co_nc2ioda.py
+
+# Output filename template (must match the source pattern in
+# ingest_observations/tropomi_s5p_no2_tropo.yaml).
+output_filename_template: "tropomi_s5p_no2_tropo_%Y%m%d%H.nc"
+
+# Additional flags passed verbatim to the converter after -i and -o.
+extra_flags:
+  -v: no2           # variable name
+  -c: troposphere   # column type
+  -n: 0.0           # no thinning
+  -q: 0.75          # quality value threshold
