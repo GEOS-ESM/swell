@@ -169,13 +169,10 @@ class DownloadObs(taskBase):
         max_orbit_dur_str = obs_config.get('max_orbit_duration', 'PT0H')
         max_orbit_dur = isodate.parse_duration(max_orbit_dur_str)
 
-        # Extend the search window on both ends:
-        #   - backwards so we catch orbits that started before window_begin
-        #     but still have data inside the window;
-        #   - forwards so we catch orbits that started after window_end
-        #     but whose end time overlaps the tail of the window.
+        # Extend the search window backwards so we catch orbits that started
+        # before window_begin but still have data inside the window.
         search_start = window_begin_dto - max_orbit_dur
-        scan_end = window_end_dto + max_orbit_dur
+        search_end = window_end_dto
 
         hour_slots = self._hour_slots(search_start, search_end)
 
@@ -451,18 +448,19 @@ class DownloadObs(taskBase):
         datetime_field = obs_config.get('filename_datetime_field', 4)
         datetime_fmt = obs_config.get('filename_datetime_format', '%Y%m%dT%H%M%SZ')
 
-        # Extend window backwards (catch early-starting orbits) and forwards
-        # (catch orbits that started after window_end but still overlap it).
+        # Extend window backwards for long-orbit instruments.
         search_start = window_begin_dto - max_orbit_dur
-        scan_end = window_end_dto + max_orbit_dur
+        search_end = window_end_dto
 
-        # Make bounds UTC-aware for comparison against parsed timestamps.
+        # Make both bounds UTC-aware for comparison against parsed timestamps.
         utc = datetime.timezone.utc
         if search_start.tzinfo is None:
             search_start = search_start.replace(tzinfo=utc)
+        if window_begin_dto.tzinfo is None:
+            window_begin_dto = window_begin_dto.replace(tzinfo=utc)
         if window_end_dto.tzinfo is None:
             window_end_dto = window_end_dto.replace(tzinfo=utc)
-        scan_end_utc = scan_end.replace(tzinfo=utc) if scan_end.tzinfo is None else scan_end
+        search_end = window_end_dto
 
         dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
         if not dry_run:
@@ -473,7 +471,7 @@ class DownloadObs(taskBase):
         bucket, _, prefix_template = without_scheme.partition('/')
 
         if dry_run:
-            for day_date in self._day_slots(search_start, scan_end_utc):
+            for day_date in self._day_slots(search_start, search_end):
                 prefix = self._resolve_s3_prefix(prefix_template, day_date)
                 self.logger.info(
                     f'  [DRY RUN] Would list s3://{bucket}/{prefix}')
@@ -496,7 +494,13 @@ class DownloadObs(taskBase):
         downloaded = 0
         failed = 0
 
-        for day_date in self._day_slots(search_start, scan_end_utc):
+        for day_date in self._day_slots(search_start, search_end):
+            prefix = self._resolve_s3_prefix(prefix_template, day_date)
+            self.logger.info(
+                f'  Listing s3://{bucket}/{prefix}')
+
+            try:
+                paginator = s3_client.get_paginator('list_objects_v2')
                 pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
             except (BotoCoreError, ClientError) as exc:
                 self.logger.error(
