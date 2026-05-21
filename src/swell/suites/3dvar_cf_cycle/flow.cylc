@@ -154,11 +154,12 @@
         script = "swell task PrepForecast $config -d $datetime -m {{model_component}}"
 
     [[RunForecast-{{model_component}}]]
-        script = "{{experiment_path}}/run/$datetime/{{model_component}}/gcm_run_geoscf.j"
+        script = "{{experiment_path}}/run/${datetime:0:13}00Z/{{model_component}}/scratch/gcm_run_geoscf.j"
         platform = {{platform}}
         execution time limit = {{scheduling["RunForecast"]["execution_time_limit"]}}
+        [[[job]]]
+            shell = /bin/csh
         [[[directives]]]
-            --output="{{experiment_path}}/run/$datetime/{{model_component}}/gcm_run.log"
         {%- for key, value in scheduling["RunForecast"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
