@@ -1,0 +1,23 @@
+# TROPOMI NO2 Tropospheric Column L2 — IODA converter configuration
+# Converter: tropomi_no2_co_nc2ioda.py
+#            https://github.com/JCSDA-internal/ioda-converters/blob/develop/src/compo/tropomi_no2_co_nc2ioda.py
+#
+# Invocation (one call per cycle, all granules passed together):
+#   python3 <converter_path>/tropomi_no2_co_nc2ioda.py
+#       -i <granule1.nc> <granule2.nc> ...
+#       -o <cycle_dir>/ioda/tropomi_s5p_no2/tropomi_s5p_no2_YYYYMMDDHH.nc
+#       -v no2
+#       -c troposphere
+#       -q 0.75
+#       -n 0.0
+
+converter_script: tropomi_no2_co_nc2ioda.py
+
+output_filename_template: "tropomi_s5p_no2_%Y%m%d%H.nc"
+
+# Additional flags passed verbatim to the converter after -i and -o.
+extra_flags:
+  -v: no2           # variable: nitrogen dioxide (must be lowercase)
+  -c: troposphere   # column type: tropospheric
+  -q: "0.75"        # qa_value threshold (ESA recommendation for NO2)
+  -n: "0.0"         # thinning fraction: 0.0 = no thinning

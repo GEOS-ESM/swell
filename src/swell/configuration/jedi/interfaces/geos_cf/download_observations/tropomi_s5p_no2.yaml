@@ -1,0 +1,28 @@
+# TROPOMI NO2 Tropospheric Column L2 (NRTI) — download configuration
+# Instrument: TROPOMI (TROPOspheric Monitoring Instrument) on Sentinel-5P
+# Product:    S5P NRTI L2 NO2 (near-real-time, tropospheric column)
+# Source:     MEEO public S3 mirror of Copernicus Sentinel-5P data
+#             Bucket: s3://meeo-s5p (AWS eu-central-1, anonymous access)
+#
+# No credentials are required. The bucket is publicly readable.
+#
+# Sentinel-5P NRTI filename convention:
+#   S5P_NRTI_L2__NO2____<start>_<stop>_<orbit>_<collection>_<processor>_<pub>.nc
+#   e.g. S5P_NRTI_L2__NO2____20240101T124959_20240101T143329_32200_03_020601_...nc
+#   Start time is at field index 8 when split by '_'.
+
+retrieval_method: s3_anon
+s3_source: s3://meeo-s5p/NRTI/L2__NO2___/YYYY/MM/DD/
+s3_region: eu-central-1
+
+# Field index (0-based) of the granule start time when the filename is split
+# on '_'. For NRTI NO2: S5P(0)_NRTI(1)_L2(2)__(3)_NO2(4)_(5)_(6)_(7)_<start>(8)
+filename_datetime_field: 8
+
+# Sentinel-5P timestamps do not include a trailing Z; the download task
+# appends one automatically before parsing.
+filename_datetime_format: "%Y%m%dT%H%M%SZ"
+
+# Maximum duration of one TROPOMI orbit pass. Extends the temporal search
+# window backwards to avoid missing granules that started before window_begin.
+max_orbit_duration: PT2H

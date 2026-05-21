@@ -143,6 +143,10 @@ class DownloadObs(taskBase):
             return self._download_obs_s3_secure(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
+        if retrieval_method == 's3_anon':
+            return self._download_obs_s3_anon(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
         if retrieval_method == 'cmr':
             return self._download_obs_cmr(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
@@ -362,6 +366,144 @@ class DownloadObs(taskBase):
 
                     # Include files whose granule start time falls within
                     # the extended search window (search_start..window_end).
+                    if not (search_start <= file_dt <= search_end):
+                        continue
+
+                    dest_path = os.path.join(dest_dir, filename)
+                    if os.path.exists(dest_path):
+                        self.logger.info(
+                            f'  Already exists, skipping: {filename}')
+                        downloaded += 1
+                        continue
+
+                    try:
+                        s3_client.download_file(bucket, key, dest_path)
+                        self.logger.info(f'  Downloaded: {filename}')
+                        downloaded += 1
+                    except (BotoCoreError, ClientError) as exc:
+                        self.logger.error(
+                            f'  Failed to download {filename}: {exc}')
+                        failed += 1
+
+        return downloaded, failed
+
+    def _download_obs_s3_anon(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Download files for one observation type from a publicly-readable S3
+        bucket using anonymous (unsigned) requests — no credentials required.
+
+        Intended for third-party mirrors such as ``s3://meeo-s5p/`` (TROPOMI
+        Sentinel-5P data hosted by MEEO on AWS ``eu-central-1``).
+
+        The ``obs_config`` dict must contain:
+
+        - ``s3_source``: S3 URI template with ``YYYY``, ``MM``, ``DD``
+          placeholders, e.g.
+          ``s3://meeo-s5p/NRTI/L2__NO2___/YYYY/MM/DD/``.
+
+        Optional keys:
+
+        - ``s3_region``: AWS region of the bucket (default ``eu-central-1``).
+        - ``max_orbit_duration``: ISO-8601 duration; extends the search
+          window backwards (default ``PT0H``).
+        - ``filename_datetime_field``: 0-based index of the start-time field
+          when the filename is split on ``_`` (default ``8``, matching NRTI
+          NO2 filenames).
+        - ``filename_datetime_format``: strptime format string for that field
+          (default ``%Y%m%dT%H%M%SZ``).
+
+        Returns ``(n_downloaded, n_failed)``.
+        """
+        try:
+            import boto3
+            from botocore import UNSIGNED
+            from botocore.config import Config as BotocoreConfig
+            from botocore.exceptions import BotoCoreError, ClientError
+        except ImportError:
+            self.logger.abort(
+                "boto3 is required for 's3_anon' retrieval but is not installed. "
+                "Install it with: pip install boto3")
+
+        s3_source_template = obs_config['s3_source']
+        s3_region = obs_config.get('s3_region', 'eu-central-1')
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+        datetime_field = obs_config.get('filename_datetime_field', 8)
+        datetime_fmt = obs_config.get('filename_datetime_format', '%Y%m%dT%H%M%SZ')
+
+        utc = datetime.timezone.utc
+        search_start = window_begin_dto - max_orbit_dur
+        search_end = window_end_dto
+        if search_start.tzinfo is None:
+            search_start = search_start.replace(tzinfo=utc)
+        if window_begin_dto.tzinfo is None:
+            window_begin_dto = window_begin_dto.replace(tzinfo=utc)
+        if window_end_dto.tzinfo is None:
+            window_end_dto = window_end_dto.replace(tzinfo=utc)
+        search_end = window_end_dto
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        if not dry_run:
+            os.makedirs(dest_dir, exist_ok=True)
+
+        without_scheme = s3_source_template[len('s3://'):]
+        bucket, _, prefix_template = without_scheme.partition('/')
+
+        if dry_run:
+            for day_date in self._day_slots(search_start, search_end):
+                prefix = self._resolve_s3_prefix(prefix_template, day_date)
+                self.logger.info(
+                    f'  [DRY RUN] Would list s3://{bucket}/{prefix}')
+            return 0, 0
+
+        s3_client = boto3.client(
+            's3',
+            config=BotocoreConfig(signature_version=UNSIGNED),
+            region_name=s3_region,
+        )
+
+        downloaded = 0
+        failed = 0
+
+        for day_date in self._day_slots(search_start, search_end):
+            prefix = self._resolve_s3_prefix(prefix_template, day_date)
+            self.logger.info(f'  Listing s3://{bucket}/{prefix}')
+
+            try:
+                paginator = s3_client.get_paginator('list_objects_v2')
+                pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
+            except (BotoCoreError, ClientError) as exc:
+                self.logger.error(
+                    f'  Failed to list s3://{bucket}/{prefix}: {exc}')
+                failed += 1
+                continue
+
+            for page in pages:
+                for obj in page.get('Contents', []):
+                    key = obj['Key']
+                    filename = os.path.basename(key)
+
+                    if filename.endswith(('.met', '.dmrpp')):
+                        continue
+
+                    try:
+                        parts = filename.split('_')
+                        ts_str = parts[datetime_field]
+                        if not ts_str.endswith('Z'):
+                            ts_str = ts_str[:15] + 'Z'
+                        file_dt = datetime.datetime.strptime(
+                            ts_str, datetime_fmt).replace(tzinfo=utc)
+                    except (IndexError, ValueError) as exc:
+                        self.logger.warning(
+                            f'  Could not parse timestamp from {filename}: {exc}')
+                        continue
+
                     if not (search_start <= file_dt <= search_end):
                         continue
 

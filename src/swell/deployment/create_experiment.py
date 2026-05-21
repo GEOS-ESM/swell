@@ -85,6 +85,7 @@ def prepare_config(
 
     yaml = YAML()
     yaml.default_flow_style = False
+    yaml.best_width = 4096
 
     # Assert valid method
     # -------------------

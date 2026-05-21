@@ -1,0 +1,26 @@
+# TROPOMI CO Total Column L2 — IODA converter configuration
+# Converter: tropomi_no2_co_nc2ioda.py
+#            https://github.com/JCSDA-internal/ioda-converters/blob/develop/src/compo/tropomi_no2_co_nc2ioda.py
+#
+# Invocation (one call per cycle, all granules passed together):
+#   python3 <converter_path>/tropomi_no2_co_nc2ioda.py
+#       -i <granule1.nc> <granule2.nc> ...
+#       -o <cycle_dir>/ioda/tropomi_s5p_co/tropomi_s5p_co_YYYYMMDDHH.nc
+#       -v co
+#       -c total
+#       -q 0.5
+#       -n 0.0
+#
+# Note: the converter resets -c to 'total' automatically when -v co is used,
+# but we pass it explicitly for clarity.
+
+converter_script: tropomi_no2_co_nc2ioda.py
+
+output_filename_template: "tropomi_s5p_co_%Y%m%d%H.nc"
+
+# Additional flags passed verbatim to the converter after -i and -o.
+extra_flags:
+  -v: co            # variable: carbon monoxide (must be lowercase)
+  -c: total         # column type: total (only valid option for CO)
+  -q: "0.5"         # qa_value threshold (ESA recommendation for CO)
+  -n: "0.0"         # thinning fraction: 0.0 = no thinning
