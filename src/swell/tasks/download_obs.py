@@ -465,8 +465,8 @@ class DownloadObs(taskBase):
     ) -> None:
         """Stream a remote file to ``dest_path`` in 1 MB chunks.
 
-        Verifies the number of bytes written against the Content-Length 
-        in the response header.  If they do not match (truncated download), 
+        Verifies the number of bytes written against the Content-Length
+        in the response header.  If they do not match (truncated download),
         the partial file is deleted and a requests.RequestException is raised
         so the caller can record the failure and the file will be
         re-attempted on the next run.

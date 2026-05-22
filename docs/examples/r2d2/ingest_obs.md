@@ -118,12 +118,20 @@ remote_host: https://snpp-omps.gesdisc.eosdis.nasa.gov
 remote_path_template: /data/SNPP_OMPS_Level2/OMPS_NPP_NMTO3_L2.2/YYYY/JJJ/
 filename_pattern: OMPS-NPP_NMTO3-L2_v2.1_YYYYmMMDDtHH*.h5
 auth_type: earthdata_token
+
+# How far before window_begin to extend the file search.
+# Use this to capture orbit granules that started before the DA window
+# but contain data within it. Set to the maximum granule/orbit duration.
 max_orbit_duration: PT2H
 ```
 
 Supported placeholders in `remote_path_template` and `filename_pattern`:
 `YYYY`, `MM`, `DD`, `JJJ` (day-of-year), `HH`. Use `*` as a wildcard in
 `filename_pattern` where the exact timestamp is not known in advance.
+
+- With `auth_type` set to `earthdata_token`, authentication uses `~/.netrc` and no tokens are stored in the config.
+- Follow the instructions on the NASA Earthdata website [here](https://urs.earthdata.nasa.gov/documentation/for_users/data_access/create_net_rc_file) to create
+- an account and set up the authentication.
 
 ---
 
@@ -159,7 +167,7 @@ machine urs.earthdata.nasa.gov login <username> password <password>
 
 
 
-`DownloadObs` places files in `<cycle_dir>/download/<obs_name>/`.
+`DownloadObs` task places files in `<cycle_dir>/download/<obs_name>/`.
 
 ### Step 4: Create the converter YAML
 
