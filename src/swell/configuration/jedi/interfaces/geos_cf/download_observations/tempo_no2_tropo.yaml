@@ -5,13 +5,11 @@
 #             (Earthdata authentication required in ~/.netrc for
 #              urs.earthdata.nasa.gov)
 #
-# Files are discovered via the NASA CMR API and downloaded from:
+# Granules are discovered via the NASA CMR API and downloaded from:
 #   https://data.asdc.earthdata.nasa.gov/TEMPO/TEMPO_NO2_L2_V03/...
 #
-# Note: for workflows running inside AWS us-west-2, direct S3 access is also
-# available (faster, no CMR query required):
-#   retrieval_method: s3_secure
-#   s3_source: "s3://asdc-prod-protected/TEMPO/TEMPO_NO2_L2_V03/YYYY.MM.DD"
+# Direct S3 access (s3://asdc-prod-protected/...) is blocked outside
+# AWS us-west-2 by ASDC IAM policy; CMR + HTTPS works from any network.
 
 retrieval_method: cmr
 cmr_short_name: TEMPO_NO2_L2

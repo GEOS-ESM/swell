@@ -99,17 +99,25 @@ Same as the direct-copy pipeline, add an entry to `observation_ioda_names.yaml`.
 
 ### Step 3: Create the download YAML
 
-Create `src/swell/configuration/jedi/interfaces/<model>/download_observations/my_obs.yaml`:
+Create `src/swell/configuration/jedi/interfaces/<model>/download_observations/my_obs.yaml`.
+
+The `retrieval_method` key selects how files are discovered and downloaded.
+Two methods are supported:
+
+---
+
+#### `retrieval_method: https` (default)
+
+Scrapes an HTML directory listing from a remote HTTPS server and downloads
+matching files. Use this for datasets served via GES DISC or similar
+directory-listing endpoints.
 
 ```yaml
+retrieval_method: https   # optional — https is the default
 remote_host: https://snpp-omps.gesdisc.eosdis.nasa.gov
 remote_path_template: /data/SNPP_OMPS_Level2/OMPS_NPP_NMTO3_L2.2/YYYY/JJJ/
 filename_pattern: OMPS-NPP_NMTO3-L2_v2.1_YYYYmMMDDtHH*.h5
 auth_type: earthdata_token
-
-# How far before window_begin to extend the file search.
-# Use this to capture orbit granules that started before the DA window
-# but contain data within it. Set to the maximum granule/orbit duration.
 max_orbit_duration: PT2H
 ```
 
@@ -117,11 +125,41 @@ Supported placeholders in `remote_path_template` and `filename_pattern`:
 `YYYY`, `MM`, `DD`, `JJJ` (day-of-year), `HH`. Use `*` as a wildcard in
 `filename_pattern` where the exact timestamp is not known in advance.
 
-With `auth_type` set to `earthdata_token`, Authentication uses `~/.netrc` and no tokens are stored in the config.
-Follow the instructions on the NASA Earthdata website [here](https://urs.earthdata.nasa.gov/documentation/for_users/data_access/create_net_rc_file) to create
-an account and set up the authentication.
+---
 
-`DownloadObs` task places files in `<cycle_dir>/download/<obs_name>/`.
+#### `retrieval_method: cmr`
+
+Queries the [NASA CMR API](https://cmr.earthdata.nasa.gov) to discover
+granule download URLs, then fetches each file over authenticated HTTPS using
+Earthdata credentials from `~/.netrc`.
+
+Use this for NASA ASDC datasets (e.g. TEMPO NO2) where direct S3 access is
+restricted to AWS `us-west-2`. CMR + HTTPS works from any network including
+Discover and other HPC systems.
+
+```yaml
+retrieval_method: cmr
+cmr_short_name: TEMPO_NO2_L2      # CMR collection short name
+cmr_version: V03                  # collection version (optional)
+max_orbit_duration: PT2H          # extend search window backwards (optional, default PT0H)
+```
+
+| Key | Required | Description |
+|-----|----------|-------------|
+| `cmr_short_name` | Yes | CMR collection short name (e.g. `TEMPO_NO2_L2`, `OMPS_NPP_NMTO3_L2`) |
+| `cmr_version` | No | Collection version string (e.g. `V03`). Omit to match all versions. |
+| `max_orbit_duration` | No | ISO-8601 duration; extends the CMR temporal query backwards so granules starting just before `window_begin` are not missed. Default `PT0H`. |
+
+CMR search requires no authentication, but you'll need Earthdata account. You can register at [urs.earthdata.nasa.gov](https://urs.earthdata.nasa.gov) if you don't have one. File downloads use the four-step
+Earthdata OAuth flow with credentials from `~/.netrc`:
+
+```
+machine urs.earthdata.nasa.gov login <username> password <password>
+```
+
+
+
+`DownloadObs` places files in `<cycle_dir>/download/<obs_name>/`.
 
 ### Step 4: Create the converter YAML
 
@@ -210,22 +248,29 @@ acquisition_method: 'cp'
 cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_cryosat2n/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_cryosat2n.nc'
 ```
 
-### `ingest_obs_cf` — OMPS-NM ozone from NASA GES DISC
+### `ingest_obs_cf` — TEMPO NO2 and OMPS-NM ozone
 
 ```bash
 swell create ingest_obs_cf
 swell launch <experiment_path>
 ```
 
-Downloads OMPS-NM HDF5 granules from GES DISC, converts them to IODA format, and
+Downloads raw granules from remote servers, converts them to IODA format, and
 ingests the result into R2D2. Uses the `DownloadObs → ConvertObsToIoda → IngestObs`
 pipeline. Requires Earthdata credentials in `~/.netrc`.
+
+Currently configured observations:
+
+| Observation | Retrieval method | Source |
+|-------------|-----------------|--------|
+| `tempo_no2_tropo` | `cmr` | NASA CMR + ASDC HTTPS (`TEMPO_NO2_L2 V03`) |
+| `omps_o3_nm_total` | `https` | NASA GES DISC |
 
 Suite configuration:
 ```python
 qd.download_convert_pipeline(True)
-qd.obs_to_download(['omps_o3_nm_total'])
-qd.obs_to_ingest(['omps_o3_nm_total'])
+qd.obs_to_download(['tempo_no2_tropo'])
+qd.obs_to_ingest(['tempo_no2_tropo'])
 qd.converter_path('/path/to/jedi-bundle/build/bin/')
 qd.window_length("PT6H")
 qd.dry_run(False)
@@ -271,7 +316,9 @@ For each cycle:
 1. **`DownloadObs`** reads `obs_to_download`, then for each obs:
    - Reads `download_observations/<obs_name>.yaml`
    - Extends the DA window backwards by `max_orbit_duration` to avoid missing partial orbits
-   - Walks through each hour slot, lists the remote directory, and downloads matching files to `<cycle_dir>/download/<obs_name>/`
+   - **`https`**: walks through each hour slot, lists the remote directory, and downloads matching files
+   - **`cmr`**: queries the NASA CMR API for granule URLs covering the window, then downloads each file via authenticated HTTPS
+   - Files are placed in `<cycle_dir>/download/<obs_name>/`
 
 2. **`ConvertObsToIoda`** reads `obs_to_download`, then for each obs:
    - Reads `convert_observations/<obs_name>.yaml`
@@ -312,3 +359,8 @@ in the format:
 ```
 machine urs.earthdata.nasa.gov login <username> password <password>
 ```
+
+File permissions must be `600` (`chmod 600 ~/.netrc`). For ASDC datasets
+(`retrieval_method: cmr`), also confirm that the ASDC DAAC application is
+approved in your Earthdata account (urs.earthdata.nasa.gov -> Applications ->
+Authorized Apps).
