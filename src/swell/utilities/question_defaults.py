@@ -259,7 +259,7 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class saber_central_block(TaskQuestion):
+    class saber_central_block(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "saber_central_block"
         ask_question: bool = True
@@ -273,7 +273,7 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class saber_outer_block(TaskQuestion):
+    class saber_outer_block(SuiteQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "saber_outer_block"
         ask_question: bool = True

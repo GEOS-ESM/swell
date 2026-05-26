@@ -86,8 +86,6 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.number_of_iterations(),
             qd.total_processors(),
-            qd.saber_central_block(),
-            qd.saber_outer_block(),
         ]
     )
 
