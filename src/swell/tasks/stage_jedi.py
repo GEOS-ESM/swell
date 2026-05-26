@@ -51,8 +51,7 @@ class StageJedi(taskBase):
         gsibec_configuration = self.config.gsibec_configuration(None)
         gsibec_nlats = self.config.gsibec_nlats(None)
         gsibec_nlons = self.config.gsibec_nlons(None)
-        saber_central_block = self.config.get_key_for_model('saber_central_block',
-                                                            self.get_model(), None)
+        saber_central_block = self.config.saber_central_block(None)
 
         # Add jedi interface template keys
         self.jedi_rendering.add_key('horizontal_resolution', horizontal_resolution)
