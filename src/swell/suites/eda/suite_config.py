@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.runahead_limit("P2"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
+            qd.ensemble_num_members(3),
         ],
         geos_atmosphere=[
             qd.cycle_times([
@@ -46,7 +47,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlats("91"),
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
-            qd.ensemble_num_members(3),
+#            qd.ensemble_num_members(3),
             qd.obs_pert_amplitude(0.5),
             qd.analysis_variables([
                 "eastward_wind",

@@ -48,23 +48,47 @@
 
             # Task triggers for: {{model_component}}
             # ------------------
-            # skip varbc / r2d2 for now
+            # Generate satellite channel records
+            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}} => sp1
-            CloneGeosMksi-{{model_component}}[^] => sp1
-            sp1 => GetEnsembleGeosExperiment-{{model_component}} => sp2
-            sp1 => GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            sp1 => GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => sp2
-            sp2 => GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}} => sp3
+            # Get background, provide a way to get background directly from GEOS experiment
+            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
 
-            {% for imem in range(1, ensemble_num_members+1) %}
-               sp3 => RunJediEda-{{model_component}}_mem{{imem}} => sp4
+            # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
+
+            RunJediEdaExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% else %}
+
+            # Cycling VarBC is inactive, static bias files will be used
+            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            {% endif %}
+
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
+            # Run Jedi variational executable
+            BuildJediByLinking[^]? | BuildJedi[^]  => SP1-{{model_component}}
+            CloneJedi[^] => StageJediCycle-{{model_component}}
+            StageJediCycle-{{model_component}} => SP1-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => SP1-{{model_component}}
+            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => SP1-{{model_component}}
+            SP1-{{model_component}} => GenerateObservingSystemRecords-{{model_component}}
+            GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}} => SP2-{{model_component}}
+            {% for i in range(1, 3) %}
+            SP2-{{model_component}} => RunJediEdaExecutable_mem{{i}}-{{model_component}} => SP3-{{model_component}}
             {% endfor %}
 
-            # Eva
-            sp4 => EvaObservations-{{model_component}}
-            sp4 => EvaJediLog-{{model_component}}
-            sp4 => EvaIncrement-{{model_component}}
+            # EvaObservations
+            SP3-{{model_component}} => EvaObservations-{{model_component}}
+
+            # EvaJediLog
+            SP3-{{model_component}} => EvaJediLog-{{model_component}}
+
+            # EvaIncrement
+            SP3-{{model_component}} => EvaIncrement-{{model_component}}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
@@ -123,8 +147,8 @@
     [[GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
-    [[GetEnsembleGeosExperiment-{{model_component}}]]
-        script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
+    [[GetBackgroundGeosExperiment-{{model_component}} ]]
+        script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
@@ -132,9 +156,9 @@
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
-    {% for imem in range(1, ensemble_num_members+1) %}
-    [[RunJediEdaExecutable-{{model_component}}_mem{{imem}}]
-        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}} -imem {{imem}}"
+    {% for i in range(1, 3) %}
+    [[RunJediEdaExecutable_mem{{i}}-{{model_component}}]]
+        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}} -imem {{i}}"
         platform = {{platform}}
         execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
@@ -142,6 +166,33 @@
             --{{key}} = {{value}}
         {%- endfor %}
     {% endfor %}
+
+    [[RunJediEdaExecutable-{{model_component}}]]
+        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunJediObsfiltersExecutable-{{model_component}}]]
+        script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediObsfiltersExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediObsfiltersExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunJediEnsembleMeanVariance-{{model_component}}]]
+        script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEnsembleMeanVariance"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
@@ -163,18 +214,15 @@
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    [[SP1-{{model_component}}]]
+        script = true
+
+    [[SP2-{{model_component}}]]
+        script = true
+
+    [[SP3-{{model_component}}]]
+        script = true
     {% endfor %}
-
-    [[sp1]]
-        script = true
-
-    [[sp2]]
-        script = true
-
-    [[sp3]]
-        script = true
-
-    [[sp4]]
-        script = true
 
 # --------------------------------------------------------------------------------------------------

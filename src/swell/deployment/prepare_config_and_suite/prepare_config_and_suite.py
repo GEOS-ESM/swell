@@ -119,8 +119,13 @@ class PrepareExperimentConfigAndSuite:
         # Get a list of all questions associated with the suite, except for those specified
         # seperately for models
 
+        print(f'suite_config = {self.suite_config}')
+
         suite_config_obj = AllSuites.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
+
+#        print(f'suite_question_list = {suite_question_list }')
+#        exit()
 
         # Allow for adding extra tasks manually from configuration
         # For dynamic suite creation (e.g. comparison tests)
@@ -160,7 +165,10 @@ class PrepareExperimentConfigAndSuite:
 
         # Iterate through the task questions
         # ----------------------------------
+        print (f'key, value in question_dictionary_tasks')
         for key, value in question_dictionary_tasks.items():
+            print (f'{key}, {value}')
+
 
             # If a question has no counterpart specified in suite questions, merge it
             # -----------------------------------------------------------------------
@@ -422,6 +430,18 @@ class PrepareExperimentConfigAndSuite:
 
                 # Ask the question
                 self.ask_a_question(self.question_dictionary_model_ind, question_key)
+
+
+        for question_key in self.question_dictionary_model_ind:
+            print (f'question_key = {question_key}')
+
+#        exit()
+
+##         self.experiment_dict['ensemble_num_members'] = 5
+        print (f'question_dictionary_model_ind  = {self.question_dictionary_model_ind}')
+        print (f'experiment_dict = {self.experiment_dict}')
+#        exit()
+
 
         # 2. Perform a non-exhaustive resolving of suite file templates
         # -------------------------------------------------------------

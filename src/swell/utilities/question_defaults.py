@@ -441,12 +441,13 @@ class QuestionDefaults():
 
     @dataclass
     class ensemble_num_members(TaskQuestion):
-        default_value: str = "defer_to_model"
+        default_value: int = 3
         question_name: str = "ensemble_num_members"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
+#        options: str = "defer_to_model"
+        ask_question: bool = True
+#        models: List[str] = mutable_field([
+#            "geos_atmosphere"
+#        ])
         prompt: str = "How many members comprise the ensemble?"
         widget_type: WType = WType.INTEGER
 
@@ -464,7 +465,7 @@ class QuestionDefaults():
         widget_type: WType = WType.FLOAT
 
     # --------------------------------------------------------------------------------------------------
-    
+
     @dataclass
     class ensmean_only(TaskQuestion):
         default_value: bool = False
