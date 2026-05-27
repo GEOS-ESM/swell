@@ -84,6 +84,8 @@ class JediConfigRendering():
             'ensemble_imember',
             'ensmean_only',
             'ensmeanvariance_only',
+            'experiment_id',
+            'experiment_root',
             'final_cycle_point',
             'gradient_norm_reduction',
             'gsibec_configuration',
