@@ -79,6 +79,7 @@ def prepare_scheduling_dict(
         'EvaTimeseries',
         'GenerateBClimatology',
         'RunGeos',
+        'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',

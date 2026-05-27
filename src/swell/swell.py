@@ -194,12 +194,14 @@ def launch(
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
+@click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
-    ensemblePacket: Optional[str]
+    ensemblePacket: Optional[str],
+    imember: Optional[int]
 ) -> None:
     """
     Run a workflow task
@@ -211,7 +213,7 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
+    task_wrapper(task, config, datetime, model, ensemblePacket, imember)
 
 
 # --------------------------------------------------------------------------------------------------

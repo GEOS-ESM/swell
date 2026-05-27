@@ -463,6 +463,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class obs_pert_amplitude(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "obs_pert_amplitude"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "Enter obs perturbation amplitude for EDA:"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensmean_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmean_only"
