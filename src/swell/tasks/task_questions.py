@@ -197,6 +197,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CompareHofxObservations = QuestionList(
+        list_name="CompareHofxObservations",
+        questions=[
+            qd.window_length(),
+            qd.observations()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     ConvertObsToIoda = QuestionList(
         list_name="ConvertObsToIoda",
         questions=[

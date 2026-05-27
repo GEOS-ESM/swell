@@ -78,3 +78,27 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    compare_hofx = QuestionList(
+        list_name="compare_hofx",
+        questions=[
+            compare,
+            qd.comparison_log_type('hofx'),
+            qd.model_components(['geos_atmosphere']),
+            qd.observations([])
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    compare_hofx_cf = QuestionList(
+        list_name="compare_hofx_cf",
+        questions=[
+            compare,
+            qd.comparison_log_type('hofx'),
+            qd.observations([]),
+            qd.model_components(['geos_cf']),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
