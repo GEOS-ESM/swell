@@ -1,0 +1,38 @@
+obs space:
+  name: Radiosondes
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/sondes.{{window_begin}}.nc4'
+      missing file action: error
+    obsgrouping:
+      group variables: ["stationIdentification", "releaseTime"]
+      sort variable: "pressure"
+      sort order: "descending"
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.sondes.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
+  simulated variables: [airTemperature]
+
+
+obs operator:
+  name: Composite
+  components:
+
+  - name: VertInterp
+    variables:
+    - name: airTemperature
+
+linear obs operator:
+  name: Composite
+  components:
+
+  - name: VertInterp
+    variables:
+    - name: airTemperature
+
+obs error:
+  covariance model: diagonal
