@@ -54,7 +54,7 @@
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
 
             GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
-            
+
             RenderJediObservations-{{model_component}} => sync_point
 
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}} => sync_point
@@ -63,7 +63,14 @@
 
             sync_point => RunJediObsfiltersExecutable-{{model_component}}
             {% if skip_ensemble_hofx %}
+# work
+#               {% for i in range(3) %}
+#               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+#               {% endfor %}
+## ideal               {% for i in range( dict[model_component]['ensemble_num_member'] ) %}
+               {% for i in range( ensemble_num_member ) %}
                sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               {% endfor %}
             {% else %}
                # Run hofx for ensemble members according to strategy
                {% if ensemble_hofx_strategy == 'serial' %}
