@@ -118,12 +118,6 @@ observations:
 path_to_ensemble:
   default_value: test
 
-saber_central_block:
-  default_value: None
-
-saber_outer_block:
-  default_value: None
-
 total_processors:
   default_value: 24
 
