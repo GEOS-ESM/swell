@@ -112,7 +112,6 @@ class SuiteConfig(QuestionContainer, Enum):
                 "scatwind",
                 "sfcship",
                 "sfc",
-                "tcp",
                 "mhs_metop-b",
                 "mhs_metop-c",
                 "mhs_n19",

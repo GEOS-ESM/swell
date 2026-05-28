@@ -64,7 +64,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfcship",
                 "sondes",
                 "ssmis_f17",
-                "tcp"
+                # "tcp"
             ]),
             qd.produce_geovals(False),
             qd.clean_patterns([

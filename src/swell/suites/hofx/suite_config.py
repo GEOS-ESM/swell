@@ -71,7 +71,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfc",
                 "sondes",
                 "ssmis_f17",
-                "tcp"
+                # "tcp"
             ]),
             qd.clean_patterns([]),
         ]
