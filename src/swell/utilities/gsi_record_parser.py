@@ -128,7 +128,7 @@ class GSIRecordParser:
                   'start': [start],
                   'end': [end],
                   'instr': [self.instr],
-                  'channel_num': [len(channel_list)],
+                  'channel_num': [str(len(channel_list))],
                   'channels': [channel_list],
                   'comments': [comment]})
 

@@ -131,6 +131,16 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class mock_experiment(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "mock_experiment"
+        ask_question: bool = False
+        prompt: str = "Dry-run option for comparing configs."
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class model_components(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "model_components"
@@ -162,6 +172,35 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_server(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_server"
+        ask_question: bool = False
+        prompt: str = (
+            "Server/profile name in ~/.swell/r2d2_credentials.yaml "
+            "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class r2d2_datastore(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_datastore"
+        ask_question: bool = False
+        prompt: str = (
+            "Datastore name passed to R2D2 fetch and store operations "
+            "(e.g. a Discover directory store or an S3 bucket store). "
+            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
+            "Leave empty to let R2D2 pick the highest-priority writable datastore "
+            "for your compute host."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
@@ -169,6 +208,34 @@ class QuestionDefaults():
         prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
                        "that may be active ahead of the current cycle "
                        "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_central_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_central_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber central block do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_outer_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_outer_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber outer blocks do you want to use?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -822,6 +889,34 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_CHECK_LIST
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class obs_to_download(TaskQuestion):
+        default_value: list = mutable_field([])
+        question_name: str = "obs_to_download"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which observations do you want to download from remote servers?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class converter_path(TaskQuestion):
+        default_value: str = ""
+        question_name: str = "converter_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Path to directory containing ioda-converter scripts"
+                       " (leave blank to use jedi_bin)")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class initial_restarts_method(TaskQuestion):
         default_value: str = "defer_to_platform"
@@ -1307,6 +1402,29 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class publish_directory(TaskQuestion):
+        default_value: str = None
+        question_name: str = "publish_directory"
+        ask_question: bool = False
+        prompt: str = "Provide an external directory to publish relevant results to."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class cache_fetch(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "cache_fetch"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Use cached observation files if they already exist?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"
@@ -1492,3 +1610,11 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class download_convert_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "download_convert_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the DownloadObs and ConvertObsToIoda tasks?"
+                       "(DownloadObs -> ConvertObsToIoda) -> IngestObs to R2D2")
+        widget_type: WType = WType.BOOLEAN
