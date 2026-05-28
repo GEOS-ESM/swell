@@ -42,6 +42,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npx_proc(3),
             qd.npy_proc(3),
             qd.cycle_times(['T00']),
+            qd.background_time_offset("PT3H"),
             qd.ensemble_num_members(3),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("Deterministic GETKF"),
@@ -55,7 +56,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.observations([
                 "atms_n20",
             ]),
-            qd.window_type("4D"),
+            qd.window_type("3D"),
             qd.clean_patterns(['*.txt'])
         ]
     )
@@ -82,6 +83,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.npy_proc(4),
             # qd.perhost(32),
             qd.cycle_times(['T00']),
+            qd.background_time_offset("PT3H"),
             qd.ensemble_num_members(16),
             qd.skip_ensemble_hofx(True),
             qd.local_ensemble_solver("Deterministic GETKF"),
@@ -122,7 +124,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_metop-b",
                 "amsua_metop-c"
             ]),
-            qd.window_type("4D"),
+            qd.window_type("3D"),
             qd.clean_patterns(['*.txt'])
         ]
     )

@@ -10,7 +10,7 @@
 import os
 from swell.tasks.base.task_base import taskBase
 from r2d2 import fetch
-from swell.utilities.r2d2 import create_r2d2_config, load_r2d2_credentials
+from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
 
@@ -32,7 +32,6 @@ class GetNcdiags(taskBase):
         ncdiag_experiments = self.config.ncdiag_experiments()
         observations = self.config.observations()
         window_length = self.config.window_length()
-        r2d2_local_path = self.config.r2d2_local_path()
         background_time_offset = self.config.background_time_offset()
 
         # Compute data assimilation window parameters
@@ -48,10 +47,6 @@ class GetNcdiags(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
-
-        # Set R2D2 config file
-        # --------------------
-        create_r2d2_config(self.logger, self.platform(), self.cycle_dir(), r2d2_local_path)
 
         # Loop over ncdiag experiments
         # -------------------------------

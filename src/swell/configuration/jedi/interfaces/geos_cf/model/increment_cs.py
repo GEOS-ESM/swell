@@ -7,21 +7,24 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
-from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
 
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_cube_mean_output(template_dict: Mapping) -> Mapping:
+def increment_cs(template_dict: Mapping) -> Mapping:
 
-    ensemble_cube_mean_output = {
-        'filetype': 'cube sphere history',
-        'provider': 'geos',
-        'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.ensemblemean.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-        'field io names': field_io_names_ensemble
+    cycle_dir = template_dict['cycle_dir']
+
+    output = {
+        'state component': {
+            'states': [{
+                'filetype': 'cube sphere history',
+                'datapath': f'{cycle_dir}',
+                'filename': f'{template_dict["experiment_id"]}.inc.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+            }]
+        }
     }
 
-    return ensemble_cube_mean_output
+    return output
 
 # --------------------------------------------------------------------------------------------------

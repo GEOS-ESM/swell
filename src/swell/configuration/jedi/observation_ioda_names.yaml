@@ -347,17 +347,21 @@ ioda instrument names:
   # Compo
   - ioda name: tempo_no2_tropo
     full name: TEMPO tropospheric column NO2
-    inst type: no2
+    inst type: retrieval
     provider :  nasa_VCD
   - ioda name: tempo_no2_total
     full name: TEMPO total column NO2
-    inst type: no2
+    inst type: retrieval
     provider : nasa_VCD
   - ioda name: tropomi_s5p_no2_tropo
     full name: TROPOMI tropospheric column NO2
-    inst type: no2
+    inst type: retrieval
     provider : esa
   - ioda name: tropomi_s5p_co_tropo
     full name: TROPOMI tropospheric column CO
-    inst type: co
+    inst type: retrieval
     provider : esa
+  - ioda name: omps_o3_nm_total
+    full name: OMPS total column O3 (Nadir Mapper)
+    inst type: retrieval
+    provider : nasa

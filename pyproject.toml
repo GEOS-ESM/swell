@@ -45,7 +45,8 @@ dependencies = [
     "h5py>=3.7.0",
     "flake8==6.1.0",
     "netCDF4",
-    "ruamel.yaml==0.17.16"
+    "ruamel.yaml==0.17.16",
+    "xarray==2024.7.0"
 ]
 
 [project.optional-dependencies]
@@ -58,7 +59,7 @@ github = [
     "isodate==0.6.1",
     "f90nml==1.4.4",
     "questionary==1.10.0",
-    "netCDF4==1.6.5",
+    "netCDF4==1.6.5"
 ]
 
 [project.urls]
@@ -74,6 +75,7 @@ swell = [
     'deployment/platforms/*/*.yaml',
     'suites/**',
     'test/suite_tests/*.yaml',
+    'test/jedi_configs/*.yaml',
     'configuration/**',
     'utilities/pinned_versions/*.yaml'
 ]

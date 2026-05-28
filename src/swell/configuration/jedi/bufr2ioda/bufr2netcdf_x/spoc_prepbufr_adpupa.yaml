@@ -1,0 +1,339 @@
+# (C) Copyright 2025 NOAA/NWS/NCEP/EMC
+#
+# This software is licensed under the terms of the Apache License Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0.
+
+bufr:
+  group_by_variable: prepbufrDataLevelCategory
+  subsets:
+    - ADPUPA
+
+  variables:
+    # ObsType
+    observationType:
+      query: "*/TYP"
+    observationSubType:
+      query: "*/T29"
+
+    # MetaData
+    timestamp:
+      timeoffset:
+        timeOffset: "*/PRSLEVEL/DRFTINFO/HRDR"
+        transforms:
+          - scale: 3600
+        referenceTime: "1970-01-01T00:00:00Z"
+    prepbufrDataLevelCategory:
+      query: "*/PRSLEVEL/CAT"
+    obsTimeMinusCycleTime:
+      query: "*/PRSLEVEL/DRFTINFO/HRDR"
+    restrictionFlag:
+      query: "*/RSRD_SEQ/RSRD"
+    restrictionExpiration:
+      query: "*/RSRD_SEQ/EXPRSRD"      
+    longitude:
+      query: "*/PRSLEVEL/DRFTINFO/XDR"
+      transforms:
+        - wrap: [ -180.0, 180.0 ]
+    latitude:
+      query: "*/PRSLEVEL/DRFTINFO/YDR"
+    stationIdentification:
+      query: "*/SID"
+    stationElevation:
+      query: "*/ELV"
+    pressure:
+      query: "*/PRSLEVEL/P___INFO/P__EVENT{1}/POB"
+      type: float
+      transforms:
+        - scale: 100
+    height:
+      query: "*/PRSLEVEL/Z___INFO/Z__EVENT{1}/ZOB"
+      type: float
+    temperatureEventCode:
+      query: "*/PRSLEVEL/T___INFO/T__EVENT{1}/TPC"
+        
+    # ObsValue
+    airTemperature:
+      query: "*/PRSLEVEL/T___INFO/T__EVENT{1}/TOB"
+      transforms:
+        - offset: 273.15
+    dewPointTemperature:
+      query: "*/PRSLEVEL/Q___INFO/TDO"
+      transforms:
+        - offset: 273.15
+    virtualTemperature:
+      query: "*/PRSLEVEL/T___INFO/TVO"
+      transforms:
+        - offset: 273.15
+    windEastward:
+      query: "*/PRSLEVEL/W___INFO/W__EVENT{1}/UOB"
+    windNorthward:
+      query: "*/PRSLEVEL/W___INFO/W__EVENT{1}/VOB"
+    specificHumidity:
+      query: "*/PRSLEVEL/Q___INFO/Q__EVENT{1}/QOB"
+      type: float
+      transforms:
+        - scale: 0.000001
+
+    # QualityMark
+    pressureQualityMarker:
+      query: "*/PRSLEVEL/P___INFO/P__EVENT{1}/PQM"
+    heightQualityMarker:
+      query: "*/PRSLEVEL/Z___INFO/Z__EVENT{1}/ZQM"
+    airTemperatureQualityMarker:
+      query: "*/PRSLEVEL/T___INFO/T__EVENT{1}/TQM"
+    virtualTemperatureQualityMarker:
+      query: "*/PRSLEVEL/T___INFO/T__EVENT{1}/TQM"
+    windQualityMarker:
+      query: "*/PRSLEVEL/W___INFO/W__EVENT{1}/WQM"
+    specificHumidityQualityMarker:
+      query: "*/PRSLEVEL/Q___INFO/Q__EVENT{1}/QQM"
+
+    # ObsError
+    pressureError:
+      query: "*/PRSLEVEL/P___INFO/P__BACKG/POE"
+      transforms:
+        - scale: 100
+    airTemperatureError:
+      query: "*/PRSLEVEL/T___INFO/T__BACKG/TOE"
+      transforms:
+        - offset: 273.15
+    virtualTemperatureError:
+      query: "*/PRSLEVEL/T___INFO/T__BACKG/TOE"
+      transforms:
+        - offset: 273.15
+    windError:
+      query: "*/PRSLEVEL/W___INFO/W__BACKG/WOE"
+    specificHumidityError:
+      query: "*/PRSLEVEL/Q___INFO/Q__BACKG/QOE"
+
+
+encoder:
+  globals:
+    - name: "platformCommonName"
+      type: string
+      value: "ADPUPA"
+
+    - name: "description"
+      type: string
+      value: "Upper-air (RAOB, PIBAL, RECCO, DROPS) reports"
+
+    - name: "platformLongDescription"
+      type: string
+      value: "Upper-air sounding data from radiosonde and pilot stations in prepBUFR format"
+
+    - name: "sensor"
+      type: string
+      value: "Upper-air soundings"
+
+    - name: "source"
+      type: string
+      value: "U.S. National Weather Service, National Centers for Environmental Prediction (NCEP))"
+
+    - name: "sourceFiles"
+      type: string
+      value: "NCEP prepBUFR - ADPUPA"
+
+    - name: "converter"
+      type: string
+      value: "bufr-query"
+
+  variables:
+    # Observation Type: pressure
+    - name: "ObsType/pressure"
+      source: variables/observationType
+      longName: "Pressure Observation Type"
+
+    # Observation Type: airTemperature
+    - name: "ObsType/airTemperature"
+      source: variables/observationType
+      longName: "airTemperature Observation Type"
+
+    # Observation Type: virtualTemperature
+    - name: "ObsType/virtualTemperature"
+      source: variables/observationType
+      longName: "virtualTemperature Observation Type"
+
+    # Observation Type: windEastward
+    - name: "ObsType/windEastward"
+      source: variables/observationType
+      longName: "Eastward Wind Observation Type"
+
+    # Observation Type: windNorthward
+    - name: "ObsType/windNorthward"
+      source: variables/observationType
+      longName: "Northward Wind Observation Type"
+
+    # Observation Type: specificHumidity
+    - name: "ObsType/specificHumidity"
+      source: variables/observationType
+      longName: "specificHumidity Observation Type"
+
+    # MetaData: dateTime
+    - name: "MetaData/dateTime"
+      source: variables/timestamp
+      longName: "Datetime"
+      units: "seconds since 1970-01-01T00:00:00Z"
+
+    # MetaData: stationIdentification
+    - name: "MetaData/stationIdentification"
+      source: variables/stationIdentification
+      longName: "Station Identification"
+
+    # Restriction on Redistribution
+    - name: "MetaData/restrictionFlag"
+      source: variables/restrictionFlag
+      longName: "Restriction on Redistribution"
+      
+    # Expiration of Restriction on Redistribution  
+    - name: "MetaData/restrictionExpiration"
+      source: variables/restrictionExpiration
+      longName: "Expiration of Restriction on Redistribution"
+    
+    # MetaData: longitude
+    - name: "MetaData/longitude"
+      source: variables/longitude
+      longName: "Longitude"
+      units: "degrees_east"
+      range: [-180, 180]
+
+    # MetaData: latitude
+    - name: "MetaData/latitude"
+      source: variables/latitude
+      longName: "Latitude"
+      units: "degrees_north"
+      range: [-90, 90]
+
+    # MetaData: stationElevation
+    - name: "MetaData/stationElevation"
+      source: variables/stationElevation
+      longName: "Height of Station"
+      units: "m"
+
+    # MetaData: prepbufrDataLevelCategory
+    - name: "MetaData/prepbufrDataLevelCategory"
+      source: variables/prepbufrDataLevelCategory
+      longName: "Prepbufr Data Level Category"
+
+    # MetaData: pressure
+    - name: "MetaData/pressure"
+      source: variables/pressure
+      longName: "Pressure"
+      units: "Pa"
+
+    # MetaData: height
+    - name: "MetaData/height"
+      source: variables/height
+      longName: "Height of Observation"
+      units: "m"
+
+    # MetaData: temperatureEventCode
+    - name: "MetaData/temperatureEventCode"
+      source: variables/temperatureEventCode
+      longName: "Temperature Event Program Code"
+
+    # ObsValue: airTemperature
+    - name: "ObsValue/airTemperature"
+      source: variables/airTemperature
+      longName: "Air Temperature"
+      units: "K"
+
+    # ObsValue: dewPointTemperature
+    - name: "ObsValue/dewPointTemperature"
+      source: variables/dewPointTemperature
+      longName: "DewPoint Temperature"
+      units: "K"
+
+    # ObsValue: virtualTemperature
+    - name: "ObsValue/virtualTemperature"
+      source: variables/virtualTemperature
+      longName: "Virtual Temperature Non-Q Controlled"
+      units: "K"
+
+    # ObsValue: windEastward
+    - name: "ObsValue/windEastward"
+      source: variables/windEastward
+      longName: "Eastward Wind"
+      units: "m s-1"
+
+    # ObsValue: windNorthward
+    - name: "ObsValue/windNorthward"
+      source: variables/windNorthward
+      longName: "Northward Wind"
+      units: "m s-1"
+
+    # ObsValue: specificHumidity
+    - name: "ObsValue/specificHumidity"
+      source: variables/specificHumidity
+      longName: "Specific Humidity"
+      units: "kg kg-1"
+
+    # QualityMarker: pressure
+    - name: "QualityMarker/pressure"
+      source: variables/pressureQualityMarker
+      longName: "Pressure Quality Marker"
+
+    # QualityMarker: height
+    - name: "QualityMarker/height"
+      source: variables/heightQualityMarker
+      longName: "Height Quality Marker"
+
+    # QualityMarker: airTemperature
+    - name: "QualityMarker/airTemperature"
+      source: variables/airTemperatureQualityMarker
+      longName: "airTemperature Quality Marker"
+
+    # QualityMarker: virtualTemperature
+    - name: "QualityMarker/virtualTemperature"
+      source: variables/virtualTemperatureQualityMarker
+      longName: "virtualTemperature Quality Marker"
+
+    # QualityMarker: windEastward
+    - name: "QualityMarker/windEastward"
+      source: variables/windQualityMarker
+      longName: "Eastward Wind Quality Marker"
+
+    # QualityMarker: windNorthward
+    - name: "QualityMarker/windNorthward"
+      source: variables/windQualityMarker
+      longName: "Northward Wind Quality Marker"
+
+    # QualityMarker: specificHumidity
+    - name: "QualityMarker/specificHumidity"
+      source: variables/specificHumidityQualityMarker
+      longName: "Specific Humidity Quality Marker"
+
+    # ObsError: pressure 
+    - name: "ObsError/pressure"
+      source: variables/pressureError
+      longName: "Pressure Error"
+      units: "Pa"
+
+    # ObsError: airTemperature
+    - name: "ObsError/airTemperature"
+      source: variables/airTemperatureError
+      longName: "airTemperature Error"
+      units: "K"
+
+    # ObsError: virtualTemperature
+    - name: "ObsError/virtualTemperature"
+      source: variables/virtualTemperatureError
+      longName: "virtualTemperature Error"
+      units: "K"
+
+    # ObsError: windEastward
+    - name: "ObsError/windEastward"
+      source: variables/windError
+      longName: "Eastward Wind Error"
+      units: "m s-1"
+
+    # ObsError: windNorthward
+    - name: "ObsError/windNorthward"
+      source: variables/windError
+      longName: "NorthwardWind Error"
+      units: "m s-1"
+
+    # ObsError: specificHumidity
+    - name: "ObsError/specificHumidity"
+      source: variables/specificHumidityError
+      longName: "Specific Humidity Error"
+      units: "kg kg-1"

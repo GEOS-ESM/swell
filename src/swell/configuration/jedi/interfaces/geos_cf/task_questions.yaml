@@ -10,8 +10,7 @@ background_experiment:
   - swell_test
 
 background_frequency:
-  default_value: PT1H
-
+  default_value: PT3H
 
 # How long before the middle of the analysis window did
 # the background providing forecast begin?
@@ -35,6 +34,11 @@ horizontal_resolution:
   - 'c90'
   - 'c360'
 
+vertical_resolution:
+  default_value: 72
+  options:
+  - 72
+
 npx:
   default_value: 91
   options:
@@ -47,16 +51,12 @@ npy:
   - 91
   - 361
 
-
 npx_proc:
-  default_value: 1
+  default_value: 2
 
 npy_proc:
-  default_value: 1
+  default_value: 2
 
-number_of_iterations:
-  default_value:
-  - 5
 
 obs_provider:
   default_value: 
@@ -70,22 +70,31 @@ observations:
   default_value: 
   - tempo_no2_tropo
   - tropomi_s5p_no2_tropo
-#  - tempo_no2_total
   options: 
   - tempo_no2_tropo
   - tropomi_s5p_no2_tropo
   - tempo_no2_total
 
-observing_system_records_path:
+obs_experiment:
   default_value: None
 
-vertical_resolution:
-  default_value: '72'
-  options:
-  - '72'
+observing_system_records_path:
+  default_value: None
 
 window_length:
   default_value: PT6H
 
 window_type:
   default_value: 3D
+
+minimizer:
+  default_value: DRPCG
+  options:
+  - DRPCG
+
+number_of_iterations:
+  default_value:
+  - 5
+
+gradient_norm_reduction:
+  default_value: 1e-10
