@@ -16,6 +16,9 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+    [[queues]]
+        [[[default]]]
+            limit = 10
 
 # --------------------------------------------------------------------------------------------------
 
@@ -43,7 +46,7 @@
             {% endfor %}
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
-	    JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
+	    JediLogComparison-{{model_component}}[^]:fail? => PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
