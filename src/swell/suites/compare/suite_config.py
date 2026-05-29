@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
             qd.model_components(),
             qd.runahead_limit(),
+            qd.observations([]),
         ]
     )
 
@@ -41,6 +42,21 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('variational'),
             qd.model_components(['geos_marine']),
+            qd.observations([
+                "adt_cryosat2n",
+                "adt_jason3",
+                "adt_saral",
+                "adt_sentinel3a",
+                "adt_sentinel3b",
+                "insitu_profile_argo",
+                "sst_ostia",
+                "sss_smos",
+                "sss_smapv5",
+                "sst_abi_g16_l3c",
+                "sst_gmi_l3u",
+                "sst_viirs_n20_l3u",
+                "temp_profile_xbt"
+            ])
         ]
     )
 
@@ -52,6 +68,42 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('variational'),
             qd.model_components(['geos_atmosphere']),
+            qd.observations([
+                "aircraft_temperature",
+                "aircraft_wind",
+                "airs_aqua",
+                "amsr2_gcom-w1",
+                "amsua_aqua",
+                "amsua_metop-b",
+                "amsua_metop-c",
+                "amsua_n15",
+                "amsua_n18",
+                "amsua_n19",
+                "atms_n20",
+                "atms_npp",
+                "avhrr3_metop-b",
+                "avhrr3_n18",
+                "avhrr3_n19",
+                "cris-fsr_n20",
+                "cris-fsr_npp",
+                "gmi_gpm",
+                "gps",
+                "iasi_metop-b",
+                "iasi_metop-c",
+                "mhs_metop-b",
+                "mhs_metop-c",
+                "mhs_n19",
+                "mls55_aura",
+                "omi_aura",
+                "ompsnm_npp",
+                "pibal",
+                "satwind",
+                "scatwind",
+                "sfcship",
+                "sfc",
+                "sondes",
+                "ssmis_f17"
+            ])
         ]
     )
 
@@ -63,6 +115,10 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('variational'),
             qd.model_components(['geos_cf']),
+            qd.observations([
+                "tempo_no2_tropo",
+                "tropomi_s5p_no2_tropo",
+            ])
         ]
     )
 
@@ -74,6 +130,34 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('fgat'),
             qd.model_components(['geos_marine']),
+            qd.observations([
+                "adt_cryosat2n",
+                "adt_jason3",
+                "adt_jason3n",
+                "adt_saral",
+                "adt_sentinel3a",
+                "adt_sentinel3b",
+                "adt_sentinel6a",
+                "adt_swot_nadir",
+                "insitu_profile_argo",
+                "insitu_profile_ctd",
+                "insitu_profile_pirata",
+                "insitu_profile_rama",
+                "insitu_profile_tao",
+                "icec_amsr2_north",
+                "icec_amsr2_south",
+                "icec_nsidc_nh",
+                "icec_nsidc_sh",
+                "sst_ostia",
+                "sss_smos",
+                "sss_smapv5",
+                "sst_abi_g16_l3c",
+                "sst_avhrrf_mb_l3u",
+                "sst_avhrrf_mc_l3u",
+                "sst_viirs_n20_l3u",
+                "sst_viirs_npp_l3u",
+                "temp_profile_xbt"
+            ])
         ]
     )
 
@@ -85,7 +169,43 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('hofx'),
             qd.model_components(['geos_atmosphere']),
-            qd.observations([])
+            qd.observations([
+                "aircraft_temperature",
+                "aircraft_wind",
+                "airs_aqua",
+                "amsr2_gcom-w1",
+                "amsua_aqua",
+                "amsua_metop-b",
+                "amsua_metop-c",
+                "amsua_n15",
+                "amsua_n18",
+                "amsua_n19",
+                "atms_n20",
+                "atms_npp",
+                "avhrr3_metop-b",
+                "avhrr3_n18",
+                "avhrr3_n19",
+                "cris-fsr_n20",
+                "cris-fsr_npp",
+                "gmi_gpm",
+                "gps",
+                "iasi_metop-b",
+                "iasi_metop-c",
+                "mhs_metop-b",
+                "mhs_metop-c",
+                "mhs_n19",
+                "mls55_aura",
+                "omi_aura",
+                "ompsnm_npp",
+                "pibal",
+                "satwind",
+                "scatwind",
+                "sfcship",
+                "sfc",
+                "sondes",
+                "ssmis_f17"
+            ]),
+            qd.mock_experiment(True)
         ]
     )
 
@@ -96,7 +216,6 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             compare,
             qd.comparison_log_type('hofx'),
-            qd.observations([]),
             qd.model_components(['geos_cf']),
         ]
     )

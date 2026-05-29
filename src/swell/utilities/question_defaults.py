@@ -152,17 +152,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class parser_options(SuiteQuestion):
-        default_value: list = mutable_field(['fgrep_residual_norm'])
-        question_name: str = "parser_options"
-        ask_question: bool = True
-        options: list = mutable_field(['fgrep_residual_norm'])
-        prompt: str = "List the test types to run on the JEDI oops log."
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class r2d2_experiment_id(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "r2d2_experiment_id"

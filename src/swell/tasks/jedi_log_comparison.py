@@ -27,6 +27,11 @@ class JediLogComparison(taskBase):
 
     def execute(self):
 
+        log_type = self.config.comparison_log_type()
+
+        if log_type == 'hofx':
+            return
+
         experiment_paths = self.config.comparison_experiment_paths()
 
         experiment_tag_paths = comparison_tags(experiment_paths, self.logger)
@@ -58,8 +63,6 @@ class JediLogComparison(taskBase):
 
         # Boolean for whether fields fall within tolerances
         passed = True
-
-        log_type = self.config.comparison_log_type()
 
         for exp_tag, experiment_path in experiment_tag_paths.items():
 

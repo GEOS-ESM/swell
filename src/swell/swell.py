@@ -85,6 +85,8 @@ or for task-model combinations.
 
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
+additional_parameter_help = """Additional option to specify parameters to task, 
+context-dependent on individual task."""
 
 # --------------------------------------------------------------------------------------------------
 
@@ -193,12 +195,15 @@ def launch(
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
+    additional_parameter: Optional[str],
     ensemblePacket: Optional[str]
 ) -> None:
     """
@@ -211,7 +216,8 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
+    task_wrapper(task, config, datetime, model, additional_parameter,
+                 ensemblePacket)
 
 
 # --------------------------------------------------------------------------------------------------

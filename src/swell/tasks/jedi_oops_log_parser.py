@@ -48,9 +48,7 @@ class JediOopsLogParser(taskBase):
 
         output_file = os.path.join(self.cycle_dir(), 'jedi_log_analysis.txt')
 
-        for parser_option in self.config.parser_options(['fgrep_residual_norm']):
-            if parser_option == 'fgrep_residual_norm':
-                self.fgrep_residual_norm(output_file)
-
+        if self.config.comparison_log_type() == 'variational':
+            self.fgrep_residual_norm(output_file)
 
 # --------------------------------------------------------------------------------------------------

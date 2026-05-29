@@ -38,6 +38,9 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
+            {% for observation in models[model_component]['observations'] %}
+            CompareHofxObservations-{{model_component}}-{{observation}}:fail? => EvaComparisonObservations-{{model_component}}-{{observation}} => comparison_fail
+            {% endfor %}
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
 	    JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
@@ -72,17 +75,19 @@
     [[EvaComparisonJediLog-{{model_component}}]]
         script = "swell task EvaComparisonJediLog $config -d $datetime -m {{model_component}}"
 
-    [[EvaComparisonObservations-{{model_component}}]]
-        script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["EvaComparisonObservations"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["EvaComparisonObservations"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
-
     [[PublishComparisons]]
          script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
+
+    {% for observation in models[model_component]['observations'] %}
+    [[CompareHofxObservations-{{model_component}}-{{observation}}]]
+        script = "swell task CompareHofxObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
+
+    [[EvaComparisonObservations-{{model_component}}-{{observation}}]]
+        script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
+    {% endfor %}
+
+    # swell task CompareHofxObservations $config -d $datetime -m {{model_component}}
+    # swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}
 
     {% if comparison_experiment_paths is mapping %}
     {% for path in comparison_experiment_paths.values() %}
