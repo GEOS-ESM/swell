@@ -790,6 +790,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             run_jedi_executable,
             qd.ensemble_num_members(),
+            qd.obs_thinning_rej_fraction(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
         ]

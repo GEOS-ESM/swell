@@ -125,7 +125,7 @@ class RunJediEdaExecutable(taskBase):
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log.log')
+        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log_mem{imember:03d}.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------

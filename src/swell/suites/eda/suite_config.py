@@ -27,10 +27,11 @@ class SuiteConfig(QuestionContainer, Enum):
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
             qd.final_cycle_point("2023-10-10T06:00:00Z"),
-            qd.runahead_limit("P2"),
+            qd.runahead_limit("P1"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
-            qd.ensemble_num_members(3),
+            ##
+            ##            qd.ensemble_num_members(2),
         ],
         geos_atmosphere=[
             qd.cycle_times([
@@ -47,7 +48,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlats("91"),
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
-#            qd.ensemble_num_members(3),
+            qd.ensemble_num_members(2),
             qd.obs_pert_amplitude(0.5),
             qd.analysis_variables([
                 "eastward_wind",
@@ -103,6 +104,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
+            qd.obs_thinning_rej_fraction(0.75),
             qd.clean_patterns(['*.txt', '*.csv']),
         ]
     )
