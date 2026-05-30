@@ -23,6 +23,11 @@ def analysis(template_dict: Mapping) -> Mapping:
         'field io names': field_io_names,
     }
 
+    # EDA case: override filename
+    imem = template_dict.get('ensemble_imember', None)
+    if imem is not None:
+        analysis['filename'] = f'eda.mem{imem:03d}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+
     return analysis
 
 # --------------------------------------------------------------------------------------------------

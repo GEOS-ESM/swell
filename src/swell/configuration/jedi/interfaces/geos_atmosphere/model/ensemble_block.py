@@ -77,6 +77,12 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
         }
     }
 
+    imem = template_dict.get('ensemble_imem', None)
+    if imem is not None:
+        # EDA diagnostic case
+        fn = ensemble_block['members from template']['template']['filename']
+        fn = f'eda.mem{imem:03d}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+
     return ensemble_block
 
 # --------------------------------------------------------------------------------------------------

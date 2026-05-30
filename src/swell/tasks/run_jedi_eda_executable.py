@@ -153,9 +153,8 @@ class RunJediEdaExecutable(taskBase):
             observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
             print (f'hxout = {hxout}')
 
-        for it in jedi_config_dict['variational']['iterations']:
-            it['online diagnostics']['increment']['state component']['filename'] = f'eda.mem{imember:03d}.increment-iter1.'
-        jedi_config_dict['output']['filename'] = f'eda.mem{imember:03d}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
+        for i, iter in enumerate(jedi_config_dict['variational']['iterations']):
+            iter['online diagnostics']['increment']['state component']['filename'] = f'eda.mem{imember:03d}.increment-iter{i+1}.'
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False
