@@ -379,8 +379,10 @@ while ( $counter <= ${NUM_SGMT} )
 
 /bin/rm -f  EGRESS
 
-cp -f $CYCLEDIR/CAP.rc .
+# Done in prep_forecast
+#cp -f $CYCLEDIR/CAP.rc .
 
+# To normalize whitespace
 /bin/mv CAP.rc CAP.rc.orig
 awk '{$1=$1};1' < CAP.rc.orig > CAP.rc
 
@@ -661,6 +663,7 @@ if( $REPLAY_MODE == 'Exact' | $REPLAY_MODE == 'Regular' ) then
 
      #link the actual FP files that were move to workdir
      #temp changes as we will remove that .j script with jedi
+     # Done in prep_forecast
      /bin/ln -sf ${ANA_LOCATION}/${ANA_EXPID}.ana.eta.*.nc4 .
 
 
