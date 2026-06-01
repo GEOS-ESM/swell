@@ -17,14 +17,7 @@ import r2d2
 
 # --------------------------------------------------------------------------------------------------
 
-r2d2_model_dict = {
-    'geos_cf': 'geos_cf',
-}
-
-
-# --------------------------------------------------------------------------------------------------
-
-class GetRestart(taskBase):
+class GetRestartCf(taskBase):
 
     def execute(self) -> None:
         """Fetches rst files for a given experiment and cycle from R2D2

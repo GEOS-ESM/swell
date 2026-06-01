@@ -60,19 +60,19 @@
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Prepare forecast task, Update RC files, and create scratch directory
-            RunJediVariationalExecutable-{{model_component}} => PrepForecast-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => PrepForecastCf-{{model_component}}
 
             # Get restart files from R2D2
-            PrepForecast-{{model_component}} => GetRestart-{{model_component}}
+            PrepForecastCf-{{model_component}} => GetRestartCf-{{model_component}}
 
             # Run forecast
-            GetRestart-{{model_component}} => RunForecast-{{model_component}}
+            GetRestartCf-{{model_component}} => RunForecast-{{model_component}}
 
             # Save forecast
-            RunForecast-{{model_component}} => SaveForecast-{{model_component}}
+            RunForecast-{{model_component}} => SaveForecastCf-{{model_component}}
 
             # Save restart files to R2D2
-            RunForecast-{{model_component}} => SaveRestart-{{model_component}}
+            RunForecast-{{model_component}} => SaveRestartCf-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -88,7 +88,7 @@
 
             # Clean up large files
             EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & 
-            SaveObsDiags-{{model_component}} & SaveRestart-{{model_component}} => CleanCycle-{{model_component}}
+            SaveObsDiags-{{model_component}} & SaveForecastCf-{{model_component}} & SaveRestartCf-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -147,11 +147,11 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
-    [[GetRestart-{{model_component}}]]
-        script = "swell task GetRestart $config -d $datetime -m {{model_component}}"
+    [[GetRestartCf-{{model_component}}]]
+        script = "swell task GetRestartCf $config -d $datetime -m {{model_component}}"
 
-    [[PrepForecast-{{model_component}}]]
-        script = "swell task PrepForecast $config -d $datetime -m {{model_component}}"
+    [[PrepForecastCf-{{model_component}}]]
+        script = "swell task PrepForecastCf $config -d $datetime -m {{model_component}}"
 
     [[RunForecast-{{model_component}}]]
         script = """
@@ -166,11 +166,11 @@
             --job-name = CFv2rc1t13
             --output = CFv2_gcm_%j
 
-    [[SaveForecast-{{model_component}}]]
-        script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
+    [[SaveForecastCf-{{model_component}}]]
+        script = "swell task SaveForecastCf $config -d $datetime -m {{model_component}}"
 
-    [[SaveRestart-{{model_component}}]]
-        script = "swell task SaveRestart $config -d $datetime -m {{model_component}}"
+    [[SaveRestartCf-{{model_component}}]]
+        script = "swell task SaveRestartCf $config -d $datetime -m {{model_component}}"
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"

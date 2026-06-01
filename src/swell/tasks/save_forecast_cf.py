@@ -13,6 +13,7 @@ import os
 from r2d2 import store
 
 
+from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_filename, r2d2
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -20,11 +21,11 @@ from swell.utilities.r2d2 import load_r2d2_credentials
 # --------------------------------------------------------------------------------------------------
 
 
-class SaveForecast(taskBase):
+class SaveForecastCf(taskBase):
 
     def execute(self) -> None:
 
-        """Store forecast files produced by RunForecast task in R2D2
+        """Store forecast files produced by the forecast task in R2D2
 
            Parameters
            ----------
@@ -42,6 +43,7 @@ class SaveForecast(taskBase):
         forecast_length = self.config.forecast_length()
         forecast_output_frequency = self.config.forecast_output_frequency()
         expid = self.config.r2d2_experiment_id()
+        fc_store = r2d2(self.jedi_rendering.__template_dict__)['store']['fc'][0]
 
         cycle_dir = self.cycle_dir()
         scratch_dir = os.path.join(cycle_dir, 'scratch')
@@ -61,7 +63,7 @@ class SaveForecast(taskBase):
             step = isodate.duration_isoformat(step_dur)
 
             file_time = forecast_start + step_dur
-            fname = f"CF2.geoscf_jedi.{file_time.strftime('%Y%m%dT%H%M%SZ')}.nc4"
+            fname = forecast_filename(file_time)
             source_file = os.path.join(scratch_dir, fname)
             if not os.path.isfile(source_file):
                 self.logger.abort(f'Expected forecast file not found: {source_file}')
@@ -69,7 +71,7 @@ class SaveForecast(taskBase):
             self.logger.info(f'Storing {fname} at step {step}')
 
             store(
-                model='geos_cf',
+                model=fc_store['r2d2_model'],
                 item='forecast',
                 step=step,
                 experiment=expid,
@@ -77,7 +79,7 @@ class SaveForecast(taskBase):
                 date=forecast_start.strftime('%Y%m%dT%H%M%S%z'),
                 source_file=source_file,
                 file_extension='nc',
-                file_type='bkg',
+                file_type=fc_store['file_type'],
                 store_as_symlink=False,
             )
             step_dur += forecast_frequency_dur

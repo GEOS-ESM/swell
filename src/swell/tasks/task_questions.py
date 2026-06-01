@@ -312,10 +312,10 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    GetRestart = QuestionList(
-        list_name="GetRestart",
+    GetRestartCf = QuestionList(
+        list_name="GetRestartCf",
         questions=[
-            window_questions,
+            qd.window_length(),
             qd.rst_experiment(),
             qd.rst_file_types(),
             qd.horizontal_resolution(),
@@ -564,8 +564,8 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    PrepForecast = QuestionList(
-        list_name="PrepForecast",
+    PrepForecastCf = QuestionList(
+        list_name="PrepForecastCf",
         questions=[
             qd.analysis_variables(),
             qd.forecast_length(),
@@ -785,14 +785,11 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    SaveRestart = QuestionList(
-        list_name="SaveRestart",
+    SaveRestartCf = QuestionList(
+        list_name="SaveRestartCf",
         questions=[
-            window_questions,
-            qd.background_time_offset(),
-            qd.forecast_duration(),
+            qd.window_length(),
             qd.horizontal_resolution(),
-            qd.marine_models(),
             qd.rst_file_types(),
             qd.rst_store_interval(),
         ]
@@ -814,8 +811,8 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    SaveForecast = QuestionList(
-        list_name="SaveForecast",
+    SaveForecastCf = QuestionList(
+        list_name="SaveForecastCf",
         questions=[
             qd.forecast_length(),
             qd.forecast_output_frequency(),

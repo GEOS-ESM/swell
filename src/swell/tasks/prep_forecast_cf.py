@@ -14,13 +14,14 @@ import shutil
 import isodate
 import xarray as xr
 
+from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_history
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.shell_commands import run_subprocess
 
 # --------------------------------------------------------------------------------------------------
 
 
-class PrepForecast(taskBase):
+class PrepForecastCf(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
@@ -217,6 +218,13 @@ class PrepForecast(taskBase):
         history_src = os.path.join(namelists_dir, 'HISTORY.rc')
         history_dst = os.path.join(scratch_dir, 'HISTORY.rc')
         shutil.copy(history_src, history_dst)
+        history = forecast_history()
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_EXPID<<<',
+                            history['expid'])
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_COLLECTION<<<',
+                            history['collection'])
+        self.replace_string(history_dst, '>>>SWELL_GEOSCF_FORECAST_TEMPLATE<<<',
+                            history['template'])
 
         if resolution == 'c90':
             grid_label = 'PE90x540-CF'
