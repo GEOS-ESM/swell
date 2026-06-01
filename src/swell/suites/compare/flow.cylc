@@ -16,9 +16,6 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
-    [[queues]]
-        [[[default]]]
-            limit = 10
 
 # --------------------------------------------------------------------------------------------------
 
@@ -27,6 +24,9 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
+    [[queues]]
+        [[[default]]]
+            limit = 20
 
     [[graph]]
 	R1 = """
@@ -42,11 +42,13 @@
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
             {% for observation in models[model_component]['observations'] %}
-            CompareHofxObservations-{{model_component}}-{{observation}}:fail? => EvaComparisonObservations-{{model_component}}-{{observation}} => comparison_fail
+            CompareHofxObservations-{{model_component}}-{{observation}}:fail? => EvaComparisonObservations-{{model_component}}-{{observation}}?
+            EvaComparisonObservations-{{model_component}}:finish-all => PublishComparisons
             {% endfor %}
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
-	    JediLogComparison-{{model_component}}[^]:fail? => PublishComparisons => comparison_fail
+	    JediLogComparison-{{model_component}}[^]:fail? => PublishComparisons
+            PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -81,16 +83,21 @@
     [[PublishComparisons]]
          script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
 
+    [[CompareHofxObservations-{{model_component}}]]
+         script = "swell task CompareHofxObservations $config -d $datetime -m {{model_component}}"
+
+    [[EvaComparisonObservations-{{model_component}}]]
+         script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"
+
     {% for observation in models[model_component]['observations'] %}
     [[CompareHofxObservations-{{model_component}}-{{observation}}]]
         script = "swell task CompareHofxObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
+        inherit = CompareHofxObservations-{{model_component}}
 
     [[EvaComparisonObservations-{{model_component}}-{{observation}}]]
         script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}} -a {{observation}}"
+        inherit = EvaComparisonObservations-{{model_component}}
     {% endfor %}
-
-    # swell task CompareHofxObservations $config -d $datetime -m {{model_component}}
-    # swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}
 
     {% if comparison_experiment_paths is mapping %}
     {% for path in comparison_experiment_paths.values() %}

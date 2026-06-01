@@ -105,7 +105,7 @@ class CompareHofxObservations(taskBase):
 
         if len(hofx_means_1) != len(hofx_means_2):
             raise Exception('Number of simulated variables does not '
-                                'match between experiments.')
+                            'match between experiments.')
 
         output_str += f'{observation}\n'
         for sim_var in hofx_means_1.keys():
@@ -120,21 +120,23 @@ class CompareHofxObservations(taskBase):
                 tag_length = max(len(tag_1), len(tag_2)) + 2
                 len_length = max(len(str(len_1)), len(str(len_2))) + 2
                 mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
-                output_str += f'{"":<{tag_length}} {"Length":<{len_length}} {"Mean":<{mean_length}}\n'
-                output_str += f'{tag_1:<{tag_length}} {len_1:<{len_length}} {mean_1:<{mean_length}}\n'
-                output_str += f'{tag_2:<{tag_length}} {len_2:<{len_length}} {mean_2:<{mean_length}}\n\n'
+                output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
+                               f'{"Mean":<{mean_length}}\n')
+                output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
+                               f'{mean_1:<{mean_length}}\n')
+                output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
+                               f'{mean_2:<{mean_length}}\n\n')
                 passed = False
             else:
                 output_str += f'Passed\n\n'
 
-        output_file = Path(self.cycle_dir()) / 'hofx_comparison.txt'
-
-        # Output to file
-        with open(output_file, 'w') as f:
-            f.write(output_str)
-
         # Fail suite if not passed
         if not passed:
+            output_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
+
+            # Output to file
+            with open(output_file, 'w') as f:
+                f.write(output_str)
             raise Exception(f'Mismatch in HofX observation length or average, '
                             f'check {output_file}')
 

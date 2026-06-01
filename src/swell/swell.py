@@ -85,8 +85,8 @@ or for task-model combinations.
 
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
-additional_parameter_help = """Additional option to specify parameters to task, 
-context-dependent on individual task."""
+additional_parameter_help = ('Additional option to specify parameters to task, '
+                             'context-dependent on individual task.')
 
 # --------------------------------------------------------------------------------------------------
 
