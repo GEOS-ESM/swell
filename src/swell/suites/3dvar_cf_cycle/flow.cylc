@@ -155,8 +155,10 @@
 
     [[RunForecast-{{model_component}}]]
         script = """
-            cycle_dir=$(python3 -c 'import re, sys; s = re.sub("[^0-9]", "", sys.argv[1] + "000000")[:14]; print(f"{s[:8]}T{s[8:]}Z")' "$CYLC_TASK_CYCLE_POINT")
-            "{{experiment_path}}/run/${cycle_dir}/{{model_component}}/scratch/gcm_run_geoscf.j"
+            cycle_dir=$(python3 -c 'from swell.utilities.datetime_util import Datetime; import sys; print(Datetime(sys.argv[1]).string_directory())' "$CYLC_TASK_CYCLE_POINT")
+            scratch_dir="{{experiment_path}}/run/${cycle_dir}/{{model_component}}/scratch"
+            forecast_log="${scratch_dir}/CFv2_gcm_${SLURM_JOB_ID:-$$}"
+            "${scratch_dir}/gcm_run_geoscf.j" > "${forecast_log}" 2>&1
         """
         platform = {{platform}}
         [[[directives]]]
@@ -164,7 +166,7 @@
             --nodes = 8
             --ntasks-per-node = 108
             --job-name = CFv2rc1t13
-            --output = CFv2_gcm_%j
+            --output = /dev/null
 
     [[SaveForecastCf-{{model_component}}]]
         script = "swell task SaveForecastCf $config -d $datetime -m {{model_component}}"

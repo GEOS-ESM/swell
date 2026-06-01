@@ -310,7 +310,8 @@ _EOF_
  echo "/bin/ln -sf $SSTDIR/SEAWIFS_KPAR_mon_clim.2880x1440 SEAWIFS_KPAR_mon_clim.data" >> $FILE
 
 chmod +x linkbcs
-cp  linkbcs $CYCLEDIR
+# Done in prep_forecast
+#cp  linkbcs $CYCLEDIR
 
 #######################################################################
 #                    Get Executable and RESTARTS
@@ -664,7 +665,7 @@ if( $REPLAY_MODE == 'Exact' | $REPLAY_MODE == 'Regular' ) then
      #link the actual FP files that were move to workdir
      #temp changes as we will remove that .j script with jedi
      # Done in prep_forecast
-     /bin/ln -sf ${ANA_LOCATION}/${ANA_EXPID}.ana.eta.*.nc4 .
+     #/bin/ln -sf ${ANA_LOCATION}/${ANA_EXPID}.ana.eta.*.nc4 .
 
 
 endif
