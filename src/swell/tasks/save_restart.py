@@ -27,4 +27,3 @@ class SaveRestart(taskBase):
         self.logger.info('SaveRestart is not implemented for this workflow; skipping.')
 
 # --------------------------------------------------------------------------------------------------
-
