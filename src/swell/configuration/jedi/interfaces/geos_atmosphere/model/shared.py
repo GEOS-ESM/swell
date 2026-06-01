@@ -96,6 +96,7 @@ field_io_names_ensemble = {
     'eastward_wind': 'ua',
     'northward_wind': 'va',
     'air_temperature': 't',
+    'air_pressure_at_surface': 'ps',
     'air_pressure_levels': 'pe',
     'water_vapor_mixing_ratio_wrt_moist_air': 'q',
     'cloud_liquid_ice': 'qi',

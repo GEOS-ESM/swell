@@ -31,7 +31,13 @@ class GetBackground(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_server=self.config.r2d2_server(default=None),
+        )
+
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
@@ -151,7 +157,7 @@ class GetBackground(taskBase):
 
                 file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
 
-                r2d2.fetch(
+                fetch_kwargs = dict(
                     item='forecast',
                     target_file=target_file,
                     model=r2d2_model,
@@ -162,6 +168,9 @@ class GetBackground(taskBase):
                     date=forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                     file_type=file_type,
                 )
+                if r2d2_datastore:
+                    fetch_kwargs['data_store'] = r2d2_datastore
+                r2d2.fetch(**fetch_kwargs)
 
                 # Change permission
                 os.chmod(target_file, 0o644)
