@@ -31,19 +31,6 @@ from swell.utilities.check_da_params import check_da_params
 # --------------------------------------------------------------------------------------------------
 
 
-def read_override_file(override_path: str | None) -> dict:
-
-    yaml = YAML(typ='safe')
-
-    if override_path is None:
-        return {}
-    else:
-        with open(override_path, 'r') as f:
-            return yaml.load(f)
-
-# --------------------------------------------------------------------------------------------------
-
-
 def clone_config(
     configuration: str,
     experiment_id: str,
@@ -184,7 +171,10 @@ def prepare_config(
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
         load_r2d2_module(logger, platform)
-        load_r2d2_credentials(logger, platform)
+        r2d2_server = experiment_dict.get('r2d2_server')
+        if r2d2_server is not None:
+            r2d2_server = str(r2d2_server).strip() or None
+        load_r2d2_credentials(logger, platform, r2d2_server=r2d2_server)
 
         import r2d2
 
@@ -233,7 +223,7 @@ def create_experiment_directory(
     suite_config: str,
     method: str,
     platform: str,
-    override: str,
+    override: dict,
     advanced: bool,
     slurm: str | None,
     skip_r2d2: bool
@@ -247,21 +237,17 @@ def create_experiment_directory(
     # ---------------
     logger = get_logger('SwellCreateExperiment')
 
-    # Read override file
-    # ------------------
-    override_dict = read_override_file(override)
-
     # Specify whether to skip registering and storing in R2D2
     # -------------------------------------------------------
     if skip_r2d2:
 
         # Only override this if it is true, otherwise let the suite decide
-        override_dict['skip_r2d2'] = skip_r2d2
+        override['skip_r2d2'] = skip_r2d2
 
     # Call the experiment config and suite generation
     # ------------------------------------------------
     experiment_dict_str = prepare_config(suite, suite_config, method, platform,
-                                         override_dict, advanced, slurm)
+                                         override, advanced, slurm)
 
     # Load the string using yaml
     # --------------------------

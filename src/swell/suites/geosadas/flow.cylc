@@ -107,7 +107,7 @@
     [[ GetGeosAdasBackground ]]
         script = "swell task GetGeosAdasBackground $config -d $datetime -m geos_atmosphere"
 
-    [[RenderJediObservations-{{model_component}}]]
+    [[RenderJediObservations-geos_atmosphere]]
         script = "swell task RenderJediObservations $config -d $datetime -m geos_atmosphere"
 
     [[RunJediVariationalExecutable]]

@@ -1,0 +1,19 @@
+# OMPS Nadir Mapper Total Ozone L2 — download configuration
+# Instrument: OMPS-NM on Suomi NPP
+# Product:    OMPS_NPP_NMTO3_L2 v2.1
+# Source:     NASA GES DISC (Earthdata authentication required in ~/.netrc)
+#
+# Files are named: OMPS-NPP_NMTO3-L2_v2.1_YYYYmMMDDtHH*.h5
+# where HH is the UTC hour at the start of the orbit granule.
+
+# Requires earthdata token in `~/.netrc'. 
+# Follow the instruction in the documentations
+remote_host: https://snpp-omps.gesdisc.eosdis.nasa.gov
+remote_path_template: /data/SNPP_OMPS_Level2/OMPS_NPP_NMTO3_L2.2/YYYY/JJJ/
+filename_pattern: OMPS-NPP_NMTO3-L2_v2.1_YYYYmMMDDtHH*.h5
+
+# Maximum duration of a single orbit granule. Used to extend the file
+# search window backwards so that orbits starting before window_begin
+# but containing data within the DA window are not missed.
+# OMPS-NM orbits are approximately 101 minutes; PT2H provides a safe margin.
+max_orbit_duration: PT2H
