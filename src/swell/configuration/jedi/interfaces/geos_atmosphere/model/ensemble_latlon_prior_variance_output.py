@@ -14,11 +14,17 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 def ensemble_latlon_prior_variance_output(template_dict: Mapping) -> Mapping:
 
+    suite_name = template_dict.get('suite_name')
+    if suite_name == 'eda':
+        fn = 'eda.variance.'
+    else:
+        fn = 'geos.prior.variance.'
+
     ensemble_latlon_prior_variance_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
         'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.prior.variance.',
+        'filename': fn,
         'field io names': field_io_names_ensemble
     }
 

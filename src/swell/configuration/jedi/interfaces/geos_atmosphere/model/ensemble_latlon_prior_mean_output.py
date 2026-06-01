@@ -14,11 +14,17 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 
 def ensemble_latlon_prior_mean_output(template_dict: Mapping) -> Mapping:
 
+    suite_name = template_dict.get('suite_name')
+    if suite_name == 'eda':
+        fn = 'eda.mean.'
+    else:
+        fn = 'geos.prior.mean.'
+
     ensemble_latlon_prior_mean_output = {
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
         'datapath': template_dict['cycle_dir'],
-        'filename': 'geos.prior.mean.',
+        'filename': fn,
         'field io names': field_io_names_ensemble
     }
 

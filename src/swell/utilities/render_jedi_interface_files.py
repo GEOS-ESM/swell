@@ -137,6 +137,7 @@ class JediConfigRendering():
             'window_end_iso',
             'window_length',
             'forecast_length',
+            'suite_name',
         ]
 
         # List of all potential valid dynamic keys that can be used in templates
