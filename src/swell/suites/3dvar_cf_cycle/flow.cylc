@@ -154,7 +154,17 @@
         script = "swell task PrepForecast $config -d $datetime -m {{model_component}}"
 
     [[RunForecast-{{model_component}}]]
-        script = "swell task RunForecast $config -d $datetime -m {{model_component}}"
+        script = """
+            cycle_dir=$(python3 -c 'import re, sys; s = re.sub("[^0-9]", "", sys.argv[1] + "000000")[:14]; print(f"{s[:8]}T{s[8:]}Z")' "$CYLC_TASK_CYCLE_POINT")
+            "{{experiment_path}}/run/${cycle_dir}/{{model_component}}/scratch/gcm_run_geoscf.j"
+        """
+        platform = {{platform}}
+        [[[directives]]]
+            --time = 00:40:00
+            --nodes = 8
+            --ntasks-per-node = 108
+            --job-name = CFv2rc1t13
+            --output = CFv2_gcm_%j
 
     [[SaveForecast-{{model_component}}]]
         script = "swell task SaveForecast $config -d $datetime -m {{model_component}}"
