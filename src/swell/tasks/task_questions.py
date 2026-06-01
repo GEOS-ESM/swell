@@ -797,6 +797,13 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    SaveRestart = QuestionList(
+        list_name="SaveRestart",
+        questions=[]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     StageJedi = QuestionList(
         list_name="StageJedi",
         questions=[
