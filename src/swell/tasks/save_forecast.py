@@ -150,6 +150,30 @@ class StoreBackground(taskBase):
 class StoreJdi(taskBase):
 
     def execute(self) -> None:
+        """Store GEOS-CF NRT JDI background files in R2D2 as symlinks.
+
+        The JDI collection contains 1-hourly instantaneous analysis files.
+        Each calendar day has a single forecast run that initialises at 09Z,
+        with hourly output steps PT0H (valid 09Z) through PT23H (valid 08Z
+        the following day).
+
+        For every hourly file valid on the cycle date this task resolves the
+        source path from ``jdi_source_path`` (a template supporting ``YYYY``,
+        ``MM``, ``DD``, ``HH`` placeholders), confirms the file exists, and
+        calls ``r2d2.store`` with ``store_as_symlink=True`` so R2D2 registers
+        a symlink rather than copying the data.
+
+        Config keys (read from experiment YAML under the model component):
+
+        - ``jdi_source_path``: path template, e.g.
+          ``/css/gmao/geos-cf/NRTv2/priv/ana/YYYY/MM/DD/
+          GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.YYYYMMDD_HHmmz.nc4``
+        - ``jdi_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
+        - ``jdi_resolution``: R2D2 resolution string (default ``c360``)
+
+        The Cylc cycle point must be the 09Z point for the day being ingested,
+        e.g. ``2025-10-02T09:00:00Z``.
+        """
 
         # Load R2D2 credentials
         load_r2d2_credentials(self.logger, self.platform())
