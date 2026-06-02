@@ -164,6 +164,7 @@ class StoreJdi(taskBase):
         stored = 0
         skipped = 0
 
+        # 24 hourly steps: PT0H (valid at forecast_start) through PT23H
         for hour_offset in range(24):
             valid_time = forecast_start + timedelta(hours=hour_offset)
             step = f'PT{hour_offset}H'
@@ -196,14 +197,18 @@ class StoreJdi(taskBase):
     # ------------------------------------------------------------------
 
     def _resolve_jdi_path(self, template: str, valid_time: dt) -> str:
-        """Substitute YYYY, MM, DD, HH placeholders in the JDI path template.
+        """Substitute placeholders in the JDI path template.
 
-        Also handles the composite ``YYYYMMDD_HHmmz`` token used in the
-        GEOS-CF NRT filename convention.
+        Supports:
+        - ``YDIR``, ``MDIR``, ``DDIR``: prefixed directory tokens (e.g. Y2025, M10, D02)
+        - ``YYYYMMDD_HHmmz``: composite filename token (e.g. 20251002_0900z)
+        - ``YYYY``, ``MM``, ``DD``, ``HH``: individual date/time tokens
         """
         return (template
-                .replace('YYYYMMDD_HHmmz',
-                         valid_time.strftime('%Y%m%d_%H%Mz'))
+                .replace('YDIR', 'Y' + valid_time.strftime('%Y'))
+                .replace('MDIR', 'M' + valid_time.strftime('%m'))
+                .replace('DDIR', 'D' + valid_time.strftime('%d'))
+                .replace('YYYYMMDD_HHmmz', valid_time.strftime('%Y%m%d_%H%Mz'))
                 .replace('YYYY', valid_time.strftime('%Y'))
                 .replace('MM',   valid_time.strftime('%m'))
                 .replace('DD',   valid_time.strftime('%d'))
