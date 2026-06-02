@@ -212,18 +212,35 @@ class StoreJdi(taskBase):
 
             self.logger.info(f'  Storing step={step}: {os.path.basename(source_file)}')
 
-            store(
-                model='geos_cf',
-                item='forecast',
-                step=step,
-                experiment=jdi_experiment,
-                resolution=jdi_resolution,
-                date=forecast_start.strftime('%Y%m%d_%H%Mz'),
-                source_file=source_file,
-                file_extension='nc4',
-                file_type='bkg',
-                store_as_symlink=True,
-            )
+            try:
+                store(
+                    model='geos_cf',
+                    item='forecast',
+                    step=step,
+                    experiment=jdi_experiment,
+                    resolution=jdi_resolution,
+                    date=forecast_start.strftime('%Y%m%d_%H%Mz'),
+                    source_file=source_file,
+                    file_extension='nc4',
+                    file_type='bkg',
+                    store_as_symlink=True,
+                )
+            except PermissionError as exc:
+                # R2D2 bug?: after creating the symlink, file_util._set_permissions
+                # calls os.chmod which follows the symlink to the CSS source file.
+                # Since we don't own that file, EPERM is raised, but the symlink
+                # and DB entry are both created successfully before the chmod.
+                # Need to verify the symlink points to the right file before continuing.
+                r2d2_path = exc.filename
+                if (r2d2_path
+                        and os.path.islink(r2d2_path)
+                        and os.readlink(r2d2_path) == source_file):
+                    self.logger.warning(
+                        f'  chmod on symlink target raised PermissionError (R2D2 bug) '
+                        f'— symlink verified: {os.path.basename(r2d2_path)} -> '
+                        f'{os.path.basename(source_file)}')
+                else:
+                    raise
             stored += 1
 
         verb = 'Would store' if dry_run else 'Stored'
