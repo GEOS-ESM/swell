@@ -154,6 +154,10 @@ class StoreJdi(taskBase):
         # Load R2D2 credentials
         load_r2d2_credentials(self.logger, self.platform())
 
+        dry_run = self.config.dry_run(True)
+        if dry_run:
+            self.logger.info('DRY RUN MODE - No files will be stored')
+
         # Cycle time is the forecast initialisation time (always 09Z)
         forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
 
@@ -176,6 +180,12 @@ class StoreJdi(taskBase):
                 skipped += 1
                 continue
 
+            if dry_run:
+                self.logger.info(
+                    f'  [DRY RUN] Would store step={step}: {os.path.basename(source_file)}')
+                stored += 1
+                continue
+
             self.logger.info(f'  Storing step={step}: {os.path.basename(source_file)}')
 
             store(
@@ -184,7 +194,7 @@ class StoreJdi(taskBase):
                 step=step,
                 experiment=jdi_experiment,
                 resolution=jdi_resolution,
-                date=forecast_start,
+                date=forecast_start.strftime('%Y%m%d_%H%Mz'),
                 source_file=source_file,
                 file_extension='nc4',
                 file_type='bkg',
@@ -192,7 +202,8 @@ class StoreJdi(taskBase):
             )
             stored += 1
 
-        self.logger.info(f'JDI ingest complete: {stored} stored, {skipped} skipped')
+        verb = 'Would store' if dry_run else 'Stored'
+        self.logger.info(f'JDI ingest complete: {verb} {stored} files, {skipped} skipped')
 
     # ------------------------------------------------------------------
 
