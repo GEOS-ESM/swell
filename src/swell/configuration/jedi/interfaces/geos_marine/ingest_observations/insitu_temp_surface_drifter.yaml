@@ -3,4 +3,4 @@
 # time_end: '2024-12-31T23:59:59Z'
 
 acquisition_method: 'cp'
-cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/gdas_obs/gdas_YYYY/gdas.YYYYMMDD/HH/ocean/insitu/gdas.tHHz.insitu_temp_surface_drifter.nc'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/gdas_obs/gdas_YYYY/gdas.YYYYMMDD/HH/ocean/insitu/gdas.tHHz.insitu_temp_surface_drifter.nc4'

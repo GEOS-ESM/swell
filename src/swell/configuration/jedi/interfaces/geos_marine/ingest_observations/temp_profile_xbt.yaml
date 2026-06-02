@@ -3,4 +3,4 @@
 # time_end: '2999-12-31T23:59:59Z'
 
 acquisition_method: 'cp'
-cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/temp_profile_xbt/YYYY/MM/ioda-obs-YYYYMMDDHH-temp_profile_xbt.nc'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/temp_profile_xbt/YYYY/MM/ioda-obs-YYYYMMDDHH-temp_profile_xbt.nc4'

@@ -3,4 +3,4 @@
 # time_end: '2999-12-31T23:59:59Z'
 
 acquisition_method: 'cp'
-cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_sentinel6a.nc'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_sentinel6a/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_sentinel6a.nc4'
