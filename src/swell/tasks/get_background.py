@@ -44,11 +44,21 @@ class GetBackground(taskBase):
         bkg_steps = []
 
         # Parse config
-        background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency(None)
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_type = self.config.window_type()
+
+        # For experiments with cycle in the suite name:
+        # for the first cycle, use background_experiment in config
+        # as the experiment id for fetching from r2d2 for cycles after
+        # the first, use the current experiment id for fetching from r2d2
+        if self.cycle_time_dto() != self.start_cycle_point_dto() and 'cycle' in self.suite_name():
+            background_experiment = self.config.r2d2_experiment_id()
+        else:
+            background_experiment = self.config.background_experiment()
+
+        self.logger.info(f'Fetching background from experiment {background_experiment}')
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
