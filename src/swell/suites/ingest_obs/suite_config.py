@@ -62,3 +62,19 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.dry_run(False),
         ]
     )
+
+    ingest_jdi_cf = QuestionList(
+        list_name="ingest_jdi_cf",
+        questions=[
+            qd.start_cycle_point("2025-10-02T09:00:00Z"),
+            qd.final_cycle_point("2025-10-02T09:00:00Z"),
+            qd.model_components(['geos_cf']),
+            qd.runahead_limit("P5"),
+            qd.ingest_jdi_pipeline(True),
+        ],
+        geos_cf=[
+            qd.jdi_source_path(),
+            qd.jdi_experiment(),
+            qd.jdi_resolution(),
+        ]
+    )

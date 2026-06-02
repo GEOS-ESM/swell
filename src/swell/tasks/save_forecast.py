@@ -9,6 +9,7 @@
 
 
 from datetime import datetime as dt
+from datetime import timedelta
 import isodate
 import os
 from r2d2 import store
@@ -141,3 +142,69 @@ class StoreBackground(taskBase):
                           resolution=self.config.horizontal_resolution(),
                           type='fc',
                           experiment=background_experiment)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+class StoreJdi(taskBase):
+
+    def execute(self) -> None:
+
+        # Load R2D2 credentials
+        load_r2d2_credentials(self.logger, self.platform())
+
+        # Cycle time is the forecast initialisation time (always 09Z)
+        forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
+
+        jdi_source_template = self.config.jdi_source_path()
+        jdi_experiment = self.config.jdi_experiment('geos_cf_v2')
+        jdi_resolution = self.config.jdi_resolution('c360')
+
+        stored = 0
+        skipped = 0
+
+        for hour_offset in range(24):
+            valid_time = forecast_start + timedelta(hours=hour_offset)
+            step = f'PT{hour_offset}H'
+
+            source_file = self._resolve_jdi_path(jdi_source_template, valid_time)
+
+            if not os.path.exists(source_file):
+                self.logger.warning(f'JDI file not found, skipping: {source_file}')
+                skipped += 1
+                continue
+
+            self.logger.info(f'  Storing step={step}: {os.path.basename(source_file)}')
+
+            store(
+                model='geos_cf',
+                item='forecast',
+                step=step,
+                experiment=jdi_experiment,
+                resolution=jdi_resolution,
+                date=forecast_start,
+                source_file=source_file,
+                file_extension='nc4',
+                file_type='bkg',
+                store_as_symlink=True,
+            )
+            stored += 1
+
+        self.logger.info(f'JDI ingest complete: {stored} stored, {skipped} skipped')
+
+    # ------------------------------------------------------------------
+
+    def _resolve_jdi_path(self, template: str, valid_time: dt) -> str:
+        """Substitute YYYY, MM, DD, HH placeholders in the JDI path template.
+
+        Also handles the composite ``YYYYMMDD_HHmmz`` token used in the
+        GEOS-CF NRT filename convention.
+        """
+        return (template
+                .replace('YYYYMMDD_HHmmz',
+                         valid_time.strftime('%Y%m%d_%H%Mz'))
+                .replace('YYYY', valid_time.strftime('%Y'))
+                .replace('MM',   valid_time.strftime('%m'))
+                .replace('DD',   valid_time.strftime('%d'))
+                .replace('HH',   valid_time.strftime('%H')))

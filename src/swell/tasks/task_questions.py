@@ -839,3 +839,14 @@ class TaskQuestions(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
+
+    StoreJdi = QuestionList(
+        list_name="StoreJdi",
+        questions=[
+            qd.jdi_source_path(),
+            qd.jdi_experiment(),
+            qd.jdi_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------

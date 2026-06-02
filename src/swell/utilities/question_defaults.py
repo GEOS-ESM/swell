@@ -1580,7 +1580,54 @@ class QuestionDefaults():
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
         widget_type: WType = WType.STRING_DROP_LIST
 
-# --------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class jdi_source_path(TaskQuestion):
+        default_value: str = (
+            '/css/gmao/geos-cf/NRTv2/priv/ana/YYYY/MM/DD/'
+            'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.YYYYMMDD_HHmmz.nc4'
+        )
+        question_name: str = "jdi_source_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field(['geos_cf'])
+        prompt: str = ("Path template for GEOS-CF JDI files. Supports YYYY, MM, DD, HH and "
+                       "YYYYMMDD_HHmmz placeholders.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class jdi_experiment(TaskQuestion):
+        default_value: str = 'geos_cf_v2'
+        question_name: str = "jdi_experiment"
+        ask_question: bool = True
+        models: List[str] = mutable_field(['geos_cf'])
+        prompt: str = "R2D2 experiment name for the GEOS-CF JDI collection."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class jdi_resolution(TaskQuestion):
+        default_value: str = 'c360'
+        question_name: str = "jdi_resolution"
+        ask_question: bool = True
+        models: List[str] = mutable_field(['geos_cf'])
+        prompt: str = "R2D2 resolution string for the GEOS-CF JDI collection (e.g. c360)."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ingest_jdi_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "ingest_jdi_pipeline"
+        ask_question: bool = False
+        prompt: str = "Run the StoreJdi task to ingest GEOS-CF JDI files into R2D2?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
     @dataclass
     class download_convert_pipeline(SuiteQuestion):
         default_value: bool = False
