@@ -66,6 +66,7 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_jdi_cf = QuestionList(
         list_name="ingest_jdi_cf",
         questions=[
+            ingest_obs,
             qd.start_cycle_point("2025-10-02T09:00:00Z"),
             qd.final_cycle_point("2025-10-02T09:00:00Z"),
             qd.model_components(['geos_cf']),
