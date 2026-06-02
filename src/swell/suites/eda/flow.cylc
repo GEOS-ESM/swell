@@ -77,7 +77,8 @@
             SP1-{{model_component}} => GenerateObservingSystemRecords-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}} => SP2-{{model_component}}
-            {% for i in range(1, 3) %}
+
+            {% for i in range( 1, models[model_component]['ensemble_num_members'] + 1 ) %}
             SP2-{{model_component}} => RunJediEdaExecutable_mem{{i}}-{{model_component}} => SP3-{{model_component}}
             {% endfor %}
 
@@ -156,7 +157,7 @@
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
 
-    {% for i in range(1, 3) %}
+    {% for i in range(1, 5) %}
     [[RunJediEdaExecutable_mem{{i}}-{{model_component}}]]
         script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}} -imem {{i}}"
         platform = {{platform}}
@@ -167,14 +168,14 @@
         {%- endfor %}
     {% endfor %}
 
-    [[RunJediEdaExecutable-{{model_component}}]]
-        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
+#    [[RunJediEdaExecutable-{{model_component}}]]
+#        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}}"
+#        platform = {{platform}}
+#        execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
+#        [[[directives]]]
+#        {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
+#            --{{key}} = {{value}}
+#        {%- endfor %}
 
     [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
@@ -223,6 +224,7 @@
 
     [[SP3-{{model_component}}]]
         script = true
+
     {% endfor %}
 
 # --------------------------------------------------------------------------------------------------
