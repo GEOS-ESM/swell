@@ -69,6 +69,7 @@ class SuiteConfig(QuestionContainer, Enum):
             ingest_obs,
             qd.start_cycle_point("2025-10-02T09:00:00Z"),
             qd.final_cycle_point("2025-10-02T09:00:00Z"),
+            qd.cycle_times(['T09']),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
             qd.ingest_jdi_pipeline(True),
