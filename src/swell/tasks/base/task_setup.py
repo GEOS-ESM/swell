@@ -15,6 +15,8 @@ from swell.utilities.cylc_formatting import CylcSection, indent_lines
 from swell.utilities.suite_utils import get_model_components
 from swell.utilities.dictionary import update_dict
 from swell.utilities.swell_questions import QuestionList
+from swell.utilities.jinja2 import template_string_jinja2
+from swell.utilities.logger import get_logger
 
 # --------------------------------------------------------------------------------------------------
 
@@ -101,6 +103,8 @@ class TaskSetup(ABC):
         self.questions = []
         self.additional_sections = []
 
+        self.logger = get_logger('TaskSetup')
+
         # Set the defaults for the individual task
         self.set_defaults()
 
@@ -176,7 +180,10 @@ class TaskSetup(ABC):
                 self.script += ' -m {model}'
 
         if self.model_dep and self.model is not None:
-            self.script = self.script.format(model=self.model)
+            if '{model}' in self.script:
+                self.script = self.script.format(model=self.model)
+            self.script = template_string_jinja2(self.logger, self.script,
+                                                 {'model_component': self.model}, True)
             self.scheduling_name = self.scheduling_name.format(model=self.model)
 
         # Set retry defaults

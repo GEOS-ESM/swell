@@ -49,7 +49,11 @@ class GetGeovals(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_server=self.config.r2d2_server(default=None),
+        )
 
         # Parse config
         # ------------

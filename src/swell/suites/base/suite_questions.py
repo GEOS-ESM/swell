@@ -40,7 +40,9 @@ common = QuestionList(
         qd.runahead_limit(),
         qd.r2d2_experiment_id(),
         qd.mock_experiment(),
-        qd.skip_r2d2()
+        qd.skip_r2d2(),
+        qd.r2d2_server(),
+        qd.r2d2_datastore()
     ]
 )
 

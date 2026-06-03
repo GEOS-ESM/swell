@@ -40,8 +40,6 @@ class Setup(TaskSetup):
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution(),
-            qd.saber_central_block(),
-            qd.saber_outer_block(),
         ]
 
 

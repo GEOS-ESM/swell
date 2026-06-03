@@ -58,18 +58,34 @@ class GetBackground(taskBase):
         # Load R2D2 credentials
         # ---------------------
         import r2d2
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_server=self.config.r2d2_server(default=None),
+        )
+
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
 
         # Get duration into forecast for first background file
         # ----------------------------------------------------
         bkg_steps = []
 
         # Parse config
-        background_experiment = self.config.background_experiment()
         background_frequency = self.config.background_frequency(None)
         horizontal_resolution = self.config.horizontal_resolution()
         window_length = self.config.window_length()
         window_type = self.config.window_type()
+
+        # For experiments with cycle in the suite name:
+        # for the first cycle, use background_experiment in config
+        # as the experiment id for fetching from r2d2 for cycles after
+        # the first, use the current experiment id for fetching from r2d2
+        if self.cycle_time_dto() != self.start_cycle_point_dto() and 'cycle' in self.suite_name():
+            background_experiment = self.config.r2d2_experiment_id()
+        else:
+            background_experiment = self.config.background_experiment()
+
+        self.logger.info(f'Fetching background from experiment {background_experiment}')
 
         # Get window parameters
         local_background_time = self.da_window_params.local_background_time(window_length,
@@ -168,7 +184,7 @@ class GetBackground(taskBase):
 
                 file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
 
-                r2d2.fetch(
+                fetch_kwargs = dict(
                     item='forecast',
                     target_file=target_file,
                     model=r2d2_model,
@@ -179,6 +195,9 @@ class GetBackground(taskBase):
                     date=forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ'),
                     file_type=file_type,
                 )
+                if r2d2_datastore:
+                    fetch_kwargs['data_store'] = r2d2_datastore
+                r2d2.fetch(**fetch_kwargs)
 
                 # Change permission
                 os.chmod(target_file, 0o644)

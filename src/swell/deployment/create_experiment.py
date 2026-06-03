@@ -201,7 +201,10 @@ def prepare_config(
         from swell.utilities.r2d2 import load_r2d2_credentials, load_r2d2_module, unique_r2d2_id
 
         load_r2d2_module(logger, platform)
-        load_r2d2_credentials(logger, platform)
+        r2d2_server = experiment_dict.get('r2d2_server')
+        if r2d2_server is not None:
+            r2d2_server = str(r2d2_server).strip() or None
+        load_r2d2_credentials(logger, platform, r2d2_server=r2d2_server)
 
         import r2d2
 

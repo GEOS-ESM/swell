@@ -11,6 +11,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.suites.base.cylc_workflow import CylcWorkflow
 from swell.tasks.base.task_attributes import task_attributes as ta
 from swell.suites.base.suite_attributes import workflows
+from swell.utilities.jinja2 import template_string_jinja2
 
 # --------------------------------------------------------------------------------------------------
 
@@ -138,6 +139,8 @@ class Workflow_localensembleda(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+
+        workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict, True)
 
         return workflow_str
 
