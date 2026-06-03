@@ -575,9 +575,18 @@ def prepare_cylc_suite_jinja2(
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
+    # Set jinja templated string to use upon runtime
+    # ----------------------------------------------
+    render_dictionary['scheduling']['stall_timeout'] = """\
+    {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+    [[events]]
+    stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+    {% endif %}"""
+
     # Render the template
     # -------------------
-    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary,
+                                            allow_unresolved=True)
 
     # Write suite file to experiment
     # ------------------------------
