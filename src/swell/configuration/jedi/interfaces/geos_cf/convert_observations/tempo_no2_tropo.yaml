@@ -12,11 +12,10 @@
 # Name of the ioda-converters Python script.
 converter_script: tempo_nc2ioda.py
 
-# Output filename template (must match the source pattern in
-# ingest_observations/tempo_no2_tropo.yaml once that is created).
+# Output filename template (must match `source` in ingest_observations/tempo_no2_tropo.yaml).
 output_filename_template: "tempo_no2_tropo_%Y%m%d%H.nc"
 
 # Additional flags passed verbatim to the converter after -i and -o.
 extra_flags:
   -c: troposphere   # retrieval layer: troposphere column
-  -v: NO2           # variable: nitrogen dioxide
+  -v: no2           # variable: nitrogen dioxide
