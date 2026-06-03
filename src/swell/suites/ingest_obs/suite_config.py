@@ -75,7 +75,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ingest_jdi_pipeline(True),
         ],
         geos_cf=[
-            qd.dry_run(False),
+            qd.dry_run(True),
             qd.jdi_source_path(),
             qd.jdi_experiment(),
             qd.jdi_resolution(),
