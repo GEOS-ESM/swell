@@ -286,7 +286,7 @@ class DownloadObs(taskBase):
 
         if dry_run:
             for day_date in self._day_slots(search_start, search_end):
-                prefix = self._resolve_s3_prefix(prefix_template, day_date)
+                prefix = self._resolve_path(prefix_template, day_date)
                 self.logger.info(
                     f'  [DRY RUN] Would list s3://{bucket}/{prefix}')
             return 0, 0
@@ -299,7 +299,7 @@ class DownloadObs(taskBase):
         failed = 0
 
         for day_date in self._day_slots(search_start, search_end):
-            prefix = self._resolve_s3_prefix(prefix_template, day_date)
+            prefix = self._resolve_path(prefix_template, day_date)
             self.logger.info(f'  Listing s3://{bucket}/{prefix}')
 
             try:
@@ -568,17 +568,6 @@ class DownloadObs(taskBase):
     # ------------------------------------------------------------------
     # Template resolution helpers
     # ------------------------------------------------------------------
-
-    def _resolve_s3_prefix(self, template: str, date: datetime.date) -> str:
-        """Substitute YYYY, MM, DD in an S3 prefix template.
-
-        Handles both slash-separated (``YYYY/MM/DD``) and dot-separated
-        (``YYYY.MM.DD``) date formats that appear in NASA ASDC S3 paths.
-        """
-        return (template
-                .replace('YYYY', f'{date.year:04d}')
-                .replace('MM', f'{date.month:02d}')
-                .replace('DD', f'{date.day:02d}'))
 
     def _resolve_path(self, template: str, date: datetime.date) -> str:
         """Substitute YYYY, MM, DD, JJJ placeholders in a path template."""
