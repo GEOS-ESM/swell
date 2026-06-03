@@ -1,4 +1,3 @@
-#!jinja2
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -21,7 +20,7 @@
 
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
-    runahead limit = {{runahead_limit}}
+    runahead limit = P0
 
     [[graph]]
         R1 = """
@@ -35,48 +34,45 @@
 
             # If not able to link to build create the build
             BuildJediByLinking:fail? => BuildJedi
-
-            {% for model_component in model_components %}
-            # Clone geos ana for generating observing system records
-            CloneGeosMksi-{{model_component}}
-            {% endfor %}
         """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-
             # Task triggers for: {{model_component}}
             # ------------------
-            # Generate satellite channel records
-            CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
+            # Ensure previous cycle completes before starting this one
+            CleanCycle-{{model_component}}[-{{models[model_component]["window_length"]}}] => GetBackground-{{model_component}}
 
-            # Get background, provide a way to get background directly from GEOS experiment
-            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
-
-            # Get observations
-            {% if cycling_varbc %}
-            # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
-            {% else %}
-
-            # Cycling VarBC is inactive, static bias files will be used
-            GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
-            {% endif %}
+            # Generate background error covariance
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
 
             # Run Jedi variational executable
             BuildJediByLinking[^]? | BuildJedi[^]  => RunJediVariationalExecutable-{{model_component}}
-            CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            GetBackground-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
             RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
-            GenerateObservingSystemRecords-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            # Prepare forecast task, Update RC files, and create scratch directory
+            RunJediVariationalExecutable-{{model_component}} => PrepForecastCf-{{model_component}}
+
+            # Get restart files from R2D2
+            PrepForecastCf-{{model_component}} => GetRestartCf-{{model_component}}
+
+            # Run forecast
+            GetRestartCf-{{model_component}} => RunForecast-{{model_component}}
+
+            # Save forecast
+            RunForecast-{{model_component}} => SaveForecastCf-{{model_component}}
+
+            # Save restart files to R2D2
+            RunForecast-{{model_component}} => SaveRestartCf-{{model_component}}
 
             # EvaObservations
             RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
@@ -87,15 +83,12 @@
             # EvaIncrement
             RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
 
-	    {% if not skip_r2d2 %}
             # Save observations
-            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
-            {% endif %}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}}
 
             # Clean up large files
-            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} & 
+            SaveObsDiags-{{model_component}} & SaveForecastCf-{{model_component}} & SaveRestartCf-{{model_component}} => CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -133,24 +126,11 @@
         {%- endfor %}
 
     {% for model_component in model_components %}
-
-    [[CloneGeosMksi-{{model_component}}]]
-        script = "swell task CloneGeosMksi $config -m {{model_component}}"
-
-    [[GenerateObservingSystemRecords-{{model_component}}]]
-        script = "swell task GenerateObservingSystemRecords $config -d $datetime -m {{model_component}}"
-
-    [[GetObsNotInR2d2-{{model_component}}]]
-        script = "swell task GetObsNotInR2d2 $config -d $datetime -m {{model_component}}"
-
     [[StageJediCycle-{{model_component}}]]
         script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
 
-    [[GetBackground-{{model_component}} ]]
+    [[GetBackground-{{model_component}}]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
-
-    [[GetBackgroundGeosExperiment-{{model_component}} ]]
-        script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
@@ -166,6 +146,33 @@
         {%- for key, value in scheduling["RunJediVariationalExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[GetRestartCf-{{model_component}}]]
+        script = "swell task GetRestartCf $config -d $datetime -m {{model_component}}"
+
+    [[PrepForecastCf-{{model_component}}]]
+        script = "swell task PrepForecastCf $config -d $datetime -m {{model_component}}"
+
+    [[RunForecast-{{model_component}}]]
+        script = """
+            cycle_dir=$(python3 -c 'from swell.utilities.datetime_util import Datetime; import sys; print(Datetime(sys.argv[1]).string_directory())' "$CYLC_TASK_CYCLE_POINT")
+            scratch_dir="{{experiment_path}}/run/${cycle_dir}/{{model_component}}/scratch"
+            forecast_log="${scratch_dir}/CFv2_gcm_${SLURM_JOB_ID:-$$}"
+            "${scratch_dir}/gcm_run_geoscf.j" > "${forecast_log}" 2>&1
+        """
+        platform = {{platform}}
+        [[[directives]]]
+            --time = 00:40:00
+            --nodes = 8
+            --ntasks-per-node = 108
+            --job-name = CFv2rc1t13
+            --output = /dev/null
+
+    [[SaveForecastCf-{{model_component}}]]
+        script = "swell task SaveForecastCf $config -d $datetime -m {{model_component}}"
+
+    [[SaveRestartCf-{{model_component}}]]
+        script = "swell task SaveRestartCf $config -d $datetime -m {{model_component}}"
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"

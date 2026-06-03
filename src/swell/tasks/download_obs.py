@@ -9,18 +9,15 @@ Task for downloading raw observation files from remote servers.
 
 Downloads native observation files (e.g. HDF5, NetCDF) from either HTTPS
 servers such as NASA GES DISC, from public AWS S3 buckets, or from
-protected S3 buckets via the NASA Earthdata Cumulus distribution service.
+authenticated HTTPS endpoints for NASA ASDC datasets.
 
-HTTPS authentication is handled via ~/.netrc (same mechanism used by
-wget/curl).
+``https`` (default)
+    Scrapes an HTML directory listing and streams files via HTTPS.
+    Authentication uses ``~/.netrc``.
 
-S3 (``retrieval_method: s3_public``) uses anonymous boto3 access for
-publicly readable buckets (e.g. ``s3://meeo-s5p``).  Requires ``boto3``.
-
-S3 (``retrieval_method: s3_secure``) authentication is done by exchanging
-Earthdata credentials (read from ``~/.netrc`` for
-``urs.earthdata.nasa.gov``) for temporary AWS credentials via the NASA ASDC
-Cumulus S3 distribution endpoint.  Requires ``boto3`` to be installed.
+``s3_public``
+    Downloads from a publicly readable S3 bucket using anonymous boto3
+    access (e.g. ``s3://meeo-s5p``).  Requires ``boto3``.
 
 ``cmr``
     Queries the NASA CMR API for granule URLs, then downloads via
@@ -146,10 +143,6 @@ class DownloadObs(taskBase):
 
         if retrieval_method == 's3_public':
             return self._download_obs_s3_public(
-                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
-
-        if retrieval_method == 's3_secure':
-            return self._download_obs_s3_secure(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
 
         if retrieval_method == 'cmr':
