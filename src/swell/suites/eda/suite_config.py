@@ -30,19 +30,17 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.runahead_limit("P1"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
-            ##
-            ##            qd.ensemble_num_members(2),
         ],
         geos_atmosphere=[
             qd.cycle_times([
                 "T00",
-                "T06",
-                "T12",
-                "T18"
             ]),
             qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
                                            "dadev/rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
+                                         'rtodling/archive/541/Milan'),
             qd.window_length("PT6H"),
+            qd.background_time_offset("PT3H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
             qd.gsibec_nlats("91"),

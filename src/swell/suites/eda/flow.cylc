@@ -51,9 +51,6 @@
             # Generate satellite channel records
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-            # Get background, provide a way to get background directly from GEOS experiment
-            GetBackgroundGeosExperiment-{{model_component}} :fail? => GetBackground-{{model_component}}
-
             # Get observations
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
@@ -72,7 +69,7 @@
             BuildJediByLinking[^]? | BuildJedi[^]  => SP1-{{model_component}}
             CloneJedi[^] => StageJediCycle-{{model_component}}
             StageJediCycle-{{model_component}} => SP1-{{model_component}}
-            GetBackgroundGeosExperiment-{{model_component}}? | GetBackground-{{model_component}} => SP1-{{model_component}}
+            GetEnsembleGeosExperiment-{{model_component}} => SP1-{{model_component}}
             GetObsNotInR2d2-{{model_component}}? | GetObservations-{{model_component}} => SP1-{{model_component}}
             SP1-{{model_component}} => GenerateObservingSystemRecords-{{model_component}}
             GenerateObservingSystemRecords-{{model_component}} => RenderJediObservations-{{model_component}}
@@ -150,6 +147,9 @@
 
     [[GetBackgroundGeosExperiment-{{model_component}} ]]
         script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
+
+    [[GetEnsembleGeosExperiment-{{model_component}}]]
+        script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
 
     [[GetObservations-{{model_component}}]]
         script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
