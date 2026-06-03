@@ -63,13 +63,8 @@
 
             sync_point => RunJediObsfiltersExecutable-{{model_component}}
             {% if skip_ensemble_hofx %}
-# work
-#               {% for i in range(3) %}
-#               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
-#               {% endfor %}
-## ideal               {% for i in range( dict[model_component]['ensemble_num_member'] ) %}
-               {% for i in range( ensemble_num_member ) %}
-               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+               {% for i in range( 1, models[model_component]['ensemble_num_members'] + 1 ) %}
+               sync_point => RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}-{{i}}
                {% endfor %}
             {% else %}
                # Run hofx for ensemble members according to strategy
@@ -217,6 +212,17 @@
         {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    {% for i in range( 1, 33) %}
+    [[RunJediLocalEnsembleDaExecutable-{{model_component}}-{{i}}]]
+        script = "swell task RunJediLocalEnsembleDaExecutable $config -d $datetime -m {{model_component}} -imem {{i}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediLocalEnsembleDaExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+    {% endfor %}
 
     [[EvaIncrement-{{model_component}}]]
         script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
