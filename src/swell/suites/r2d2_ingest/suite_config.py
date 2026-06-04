@@ -13,8 +13,8 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    ingest_obs = QuestionList(
-        list_name="ingest_obs",
+    r2d2_ingest = QuestionList(
+        list_name="r2d2_ingest",
         questions=[
             sq.common,
             qd.download_convert_pipeline(False)
@@ -25,7 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_obs_marine = QuestionList(
         list_name="ingest_obs_marine",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             sq.marine,
             qd.start_cycle_point("2023-07-02T06:00:00Z"),
             qd.final_cycle_point("2023-07-03T06:00:00Z"),
@@ -43,7 +43,7 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_obs_cf = QuestionList(
         list_name="ingest_obs_cf",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             qd.start_cycle_point("2024-01-01T18:00:00Z"),
             qd.final_cycle_point("2024-01-01T18:00:00Z"),
             qd.model_components(['geos_cf']),
@@ -66,7 +66,7 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_jdi_cf = QuestionList(
         list_name="ingest_jdi_cf",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             qd.start_cycle_point("2025-10-02T09:00:00Z"),
             qd.final_cycle_point("2025-10-02T09:00:00Z"),
             qd.cycle_times(['T09']),
