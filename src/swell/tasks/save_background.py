@@ -19,10 +19,10 @@ from swell.utilities.r2d2 import load_r2d2_credentials
 # --------------------------------------------------------------------------------------------------
 
 
-class StoreJdi(taskBase):
+class IngestCFBackground(taskBase):
 
     def execute(self) -> None:
-        """Store GEOS-CF NRT JDI background files in R2D2 as symlinks.
+        """Ingest GEOS-CF NRT JDI background files into R2D2 as symlinks.
 
         The JDI collection contains 1-hourly instantaneous analysis files.
         Each calendar day has a single forecast run that initialises at 09Z,
@@ -30,17 +30,18 @@ class StoreJdi(taskBase):
         the following day).
 
         For every hourly file valid on the cycle date this task resolves the
-        source path by calling ``strftime`` on ``jdi_source_path``, confirms
-        the file exists, and calls ``r2d2.store`` with ``store_as_symlink=True``
-        so R2D2 registers a symlink rather than copying the data.
+        source path by calling ``strftime`` on ``background_source_path``,
+        confirms the file exists, and calls ``r2d2.store`` with
+        ``store_as_symlink=True`` so R2D2 registers a symlink rather than
+        copying the data.
 
         Config keys (read from experiment YAML under the model component):
 
-        - ``jdi_source_path``: strftime path template, e.g.
+        - ``background_source_path``: strftime path template, e.g.
           ``/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/
           GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4``
-        - ``jdi_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
-        - ``jdi_resolution``: R2D2 resolution string (default ``c360``)
+        - ``background_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
+        - ``horizontal_resolution``: R2D2 resolution string (default ``c360``)
 
         The Cylc cycle point must be the 09Z point for the day being ingested,
         e.g. ``2025-10-02T09:00:00Z``.
@@ -56,9 +57,9 @@ class StoreJdi(taskBase):
         # Cycle time is the forecast initialisation time (always 09Z)
         forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
 
-        jdi_source_template = self.config.jdi_source_path()
-        jdi_experiment = self.config.jdi_experiment('geos_cf_v2')
-        jdi_resolution = self.config.jdi_resolution('c360')
+        source_template = self.config.background_source_path()
+        experiment = self.config.background_experiment('geos_cf_v2')
+        resolution = self.config.horizontal_resolution('c360')
 
         stored = 0
         skipped = 0
@@ -68,10 +69,10 @@ class StoreJdi(taskBase):
             valid_time = forecast_start + timedelta(hours=hour_offset)
             step = f'PT{hour_offset}H'
 
-            source_file = valid_time.strftime(jdi_source_template)
+            source_file = valid_time.strftime(source_template)
 
             if not os.path.exists(source_file):
-                self.logger.warning(f'JDI file not found, skipping: {source_file}')
+                self.logger.warning(f'Background file not found, skipping: {source_file}')
                 skipped += 1
                 continue
 
@@ -88,8 +89,8 @@ class StoreJdi(taskBase):
                     model='geos_cf',
                     item='forecast',
                     step=step,
-                    experiment=jdi_experiment,
-                    resolution=jdi_resolution,
+                    experiment=experiment,
+                    resolution=resolution,
                     date=forecast_start.strftime('%Y%m%d_%H%Mz'),
                     source_file=source_file,
                     file_extension='nc4',
@@ -97,11 +98,11 @@ class StoreJdi(taskBase):
                     store_as_symlink=True,
                 )
             except PermissionError as exc:
-                # R2D2 bug?: after creating the symlink, file_util._set_permissions
+                # R2D2 bug: after creating the symlink, file_util._set_permissions
                 # calls os.chmod which follows the symlink to the CSS source file.
                 # Since we don't own that file, EPERM is raised, but the symlink
                 # and DB entry are both created successfully before the chmod.
-                # Need to verify the symlink points to the right file before continuing.
+                # Verify the symlink points to the right file before continuing.
                 r2d2_path = exc.filename
                 if (r2d2_path
                         and os.path.islink(r2d2_path)
@@ -115,4 +116,4 @@ class StoreJdi(taskBase):
             stored += 1
 
         verb = 'Would store' if dry_run else 'Stored'
-        self.logger.info(f'JDI ingest complete: {verb} {stored} files, {skipped} skipped')
+        self.logger.info(f'CF background ingest complete: {verb} {stored} files, {skipped} skipped')

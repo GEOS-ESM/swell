@@ -46,8 +46,8 @@
                 DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}}
                 BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{model_component}}
                 ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
-                {% elif ingest_jdi_pipeline %}
-                StoreJdi-{{model_component}}
+                {% elif ingest_background_pipeline %}
+                IngestCFBackground-{{model_component}}
                 {% else %}
                 IngestObs-{{model_component}}
                 {% endif %}
@@ -101,9 +101,9 @@
         script = "swell task IngestObs $config -d $datetime -m {{model_component}}"
         execution time limit = PT10M
 
-    {% if ingest_jdi_pipeline %}
-    [[StoreJdi-{{model_component}}]]
-        script = "swell task StoreJdi $config -d $datetime -m {{model_component}}"
+    {% if ingest_background_pipeline %}
+    [[IngestCFBackground-{{model_component}}]]
+        script = "swell task IngestCFBackground $config -d $datetime -m {{model_component}}"
         execution time limit = PT30M
     {% endif %}
 

@@ -876,13 +876,13 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    StoreJdi = QuestionList(
-        list_name="StoreJdi",
+    IngestCFBackground = QuestionList(
+        list_name="IngestCFBackground",
         questions=[
             qd.dry_run(),
-            qd.jdi_source_path(),
-            qd.jdi_experiment(),
-            qd.jdi_resolution(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
         ]
     )
 

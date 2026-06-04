@@ -1765,15 +1765,15 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class jdi_source_path(TaskQuestion):
+    class background_source_path(TaskQuestion):
         default_value: str = (
             '/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/'
             'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4'
         )
-        question_name: str = "jdi_source_path"
+        question_name: str = "background_source_path"
         ask_question: bool = True
         models: List[str] = mutable_field(['geos_cf'])
-        prompt: str = ("Path template for GEOS-CF JDI files. Uses Python strftime format codes, "
+        prompt: str = ("Path template for background files. Uses Python strftime format codes, "
                        "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
                        "20251002_0900z.")
         widget_type: WType = WType.STRING
@@ -1781,33 +1781,11 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class jdi_experiment(TaskQuestion):
-        default_value: str = 'geos_cf_v2'
-        question_name: str = "jdi_experiment"
-        ask_question: bool = True
-        models: List[str] = mutable_field(['geos_cf'])
-        prompt: str = "R2D2 experiment name for the GEOS-CF JDI collection."
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class jdi_resolution(TaskQuestion):
-        default_value: str = 'c360'
-        question_name: str = "jdi_resolution"
-        ask_question: bool = True
-        models: List[str] = mutable_field(['geos_cf'])
-        prompt: str = "R2D2 resolution string for the GEOS-CF JDI collection (e.g. c360)."
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ingest_jdi_pipeline(SuiteQuestion):
+    class ingest_background_pipeline(SuiteQuestion):
         default_value: bool = False
-        question_name: str = "ingest_jdi_pipeline"
+        question_name: str = "ingest_background_pipeline"
         ask_question: bool = False
-        prompt: str = "Run the StoreJdi task to ingest GEOS-CF JDI files into R2D2?"
+        prompt: str = "Run the IngestCFBackground task to ingest GEOS-CF JDI files into R2D2?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

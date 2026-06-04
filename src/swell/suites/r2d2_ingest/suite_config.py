@@ -63,8 +63,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ]
     )
 
-    ingest_jdi_cf = QuestionList(
-        list_name="ingest_jdi_cf",
+    ingest_background_cf = QuestionList(
+        list_name="ingest_background_cf",
         questions=[
             r2d2_ingest,
             qd.start_cycle_point("2025-10-02T09:00:00Z"),
@@ -72,12 +72,12 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(['T09']),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
-            qd.ingest_jdi_pipeline(True),
+            qd.ingest_background_pipeline(True),
         ],
         geos_cf=[
             qd.dry_run(True),
-            qd.jdi_source_path(),
-            qd.jdi_experiment(),
-            qd.jdi_resolution(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
         ]
     )
