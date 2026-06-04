@@ -16,7 +16,7 @@ Use this when IODA-formatted files are already available on the local filesystem
 
 ### Step 1: Add your observation to the suite config
 
-Edit `src/swell/suites/ingest_obs/suite_config.py` and update (or create) the appropriate
+Edit `src/swell/suites/r2d2_ingest/suite_config.py` and update (or create) the appropriate
 section. For example for marine observations, update `ingest_obs_marine`:
 
 ```python
