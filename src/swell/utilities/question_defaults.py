@@ -1785,7 +1785,7 @@ class QuestionDefaults():
         default_value: bool = False
         question_name: str = "ingest_background_pipeline"
         ask_question: bool = False
-        prompt: str = "Run the IngestCFBackground task to ingest GEOS-CF JDI files into R2D2?"
+        prompt: str = "Run the SaveBackground task to ingest GEOS-CF JDI background files into R2D2?"
         widget_type: WType = WType.BOOLEAN
 
     # --------------------------------------------------------------------------------------------------

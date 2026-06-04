@@ -876,8 +876,8 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    IngestCFBackground = QuestionList(
-        list_name="IngestCFBackground",
+    SaveBackground = QuestionList(
+        list_name="SaveBackground",
         questions=[
             qd.dry_run(),
             qd.background_source_path(),

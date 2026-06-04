@@ -19,21 +19,22 @@ from swell.utilities.r2d2 import load_r2d2_credentials
 # --------------------------------------------------------------------------------------------------
 
 
-class IngestCFBackground(taskBase):
+class SaveBackground(taskBase):
 
     def execute(self) -> None:
-        """Ingest GEOS-CF NRT JDI background files into R2D2 as symlinks.
+        """Ingest NRT background files into R2D2 as symlinks.
 
-        The JDI collection contains 1-hourly instantaneous analysis files.
-        Each calendar day has a single forecast run that initialises at 09Z,
-        with hourly output steps PT0H (valid 09Z) through PT23H (valid 08Z
-        the following day).
+        Designed for collections where background files already exist on a
+        shared filesystem and only need to be registered in R2D2 via symlinks
+        rather than copied. Currently used for the GEOS-CF JDI collection.
 
-        For every hourly file valid on the cycle date this task resolves the
-        source path by calling ``strftime`` on ``background_source_path``,
-        confirms the file exists, and calls ``r2d2.store`` with
-        ``store_as_symlink=True`` so R2D2 registers a symlink rather than
-        copying the data.
+        The collection contains 1-hourly instantaneous analysis files with a
+        single forecast run initialising at 09Z each day. Steps PT0H (valid
+        09Z) through PT23H (valid 08Z the following day) are ingested.
+
+        For every hourly step the source path is resolved by calling
+        ``strftime`` on ``background_source_path``, the file is confirmed to
+        exist, and ``r2d2.store`` is called with ``store_as_symlink=True``.
 
         Config keys (read from experiment YAML under the model component):
 
@@ -43,7 +44,7 @@ class IngestCFBackground(taskBase):
         - ``background_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
         - ``horizontal_resolution``: R2D2 resolution string (default ``c360``)
 
-        The Cylc cycle point must be the 09Z point for the day being ingested,
+        The Cylc cycle point must be the forecast initialisation time,
         e.g. ``2025-10-02T09:00:00Z``.
         """
 
@@ -54,9 +55,10 @@ class IngestCFBackground(taskBase):
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be stored')
 
-        # Cycle time is the forecast initialisation time (always 09Z)
+        # Cycle time is the forecast initialisation time
         forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
 
+        model = self.model_component()
         source_template = self.config.background_source_path()
         experiment = self.config.background_experiment('geos_cf_v2')
         resolution = self.config.horizontal_resolution('c360')
@@ -86,7 +88,7 @@ class IngestCFBackground(taskBase):
 
             try:
                 store(
-                    model='geos_cf',
+                    model=model,
                     item='forecast',
                     step=step,
                     experiment=experiment,
@@ -99,10 +101,10 @@ class IngestCFBackground(taskBase):
                 )
             except PermissionError as exc:
                 # R2D2 bug: after creating the symlink, file_util._set_permissions
-                # calls os.chmod which follows the symlink to the CSS source file.
-                # Since we don't own that file, EPERM is raised, but the symlink
-                # and DB entry are both created successfully before the chmod.
-                # Verify the symlink points to the right file before continuing.
+                # calls os.chmod which follows the symlink to the source file on
+                # the shared filesystem. Since we don't own that file, EPERM is
+                # raised, but the symlink and DB entry are both created successfully
+                # before the chmod. Verify the symlink before continuing.
                 r2d2_path = exc.filename
                 if (r2d2_path
                         and os.path.islink(r2d2_path)
@@ -116,4 +118,4 @@ class IngestCFBackground(taskBase):
             stored += 1
 
         verb = 'Would store' if dry_run else 'Stored'
-        self.logger.info(f'CF background ingest complete: {verb} {stored} files, {skipped} skipped')
+        self.logger.info(f'Background ingest complete: {verb} {stored} files, {skipped} skipped')
