@@ -27,8 +27,8 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             ingest_obs,
             sq.marine,
-            qd.start_cycle_point("2021-07-02T06:00:00Z"),
-            qd.final_cycle_point("2021-07-03T06:00:00Z"),
+            qd.start_cycle_point("2023-07-02T06:00:00Z"),
+            qd.final_cycle_point("2023-07-03T06:00:00Z"),
             qd.model_components(['geos_marine']),
             qd.runahead_limit("P5"),
         ],
@@ -44,8 +44,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="ingest_obs_cf",
         questions=[
             ingest_obs,
-            qd.start_cycle_point("2023-08-10T00:00:00Z"),
-            qd.final_cycle_point("2023-08-11T00:00:00Z"),
+            qd.start_cycle_point("2024-01-01T18:00:00Z"),
+            qd.final_cycle_point("2024-01-01T18:00:00Z"),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
             qd.download_convert_pipeline(True),
@@ -53,8 +53,8 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
         geos_cf=[
             qd.window_length("PT6H"),
-            qd.obs_to_download(['omps_o3_nm_total']),
-            qd.obs_to_ingest(['omps_o3_nm_total']),
+            qd.obs_to_download(['tempo_no2_tropo']),
+            qd.obs_to_ingest(['tempo_no2_tropo']),
             qd.converter_path(
                 "/discover/nobackup/projects/jcsda/s2127/maryamao/"
                 "jedi-bundle/build-intel-1.9/bin/"

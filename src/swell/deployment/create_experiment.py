@@ -179,7 +179,10 @@ def prepare_config(
                 unique_r2d2_id
 
         load_r2d2_module(logger, platform)
-        load_r2d2_credentials(logger, platform)
+        r2d2_server = experiment_dict.get('r2d2_server')
+        if r2d2_server is not None:
+            r2d2_server = str(r2d2_server).strip() or None
+        load_r2d2_credentials(logger, platform, r2d2_server=r2d2_server)
 
         import r2d2
 
@@ -582,9 +585,18 @@ def prepare_cylc_suite_jinja2(
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
 
+    # Set jinja templated string to use upon runtime
+    # ----------------------------------------------
+    render_dictionary['scheduling']['stall_timeout'] = """\
+    {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+    [[events]]
+    stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+    {% endif %}"""
+
     # Render the template
     # -------------------
-    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary, False)
+    new_suite_file = template_string_jinja2(logger, suite_file, render_dictionary,
+                                            allow_unresolved=True)
 
     # Write suite file to experiment
     # ------------------------------
