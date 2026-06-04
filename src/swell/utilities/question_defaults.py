@@ -997,6 +997,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class store_as_symlink(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "store_as_symlink"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
         question_name: str = "obs_to_ingest"

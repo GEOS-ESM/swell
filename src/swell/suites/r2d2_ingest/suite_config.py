@@ -79,5 +79,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.background_source_path(),
             qd.background_experiment(),
             qd.horizontal_resolution(),
+            qd.store_as_symlink(True),
         ]
     )

@@ -43,6 +43,8 @@ class SaveBackground(taskBase):
           GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4``
         - ``background_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
         - ``horizontal_resolution``: R2D2 resolution string (default ``c360``)
+        - ``store_as_symlink``: if ``True`` (default), register files as symlinks
+          in R2D2 rather than copying them
 
         The Cylc cycle point must be the forecast initialisation time,
         e.g. ``2025-10-02T09:00:00Z``.
@@ -62,6 +64,7 @@ class SaveBackground(taskBase):
         source_template = self.config.background_source_path()
         experiment = self.config.background_experiment('geos_cf_v2')
         resolution = self.config.horizontal_resolution('c360')
+        store_as_symlink = self.config.store_as_symlink(True)
 
         stored = 0
         skipped = 0
@@ -97,7 +100,7 @@ class SaveBackground(taskBase):
                     source_file=source_file,
                     file_extension='nc4',
                     file_type='bkg',
-                    store_as_symlink=True,
+                    store_as_symlink=store_as_symlink,
                 )
             except PermissionError as exc:
                 # R2D2 bug: after creating the symlink, file_util._set_permissions
@@ -105,8 +108,10 @@ class SaveBackground(taskBase):
                 # the shared filesystem. Since we don't own that file, EPERM is
                 # raised, but the symlink and DB entry are both created successfully
                 # before the chmod. Verify the symlink before continuing.
+                # Only applies when store_as_symlink=True; a real copy never hits this.
                 r2d2_path = exc.filename
-                if (r2d2_path
+                if (store_as_symlink
+                        and r2d2_path
                         and os.path.islink(r2d2_path)
                         and os.readlink(r2d2_path) == source_file):
                     self.logger.warning(
