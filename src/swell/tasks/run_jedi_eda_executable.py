@@ -135,7 +135,6 @@ class RunJediEdaExecutable(taskBase):
 
         # imember: specify yaml
         # ----------------------------------------------------
-
         if imember == 1:
             jedi_config_dict['cost function']['observations'].pop('obs perturbations', None)
         else:
@@ -145,16 +144,30 @@ class RunJediEdaExecutable(taskBase):
             # Get observation name
             observation = observer['observation_name']
             if imember > 1:
-                observer['obs space'].update({'obs perturbations seed': imember})
-                observer['obs error'].update({'obs perturbations amplitude': 0.5})
+                obs_cov_model = observer.get('obs error', {}).get('covariance model')
+                print( f'{observation}:  obs_cov_model = {obs_cov_model}')
+                if obs_cov_model and 'cross variable covariances' in obs_cov_model:
+                    print(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
+                else:
+                    print(f"No cross varaible covariance found for {observation},  Obs Error Diagonal")
+                    obs_error_dict = {
+                        'covariance model': 'diagonal',
+                        'zero-mean perturbations': True,
+                        'member': imember,
+                        'number of members': nmember
+                    }
+                    observer.update({'obs error': obs_error_dict})
+                    observer['obs space'].update({'obs perturbations seed': imember})
+
             hxout = observer['obs space']['obsdataout']['engine']['obsfile']
             dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, f'diag/mem{imember:003d}', fname)
+            hxout = os.path.join(dir1, f'analysis/mem{imember:003d}', fname)
             observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
-            print (f'hxout = {hxout}')
+            # print (f'hxout = {hxout}')
 
-        for i, iter in enumerate(jedi_config_dict['variational']['iterations']):
-            iter['online diagnostics']['increment']['state component']['filename'] = f'eda.mem{imember:03d}.increment-iter{i+1}.'
+        # create subdir
+        xdir = os.path.join(self.cycle_dir(), f'analysis/mem{imember:003d}')
+        os.makedirs(xdir, exist_ok=True)
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False

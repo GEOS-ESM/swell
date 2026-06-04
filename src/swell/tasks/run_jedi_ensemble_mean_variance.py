@@ -51,6 +51,7 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         # ------------------------
 
+
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
@@ -71,6 +72,24 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
 
+
+        print( f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
+        meanvar_spec_dict = self.config.ensmeanvariance_spec()
+#        # Loop directly over the items in the list
+#        for spec in config_dict:
+#            # Unpack variables directly from the current dictionary item
+#            fn_input = spec["fn_input"]
+#            fn_output_mean = spec["fn_output_mean"]
+#            fn_output_variance = spec["fn_output_variance"]
+#
+#            # Use the variables directly
+#            print(f"Input Path:  {fn_input}")
+#            print(f"Output Mean: {fn_output_mean}")
+#            print(f"Output Var:  {fn_output_variance}")
+#            print("-" * 40)
+#
+
+
         # Add placeholder names if mock experiment
         # ----------------------------------------
         if self.config.mock_experiment(False):
@@ -78,49 +97,56 @@ class RunJediEnsembleMeanVariance(taskBase):
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
-        # Jedi configuration file
+
+        # loop item in ensmeanvariance_spec
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config.yaml')
+        for idx, spec in enumerate(meanvar_spec_dict, start=1):
 
-        # Output log file
-        # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}.log')
+            self.jedi_rendering.add_key('ensmeanvariance_spec_item', spec)
 
-        # Open the JEDI config file and fill templates
-        # --------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
-                                                                window_type,
-                                                                jedi_forecast_model)
+            # Jedi configuration file
+            # -----------------------
+            jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config_{idx}.yaml')
 
-        yaml = YAML()
-        yaml.default_flow_style = False
+            # Output log file
+            # ---------------
+            output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_{idx}.log')
 
-        # Write the expanded dictionary to YAML file
-        # ------------------------------------------
-        with open(jedi_config_file, 'w') as jedi_config_file_open:
-            yaml.dump(jedi_config_dict, jedi_config_file_open)
+            # Open the JEDI config file and fill templates
+            # --------------------------------------------
+            jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
+                                                                    window_type,
+                                                                    jedi_forecast_model)
 
-        # Get the JEDI interface metadata
-        # -------------------------------
-        model_component_meta = self.jedi_rendering.render_interface_meta()
+            yaml = YAML()
+            yaml.default_flow_style = False
 
-        # Compute number of processors
-        # ----------------------------
-        np = eval(str(model_component_meta['total_processors']))
+            # Write the expanded dictionary to YAML file
+            # ------------------------------------------
+            with open(jedi_config_file, 'w') as jedi_config_file_open:
+                yaml.dump(jedi_config_dict, jedi_config_file_open)
 
-        # Jedi executable name
-        # --------------------
-        jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
+            # Get the JEDI interface metadata
+            # -------------------------------
+            model_component_meta = self.jedi_rendering.render_interface_meta()
 
-        # Run the JEDI executable
-        # -----------------------
-        if not generate_yaml_and_exit:
-            self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
-            run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
-                           jedi_config_file, output_log_file)
-        else:
-            self.logger.info('YAML generated, now exiting.')
+            # Compute number of processors
+            # ----------------------------
+            np = eval(str(model_component_meta['total_processors']))
+
+            # Jedi executable name
+            # --------------------
+            jedi_executable = model_component_meta['executables'][f'{jedi_application}']
+            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
+                                                jedi_executable)
+
+            # Run the JEDI executable
+            # -----------------------
+            if not generate_yaml_and_exit:
+                self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+                run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
+                               jedi_config_file, output_log_file)
+            else:
+                self.logger.info('YAML generated, now exiting.')
 
 # --------------------------------------------------------------------------------------------------

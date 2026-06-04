@@ -537,6 +537,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensmeanvariance_spec(TaskQuestion):
+        default_value: List[Dict[str, str]] = mutable_field([
+            {
+                "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                "fn_output_mean": "geos.prior.mean",
+                "fn_output_variance": "geos.prior.variance",
+                "geom": "latlon"
+            },
+            {
+                "fn_input": "analysis/mem%mem%/eda.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                "fn_output_mean": "eda.ana.mean",
+                "fn_output_variance": "eda.ana.variance",
+                "geom": "latlon"
+            },
+        ])
+        question_name: str = "ensmeanvariance_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the ensemble mean and variance specifications: [e.g. ebkg, eda.analysis, eda.inc, etc.]"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class existing_geos_gcm_build_path(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_build_path"

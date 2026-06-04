@@ -44,7 +44,7 @@ class eda3D(OopsConfig):
                     'diagnostics': {
                         'departures': 'ombg'
                     },
-                    'online diagnostics': self.interface_model('varincrement1')
+                    'online diagnostics': self.interface_model('eda_varincrement1')
                 }],
             },
             'final': {
@@ -55,7 +55,7 @@ class eda3D(OopsConfig):
                     'frequency': 'PT3H'
                 }
             },
-            'output': self.interface_model('analysis')
+            'output': self.interface_model('eda_analysis')
         }
 
         # TODO: Implement this more cleanly in the OOPS schema

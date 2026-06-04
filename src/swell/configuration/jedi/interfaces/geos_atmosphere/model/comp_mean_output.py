@@ -12,23 +12,22 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import fie
 # --------------------------------------------------------------------------------------------------
 
 
-def ensemble_latlon_prior_variance_output(template_dict: Mapping) -> Mapping:
+def comp_mean_output(template_dict: Mapping) -> Mapping:
+        
+    fn_output_mean = template_dict['ensmeanvariance_spec_item'].get('fn_output_mean')
+    geom = template_dict['ensmeanvariance_spec_item'].get('geom')
 
-    suite_name = template_dict.get('suite_name')
-    if suite_name == 'eda':
-        fn = 'eda.variance.'
-    else:
-        fn = 'geos.prior.variance.'
+    mean_output = {}
+    if geom == 'latlon':
+        mean_output = {
+            'filetype': 'auxgrid',
+            'gridtype': 'latlon',
+            'datapath': template_dict['cycle_dir'],
+            'filename': fn_output_mean,
+            'field io names': field_io_names_ensemble
+        }
 
-    ensemble_latlon_prior_variance_output = {
-        'filetype': 'auxgrid',
-        'gridtype': 'latlon',
-        'datapath': template_dict['cycle_dir'],
-        'filename': fn,
-        'field io names': field_io_names_ensemble
-    }
-
-    return ensemble_latlon_prior_variance_output
+    return ensemble_mean_output
 
 
 # --------------------------------------------------------------------------------------------------

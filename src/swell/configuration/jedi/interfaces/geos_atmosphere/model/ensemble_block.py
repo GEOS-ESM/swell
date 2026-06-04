@@ -13,6 +13,8 @@ from collections.abc import Mapping
 
 def ensemble_block(template_dict: Mapping) -> Mapping:
 
+    fn_input = template_dict['ensmeanvariance_spec_item'].get('fn_input')
+
     ensemble_block = {
         'members from template': {
             'template': {
@@ -22,7 +24,7 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
                 'compute edge pressure from surface pressure': True,
                 'max allowable geometry difference': 1e-3,
                 'datapath': template_dict['cycle_dir'],
-                'filename': 'ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+                'filename': fn_input,
                 'state variables': [
                     'eastward_wind',
                     'northward_wind',
@@ -76,12 +78,6 @@ def ensemble_block(template_dict: Mapping) -> Mapping:
             'zero padding': 3
         }
     }
-
-    imem = template_dict.get('ensemble_imem', None)
-    if imem is not None:
-        # EDA diagnostic case
-        fn = ensemble_block['members from template']['template']['filename']
-        fn = f'eda.mem{imem:03d}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4'
 
     return ensemble_block
 

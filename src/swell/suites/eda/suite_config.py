@@ -27,7 +27,7 @@ class SuiteConfig(QuestionContainer, Enum):
             sq.common,
             qd.start_cycle_point("2023-10-10T00:00:00Z"),
             qd.final_cycle_point("2023-10-10T06:00:00Z"),
-            qd.runahead_limit("P1"),
+            qd.runahead_limit("P2"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
         ],
@@ -40,7 +40,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
                                          'rtodling/archive/541/Milan'),
             qd.window_length("PT6H"),
-            qd.background_time_offset("PT3H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
             qd.gsibec_nlats("91"),

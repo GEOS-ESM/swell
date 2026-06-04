@@ -638,6 +638,7 @@ class TaskQuestions(QuestionContainer, Enum):
             window_questions,
             qd.analysis_variables(),
             qd.ensemble_num_members(),
+            qd.ensmeanvariance_spec(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
             qd.observations(),

@@ -8,16 +8,18 @@
 
 from collections.abc import Mapping
 from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names
-
+import os
 # --------------------------------------------------------------------------------------------------
 
 
-def analysis(template_dict: Mapping) -> Mapping:
+def eda_analysis(template_dict: Mapping) -> Mapping:
+
+    imem = template_dict.get('ensemble_imember', None)
     analysis = {
         'filetype': 'cube sphere history',
         'provider': 'geos',
-        'datapath': template_dict['cycle_dir'],
-        'filename': f'{template_dict["experiment_id"]}.analysis.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'datapath': f'./analysis/mem{imem:03d}',
+        'filename': f'{template_dict["experiment_id"]}.ana.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'first': 'PT0H',
         'frequency': 'PT1H',
         'field io names': field_io_names,
