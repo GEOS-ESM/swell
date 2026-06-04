@@ -1767,15 +1767,15 @@ class QuestionDefaults():
     @dataclass
     class jdi_source_path(TaskQuestion):
         default_value: str = (
-            '/css/gmao/geos-cf/NRTv2/priv/ana/YDIR/MDIR/DDIR/'
-            'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.YYYYMMDD_HHmmz.R0.nc4'
+            '/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/'
+            'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4'
         )
         question_name: str = "jdi_source_path"
         ask_question: bool = True
         models: List[str] = mutable_field(['geos_cf'])
-        prompt: str = ("Path template for GEOS-CF JDI files. Supports YDIR, MDIR, DDIR "
-                       "(prefixed directory tokens e.g. Y2025/M10/D02), YYYY, MM, DD, HH and "
-                       "YYYYMMDD_HHmmz placeholders.")
+        prompt: str = ("Path template for GEOS-CF JDI files. Uses Python strftime format codes, "
+                       "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
+                       "20251002_0900z.")
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

@@ -30,16 +30,15 @@ class StoreJdi(taskBase):
         the following day).
 
         For every hourly file valid on the cycle date this task resolves the
-        source path from ``jdi_source_path`` (a template supporting ``YYYY``,
-        ``MM``, ``DD``, ``HH`` placeholders), confirms the file exists, and
-        calls ``r2d2.store`` with ``store_as_symlink=True`` so R2D2 registers
-        a symlink rather than copying the data.
+        source path by calling ``strftime`` on ``jdi_source_path``, confirms
+        the file exists, and calls ``r2d2.store`` with ``store_as_symlink=True``
+        so R2D2 registers a symlink rather than copying the data.
 
         Config keys (read from experiment YAML under the model component):
 
-        - ``jdi_source_path``: path template, e.g.
-          ``/css/gmao/geos-cf/NRTv2/priv/ana/YYYY/MM/DD/
-          GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.YYYYMMDD_HHmmz.nc4``
+        - ``jdi_source_path``: strftime path template, e.g.
+          ``/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/
+          GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4``
         - ``jdi_experiment``: R2D2 experiment name (default ``geos_cf_v2``)
         - ``jdi_resolution``: R2D2 resolution string (default ``c360``)
 
@@ -69,7 +68,7 @@ class StoreJdi(taskBase):
             valid_time = forecast_start + timedelta(hours=hour_offset)
             step = f'PT{hour_offset}H'
 
-            source_file = self._resolve_jdi_path(jdi_source_template, valid_time)
+            source_file = valid_time.strftime(jdi_source_template)
 
             if not os.path.exists(source_file):
                 self.logger.warning(f'JDI file not found, skipping: {source_file}')
@@ -117,23 +116,3 @@ class StoreJdi(taskBase):
 
         verb = 'Would store' if dry_run else 'Stored'
         self.logger.info(f'JDI ingest complete: {verb} {stored} files, {skipped} skipped')
-
-    # ------------------------------------------------------------------
-
-    def _resolve_jdi_path(self, template: str, valid_time: dt) -> str:
-        """Substitute placeholders in the JDI path template.
-
-        Supports:
-        - ``YDIR``, ``MDIR``, ``DDIR``: prefixed directory tokens (e.g. Y2025, M10, D02)
-        - ``YYYYMMDD_HHmmz``: composite filename token (e.g. 20251002_0900z)
-        - ``YYYY``, ``MM``, ``DD``, ``HH``: individual date/time tokens
-        """
-        return (template
-                .replace('YDIR', 'Y' + valid_time.strftime('%Y'))
-                .replace('MDIR', 'M' + valid_time.strftime('%m'))
-                .replace('DDIR', 'D' + valid_time.strftime('%d'))
-                .replace('YYYYMMDD_HHmmz', valid_time.strftime('%Y%m%d_%H%Mz'))
-                .replace('YYYY', valid_time.strftime('%Y'))
-                .replace('MM',   valid_time.strftime('%m'))
-                .replace('DD',   valid_time.strftime('%d'))
-                .replace('HH',   valid_time.strftime('%H')))
