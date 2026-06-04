@@ -58,7 +58,7 @@ class SaveBackground(taskBase):
         # Cycle time is the forecast initialisation time
         forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
 
-        model = self.model_component()
+        model = self.__model__
         source_template = self.config.background_source_path()
         experiment = self.config.background_experiment('geos_cf_v2')
         resolution = self.config.horizontal_resolution('c360')
