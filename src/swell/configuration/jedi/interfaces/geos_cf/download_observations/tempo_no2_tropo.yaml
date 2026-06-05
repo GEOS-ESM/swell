@@ -1,0 +1,21 @@
+# TEMPO NO2 Tropospheric Column L2 — download configuration
+# Instrument: TEMPO (Tropospheric Emissions: Monitoring of Pollution)
+# Product:    TEMPO_NO2_L2 V03
+# Source:     NASA CMR search API + ASDC Cumulus HTTPS download
+#             (Earthdata authentication required in ~/.netrc for
+#              urs.earthdata.nasa.gov)
+#
+# Granules are discovered via the NASA CMR API and downloaded from:
+#   https://data.asdc.earthdata.nasa.gov/TEMPO/TEMPO_NO2_L2_V03/...
+#
+# Direct S3 access (s3://asdc-prod-protected/...) is blocked outside
+# AWS us-west-2 by ASDC IAM policy; CMR + HTTPS works from any network.
+
+retrieval_method: cmr
+cmr_short_name: TEMPO_NO2_L2
+cmr_version: V03
+
+# Maximum duration of a single TEMPO scan granule. Used to extend the
+# temporal search window backwards so granules starting before window_begin
+# but containing data within the DA window are not missed.
+max_orbit_duration: PT2H
