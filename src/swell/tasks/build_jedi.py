@@ -63,7 +63,6 @@ class BuildJedi(taskBase):
                                                   use_pinned, 32)
 
         # Perform the clone of JEDI repos
-        execute_tasks(['make'], jedi_bundle_dict)
         try:
             execute_tasks(['make'], jedi_bundle_dict)
         except Exception:
