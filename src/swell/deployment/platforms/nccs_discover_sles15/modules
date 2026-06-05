@@ -19,6 +19,7 @@ module load gmao-swell-env/1.0.0
 module unload gsibec crtm fms
 module load fms/2025.03-geos-constants
 module unload py-netcdf4 
+module unload bufr-query
 
 # JEDI Python Path
 # ----------------
@@ -36,12 +37,12 @@ module load other/mepo
 # Load r2d2 modules
 # -----------------
 module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load r2d2-client/sles15_spack_2.0
+module load r2d2-client/spackstack_2.1
 
 # Load eva and jedi_bundle
 # ------------------------
-module load eva/sles15_spack_2.0
-module load jedi_bundle/sles15_spack_2.0
+module load eva/spackstack_2.1
+module load jedi_bundle/spackstack_2.1
 
 # Load ip
 # -------
@@ -60,4 +61,3 @@ PYTHONPATH={{swell_lib_path}}:$PYTHONPATH
 ulimit -S -s unlimited
 ulimit -S -v unlimited
 umask 022
-

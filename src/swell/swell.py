@@ -20,6 +20,8 @@ from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import AllSuites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.utilities.datetime_util import is_duration
+from swell.utilities.suite_utils import read_override_file
 
 
 # --------------------------------------------------------------------------------------------------
@@ -84,6 +86,9 @@ or for task-model combinations.
 
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
+cylc_timeout_help = """
+Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
+ ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
 
 # --------------------------------------------------------------------------------------------------
 
@@ -117,8 +122,12 @@ def create(
 
     """
 
+    # Read override file
+    override_dict = read_override_file(override)
+
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm, skip_r2d2)
+    create_experiment_directory(suite, input_method, platform, override_dict,
+                                advanced, slurm, skip_r2d2)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -163,10 +172,12 @@ def clone(
 @click.argument('suite_path')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False, help=no_detach_help)
 @click.option('-l', '--log_path', 'log_path', default=None, help=log_path_help)
+@click.option('-t', '--cylc-timeout', 'cylc_timeout', default=None, help=cylc_timeout_help)
 def launch(
     suite_path: str,
     no_detach: bool,
-    log_path: str
+    log_path: str,
+    cylc_timeout: bool
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -177,7 +188,12 @@ def launch(
         suite_path (str): Path to where the flow.cylc and associated suite files are located. \n
 
     """
-    launch_experiment(suite_path, no_detach, log_path)
+
+    if cylc_timeout is not None:
+        if not is_duration(cylc_timeout):
+            raise ValueError(f'Specified cylc timeout does not match ISO duration format')
+
+    launch_experiment(suite_path, no_detach, log_path, cylc_timeout)
 
 
 # --------------------------------------------------------------------------------------------------
