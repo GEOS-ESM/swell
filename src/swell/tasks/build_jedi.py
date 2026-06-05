@@ -60,12 +60,12 @@ class BuildJedi(taskBase):
         jedi_bundle_dict = set_jedi_bundle_config(self.config.bundles(bundles),
                                                   jedi_bundle_source_path,
                                                   jedi_bundle_build_path, self.platform(),
-                                                  use_pinned, 24)
+                                                  use_pinned, 32)
 
         # Perform the clone of JEDI repos
-        execute_tasks(['configure', 'make'], jedi_bundle_dict)
+        execute_tasks(['make'], jedi_bundle_dict)
         try:
-            execute_tasks(['configure', 'make'], jedi_bundle_dict)
+            execute_tasks(['make'], jedi_bundle_dict)
         except Exception:
             self.logger.abort(f'A failure occurred in jedi_bundle.execute_tasks')
 
