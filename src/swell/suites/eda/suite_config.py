@@ -102,6 +102,26 @@ class SuiteConfig(QuestionContainer, Enum):
                 "ssmis_f17"
             ]),
             qd.obs_thinning_rej_fraction(0.75),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": "analysis/mem%mem%/eda.ana.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "eda.ana.mean",
+                 "fn_output_variance": "eda.ana.variance",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2": 
+                {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff": 
+                {"fn_output": "eda.inc.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                }),
             qd.clean_patterns(['*.txt', '*.csv']),
         ]
     )

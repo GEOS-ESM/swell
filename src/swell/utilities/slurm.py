@@ -81,6 +81,7 @@ def prepare_scheduling_dict(
         'RunGeos',
         'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',
+        'RunJediDiffstates',        
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',
         'RunJediHofxEnsembleExecutable',

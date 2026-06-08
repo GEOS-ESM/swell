@@ -650,6 +650,22 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediDiffstates = QuestionList(
+        list_name="RunJediDiffstates",
+        questions=[
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.diffstates_spec(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.comparison_log_type('diffstates'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediFgatExecutable = QuestionList(
         list_name="RunJediFgatExecutable",
         questions=[

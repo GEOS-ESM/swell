@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass
-from typing import List, Dict
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -538,26 +538,26 @@ class QuestionDefaults():
 
     @dataclass
     class ensmeanvariance_spec(TaskQuestion):
-        default_value: List[Dict[str, str]] = mutable_field([
-            {
-                "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                "fn_output_mean": "geos.prior.mean",
-                "fn_output_variance": "geos.prior.variance",
-                "geom": "latlon"
-            },
-            {
-                "fn_input": "analysis/mem%mem%/eda.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                "fn_output_mean": "eda.ana.mean",
-                "fn_output_variance": "eda.ana.variance",
-                "geom": "latlon"
-            },
-        ])
+        default_value: List[Dict[str, str]] = field(default_factory=lambda: [{}])
         question_name: str = "ensmeanvariance_spec"
         models: List[str] = mutable_field([
             "all_models"
         ])
         ask_question: bool = True
-        prompt: str = "Configure the ensemble mean and variance specifications: [e.g. ebkg, eda.analysis, eda.inc, etc.]"
+        prompt: str = "Configure the ensemble mean and variance specifications: [ebkg, eda.analysis]"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class diffstates_spec(TaskQuestion):
+        default_value: Dict[str, Any] = field(default_factory=dict)
+        question_name: str = "diffstates_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the diffstates specifications: [state1, state2]"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

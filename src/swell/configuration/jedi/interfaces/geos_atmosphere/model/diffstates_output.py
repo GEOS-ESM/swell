@@ -13,39 +13,30 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 # --------------------------------------------------------------------------------------------------
 
 
-def comp_mean_output(template_dict: Mapping) -> Mapping:
-        
-    prefix_output_mean = template_dict['ensmeanvariance_spec_item'].get('fn_output_mean')
-    state = template_dict['ensmeanvariance_spec_item'].get('state')
-    grid_type= template_dict['ensmeanvariance_spec_gridtype']
+def diffstates_output(template_dict: Mapping) -> Mapping:
 
-    mean_output = {}
+    # diff states (inc)
+    grid_type= template_dict['diffstates_spec_gridtype']
+    prefix_output = template_dict['diffstates_spec'].get('state_diff', {}).get('fn_output')
+
+    output = {}
     if grid_type == 'cs':
-        mean_output = {
+        output = {
             'filetype': 'cube sphere history',
             'provider': 'geos',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_mean}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-            'first':    'PT0H',
-            'frequency': 'PT1H',
-            'field io names': []
+            'filename': f'{prefix_output}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            'field io names': field_io_names_ensemble
         }
     elif grid_type == 'latlon':
-        mean_output = {
+        output = {
             'filetype': 'auxgrid',
             'gridtype': 'latlon',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output_mean}.ll.',
-            'field io names': []
+            'filename': f'{prefix_output}.ll.',
+            'field io names': field_io_names_ensemble
         }        
-
-    if state in ['bkg', 'analysis']:
-        mean_output['field io names'] = field_io_names
-    else:
-        mean_output['field io names'] = field_io_names_ensemble
-
         
-    return mean_output
-
+    return output
 
 # --------------------------------------------------------------------------------------------------

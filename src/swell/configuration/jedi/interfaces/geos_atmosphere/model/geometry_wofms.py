@@ -6,23 +6,27 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from swell.utilities.oops_config import OopsConfig
+from collections.abc import Mapping
 
 # --------------------------------------------------------------------------------------------------
 
 
-class ensmeanvariance(OopsConfig):
+def geometry_wofms(template_dict: Mapping) -> Mapping:
 
-    def render_oops(self):
+    npx_proc = template_dict['npx_proc']
+    npy_proc = template_dict['npy_proc']
 
-        oops = {
-            'geometry': self.interface_model('geometry'),
-            'ensemble': self.interface_model('state_ensemble'),
-            'variance output': self.interface_model('comp_variance_output'),
-            'mean output': self.interface_model('comp_mean_output')
-        }
+    horizontal_resolution = template_dict['horizontal_resolution']
+    vertical_resolution = template_dict['vertical_resolution']
 
-        return oops
+    geometry = {
+        'akbk': f'./fv3-jedi/fv3files/akbk{vertical_resolution}.nc4',
+        'layout': [npx_proc, npy_proc],
+        'npx': horizontal_resolution,
+        'npy': horizontal_resolution,
+        'npz': vertical_resolution
+    }
 
+    return geometry
 
 # --------------------------------------------------------------------------------------------------

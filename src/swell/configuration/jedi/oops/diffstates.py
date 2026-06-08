@@ -11,15 +11,16 @@ from swell.utilities.oops_config import OopsConfig
 # --------------------------------------------------------------------------------------------------
 
 
-class ensmeanvariance(OopsConfig):
+class diffstates(OopsConfig):
 
     def render_oops(self):
 
+        two_states = self.interface_model('two_states')
         oops = {
-            'geometry': self.interface_model('geometry'),
-            'ensemble': self.interface_model('state_ensemble'),
-            'variance output': self.interface_model('comp_variance_output'),
-            'mean output': self.interface_model('comp_mean_output')
+            'state geometry': self.interface_model('geometry'),
+            'increment geometry': self.interface_model('geometry_wofms'),
+            **two_states,
+            'output': self.interface_model('diffstates_output')
         }
 
         return oops

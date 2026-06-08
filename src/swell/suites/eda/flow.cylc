@@ -79,14 +79,18 @@
             SP2-{{model_component}} => RunJediEdaExecutable_mem{{i}}-{{model_component}} => SP3-{{model_component}}
             {% endfor %}
 
+            # bkg/ana : mean/variance
+            SP3-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
+            RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
+
             # EvaObservations
-            SP3-{{model_component}} => EvaObservations-{{model_component}}
+            SP4-{{model_component}} => EvaObservations-{{model_component}}
 
             # EvaJediLog
-            SP3-{{model_component}} => EvaJediLog-{{model_component}}
+            SP4-{{model_component}} => EvaJediLog-{{model_component}}
 
             # EvaIncrement
-            SP3-{{model_component}} => EvaIncrement-{{model_component}}
+            SP4-{{model_component}} => EvaIncrement-{{model_component}}
 
             # Clean up large files
             EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
@@ -195,6 +199,15 @@
             --{{key}} = {{value}}
         {%- endfor %}
 
+    [[RunJediDiffstates-{{model_component}}]]
+        script = "swell task RunJediDiffstates $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediDiffstates"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediDiffstates"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
 
@@ -216,6 +229,7 @@
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
 
+    # SP: Sync Point
     [[SP1-{{model_component}}]]
         script = true
 
@@ -223,6 +237,9 @@
         script = true
 
     [[SP3-{{model_component}}]]
+        script = true
+
+    [[SP4-{{model_component}}]]
         script = true
 
     {% endfor %}
