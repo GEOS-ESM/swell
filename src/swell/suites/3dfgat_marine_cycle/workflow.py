@@ -1,4 +1,5 @@
-# (C) Copyright 2021- United States Government as represented by the Administrator of the
+#!jinja2
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
 # This software is licensed under the terms of the Apache Licence Version 2.0
@@ -25,6 +26,8 @@ template_str = '''
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+
+{{stall_timeout}}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -151,6 +154,12 @@ class Workflow_3dfgat_marine_cycle(CylcWorkflow):
         for task in self.tasks:
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
 
         workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict,
                                               allow_unresolved=True)

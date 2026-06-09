@@ -1,3 +1,4 @@
+#!jinja2
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -24,6 +25,8 @@ template_str = '''
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+
+{{stall_timeout}}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -113,6 +116,13 @@ class Workflow_hofx(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,

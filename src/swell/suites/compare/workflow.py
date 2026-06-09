@@ -27,6 +27,8 @@ template_str = '''
     UTC mode = True
     allow implicit tasks = False
 
+{{stall_timeout}}
+
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
@@ -72,6 +74,13 @@ class Workflow_compare(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
         workflow_str += template_string_jinja2(logger=self.logger,
                                                templated_string=template_str,
                                                dictionary_of_templates=self.experiment_dict,
@@ -102,6 +111,7 @@ class Workflow_compare(CylcWorkflow):
             self.tasks.append(ta.EvaComparisonIncrement(model=model))
             self.tasks.append(ta.EvaComparisonJediLog(model=model))
             self.tasks.append(ta.JediLogComparison(model=model))
+            self.tasks.append(ta.PublishComparisons(model=model))
 
             for i, path in enumerate(paths):
                 log_parser = ta.JediOopsLogParser(model=model)

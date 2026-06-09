@@ -164,11 +164,9 @@ class ConvertObsToIoda(taskBase):
         input_files = sorted(glob.glob(input_pattern))
 
         if not input_files:
-            msg = f'No input files found for {obs_name} in {download_dir}'
-            if dry_run:
-                self.logger.warning(msg)
-            else:
-                self.logger.abort(msg)
+            self.logger.warning(
+                f'No input files found for {obs_name} in {download_dir} - skipping')
+            return
 
         self.logger.info(f'Found {len(input_files)} input file(s)')
 

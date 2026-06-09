@@ -63,8 +63,8 @@ ingest_obs_cf = QuestionList(
     ],
     geos_cf=[
         qd.window_length("PT6H"),
-        qd.obs_to_download(['omps_o3_nm_total']),
-        qd.obs_to_ingest(['omps_o3_nm_total']),
+        qd.obs_to_download(['tempo_no2_tropo']),
+        qd.obs_to_ingest(['tempo_no2_tropo']),
         qd.converter_path(
             "/discover/nobackup/projects/jcsda/s2127/maryamao/"
             "jedi-bundle/build-intel-1.9/bin/"

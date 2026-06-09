@@ -22,6 +22,7 @@ from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
 from swell.deployment.create_task_config import task_config_wrapper
+from swell.utilities.datetime_util import is_duration
 from swell.utilities.suite_utils import read_override_file
 
 
@@ -90,6 +91,11 @@ For task configs, set flag to create directory at the user's cwd, otherwise dire
 created in default experiment_root."""
 
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
+
+cylc_timeout_help = """
+Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
+ ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -215,12 +221,15 @@ def clone(
 @click.option('-l', '--log_path', 'log_path', default=None, help=log_path_help)
 @click.option('-m', '--send-messages', 'send_messages', is_flag=True)
 @click.option('-d', '--pause-workflow', 'pause_workflow', is_flag=True)
+@click.option('-t', '--cylc-timeout', 'cylc_timeout', default=None, help=cylc_timeout_help)
 def launch(
     suite_path: str,
     no_detach: bool,
     log_path: str,
     send_messages: bool,
-    pause_workflow: bool
+    pause_workflow: bool,
+    cylc_timeout: bool
+
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -231,8 +240,12 @@ def launch(
         suite_path (str): Path to where the flow.cylc and associated suite files are located. \n
 
     """
-    launch_experiment(suite_path, no_detach, log_path, send_messages, pause_workflow)
 
+    if cylc_timeout is not None:
+        if not is_duration(cylc_timeout):
+            raise ValueError(f'Specified cylc timeout does not match ISO duration format')
+
+    launch_experiment(suite_path, no_detach, log_path, send_messages, pause_workflow, cylc_timeout)
 
 # --------------------------------------------------------------------------------------------------
 
