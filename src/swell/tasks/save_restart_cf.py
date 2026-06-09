@@ -9,7 +9,6 @@
 
 import isodate
 import os
-from r2d2 import store
 
 import swell.configuration.question_defaults as qd
 from swell.tasks.base.task_base import taskBase
@@ -47,6 +46,8 @@ class SaveRestartCf(taskBase):
         Saves checkpoint files that are valid at the beginning of the next DA window so they
         can be retrieved by GetRestartCf in the subsequent cycle.
         """
+
+        from r2d2 import store
 
         model = self.__model__
 

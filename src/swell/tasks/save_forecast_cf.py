@@ -10,7 +10,6 @@
 
 import isodate
 import os
-from r2d2 import store
 
 import swell.configuration.question_defaults as qd
 from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_filename, r2d2
@@ -52,6 +51,8 @@ class SaveForecastCf(taskBase):
              All inputs are extracted from the JEDI experiment file configuration.
              See the taskBase constructor for more information.
         """
+
+        from r2d2 import store
 
         # Load R2D2 credentials
         # ---------------------
