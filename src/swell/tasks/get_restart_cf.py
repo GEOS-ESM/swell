@@ -16,7 +16,6 @@ from swell.utilities.r2d2 import load_r2d2_credentials
 
 import isodate
 import os
-import r2d2
 
 # ----------------------------------------------------------------------------------------------
 
@@ -45,6 +44,8 @@ class GetRestartCf(taskBase):
         """Fetches rst files for a given experiment and cycle from R2D2
 
         """
+
+        import r2d2
 
         # Load R2D2 credentials
         # ---------------------
