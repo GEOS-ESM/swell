@@ -357,6 +357,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ebkg_time_offset(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ebkg_time_offset"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("How long before the middle of the analysis window did"
+                       " the ensemble background providing forecast begin?")
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class rst_experiment(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "rst_experiment"

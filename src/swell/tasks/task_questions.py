@@ -392,6 +392,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.background_experiment(),
             qd.background_time_offset(),
+            qd.ebkg_time_offset(),
             qd.geos_x_ensemble_directory()
         ]
     )
