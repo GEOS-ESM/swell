@@ -39,14 +39,18 @@ class SuiteConfig(QuestionContainer, Enum):
                                            "dadev/rtodling/archive/Restarts/JEDI/541x"),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
                                          'rtodling/archive/541/Milan'),
+            qd.npx_proc(4),
+            qd.npy_proc(5),
             qd.window_length("PT6H"),
             qd.window_type("3D"),
             qd.horizontal_resolution("91"),
             qd.gsibec_nlats("91"),
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
-            qd.ensemble_num_members(4),
+            qd.ensemble_num_members(16),
             qd.obs_pert_amplitude(0.5),
+            qd.number_of_iterations([25]),
+            qd.gradient_norm_reduction(1.e-8),
             qd.analysis_variables([
                 "eastward_wind",
                 "northward_wind",
@@ -101,7 +105,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
-            qd.obs_thinning_rej_fraction(0.98),
+            qd.obs_thinning_rej_fraction(0.8),
             qd.ensmeanvariance_spec([
                 {"state": "bkg",
                  "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
@@ -117,9 +121,9 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.diffstates_spec({
                 "state1":
                 {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state2": 
+                "state2":
                 {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state_diff": 
+                "state_diff":
                 {"fn_output": "eda.mean-inc", "grid_type": ['cs', 'latlon']},
                 "state_type": "ensemble"
                 }),
