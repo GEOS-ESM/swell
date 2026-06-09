@@ -101,7 +101,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
-            qd.obs_thinning_rej_fraction(0.75),
+            qd.obs_thinning_rej_fraction(0.98),
             qd.ensmeanvariance_spec([
                 {"state": "bkg",
                  "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
@@ -120,7 +120,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "state2": 
                 {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
                 "state_diff": 
-                {"fn_output": "eda.inc.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                {"fn_output": "eda.mean-inc", "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
                 }),
             qd.clean_patterns(['*.txt', '*.csv']),
         ]

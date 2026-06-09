@@ -155,7 +155,8 @@ state_variables_sa1 = [
 	'water_vapor_mixing_ratio_wrt_moist_air',
 	'cloud_liquid_ice',
 	'cloud_liquid_water',
-	'mole_fraction_of_ozone_in_air'
+	'mole_fraction_of_ozone_in_air',
+        'skin_temperature_at_surface',
   ]
 
 # --------------------------------------------------------------------------------------------------
@@ -170,6 +171,7 @@ field_io_names_sa1 = {
     'cloud_liquid_ice': 'qi',
     'cloud_liquid_water': 'ql',
     'mole_fraction_of_ozone_in_air': 'o3ppmv',
+    'skin_temperature_at_surface': 'ts',
 }
 
 # --------------------------------------------------------------------------------------------------

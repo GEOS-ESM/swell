@@ -31,7 +31,7 @@ def diffstates_output(template_dict: Mapping) -> Mapping:
             'filetype': 'cube sphere history',
             'provider': 'geos',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            'filename': f'{prefix_output}.cs.%yyyy%mm%dd_%hh%MM%ssz.nc4',
             'field io names': field_io_names_loc
         }
     elif grid_type == 'latlon':
@@ -39,7 +39,7 @@ def diffstates_output(template_dict: Mapping) -> Mapping:
             'filetype': 'auxgrid',
             'gridtype': 'latlon',
             'datapath': template_dict['cycle_dir'],
-            'filename': f'{prefix_output}.ll.',
+            'filename': f'{prefix_output}.',
             'field io names': field_io_names_loc
         }
 
