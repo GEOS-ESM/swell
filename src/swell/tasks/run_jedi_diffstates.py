@@ -68,7 +68,7 @@ class RunJediDiffstates(taskBase):
 
         # Diffstates
         spec_dict = self.config.diffstates_spec()
-        self.jedi_rendering.add_key('diffstates_spec', spec_dict)         
+        self.jedi_rendering.add_key('diffstates_spec', spec_dict)
         print( f'diffstates = {spec_dict}')
 
         # Add placeholder names if mock experiment
@@ -78,13 +78,16 @@ class RunJediDiffstates(taskBase):
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
+        state_type = spec_dict.get('state_type')
+        self.jedi_rendering.add_key('diffstates_spec_statetype', state_type)
+
         # loop output grid_type:
         grid_type = spec_dict['state_diff'].get('grid_type')
         print (f'grid_type = {grid_type}')
 
         if grid_type is None:
             grid_type = ['latlon']
-        
+
         for output_grid in grid_type:
 
             self.jedi_rendering.add_key('diffstates_spec_gridtype', output_grid)
@@ -96,7 +99,7 @@ class RunJediDiffstates(taskBase):
             # Output log file
             # ---------------
             output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_output_{output_grid}.log')
-            
+
             # Open the JEDI config file and fill templates
             # --------------------------------------------
             jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
@@ -109,7 +112,7 @@ class RunJediDiffstates(taskBase):
             # ------------------------------------------
             with open(jedi_config_file, 'w') as jedi_config_file_open:
                 yaml.dump(jedi_config_dict, jedi_config_file_open)
-                
+
             # Get the JEDI interface metadata
             # -------------------------------
             model_component_meta = self.jedi_rendering.render_interface_meta()
