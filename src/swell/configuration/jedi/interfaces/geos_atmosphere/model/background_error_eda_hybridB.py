@@ -13,6 +13,7 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
     field_io_names
 
 # --------------------------------------------------------------------------------------------------
+# Hybrid-B:  not tested
 
 state_variables_to_inverse = [
     'eastward_wind',
@@ -193,7 +194,7 @@ components:
 """
 
 
-def background_error_hybrid(template_dict: Mapping) -> Mapping:
+def background_error_eda_hybridB(template_dict: Mapping) -> Mapping:
     render_context = {
         **template_dict,
         'state_variables_to_inverse': state_variables_to_inverse,
