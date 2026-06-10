@@ -71,8 +71,8 @@ def background_eda(template_dict: Mapping) -> Mapping:
         'max allowable geometry difference': 1e-3,
         'datapath': template_dict['cycle_dir'],
         'filenames': [
-            f'ebkg/mem{imem:03d}/geos.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-            f'fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
+            f'./ebkg/mem{imem:03d}/geos.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+            f'./fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
         ],
         'state variables': state_variables,
         'field io names': field_io_names,

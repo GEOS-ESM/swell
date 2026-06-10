@@ -9,6 +9,8 @@
 
 import os
 import copy
+import glob
+import shutil
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
@@ -140,9 +142,23 @@ class RunJediEdaExecutable(taskBase):
         else:
             jedi_config_dict['cost function']['observations'].update({'obs perturbations': True})
 
+        # create subdir
+        mem_dir = f'analysis/mem{imember:003d}/'
+        xdir = os.path.join(self.cycle_dir(), mem_dir)
+        os.makedirs(xdir, exist_ok=True)
+
         for observer in jedi_config_dict['cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
+
+            print( f'ob= {observation}' )
+            # copy obs input file to avoid multi MPI reading the same file
+            files = glob.glob(os.path.join(self.cycle_dir(), f'{observation}*.nc4')) + \
+                glob.glob(os.path.join(self.cycle_dir(), f'{observation}*.txt'))
+            for src_file in files:
+                print( f'f= {src_file}' )
+                shutil.copy(src_file,  xdir)
+
             if imember > 1:
                 obs_cov_model = observer.get('obs error', {}).get('covariance model')
                 print( f'{observation}:  obs_cov_model = {obs_cov_model}')
@@ -161,13 +177,37 @@ class RunJediEdaExecutable(taskBase):
 
             hxout = observer['obs space']['obsdataout']['engine']['obsfile']
             dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, f'analysis/mem{imember:003d}', fname)
+            hxout = os.path.join(dir1, mem_dir, fname)
             observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
-            # print (f'hxout = {hxout}')
 
-        # create subdir
-        xdir = os.path.join(self.cycle_dir(), f'analysis/mem{imember:003d}')
-        os.makedirs(xdir, exist_ok=True)
+            obsFileIn = observer['obs space']['obsdatain']['engine']['obsfile']
+            dir1, fname = os.path.split(obsFileIn)
+            obsFileIn = os.path.join(dir1, mem_dir, fname)
+            observer['obs space']['obsdatain']['engine']['obsfile'] = obsFileIn
+
+            obs_bias = observer.get('obs bias')
+            if obs_bias is not None:
+                File = obs_bias['input file']
+                dir1, fname = os.path.split(File)
+                File = os.path.join(dir1, mem_dir, fname)
+                obs_bias['input file'] = File
+                #
+                File = obs_bias['output file']
+                dir1, fname = os.path.split(File)
+                File = os.path.join(dir1, mem_dir, fname)
+                obs_bias['output file'] = File
+                #
+                File = obs_bias.get('covariance', {}).get('output file')
+                if File is not None:
+                    dir1, fname = os.path.split(File)
+                    File = os.path.join(dir1, mem_dir, fname)
+                    obs_bias['covariance']['output file'] = File
+                #
+                File = obs_bias.get('covariance', {}).get('prior',{}).get('input file')
+                if File is not None:
+                    dir1, fname = os.path.split(File)
+                    File = os.path.join(dir1, mem_dir, fname)
+                    obs_bias['covariance']['prior']['input file'] = File
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False
@@ -175,6 +215,22 @@ class RunJediEdaExecutable(taskBase):
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
+
+        # copy fv3-jedi dir, update dir names
+        d1 = os.path.join(self.cycle_dir(), 'fv3-jedi')
+        d2 = os.path.join(self.cycle_dir(), mem_dir, 'fv3-jedi')
+        shutil.copytree(d1, d2, dirs_exist_ok=True)
+
+        with open(jedi_config_file, 'r') as f:
+            yaml_content = f.read()
+
+        dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
+        for i in dir_list:
+            j = f"fv3-jedi/{i}"
+            k = f"{mem_dir}{j}"  # Result: analysis/mem002/fv3-jedi/rcov
+            yaml_content = yaml_content.replace(j, k)
+        with open(jedi_config_file, 'w') as f:
+            f.write(yaml_content)
 
         # Get the JEDI interface metadata
         # -------------------------------
@@ -203,5 +259,15 @@ class RunJediEdaExecutable(taskBase):
             mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
+
+
+# clean up dir
+#        for observer in jedi_config_dict['cost function']['observations']['observers']:
+#            # Get observation name
+#            observation = observer['observation_name']
+#            # Delete input obsfile .nc4 files
+#            for file_path in glob.glob(os.path.join(mem_dir, f'{observation}*.nc4')):
+#                os.remove(file_path)
+#                print(f"Deleted: {file_path}")
 
 # --------------------------------------------------------------------------------------------------
