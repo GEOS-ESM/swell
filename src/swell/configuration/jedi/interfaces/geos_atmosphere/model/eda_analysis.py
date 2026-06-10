@@ -19,7 +19,7 @@ def eda_analysis(template_dict: Mapping) -> Mapping:
         'filetype': 'cube sphere history',
         'provider': 'geos',
         'datapath': f'./analysis/mem{imem:03d}',
-        'filename': f'{template_dict["experiment_id"]}.ana.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'filename': f'eda.ana.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'first': 'PT0H',
         'frequency': 'PT1H',
         'field io names': field_io_names,

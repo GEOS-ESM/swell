@@ -849,6 +849,16 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CleanEda = QuestionList(
+        list_name="CleanEda",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveObsDiags = QuestionList(
         list_name="SaveObsDiags",
         questions=[

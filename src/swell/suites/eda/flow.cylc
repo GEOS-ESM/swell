@@ -85,6 +85,9 @@
             SP3-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
             RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
 
+            # CleanupEda directory
+            SP4-{{model_component}} => CleanEdaFiles-{{model_component}}
+
             # EvaObservations
             SP4-{{model_component}} => EvaObservations-{{model_component}}
 
@@ -211,6 +214,9 @@
         {%- for key, value in scheduling["RunJediDiffstates"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
+
+    [[CleanEdaFiles-{{model_component}}]]
+        script = "swell task CleanEda $config -d $datetime -m {{model_component}}"
 
     [[EvaJediLog-{{model_component}}]]
         script = "swell task EvaJediLog $config -d $datetime -m {{model_component}}"
