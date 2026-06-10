@@ -153,8 +153,7 @@ class RunJediEdaExecutable(taskBase):
 
             print( f'ob= {observation}' )
             # copy obs input file to avoid multi MPI reading the same file
-            files = glob.glob(os.path.join(self.cycle_dir(), f'{observation}*.nc4')) + \
-                glob.glob(os.path.join(self.cycle_dir(), f'{observation}*.txt'))
+            files = glob.glob(os.path.join(self.cycle_dir(), f'{observation}.*'))
             for src_file in files:
                 print( f'f= {src_file}' )
                 shutil.copy(src_file,  xdir)
