@@ -10,7 +10,6 @@
 import os
 import shutil
 from ruamel.yaml import YAML
-from typing import Optional
 import random
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -63,7 +62,7 @@ class RunJediObsfiltersExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members: Optional[list] = None) -> None:
+    def execute(self, ensemble_members: list | None = None) -> None:
 
         # Jedi application name
         # ---------------------

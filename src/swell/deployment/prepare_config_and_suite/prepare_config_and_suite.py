@@ -11,7 +11,6 @@
 import os
 from ruamel.yaml import YAML
 from collections.abc import Mapping
-from typing import Optional
 import datetime
 
 from swell.swell_path import get_swell_path
@@ -76,8 +75,8 @@ class PrepareExperimentConfigAndSuite:
 
         # Big dictionary that contains all user responses as well a dictionary containing the
         # questions that were asked
-        self.experiment_dict = {}
-        self.comment_dict = {}
+        self.experiment_dict: dict = {}
+        self.comment_dict: dict = {}
 
         # Add the datetime to the dictionary
         # ----------------------------------
@@ -410,7 +409,7 @@ class PrepareExperimentConfigAndSuite:
         self,
         full_question_dictionary: dict,
         question_key: str,
-        model: Optional[str] = None
+        model: str | None = None
     ) -> None:
 
         # Set flag for whether the question should be asked
@@ -460,7 +459,7 @@ class PrepareExperimentConfigAndSuite:
 
     # ----------------------------------------------------------------------------------------------
 
-    def question_not_been_asked(self, question_key: str, model: str) -> bool:
+    def question_not_been_asked(self, question_key: str, model: str | None) -> bool:
         # See if a question has been answered in the experiment dict
 
         # Check model independent keys

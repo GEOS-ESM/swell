@@ -8,7 +8,6 @@
 
 from ruamel.yaml import YAML
 import os
-from typing import Optional
 from datetime import datetime
 
 from swell.utilities.logger import get_logger
@@ -19,9 +18,9 @@ from swell.utilities.datetime_util import datetime_formats
 
 def check_da_params(config_list: list,
                     model_component: str,
-                    start_cycle_point_in: Optional[str],
-                    final_cycle_point_in: Optional[str],
-                    cycle_times_in: Optional[str]) -> None:
+                    start_cycle_point_in: str | None,
+                    final_cycle_point_in: str | None,
+                    cycle_times_in: str | None) -> tuple[list, list, list]:
 
     # From two or more experiments, check that the window parameters are the same, and gather the
     # common cycle times between the two. Returns times between the start and final cycle points,

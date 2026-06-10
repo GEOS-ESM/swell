@@ -13,7 +13,6 @@ import os
 from netCDF4 import Dataset
 import numpy as np
 import xarray as xr
-from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
@@ -65,10 +64,9 @@ class LinkCoupledGeosOutput(taskBase):
         if self.window_type == '4D' or 'fgat' in self.suite_name():
             self.background_frequency = self.config.background_frequency()
 
-        self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time(
+        self.bkgr_time_iso, self.bkgr_time_dto = self.da_window_params.local_background_time_dto(
             self.window_length,
-            self.window_type,
-            dto=True)
+            self.window_type)
 
         # Create source and destination files for linking model output to cycle directories
         # -----------------------------------------------------------------------------------
@@ -223,7 +221,7 @@ class LinkCoupledGeosOutput(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def prepare_cice6_restart(self) -> Tuple[str, str]:
+    def prepare_cice6_restart(self) -> tuple[str, str]:
         # CICE6 input in SOCA requires aggregation of multiple variables and
         # time dimension added to the dataset.
         # SOCA needs icea area (aicen), ice volume (vicen), and snow area (vsnon)

@@ -14,7 +14,7 @@ from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
 
-from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
+from swell.utilities.r2d2_utils import load_r2d2_credentials, get_r2d2_model_name
 
 import isodate
 import os

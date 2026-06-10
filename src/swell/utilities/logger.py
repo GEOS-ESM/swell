@@ -9,7 +9,6 @@
 
 import os
 import logging
-from typing import Optional
 
 # --------------------------------------------------------------------------------------------------
 
@@ -19,7 +18,7 @@ class Logger(logging.Logger):
     # --------------------------------------------------------------------------------------------------
 
     def abort(self, msg: str,
-              exception: Exception = Exception, *args, **kwargs) -> None:
+              exception: type[Exception] = Exception, *args, **kwargs) -> None:
 
         formatted_msg = '  Swell called ABORT: ' + msg
 
@@ -38,7 +37,7 @@ class Logger(logging.Logger):
 # --------------------------------------------------------------------------------------------------
 
 
-def get_logger(name: Optional[str] = None) -> Logger:
+def get_logger(name: str | None = None) -> Logger:
     '''
     Get a logger with custom message formatting for swell-related tasks.
 

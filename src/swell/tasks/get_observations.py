@@ -11,7 +11,7 @@ import isodate
 import numpy as np
 import os
 import shutil
-from typing import Union
+from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
@@ -20,8 +20,7 @@ from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
 
-from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
-
+from swell.utilities.r2d2_utils import get_r2d2_model_name, load_r2d2_credentials
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
@@ -105,7 +104,6 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     # Change the permissions
     os.chmod(target_file, 0o644)
-
 
 # --------------------------------------------------------------------------------------------------
 
@@ -432,7 +430,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict: dict) -> Union[None, int]:
+    def get_tlapse_files(self, observation_dict: dict) -> Iterator[int | None]:
 
         # Function to locate instances of tlapse in the obs operator config
 

@@ -11,7 +11,7 @@ from collections.abc import Mapping
 # --------------------------------------------------------------------------------------------------
 
 
-def stage_cycle(template_dict: Mapping) -> Mapping:
+def stage_cycle(template_dict: Mapping) -> list:
 
     cycle_dir = template_dict['cycle_dir']
     swell_static_files = template_dict['swell_static_files']

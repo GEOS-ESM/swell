@@ -11,7 +11,6 @@ from ruamel.yaml import YAML
 import os
 from datetime import datetime as dt
 from itertools import groupby
-from typing import Tuple, Optional
 
 from swell.utilities.exceptions import SwellError
 from swell.utilities.logger import Logger
@@ -77,7 +76,7 @@ def get_channels(
     observation: str,
     dt_cycle_time: dt,
     logger: Logger
-) -> Tuple[Optional[str], Optional[list[int]]]:
+) -> tuple[str | None, list[int] | None]:
 
     '''
         Comparing available channels and active channels from the observing
@@ -123,7 +122,7 @@ def num_active_channels(
     path_to_observing_sys_yamls: str,
     observation: str,
     dt_cycle_time: dt
-) -> Optional[int]:
+) -> int | None:
 
     # Retrieve available and active channels from records yaml
     path_to_observing_sys_config = path_to_observing_sys_yamls + '/' + \

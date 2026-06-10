@@ -16,7 +16,7 @@ from swell.configuration.jedi.interfaces.geos_cf.model.r2d2 import forecast_file
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 
 
 # --------------------------------------------------------------------------------------------------

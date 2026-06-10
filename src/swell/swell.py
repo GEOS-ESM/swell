@@ -10,7 +10,7 @@
 
 import click
 from ruamel.yaml import YAML
-from typing import Union, Optional, Literal
+from typing import Literal
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -114,7 +114,7 @@ def create(
     suite: str,
     input_method: str,
     platform: str,
-    override: Union[dict, str, None],
+    override: dict | str | None,
     advanced: bool,
     slurm: str,
     skip_r2d2: bool
@@ -153,11 +153,11 @@ def create(
 def create_task_config(
     task: str,
     platform: str,
-    datetime: Optional[str],
-    model: Optional[str],
+    datetime: str | None,
+    model: str | None,
     input_method: str,
-    override: Optional[str],
-    slurm: Optional[str],
+    override: str | None,
+    slurm: str | None,
     cwd: bool,
 ) -> None:
     """
@@ -187,12 +187,16 @@ def create_task_config(
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default=None, help=platform_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def clone(
     configuration: str,
     experiment_id: str,
     input_method: str,
     platform: str,
-    advanced: bool
+    advanced: bool,
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Clone an existing experiment
@@ -208,9 +212,14 @@ def clone(
     experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform,
                                        advanced)
 
-    # Create the experiment directory
-    create_experiment_directory(experiment_dict_str)
+    yaml = YAML(typ='safe')
+    experiment_override = yaml.load(experiment_dict_str)
+    suite = experiment_override['suite_to_run']
 
+    # Create the experiment directory
+    create_experiment_directory(suite, method=input_method, platform=platform,
+                                override=experiment_override, advanced=advanced, slurm=slurm,
+                                skip_r2d2=skip_r2d2)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -259,9 +268,9 @@ def launch(
 def task(
     task: str,
     config: str,
-    datetime: Optional[str],
-    model: Optional[str],
-    ensemblePacket: Optional[str],
+    datetime: str | None,
+    model: str | None,
+    ensemblePacket: str | None
 ) -> None:
     """
     Run a workflow task
@@ -321,7 +330,7 @@ def test(test: str) -> None:
                                             "localensembleda", "3dvar_cycle")))
 def t1test(
     suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: Optional[str] = "nccs_discover_sles15"
+    platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
@@ -343,7 +352,7 @@ def t1test(
 def t2test(
     suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
-        platform: Optional[str] = "nccs_discover_sles15"
+        platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 2 tests.

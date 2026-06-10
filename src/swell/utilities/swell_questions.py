@@ -10,7 +10,7 @@
 
 import os
 from dataclasses import dataclass, asdict
-from typing import List, Optional, Self, Union, Literal
+from typing import Self, Literal
 from enum import Enum, StrEnum
 
 from swell.utilities.datetime_util import is_datetime, is_duration
@@ -62,6 +62,8 @@ class WidgetType(Enum):
         if 'iso-' in self.value:
             return str
 
+        raise TypeError('Could not deduce widget type')
+
     def validate_value(self, value) -> bool:
         """ Validate that the value matches the type and format of the widget type. """
         base_type = self.base_type()
@@ -99,14 +101,14 @@ class WidgetType(Enum):
 @dataclass
 class SwellQuestion:
     """Basic dataclass for defining Swell questions for suites and tasks"""
-    default_value: str
+    default_value: any
     question_name: str
     widget_type: WidgetType
     prompt: str
-    models: Optional[list] = None
+    models: list | None = None
     question_type: str = None
     ask_question: bool = False
-    options: Optional[str] = None
+    options: str | list | None = None
 
 # --------------------------------------------------------------------------------------------------
 
@@ -114,7 +116,7 @@ class SwellQuestion:
 @dataclass
 class QuestionList:
     """Basic dataclass containing a list of questions for each model, suite, task"""
-    questions: List[Union[SwellQuestion, Self]] = mutable_field([])
+    questions: list[SwellQuestion | Self] = mutable_field([])
 
     geos_atmosphere: list = mutable_field([])
     geos_cf: list = mutable_field([])
@@ -122,7 +124,7 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_all_question_names(self, suite_task: Optional[Literal['suite', 'task']] = None) -> None:
+    def get_all_question_names(self, suite_task: Literal['suite', 'task'] | None = None) -> list:
         question_list = []
         for model in [None] + os.listdir(os.path.join(get_swell_path(),
                                                       'configuration', 'jedi', 'interfaces')):
@@ -138,7 +140,7 @@ class QuestionList:
 
     # --------------------------------------------------------------------------------------------------
 
-    def expand_question_list(self, model: Optional[str] = None):
+    def expand_question_list(self, model: str | None = None):
         question_list = []
 
         # Loop through the items in the questions list

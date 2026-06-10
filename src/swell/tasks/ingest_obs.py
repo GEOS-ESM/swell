@@ -19,8 +19,7 @@ from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
-from swell.utilities.r2d2 import load_r2d2_credentials
-
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
 # --------------------------------------------------------------------------------------------------

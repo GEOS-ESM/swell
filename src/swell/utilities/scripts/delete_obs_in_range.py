@@ -1,4 +1,4 @@
-import r2d2
+import swell.utilities.r2d2_utils as r2d2_utils
 from datetime import datetime, timedelta
 
 
@@ -34,7 +34,7 @@ def deregister_observations_in_range(
                 print(f"[DRY RUN] Would delete: {observation_type} at {window_start}")
             else:
                 try:
-                    r2d2.delete(
+                    r2d2_utils.delete(
                         item='observation',
                         observation_type=observation_type,
                         provider=provider,

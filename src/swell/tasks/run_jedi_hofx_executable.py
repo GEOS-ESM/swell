@@ -11,7 +11,6 @@
 import glob
 import os
 from ruamel.yaml import YAML
-from typing import Optional
 
 from swell.tasks.base.task_base import taskBase
 from swell.tasks.base.task_setup import TaskSetup
@@ -62,7 +61,7 @@ class RunJediHofxExecutable(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def execute(self, ensemble_members: Optional[list] = None) -> None:
+    def execute(self, ensemble_members: list | None = None) -> None:
 
         # Jedi application name
         # ---------------------
@@ -252,7 +251,6 @@ class RunJediHofxExecutable(taskBase):
                 jedi_config_dict = \
                     self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
                                                          window_type,
-                                                         observations,
                                                          jedi_forecast_model)
 
                 # Continue with the yaml edits below some of which need to be
@@ -299,7 +297,7 @@ class RunJediHofxExecutable(taskBase):
         observations: list,
         jedi_config_dict: dict,
         window_begin: str,
-        mem: Optional[str] = None
+        mem: str | None = None
     ) -> None:
 
         # We may need to save the GeoVaLs for ensemble members. This will
