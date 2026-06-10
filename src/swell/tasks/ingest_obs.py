@@ -69,7 +69,13 @@ class IngestObs(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
-        load_r2d2_credentials(self.logger, self.platform())
+        load_r2d2_credentials(
+            self.logger,
+            self.platform(),
+            r2d2_server=self.config.r2d2_server(default=None),
+        )
+
+        r2d2_datastore = self.config.r2d2_datastore(default=None)
 
         # Get list of observations to ingest (strings)
         obs_to_ingest = self.config.obs_to_ingest([])
@@ -123,7 +129,8 @@ class IngestObs(taskBase):
 
             # Ingest
             ingested, failed = self.process_obs_config(
-                obs_config, obs_name, cycle_time, window_start, window_length, dry_run)
+                obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
+                r2d2_datastore)
 
             total_ingested += len(ingested)
             total_failed += len(failed)
@@ -145,6 +152,7 @@ class IngestObs(taskBase):
         window_start: str,
         window_length: str,
         dry_run: bool,
+        r2d2_datastore: str | None = None,
     ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single observation configuration file."""
         ingested = []
@@ -202,7 +210,7 @@ class IngestObs(taskBase):
         else:
             try:
                 # Store to R2D2
-                r2d2.store(
+                store_kwargs = dict(
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
@@ -210,8 +218,11 @@ class IngestObs(taskBase):
                         target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file,
+                    source_file=target_file
                 )
+                if r2d2_datastore:
+                    store_kwargs['data_store'] = r2d2_datastore
+                r2d2.store(**store_kwargs)
             except (ValueError, KeyError, FileNotFoundError,
                     OSError, requests.RequestException) as e:
                 self.logger.error(f"Failed to ingest {obs_name}: {e}")

@@ -102,12 +102,6 @@ class SaveForecast(taskBase):
                 else:
                     self._store_fc_dict(model_name, self.local_background_time_dto, step='PT0H')
 
-        elif model_component == 'geos_cf':
-            if is_4d:
-                self.store_cf_4d()
-            else:
-                self.store_cf_3d()
-
         else:
             self.logger.abort(f'Unknown model component for SaveForecast: {model_component}')
 
@@ -161,7 +155,7 @@ class SaveForecast(taskBase):
 
         The filename for each entry is resolved by applying strftime to bkg_dto,
         ensuring it works for both static (marine, already strftime-compatible) and
-        datetime-templated (atmosphere, cf) filename patterns.
+        datetime-templated (atmosphere) filename patterns.
 
         Parameters
         ----------
@@ -233,24 +227,5 @@ class SaveForecast(taskBase):
             step = isodate.duration_isoformat(state_dto - self.local_background_time_dto)
             source_file = os.path.join(self.cycle_dir(), state[filename_key])
             self._store_forecast(model_name, state_dto, source_file, file_type, step=step)
-
-    # ----------------------------------------------------------------------------------------------
-    # GEOS-CF store methods
-    # ----------------------------------------------------------------------------------------------
-
-    def store_cf_3d(self) -> None:
-        """Store a single GEOS-CF forecast at the middle of a 3D window."""
-
-        self.logger.abort('Storing a single GEOS-CF forecast at the middle of a 3D window is not ready yet.')
-
-    # ----------------------------------------------------------------------------------------------
-
-    def store_cf_4d(self) -> None:
-        """Store GEOS-CF forecasts across a 4D (or FGAT) window.
-
-        Uses states_generator to enumerate valid forecast datetimes.
-        """
-        self.logger.abort('Storing GEOS-CF forecasts across 4D window is not ready yet.')
-
 
 # --------------------------------------------------------------------------------------------------
