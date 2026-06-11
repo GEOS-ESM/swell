@@ -88,19 +88,19 @@
             # CleanupEda directory
             SP4-{{model_component}} => CleanEdaFiles-{{model_component}}
 
-            # EvaObservations
-            SP4-{{model_component}} => EvaObservations-{{model_component}}
-
-            # EvaJediLog
-            SP4-{{model_component}} => EvaJediLog-{{model_component}}
-
             # EvaIncrement
             SP4-{{model_component}} => EvaIncrement-{{model_component}}
 
-            # Clean up large files
-            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-            EvaObservations-{{model_component}} =>
-            CleanCycle-{{model_component}}
+#            # EvaObservations
+#            SP4-{{model_component}} => EvaObservations-{{model_component}}
+#
+#            # EvaJediLog
+#            SP4-{{model_component}} => EvaJediLog-{{model_component}}
+#
+#            # Clean up large files
+#            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
+#            EvaObservations-{{model_component}} =>
+#            CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}

@@ -140,8 +140,8 @@ class CleanEda(taskBase):
             for observer in jedi_config_dict['cost function']['observations']['observers']:
                 # Get observation name
                 observation = observer['observation_name']
-                # Delete input obsfile .nc4 files
-                for file_path in glob.glob(os.path.join(d1, f'{observation}*.nc4')):
+                # Delete input obsfile in analysis/mem00x (.nc4 .tlapse.txt acftbias acftbias_cov)
+                for file_path in glob.glob(os.path.join(d1, f'{observation}.*')):
                     if os.path.islink(file_path):
                         os.unlink(file_path)                         # safe: removes only the link
                         print(f"Deleted symlink file: {file_path}")
