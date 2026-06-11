@@ -240,6 +240,7 @@ obs post filters:
                            30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
                            30 ]
       obserr_dtempf: [0.50,2.00,4.00,2.00,4.00]
+      cldthreshold_clearsky: 0.01
   maxvalue: 1.0e-12
   action:
     name: reject
