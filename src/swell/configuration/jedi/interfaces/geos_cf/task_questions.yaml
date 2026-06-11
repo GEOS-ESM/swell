@@ -4,18 +4,6 @@ analysis_variables:
   options:
   - volume_mixing_ratio_of_no2
 
-saber_central_block:
-  default_value: bump_nicas
-  options:
-  - identity
-  - bump_nicas
-
-saber_outer_block:
-  default_value: stddev_bkg_scaled
-  options:
-  - stddev_bkg_scaled
-  - stddev_fixed_values
-
 background_experiment:
   default_value: swell_test
   options:
@@ -86,6 +74,9 @@ observations:
   - tempo_no2_tropo
   - tropomi_s5p_no2_tropo
   - tempo_no2_total
+
+obs_experiment:
+  default_value: None
 
 observing_system_records_path:
   default_value: None
