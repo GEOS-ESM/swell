@@ -8,7 +8,6 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-import copy
 import glob
 import shutil
 from ruamel.yaml import YAML

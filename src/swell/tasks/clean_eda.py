@@ -8,13 +8,9 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
-import copy
 import glob
 import shutil
-from ruamel.yaml import YAML
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.run_jedi_executables import run_executable
 
 
 # --------------------------------------------------------------------------------------------------
@@ -38,8 +34,6 @@ class CleanEda(taskBase):
         background_time_offset = self.config.background_time_offset()
         number_of_iterations = self.config.number_of_iterations()
         jedi_forecast_model = self.config.jedi_forecast_model(None)
-        generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
-        perhost = self.config.perhost(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -63,7 +57,7 @@ class CleanEda(taskBase):
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
-        imember = self.get_ensemble_imember()
+        ## imember = self.get_ensemble_imember()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
