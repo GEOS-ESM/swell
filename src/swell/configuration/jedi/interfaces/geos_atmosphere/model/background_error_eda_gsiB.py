@@ -15,7 +15,6 @@ state_variables_to_inverse = [
     'northward_wind',
     'air_temperature',
     'air_pressure_at_surface',
-#    'air_pressure_levels',
     'water_vapor_mixing_ratio_wrt_moist_air',
     'cloud_liquid_ice',
     'cloud_liquid_water',

@@ -48,7 +48,6 @@ class RunJediDiffstates(taskBase):
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
-
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
@@ -69,7 +68,7 @@ class RunJediDiffstates(taskBase):
         # Diffstates
         spec_dict = self.config.diffstates_spec()
         self.jedi_rendering.add_key('diffstates_spec', spec_dict)
-        print( f'diffstates = {spec_dict}')
+        print(f'diffstates = {spec_dict}')
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
@@ -83,7 +82,7 @@ class RunJediDiffstates(taskBase):
 
         # loop output grid_type:
         grid_type = spec_dict['state_diff'].get('grid_type')
-        print (f'grid_type = {grid_type}')
+        print(f'grid_type = {grid_type}')
 
         if grid_type is None:
             grid_type = ['latlon']
@@ -94,11 +93,13 @@ class RunJediDiffstates(taskBase):
 
             # Jedi configuration file
             # -----------------------
-            jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_output_{output_grid}_config.yaml')
+            jedi_config_file = os.path.join(
+                self.cycle_dir(), f'jedi_{jedi_application}_output_{output_grid}_config.yaml')
 
             # Output log file
             # ---------------
-            output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_output_{output_grid}.log')
+            output_log_file = os.path.join(self.cycle_dir(),
+                                           f'jedi_{jedi_application}_output_{output_grid}.log')
 
             # Open the JEDI config file and fill templates
             # --------------------------------------------
@@ -124,8 +125,8 @@ class RunJediDiffstates(taskBase):
             # Jedi executable name
             # --------------------
             jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-            jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                                jedi_executable)
+            jedi_executable_path = os.path.join(self.experiment_path(),
+                                                'jedi_bundle', 'build', 'bin', jedi_executable)
 
             # Run the JEDI executable
             # -----------------------

@@ -14,10 +14,10 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 
 
 def comp_mean_output(template_dict: Mapping) -> Mapping:
-        
+
     prefix_output_mean = template_dict['ensmeanvariance_spec_item'].get('fn_output_mean')
     state = template_dict['ensmeanvariance_spec_item'].get('state')
-    grid_type= template_dict['ensmeanvariance_spec_gridtype']
+    grid_type = template_dict['ensmeanvariance_spec_gridtype']
 
     mean_output = {}
     if grid_type == 'cs':
@@ -37,15 +37,13 @@ def comp_mean_output(template_dict: Mapping) -> Mapping:
             'datapath': template_dict['cycle_dir'],
             'filename': f'{prefix_output_mean}.ll.',
             'field io names': []
-        }        
+        }
 
     if state in ['bkg', 'analysis']:
         mean_output['field io names'] = field_io_names
     else:
         mean_output['field io names'] = field_io_names_ensemble
 
-        
     return mean_output
-
 
 # --------------------------------------------------------------------------------------------------

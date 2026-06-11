@@ -17,7 +17,7 @@ def comp_variance_output(template_dict: Mapping) -> Mapping:
 
     prefix_output_variance = template_dict['ensmeanvariance_spec_item'].get('fn_output_variance')
     state = template_dict['ensmeanvariance_spec_item'].get('state')
-    grid_type= template_dict['ensmeanvariance_spec_gridtype']
+    grid_type = template_dict['ensmeanvariance_spec_gridtype']
 
     variance_output = {}
     if grid_type == 'cs':
@@ -43,6 +43,5 @@ def comp_variance_output(template_dict: Mapping) -> Mapping:
         variance_output['field io names'] = field_io_names_ensemble
 
     return variance_output
-
 
 # --------------------------------------------------------------------------------------------------

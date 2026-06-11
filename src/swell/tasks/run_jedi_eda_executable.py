@@ -64,7 +64,6 @@ class RunJediEdaExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
-###        print( f' imember = {imember}' )
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -120,14 +119,15 @@ class RunJediEdaExecutable(taskBase):
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
 
-
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config_mem{imember:03d}.yaml')
+        jedi_config_file = os.path.join(
+            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config_mem{imember:03d}.yaml')
 
         # Output log file
         # ---------------
-        output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log_mem{imember:03d}.log')
+        output_log_file = os.path.join(
+            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log_mem{imember:03d}.log')
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -150,21 +150,20 @@ class RunJediEdaExecutable(taskBase):
         for observer in jedi_config_dict['cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
-
-            print( f'ob= {observation}' )
+            print(f'ob= {observation}')
             # copy obs input file to avoid multi MPI reading the same file
             files = glob.glob(os.path.join(self.cycle_dir(), f'{observation}.*'))
             for src_file in files:
-                print( f'f= {src_file}' )
-                shutil.copy(src_file,  xdir)
+                print(f'f= {src_file}')
+                shutil.copy(src_file, xdir)
 
             if imember > 1:
                 obs_cov_model = observer.get('obs error', {}).get('covariance model')
-                print( f'{observation}:  obs_cov_model = {obs_cov_model}')
+                print(f'{observation}:  obs_cov_model = {obs_cov_model}')
                 if obs_cov_model and 'cross variable covariances' in obs_cov_model:
                     print(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
                 else:
-                    print(f"No cross varaible covariance found for {observation},  Obs Error Diagonal")
+                    print(f"No cross varaible covariance found: {observation}, Obs Error Diagonal")
                     obs_error_dict = {
                         'covariance model': 'diagonal',
                         'zero-mean perturbations': True,
@@ -201,8 +200,7 @@ class RunJediEdaExecutable(taskBase):
                     dir1, fname = os.path.split(File)
                     File = os.path.join(dir1, mem_dir, fname)
                     obs_bias['covariance']['output file'] = File
-                #
-                File = obs_bias.get('covariance', {}).get('prior',{}).get('input file')
+                File = obs_bias.get('covariance', {}).get('prior', {}).get('input file')
                 if File is not None:
                     dir1, fname = os.path.split(File)
                     File = os.path.join(dir1, mem_dir, fname)

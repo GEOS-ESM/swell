@@ -599,7 +599,7 @@ class QuestionDefaults():
             "all_models"
         ])
         ask_question: bool = True
-        prompt: str = "Configure the ensemble mean and variance specifications: [ebkg, eda.analysis]"
+        prompt: str = "Configure the ensemble mean and variance specifications:"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------

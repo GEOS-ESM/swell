@@ -61,7 +61,7 @@ state_variables = [
 
 def background_eda(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
-    imem=template_dict['ensemble_imember']
+    imem = template_dict['ensemble_imember']
 
     background = {
         'datetime': template_dict['local_background_time_iso'],

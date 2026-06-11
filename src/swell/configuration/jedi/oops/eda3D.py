@@ -26,11 +26,11 @@ class eda3D(OopsConfig):
                 'geometry': self.interface_model('geometry'),
                 'analysis variables': self.template_dict['analysis_variables'],
                 'background': self.interface_model('background_eda'),
-                #GSI:B
+                # GSI:B
                 'background error': self.interface_model('background_error_eda_gsiB'),
                 #
-                #Hybrid-B: not tested
-                #'background error': self.interface_model('background_error_eda_hybridB'),
+                # Hybrid-B: not tested
+                # 'background error': self.interface_model('background_error_eda_hybridB'),
                 'observations': {
                     'obs perturbations': False,
                     'get values': self.interface_model('getvalues'),

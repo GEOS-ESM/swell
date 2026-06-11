@@ -51,7 +51,6 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         # ------------------------
 
-
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
@@ -72,8 +71,7 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
 
-
-        print( f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
+        print(f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
         meanvar_spec_dict = self.config.ensmeanvariance_spec()
 #        # Loop directly over the items in the list
 #        for spec in config_dict:
@@ -87,8 +85,6 @@ class RunJediEnsembleMeanVariance(taskBase):
 #            print(f"Output Mean: {fn_output_mean}")
 #            print(f"Output Var:  {fn_output_variance}")
 #            print("-" * 40)
-#
-
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
@@ -97,25 +93,27 @@ class RunJediEnsembleMeanVariance(taskBase):
             self.jedi_rendering.add_key('experiment_id', 'experiment_id')
             self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
 
-
-        # loop item in ensmeanvariance_spec:  state + grid_type 
+        # loop item in ensmeanvariance_spec:  state + grid_type
         # -----------------------
         for idx, spec in enumerate(meanvar_spec_dict, start=1):
 
             self.jedi_rendering.add_key('ensmeanvariance_spec_item', spec)
             state_name = spec.get('state')
 
-            for output_grid in spec.get('grid_type'): 
+            for output_grid in spec.get('grid_type'):
 
-                self.jedi_rendering.add_key('ensmeanvariance_spec_gridtype', output_grid)                
-             
+                self.jedi_rendering.add_key('ensmeanvariance_spec_gridtype', output_grid)
+
                 # Jedi configuration file
                 # -----------------------
-                jedi_config_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_config_{state_name}_{output_grid}.yaml')
+                jedi_config_file = os.path.join(
+                    self.cycle_dir(),
+                    f'jedi_{jedi_application}_config_{state_name}_{output_grid}.yaml')
 
                 # Output log file
                 # ---------------
-                output_log_file = os.path.join(self.cycle_dir(), f'jedi_{jedi_application}_{state_name}_{output_grid}.log')
+                output_log_file = os.path.join(
+                    self.cycle_dir(), f'jedi_{jedi_application}_{state_name}_{output_grid}.log')
 
                 # Open the JEDI config file and fill templates
                 # --------------------------------------------
@@ -142,13 +140,14 @@ class RunJediEnsembleMeanVariance(taskBase):
                 # Jedi executable name
                 # --------------------
                 jedi_executable = model_component_meta['executables'][f'{jedi_application}']
-                jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                                    jedi_executable)
+                jedi_executable_path = os.path.join(self.experiment_path(),
+                                                    'jedi_bundle', 'build', 'bin', jedi_executable)
 
                 # Run the JEDI executable
                 # -----------------------
                 if not generate_yaml_and_exit:
-                    self.logger.info('Running '+jedi_executable_path+' with '+str(np)+' processors.')
+                    self.logger.info(
+                        'Running '+jedi_executable_path+' with '+str(np)+' processors.')
                     run_executable(self.logger, self.cycle_dir(), np, jedi_executable_path,
                                    jedi_config_file, output_log_file)
                 else:

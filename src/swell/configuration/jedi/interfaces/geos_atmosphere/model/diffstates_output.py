@@ -16,11 +16,11 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 def diffstates_output(template_dict: Mapping) -> Mapping:
 
     # diff states (inc)
-    grid_type= template_dict['diffstates_spec_gridtype']
+    grid_type = template_dict['diffstates_spec_gridtype']
     prefix_output = template_dict['diffstates_spec'].get('state_diff', {}).get('fn_output')
 
     stateType = template_dict.get('diffstates_spec_statetype')
-    if [ stateType == 'ensemble' ]:
+    if [stateType == 'ensemble']:
         field_io_names_loc = field_io_names_sa1
     else:
         field_io_names_loc = field_io_names

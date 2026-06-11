@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------------------------------
 from ruamel.yaml import YAML
 from jinja2 import Environment
-##from typing import Mapping
 from collections.abc import Mapping
 from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
     field_io_names
 
 # --------------------------------------------------------------------------------------------------
-# Hybrid-B:  not tested
+# Hybrid-B from rtodling: not tested
 
 state_variables_to_inverse = [
     'eastward_wind',
     'northward_wind',
     'air_temperature',
     'air_pressure_at_surface',
-#    'air_pressure_levels',
     'water_vapor_mixing_ratio_wrt_moist_air',
     'cloud_liquid_ice',
     'cloud_liquid_water',
@@ -31,7 +29,7 @@ state_variables_to_inverse = [
     'fraction_of_lake',
     'fraction_of_ice',
     'geopotential_height_times_gravity_at_surface',
-    'skin_temperature_at_surface',
+    'skin_temperature_at_surface'
 ]
 
 # --------------------------------------------------------------------------------------------------
@@ -46,8 +44,12 @@ components:
       saber block name: gsi hybrid covariance
       read:
         gsi akbk: ./fv3-jedi/fv3files/akbk{{vertical_resolution}}.nc4
-        gsi error covariance file: ./fv3-jedi/gsibec/gsi-coeffs-gmao-global-l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nc4
-        gsi berror namelist file: ./fv3-jedi/gsibec/{{gsibec_configuration}}_l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nml
+        gsi error covariance file: >-
+          ./fv3-jedi/gsibec/gsi-coeffs-gmao-global-
+          l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nc4
+        gsi berror namelist file: >-
+          ./fv3-jedi/gsibec/{{gsibec_configuration}}_
+          l{{vertical_resolution}}x{{gsibec_nlons}}y{{gsibec_nlats}}.nml
         processor layout x direction: {{gsibec_npx_proc}}
         processor layout y direction: {{gsibec_npy_proc}}
         debugging mode: false
@@ -210,7 +212,8 @@ def background_error_eda_hybridB(template_dict: Mapping) -> Mapping:
     # Use ruamel.yaml to load the string instead of standard pyyaml
     ruamel_yaml = YAML()
     background_error = ruamel_yaml.load(rendered_yaml_string)
-    cov_template = background_error['components'][1]['covariance']['members from template']['template']
+    cov_template = background_error['components'][1]['covariance']
+    ['members from template']['template']
     cov_template['field io names'] = field_io_names
     a = background_error['components'][0]['covariance']['linear variable change']
     a['output variables'] = template_dict['analysis_variables']

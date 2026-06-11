@@ -12,13 +12,14 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 
 # --------------------------------------------------------------------------------------------------
 
+
 def two_states(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
     f1 = template_dict['diffstates_spec']['state1']['fn_input']
     f2 = template_dict['diffstates_spec']['state2']['fn_input']
 
     stateType = template_dict.get('diffstates_spec_statetype')
-    if [ stateType == 'ensemble' ]:
+    if [stateType == 'ensemble']:
         state_variables_loc = state_variables_sa1
         field_io_names_loc = field_io_names_sa1
     else:

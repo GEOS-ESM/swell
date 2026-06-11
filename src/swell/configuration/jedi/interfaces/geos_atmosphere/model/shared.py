@@ -147,16 +147,16 @@ state_variables_ensemble = [
 
 # stand alone 1
 state_variables_sa1 = [
-	'eastward_wind',
-	'northward_wind',
-	'air_temperature',
-	'air_pressure_at_surface',
-	'air_pressure_levels',
-	'water_vapor_mixing_ratio_wrt_moist_air',
-	'cloud_liquid_ice',
-	'cloud_liquid_water',
-	'mole_fraction_of_ozone_in_air',
-        'skin_temperature_at_surface',
+    'eastward_wind',
+    'northward_wind',
+    'air_temperature',
+    'air_pressure_at_surface',
+    'air_pressure_levels',
+    'water_vapor_mixing_ratio_wrt_moist_air',
+    'cloud_liquid_ice',
+    'cloud_liquid_water',
+    'mole_fraction_of_ozone_in_air',
+    'skin_temperature_at_surface',
   ]
 
 # --------------------------------------------------------------------------------------------------
