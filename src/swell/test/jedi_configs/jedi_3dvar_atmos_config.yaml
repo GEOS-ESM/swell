@@ -6224,6 +6224,8 @@ cost function:
             - 4.0
             - 2.0
             - 4.0
+            cldthreshold_clearsky:
+            - 0.01
         maxvalue: 1e-12
         action:
           name: reject
@@ -7775,6 +7777,8 @@ cost function:
             - 4.0
             - 2.0
             - 4.0
+            cldthreshold_clearsky:
+            - 0.01
         maxvalue: 1e-12
         action:
           name: reject
