@@ -37,7 +37,6 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.horizontal_resolution("72x36"),
             qd.vertical_resolution("50"),
             qd.total_processors(6),
-            qd.obs_experiment("s2s_v1"),
             qd.observations([
                 "adt_cryosat2n",
                 "adt_jason3",
@@ -59,11 +58,39 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-
+    
     _3dvar_marine_tier1 = QuestionList(
         list_name="3dvar_marine_tier1",
         questions=[
             _3dvar_marine
+        ]
+    )
+    
+    # --------------------------------------------------------------------------------------------------
+
+    _3dvar_marine_tier2 = QuestionList(
+        list_name="3dvar_marine_tier2",
+        questions=[
+            _3dvar_marine,
+            qd.start_cycle_point("2023-01-02T12:00:00Z"),
+            qd.final_cycle_point("2023-01-03T12:00:00Z"),
+        ],
+        geos_marine=[
+            qd.cycle_times(['T12']),
+            qd.marine_models(['mom6', 'cice6']),
+            qd.analysis_variables([
+                "sea_water_salinity",
+                "sea_water_potential_temperature",
+                "sea_surface_height_above_geoid",
+                "sea_water_cell_thickness",
+                "sea_ice_area_fraction",
+                "sea_ice_thickness",
+                "sea_ice_snow_thickness"
+            ]),
+            qd.window_length("P1D"),
+            qd.horizontal_resolution("1440x1080"),
+            qd.vertical_resolution("75"),
+            qd.total_processors(720),
         ]
     )
 
