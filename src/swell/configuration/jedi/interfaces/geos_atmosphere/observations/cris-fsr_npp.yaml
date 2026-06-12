@@ -195,7 +195,7 @@ obs post filters:
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
-      error parameter vector: &cris-fsr_npp_obserr
+      error parameter vector: *cris-fsr_npp_obserr
       use_flag: &useflag_cris-fsr_npp {{crisfsr_npp_active_channels}}
       use_flag_clddet: &clddet_cris-fsr_npp [ 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
                            31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
@@ -268,7 +268,7 @@ obs post filters:
     channels: *cris-fsr_npp_channels
     options:
       channels: *cris-fsr_npp_channels
-      error parameter vector: &cris-fsr_npp_obserr
+      error parameter vector: *cris-fsr_npp_obserr
       use_flag: *useflag_cris-fsr_npp
   maxvalue: 1.0e-12
   action:
@@ -307,7 +307,7 @@ obs post filters:
         channels: *cris-fsr_npp_channels
         options:
           channels: *cris-fsr_npp_channels
-      error parameter vector: &cris-fsr_npp_obserr
+      error parameter vector: *cris-fsr_npp_obserr
       obserr_bound_max: [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
                           2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
                           2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
