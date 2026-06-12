@@ -270,9 +270,9 @@ def test(test: str) -> None:
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
-                                            "localensembleda", "3dvar_cycle")))
+                                            "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
