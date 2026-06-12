@@ -11,6 +11,7 @@
 from multiprocessing import Pool
 import os
 import yaml
+from pathlib import Path
 
 from eva.eva_driver import eva
 
@@ -38,6 +39,15 @@ def run_eva(eva_dict: dict) -> eva:
 class EvaComparisonObservations(taskBase):
 
     def execute(self) -> None:
+
+        observation = self.get_parameter()
+
+        obs_comparison_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
+
+        if obs_comparison_file.exists():
+            self.run_plot(observation)
+
+    def run_plot(self, observation: str) -> None:
 
         # Comparison log type
         # -------------------
@@ -119,8 +129,6 @@ class EvaComparisonObservations(taskBase):
             'iasi_metop-c': [55, 70, 106, 122, 144, 176, 185, 210, 236, 254, 299, 345, 375, 404,
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
-
-        observation = self.get_parameter()
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
