@@ -14,7 +14,6 @@ from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import \
 
 
 def two_states(template_dict: Mapping) -> Mapping:
-    horizontal_resolution = template_dict['horizontal_resolution']
     f1 = template_dict['diffstates_spec']['state1']['fn_input']
     f2 = template_dict['diffstates_spec']['state2']['fn_input']
 
