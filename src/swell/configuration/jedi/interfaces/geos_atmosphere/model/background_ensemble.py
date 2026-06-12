@@ -17,7 +17,9 @@ def background_ensemble(template_dict: Mapping) -> Mapping:
     horizontal_resolution = template_dict['horizontal_resolution']
 
     background_ensemble = {
-        'date': template_dict['window_begin_iso'],
+# 4D-window
+#        'date': template_dict['window_begin_iso'],
+        'date': template_dict['local_background_time_iso'],
         'members from template': {
             'template': {
                 'datetime': template_dict['local_background_time_iso'],
