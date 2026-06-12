@@ -68,7 +68,8 @@ obs prior filters:
     channels: *airs_aqua_channels
   action:
     name: assign error
-    error parameter vector: [ 1.2000, 1.2000, 1.3136, 1.4000, 1.4000, 1.2639, 1.4000, 1.4000, 1.1802, 1.2517,
+    error parameter vector: &airs_aqua_obserr
+                [ 1.2000, 1.2000, 1.3136, 1.4000, 1.4000, 1.2639, 1.4000, 1.4000, 1.1802, 1.2517,
                   1.1719, 1.2000, 1.1728, 1.1442, 1.2000, 1.2000, 1.1500, 1.0801, 1.1500, 1.1500,
                   1.0396, 1.1500, 1.1500, 1.1500, 1.1500, 1.1500, 1.1500, 1.1500, 0.9946, 1.0500,
                   0.9217, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000, 2.0000,
@@ -181,6 +182,7 @@ obs post filters:
     channels: *airs_aqua_channels
     options:
       channels: *airs_aqua_channels
+      error parameter vector: *airs_aqua_obserr
       use_flag: &useflag_airs_aqua {{airs_aqua_active_channels}}
       use_flag_clddet: &clddet_airs_aqua [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                          1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -225,6 +227,7 @@ obs post filters:
     channels: *airs_aqua_channels
     options:
       channels: *airs_aqua_channels
+      error parameter vector: *airs_aqua_obserr
       use_flag: *useflag_airs_aqua
   maxvalue: 1.0e-12
   action:
@@ -263,6 +266,7 @@ obs post filters:
         channels: *airs_aqua_channels
         options:
           channels: *airs_aqua_channels
+      error parameter vector: *airs_aqua_obserr
       obserr_bound_max: [3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50,
                          3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50,
                          3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50, 3.50,
