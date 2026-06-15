@@ -12,6 +12,23 @@ import os
 import subprocess
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'CloneGmaoPerllib'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.existing_perllib_path(),
+            qd.gmao_perllib_tag()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

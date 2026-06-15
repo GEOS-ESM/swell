@@ -8,40 +8,44 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from swell.utilities.swell_questions import QuestionContainer, QuestionList
-from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.suites.suite_questions import SuiteQuestions as sq
-
-from enum import Enum
-
+from swell.utilities.swell_questions import QuestionList
+import swell.configuration.question_defaults as qd
+from swell.suites.base.suite_questions import all_suites
+from swell.suites.base.suite_attributes import suite_configs
 
 # --------------------------------------------------------------------------------------------------
 
-class SuiteConfig(QuestionContainer, Enum):
+suite_name = 'forecast_coupled_geos'
 
-    # --------------------------------------------------------------------------------------------------
+forecast_geos_tier1 = QuestionList(
+    questions=[
+        all_suites,
+        qd.cycle_times(),
+        qd.final_cycle_point(),
+        qd.start_cycle_point(),
+        qd.start_cycle_point("2021-06-20T00:00:00Z"),
+        qd.final_cycle_point("2021-06-21T00:00:00Z"),
+        qd.cycle_times([
+            "T00",
+            "T06",
+            "T12",
+            "T18"
+        ]),
+        qd.geos_build_method("use_existing"),
+        qd.forecast_duration("PT6H"),
+    ],
+)
 
-    forecast_coupled_geos = QuestionList(
-        list_name="forecast_coupled_geos",
-        questions=[
-            sq.all_suites,
-            qd.start_cycle_point("2021-07-02T12:00:00Z"),
-            qd.final_cycle_point("2021-07-03T12:00:00Z"),
-            qd.cycle_times([
-                "T12",
-            ]),
-            qd.geos_build_method("use_existing"),
-            qd.forecast_duration("P1D"),
-        ],
-    )
+suite_configs.register(suite_name, 'forecast_coupled_geos_tier1', forecast_geos_tier1)
 
-    # --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
-    forecast_coupled_geos_tier1 = QuestionList(
-        list_name="forecast_coupled_geos_tier1",
-        questions=[
-            forecast_coupled_geos
-        ]
-    )
+forecast_geos = QuestionList(
+    questions=[
+        forecast_geos_tier1
+    ]
+)
 
-    # --------------------------------------------------------------------------------------------------
+suite_configs.register(suite_name, 'forecast_coupled_geos', forecast_geos)
+
+# --------------------------------------------------------------------------------------------------

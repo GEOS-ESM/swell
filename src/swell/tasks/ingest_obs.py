@@ -15,12 +15,32 @@ import os
 import yaml
 from datetime import datetime
 
-import requests
-
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
-import r2d2
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'IngestObs'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.dry_run(),
+            qd.obs_to_ingest(),
+            qd.window_length(),
+            # qd.window_offset(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class IngestObs(taskBase):
@@ -154,6 +174,10 @@ class IngestObs(taskBase):
         dry_run: bool,
         r2d2_datastore: str | None = None,
     ) -> tuple[list[str], list[tuple[str, str]]]:
+
+        import r2d2
+        import requests
+
         """Process a single observation configuration file."""
         ingested = []
         failed = []

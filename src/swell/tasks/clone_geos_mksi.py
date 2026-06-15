@@ -9,8 +9,26 @@
 
 
 import os
+import subprocess
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.build import link_path
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'CloneGeosMksi'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.questions = [
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_mksi_path_tag()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,6 +40,8 @@ class CloneGeosMksi(taskBase):
         """
         Generate the satellite channel record from GEOSmksi files
         """
+
+        from swell.utilities.build import link_path
 
         # This task should only execute for geos_atmosphere
         # -------------------------------------------------
@@ -41,9 +61,17 @@ class CloneGeosMksi(taskBase):
                 branch = 'develop'
             else:
                 branch = tag
-            # Clone GEOS_mksi develop repo to experiment directory
-            os.system(f'git clone -b {branch} https://github.com/GEOS-ESM/GEOS_mksi.git '
-                      + os.path.join(self.experiment_path(), 'GEOS_mksi'))
+
+            mksi_path = os.path.join(self.experiment_path(), 'GEOS_mksi')
+
+            if os.path.exists(mksi_path):
+                # Checkout the branch
+                subprocess.run(['git', 'checkout', branch], cwd=mksi_path, check=True)
+            else:
+                # Clone GEOS_mksi develop repo to experiment directory
+                subprocess.run(['git', 'clone', '-b', branch,
+                                'https://github.com/GEOS-ESM/GEOS_mksi.git',
+                                mksi_path], check=True)
         else:
             # Link the source code directory
             link_path(self.config.observing_system_records_mksi_path(),

@@ -12,10 +12,45 @@ import os
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.filehandler import get_file_handler
 from swell.utilities.exceptions import SwellError
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'StageJedi'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.questions = [
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+        ]
+
+
+@task_attributes.register('StageJediCycle')
+class StageJediCycle(Setup):
+    def set_defaults(self):
+        super().set_defaults()
+        self.base_name = "StageJedi"
+        self.scheduling_name = "StageJediCycle-{model}"
+        self.is_cycling = True
+        self.model_dep = True
 
 # --------------------------------------------------------------------------------------------------
 

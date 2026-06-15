@@ -12,11 +12,12 @@ from multiprocessing import Pool
 import os
 import yaml
 
-from eva.eva_driver import eva
-
 from swell.swell_path import get_swell_path
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
@@ -26,9 +27,28 @@ from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------
 
+task_name = 'EvaComparisonObservations'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = True
+        self.is_cycling = True
+        self.model_dep = True
+        self.slurm = {}
+        self.questions = [
+            qd.comparison_log_type(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
+
 
 # Pass through to avoid confusion with optional logger argument inside eva
-def run_eva(eva_dict: dict) -> eva:
+def run_eva(eva_dict: dict):
+    from eva.eva_driver import eva
+
     eva(eva_dict)
 
 

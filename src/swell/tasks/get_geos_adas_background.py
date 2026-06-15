@@ -14,7 +14,25 @@ import os
 import re
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetGeosAdasBackground'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.path_to_geos_adas_background()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

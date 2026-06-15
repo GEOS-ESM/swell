@@ -122,7 +122,7 @@ The `root` section defines actions and variables shared by all tasks. Note that 
 
 ## How the experiment is created
 
-When an experiment is created using `swell create <suite>`, a dictionary of questions is pieced together from questions associated with the suite and its member tasks. Answers for these questions are set either from default configurations, from user input on the command line, or overridden from a specified file. In a complex process, the answers provided are then used to generate the `experiment.yaml` and the experiment's `flow.cylc file. 
+When an experiment is created using `swell create <suite>`, a dictionary of questions is pieced together from questions associated with the suite and its member tasks. Answers for these questions are set either from default configurations, from user input on the command line, or overridden from a specified file. In a complex process, the answers provided are then used to generate the `experiment.yaml` and the experiment's `workflow.py` file. 
 
 # Creating a Suite
 
@@ -145,19 +145,20 @@ Creating visualizations such as flowcharts may help in designing workflows.
 In practice, there are three major steps towards creating a suite. Completing all of these steps is necessary to make the suite work, so these steps will likely be done iteratively/non-linearly:
 
 1. Write the tasks.
-2. Create the `flow.cylc` file.
+2. Create the `workflow.py` file.
 3. Add the appropriate suite and task question lists.
 
 More detailed instructions and examples for these steps follows in this section.
 
 ### Writing tasks
 
-Swell has a variety of tasks, many of which are shared across suites. Tasks in Swell are defined as classes which extend the `taskBase` parent class, which has many helpful functions and attributes. When a task is run by swell, it calls the `execute` function.
+Swell has a variety of tasks, many of which are shared across suites. Tasks in Swell are defined as classes which extend the `taskBase` parent class, which has many helpful functions and attributes. When a task is run by swell, it calls the `execute` function. Information on how to run the task and the parameters the task needs are specified in the `TaskSetup` class.
 
 Calls to parameters are made using either functions of `taskBase`, for more common parameters, or using `self.config.<parameter>`.
 
 ### Example Swell Task
 ```python
+
 class CloneGeosMksi(taskBase):
 
     def execute(self) -> None:
@@ -179,7 +180,24 @@ class CloneGeosMksi(taskBase):
 ```
 This example shows the basics of writing a task, including task definition and the execute function. The current model is accessed by the `self.get_model()` function, inherited from `taskBase`. The variables `path_to_geos_mksi`, and `tag`, are pulled from the experiment configuration, which is sourced from the `experiment.yaml`.
 
-Tasks that have a slurm requirement need to be specified in `src/swell/utilities/slurm.py`.
+The `TaskSetup` class informs swell how to construct the task's cylc parameters, as well as the questions that are used by the task. The `TaskSetup` class for `CloneGeosMksi` looks like the following:
+
+```python
+
+task_name = 'CloneGeosMksi'
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_attributes(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.questions = [
+            qd.observing_system_records_mksi_path(),
+            qd.observing_system_records_mksi_path_tag()
+        ]
+
+```
+
+The `set_attributes` abstract method is used to set values for the class. The `self.questions` list sets needed question parameters for the config. Slurm requirements are also set in the the `TaskSetup`. For more information, see documentation in `src/swell/tasks/base/task_setup.py`.
 
 For debugging purposes, it may be easier to first create and test some tasks outside of Swell, and then port them to Swell by changing relevant variables and path specifications. Alternatively, `experiment.yaml` can be populated manually and tested using `swell task <task> experiment.yaml`.
 
@@ -187,24 +205,9 @@ For debugging purposes, it may be easier to first create and test some tasks out
 
 For more detailed information on cylc workflows, see the [cylc documentation](https://cylc.github.io/cylc-doc/latest/html/index.html). Existing Swell suite workflows can also provide useful examples to consider. 
 
-Suite workflows are stored in `src/swell/suites/<suite>`.
+Suite workflows are stored in `src/swell/suites/<suite>/workflow.py`.
 
-The experiment `flow.cylc` file is generated from a suite template using a `jinja2` process. For example, here is part of a suite template, versus a filled-in experiment `flow.cylc`. During creation, specified questions are used to fill in the template:
-
-```
-[scheduling]
-
-    initial cycle point = {{start_cycle_point}}
-    final cycle point = {{final_cycle_point}}
-    runahead limit = {{runahead_limit}}
-```
-```
-[scheduling]
-
-    initial cycle point = 2021-07-01T12:00:00Z
-    final cycle point = 2021-07-01T12:00:00Z
-    runahead limit = P4
-```
+The experiment `flow.cylc` file is generated from a suite template. This is handled through the `CylcWorkflow` task and generally consists of two steps, setting the graph and iterating through the tasks to generate. For more information, see the documentation for `CylcWorkflow` under `src/swell/utilities/cylc_workflow.py` and example suites.
 
 For initial development/testing purposes, it may be easier to create a `flow.cylc` using hard-coded values, then replace these with `jinja2` templated values as the suite nears completion.
 
@@ -212,7 +215,7 @@ For initial development/testing purposes, it may be easier to create a `flow.cyl
 
 ### Question Objects
 
-Questions for swell are stored as dataclass instances, in the file `src/swell/utilities/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
+Questions for swell are stored as dataclass instances, in the file `src/swell/configuration/question_defaults.py`. Dataclasses allow for simple declaration of data fields, and powerful type checking capabilities. Each question is an extension of the `SuiteQuestion` or `TaskQuestion` class, which are extensions of the `SwellQuestion` parent:
 
 ```python
 @dataclass
@@ -274,121 +277,75 @@ question = existing_jedi_build_directory(options=['example1', 'example2'])
 Each individual suite and most tasks have an associated list of questions which are used to create the experiment. 
 
 Suite question lists are stored in `src/swell/suites/<suite>/suite_config.py`
-Task question lists are stored in `src/swell/tasks/task_questions.py`
+Task question lists are stored in `src/swell/tasks/<task>.py`
 
-`QuestionList` objects store and handle questions in an object-oriented manner. They can store questions directly, or store other lists to use their questions. Here is an example of a question list for a task: 
+`QuestionList` objects store and handle questions in an object-oriented manner. They can store questions directly, or store other lists to use their questions.
 
-```python
-    BuildJediByLinking = QuestionList(
-        list_name="BuildJediByLinking",
-        questions=[
-            qd.existing_jedi_build_directory(),
-            qd.existing_jedi_build_directory_pinned(),
-            qd.jedi_build_method()
-        ]
-    )
-```
-
-During experiment creation, Swell scans the suite's `flow.cylc` file to find all of the tasks used in the workflow. It then finds the corresponding task lists in `src/swell/tasks/task_questions.py`, and fits together a list of uniquely named questions from all of the lists. Questions have a priority depending on order. In the case of duplicate questions, those further DOWN the list take priority. For this reason, it is NOT RECOMMENDED to set different default values for tasks in `task_questions.py`, since questions may be overridden by a questions in a different task. 
+During experiment creation, Swell consults the suite's `workflow.py` file to find all of the tasks used in the workflow. It then finds the corresponding task lists in the `TaskSetup` object located in  `src/swell/tasks/<task>.py`, and fits together a list of uniquely named questions from all of the lists. Questions have a priority depending on order. In the case of duplicate questions, those further DOWN the list take priority. For this reason, it is NOT RECOMMENDED to set different default values for questions listed in tasks, since questions may be overridden by a questions in a different task. 
 
 In this question infrastructure, **suites take priority over tasks**. Any question specified in a suite configuration will override the default value for a question in one of its member tasks. This allows for easily setting different configurations for suites without having to specify redundant questions. For ease of use, model-dependent questions can be assigned directly in their respective lists.
 
 Consider the following example of suite questions for `3dvar_marine` (in python, variable names cannot begin with digits):
 
-```python
-from swell.utilities.question_defaults import QuestionDefaults as qd
-from swell.suites.suite_questions import SuiteQuestions as sq
-
-class SuiteQuestions(QuestionContainer, Enum):
-
-    # --------------------------------------------------------------------------------------------------
-    # Shared groups of questions across suites
-    # --------------------------------------------------------------------------------------------------
-
-    all_suites = QuestionList(
-        list_name="all_suites",
-        questions=[
-            qd.experiment_id(),
-            qd.experiment_root()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    common = QuestionList(
-        list_name="common",
-        questions=[
-            all_suites,
-            qd.cycle_times(),
-            qd.start_cycle_point(),
-            qd.final_cycle_point(),
-            qd.model_components(),
-            qd.runahead_limit()
-        ]
-    )
-
-    # --------------------------------------------------------------------------------------------------
-
-    marine = QuestionList(
-        list_name="marine",
-        questions=[
-            common,
-            qd.marine_models()
-        ]
-    )
-```
-
 
 ```python
-class SuiteConfig(QuestionContainer, Enum):
 
-    _3dvar_marine_base = QuestionList(
-        list_name="3dvar_marine_base",
-        questions=[
-            sq.marine
-        ]
-    )
 
-    # --------------------------------------------------------------------------------------------------
+from swell.suites.base.all_suites import suite_configs
+from swell.suites.base.suite_questions import marine
 
-    _3dvar_marine_tier1 = QuestionList(
-        list_name="3dvar_marine_tier1",
-        questions=[
-            _3dvar_base,
-            qd.start_cycle_point("2021-07-01T12:00:00Z"),
-            qd.final_cycle_point("2021-07-01T12:00:00Z"),
-            qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_marine']),
-        ],
-        geos_marine=[
-            qd.cycle_times(['T12']),
-            qd.marine_models(['mom6']),
-            qd.window_length("P1D"),
-            qd.horizontal_resolution("72x36"),
-            qd.vertical_resolution("50"),
-            qd.total_processors(6),
-            qd.obs_experiment("s2s_v1"),
-            qd.observations([
-                "adt_cryosat2n",
-                "adt_jason3",
-                "adt_saral",
-                "adt_sentinel3a",
-                "adt_sentinel3b",
-                "insitu_profile_argo",
-                "sst_ostia",
-                "sss_smos",
-                "sss_smapv5",
-                "sst_abi_g16_l3c",
-                "sst_gmi_l3u",
-                "sst_viirs_n20_l3u",
-                "temp_profile_xbt"
-            ]),
-            qd.obs_provider(['odas', 'gdas_marine']),
-            qd.background_time_offset("PT18H"),
-            qd.clean_patterns(['*.nc4', '*.txt']),
-        ]
-    )
+_3dvar_marine_base = QuestionList(
+    list_name="3dvar_marine_base",
+    questions=[
+        marine
+    ]
+)
+
+suite_configs.register('3dvar_marine', '3dvar_marine_base', _3dvar_marine_base)
+
+# --------------------------------------------------------------------------------------------------
+
+_3dvar_marine_tier1 = QuestionList(
+    list_name="3dvar_marine_tier1",
+    questions=[
+        _3dvar_base,
+        qd.start_cycle_point("2021-07-01T12:00:00Z"),
+        qd.final_cycle_point("2021-07-01T12:00:00Z"),
+        qd.jedi_build_method("use_existing"),
+        qd.model_components(['geos_marine']),
+    ],
+    geos_marine=[
+        qd.cycle_times(['T12']),
+        qd.marine_models(['mom6']),
+        qd.window_length("P1D"),
+        qd.horizontal_resolution("72x36"),
+        qd.vertical_resolution("50"),
+        qd.total_processors(6),
+        qd.obs_experiment("s2s_v1"),
+        qd.observations([
+            "adt_cryosat2n",
+            "adt_jason3",
+            "adt_saral",
+            "adt_sentinel3a",
+            "adt_sentinel3b",
+            "insitu_profile_argo",
+            "sst_ostia",
+            "sss_smos",
+            "sss_smapv5",
+            "sst_abi_g16_l3c",
+            "sst_gmi_l3u",
+            "sst_viirs_n20_l3u",
+            "temp_profile_xbt"
+        ]),
+        qd.obs_provider(['odas', 'gdas_marine']),
+        qd.background_time_offset("PT18H"),
+        qd.clean_patterns(['*.nc4', '*.txt']),
+    ]
+)
+
+suite_configs.register('3dvar_marine', '3dvar_marine_tier1', _3dvar_marine_tier1)
+
 ```
-The class `SuiteQuestions` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite.
+The file `suite_questions.py` contains lists of questions which are common to many suites. This avoids the need for redundantly setting the same questions for every suite.
 
-`_3dvar_marine_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `QuestionDefaults` (`src/swell/utilities/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_marine_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_marine_tier1`, and set their own defaults on top of the existing ones.
+`_3dvar_marine_base` is responsible for establishing the baseline for questions used by the suite. The 'base' list should be used to associate all questions used by the suite. This list will be populated with the questions that match the defaults in `question_defaults.py` (`src/swell/configuration/question_defaults.py`). However, in many cases, those defaults will not be ideal defaults for the individual suite. Thus, `_3dvar_marine_tier1` sets different default values which override the question defaults. If desired, other configurations can then inherit question defaults from `_3dvar_marine_tier1`, and set their own defaults on top of the existing ones. 

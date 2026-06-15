@@ -1,0 +1,199 @@
+#!jinja2
+# (C) Copyright 2023 United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+
+# --------------------------------------------------------------------------------------------------
+
+from swell.utilities.jinja2 import template_string_jinja2
+from swell.suites.base.cylc_workflow import CylcWorkflow
+from swell.tasks.base.task_attributes import task_attributes as ta
+from swell.suites.base.suite_attributes import workflows
+from swell.suites.forecast_coupled_geos.workflow import RunGeos
+
+# --------------------------------------------------------------------------------------------------
+
+template_str = '''
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing Geos forecast
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+{{stall_timeout}}
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone Geos source code
+            CloneGeos
+
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build Geos source code by linking
+            CloneGeos => BuildGeosByLinking?
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildGeosByLinking:fail? => BuildGeos
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            # Need first set of restarts to run model
+            GetCoupledGeosRestart => PrepCoupledGeosRunDir
+
+            # Model cannot run without code
+            BuildGeosByLinking? | BuildGeos => RunGeos
+
+            {% for model_component in model_components %}
+
+            # JEDI cannot run without code
+            BuildJediByLinking? | BuildJedi => RunJediVariationalExecutable-{{model_component}}
+
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            {% endfor %}
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+
+            # Model preperation
+            # Run the forecast through two windows (need to output restarts at the end of the
+            # first window and backgrounds for the second window)
+            MoveDaRestart-{{model_component}}[-{{models[model_component]["window_length"]}}] => PrepCoupledGeosRunDir
+            PrepCoupledGeosRunDir => RunGeos
+
+            # Run the analysis
+            RunGeos => LinkCoupledGeosOutput-{{model_component}}
+            LinkCoupledGeosOutput-{{model_component}} => GenerateBClimatology-{{model_component}}
+
+            # Data assimilation preperation
+            StageJediCycle-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            GenerateBClimatology-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+            RenderJediObservations-{{model_component}} => RunJediVariationalExecutable-{{model_component}}
+
+            # Run analysis diagnostics
+            RunJediVariationalExecutable-{{model_component}} => EvaObservations-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaJediLog-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
+            # Prepare analysis for next forecast
+            EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
+            {% if 'cice6' in models[model_component]["marine_models"] %}
+            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
+            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            {% else %}
+            # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
+            PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
+            {% endif %}
+
+            # Move restart to next cycle and then erase current forecast folder
+            SaveRestart-{{model_component}} => MoveDaRestart-{{model_component}} => CleanCycle-{{model_component}}
+
+            {% if not skip_r2d2 %}
+            # Save analysis output
+            # RunJediVariationalExecutable-{{model_component}} => SaveAnalysis-{{model_component}}
+            RunJediVariationalExecutable-{{model_component}} => SaveObsDiags-{{model_component}} => CleanCycle-{{model_component}}
+            {% endif %}
+
+            # Save model output
+            # MoveBackground-{{model_component}} => StoreBackground-{{model_component}}
+
+            # Clean up large files
+            EvaObservations-{{model_component}} & EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} =>
+            CleanCycle-{{model_component}}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+
+'''  # noqa
+
+# --------------------------------------------------------------------------------------------------
+
+
+@workflows.register('3dvar_marine_cycle')
+class Workflow_3dvar_marine_cycle(CylcWorkflow):
+
+    def get_workflow_string(self):
+        workflow_str = self.default_header()
+        workflow_str += template_str
+        for task in self.tasks:
+            workflow_str += task.runtime_string(self.experiment_dict,
+                                                self.slurm_external)
+
+        self.experiment_dict['stall_timeout'] = """\
+        {% if environ.get('SWELL_CYLC_TIMEOUT') %}
+        [[events]]
+        stall timeout = {{environ['SWELL_CYLC_TIMEOUT']}}
+        {% endif %}"""
+
+        workflow_str = template_string_jinja2(self.logger, workflow_str, self.experiment_dict,
+                                              allow_unresolved=True)
+
+        return workflow_str
+
+    def set_tasks(self) -> list:
+
+        self.tasks.append(ta.root())
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.CloneGeos())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.BuildGeosByLinking())
+        self.tasks.append(ta.BuildJedi())
+        self.tasks.append(ta.BuildGeos())
+        self.tasks.append(ta.GetCoupledGeosRestart())
+        self.tasks.append(ta.PrepCoupledGeosRunDir())
+        self.tasks.append(RunGeos())
+
+        for model in self.experiment_dict['model_components']:
+            self.tasks.append(ta.StageJedi(model=model))
+            self.tasks.append(ta.StageJediCycle(model=model))
+            self.tasks.append(ta.RunJediVariationalExecutable(model=model))
+            self.tasks.append(ta.LinkCoupledGeosOutput(model=model))
+            self.tasks.append(ta.GenerateBClimatology(model=model))
+            self.tasks.append(ta.GetObservations(model=model))
+            self.tasks.append(ta.PrepareAnalysis(model=model))
+            self.tasks.append(ta.RenderJediObservations(model=model))
+            self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+            self.tasks.append(ta.MoveDaRestart(model=model))
+            self.tasks.append(ta.EvaObservations(model=model))
+            self.tasks.append(ta.EvaJediLog(model=model))
+            self.tasks.append(ta.EvaIncrement(model=model))
+            self.tasks.append(ta.SaveObsDiags(model=model))
+            self.tasks.append(ta.CleanCycle(model=model))
+            self.tasks.append(ta.SaveRestart(model=model))
+
+# --------------------------------------------------------------------------------------------------

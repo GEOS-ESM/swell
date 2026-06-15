@@ -9,7 +9,8 @@
 
 
 import click
-from typing import Union, Optional, Literal
+from ruamel.yaml import YAML
+from typing import Literal
 
 from swell.deployment.platforms.platforms import get_platforms
 from swell.deployment.create_experiment import clone_config, create_experiment_directory
@@ -17,9 +18,10 @@ from swell.deployment.launch_experiment import launch_experiment
 from swell.tasks.base.task_base import task_wrapper, get_tasks
 from swell.test.test_driver import test_wrapper, valid_tests
 from swell.test.suite_tests.suite_tests import run_suite, TestSuite
-from swell.suites.all_suites import AllSuites
+from swell.suites.base.suite_attributes import suite_configs
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.deployment.create_task_config import task_config_wrapper
 from swell.utilities.datetime_util import is_duration
 from swell.utilities.suite_utils import read_override_file
 
@@ -84,17 +86,22 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
+cwd_help = """
+For task configs, set flag to create directory at the user's cwd, otherwise directory will be
+created in default experiment_root."""
+
 skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
 
 cylc_timeout_help = """
 Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
  ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
 
+
 # --------------------------------------------------------------------------------------------------
 
 
 @swell_driver.command()
-@click.argument('suite', type=click.Choice(AllSuites.config_names()))
+@click.argument('suite', type=click.Choice(suite_configs.all_configs()))
 @click.option('-m', '--input_method', 'input_method', default='defaults',
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
@@ -107,7 +114,7 @@ def create(
     suite: str,
     input_method: str,
     platform: str,
-    override: Union[dict, str, None],
+    override: dict | str | None,
     advanced: bool,
     slurm: str,
     skip_r2d2: bool
@@ -129,6 +136,46 @@ def create(
     create_experiment_directory(suite, input_method, platform, override_dict,
                                 advanced, slurm, skip_r2d2)
 
+# --------------------------------------------------------------------------------------------------
+
+
+@swell_driver.command()
+@click.argument('task', type=click.Choice(get_tasks()))
+@click.option('-p', '--platform', 'platform', default='nccs_discover_sles15',
+              type=click.Choice(get_platforms()), help=platform_help)
+@click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
+@click.option('-m', '--model', 'model', default=None, help=model_help)
+@click.option('-i', '--input_method', 'input_method', default='defaults',
+              type=click.Choice(['defaults', 'cli']), help=input_method_help)
+@click.option('-o', '--override', 'override', default=None, help=override_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-c', '--cwd', 'cwd', is_flag=True, help=cwd_help)
+def create_task_config(
+    task: str,
+    platform: str,
+    datetime: str | None,
+    model: str | None,
+    input_method: str,
+    override: str | None,
+    slurm: str | None,
+    cwd: bool,
+) -> None:
+    """
+    Create a config for a single task
+
+    This command generates a config to be used to run a single task.
+
+    Arguments:\n
+        task (str): Name of the task to execute.\n
+
+    """
+    if override is not None:
+        yaml = YAML(typ='safe')
+        with open(override, 'r') as f:
+            override_dict = yaml.load(f)
+    else:
+        override_dict = {}
+    task_config_wrapper(task, platform, datetime, model, input_method, override_dict, slurm, cwd)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -140,12 +187,16 @@ def create(
               type=click.Choice(['defaults', 'cli']), help=input_method_help)
 @click.option('-p', '--platform', 'platform', default=None, help=platform_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
+@click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def clone(
     configuration: str,
     experiment_id: str,
     input_method: str,
     platform: str,
-    advanced: bool
+    advanced: bool,
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Clone an existing experiment
@@ -161,9 +212,14 @@ def clone(
     experiment_dict_str = clone_config(configuration, experiment_id, input_method, platform,
                                        advanced)
 
-    # Create the experiment directory
-    create_experiment_directory(experiment_dict_str)
+    yaml = YAML(typ='safe')
+    experiment_override = yaml.load(experiment_dict_str)
+    suite = experiment_override['suite_to_run']
 
+    # Create the experiment directory
+    create_experiment_directory(suite, method=input_method, platform=platform,
+                                override=experiment_override, advanced=advanced, slurm=slurm,
+                                skip_r2d2=skip_r2d2)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -172,12 +228,17 @@ def clone(
 @click.argument('suite_path')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False, help=no_detach_help)
 @click.option('-l', '--log_path', 'log_path', default=None, help=log_path_help)
+@click.option('-m', '--send-messages', 'send_messages', is_flag=True)
+@click.option('-d', '--pause-workflow', 'pause_workflow', is_flag=True)
 @click.option('-t', '--cylc-timeout', 'cylc_timeout', default=None, help=cylc_timeout_help)
 def launch(
     suite_path: str,
     no_detach: bool,
     log_path: str,
+    send_messages: bool,
+    pause_workflow: bool,
     cylc_timeout: bool
+
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -193,8 +254,7 @@ def launch(
         if not is_duration(cylc_timeout):
             raise ValueError(f'Specified cylc timeout does not match ISO duration format')
 
-    launch_experiment(suite_path, no_detach, log_path, cylc_timeout)
-
+    launch_experiment(suite_path, no_detach, log_path, send_messages, pause_workflow, cylc_timeout)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -208,9 +268,9 @@ def launch(
 def task(
     task: str,
     config: str,
-    datetime: Optional[str],
-    model: Optional[str],
-    ensemblePacket: Optional[str]
+    datetime: str | None,
+    model: str | None,
+    ensemblePacket: str | None
 ) -> None:
     """
     Run a workflow task
@@ -245,7 +305,6 @@ def utility(utility: str) -> None:
 
 # --------------------------------------------------------------------------------------------------
 
-
 @swell_driver.command()
 @click.argument('test', type=click.Choice(valid_tests))
 def test(test: str) -> None:
@@ -271,7 +330,7 @@ def test(test: str) -> None:
                                             "localensembleda", "3dvar_cycle")))
 def t1test(
     suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
-    platform: Optional[str] = "nccs_discover_sles15"
+    platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
@@ -293,7 +352,7 @@ def t1test(
 def t2test(
     suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
-        platform: Optional[str] = "nccs_discover_sles15"
+        platform: str = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 2 tests.

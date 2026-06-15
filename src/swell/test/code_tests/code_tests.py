@@ -15,8 +15,8 @@ from swell.utilities.logger import get_logger
 from swell.test.code_tests.slurm_test import SLURMConfigTest
 from swell.test.code_tests.test_pinned_versions import PinnedVersionsTest
 from swell.test.code_tests.unused_variables_test import UnusedVariablesTest
-from swell.test.code_tests.question_dictionary_comparison_test import QuestionDictionaryTest
 from swell.test.code_tests.test_generate_observing_system import GenerateObservingSystemTest
+from swell.test.code_tests.question_order_test import QuestionOrderTest
 from swell.test.code_tests.suite_creation_test import SuiteCreationTest
 from swell.test.code_tests.jedi_config_test import JEDIConfigTest
 
@@ -42,8 +42,8 @@ def code_tests() -> None:
     # Load unused variable test
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(UnusedVariablesTest))
 
-    # Load tests from UnusedVariablesTest
-    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(QuestionDictionaryTest))
+    # Load question order test
+    test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(QuestionOrderTest))
 
     # Load SLURM tests
     test_suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SLURMConfigTest))

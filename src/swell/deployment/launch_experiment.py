@@ -25,6 +25,8 @@ class DeployWorkflow():
         experiment_name: str,
         no_detach: bool,
         log_path: str,
+        send_cylc_messages: bool,
+        allow_pause: bool,
         cylc_timeout: str
     ) -> None:
 
@@ -94,6 +96,12 @@ class DeployWorkflow():
             self.logger.info('  \u001b[32mcylc stop --kill ' + self.experiment_name + '\033[0m')
             self.logger.info(' ')
 
+            send_messages = os.environ.get('SWELL_SEND_MESSAGES')
+            if send_messages == '1':
+                self.logger.info('  Workflow will pause on tasks configured to do so. To unpause:')
+                self.logger.info('  \u001b[32mcylc play ' + self.experiment_name + '\033[0m')
+                self.logger.info(' ')
+
             # Launch the job monitor
             self.logger.critical('Press Enter to launch the TUI. To exit TUI, ' +
                                  'press \'q\' at any time.')
@@ -112,7 +120,9 @@ def launch_experiment(
     suite_path: str,
     no_detach: bool,
     log_path: str,
-    cylc_timeout: bool
+    send_cylc_messages: bool = False,
+    allow_pause: bool = False,
+    cylc_timeout: str | None = None
 ) -> None:
 
     # Get the path to where the suite files are located
@@ -128,12 +138,27 @@ def launch_experiment(
 
     # Create the deployment object
     # ----------------------------
-    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path, cylc_timeout)
+    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path,
+                                     send_cylc_messages, allow_pause, cylc_timeout)
 
     # Write some info for the user
     # ----------------------------
     deploy_workflow.logger.info('Launching workflow defined by files in \'' + suite_path + '\'.')
     deploy_workflow.logger.info('Experiment name: ' + experiment_name)
+
+    # Set environment variable allowing for cylc email messaging
+    # ----------------------------------------------------------
+    if send_cylc_messages:
+        os.environ['SWELL_SEND_MESSAGES'] = str(1)
+    else:
+        os.environ['SWELL_SEND_MESSAGES'] = str(0)
+
+    # Set environment variable allowing for pausing on set tasks
+    # ----------------------------------------------------------
+    if allow_pause:
+        os.environ['SWELL_PAUSE_WORKFLOW'] = str(1)
+    else:
+        os.environ['SWELL_PAUSE_WORKFLOW'] = str(0)
 
     # Launch the workflow
     # -------------------

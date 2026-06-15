@@ -9,8 +9,51 @@ import os
 from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.file_system_operations import check_if_files_exist_in_path
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GenerateBClimatology'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = True
+        self.is_cycling = True
+        self.model_dep = True
+        self.retry = '2*PT1M'
+        self.slurm = {}
+        self.questions = [
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.swell_static_files(),
+            qd.swell_static_files_user(),
+            qd.analysis_variables(),
+            qd.background_error_model(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.minimizer(),
+            qd.number_of_iterations(),
+            qd.observing_system_records_path(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

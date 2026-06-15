@@ -9,11 +9,37 @@
 
 
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
+
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+from swell.utilities.r2d2_utils import load_r2d2_credentials, get_r2d2_model_name
 
 import isodate
 import os
-import r2d2
+
+# --------------------------------------------------------------------------------------------------
+
+
+task_name = 'GetBackground'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.window_length(),
+            qd.window_type(),
+            qd.window_length(),
+            qd.background_experiment(),
+            qd.background_frequency(),
+            qd.horizontal_resolution(),
+            qd.marine_models(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -31,6 +57,7 @@ class GetBackground(taskBase):
 
         # Load R2D2 credentials
         # ---------------------
+        import r2d2
         load_r2d2_credentials(
             self.logger,
             self.platform(),

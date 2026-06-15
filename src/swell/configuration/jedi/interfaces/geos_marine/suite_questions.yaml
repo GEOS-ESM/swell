@@ -2,6 +2,10 @@ cycle_times:
   default_value: ['T00', 'T12']
   options: ['T00', 'T12']
 
+cycling_varbc:
+  default_value: false
+  options: [true, false]
+
 ensemble_hofx_strategy:
   default_value: 'serial'
 
@@ -16,3 +20,13 @@ saber_outer_block:
 
 skip_ensemble_hofx:
   default_value: true
+
+marine_models:
+  default_value:
+  - mom6
+  - cice6
+  options:
+  - mom6
+  - cice6
+  - bgc
+  - ww3

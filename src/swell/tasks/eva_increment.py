@@ -11,10 +11,28 @@
 import os
 from ruamel.yaml import YAML
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaIncrement'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.marine_models(),
+            qd.window_length(),
+            qd.window_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,6 +40,9 @@ from swell.utilities.jinja2 import template_string_jinja2
 class EvaIncrement(taskBase):
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        from eva.eva_driver import eva
 
         # Get the model and window type
         # -----------------------------
@@ -50,8 +71,8 @@ class EvaIncrement(taskBase):
                                                               dto=True)
         window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
 
-        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
-            self.config.window_length(), self.config.window_type(), dto=True)
+        local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time_dto(
+            self.config.window_length(), self.config.window_type())
         local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
 
         # Define the increment filename and path

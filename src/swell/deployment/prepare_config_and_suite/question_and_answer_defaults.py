@@ -7,16 +7,13 @@
 
 # --------------------------------------------------------------------------------------------------
 
-
-from typing import Union, Optional
-
 from swell.utilities.logger import Logger
 
 
 class GetAnswerDefaults:
 
     def get_answer(self, logger: Logger, key: str, val: dict,
-                   model: Optional[str] = None) -> Union[int, float, str]:
+                   model: str | None = None) -> int | float | str:
         default = val['default_value']
         widget_type = val['widget_type']
 

@@ -2,6 +2,10 @@ cycle_times:
   default_value: ['T00', 'T06', 'T12', 'T18']
   options: ['T00', 'T06', 'T12', 'T18']
 
+cycling_varbc:
+  default_value: false
+  options: [true, false]
+
 ensemble_hofx_strategy:
   default_value: 'serial'
 

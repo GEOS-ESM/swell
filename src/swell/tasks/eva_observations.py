@@ -12,10 +12,11 @@ from multiprocessing import Pool
 import os
 from ruamel.yaml import YAML
 
-from eva.eva_driver import eva
-
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
@@ -25,9 +26,36 @@ from swell.utilities.run_jedi_executables import check_obs
 
 
 # Pass through to avoid confusion with optional logger argument inside eva
-def run_eva(eva_dict: dict) -> eva:
+def run_eva(eva_dict: dict):
+
+    # Local import because module is not loaded until experiment launch
+    from eva.eva_driver import eva
     eva(eva_dict)
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaObservations'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.task_time_limit = True
+        self.is_cycling = True
+        self.model_dep = True
+        self.slurm = {}
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.marine_models(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+            qd.marine_models(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

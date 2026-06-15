@@ -7,10 +7,33 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import r2d2
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+from swell.utilities.r2d2_utils import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'SaveObsDiags'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+            qd.marine_models()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -22,6 +45,9 @@ class SaveObsDiags(taskBase):
     """
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        import r2d2
 
         # Load R2D2 credentials
         # ---------------------

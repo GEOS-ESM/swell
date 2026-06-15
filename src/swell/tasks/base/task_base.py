@@ -16,12 +16,10 @@ import importlib
 import os
 import time
 from datetime import datetime as dt
-from typing import Union, Optional
 
 # swell imports
 from swell.swell_path import get_swell_path
 from swell.utilities.case_switching import camel_case_to_snake_case, snake_case_to_camel_case
-from swell.utilities.config import Config
 from swell.utilities.data_assimilation_window_params import DataAssimilationWindowParams
 from swell.utilities.datetime_util import Datetime
 from swell.utilities.logger import get_logger
@@ -38,15 +36,17 @@ class taskBase(ABC):
     def __init__(
         self,
         config_input: str,
-        datetime_input: Optional[str],
+        datetime_input: str | None,
         model: str,
-        ensemblePacket: Optional[str],
+        ensemblePacket: str | None,
         task_name: str
     ) -> None:
 
         # Create message logger
         # ---------------------
         self.logger = get_logger(task_name)
+
+        from swell.utilities.config import Config
 
         # Write out the initialization info
         # ---------------------------------
@@ -163,7 +163,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_ensemble_packet(self) -> Optional[str]:
+    def get_ensemble_packet(self) -> str | None:
         return self.__ensemble_packet__
 
     # ----------------------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_model_components(self) -> Union[str, list]:
+    def get_model_components(self) -> str | list:
         return self.__model_components__
 
     # ----------------------------------------------------------------------------------------------
@@ -192,21 +192,30 @@ class taskBase(ABC):
         self.logger.assert_abort(self.__model__ is not None, 'In get_cycle_dir but this ' +
                                  'should not be called if the task does not receive model.')
 
-        # Combine datetime string (directory format) with the model
-        cycle_dir = os.path.join(self.experiment_path(), 'run',
-                                 self.__datetime__.string_directory(), self.__model__)
+        # Check whether to send to cycle dir
+        # Set to true since not set by default
+        if self.config.use_cycle_dir(True):
+
+            # Combine datetime string (directory format) with the model
+            cycle_dir = os.path.join(self.experiment_path(), 'run',
+                                     self.__dto__().string_directory(), self.__model_str__())
+        else:
+            return self.experiment_path()
 
         # Return
         return cycle_dir
 
     # ----------------------------------------------------------------------------------------------
 
-    def forecast_dir(self, paths: Union[str, list[str]] = []) -> Optional[str]:
+    def forecast_dir(self, paths: str | list[str] = []) -> str:
 
         '''
         Method to provide "forecast" directory to geos class
         If paths are provided, it is combined with the forecast directory and returned
         '''
+
+        if self.str_forecast_dir is None:
+            raise ValueError('str_forecast_dir is None')
 
         # Make sure forecast directory exists
         # -----------------------------------
@@ -223,15 +232,31 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def __dto__(self) -> Datetime:
+        if self.__datetime__ is None:
+            raise ValueError('Trying to call cycle datetime, but task was called without cyle time')
+
+        return self.__datetime__
+
+    # ----------------------------------------------------------------------------------------------
+
+    def __model_str__(self) -> str:
+        if self.__model__ is None:
+            raise ValueError('Trying to call the model component, but task was not called with one')
+
+        return self.__model__
+
+    # ----------------------------------------------------------------------------------------------
+
     def cycle_time_dto(self) -> dt:
 
-        return self.__datetime__.dto()
+        return self.__dto__().dto()
 
     # ----------------------------------------------------------------------------------------------
 
     def cycle_time(self) -> str:
 
-        return self.__datetime__.string_iso()
+        return self.__dto__().string_iso()
 
     # ----------------------------------------------------------------------------------------------
 
@@ -272,9 +297,9 @@ class taskFactory():
         self,
         task: str,
         config: str,
-        datetime: Union[str, dt, None],
-        model: str,
-        ensemblePacket: Optional[str]
+        datetime: str | dt | None,
+        model: str | None,
+        ensemblePacket: str | None
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -303,7 +328,8 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, task)
+        return task_class(config, datetime, model, ensemblePacket,
+                          task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -320,7 +346,7 @@ def get_tasks() -> list:
     tasks = []
     for task_file in task_files:
         base_name = os.path.basename(task_file)
-        if '__' not in base_name:
+        if '__' not in base_name and base_name != 'task_attributes.py':
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
 
     # Return list of valid task choices
@@ -332,15 +358,16 @@ def get_tasks() -> list:
 def task_wrapper(
     task: str,
     config: str,
-    datetime: Union[str, dt, None],
-    model: Optional[str],
-    ensemblePacket: Optional[str]
+    datetime: str | dt | None,
+    model: str | None,
+    ensemblePacket: str | None
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
     task_object = creator.create_task(task, config, datetime, model, ensemblePacket)
+
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 

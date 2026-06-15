@@ -9,7 +9,6 @@
 
 import datetime
 import isodate
-from typing import Union, Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.logger import Logger
@@ -43,7 +42,7 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_offset(self, window_length: str, dto: bool = False) -> str:
+    def window_offset(self, window_length: str, dto: bool = False) -> str | datetime.datetime:
         window_offset_dur = self.__get_window_offset_dur__(window_length)
 
         if dto:
@@ -142,20 +141,27 @@ class DataAssimilationWindowParams():
                               window_length,
                               window_type,
                               dto=False
-                              ) -> Union[str, Tuple[str, datetime.datetime]]:
+                              ) -> str:
 
         local_background_time = self.__get_local_background_time__(window_type, window_length)
-
-        # Return datetime object if asked
-        if dto:
-            return local_background_time.strftime(datetime_formats['directory_format']), \
-                local_background_time
 
         return local_background_time.strftime(datetime_formats['directory_format'])
 
     # ----------------------------------------------------------------------------------------------
 
-    def window_begin(self, window_length: str, dto: bool = False) -> Union[str, datetime.datetime]:
+    def local_background_time_dto(self,
+                                  window_length: str,
+                                  window_type: str) -> tuple[str, datetime.datetime]:
+
+        local_background_time = self.__get_local_background_time__(window_type, window_length)
+
+        # Return datetime object if asked
+        return local_background_time.strftime(datetime_formats['directory_format']), \
+            local_background_time
+
+    # ----------------------------------------------------------------------------------------------
+
+    def window_begin(self, window_length: str, dto: bool = False) -> str | datetime.datetime:
 
         window_begin_dto = self.__get_window_begin_dto__(window_length)
 

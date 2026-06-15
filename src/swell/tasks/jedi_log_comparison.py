@@ -14,11 +14,29 @@ import re
 import numpy as np
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.comparisons import comparison_tags
 
 # --------------------------------------------------------------------------------------------------
 
 comparison_fields = {'Residual norm': {'delimiter': '=', 'dtype': float}}
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'JediLogComparison'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.model_dep = True
+        self.questions = [
+            qd.number_of_iterations(),
+            qd.comparison_log_type(),
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

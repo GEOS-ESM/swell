@@ -13,6 +13,9 @@ from ruamel.yaml import YAML
 
 from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.run_jedi_executables import run_executable
 
 # --------------------------------------------------------------------------------------------------
@@ -32,6 +35,67 @@ def replace_key(obj, old_key, new_key):
         return [replace_key(item, old_key, new_key) for item in obj]
     else:
         return obj
+
+# --------------------------------------------------------------------------------------------------
+
+
+task_name = 'RunJediLocalEnsembleDaExecutable'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.task_time_limit = True
+        self.slurm = {}
+        self.questions = [
+            qd.npx_proc(),
+            qd.npy_proc(),
+            qd.npx(),
+            qd.npy(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.ensemble_hofx_packets(),
+            qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
+            qd.ensmean_only(),
+            qd.ensmeanvariance_only(),
+            qd.generate_yaml_and_exit(),
+            qd.horizontal_localization_lengthscale(),
+            qd.horizontal_localization_max_nobs(),
+            qd.horizontal_localization_method(),
+            qd.jedi_forecast_model(),
+            qd.local_ensemble_inflation_mult(),
+            qd.local_ensemble_inflation_rtpp(),
+            qd.local_ensemble_inflation_rtps(),
+            qd.local_ensemble_save_posterior_ensemble(),
+            qd.local_ensemble_save_posterior_ensemble_increments(),
+            qd.local_ensemble_save_posterior_mean(),
+            qd.local_ensemble_save_posterior_mean_increment(),
+            qd.local_ensemble_solver(),
+            qd.local_ensemble_use_linear_observer(),
+            qd.skip_ensemble_hofx(),
+            qd.total_processors(),
+            qd.vertical_localization_apply_log_transform(),
+            qd.vertical_localization_function(),
+            qd.vertical_localization_ioda_vertical_coord(),
+            qd.vertical_localization_ioda_vertical_coord_group(),
+            qd.vertical_localization_lengthscale(),
+            qd.vertical_localization_method(),
+            qd.perhost(),
+            qd.comparison_log_type('localensembleda'),
+            qd.mock_experiment()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class RunJediLocalEnsembleDaExecutable(taskBase):

@@ -58,16 +58,6 @@ jedi_forecast_model:
   options:
   - NA
 
-marine_models:
-  default_value:
-  - mom6
-  - cice6
-  options:
-  - mom6
-  - cice6
-  - bgc
-  - ww3
-
 minimizer:
   default_value: RPCG
   options:

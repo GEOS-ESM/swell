@@ -11,11 +11,23 @@
 import os
 from ruamel.yaml import YAML
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.jinja2 import template_string_jinja2
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaJediLog'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
 
 # --------------------------------------------------------------------------------------------------
 
@@ -23,6 +35,9 @@ from swell.utilities.jinja2 import template_string_jinja2
 class EvaJediLog(taskBase):
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        from eva.eva_driver import eva
 
         # Get the model
         # -------------

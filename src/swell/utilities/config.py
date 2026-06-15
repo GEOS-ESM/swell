@@ -10,9 +10,9 @@
 from ruamel.yaml import YAML
 from typing import Callable
 
-from swell.tasks.task_questions import TaskQuestions as task_questions
+from swell.tasks.base.task_attributes import task_attributes
 from swell.utilities.logger import Logger
-from swell.suites.all_suites import AllSuites
+from swell.suites.base.suite_attributes import suite_configs
 
 
 # --------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ class Config():
         # -------------------------------------------------------------------------
 
         # Check for suite questions
-        suite_questions = AllSuites.get_config(
+        suite_questions = suite_configs.get_config(
                 self.__suite_to_run__).get_all_question_names('suite')
         question_list = []
 
@@ -123,8 +123,8 @@ class Config():
                 question_list.append(question)
 
         # Find the questions associated with the task
-        if task_name in task_questions.get_all():
-            question_list.extend(task_questions[task_name].value.get_all_question_names())
+        task_class = getattr(task_attributes, task_name)
+        question_list.extend(task_class().question_list.get_all_question_names())
 
         # Loop through the experiment dictionary
         for exp_key, exp_val in experiment_dict.items():

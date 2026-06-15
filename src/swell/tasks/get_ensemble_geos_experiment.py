@@ -13,7 +13,27 @@ import os
 import tarfile
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.datetime_util import datetime_formats
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GetEnsembleGeosExperiment'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.background_experiment(),
+            qd.background_time_offset(),
+            qd.geos_x_ensemble_directory()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 

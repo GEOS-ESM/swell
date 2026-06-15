@@ -1,6 +1,7 @@
 import tempfile
 from ruamel.yaml import YAML
 import random
+import os
 
 from pathlib import Path
 from datetime import datetime
@@ -38,20 +39,20 @@ def build_jedi_for_tier2(test_dir: str, experiment_id_root: str, platform: str, 
     if "override" in test_config:
         override = update_dict(override, test_config['override'])
 
-    experiment_dir = test_dir / experiment_id
-    experiment_dir.mkdir(parents=True, exist_ok=True)
-    override_yml = experiment_dir / "override.yaml"
+    experiment_dir = os.path.join(test_dir, experiment_id)
+    os.makedirs(experiment_dir, exist_ok=True)
+    override_yml = os.path.join(experiment_dir, "override.yaml")
 
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
 
     create_experiment_directory(
-        "build_jedi", None, "defaults", platform,
-        str(override_yml), False, None
+        "build_jedi", "defaults", platform,
+        str(override_yml), False, None, False
     )
 
-    suite_path = str(experiment_dir / f"{experiment_id}-suite")
-    log_path = str(experiment_dir / "log")
+    suite_path = os.path.join(experiment_dir, f"{experiment_id}-suite")
+    log_path = os.path.join(experiment_dir, "log")
 
     launch_experiment(suite_path, True, log_path)
 
@@ -67,8 +68,9 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     experiment_id = f"{experiment_id_root}{suite}"
 
     # Get test directory from `~/.swell/swell-test.yaml`
+    testdir = Path(tempfile.TemporaryDirectory().name).expanduser()
     test_config = {
-        "test_root": Path(tempfile.TemporaryDirectory().name)
+        "test_root": testdir.name
     }
     yaml = YAML(typ='safe')
     yamlfile = Path("~/.swell/swell-test.yaml").expanduser()
@@ -82,11 +84,10 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     except Exception as err:
         raise err
 
-    testdir = Path(test_config["test_root"]).expanduser()
-    testdir.mkdir(exist_ok=True, parents=True)
+    testdir.mkdir(exist_ok=True)
 
     print(f"Testing suite: {suite}")
-    print(f"Test directory: {testdir}")
+    print(f"Test directory: {testdir.name}")
     print(f"Experiment ID: {experiment_id}")
 
     override = {
@@ -118,7 +119,8 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
            and test_config["jedi_build_method"] == "use_existing"
            and 'existing_jedi_source_directory' in test_config
            and 'existing_jedi_build_directory' in test_config):
-            jedi_dir = build_jedi_for_tier2(testdir, experiment_id_root, platform, test_config)
+            jedi_dir = build_jedi_for_tier2(str(testdir), experiment_id_root,
+                                            platform, test_config)
 
             tier2_override = {"jedi_build_method": "use_existing",
                               "existing_jedi_source_directory": f"{jedi_dir}/jedi_bundle/source",
@@ -129,7 +131,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
             if suite == "build_jedi":
                 return None
 
-    override_yml = experiment_dir / "override.yaml"
+    override_yml = os.path.join(experiment_dir, "override.yaml")
     with open(override_yml, "w") as f:
         yaml.dump(override, f)
 
@@ -139,7 +141,7 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
 
     create_experiment_directory(
         suite_config, "defaults", platform,
-        str(override_yml), False, None
+        str(override_yml), False, None, True
     )
 
     # TODO: Check some stuff about the experiment directory
@@ -150,20 +152,3 @@ def run_suite(suite: str, platform: str, test_tier: TestSuite):
     launch_experiment(suite_path, True, log_path)
 
     # TODO: Check the outputs
-
-
-if __name__ == "__main__":
-    from argparse import ArgumentParser
-
-    parser = ArgumentParser(description="Swell suite tests")
-    parser.add_argument("suites", nargs="+",
-                        help="Suite(s) to run (or `all` to run all suites)")
-
-    args = parser.parse_args()
-    if args.suites == ["all"]:
-        suites = ("3dvar_marine", "hofx", "3dvar_atmos")
-    else:
-        suites = args.suites
-
-    for suite in suites:
-        run_suite(suite)

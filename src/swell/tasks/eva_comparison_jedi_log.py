@@ -11,12 +11,28 @@
 import os
 from ruamel.yaml import YAML
 
-from eva.eva_driver import eva
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.comparisons import comparison_tags
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'EvaComparisonJediLog'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.comparison_log_type()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -24,6 +40,9 @@ from swell.utilities.comparisons import comparison_tags
 class EvaComparisonJediLog(taskBase):
 
     def execute(self) -> None:
+
+        # Local import because module is not loaded until experiment launch
+        from eva.eva_driver import eva
 
         # Get the model
         # -------------
@@ -63,9 +82,9 @@ class EvaComparisonJediLog(taskBase):
         experiment_id_2 = experiment_dict_2['experiment_id']
 
         cycle_dir_1 = os.path.join(os.path.dirname(experiment_path_1), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                   self.__dto__().string_directory(), self.get_model())
         cycle_dir_2 = os.path.join(os.path.dirname(experiment_path_2), '..', 'run',
-                                   self.__datetime__.string_directory(), self.get_model())
+                                   self.__dto__().string_directory(), self.get_model())
 
         # Info to task log
         info_string = 'Running Eva to plot from the jedi_log file'

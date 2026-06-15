@@ -31,6 +31,25 @@ import isodate
 import requests
 
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'DownloadObs'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.questions = [
+            qd.dry_run(),
+            qd.obs_to_download(),
+            qd.window_length()
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 class DownloadObs(taskBase):

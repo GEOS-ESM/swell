@@ -10,7 +10,7 @@
 
 import os
 import netCDF4 as nc
-from typing import Optional
+import datetime
 
 from swell.utilities.shell_commands import run_track_log_subprocess
 from swell.utilities.logger import Logger
@@ -19,11 +19,11 @@ from swell.utilities.logger import Logger
 
 
 def check_obs(
-    path_to_observing_sys_yamls: Optional[str],
+    path_to_observing_sys_yamls: str | None,
     observation: str,
     obs_dict: dict,
-    cycle_time: Optional[str],
-    input_and_output: Optional[bool] = False
+    cycle_time: str | datetime.datetime | None,
+    input_and_output: bool | None = False
 ) -> bool:
 
     use_observation = False
@@ -69,7 +69,7 @@ def run_executable(
     jedi_executable_path: str,
     jedi_config_file: str,
     output_log: str,
-    perhost: Optional[int] = None
+    perhost: int | None = None
 ) -> None:
 
     # Run the JEDI executable

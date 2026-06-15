@@ -14,14 +14,31 @@ import glob
 import os
 import re
 
-# Ioda converters
-import pyiodaconv.gsi_ncdiag as gsid
-from pyiodaconv.combine_obsspace import combine_obsspace
-
 from swell.tasks.base.task_base import taskBase
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.shell_commands import run_subprocess, create_executable_file
 
+
+# --------------------------------------------------------------------------------------------------
+
+task_name = 'GsiNcdiagToIoda'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.observations(),
+            qd.produce_geovals(),
+            qd.single_observations(),
+            qd.window_length()
+        ]
 
 # --------------------------------------------------------------------------------------------------
 
@@ -29,6 +46,10 @@ from swell.utilities.shell_commands import run_subprocess, create_executable_fil
 class GsiNcdiagToIoda(taskBase):
 
     def execute(self) -> None:
+
+        # Ioda converters
+        import pyiodaconv.gsi_ncdiag as gsid
+        from pyiodaconv.combine_obsspace import combine_obsspace
 
         # Parse configuration
         # -------------------

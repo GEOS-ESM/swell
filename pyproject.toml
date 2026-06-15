@@ -47,7 +47,8 @@ dependencies = [
     "flake8==6.1.0",
     "netCDF4",
     "ruamel.yaml==0.17.16",
-    "xarray==2024.7.0"
+    "xarray==2024.7.0",
+    "requests>=2.23.0"
 ]
 
 [project.optional-dependencies]

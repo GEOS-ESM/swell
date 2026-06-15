@@ -8,21 +8,45 @@
 # --------------------------------------------------------------------------------------------------
 
 import isodate
-import netCDF4 as nc
 import numpy as np
 import os
-import r2d2
 import shutil
-from typing import Union
+from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
-from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
+from swell.tasks.base.task_setup import TaskSetup
+from swell.tasks.base.task_attributes import task_attributes
+import swell.configuration.question_defaults as qd
+
+from swell.utilities.r2d2_utils import get_r2d2_model_name, load_r2d2_credentials
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 
 # ----------------------------------------------------------------------------------------------
+
+task_name = 'GetObservations'
+
+
+@task_attributes.register(task_name)
+class Setup(TaskSetup):
+    def set_defaults(self):
+        self.base_name = task_name
+        self.is_cycling = True
+        self.model_dep = True
+        self.questions = [
+            qd.background_time_offset(),
+            qd.crtm_coeff_dir(),
+            qd.observations(),
+            qd.observing_system_records_path(),
+            qd.cycling_varbc(),
+            qd.obs_experiment(),
+            qd.observing_system_records_path(),
+            qd.window_length(),
+        ]
+
+# --------------------------------------------------------------------------------------------------
 
 
 def run_r2d2_fetch(r2d2_dict: dict) -> None:
@@ -37,6 +61,8 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     These values will be popped from the dictionary before running the fetch command
     """
+
+    import r2d2
 
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
     cycle_dir = r2d2_dict.pop('cycle_dir')
@@ -79,8 +105,8 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     # Change the permissions
     os.chmod(target_file, 0o644)
 
-
 # --------------------------------------------------------------------------------------------------
+
 
 class GetObservations(taskBase):
 
@@ -404,7 +430,7 @@ class GetObservations(taskBase):
 
     # ----------------------------------------------------------------------------------------------
 
-    def get_tlapse_files(self, observation_dict: dict) -> Union[None, int]:
+    def get_tlapse_files(self, observation_dict: dict) -> Iterator[int | None]:
 
         # Function to locate instances of tlapse in the obs operator config
 
@@ -506,6 +532,7 @@ class GetObservations(taskBase):
     # Get the target data from the netcdf file
     # ----------------------------------------
     def get_data(self, input_file: str, group: str, var_name: str) -> object:
+        import netCDF4 as nc
         with nc.Dataset(input_file, 'r') as ds:
             return ds[group][var_name][:]
 
@@ -530,6 +557,8 @@ class GetObservations(taskBase):
         self.logger.info(f"Creating file {output_filename}")
         if os.path.exists(output_filename):
             os.remove(output_filename)
+
+        import netCDF4 as nc
 
         # Reduce the list of input files to only those that exist
         # -------------------------------------------------------------
