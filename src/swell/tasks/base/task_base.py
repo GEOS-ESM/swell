@@ -193,7 +193,7 @@ class taskBase(ABC):
                                  'should not be called if the task does not receive model.')
 
         # Check whether to send to cycle dir
-        if self.config.use_cycle_dir(True):
+        if self.config.use_cycle_dir():
 
             # Combine datetime string (directory format) with the model
             cycle_dir = os.path.join(self.experiment_path(), 'run',
