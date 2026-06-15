@@ -133,6 +133,8 @@ class EvaComparisonObservations(taskBase):
 
             if self.get_model() == 'geos_atmosphere':
                 obs_long_name = ioda_name_to_long_name(observation, self.logger)
+                obs_long_name = obs_long_name.replace('(', '')
+                obs_long_name = obs_long_name.replace(')', '')
             else:
                 obs_long_name = observation
 
