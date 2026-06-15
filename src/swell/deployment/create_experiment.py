@@ -574,6 +574,8 @@ def prepare_cylc_suite_jinja2(
     # run time (note: these overwrite defaults above)
     render_dictionary['scheduling']['BuildJedi']['execution_time_limit'] = 'PT3H'
     render_dictionary['scheduling']['EvaObservations']['execution_time_limit'] = 'PT30M'
+    render_dictionary['scheduling']['GenerateBClimatology']['execution_time_limit'] = 'PT10M'
+    render_dictionary['scheduling']['RunGeos']['execution_time_limit'] = 'PT30M'
 
     # Set jinja templated string to use upon runtime
     # ----------------------------------------------
