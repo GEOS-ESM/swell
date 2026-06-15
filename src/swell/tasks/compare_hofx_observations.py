@@ -78,11 +78,12 @@ class CompareHofxObservations(taskBase):
     def execute(self) -> None:
 
         '''
-        Reads observation files for hofx simualted variables, compare total length of array and mean
+        Reads observation files for hofx simulated variables, compare total length of array and mean
         of data points to evaluate diff. Output is sent to <cycle_dir>/hofx_comparison.txt
         '''
 
         comparison_experiment_paths = self.config.comparison_experiment_paths()
+        observations = self.config.observations()
 
         experiment_tag_paths = comparison_tags(comparison_experiment_paths, self.logger)
 
@@ -98,46 +99,45 @@ class CompareHofxObservations(taskBase):
         output_str += '\n'
         passed = True
 
-        observation = self.get_parameter()
+        for observation in observations:
+            hofx_means_1 = self.hofx_means(path_1, observation, cutoff=int(1e4))
+            hofx_means_2 = self.hofx_means(path_2, observation, cutoff=int(1e4))
 
-        hofx_means_1 = self.hofx_means(path_1, observation, cutoff=int(1e4))
-        hofx_means_2 = self.hofx_means(path_2, observation, cutoff=int(1e4))
+            if len(hofx_means_1) != len(hofx_means_2):
+                raise Exception('Number of simulated variables does not '
+                                'match between experiments.')
 
-        if len(hofx_means_1) != len(hofx_means_2):
-            raise Exception('Number of simulated variables does not '
-                            'match between experiments.')
+            output_str += f'{observation}\n'
+            for sim_var in hofx_means_1.keys():
+                len_1 = hofx_means_1[sim_var]['length']
+                len_2 = hofx_means_2[sim_var]['length']
 
-        output_str += f'{observation}\n'
-        for sim_var in hofx_means_1.keys():
-            len_1 = hofx_means_1[sim_var]['length']
-            len_2 = hofx_means_2[sim_var]['length']
+                mean_1 = hofx_means_1[sim_var]['mean']
+                mean_2 = hofx_means_2[sim_var]['mean']
 
-            mean_1 = hofx_means_1[sim_var]['mean']
-            mean_2 = hofx_means_2[sim_var]['mean']
+                output_str += f'{sim_var}\n'
+                if len_1 != len_2 or mean_1 != mean_2:
+                    tag_length = max(len(tag_1), len(tag_2)) + 2
+                    len_length = max(len(str(len_1)), len(str(len_2))) + 2
+                    mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
+                    output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
+                                f'{"Mean":<{mean_length}}\n')
+                    output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
+                                f'{mean_1:<{mean_length}}\n')
+                    output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
+                                f'{mean_2:<{mean_length}}\n\n')
+                    passed = False
+                else:
+                    output_str += f'Passed\n\n'
 
-            output_str += f'{sim_var}\n'
-            if len_1 != len_2 or mean_1 != mean_2:
-                tag_length = max(len(tag_1), len(tag_2)) + 2
-                len_length = max(len(str(len_1)), len(str(len_2))) + 2
-                mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
-                output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
-                               f'{"Mean":<{mean_length}}\n')
-                output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
-                               f'{mean_1:<{mean_length}}\n')
-                output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
-                               f'{mean_2:<{mean_length}}\n\n')
-                passed = False
-            else:
-                output_str += f'Passed\n\n'
+            # Fail suite if not passed
+            if not passed:
+                output_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
 
-        # Fail suite if not passed
-        if not passed:
-            output_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
-
-            # Output to file
-            with open(output_file, 'w') as f:
-                f.write(output_str)
-            raise Exception(f'Mismatch in HofX observation length or average, '
-                            f'check {output_file}')
+                # Output to file
+                with open(output_file, 'w') as f:
+                    f.write(output_str)
+                raise Exception(f'Mismatch in HofX observation length or average, '
+                                f'check {output_file}')
 
 # --------------------------------------------------------------------------------------------------
