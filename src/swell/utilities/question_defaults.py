@@ -161,6 +161,35 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class r2d2_server(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_server"
+        ask_question: bool = False
+        prompt: str = (
+            "Server/profile name in ~/.swell/r2d2_credentials.yaml "
+            "(e.g. 'gmao_server'). Leave empty if credentials are at the root level."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class r2d2_datastore(SuiteQuestion):
+        default_value: str | None = None
+        question_name: str = "r2d2_datastore"
+        ask_question: bool = False
+        prompt: str = (
+            "Datastore name passed to R2D2 fetch and store operations "
+            "(e.g. a Discover directory store or an S3 bucket store). "
+            "Run scripts/discover_r2d2_datastores.py to list available datastores. "
+            "Leave empty to let R2D2 pick the highest-priority writable datastore "
+            "for your compute host."
+        )
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class runahead_limit(SuiteQuestion):
         default_value: str = "P4"
         question_name: str = "runahead_limit"
@@ -168,6 +197,34 @@ class QuestionDefaults():
         prompt: str = ("Set the Cylc runahead limit: the maximum number of cycles "
                        "that may be active ahead of the current cycle "
                        "(e.g. P1: up to 1 cycle ahead, P3: up to 3 cycles ahead, default P4).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_central_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_central_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber central block do you want to use?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class saber_outer_block(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "saber_outer_block"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Which saber outer blocks do you want to use?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -248,34 +305,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class saber_central_block(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "saber_central_block"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which saber central block do you want to use?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class saber_outer_block(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "saber_outer_block"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which saber outer blocks do you want to use?"
-        widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class background_experiment(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_experiment"
@@ -315,6 +344,48 @@ class QuestionDefaults():
         widget_type: WType = WType.ISO_DURATION
 
     # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_experiment(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_experiment"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the name of the experiment providing the restart files in R2D2?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_file_types(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "rst_file_types"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What are the restart file types to fetch/store from R2D2?"
+        widget_type: WType = WType.STRING_CHECK_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class rst_store_interval(TaskQuestion):
+        default_value: str = None
+        question_name: str = "rst_store_interval"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = ("After how many cycles should restart files be stored as real files "
+                       "(not symlinks)? E.g. 28 means every 28th cycle (and multiples) stores "
+                       "real files. Leave unset to always store as symlinks.")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
@@ -590,6 +661,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class forecast_length(TaskQuestion):
+        default_value: str = "PT12H"
+        question_name: str = "forecast_length"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Duration of the GEOS-CF forecast (ISO 8601 duration, e.g. PT12H)"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class forecast_output_frequency(TaskQuestion):
+        default_value: str = "PT1H"
+        question_name: str = "forecast_output_frequency"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Frequency of forecast output files (ISO 8601 duration, e.g. PT1H)"
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class generate_yaml_and_exit(TaskQuestion):
         default_value: bool = False
         question_name: str = "generate_yaml_and_exit"
@@ -648,6 +745,58 @@ class QuestionDefaults():
         prompt: str = ("What is the location for the EXPERIMENT Directory (to contain model "
                        "output and restart files), if it is different than your GEOS HOME "
                        "Directory?")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_install_dir(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geos_cf_install_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF install directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geos_cf_run_dir(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geos_cf_run_dir"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF model run directory?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_exp(TaskQuestion):
+        default_value: str = "f5295_fp"
+        question_name: str = "geosfp_exp"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the GEOS FP experiment ID used for IAU analysis files?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class geosfp_path(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "geosfp_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS FP archive?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -902,6 +1051,36 @@ class QuestionDefaults():
         ])
         prompt: str = (
             "Provide a path that contains observation files not in r2d2.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class iau(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "iau"
+        ask_question: bool = True
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "Use Incremental Analysis Update (IAU) in the GEOS-CF forecast?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class inc_template(TaskQuestion):
+        default_value: str = "defer_to_platform"
+        question_name: str = "inc_template"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_cf"
+        ])
+        prompt: str = "What is the path to the GEOS-CF increment template NetCDF file?"
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
@@ -1417,6 +1596,9 @@ class QuestionDefaults():
     class swell_static_files(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
         prompt: str = "What is the path to the Swell Static files directory?"
         widget_type: WType = WType.STRING
 
