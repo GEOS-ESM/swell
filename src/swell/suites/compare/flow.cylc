@@ -24,9 +24,6 @@
     initial cycle point = {{start_cycle_point}}
     final cycle point = {{final_cycle_point}}
     runahead limit = {{runahead_limit}}
-    [[queues]]
-        [[[default]]]
-            limit = 20
 
     [[graph]]
 	R1 = """
@@ -41,10 +38,11 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            CompareHofxObservations-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons
-            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons
-            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons
-            PublishComparisons => comparison_fail
+            CompareHofxObservations-{{model_component}}?
+            CompareHofxObservations-{{model_component}}:fail? | JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons?
+            PublishComparisons? => comparison_fail?
         {% endif %}
         {% endfor %}
         """
@@ -81,11 +79,15 @@
 
     [[CompareHofxObservations-{{model_component}}]]
         script = "swell task CompareHofxObservations $config -d $datetime -m {{model_component}}"
-        inherit = CompareHofxObservations-{{model_component}}
 
     [[EvaComparisonObservations-{{model_component}}]]
         script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"
-        inherit = EvaComparisonObservations-{{model_component}}
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaComparisonObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["EvaComparisonObservations"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
 
     {% if comparison_experiment_paths is mapping %}
     {% for path in comparison_experiment_paths.values() %}

@@ -121,11 +121,11 @@ class CompareHofxObservations(taskBase):
                     len_length = max(len(str(len_1)), len(str(len_2))) + 2
                     mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
                     output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
-                                f'{"Mean":<{mean_length}}\n')
+                                   f'{"Mean":<{mean_length}}\n')
                     output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
-                                f'{mean_1:<{mean_length}}\n')
+                                   f'{mean_1:<{mean_length}}\n')
                     output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
-                                f'{mean_2:<{mean_length}}\n\n')
+                                   f'{mean_2:<{mean_length}}\n\n')
                     passed = False
                 else:
                     output_str += f'Passed\n\n'

@@ -63,7 +63,6 @@ class EvaComparisonObservations(taskBase):
             experiment_config_1 = yaml.safe_load(f)
             experiment_id_1 = experiment_config_1['experiment_id']
             comparison_suite = experiment_config_1['suite_to_run']
-            observations = experiment_config_1['models'][model]['observations']
 
         # Second file parameters
         with open(experiment_path_2, 'r') as f:
@@ -131,8 +130,6 @@ class EvaComparisonObservations(taskBase):
             obs_comparison_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
             if not obs_comparison_file.exists():
                 continue
-            else:
-                passed = False
 
             if self.get_model() == 'geos_atmosphere':
                 obs_long_name = ioda_name_to_long_name(observation, self.logger)
@@ -154,10 +151,10 @@ class EvaComparisonObservations(taskBase):
 
             # Check if IODA observation input and output have non-zero location dimensions
             use_obs_1 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                    observation_dict_1, self.cycle_time_dto(), input_and_output=True)
+                                  observation_dict_1, self.cycle_time_dto(), input_and_output=True)
 
             use_obs_2 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
-                                    observation_dict_2, self.cycle_time_dto(), input_and_output=True)
+                                  observation_dict_2, self.cycle_time_dto(), input_and_output=True)
 
             use_obs = use_obs_1 and use_obs_2
 
@@ -179,7 +176,7 @@ class EvaComparisonObservations(taskBase):
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
                 if not os.path.exists(obs_path_file_0000):
                     self.logger.abort(f'No observation file found for {obs_path_file_1} or ' +
-                                        f'{obs_path_file_0000}')
+                                      f'{obs_path_file_0000}')
                 obs_path_file_1 = obs_path_file_0000
 
             # Check for need to add 0000 to the file
@@ -189,7 +186,7 @@ class EvaComparisonObservations(taskBase):
                 obs_path_file_0000 = obs_path_file_name + '_0000' + obs_path_file_ext
                 if not os.path.exists(obs_path_file_0000):
                     self.logger.abort(f'No observation file found for {obs_path_file_2} or ' +
-                                        f'{obs_path_file_0000}')
+                                      f'{obs_path_file_0000}')
                 obs_path_file_2 = obs_path_file_0000
 
             # Get instrument ioda and full name
