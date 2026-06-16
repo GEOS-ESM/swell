@@ -41,6 +41,7 @@ class SuiteConfig(QuestionContainer, Enum):
                               'sss_smos',
                               ]),
             qd.dry_run(True),
+            qd.store_as_symlink(False),
         ]
     )
 
@@ -64,6 +65,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "jedi-bundle/build-intel-1.9/bin/"
             ),
             qd.dry_run(False),
+            qd.store_as_symlink(False),
         ]
     )
 
