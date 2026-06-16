@@ -200,6 +200,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="CompareIodaObservations",
         questions=[
             qd.window_length(),
+            qd.ioda_fields_for_comparison(),
             qd.observations()
         ]
     )

@@ -30,7 +30,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
             qd.model_components(),
             qd.runahead_limit(),
-            qd.ioda_fields_for_comparison(['hofx0/{variable}']),
+            qd.ioda_fields_for_comparison(['hofx0/{variable}',
+                                           'hofx1/{variable}']),
             qd.observations([]),
         ]
     )

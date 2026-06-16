@@ -127,7 +127,7 @@ class EvaComparisonObservations(taskBase):
 
         for observation in self.config.observations():
 
-            obs_comparison_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
+            obs_comparison_file = Path(self.cycle_dir()) / f'ioda_{observation}_comparison.txt'
             if not obs_comparison_file.exists():
                 continue
 

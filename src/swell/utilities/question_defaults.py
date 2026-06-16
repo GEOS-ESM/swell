@@ -995,7 +995,7 @@ class QuestionDefaults():
         models: List[str] = mutable_field(['all_models'])
         prompt: str = "List of IODA fields to run comparisons on for two experiments."
         widget_type: WType = WType.STRING_CHECK_LIST
- 
+
     # ------------------------------------------------------------------------------------------------
 
     @dataclass
