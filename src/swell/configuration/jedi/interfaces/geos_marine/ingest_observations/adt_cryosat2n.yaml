@@ -1,6 +1,6 @@
 # Data availability period (for reference only):
-# time_begin: '2023-07-01T00:00:00Z'
+# time_begin: '2010-04-08T00:00:00Z'
 # time_end: '2999-12-31T23:59:59Z'
 
 acquisition_method: 'cp'
-cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_cryosat2n/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_cryosat2n.nc'
+cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_cryosat2n/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_cryosat2n.nc4'
