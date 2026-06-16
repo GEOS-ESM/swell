@@ -41,8 +41,8 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            CompareHofxObservations-{{model_component}}?
-            CompareHofxObservations-{{model_component}}:fail? | JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            CompareIodaObservations-{{model_component}}?
+            CompareIodaObservations-{{model_component}}:fail? | JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons?
             PublishComparisons? => comparison_fail?
@@ -80,8 +80,8 @@
     [[PublishComparisons]]
          script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
 
-    [[CompareHofxObservations-{{model_component}}]]
-        script = "swell task CompareHofxObservations $config -d $datetime -m {{model_component}}"
+    [[CompareIodaObservations-{{model_component}}]]
+        script = "swell task CompareIodaObservations $config -d $datetime -m {{model_component}}"
 
     [[EvaComparisonObservations-{{model_component}}]]
         script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"

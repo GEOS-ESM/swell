@@ -30,6 +30,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times(default_value=[None], widget_type=WidgetType.STRING_CHECK_LIST),
             qd.model_components(),
             qd.runahead_limit(),
+            qd.ioda_fields_for_comparison(['hofx0/{variable}']),
             qd.observations([]),
         ]
     )
@@ -169,6 +170,7 @@ class SuiteConfig(QuestionContainer, Enum):
             compare,
             qd.comparison_log_type('hofx'),
             qd.model_components(['geos_atmosphere']),
+            qd.ioda_fields_for_comparison(['hofx/{variable}']),
             qd.observations([
                 "aircraft_temperature",
                 "aircraft_wind",
@@ -216,6 +218,7 @@ class SuiteConfig(QuestionContainer, Enum):
         questions=[
             compare,
             qd.comparison_log_type('hofx'),
+            qd.ioda_fields_for_comparison(['hofx/{variable}']),
             qd.model_components(['geos_cf']),
         ]
     )

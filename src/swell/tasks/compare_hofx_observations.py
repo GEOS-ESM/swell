@@ -18,15 +18,16 @@ from swell.utilities.comparisons import comparison_tags
 # --------------------------------------------------------------------------------------------------
 
 
-class CompareHofxObservations(taskBase):
+class CompareIodaObservations(taskBase):
 
-    def hofx_means(self, exp_path: str, observation: str, cutoff: int | None = None):
-        ''' Reads observation files for hofx simulated variables, returning total length of
+    def ioda_means(self, exp_path: str, observation: str, field: str, cutoff: int | None = None):
+        ''' Reads observation files for ioda variables, returning total length of
         the array and mean of all data points.
 
         Arguments:
         exp_path: experiment.yaml location for experiment to compare
         observation: ioda name of observation
+        field: name of data field
         cutoff: int array index to cut off mean of array
 
         Returns:
@@ -58,20 +59,16 @@ class CompareHofxObservations(taskBase):
         for ob in obs_config:
             if ob['observation_name'] == observation:
                 simulated_variables = ob['obs space']['simulated variables']
-        print(observation)
-        hofx_means = {}
-        with Dataset(obs_file, 'r') as ds:
-            hofx_field = 'hofx'
-            print(ds.groups)
-            if 'hofx0' in ds.groups:
-                hofx_field = 'hofx0'
-            for sim_var in simulated_variables:
-                hofx_obs = ds[hofx_field][sim_var]
-                hofx_means[sim_var] = {}
-                hofx_means[sim_var]['length'] = len(hofx_obs)
-                hofx_means[sim_var]['mean'] = np.mean(hofx_obs[0:cutoff])
 
-        return hofx_means
+        field_means = {}
+        with Dataset(obs_file, 'r') as ds:
+            for sim_var in simulated_variables:
+                hofx_obs = ds[field.format(variable=sim_var)]
+                field_means[sim_var] = {}
+                field_means[sim_var]['length'] = len(hofx_obs)
+                field_means[sim_var]['mean'] = np.mean(hofx_obs[0:cutoff])
+
+        return field_means
 
     # --------------------------------------------------------------------------------------------------
 
@@ -84,6 +81,7 @@ class CompareHofxObservations(taskBase):
 
         comparison_experiment_paths = self.config.comparison_experiment_paths()
         observations = self.config.observations()
+        ioda_fields = self.config.ioda_fields_for_comparison()
 
         experiment_tag_paths = comparison_tags(comparison_experiment_paths, self.logger)
 
@@ -93,51 +91,54 @@ class CompareHofxObservations(taskBase):
         path_1 = list(experiment_tag_paths.values())[0]
         path_2 = list(experiment_tag_paths.values())[1]
 
-        output_str = 'HofX Comparison Results\n'
-        output_str += f'{tag_1}: {path_1}\n'
-        output_str += f'{tag_2}: {path_2}\n'
-        output_str += '\n'
-        passed = True
-
         for observation in observations:
-            hofx_means_1 = self.hofx_means(path_1, observation, cutoff=int(1e4))
-            hofx_means_2 = self.hofx_means(path_2, observation, cutoff=int(1e4))
 
-            if len(hofx_means_1) != len(hofx_means_2):
-                raise Exception('Number of simulated variables does not '
-                                'match between experiments.')
+            output_str = f'{observation} Comparison Results\n'
+            output_str += f'{tag_1}: {path_1}\n'
+            output_str += f'{tag_2}: {path_2}\n'
+            output_str += '\n'
+            passed = True
 
-            output_str += f'{observation}\n'
-            for sim_var in hofx_means_1.keys():
-                len_1 = hofx_means_1[sim_var]['length']
-                len_2 = hofx_means_2[sim_var]['length']
+            for field in ioda_fields:
 
-                mean_1 = hofx_means_1[sim_var]['mean']
-                mean_2 = hofx_means_2[sim_var]['mean']
+                field_means_1 = self.ioda_means(path_1, observation, field, cutoff=int(1e4))
+                field_means_2 = self.ioda_means(path_2, observation, field, cutoff=int(1e4))
 
-                output_str += f'{sim_var}\n'
-                if len_1 != len_2 or mean_1 != mean_2:
-                    tag_length = max(len(tag_1), len(tag_2)) + 2
-                    len_length = max(len(str(len_1)), len(str(len_2))) + 2
-                    mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
-                    output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
-                                   f'{"Mean":<{mean_length}}\n')
-                    output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
-                                   f'{mean_1:<{mean_length}}\n')
-                    output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
-                                   f'{mean_2:<{mean_length}}\n\n')
-                    passed = False
-                else:
-                    output_str += f'Passed\n\n'
+                if len(field_means_1) != len(field_means_2):
+                    raise Exception(f'Length of {field} fields does not '
+                                    'match between experiments.')
 
-            # Fail suite if not passed
-            if not passed:
-                output_file = Path(self.cycle_dir()) / f'hofx_{observation}_comparison.txt'
+                output_str += f'{observation}\n'
+                for sim_var in field_means_1.keys():
+                    len_1 = field_means_1[sim_var]['length']
+                    len_2 = field_means_2[sim_var]['length']
 
-                # Output to file
-                with open(output_file, 'w') as f:
-                    f.write(output_str)
-                raise Exception(f'Mismatch in HofX observation length or average, '
-                                f'check {output_file}')
+                    mean_1 = field_means_1[sim_var]['mean']
+                    mean_2 = field_means_2[sim_var]['mean']
+
+                    output_str += f'{sim_var}\n'
+                    if len_1 != len_2 or mean_1 != mean_2:
+                        tag_length = max(len(tag_1), len(tag_2)) + 2
+                        len_length = max(len(str(len_1)), len(str(len_2))) + 2
+                        mean_length = max(len(str(mean_1)), len(str(mean_2))) + 2
+                        output_str += (f'{"":<{tag_length}} {"Length":<{len_length}} '
+                                    f'{"Mean":<{mean_length}}\n')
+                        output_str += (f'{tag_1:<{tag_length}} {len_1:<{len_length}} '
+                                    f'{mean_1:<{mean_length}}\n')
+                        output_str += (f'{tag_2:<{tag_length}} {len_2:<{len_length}} '
+                                    f'{mean_2:<{mean_length}}\n\n')
+                        passed = False
+                    else:
+                        output_str += f'Passed\n\n'
+
+                # Fail suite if not passed
+                if not passed:
+                    output_file = Path(self.cycle_dir()) / f'ioda_{observation}_comparison.txt'
+
+                    # Output to file
+                    with open(output_file, 'w') as f:
+                        f.write(output_str)
+                    raise Exception(f'Mismatch in HofX observation length or average, '
+                                    f'check {output_file}')
 
 # --------------------------------------------------------------------------------------------------
