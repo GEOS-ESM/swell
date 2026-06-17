@@ -46,6 +46,12 @@
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
 
+            # logic tree:
+            # prep (clone, stage, build, get bkg, get obs) -> SP1
+            # -> mksi/observation + filter -> SP2
+            # -> [ submit/wait for N member runs ]-> SP3
+            # -> mean/variance + diffstate -> SP4 -> eva
+
             # Task triggers for: {{model_component}}
             # ------------------
             # Generate satellite channel records
@@ -90,17 +96,6 @@
 
             # EvaIncrement
             SP4-{{model_component}} => EvaIncrement-{{model_component}}
-
-#            # EvaObservations
-#            SP4-{{model_component}} => EvaObservations-{{model_component}}
-#
-#            # EvaJediLog
-#            SP4-{{model_component}} => EvaJediLog-{{model_component}}
-#
-#            # Clean up large files
-#            EvaJediLog-{{model_component}} & EvaIncrement-{{model_component}} &
-#            EvaObservations-{{model_component}} =>
-#            CleanCycle-{{model_component}}
 
         {% endif %}
         {% endfor %}
@@ -178,15 +173,6 @@
         {%- endfor %}
     {% endfor %}
     {% endif %}
-
-#    [[RunJediEdaExecutable-{{model_component}}]]
-#        script = "swell task RunJediEdaExecutable $config -d $datetime -m {{model_component}}"
-#        platform = {{platform}}
-#        execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
-#        [[[directives]]]
-#        {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
-#            --{{key}} = {{value}}
-#        {%- endfor %}
 
     [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"

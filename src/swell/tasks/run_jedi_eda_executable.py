@@ -162,7 +162,7 @@ class RunJediEdaExecutable(taskBase):
                 if obs_cov_model and 'cross variable covariances' in obs_cov_model:
                     print(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
                 else:
-                    print(f"No cross varaible covariance found: {observation}, Obs Error Diagonal")
+                    print(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
                     obs_error_dict = {
                         'covariance model': 'diagonal',
                         'zero-mean perturbations': True,
@@ -255,15 +255,5 @@ class RunJediEdaExecutable(taskBase):
             mpi_command += f" -np {np} {jedi_executable_path} {jedi_config_file} {output_log_file}"
             print(f'intended mpi_command = {mpi_command}')
             self.logger.info('YAML generated, now exiting.')
-
-
-# clean up dir
-#        for observer in jedi_config_dict['cost function']['observations']['observers']:
-#            # Get observation name
-#            observation = observer['observation_name']
-#            # Delete input obsfile .nc4 files
-#            for file_path in glob.glob(os.path.join(mem_dir, f'{observation}*.nc4')):
-#                os.remove(file_path)
-#                print(f"Deleted: {file_path}")
 
 # --------------------------------------------------------------------------------------------------

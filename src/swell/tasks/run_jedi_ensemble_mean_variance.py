@@ -73,18 +73,6 @@ class RunJediEnsembleMeanVariance(taskBase):
 
         print(f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
         meanvar_spec_dict = self.config.ensmeanvariance_spec()
-#        # Loop directly over the items in the list
-#        for spec in config_dict:
-#            # Unpack variables directly from the current dictionary item
-#            fn_input = spec["fn_input"]
-#            fn_output_mean = spec["fn_output_mean"]
-#            fn_output_variance = spec["fn_output_variance"]
-#
-#            # Use the variables directly
-#            print(f"Input Path:  {fn_input}")
-#            print(f"Output Mean: {fn_output_mean}")
-#            print(f"Output Var:  {fn_output_variance}")
-#            print("-" * 40)
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
