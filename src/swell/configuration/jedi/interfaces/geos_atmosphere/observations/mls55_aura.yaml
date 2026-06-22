@@ -41,6 +41,6 @@ obs filters:
     test variables:
     - name: MetaData/pressure
     minvalue: 10
-    maxvalue: 20000
+    maxvalue: 25000
     action:
           name: reject
