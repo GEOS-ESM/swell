@@ -18,7 +18,7 @@ obs operator:
   name: CRTM
   Absorbers: [H2O,O3,CO2]
   obs options:
-    Sensor_ID: &Sensor_ID abi_g18
+    Sensor_ID: abi_g18
     EndianType: little_endian
     CoefficientPath: '{{crtm_coeff_dir}}/'
   linear obs operator:
@@ -48,6 +48,17 @@ obs bias:
       order: 2
     - name: sensorScanAngle
       var_name: sensorScanPosition
+  covariance:
+    minimal required obs number: 20
+    variance range: [1.0e-6, 10.0]
+    step size: 1.0e-4
+    largest analysis variance: 10000.0
+    prior:
+      input file: '{{cycle_dir}}/abi_g18.{{background_time}}.satbias_cov.nc4'
+      inflation:
+        ratio: 1.1
+        ratio for small dataset: 2.0
+    output file: '{{cycle_dir}}/abi_g18.{{window_begin}}.satbias_cov.nc4'
 
 obs prior filters:
 - filter: Perform Action
@@ -155,7 +166,7 @@ obs post filters:
       channels: *abi_g18_channels
       options:
         channels: *abi_g18_channels
-        sensor: *Sensor_ID
+        sensor: abi_g18
 
 # Model top transmittance check
 - filter: Perform Action
@@ -279,7 +290,7 @@ obs post filters:
       channels: *abi_g18_channels
       options:
         channels: *abi_g18_channels
-        sensor: *Sensor_ID
+        sensor: abi_g18
         obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
         obserr_dtempf: [0.5, 2.0, 4.0, 2.0, 4.0]
 
