@@ -34,3 +34,13 @@ obs filters:
     threshold: 5.0
     action:
       name: reject
+  # restrict use of data between 200 to 0.1 hPa
+  - filter: Bounds Check
+    filter variables:
+    - name: ozoneProfile
+    test variables:
+    - name: MetaData/pressure
+    minvalue: 10
+    maxvalue: 20000
+    action:
+          name: reject
