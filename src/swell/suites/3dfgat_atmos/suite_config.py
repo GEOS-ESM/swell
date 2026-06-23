@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dfgat_atmos",
         questions=[
             sq.common,
-            qd.start_cycle_point("2023-10-10T00:00:00Z"),
-            qd.final_cycle_point("2023-10-10T06:00:00Z"),
+            qd.start_cycle_point("2025-12-30T06:00:00Z"),
+            qd.final_cycle_point("2025-12-30T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
             qd.runahead_limit("P2"),
@@ -39,8 +39,9 @@ class SuiteConfig(QuestionContainer, Enum):
                 "T18"
             ]),
             qd.horizontal_resolution("91"),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
-                                           "dadev/rtodling/archive/Restarts/JEDI/541x"),
+            qd.background_experiment("x0054"),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/"
+                                           "archive/"),
             qd.window_type("4D"),
             qd.observations([
                 "abi_g16",
