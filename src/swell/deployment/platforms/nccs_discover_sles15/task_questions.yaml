@@ -35,4 +35,4 @@ swell_static_files:
   default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
 
 ioda_locations_not_in_r2d2:
-  default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
+  default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/544/x0054/ioda
