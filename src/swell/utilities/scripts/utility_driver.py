@@ -44,7 +44,7 @@ def get_utilities() -> list:
 # --------------------------------------------------------------------------------------------------
 
 
-def utility_wrapper(utility: str) -> None:
+def utility_wrapper(utility: str, parameter: str | None) -> None:
 
     # Convert utility to snake case
     utility_snake = camel_case_to_snake_case(utility)
@@ -55,8 +55,11 @@ def utility_wrapper(utility: str) -> None:
     # Import the correct method
     utility_method = getattr(importlib.import_module(test_script_file), 'main')
 
-    # Run the test
-    utility_method()
+    if parameter is not None:
+        # Run the test
+        utility_method(parameter)
+    else:
+        utility_method()
 
 
 # --------------------------------------------------------------------------------------------------
