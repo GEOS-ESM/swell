@@ -265,11 +265,13 @@ class GsiNcdiagToIoda(taskBase):
                 if produce_geovals:
                     geo_dir = self.cycle_dir()
 
-                combine_obsspace(ioda_path_files, new_name, geo_dir)
+                pattern = r"\b\w*aircraft\w*\b"
+                if not re.search(pattern, new_name):
+                   combine_obsspace(ioda_path_files, new_name, geo_dir)
 
-                # Remove input files
-                for ioda_path_file in ioda_path_files:
-                    os.remove(ioda_path_file)
+                   # Remove input files
+                   for ioda_path_file in ioda_path_files:
+                       os.remove(ioda_path_file)
 
             elif len(ioda_file_0_) == 3:
                 self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
