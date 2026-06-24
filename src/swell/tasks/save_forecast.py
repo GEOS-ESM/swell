@@ -28,9 +28,6 @@ class SaveForecast(taskBase):
 
         """Store forecast files for a given experiment and cycle in R2D2.
 
-           Dispatches to model-component- and window-type-specific store methods,
-           mirroring the structure of LinkCoupledGeosOutput.
-
            Parameters
            ----------
              All inputs are extracted from the JEDI experiment file configuration.
@@ -43,7 +40,6 @@ class SaveForecast(taskBase):
         self.window_type = self.config.window_type()
         self.window_length = self.config.window_length()
         self.window_begin_iso = self.da_window_params.window_begin_iso(self.window_length)
-        self.background_experiment = self.experiment_id()
         self.horizontal_resolution = self.config.horizontal_resolution()
 
         # Load R2D2 credentials
@@ -130,23 +126,23 @@ class SaveForecast(taskBase):
             ISO 8601 duration string for the forecast step (e.g. 'PT0H', 'PT6H').
         """
 
-        file_extension = file_type.split('.')[-1] if '.' in file_type else 'nc'
+        file_extension = source_file.split('.')[-1] if '.' in source_file else 'nc'
 
         self.logger.info(f'Storing {os.path.basename(source_file)} '
                          f'({file_type}) step={step} '
                          f'at {bkg_dto.strftime(datetime_formats["iso_format"])}')
 
-        # store(
-        #     item='forecast',
-        #     model=model_name,
-        #     experiment=self.background_experiment,
-        #     resolution=self.horizontal_resolution,
-        #     date=bkg_dto.strftime('%Y-%m-%d %H:%M:%S'),
-        #     source_file=source_file,
-        #     file_type=file_type,
-        #     file_extension=file_extension,
-        #     step=str(step),
-        # )
+        store(
+            item='forecast',
+            model=model_name,
+            experiment=self.config.r2d2_experiment_id(),
+            resolution=self.horizontal_resolution,
+            date=bkg_dto.strftime('%Y-%m-%d %H:%M:%S'),
+            source_file=source_file,
+            file_type=file_type,
+            file_extension=file_extension,
+            step=str(step),
+        )
 
     # ----------------------------------------------------------------------------------------------
 

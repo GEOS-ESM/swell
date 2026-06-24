@@ -822,7 +822,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="SaveForecast",
         questions=[
             window_questions,
-            qd.background_experiment(),
+            qd.r2d2_experiment_id(),
             qd.background_frequency(),
             qd.horizontal_resolution(),
         ]
