@@ -256,6 +256,30 @@ acquisition_method: 'cp'
 cp_source: '/discover/nobackup/projects/gmao/soca/obs/ioda/ocean/adt_cryosat2n/YYYY/MM/ioda-obs-YYYYMMDDHH-adt_cryosat2n.nc'
 ```
 
+### `ingest_background_cf` — GEOS-CF JEDI hourly backgrounds
+
+```bash
+swell create ingest_background_cf
+# Set dry_run in experiment.yaml false to actually store files, or keep true to preview which files you will be storing.
+swell launch <experiment_path>
+```
+
+Registers GEOS-CF NRT JEDI hourly background files into R2D2 as symlinks. Files already
+exist on the CSS shared filesystem. Each cycle runs a
+single `SaveBackground` task that loops over 24 hourly steps (PT0H–PT23H) from the 09Z
+forecast start and calls `r2d2.store(..., store_as_symlink=True)` for each.
+
+Key config keys (set in `experiment.yaml` under `geos_cf`):
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `background_source_path` | CSS NRTv2 path | strftime path template, e.g. `Y%Y/M%m/D%d/...%Y%m%d_%H%Mz...` |
+| `background_experiment` | `geos_cf_v2` | R2D2 experiment name |
+| `horizontal_resolution` | `c360` | R2D2 resolution string |
+| `store_as_symlink` | `true` | Register as symlink rather than copying the file |
+| `dry_run` | `true` | Log what would be stored without writing to R2D2 |
+
+
 ### `ingest_obs_cf` — TEMPO NO2 and OMPS-NM ozone
 
 ```bash
@@ -301,9 +325,13 @@ copied configuration in your experiment directory after `swell create`.
 | `obs_to_ingest` | `IngestObs` | List of observation names to ingest into R2D2 |
 | `obs_to_download` | `DownloadObs`, `ConvertObsToIoda` | List of obs names to download and convert |
 | `download_convert_pipeline` | `flow.cylc` | `True` enables the Download→Convert→Ingest pipeline |
+| `ingest_background_pipeline` | `flow.cylc` | `True` enables the `SaveBackground` task for background ingestion |
 | `converter_path` | `ConvertObsToIoda` | Directory containing ioda-converter scripts |
 | `window_length` | `DownloadObs` | DA window length as ISO-8601 duration (e.g. `"PT6H"`) |
 | `dry_run` | All tasks | `True` = log only, no files downloaded/stored |
+| `background_source_path` | `SaveBackground` | strftime path template for background files |
+| `background_experiment` | `SaveBackground` | R2D2 experiment name for backgrounds |
+| `store_as_symlink` | `SaveBackground`, `IngestObs` | `True` = register as symlink instead of copying |
 
 ---
 
