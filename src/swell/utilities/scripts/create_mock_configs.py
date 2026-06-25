@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+from pathlib import Path
 
 from swell.swell_path import get_swell_path
 from swell.utilities.mock_jedi_config import mock_jedi_config
@@ -54,7 +55,7 @@ defaults_dict['3dvar_cf'] = {'datetime': '20230805T180000Z',
 # --------------------------------------------------------------------------------------------------
 
 
-def main() -> None:
+def main(parameter: str | None = None) -> None:
     for suite, defaults in defaults_dict.items():
         model = defaults['model']
         datetime = defaults['datetime']
@@ -62,6 +63,12 @@ def main() -> None:
 
         work_dir = get_test_cache()
         copy_dir = os.path.join(get_swell_path(), 'test', 'jedi_configs')
+
+        if parameter is not None:
+            copy_dir = Path(parameter)
+            if not copy_dir.is_dir():
+                raise FileNotFoundError(f'Specified directory {parameter} does not exist'
+                                        ' or is not a directory')
 
         mock_jedi_config(suite, model, datetime, executable_type, work_dir, copy_dir)
 
