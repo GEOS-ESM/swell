@@ -11,6 +11,7 @@
 from datetime import datetime as dt
 import isodate
 import os
+import tarfile
 from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
@@ -28,10 +29,9 @@ class SaveForecast(taskBase):
 
         """Store forecast files for a given experiment and cycle in R2D2.
 
-           Parameters
-           ----------
-             All inputs are extracted from the JEDI experiment file configuration.
-             See the taskBase constructor for more information.
+        Note:
+            All inputs are extracted from the JEDI experiment file configuration.
+            See the taskBase constructor for more information.
         """
 
         # Parse common configuration as instance variables
@@ -93,10 +93,7 @@ class SaveForecast(taskBase):
                 marine_model_configs.append(('cice6', 'ice_filename', 'cice.res'))
 
             for model_name, filename_key, file_type in marine_model_configs:
-                if is_4d:
-                    self._store_marine_4d(model_name, filename_key, file_type)
-                else:
-                    self._store_fc_dict(model_name, self.local_background_time_dto, step='PT0H')
+                self._store_compressed_marine(model_name, filename_key, file_type, is_4d)
 
         else:
             self.logger.abort(f'Unknown model component for SaveForecast: {model_component}')
@@ -112,21 +109,18 @@ class SaveForecast(taskBase):
                         ) -> None:
         """Call r2d2.store for a single forecast file at its exact valid time.
 
-        Parameters
-        ----------
-        model_name : str
-            R2D2 model identifier (e.g. 'geos', 'mom6', 'cice6', 'geos_cf').
-        bkg_dto : datetime
-            Valid datetime of the forecast file (used directly as the r2d2 date).
-        source_file : str
-            Absolute path to the forecast file to store.
-        file_type : str
-            R2D2 file_type label (e.g. 'MOM.res', 'cice.res', 'bkg').
-        step : str
-            ISO 8601 duration string for the forecast step (e.g. 'PT0H', 'PT6H').
+        Args:
+            model_name (str): R2D2 model identifier (e.g. 'geos', 'mom6', 'cice6', 'geos_cf').
+            bkg_dto (dt): Valid datetime of the forecast file (used directly as the r2d2 date).
+            source_file (str): Absolute path to the forecast file to store.
+            file_type (str): R2D2 file_type label (e.g. 'MOM.res', 'cice.res', 'bkg').
+            step (str): ISO 8601 duration string for the forecast step (e.g. 'PT0H', 'PT6H').
         """
 
-        file_extension = source_file.split('.')[-1] if '.' in source_file else 'nc'
+        if source_file.endswith('.tar.gz'):
+            file_extension = 'tar.gz'
+        else:
+            file_extension = source_file.split('.')[-1] if '.' in source_file else 'nc'
 
         self.logger.info(f'Storing {os.path.basename(source_file)} '
                          f'({file_type}) step={step} '
@@ -143,32 +137,6 @@ class SaveForecast(taskBase):
             file_extension=file_extension,
             step=str(step),
         )
-
-    # ----------------------------------------------------------------------------------------------
-
-    def _store_fc_dict(self, model_name: str, bkg_dto: dt, step: str) -> None:
-        """Store all forecasts defined in r2d2_dict['store']['fc'] for one datetime.
-
-        The filename for each entry is resolved by applying strftime to bkg_dto,
-        ensuring it works for both static (marine, already strftime-compatible) and
-        datetime-templated (atmosphere) filename patterns.
-
-        Parameters
-        ----------
-        model_name : str
-            R2D2 model identifier.
-        bkg_dto : datetime
-            Valid datetime of the forecast — used as the r2d2 date and for filename resolution.
-        step : str
-            ISO 8601 duration string for the forecast step (e.g. 'PT0H', 'PT6H').
-        """
-
-        for fc in self.r2d2_dict['store']['fc']:
-            if fc.get('r2d2_model') != model_name:
-                continue
-            file_type = fc['file_type']
-            source_file = bkg_dto.strftime(fc['filename'])
-            self._store_forecast(model_name, bkg_dto, source_file, file_type, step)
 
     # ----------------------------------------------------------------------------------------------
     # Atmosphere store methods
@@ -194,34 +162,72 @@ class SaveForecast(taskBase):
     # Marine store methods
     # ----------------------------------------------------------------------------------------------
 
-    def _store_marine_4d(self, model_name: str, filename_key: str, file_type: str) -> None:
-        """Store marine forecasts across a 4D (or FGAT) window for one model component.
+    def _store_compressed_marine(self,
+                                 model_name: str,
+                                 filename_key: str,
+                                 file_type: str,
+                                 is_4d: bool,
+                                 ) -> None:
+        """Collect all marine state files, check that they exist, compress them with gz,
+        and store the compressed archive in R2D2.
 
-        Stores the window-begin forecast from r2d2_dict and then each subsequent
-        state file from states_generator at its own exact valid datetime.
-
-        Parameters
-        ----------
-        model_name : str
-            R2D2 model identifier (e.g. 'mom6', 'cice6').
-        filename_key : str
-            Key in the states_generator dict for the source filename (e.g. 'ocn_filename').
-        file_type : str
-            R2D2 file_type label (e.g. 'MOM.res', 'cice.res').
+        Args:
+            model_name (str): R2D2 model identifier (e.g. 'mom6', 'cice6').
+            filename_key (str): Key in the states_generator dict for the source filename
+                (e.g. 'ocn_filename', 'ice_filename').
+            file_type (str): R2D2 file_type label (e.g. 'MOM.res', 'cice.res').
+            is_4d (bool): Whether the model is running in 4D (or FGAT) mode.
         """
 
-        # Store the window-begin forecast defined in the r2d2 dict (step = PT0H)
-        self._store_fc_dict(model_name, self.local_background_time_dto, step='PT0H')
+        # Gather file paths
+        files_to_compress = []
 
-        # Store subsequent state forecasts from states_generator
-        states = self.geos.states_generator(
-            self.background_frequency, self.window_length,
-            self.window_begin_iso, self.get_model(), self.marine_models)
+        # 1. Window-begin forecast files (from r2d2_dict)
+        for fc in self.r2d2_dict['store']['fc']:
+            if fc.get('r2d2_model') == model_name:
+                source_file = self.local_background_time_dto.strftime(fc['filename'])
+                files_to_compress.append(source_file)
 
-        for state in states:
-            state_dto = dt.strptime(state['date'], datetime_formats['iso_format'])
-            step = isodate.duration_isoformat(state_dto - self.local_background_time_dto)
-            source_file = os.path.join(self.cycle_dir(), state[filename_key])
-            self._store_forecast(model_name, state_dto, source_file, file_type, step=step)
+        # 2. Subsequent state forecasts (for 4D)
+        if is_4d:
+            states = self.geos.states_generator(
+                self.background_frequency, self.window_length,
+                self.window_begin_iso, self.get_model(), self.marine_models)
+
+            for state in states:
+                source_file = os.path.join(self.cycle_dir(), state[filename_key])
+                files_to_compress.append(source_file)
+
+        # Step 1: Check if all marine states exist
+        for f in files_to_compress:
+            if not os.path.exists(f):
+                if os.path.islink(f):
+                    self.logger.abort(f"Marine state is a broken symbolic link: {f}")
+                else:
+                    self.logger.abort(f"Required marine state file does not exist: {f}")
+
+        # Step 2: Compress them with gz mode
+        archive_name = f"{model_name}.{self.local_background_time}.tar.gz"
+        archive_path = os.path.join(self.cycle_dir(), archive_name)
+
+        self.logger.info(f"Compressing {len(files_to_compress)} marine state and/or background "
+                         f"files into {archive_path}")
+        self.logger.debug(f"Files to compress: {files_to_compress}")
+
+        try:
+            with tarfile.open(archive_path, 'w:gz', dereference=True) as tar:
+                for f in files_to_compress:
+                    tar.add(f, arcname=os.path.basename(f))
+        except Exception as e:
+            self.logger.abort(f"Failed to create tar.gz archive for marine states: {e}")
+
+        # Step 3: Finally, store them in r2d2
+        self._store_forecast(
+            model_name=model_name,
+            bkg_dto=self.local_background_time_dto,
+            source_file=archive_path,
+            file_type=file_type,
+            step='PT0H'
+        )
 
 # --------------------------------------------------------------------------------------------------
