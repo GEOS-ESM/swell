@@ -42,8 +42,8 @@ class taskBase(ABC):
         model: str,
         ensemblePacket: Optional[str],
         additional_parameter: Optional[str],
+        imember: int | None,
         task_name: str
-        imember: int | None = None, 
     ) -> None:
 
         # Create message logger
@@ -293,7 +293,7 @@ class taskFactory():
         model: str,
         additional_parameter: str | None,
         ensemblePacket: Optional[str],
-        imember: int | None = None, 
+        imember: int | None = None,
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -322,7 +322,8 @@ class taskFactory():
             factory_logger.info(f'Using module swell.tasks.{task_lower}')
 
         # Return task object
-        return task_class(config, datetime, model, ensemblePacket, additional_parameter, task, imember=imember)
+        return task_class(config, datetime, model, ensemblePacket,
+                          additional_parameter, imember, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -355,7 +356,7 @@ def task_wrapper(
     model: Optional[str],
     additional_parameter: str | None,
     ensemblePacket: Optional[str],
-    imember: int | None = None, 
+    imember: int | None = None,
 ) -> None:
 
     # Create the object
