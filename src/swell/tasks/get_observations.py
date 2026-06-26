@@ -13,11 +13,13 @@ import numpy as np
 import os
 import r2d2
 import shutil
+import yaml
 from typing import Union
 from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
+from swell.utilities import s3 as swell_s3
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
@@ -42,16 +44,23 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     cycle_dir = r2d2_dict.pop('cycle_dir')
     logger = r2d2_dict.pop('logger')
     cache_fetch = r2d2_dict.pop('cache_fetch', True)
+    # Optional: fetch directly from a public S3 bucket instead of R2D2. When
+    # present, the file is pulled anonymously from the bucket into target_file
+    # and nothing is stored/copied into any R2D2 datastore.
+    external_s3 = r2d2_dict.pop('external_s3', None)
 
     target_file = r2d2_dict['target_file']
 
     # Skip fetch if caching is enabled and the file already exists
     if cache_fetch and os.path.exists(target_file) and os.path.getsize(target_file) > 0:
-        logger.info(f"Cache exists, skipping R2D2 fetch: {target_file}")
+        logger.info(f"Cache exists, skipping fetch: {target_file}")
         return
 
     try:
-        r2d2.fetch(**r2d2_dict)
+        if external_s3 is not None:
+            _fetch_from_public_s3(external_s3, r2d2_dict, logger)
+        else:
+            r2d2.fetch(**r2d2_dict)
         logger.info(f"Successfully fetched {target_file}")
     except Exception as e:
         # If this can be an empty obs file, fetch or copy empty file to the target file
@@ -78,6 +87,46 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     # Change the permissions
     os.chmod(target_file, 0o644)
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+def _fetch_from_public_s3(external_s3: dict, r2d2_dict: dict, logger) -> None:
+    """Download a single observation file directly from a public S3 bucket.
+
+    The S3 key is built from the sub-window time (``window_start``) and the
+    ``s3_key_template`` for this observation, then fetched anonymously into
+    ``target_file``. Nothing is stored in any R2D2 datastore.
+
+    By default this uses exact-key mode (one GET, no listing). If a
+    ``filename_pattern`` is supplied, ``s3_key_template`` is treated as a prefix
+    that is listed and filtered, and the first matching object is used.
+
+    Raises an exception (caught by run_r2d2_fetch) if the object is missing, so a
+    missing sub-window is handled like a missing R2D2 fetch (empty obs).
+    """
+    target_file = r2d2_dict['target_file']
+    bucket = external_s3['bucket']
+    when = dt.strptime(r2d2_dict['window_start'], datetime_formats['iso_format'])
+
+    client = swell_s3.anonymous_s3_client()
+
+    filename_pattern = external_s3.get('filename_pattern')
+    if filename_pattern:
+        prefix = swell_s3.resolve_template(external_s3['key_template'], when)
+        filename_glob = swell_s3.resolve_template(filename_pattern, when)
+        regex = swell_s3.glob_to_regex(filename_glob)
+        matches = swell_s3.list_matching_keys(client, bucket, prefix, regex)
+        if not matches:
+            raise FileNotFoundError(
+                f's3://{bucket}/{prefix} has no object matching {filename_glob}')
+        key = matches[0]
+    else:
+        key = swell_s3.resolve_template(external_s3['key_template'], when)
+
+    logger.info(f'Fetching from public S3: s3://{bucket}/{key}')
+    swell_s3.download_object(client, bucket, key, target_file)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -210,6 +259,13 @@ class GetObservations(taskBase):
         # -----------------------------------------
         observation_dicts = {}
 
+        # Per-observation sub-window time list. Observations fetched directly from
+        # a public S3 bucket may sit on a different synoptic grid than the default
+        # (e.g. NOAA reanalysis files are organized at 00/06/12/18z or daily), so
+        # the time list is resolved per observation.
+        # -----------------------------------------------------------------------
+        obs_time_lists = {}
+
         # Loop over observation operators
         # -------------------------------
         for observation in observations:
@@ -228,11 +284,26 @@ class GetObservations(taskBase):
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
+            # If this observation is registered to be fetched directly from a
+            # public S3 bucket, load its config and resolve the sub-window grid it
+            # uses; otherwise fall back to the default R2D2 grid.
+            # -------------------------------------------------------------------
+            external_s3_config = self.get_external_s3_config(observation)
+            if external_s3_config and external_s3_config.get('obs_timesteps'):
+                this_window_length = external_s3_config.get('obs_window_length',
+                                                            obs_window_length)
+                this_obs_list = self.create_obs_time_list(
+                    external_s3_config['obs_timesteps'], window_begin_dto, window_end_dto)
+            else:
+                this_window_length = obs_window_length
+                this_obs_list = obs_list_dto
+            obs_time_lists[observation] = this_obs_list
+
             # Fetch observation files
             # -----------------------
             combine_input_files = []
             # Here, we are fetching
-            for obs_num, obs_time in enumerate(obs_list_dto):
+            for obs_num, obs_time in enumerate(this_obs_list):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
                 target_file = os.path.join(
                     self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
@@ -245,10 +316,18 @@ class GetObservations(taskBase):
                     'observation_type': observation,     # From filename
                     'file_extension': obs_file_extension,
                     'window_start': obs_window_begin,    # From filename timestamp
-                    'window_length': obs_window_length,  # From filename
+                    'window_length': this_window_length,  # From filename
                     'target_file': target_file,          # Where to save
                     'fetch_empty': True
                 }
+
+                # Route this fetch to the public S3 bucket instead of R2D2.
+                if external_s3_config:
+                    fetch_criteria['external_s3'] = {
+                        'bucket': external_s3_config['s3_bucket'],
+                        'key_template': external_s3_config['s3_key_template'],
+                        'filename_pattern': external_s3_config.get('filename_pattern'),
+                    }
 
                 r2d2_fetch_dicts.append(fetch_criteria)
 
@@ -377,7 +456,9 @@ class GetObservations(taskBase):
 
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
-            for obs_num, obs_time in enumerate(obs_list_dto):
+            # Use the same per-observation sub-window list that was used to fetch.
+            this_obs_list = obs_time_lists.get(observation, obs_list_dto)
+            for obs_num, obs_time in enumerate(this_obs_list):
                 target_file = os.path.join(
                     self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
                 )
@@ -393,9 +474,9 @@ class GetObservations(taskBase):
             else:
                 jedi_obs_file = observation_dict['obs space']['obsdatain']['engine']['obsfile']
                 self.logger.info(f'Processing observation file {jedi_obs_file}')
-                # If obs_list_dto has one member, then just rename the file
+                # If this_obs_list has one member, then just rename the file
                 # ---------------------------------------------------------
-                if len(obs_list_dto) == 1:
+                if len(this_obs_list) == 1:
                     os.rename(combine_input_files[0], jedi_obs_file)
                 else:
                     self.read_and_combine(combine_input_files, jedi_obs_file)
@@ -500,6 +581,38 @@ class GetObservations(taskBase):
         subset_list = [dt for dt in obs_time_list if start_date <= dt < end_date]
 
         return subset_list
+
+    # ----------------------------------------------------------------------------------------------
+
+    # ----------------------------------------------------------------------------------------------
+
+    def get_external_s3_config(self, observation: str) -> Union[dict, None]:
+        """Return the public-S3 fetch config for an observation, or None.
+
+        Looks for ``fetch_observations_s3/<observation>.yaml`` in the experiment's
+        ``configuration/jedi/interfaces/<model>/`` directory. When present, this
+        observation is fetched directly from a public S3 bucket into the cycle
+        directory instead of from R2D2 (no datastore copy).
+        """
+        config_path = os.path.join(
+            self.experiment_path(),
+            'configuration', 'jedi', 'interfaces',
+            self.get_model(),
+            'fetch_observations_s3',
+            f'{observation}.yaml')
+
+        if not os.path.exists(config_path):
+            return None
+
+        with open(config_path, 'r') as fh:
+            config = yaml.safe_load(fh)
+
+        # Minimal validation of the required keys.
+        for required in ('s3_bucket', 's3_key_template'):
+            if required not in config:
+                self.logger.abort(
+                    f"'{required}' missing from {config_path}")
+        return config
 
     # ----------------------------------------------------------------------------------------------
 
