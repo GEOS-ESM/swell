@@ -836,17 +836,18 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    RunJediEdaExecutable = QuestionList(
-        list_name="RunJediEdaExecutable",
+    RunJediEdaControlPertExecutable = QuestionList(
+        list_name="RunJediEdaControlPertExecutable",
         questions=[
             run_jedi_executable,
             qd.ensemble_num_members(),
+            qd.ensemble_eda_chunk(),
             qd.obs_thinning_rej_fraction(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
         ]
     )
-
+    
     # --------------------------------------------------------------------------------------------------
 
     CleanEda = QuestionList(

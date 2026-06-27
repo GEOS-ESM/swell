@@ -87,6 +87,12 @@
             {% endfor %}
             {% endif %}
 
+            {% if models[model_component]['ensemble_num_members'] is defined %}
+            {% for i in range( 1, models[model_component]['ensemble_num_members'] + 1 ) %}
+            SP2-{{model_component}} => RunJediEdaControlPertExecutable_mem{{i}}-{{model_component}} => SP3-{{model_component}}
+            {% endfor %}
+            {% endif %}
+
             # bkg/ana : mean/variance
             SP3-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
             RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
@@ -169,6 +175,19 @@
         execution time limit = {{scheduling["RunJediEdaExecutable"]["execution_time_limit"]}}
         [[[directives]]]
         {%- for key, value in scheduling["RunJediEdaExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+    {% endfor %}
+    {% endif %}
+
+    {% if models[model_component]['ensemble_num_members'] is defined %}
+    {% for i in range( 1, models[model_component]['ensemble_num_members'] + 1 ) %}
+    [[RunJediEdaControlPertExecutable_mem{{i}}-{{model_component}}]]
+        script = "swell task RunJediEdaControlPertExecutable $config -d $datetime -m {{model_component}} -imem {{i}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEdaControlPertExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEdaControlPertExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
     {% endfor %}

@@ -547,6 +547,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensemble_eda_chunk(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ensemble_eda_chunk"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "How many chunks do you want to run for EDA?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_pert_amplitude(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "obs_pert_amplitude"

@@ -48,6 +48,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
             qd.ensemble_num_members(32),
+            qd.ensemble_eda_chunk(8),            
             qd.obs_pert_amplitude(0.5),
             qd.number_of_iterations([100]),
             qd.gradient_norm_reduction(1.e-8),
