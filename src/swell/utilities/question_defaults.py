@@ -398,6 +398,21 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class bufr_dir(TaskQuestion):
+        default_value: str = "/path/to/bufr/%Y%m%d/"
+        question_name: str = "bufr_dir"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = ("Path to the directory containing raw BUFR files. "
+                       "Supports strftime placeholders (e.g. /path/to/bufr/%Y%m%d/).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class bufr_obs_classes(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "bufr_obs_classes"
@@ -1763,6 +1778,17 @@ class QuestionDefaults():
         widget_type: WType = WType.STRING_DROP_LIST
 
 # --------------------------------------------------------------------------------------------------
+    @dataclass
+    class bufr_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "bufr_pipeline"
+        ask_question: bool = False
+        prompt: str = ("Run the BufrToIoda and IngestObs tasks? "
+                       "(BufrToIoda -> IngestObs) to R2D2")
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
     @dataclass
     class download_convert_pipeline(SuiteQuestion):
         default_value: bool = False

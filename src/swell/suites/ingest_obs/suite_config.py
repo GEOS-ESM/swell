@@ -22,6 +22,28 @@ class SuiteConfig(QuestionContainer, Enum):
     )
     # This name should be unique and not conflict with other suites
     # (otherwise it might get overwritten)
+    ingest_obs_atmosphere = QuestionList(
+        list_name="ingest_obs_atmosphere",
+        questions=[
+            ingest_obs,
+            qd.start_cycle_point("2023-10-10T00:00:00Z"),
+            qd.final_cycle_point("2023-10-10T00:00:00Z"),
+            qd.model_components(['geos_atmosphere']),
+            qd.runahead_limit("P5"),
+            qd.bufr_pipeline(True),
+        ],
+        geos_atmosphere=[
+            qd.window_length("PT6H"),
+            qd.cycle_times(['T00']),
+            qd.bufr_dir(
+                "/discover/nobackup/fgoktas/SwellExperiments/"
+                "swell-convert_bufr/run/%Y%m%dT000000Z/geos_atmosphere/bufr/"
+            ),
+            qd.obs_to_ingest(['ncep_1bamua_bufr', 'ncep_mtiasi_bufr']),
+            qd.dry_run(True),
+        ]
+    )
+
     ingest_obs_marine = QuestionList(
         list_name="ingest_obs_marine",
         questions=[

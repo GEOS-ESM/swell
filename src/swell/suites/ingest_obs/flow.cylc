@@ -42,7 +42,9 @@
         {% for cycle_time in cycle_times %}
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
-                {% if download_convert_pipeline %}
+                {% if bufr_pipeline %}
+                BufrToIoda-{{model_component}} => IngestObs-{{model_component}}
+                {% elif download_convert_pipeline %}
                 DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}}
                 BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{model_component}}
                 ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
@@ -84,6 +86,12 @@
     {% endif %}
 
     {% for model_component in model_components %}
+
+    {% if bufr_pipeline %}
+    [[BufrToIoda-{{model_component}}]]
+        script = "swell task BufrToIoda $config -d $datetime -m {{model_component}}"
+        execution time limit = PT30M
+    {% endif %}
 
     {% if download_convert_pipeline %}
     [[DownloadObs-{{model_component}}]]
