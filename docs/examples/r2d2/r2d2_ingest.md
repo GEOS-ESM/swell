@@ -264,10 +264,12 @@ swell create ingest_background_cf
 swell launch <experiment_path>
 ```
 
-Registers GEOS-CF NRT JEDI hourly background files into R2D2 as symlinks. Files already
+Stores GEOS-CF NRT `jdi` collection's hourly files into R2D2 as symlinks. Files already
 exist on the CSS shared filesystem. Each cycle runs a
 single `SaveBackground` task that loops over 24 hourly steps (PT0H–PT23H) from the 09Z
-forecast start and calls `r2d2.store(..., store_as_symlink=True)` for each.
+forecast start and calls `r2d2.store(..., store_as_symlink=True)` for each. Because of this,
+`start_cycle_point` must be set to the forecast initialization time (`09Z`),
+e.g. `2025-10-02T09:00:00Z`.
 
 Key config keys (set in `experiment.yaml` under `geos_cf`):
 

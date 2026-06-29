@@ -29,7 +29,7 @@ class SaveBackground(taskBase):
         rather than copied. Currently used for the GEOS-CF JDI collection.
 
         The collection contains 1-hourly instantaneous analysis files with a
-        single forecast run initialising at 09Z each day. Steps PT0H (valid
+        single forecast run initializing at 09Z each day. Steps PT0H (valid
         09Z) through PT23H (valid 08Z the following day) are ingested.
 
         For every hourly step the source path is resolved by calling
@@ -46,7 +46,7 @@ class SaveBackground(taskBase):
         - ``store_as_symlink``: if ``True`` (default), register files as symlinks
           in R2D2 rather than copying them
 
-        The Cylc cycle point must be the forecast initialisation time,
+        The Cylc cycle point must be the forecast initialization time,
         e.g. ``2025-10-02T09:00:00Z``.
         """
 
@@ -57,8 +57,17 @@ class SaveBackground(taskBase):
         if dry_run:
             self.logger.info('DRY RUN MODE - No files will be stored')
 
-        # Cycle time is the forecast initialisation time
+        # Cycle time is the forecast initialization time
         forecast_start = dt.strptime(self.cycle_time(), datetime_formats['iso_format'])
+
+        # This suite is built around a single 09Z forecast run. If cycle_times
+        # is accidentally changed the step offsets (PT0H–PT23H) will be wrong.
+        if forecast_start.hour != 9:
+            self.logger.abort(
+                f'SaveBackground expects cycle_time hour to be 09Z, '
+                f'got {forecast_start.hour:02d}Z. '
+                f'Ensure cycle_times is set to [T09] in the suite config.'
+            )
 
         model = self.get_model()
         source_template = self.config.background_source_path()
