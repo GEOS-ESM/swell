@@ -63,6 +63,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
+        ichunk= self.get_ensemble_packet(()        
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -134,16 +135,13 @@ class RunJediEdaControlPertExecutable(taskBase):
                                                                 window_type,
                                                                 jedi_forecast_model)
 
-        # imember: specify yaml
+        # ichunk: specify yaml
         # ----------------------------------------------------
-        if imember == 1:
-            jedi_config_dict['cost function']['observations'].pop('obs perturbations', None)
-        else:
-            jedi_config_dict['cost function']['observations'].update({'obs perturbations': True})
+##        if imember == 1:
 
         # create subdir
-        mem_dir = f'analysis/mem{imember:003d}/'
-        xdir = os.path.join(self.cycle_dir(), mem_dir)
+        chunk_dir = f'analysis/chunk{ichunk:003d}/'
+        xdir = os.path.join(self.cycle_dir(), chunk_dir)
         os.makedirs(xdir, exist_ok=True)
 
         for observer in jedi_config_dict['cost function']['observations']['observers']:
@@ -174,35 +172,35 @@ class RunJediEdaControlPertExecutable(taskBase):
 
             hxout = observer['obs space']['obsdataout']['engine']['obsfile']
             dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, mem_dir, fname)
+            hxout = os.path.join(dir1, chunk_dir, fname)
             observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
 
             obsFileIn = observer['obs space']['obsdatain']['engine']['obsfile']
             dir1, fname = os.path.split(obsFileIn)
-            obsFileIn = os.path.join(dir1, mem_dir, fname)
+            obsFileIn = os.path.join(dir1, chunk_dir, fname)
             observer['obs space']['obsdatain']['engine']['obsfile'] = obsFileIn
 
             obs_bias = observer.get('obs bias')
             if obs_bias is not None:
                 File = obs_bias['input file']
                 dir1, fname = os.path.split(File)
-                File = os.path.join(dir1, mem_dir, fname)
+                File = os.path.join(dir1, chunk_dir, fname)
                 obs_bias['input file'] = File
                 #
                 File = obs_bias['output file']
                 dir1, fname = os.path.split(File)
-                File = os.path.join(dir1, mem_dir, fname)
+                File = os.path.join(dir1, chunk_dir, fname)
                 obs_bias['output file'] = File
                 #
                 File = obs_bias.get('covariance', {}).get('output file')
                 if File is not None:
                     dir1, fname = os.path.split(File)
-                    File = os.path.join(dir1, mem_dir, fname)
+                    File = os.path.join(dir1, chunk_dir, fname)
                     obs_bias['covariance']['output file'] = File
                 File = obs_bias.get('covariance', {}).get('prior', {}).get('input file')
                 if File is not None:
                     dir1, fname = os.path.split(File)
-                    File = os.path.join(dir1, mem_dir, fname)
+                    File = os.path.join(dir1, chunk_dir, fname)
                     obs_bias['covariance']['prior']['input file'] = File
 
         ruamel_yaml = YAML()
@@ -214,7 +212,7 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # copy fv3-jedi dir, update dir names
         d1 = os.path.join(self.cycle_dir(), 'fv3-jedi')
-        d2 = os.path.join(self.cycle_dir(), mem_dir, 'fv3-jedi')
+        d2 = os.path.join(self.cycle_dir(), chunk_dir, 'fv3-jedi')
         shutil.copytree(d1, d2, dirs_exist_ok=True)
 
         with open(jedi_config_file, 'r') as f:
@@ -223,7 +221,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
         for i in dir_list:
             j = f"fv3-jedi/{i}"
-            k = f"{mem_dir}{j}"  # Result: analysis/mem002/fv3-jedi/rcov
+            k = f"{chunk_dir}{j}"  # Result: analysis/mem002/fv3-jedi/rcov ??? analysis/chunk/mem002/fv3-jedi/rcov
             yaml_content = yaml_content.replace(j, k)
         with open(jedi_config_file, 'w') as f:
             f.write(yaml_content)
