@@ -179,6 +179,18 @@ class DataAssimilationWindowParams():
 
     # ----------------------------------------------------------------------------------------------
 
+    def window_begin_geos(self, window_length: str, dto: bool = False):
+
+        window_begin_dto = self.__get_window_begin_dto__(window_length)
+
+        # Return datetime object if asked
+        if dto:
+            return window_begin_dto
+
+        return window_begin_dto.strftime(datetime_formats['geos_format'])
+
+    # ----------------------------------------------------------------------------------------------
+
     def window_end_iso(self, window_length: str, dto: bool = False) -> str:
 
         # Compute window length duration

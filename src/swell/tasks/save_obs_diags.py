@@ -11,7 +11,6 @@ import r2d2
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
-from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -47,8 +46,7 @@ class SaveObsDiags(taskBase):
 
         # Get window beginning
         window_begin = self.da_window_params.window_begin(window_length)
-        window_begin_dto = self.da_window_params.window_begin(window_length, dto=True)
-        window_begin_geos_aero = window_begin_dto.strftime(datetime_formats['geos_format'])
+        window_begin_geos_aero = self.da_window_params.window_begin_geos(window_length)
         background_time = self.da_window_params.background_time(background_time_offset)
 
         # Create templates dictionary
