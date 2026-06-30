@@ -33,7 +33,7 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_atmosphere=[
             qd.horizontal_resolution("91"),
             qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
-                                           "rtodling/archive/Restarts/JEDI/541x"),
+                                           "rtodling/archive/Restarts/JEDI/541x/91/x0050/rs"),
             qd.npx_proc(2),
             qd.npy_proc(2),
             qd.observations([
