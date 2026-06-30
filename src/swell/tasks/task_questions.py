@@ -350,7 +350,6 @@ class TaskQuestions(QuestionContainer, Enum):
     GetBackgroundGeosExperiment = QuestionList(
         list_name="GetBackgroundGeosExperiment",
         questions=[
-            qd.horizontal_resolution(),
             qd.background_experiment(),
             qd.background_time_offset(),
             qd.geos_x_background_directory()
