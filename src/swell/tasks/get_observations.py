@@ -217,6 +217,10 @@ class GetObservations(taskBase):
         window_length = self.config.window_length()
         cycling_varbc = self.config.cycling_varbc(None)
         cache_fetch = self.config.cache_fetch(True)
+        # When True, observations that have a fetch_observations_s3
+        # registry entry are pulled directly from a public S3 bucket instead of
+        # R2D2. When False (default) every observation goes through R2D2 as before.
+        fetch_obs_from_public_s3 = self.config.fetch_obs_from_public_s3(False)
         # Get model component and translate to R2D2 model name
         model_component = self.get_model()
         r2d2_model = get_r2d2_model_name(model_component)
@@ -288,7 +292,9 @@ class GetObservations(taskBase):
             # public S3 bucket, load its config and resolve the sub-window grid it
             # uses; otherwise fall back to the default R2D2 grid.
             # -------------------------------------------------------------------
-            external_s3_config = self.get_external_s3_config(observation)
+            external_s3_config = None
+            if fetch_obs_from_public_s3:
+                external_s3_config = self.get_external_s3_config(observation)
             if external_s3_config and external_s3_config.get('obs_timesteps'):
                 this_window_length = external_s3_config.get('obs_window_length',
                                                             obs_window_length)

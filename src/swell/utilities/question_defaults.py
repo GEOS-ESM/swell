@@ -1575,6 +1575,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class fetch_obs_from_public_s3(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "fetch_obs_from_public_s3"
+        options: List[bool] = mutable_field([
+            True,
+            False
+        ])
+        prompt: str = "Fetch observations directly from a public S3 bucket (where registered)?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class save_geovals(TaskQuestion):
         default_value: bool = False
         question_name: str = "save_geovals"

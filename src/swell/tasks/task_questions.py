@@ -456,6 +456,7 @@ class TaskQuestions(QuestionContainer, Enum):
             background_crtm_obs,
             qd.cache_fetch(),
             qd.cycling_varbc(),
+            qd.fetch_obs_from_public_s3(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
             qd.window_length(),
