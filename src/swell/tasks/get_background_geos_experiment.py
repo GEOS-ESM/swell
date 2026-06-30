@@ -44,10 +44,12 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Parse config
         # ------------
+        # background_experiment is used for R2D2 / metadata, not for building
+        # the GEOS background filesystem path. The latter is provided directly
+        # via geos_x_background_directory.
         background_experiment = self.config.background_experiment()
         geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()
-        horizontal_resolution = self.config.horizontal_resolution()
 
         # Since this is an optional task, check if the geos_x_background_directory is
         # set to /dev/null, if so fail the task
@@ -76,11 +78,11 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Define the source tar folder and file
         # -------------------------------------
+        # geos_x_background_directory is expected to point to the base
+        # directory containing the rs/Yyyyy/Mmm hierarchy for this
+        # experiment and resolution (e.g. .../Restarts/JEDI/541x/x0054/rs).
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
         bkgr_tar = os.path.join(geos_x_background_directory,
-                                horizontal_resolution,
-                                background_experiment,
-                                'rs',
                                 bkgr_exp_start_dto.strftime('Y%Y'),
                                 bkgr_exp_start_dto.strftime('M%m'),
                                 bkgr_tar_file)

@@ -16,6 +16,7 @@ from typing import Optional
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.netcdf_files import combine_files_without_groups
 from swell.utilities.run_jedi_executables import run_executable
+from swell.utilities.datetime_util import datetime_formats
 
 
 # --------------------------------------------------------------------------------------------------
@@ -56,6 +57,10 @@ class RunJediHofxExecutable(taskBase):
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
 
+        # GEOS-style window begin string for geos_aero obs filenames
+        window_begin_dto = self.da_window_params.window_begin(window_length, dto=True)
+        window_begin_geos_aero = window_begin_dto.strftime(datetime_formats['geos_format'])
+
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
@@ -82,6 +87,7 @@ class RunJediHofxExecutable(taskBase):
         # ------------
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
+        self.jedi_rendering.add_key('window_begin_geos_aero', window_begin_geos_aero)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Add placeholder names if mock experiment

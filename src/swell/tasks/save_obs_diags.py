@@ -11,6 +11,7 @@ import r2d2
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.run_jedi_executables import check_obs
+from swell.utilities.datetime_util import datetime_formats
 
 # --------------------------------------------------------------------------------------------------
 
@@ -45,13 +46,16 @@ class SaveObsDiags(taskBase):
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Get window beginning
-        window_begin = self.da_window_params.window_begin(window_length)  # dto
+        window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_dto = self.da_window_params.window_begin(window_length, dto=True)
+        window_begin_geos_aero = window_begin_dto.strftime(datetime_formats['geos_format'])
         background_time = self.da_window_params.background_time(background_time_offset)
 
         # Create templates dictionary
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
         self.jedi_rendering.add_key('window_begin', window_begin)
+        self.jedi_rendering.add_key('window_begin_geos_aero', window_begin_geos_aero)
 
         # Loop over observation operators
         # -------------------------------

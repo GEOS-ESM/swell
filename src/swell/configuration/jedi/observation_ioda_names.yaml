@@ -538,3 +538,9 @@ ioda instrument names:
     full name: OMPS total column O3 (Nadir Mapper)
     inst type: retrieval
     provider : nasa
+  # Aero
+  - ioda name: mod04_l2a_land
+    full name: MODIS AOD
+    inst type: retrieval
+    provider : nasa
+

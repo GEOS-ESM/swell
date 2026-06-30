@@ -16,6 +16,7 @@ from eva.eva_driver import eva
 
 from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.dictionary import remove_matching_keys, replace_string_in_dictionary
 from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.observations import ioda_name_to_long_name
@@ -41,6 +42,8 @@ class EvaObservations(taskBase):
         # Compute window beginning time
         # -----------------------------
         window_begin = self.da_window_params.window_begin(window_length)
+        window_begin_dto = self.da_window_params.window_begin(window_length, dto=True)
+        window_begin_geos_aero = window_begin_dto.strftime(datetime_formats['geos_format'])
         background_time = self.da_window_params.background_time(
                 self.config.background_time_offset())
 
@@ -49,6 +52,8 @@ class EvaObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
+        # Used by geos_aero obs filenames (e.g. MOD04_L2a)
+        self.jedi_rendering.add_key('window_begin_geos_aero', window_begin_geos_aero)
 
         # Get the model
         # -------------
