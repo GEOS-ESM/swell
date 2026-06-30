@@ -45,7 +45,7 @@
             JediLogComparison-{{model_component}}:fail? => comparison_fail?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}}? => PublishComparisons?
-	    JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
         {% endif %}
         {% endfor %}
         """
