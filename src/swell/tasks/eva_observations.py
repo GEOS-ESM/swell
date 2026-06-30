@@ -41,7 +41,6 @@ class EvaObservations(taskBase):
         # Compute window beginning time
         # -----------------------------
         window_begin = self.da_window_params.window_begin(window_length)
-        window_begin_geos_aero = self.da_window_params.window_begin_geos(window_length)
         background_time = self.da_window_params.background_time(
                 self.config.background_time_offset())
 
@@ -51,7 +50,7 @@ class EvaObservations(taskBase):
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
         # Used by geos_aero obs filenames (e.g. MOD04_L2a)
-        self.jedi_rendering.add_key('window_begin_geos_aero', window_begin_geos_aero)
+        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Get the model
         # -------------

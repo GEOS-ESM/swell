@@ -1,18 +1,3 @@
-
-analysis_variables:
-  default_value:
-  - aerosol_optical_thickness_due_to_black_carbon_ambient
-  - aerosol_optical_thickness_due_to_sea_salt_ambient
-  - aerosol_optical_thickness_due_to_dust_ambient
-  - aerosol_optical_thickness_due_to_organic_carbon_ambient
-  - aerosol_optical_thickness_due_to_sulfate_ambient
-  options:
-  - aerosol_optical_thickness_due_to_black_carbon_ambient
-  - aerosol_optical_thickness_due_to_sea_salt_ambient
-  - aerosol_optical_thickness_due_to_dust_ambient
-  - aerosol_optical_thickness_due_to_organic_carbon_ambient
-  - aerosol_optical_thickness_due_to_sulfate_ambient
-
 background_experiment:
   default_value: x0054
   options:
@@ -55,10 +40,11 @@ observations:
   - mod04_l2a_land
 
 obs_experiment:
-  default_value: x0054
+  default_value: None
 
+# obs needs to be in {ioda_locations_not_in_r2d2}/{cycle}/{model}
 ioda_locations_not_in_r2d2:
-  default_value: /discover/nobackup/mabdiosk/garage/applications/aod-ext/hx/inputs/obs
+  default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
 
 vertical_resolution:
   default_value: '72'

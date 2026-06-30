@@ -3,7 +3,7 @@ obs space:
   obsdatain:
     engine:
       type: H5File
-      obsfile: '{{cycle_dir}}/IODA_x0054.MOD04_L2a.land.{{window_begin_geos_aero}}.nc4'
+      obsfile: '{{cycle_dir}}/IODA_x0054.MOD04_L2a.land.{{window_begin}}.nc4'
   obsdataout:
     engine:
       type: H5File

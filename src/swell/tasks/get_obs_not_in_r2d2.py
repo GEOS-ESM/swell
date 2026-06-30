@@ -26,13 +26,14 @@ class GetObsNotInR2d2(taskBase):
         # --------------------
         cycle_date = self.__datetime__.string_directory()
 
-        # Get the path and pattern for the background files
+        # Get the path and pattern for the observation files
         # -------------------------------------------------
         existing_path = self.config.ioda_locations_not_in_r2d2()
 
         # Point to the model directory
         # ----------------------------
         existing_path = os.path.join(existing_path, cycle_date, self.__model__)
+        print(existing_path)
 
         # Create the list containing the files to process
         # -----------------------------------------------
@@ -50,8 +51,8 @@ class GetObsNotInR2d2(taskBase):
 
         # Assert that some files were found
         # ---------------------------------
-        self.logger.assert_abort(len(existing_path_files) > 0, f'No background '
-                                 'files matching cycle in background directory.')
+        self.logger.assert_abort(len(existing_path_files) > 0, f'No observation '
+                                 'files matching cycle in observation directory.')
 
         # Loop over all the files
         # -----------------------

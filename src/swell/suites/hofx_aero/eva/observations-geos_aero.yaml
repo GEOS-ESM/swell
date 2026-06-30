@@ -110,6 +110,9 @@ graphics:
           markersize: 2
           label: ObsValue
           colorbar: true
+          # probably there are negative values in obs so the ObsValue map has -1 to 1 range.
+          # Better to handle it by either removing negative obs in the file or hard-coding
+          # the range of vmin and vmax in this yaml
           cmap: ${dynamic_cmap}
           vmin: ${dynamic_vmin}
           vmax: ${dynamic_vmax}

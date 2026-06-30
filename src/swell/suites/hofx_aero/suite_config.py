@@ -36,14 +36,13 @@ class SuiteConfig(QuestionContainer, Enum):
         geos_aero=[
              qd.horizontal_resolution("181"),
              qd.background_experiment("x0054"),
-             #qd.background_time_offset("PT3H"),
              qd.geos_x_background_directory(
                  "/discover/nobackup/projects/gmao/dadev/rtodling/archive/544/x0054/rs"
              ),
              # Explicitly set obs location for geos_aero so GetObsNotInR2d2 uses
              # the aerosol MODIS AOD directory instead of platform defaults.
              qd.ioda_locations_not_in_r2d2(
-                 "/discover/nobackup/mabdiosk/garage/applications/aod-ext/hx/inputs/obs"
+                 "/discover/nobackup/projects/gmao/advda/SwellTestData/obs"
              ),
              qd.npx_proc(4),
              qd.npy_proc(4),

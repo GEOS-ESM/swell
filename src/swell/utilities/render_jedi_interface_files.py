@@ -132,7 +132,6 @@ class JediConfigRendering():
             'vertical_localization_method',
             'vertical_resolution',
             'window_begin',
-            'window_begin_geos_aero',
             'window_begin_iso',
             'window_end_iso',
             'window_length',
