@@ -44,9 +44,6 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Parse config
         # ------------
-        # background_experiment is used for R2D2 / metadata, not for building
-        # the GEOS background filesystem path. The latter is provided directly
-        # via geos_x_background_directory.
         background_experiment = self.config.background_experiment()
         geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()

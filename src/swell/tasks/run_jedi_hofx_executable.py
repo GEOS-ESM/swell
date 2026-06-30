@@ -56,9 +56,6 @@ class RunJediHofxExecutable(taskBase):
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
 
-        # GEOS-style window begin string for geos_aero obs filenames
-        # Removed explicit definition of window_begin_geos_aero
-
         # Populate jedi interface templates dictionary
         # --------------------------------------------
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
@@ -85,7 +82,6 @@ class RunJediHofxExecutable(taskBase):
         # ------------
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
-        self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Add placeholder names if mock experiment

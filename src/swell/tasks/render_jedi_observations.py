@@ -40,12 +40,10 @@ class RenderJediObservations(taskBase):
 
         # Window parameters for observations
         window_begin = self.da_window_params.window_begin(window_length)
-        # Removed explicit definition of window_begin_geos_aero
         background_time = self.da_window_params.background_time(background_time_offset)
         crtm_coeff_dir = self.config.crtm_coeff_dir(None)
 
         # Set fields for obs files
-        self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('window_begin', window_begin)
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)

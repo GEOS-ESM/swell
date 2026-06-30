@@ -49,8 +49,6 @@ class EvaObservations(taskBase):
         self.jedi_rendering.add_key('background_time', background_time)
         self.jedi_rendering.add_key('crtm_coeff_dir', self.config.crtm_coeff_dir(None))
         self.jedi_rendering.add_key('window_begin', window_begin)
-        # Used by geos_aero obs filenames (e.g. MOD04_L2a)
-        self.jedi_rendering.add_key('window_begin', window_begin)
 
         # Get the model
         # -------------

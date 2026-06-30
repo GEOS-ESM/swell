@@ -33,7 +33,6 @@ class GetObsNotInR2d2(taskBase):
         # Point to the model directory
         # ----------------------------
         existing_path = os.path.join(existing_path, cycle_date, self.__model__)
-        print(existing_path)
 
         # Create the list containing the files to process
         # -----------------------------------------------
