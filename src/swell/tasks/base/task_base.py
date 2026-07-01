@@ -43,6 +43,7 @@ class taskBase(ABC):
         ensemblePacket: Optional[str],
         additional_parameter: Optional[str],
         imember: int | None,
+        ichunk: int | None,        
         task_name: str
     ) -> None:
 
@@ -72,6 +73,7 @@ class taskBase(ABC):
         # ---------------------------
         self.__ensemble_packet__ = ensemblePacket
         self.__ensemble_imember__ = imember
+        self.__ensemble_ichunk__ = ichunk
 
         # Keep copy of model directive
         # ----------------------------
@@ -180,6 +182,10 @@ class taskBase(ABC):
 
     # ----------------------------------------------------------------------------------------------
 
+    def get_ensemble_ichunk(self) -> int | None:
+        return self.__ensemble_ichunk__
+
+    # ----------------------------------------------------------------------------------------------
     def get_model(self) -> str:
         return self.__model__
 
@@ -294,6 +300,7 @@ class taskFactory():
         additional_parameter: str | None,
         ensemblePacket: Optional[str],
         imember: int | None = None,
+        ichunk: int | None = None,        
     ) -> taskBase:
 
         # Convert camel case string to snake case
@@ -323,7 +330,7 @@ class taskFactory():
 
         # Return task object
         return task_class(config, datetime, model, ensemblePacket,
-                          additional_parameter, imember, task)
+                          additional_parameter, imember, ichunk, task)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -357,13 +364,14 @@ def task_wrapper(
     additional_parameter: str | None,
     ensemblePacket: Optional[str],
     imember: int | None = None,
+    ichunk: int | None = None,    
 ) -> None:
 
     # Create the object
     constrc_start = time.perf_counter()
     creator = taskFactory()
     task_object = creator.create_task(task, config, datetime, model, additional_parameter,
-                                      ensemblePacket, imember=imember)
+                                      ensemblePacket, imember=imember, ichunk=ichunk)
     constrc_final = time.perf_counter()
     constrc_time = f'Constructed in {constrc_final - constrc_start:0.4f} seconds'
 

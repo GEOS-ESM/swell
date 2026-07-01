@@ -210,6 +210,7 @@ def launch(
               default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
 @click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
+@click.option('-ichunk', '--ensemble_ichunk', 'ichunk', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
@@ -218,6 +219,7 @@ def task(
     additional_parameter: Optional[str],
     ensemblePacket: Optional[str],
     imember: Optional[int]
+    ichunk: Optional[int]    
 ) -> None:
     """
     Run a workflow task
@@ -230,7 +232,7 @@ def task(
 
     """
     task_wrapper(task, config, datetime, model, additional_parameter,
-                 ensemblePacket, imember)
+                 ensemblePacket, imember, ichunk)
 
 
 # --------------------------------------------------------------------------------------------------

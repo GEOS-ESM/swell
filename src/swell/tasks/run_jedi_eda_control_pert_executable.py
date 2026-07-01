@@ -63,7 +63,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
-        ichunk= self.get_ensemble_packet(()        
+        ichunk= self.get_ensemble_ichunk(()        
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -87,6 +87,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
         self.jedi_rendering.add_key('ensemble_imember', imember)
+        self.jedi_rendering.add_key('ensemble_ichunk', ichunk)        
 
         # Geometry
         # --------
