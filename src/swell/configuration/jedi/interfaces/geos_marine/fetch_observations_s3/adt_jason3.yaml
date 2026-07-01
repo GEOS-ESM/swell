@@ -1,0 +1,5 @@
+s3_bucket: noaa-reanalyses-pds
+s3_key_template: observations/reanalysis/adt/GLORe/jason3/YYYY/MM/iodav2/adt.j3.YYYYMMDD.iodav2.nc
+
+obs_timesteps: ['T00']
+obs_window_length: P1D
