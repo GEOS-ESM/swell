@@ -13,4 +13,5 @@ executables:
   obsfilters: test_ObsFilters.x
   eda3D: fv3jedi_var.x
   eda4D: fv3jedi_var.x
+  edaControlPert: fv3jedi_controlpert.x
   diffstates: fv3jedi_diffstates.x

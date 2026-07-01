@@ -63,7 +63,9 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
-        ichunk= self.get_ensemble_ichunk(()        
+        ichunk = self.get_ensemble_ichunk()
+        nchunk = self.ensemble_eda_chunk()
+
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -119,7 +121,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         # -----
         if window_type == '4D':
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
-
         # Jedi configuration file
         # -----------------------
         str=f'jedi_{jedi_application}{window_type}_config_chunk{{ichunk:03d}}.yaml'
@@ -138,9 +139,21 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # ichunk: specify yaml
         # ----------------------------------------------------
-##        if imember == 1:
 
-        # create subdir
+        # link ebkg to ebkg_chunk
+        ebkg_chunk_dir = f'ebkg_chunk/chunk{ichunk:003d}/'
+        xdir = os.path.join(self.cycle_dir(), ebkg_chunk_dir)
+        os.makedirs(xdir, exist_ok=True)
+
+        npert = nmember / nchunk
+        mem_s = npert * (ichunk -1) + 1
+        
+        for imem in range(1, npert+1):
+            id = mem_s + imem - 1
+            f1 = f'ebkg/mem{id:003d}/'
+
+
+        # create subdir for analysis
         chunk_dir = f'analysis/chunk{ichunk:003d}/'
         xdir = os.path.join(self.cycle_dir(), chunk_dir)
         os.makedirs(xdir, exist_ok=True)
@@ -234,10 +247,16 @@ class RunJediEdaControlPertExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
+        # modify np by  (nmember / nchunk) + 1
+        if ichunk == 1:
+          np = np *  (nmember / nchunk)
+          else
+          np = np *  (nmember / nchunk + 1)          
+
 
         # Jedi executable name
         # --------------------
-        jedi_executable = model_component_meta['executables'][f'variational{window_type}']
+        jedi_executable = model_component_meta['executables']['edaControlPert']
         jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
                                             jedi_executable)
 
