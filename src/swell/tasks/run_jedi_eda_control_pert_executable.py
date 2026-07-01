@@ -27,7 +27,7 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'eda'
+        jedi_application = 'eda_control_pert'
 
         # Parse configuration
         # -------------------
@@ -63,7 +63,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
-        ichunk= self.get_ensemble_packet(()        
+        ichunk= self.get_ensemble_packet()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -87,6 +87,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
         self.jedi_rendering.add_key('ensemble_imember', imember)
+        self.jedi_rendering.add_key('ensemble_ichunk', ichunk)        
 
         # Geometry
         # --------
@@ -121,17 +122,17 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(
-            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config_mem{imember:03d}.yaml')
+        str=f'jedi_{jedi_application}{window_type}_config_chunk{{ichunk:03d}}.yaml'
+        jedi_config_file = os.path.join(self.cycle_dir(), str)
 
         # Output log file
         # ---------------
         output_log_file = os.path.join(
-            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log_mem{imember:03d}.log')
+            self.cycle_dir(), f"jedi_{jedi_application}{window_type}_log_chunk{{ichunk:03d}}.log")
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
                                                                 window_type,
                                                                 jedi_forecast_model)
 

@@ -82,6 +82,7 @@ class JediConfigRendering():
             'ensemble_hofx_strategy',
             'ensemble_num_members',
             'ensemble_imember',
+            'ensemble_ichunk',            
             'ensmean_only',
             'ensmeanvariance_only',
             'ensmeanvariance_spec_item',
