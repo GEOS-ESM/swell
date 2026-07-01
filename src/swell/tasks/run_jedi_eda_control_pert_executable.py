@@ -27,7 +27,7 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # Jedi application name
         # ---------------------
-        jedi_application = 'eda'
+        jedi_application = 'eda_control_pert'
 
         # Parse configuration
         # -------------------
@@ -122,17 +122,17 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # Jedi configuration file
         # -----------------------
-        jedi_config_file = os.path.join(
-            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_config_mem{imember:03d}.yaml')
+        str=f'jedi_{jedi_application}{window_type}_config_chunk{{ichunk:03d}}.yaml'
+        jedi_config_file = os.path.join(self.cycle_dir(), str)
 
         # Output log file
         # ---------------
         output_log_file = os.path.join(
-            self.cycle_dir(), f'jedi_{jedi_application}{window_type}_log_mem{imember:03d}.log')
+            self.cycle_dir(), f"jedi_{jedi_application}{window_type}_log_chunk{{ichunk:03d}}.log")
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
-        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}{window_type}',
+        jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
                                                                 window_type,
                                                                 jedi_forecast_model)
 

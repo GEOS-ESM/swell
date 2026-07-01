@@ -11,7 +11,7 @@ from swell.utilities.oops_config import OopsConfig
 # --------------------------------------------------------------------------------------------------
 
 
-class eda3D(OopsConfig):
+class eda_control_pert(OopsConfig):
 
     def render_oops(self):
         oops = {
@@ -61,13 +61,13 @@ class eda3D(OopsConfig):
                   }
               },
               'output': self.interface_model('eda_analysis_control_pert')
-            }
+            },
             'template': {
-              'pattern with zero padding': "%mem_pad%"
-              'pattern without zero padding': "%mem_wo_pad%"
-              'number of pert members':   'nmember / nchunk'      # ygyu pass
-              'first pert member index': 0
-              'run pert members only': false
+                'pattern with zero padding': "%mem_pad%",
+                'pattern without zero padding': "%mem_wo_pad%",
+                'number of pert members':   'nmember / nchunk',
+                'first pert member index': 0,
+                'run pert members only': False
               }
         }
 

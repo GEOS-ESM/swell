@@ -69,7 +69,7 @@ def background_eda_control_pert(template_dict: Mapping) -> Mapping:
         'provider': 'geos',
         'compute edge pressure from surface pressure': True,
         'max allowable geometry difference': 1e-3,
-        'datapath': f'{cycle_dir}/ebkg_chunk/chunk{ichunk:03d}/geos.mem%mem_pad%/'
+        'datapath': f'{cycle_dir}/ebkg_chunk/chunk{{ichunk:03d}}/geos.mem%mem_pad%/',
         'filenames': [
             f'%yyyy%mm%dd_%hh%MM%ssz.nc4',
             f'../../../fv3-jedi/bkg/geos.crtmsrf.{horizontal_resolution}.nc4'
