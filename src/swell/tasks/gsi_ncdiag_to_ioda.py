@@ -374,8 +374,6 @@ class GsiNcdiagToIoda(taskBase):
             # Change to gps_bend
             search_name = observation
 
-            print(f'search_name {search_name}')
-
             # Input filename
             ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
 
