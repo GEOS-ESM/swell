@@ -347,8 +347,34 @@ class GsiNcdiagToIoda(taskBase):
 
             self.logger.info(f'Renaming \'{observation}\' to be swell compliant')
 
+            # Special handling for aircraft observations
+            # Rename from aircraft_tsen_obs -> aircraft_temperature
+            #             aircraft_uv_obs -> aircraft_wind
+            # And use the beginning of the window
+            if observation == 'aircraft':
+                aircraft_uv_file_found = glob.glob(os.path.join(self.cycle_dir(), f'aircraft_uv_obs_*nc?'))
+                if len(aircraft_uv_file_found) == 0:
+                    self.logger.info(f'No observation files found for aircraft_uv. Skipping rename')
+                else:
+                    aircraft_uv_file_in = aircraft_uv_file_found[0]
+                    aircraft_uv_file_out = os.path.join(self.cycle_dir(), f'aircraft_wind.{window_begin}.nc4')
+                    os.rename(aircraft_uv_file_in, aircraft_uv_file_out)
+
+                aircraft_tsen_file_found = glob.glob(os.path.join(self.cycle_dir(), f'aircraft_tsen_obs_*nc?'))
+
+                if len(aircraft_tsen_file_found) == 0:
+                    self.logger.info(f'No observation files found for aircraft_tsen. Skipping rename')
+                else:
+                    aircraft_tsen_file_in = aircraft_tsen_file_found[0]
+                    aircraft_tsen_file_out = os.path.join(self.cycle_dir(), f'aircraft_temperature.{window_begin}.nc4')
+                    os.rename(aircraft_tsen_file_in, aircraft_tsen_file_out)
+
+                continue
+
             # Change to gps_bend
             search_name = observation
+
+            print(f'search_name {search_name}')
 
             # Input filename
             ioda_obs_in_pattern = f'{search_name}_obs_*nc*'
