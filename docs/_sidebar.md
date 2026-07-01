@@ -26,14 +26,6 @@
   - **R2D2 - Storing Data**
        - [Understanding R2D2](examples/r2d2_intro.md)
        - [Storing Observations to R2D2](examples/r2d2/ingest_obs.md)
-
-- Configuration files in swell
-
-  - [Observation configuration](configs/observation_configuration.md)
-  - [R2D2 v3 credentials](configs/r2d2_v3_credentials.md)
-  - [SLURM configuration](configs/slurm_configuration.md)
-  - Model configuration:
-    - [Storing Observations to R2D2](examples/r2d2/ingest_obs.md)
   - **SWELL Generic Suites**
     - [Comparing two SWELL experiment outputs](examples/comparison_workflows.md)
 

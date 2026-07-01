@@ -218,7 +218,7 @@ class IngestObs(taskBase):
                         target_file)[1][1:],  # 'nc' from '.nc'
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file,
+                    source_file=target_file
                 )
                 if r2d2_datastore:
                     store_kwargs['data_store'] = r2d2_datastore
