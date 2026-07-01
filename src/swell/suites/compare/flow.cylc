@@ -41,9 +41,10 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            CompareIodaObservations-{{model_component}}?
-            CompareIodaObservations-{{model_component}}:fail? | JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
-            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
+            CompareIodaObservations-{{model_component}}? & CompareIncrement-{{model_component}}? & JediLogComparison-{{model_component}}[^]? => Pass
+
+            CompareIodaObservations-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            CompareIncrement-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons?
             PublishComparisons? => comparison_fail?
         {% endif %}
@@ -71,6 +72,18 @@
         script = "exit 1"
 
     {% for model_component in model_components %}
+    [[Pass]]
+        script = """
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonObservations-{{model_component}} --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/PublishComparisons --out skip
+            cylc set $CYLC_WORKFLOW_ID//$datetime/comparison_fail --out skip
+        """
+
+    [[CompareIncrement-{{model_component}}]]
+        script = "swell task CompareIncrement $config -d $datetime -m {{model_component}}"
+
     [[EvaComparisonIncrement-{{model_component}}]]
         script = "swell task EvaComparisonIncrement $config -d $datetime -m {{model_component}}"
 

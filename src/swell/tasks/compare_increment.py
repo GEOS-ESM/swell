@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 import os
+import glob
 import numpy as np
 from ruamel.yaml import YAML
 from netCDF4 import Dataset
@@ -78,30 +79,25 @@ class CompareIncrement(taskBase):
                 window_type = experiment_dict['models'][self.get_model()]['window_type']
                 experiment_id = experiment_dict['experiment_id']
 
-            window_begin_dto = self.da_window_params.window_begin(window_length, dto=True)
-            window_begin = window_begin_dto.strftime('%Y%m%d_%H%M%Sz')
-
-            cycle_time_reformat = self.cycle_time_dto().strftime('%Y%m%d_%H%M%Sz')
-
             local_bkg_dir, local_bkg_dto = self.da_window_params.local_background_time(
                 window_length, window_type, dto=True)
-            local_bkg_time = local_bkg_dto.strftime('%Y%m%d_%H%M%Sz')
 
             iter_no = 1
-            incr_file = f'{experiment_id}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
+            incr_file = f'{experiment_id}.increment-iter{iter_no}.*.nc4'
             if self.suite_name() == 'localensembleda':
-                incr_file = f'geos.mean-inc.{local_bkg_time}.nc4'
+                incr_file = f'geos.mean-inc.*.nc4'
             if window_type == '4D' and 'atmos' in self.suite_name():
-                incr_file = f'{experiment_id}.increment-iter{iter_no}.{window_begin}.nc4'
+                incr_file = f'{experiment_id}.increment-iter{iter_no}.*.nc4'
 
             # Soca case
             if self.get_model() == 'geos_marine':
-                ocn_cycle_time = self.cycle_time_dto().strftime('%Y-%m-%dT%H:%M:%SZ')
-                incr_file = f'ocn.{experiment_id}.incr.{ocn_cycle_time}.nc'
+                incr_file = f'ocn.{experiment_id}.incr.*.nc'
 
-            increment_file_path = os.path.join(os.path.dirname(experiment_yaml), '..', 'run',
+            increment_file_glob = os.path.join(os.path.dirname(experiment_yaml), '..', 'run',
                                                self.__datetime__.string_directory(),
                                                self.get_model(), incr_file)
+
+            increment_file_path = glob.glob(increment_file_glob)[0]
 
             increment_files.append(increment_file_path)
 
@@ -112,6 +108,9 @@ class CompareIncrement(taskBase):
 
         output_str = ''
         passed = True
+
+        self.logger.info(f'Comparing increment files:\n{increment_files[0]}\n{increment_files[1]}')
+        self.logger.info(f'Comparing variables: {model_vars}')
 
         for var in model_vars:
             output_str += f'{var} Comparison Results\n'
@@ -149,5 +148,7 @@ class CompareIncrement(taskBase):
                 f.write(output_str)
             raise Exception(f'Mismatch in increment field length or average, '
                             f'check {output_file}')
+        else:
+            self.logger.info('Comparison passed.')
 
 # --------------------------------------------------------------------------------------------------
