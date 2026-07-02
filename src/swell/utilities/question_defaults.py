@@ -1617,6 +1617,25 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class spoc_source_directory(TaskQuestion):
+        default_value: str | None = None
+        question_name: str = "spoc_source_directory"
+        prompt: str = ("Provide a path an existing spoc repository, or set"
+                       " None to clone desired `spoc_tag`")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class spoc_tag(TaskQuestion):
+        default_value: str = "geos/develop"
+        question_name: str = "spoc_tag"
+        prompt: str = "What branch or tag to clone for spoc?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class swell_static_files(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"

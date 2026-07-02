@@ -196,6 +196,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CloneSpoc = QuestionList(
+        list_name="CloneSpoc",
+        questions=[
+            qd.spoc_tag(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     ConvertObsToIoda = QuestionList(
         list_name="ConvertObsToIoda",
         questions=[

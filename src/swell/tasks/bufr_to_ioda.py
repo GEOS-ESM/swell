@@ -29,34 +29,34 @@ from swell.tasks.base.task_base import taskBase
 # '''
 
 bufr2ioda_obs_type_dict = {
-    '1bamua': 'spoc_radiance_1bamua.yaml',
-    '1bmhs': 'spoc_radiance_1bmhs.yaml',
-    'atms': 'spoc_radiance_atms.yaml',
+    '1bamua': 'radiance_amsua_1bamua.yaml',
+    '1bmhs': 'radiance_mhs_1bmhs.yaml',
+    'atms': 'radiance_atms.yaml',
 
     # avhrr
-    'avhrr': 'spoc_radiance_avhrr.yaml',
-    'ncep_avcsam_bufr': 'spoc_radiance_avhrr.yaml',
-    'ncep_avcspm_bufr': 'spoc_radiance_avhrr.yaml',
-    'avcsam': 'spoc_radiance_avhrr.yaml',
-    'avcspm': 'spoc_radiance_avhrr.yaml',
+    'avhrr': 'radiance_avhrr.yaml',
+    'ncep_avcsam_bufr': 'radiance_avhrr.yaml',
+    'ncep_avcspm_bufr': 'radiance_avhrr.yaml',
+    'avcsam': 'radiance_avhrr.yaml',
+    'avcspm': 'radiance_avhrr.yaml',
 
     # cris
     # 'cris': 'spoc_radiance_cris-fsr.yaml',
     # 'crisf4': 'spoc_radiance_cris-fsr.yaml',
     # 'ncep_crisfsr_bufr': 'spoc_radiance_cris-fsr.yaml',
 
-    'mtiasi': 'spoc_radiance_mtiasi.yaml',
-    'ssmis': 'spoc_radiance_ssmis.yaml',
+    'mtiasi': 'radiance_iasi.yaml',
+    'ssmis': 'radiance_ssmis.yaml',
     # 'ssmisu': 'spoc_radiance_ssmis.yaml',
 
     # gpsro
-    'ncep_gpsro_bufr': 'spoc_gnssro.yaml',
-    'gpsro': 'spoc_gnssro.yaml',
+    'ncep_gpsro_bufr': 'gnssro.yaml',
+    'gpsro': 'gnssro.yaml',
 
     # prepbufr
-    'ncep_acftpfl_bufr': 'spoc_prepbufr_aircraft.yaml',
-    'acftpfl': 'spoc_prepbufr_aircraft.yaml',
-    'acft_profiles': 'spoc_prepbufr_aircraft.yaml',
+    'ncep_acftpfl_bufr': 'prepbufr_aircraft.yaml',
+    'acftpfl': 'prepbufr_aircraft.yaml',
+    'acft_profiles': 'prepbufr_aircraft.yaml',
 
     # Rest of obs_classes from GetBufr
     # 'gmao_amsr2_bufr': 'spoc_radiance_amsr2.yaml',
@@ -192,9 +192,8 @@ class BufrToIoda(taskBase):
         os.makedirs(ioda_dir, 0o755, exist_ok=True)
 
         # Set the Bufr2Ioda Yaml Template Directory
-        path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(),
-                                                       'configuration/jedi',
-                                                       'bufr2ioda/bufr2netcdf_x/')
+        path_to_ioda_conv_yaml_tmpl_dir = os.path.join(self.experiment_path(), 'spoc',
+                                                       'dump', 'config', 'atmosphere')
         self.logger.info(f'Path to yaml files found: {path_to_ioda_conv_yaml_tmpl_dir}')
 
         # Get list of all files in cycle dir with .bufr_d suffix or *bufr*
