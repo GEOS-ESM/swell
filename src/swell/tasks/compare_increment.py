@@ -22,6 +22,7 @@ increment_variables = {}
 
 increment_variables['geos_marine'] = ['Temp', 'Salt', 'ave_ssh']
 increment_variables['geos_atmosphere'] = ['ps', 'ts', 'ua', 'va', 't', 'q']
+increment_variables['geos_cf'] = ['NO2']
 
 
 class CompareIncrement(taskBase):
