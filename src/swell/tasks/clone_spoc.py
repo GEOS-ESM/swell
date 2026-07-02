@@ -36,16 +36,16 @@ class CloneSpoc(taskBase):
         if spoc_source_directory is not None:
             link_path(spoc_source_directory, spoc_exp_path)
             return
-        
+
         # Construct the clone command
         # ---------------------------
         clone_command = ['git', 'clone', 'https://github.com/GEOS-ESM/spoc.git', '-b',
                          spoc_tag, spoc_exp_path]
-        
+
         # Clone the repo
         # --------------
         subprocess.run(clone_command, check=True)
 
-        self.logger(f'Successfully cloned GEOS-ESM/spoc at branch/tag {spoc_tag}')
+        self.logger.info(f'Successfully cloned GEOS-ESM/spoc at branch/tag {spoc_tag}')
 
 # --------------------------------------------------------------------------------------------------

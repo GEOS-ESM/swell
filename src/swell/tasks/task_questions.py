@@ -200,6 +200,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="CloneSpoc",
         questions=[
             qd.spoc_tag(),
+            qd.spoc_source_directory()
         ]
     )
 
