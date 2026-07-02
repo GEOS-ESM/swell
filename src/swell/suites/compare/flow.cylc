@@ -41,10 +41,12 @@
             {% for path in comparison_experiment_paths %}
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
-            CompareIodaObservations-{{model_component}}? & CompareIncrement-{{model_component}}? & JediLogComparison-{{model_component}}[^]? => Pass
+            CompareIodaObservations-{{model_component}}? & JediLogComparison-{{model_component}}[^]? => Pass
 
             CompareIodaObservations-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            {% if comparison_log_type is defined and comparison_log_type != "hofx" %}
             CompareIncrement-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
+            {% endif %}
             JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons?
             PublishComparisons? => comparison_fail?
         {% endif %}
