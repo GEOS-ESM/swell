@@ -20,6 +20,14 @@ import subprocess
 
 
 class CloneSpoc(taskBase):
+    '''
+    Clones or links to the GEOS-ESM/spoc repository, containing bufr to ioda conversion
+    templates and other tools
+
+    By default, this task will clone the branch `geos/develop`. Changing the `spoc_tag` in
+    experiment.yaml will change the branch that is cloned. Alternatively, setting
+    `spoc_source_directory` will link to that directory.
+    '''
 
     def execute(self) -> None:
 
@@ -35,6 +43,12 @@ class CloneSpoc(taskBase):
         # -------------------------------------------
         if spoc_source_directory is not None:
             link_path(spoc_source_directory, spoc_exp_path)
+            return
+
+        # Exit if path already exists
+        # ---------------------------
+        if os.path.exists(spoc_exp_path):
+            self.logger.info('spoc location already exists within experiment, exiting.')
             return
 
         # Construct the clone command
