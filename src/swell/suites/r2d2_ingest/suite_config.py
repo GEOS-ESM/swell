@@ -13,8 +13,8 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    ingest_obs = QuestionList(
-        list_name="ingest_obs",
+    r2d2_ingest = QuestionList(
+        list_name="r2d2_ingest",
         questions=[
             sq.common,
             qd.download_convert_pipeline(False)
@@ -25,7 +25,7 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_obs_marine = QuestionList(
         list_name="ingest_obs_marine",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             sq.marine,
             qd.start_cycle_point("2023-07-01T00:00:00Z"),
             qd.final_cycle_point("2023-07-02T12:00:00Z"),
@@ -41,13 +41,14 @@ class SuiteConfig(QuestionContainer, Enum):
                               'sss_smos',
                               ]),
             qd.dry_run(True),
+            qd.store_as_symlink(False),
         ]
     )
 
     ingest_obs_cf = QuestionList(
         list_name="ingest_obs_cf",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             qd.start_cycle_point("2024-01-01T18:00:00Z"),
             qd.final_cycle_point("2024-01-01T18:00:00Z"),
             qd.model_components(['geos_cf']),
@@ -64,5 +65,26 @@ class SuiteConfig(QuestionContainer, Enum):
                 "jedi-bundle/build-intel-1.9/bin/"
             ),
             qd.dry_run(False),
+            qd.store_as_symlink(False),
+        ]
+    )
+
+    ingest_background_cf = QuestionList(
+        list_name="ingest_background_cf",
+        questions=[
+            r2d2_ingest,
+            qd.start_cycle_point("2025-10-02T09:00:00Z"),
+            qd.final_cycle_point("2025-10-02T09:00:00Z"),
+            qd.cycle_times(['T09']),
+            qd.model_components(['geos_cf']),
+            qd.runahead_limit("P5"),
+            qd.ingest_background_pipeline(True),
+        ],
+        geos_cf=[
+            qd.dry_run(True),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(True),
         ]
     )
