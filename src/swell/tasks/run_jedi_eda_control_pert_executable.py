@@ -62,9 +62,8 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
-        imember = self.get_ensemble_imember()
+        nchunk = self.config.ensemble_eda_chunk()
         ichunk = self.get_ensemble_ichunk()
-        nchunk = self.ensemble_eda_chunk()
 
 
         # Populate jedi interface templates dictionary
@@ -88,7 +87,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
-        self.jedi_rendering.add_key('ensemble_imember', imember)
         self.jedi_rendering.add_key('ensemble_ichunk', ichunk)        
 
         # Geometry
@@ -168,32 +166,6 @@ class RunJediEdaControlPertExecutable(taskBase):
                 print(f'f= {src_file}')
                 shutil.copy(src_file, xdir)
 
-            if imember > 1:
-                obs_cov_model = observer.get('obs error', {}).get('covariance model')
-                print(f'{observation}:  obs_cov_model = {obs_cov_model}')
-                if obs_cov_model and 'cross variable covariances' in obs_cov_model:
-                    print(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
-                else:
-                    print(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
-                    obs_error_dict = {
-                        'covariance model': 'diagonal',
-                        'zero-mean perturbations': True,
-                        'member': imember,
-                        'number of members': nmember
-                    }
-                    observer.update({'obs error': obs_error_dict})
-                    observer['obs space'].update({'obs perturbations seed': imember})
-
-            hxout = observer['obs space']['obsdataout']['engine']['obsfile']
-            dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, chunk_dir, fname)
-            observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
-
-            obsFileIn = observer['obs space']['obsdatain']['engine']['obsfile']
-            dir1, fname = os.path.split(obsFileIn)
-            obsFileIn = os.path.join(dir1, chunk_dir, fname)
-            observer['obs space']['obsdatain']['engine']['obsfile'] = obsFileIn
-
             obs_bias = observer.get('obs bias')
             if obs_bias is not None:
                 File = obs_bias['input file']
@@ -250,7 +222,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         # modify np by  (nmember / nchunk) + 1
         if ichunk == 1:
           np = np *  (nmember / nchunk)
-          else
+        else:
           np = np *  (nmember / nchunk + 1)          
 
 

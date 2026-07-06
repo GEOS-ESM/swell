@@ -128,6 +128,10 @@ ensemble_num_members:
   default_value: 10
   options: None
 
+ensemble_eda_chunk:
+  default_value: 8
+  options: None
+
 geovals_experiment:
   default_value: x0050-geovals
   options:
@@ -372,4 +376,3 @@ window_length:
 
 window_type:
   default_value: 4D
-
