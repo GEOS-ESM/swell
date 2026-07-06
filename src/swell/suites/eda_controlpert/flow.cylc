@@ -60,8 +60,8 @@
             # Get observations
             {% if cycling_varbc %}
             # Cycling VarBC is active, biases from the previous cycle will be used
-
-            RunJediEdaControlPertExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+## ygyu error
+##            RunJediEdaControlPertExecutable-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
             {% else %}
 
             # Cycling VarBC is inactive, static bias files will be used
