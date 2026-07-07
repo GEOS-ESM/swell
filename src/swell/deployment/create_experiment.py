@@ -249,6 +249,12 @@ def create_experiment_directory(
     experiment_dict_str = prepare_config(suite, suite_config, method, platform,
                                          override, advanced, slurm)
 
+
+    # ygyu test
+    print (f'suit = {suite}')
+    print (f'experiment_dict_str = {experiment_dict_str}')
+
+
     # Load the string using yaml
     # --------------------------
     yaml = YAML()

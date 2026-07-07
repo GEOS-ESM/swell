@@ -92,6 +92,10 @@ class PrepareExperimentConfigAndSuite:
         self.model_ind_tasks = self.get_suite_task_list_model_ind(self.suite_str)
         self.all_model_dep_tasks = self.get_all_model_dep_tasks(self.suite_str)
 
+        # ygyu test
+        print( f'self.model_ind_tasks = {self.model_ind_tasks}')
+        print( f'self.all_model_dep_tasks = {self.all_model_dep_tasks}')
+
         # Perform the assembly of the dictionaries that contain all the questions that can possibly
         # be asked. This
 
@@ -143,6 +147,8 @@ class PrepareExperimentConfigAndSuite:
                                                  for question in question_list]
             else:
                 self.questions_per_task[task] = []
+            print( f'{task} self.questions_per_task[task] = {self.questions_per_task[task]}')
+
 
         # Convert the list of questions into a dictionary indexed by the question name
         for question in suite_question_list:
@@ -196,6 +202,11 @@ class PrepareExperimentConfigAndSuite:
                                 else:
                                     question_dictionary[key][sub_key][
                                             'depends_on_model'][model] = value[sub_key]
+
+
+        # ygyu
+        print(f'question_dictionary = {question_dictionary}')
+
 
         # At this point we can check to see if this is a suite that requires model components
         self.suite_needs_model_components = True
