@@ -819,6 +819,21 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediEdaControlPertExecutable = QuestionList(
+        list_name="RunJediEdaControlPertExecutable",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members(),
+            qd.ensemble_num_chunks(),
+            qd.obs_thinning_rej_fraction(),
+            qd.perhost(),
+            qd.comparison_log_type('variational'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveObsDiags = QuestionList(
         list_name="SaveObsDiags",
         questions=[
