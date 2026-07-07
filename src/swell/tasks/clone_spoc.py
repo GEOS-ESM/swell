@@ -9,7 +9,8 @@
 
 
 import os
-from pathlib import Path
+import glob
+import shutil
 
 from swell.utilities.build import link_path
 from swell.tasks.base.task_base import taskBase
@@ -61,5 +62,12 @@ class CloneSpoc(taskBase):
         subprocess.run(clone_command, check=True)
 
         self.logger.info(f'Successfully cloned GEOS-ESM/spoc at branch/tag {spoc_tag}')
+
+        # Copy the mapping yaml's to the script path
+        # ------------------------------------------
+        config_glob = os.path.join(spoc_exp_path, 'dump', 'config', 'atmosphere', '*yaml')
+        script_path = os.path.join(spoc_exp_path, 'dump', 'scripts', 'atmosphere')
+        for config_file in glob.glob(config_glob):
+            shutil.copy(config_file, script_path)
 
 # --------------------------------------------------------------------------------------------------
