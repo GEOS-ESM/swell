@@ -370,3 +370,5 @@ window_length:
 window_type:
   default_value: 4D
 
+varx:
+  default_value: 32

@@ -1333,6 +1333,20 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class varx(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "varx"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "geos_atmosphere",
+            "geos_cf"
+        ])
+        prompt: str = "What is varx?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class npx_proc(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "npx_proc"

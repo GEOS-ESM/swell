@@ -774,6 +774,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    Taskx = QuestionList(
+        list_name="Taskx",
+        questions=[
+            qd.varx()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediObsfiltersExecutable = QuestionList(
         list_name="RunJediObsfiltersExecutable",
         questions=[
