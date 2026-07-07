@@ -83,24 +83,30 @@ obs_builder_dict = {
 
 class BufrToIoda(taskBase):
 
-    def get_obs_builder_file(self,
-                             spoc_config_path: Path,
-                             bufr_file_source_path: str) -> Path:
+    def find_obstype_match(self, bufr_path_file: str) -> str:
 
-        parts = bufr_file_source_path.split('.')
+        parts = bufr_path_file.split('.')
         for part in parts:
             if part in obs_builder_dict:
-                obs_builder_file = obs_builder_dict[part]
-                obs_builder_glob = list(spoc_config_path.glob(obs_builder_file))
-                if len(obs_builder_glob) > 0:
-                    return obs_builder_glob[0]
-                else:
-                    self.logger.info(f'ObsBuilder file `{obs_builder_file}` not '
-                                     'found in config directory.')
-                    
-        valid_obs_types = list(obs_builder_file.keys())
-        self.logger.info(f'No match found for file `{bufr_file_source_path}`.'
-                         f'A valid obs_type must be one of {valid_obs_types}')
+                self.logger.info(f'Match found: {part}')
+                return part
+            
+        valid_obs_types = list(obs_builder_dict.keys())
+        self.logger.info(f"No match found in file `{bufr_path_file}`. "
+                         f"A valid obs_type part must be one of {valid_obs_types}")
+        return None
+
+    def get_obs_builder_file(self,
+                             spoc_script_path: Path,
+                             obs_type: str) -> Path:
+
+        obs_builder_file = obs_builder_dict[obs_type]
+        obs_builder_glob = list(spoc_script_path.glob(obs_builder_file))
+        if len(obs_builder_glob) > 0:
+            return obs_builder_glob[0]
+        else:
+            self.logger.info(f'ObsBuilder file `{obs_builder_file}` not '
+                                'found in config directory.')
 
         return None
 
@@ -112,12 +118,13 @@ class BufrToIoda(taskBase):
 
         ioda_dir.mkdir(parents=True, exist_ok=True)
 
-        spoc_config_path = Path(self.experiment_path()) / 'spoc' / 'dump' / 'config' / 'atmosphere'
+        spoc_script_path = Path(self.experiment_path()) / 'spoc' / 'dump' / 'scripts' / 'atmosphere'
 
         bufr_path_files = list(bufr_dir.glob('*bufr*'))
 
         for bufr_path_file in bufr_path_files:
-            obs_builder_file = self.get_obs_builder_file(spoc_config_path, bufr_path_file)
+            obs_type = self.find_obstype_match(bufr_path_file)
+            obs_builder_file = self.get_obs_builder_file(spoc_script_path, obs_type)
 
             if obs_builder_file is None:
                 self.logger.info(f'SKIPPING: No valid observation type '
@@ -126,7 +133,7 @@ class BufrToIoda(taskBase):
 
             self.logger.info(f' MATCH FOUND: [ {obs_builder_file} ]')
 
-            obs_type_dir = ioda_dir / obs_builder_file.name.replace('.py', '')
+            obs_type_dir = ioda_dir / obs_type
             obs_type_dir.mkdir(mode=0o755, exist_ok=True)
             self.logger.info(f'obs_type_dir: {obs_type_dir}')
 
@@ -137,7 +144,7 @@ class BufrToIoda(taskBase):
                 bufr_file_parts = bufr_path_file.name
                 base_name = bufr_path_file.name
 
-            ioda_file_target = ioda_dir / bufr_file_parts[0] + '.{splits/satId}.tm00.nc4'
+            ioda_file_target = ioda_dir / (bufr_file_parts[0] + '.{splits/satId}.tm00.nc4')
 
             existing_files = list(obs_type_dir.glob(f'{base_name}*'))
             if len(existing_files) > 0:
@@ -147,5 +154,11 @@ class BufrToIoda(taskBase):
 
             subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
                             '--output', ioda_file_target], check=True)
+            '''
+            temp_files = list(Path('.').glob('temporary_*.nc'))
+            self.logger.info(f'Moving converted {obs_type} files to {obs_type_dir}')
+            for temp_file in temp_files:
+                shutil.move(temp_file, obs_type_dir)
+            '''
         
 # --------------------------------------------------------------------------------------------------
