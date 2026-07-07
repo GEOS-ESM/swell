@@ -521,6 +521,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensemble_num_chunks(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ensemble_num_chunks"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "How many chunks shall be used in EDA control pert calculations?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensemble_num_members(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_num_members"

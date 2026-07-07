@@ -48,8 +48,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.gsibec_nlons("144"),
             qd.vertical_resolution("72"),
             qd.ensemble_num_members(32),
-            qd.ensemble_eda_chunk(8),            
-            qd.obs_pert_amplitude(0.5),
+            qd.ensemble_num_chunks(8),
             qd.number_of_iterations([100]),
             qd.gradient_norm_reduction(1.e-8),
             qd.analysis_variables([
@@ -106,27 +105,27 @@ class SuiteConfig(QuestionContainer, Enum):
                 "ssmis_f17"
             ]),
             qd.obs_thinning_rej_fraction(0.8),
-            qd.ensmeanvariance_spec([
-                {"state": "bkg",
-                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "geos.prior.mean",
-                 "fn_output_variance": "geos.prior.variance",
-                 "grid_type": ['cs', 'latlon']},
-                {"state": "analysis",
-                 "fn_input": "analysis/mem%mem%/eda.ana.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
-                 "fn_output_mean": "eda.ana.mean",
-                 "fn_output_variance": "eda.ana.variance",
-                 "grid_type": ['cs', 'latlon']},
-                ]),
-            qd.diffstates_spec({
-                "state1":
-                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state2":
-                {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
-                "state_diff":
-                {"fn_output": "eda.mean-inc", "grid_type": ['cs', 'latlon']},
-                "state_type": "ensemble"
-                }),
+#            qd.ensmeanvariance_spec([
+#                {"state": "bkg",
+#                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+#                 "fn_output_mean": "geos.prior.mean",
+#                 "fn_output_variance": "geos.prior.variance",
+#                 "grid_type": ['cs', 'latlon']},
+#                {"state": "analysis",
+#                 "fn_input": "analysis/mem%mem%/eda.ana.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+#                 "fn_output_mean": "eda.ana.mean",
+#                 "fn_output_variance": "eda.ana.variance",
+#                 "grid_type": ['cs', 'latlon']},
+#                ]),
+#            qd.diffstates_spec({
+#                "state1":
+#                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+#                "state2":
+#                {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+#                "state_diff":
+#                {"fn_output": "eda.mean-inc", "grid_type": ['cs', 'latlon']},
+#                "state_type": "ensemble"
+#                }),
             qd.clean_patterns(['*.txt', '*.csv']),
         ]
     )
