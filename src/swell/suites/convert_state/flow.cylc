@@ -1,0 +1,143 @@
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for converting GEOS atmospheric background files from one cubed-sphere
+# resolution to a user-specified target resolution using fv3jedi_convertstate.x.
+#
+# Workflow per cycle point (analysis time):
+#   1. Build JEDI (or link to an existing build).
+#   2. GetBackgroundGeosExperiment  - retrieve and untar the bkgcrst archive, renaming
+#                                     files to the JEDI-standard convention and writing
+#                                     bkg_name_mapping.json to preserve original names.
+#   3. RunJediConvertStateFv3Executable (one per background file, run in parallel)
+#                                   - convert a single background file from the input
+#                                     resolution to the target resolution using
+#                                     fv3jedi_convertstate.x.
+#   4. TarBackgroundGeosConvertState - collect all converted files and pack them into
+#                                     a tarball named after the target experiment, with
+#                                     original GEOS file names restored from the mapping.
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link, build from source
+            BuildJediByLinking:fail? => BuildJedi
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+
+            # Task triggers for: {{model_component}}
+            # ----------------------------------------
+
+            # Retrieve the bkgcrst tarball from the GEOS experiment archive and
+            # extract files, renaming to JEDI convention.  Also writes
+            # bkg_name_mapping.json for original-name recovery.
+            GetBackgroundGeosExperiment-{{model_component}}
+
+            # Perform staging that is cycle dependent
+            StageJediCycle-{{model_component}}
+
+            # After JEDI is available and backgrounds are staged, convert each
+            # background file in parallel (one task per background_window_times entry).
+            {% for bkg_idx in range(background_window_times | length) %}
+            BuildJediByLinking[^]? | BuildJedi[^] => RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
+            GetBackgroundGeosExperiment-{{model_component}} => RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}
+            {% endfor %}
+
+            # Once all conversions are done, assemble the output tarball.
+            {% for bkg_idx in range(background_window_times | length) %}
+            RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}} => TarBackgroundGeosConvertState-{{model_component}}
+            {% endfor %}
+
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Non-cycling setup tasks
+    # -----------------------
+    [[CloneJedi]]
+        script = "swell task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    {% for model_component in model_components %}
+
+    # Retrieve the GEOS bkgcrst tar archive and extract background files.
+    # Writes bkg_name_mapping.json alongside the extracted files.
+    [[GetBackgroundGeosExperiment-{{model_component}}]]
+        script = "swell task GetBackgroundGeosExperiment $config -d $datetime -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
+
+    # One convert-state task per background file, running in parallel.
+    # The -p index selects which entry in background_window_times to process.
+    {% for bkg_idx in range(background_window_times | length) %}
+    [[RunJediConvertStateFv3Executable-{{bkg_idx}}-{{model_component}}]]
+        script = "swell task RunJediConvertStateFv3Executable $config -d $datetime -m {{model_component}} -p {{bkg_idx}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediConvertStateFv3Executable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediConvertStateFv3Executable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+    {% endfor %}
+
+    # Collect all converted files and write the output tarball.
+    [[TarBackgroundGeosConvertState-{{model_component}}]]
+        script = "swell task TarBackgroundGeosConvertState $config -d $datetime -m {{model_component}}"
+
+    {% endfor %}
+
+# --------------------------------------------------------------------------------------------------

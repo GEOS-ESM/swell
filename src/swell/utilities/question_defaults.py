@@ -329,6 +329,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class background_window_times(TaskQuestion):
+        default_value: List[str] = mutable_field([
+            "-PT3H", "-PT2H", "-PT1H", "PT0H", "PT1H", "PT2H", "PT3H"
+        ])
+        question_name: str = "background_window_times"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("List of ISO 8601 duration offsets from the analysis cycle point"
+                       " for each background file to be converted (e.g. -PT3H through PT3H"
+                       " for a 6-hour window with hourly backgrounds).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class background_frequency(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "background_frequency"
@@ -984,6 +1001,36 @@ class QuestionDefaults():
     # ------------------------------------------------------------------------------------------------
 
     @dataclass
+    class target_background_experiment(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "target_background_experiment"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Name of the target experiment whose resolution the backgrounds will be"
+                       " converted to (used as the output experiment ID in the output tarball,"
+                       " e.g. x0054).")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class target_horizontal_resolution(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "target_horizontal_resolution"
+        ask_question: bool = True
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Target horizontal resolution (cubed-sphere tile size) for the converted"
+                       " background files (e.g. 13 for c12, 91 for c90).")
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # ------------------------------------------------------------------------------------------------
+
+    @dataclass
     class dry_run(TaskQuestion):
         default_value: bool = True
         question_name: str = "dry_run"
@@ -1366,6 +1413,7 @@ class QuestionDefaults():
         question_name: str = "npx"
         ask_question: bool = True
         models: List[str] = mutable_field([
+            "geos_atmosphere",
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the x-direction on each cube face?"
@@ -1379,6 +1427,7 @@ class QuestionDefaults():
         question_name: str = "npy"
         ask_question: bool = True
         models: List[str] = mutable_field([
+            "geos_atmosphere",
             "geos_cf"
         ])
         prompt: str = "What is the number of grid points in the y-direction on each cube face?"

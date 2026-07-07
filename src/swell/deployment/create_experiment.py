@@ -567,6 +567,17 @@ def prepare_cylc_suite_jinja2(
             logger.abort('The suite file required marine_models but ' +
                          'geos_marine is not in the model components.')
 
+
+    # Background window times (list of ISO offsets used to parallelise convert_state)
+    if 'background_window_times' in suite_file:
+        if len(model_components) == 0:
+            logger.abort('The suite file required background_window_times but '
+                         'there are no model components to gather them from.')
+        for model_component in model_components:
+            render_dictionary['background_window_times'] = \
+                experiment_dict['models'][model_component]['background_window_times']
+ 
+
     render_dictionary['scheduling'] = prepare_scheduling_dict(logger, experiment_dict, platform)
 
     # Set some specific values for:

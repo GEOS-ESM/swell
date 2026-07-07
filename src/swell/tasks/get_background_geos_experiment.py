@@ -10,6 +10,7 @@
 
 from datetime import datetime as dt
 import isodate
+import json
 import os
 import tarfile
 
@@ -67,6 +68,8 @@ class GetBackgroundGeosExperiment(taskBase):
         # Get the background experiment start time
         # -----------------------------------------
         bkgr_exp_start_dto = self.cycle_time_dto()-background_time_offset_dur
+        print(f'self.cycle_time_dto()={self.cycle_time_dto()}')
+        print(f'background_time_offset_dur={background_time_offset_dur}')
         bkgr_exp_start_geos = bkgr_exp_start_dto.strftime(datetime_formats['gsi_nc_diag_format'])
 
         # Create cycle directory if needed
@@ -77,6 +80,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # Define the source tar folder and file
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
+        print(f'tar_file_name is={bkgr_tar_file}')
         bkgr_tar = os.path.join(geos_x_background_directory,
                                 horizontal_resolution,
                                 background_experiment,
@@ -96,13 +100,15 @@ class GetBackgroundGeosExperiment(taskBase):
 
         # Untar the background files
         # --------------------------
+        bkg_name_mapping = {}
         with tarfile.open(cycle_tar) as cycle_tar_file:
             for member in cycle_tar_file.getmembers():
                 if member.isreg():  # Use files only
 
-                    # Extract files
-                    # -------------
-                    member.name = os.path.basename(member.name)
+                    # Extract files, stripping any directory path from the name
+                    # -----------------------------------------------------------
+                    original_member_name = os.path.basename(member.name)
+                    member.name = original_member_name
                     cycle_tar_file.extract(member, self.cycle_dir())
 
                     # Get the date information from the filename (example):
@@ -123,5 +129,18 @@ class GetBackgroundGeosExperiment(taskBase):
                                      ' to: ' + bkg_filename_jedi)
                     os.rename(os.path.join(self.cycle_dir(), member.name),
                               os.path.join(self.cycle_dir(), bkg_filename_jedi))
+
+                    # Track the mapping of JEDI name -> original tar member name
+                    # -----------------------------------------------------------
+                    bkg_name_mapping[bkg_filename_jedi] = original_member_name
+
+        # Write the JEDI-to-original name mapping to a JSON file in the cycle directory.
+        # This is consumed by TarBackgroundGeosConvertState to restore original filenames
+        # in the output tarball after resolution conversion.
+        # ------------------------------------------------------------------------------
+        mapping_file = os.path.join(self.cycle_dir(), 'bkg_name_mapping.json')
+        self.logger.info(' Writing background name mapping to: ' + mapping_file)
+        with open(mapping_file, 'w') as f:
+            json.dump(bkg_name_mapping, f, indent=2)
 
 # --------------------------------------------------------------------------------------------------
