@@ -503,6 +503,11 @@ class PrepareExperimentConfigAndSuite:
 
         # 9.2 Iterate over the model_dep dictionary and ask task questions
         # ----------------------------------------------------------------
+        print(f"self.experiment_dict['model_components']:   {self.experiment_dict['model_components']}")
+        print(f'model_ind_tasks:  {model_ind_tasks}')
+        print(f'model_dep_tasks:  {model_dep_tasks}')
+
+
         for model in self.experiment_dict['model_components']:
 
             # Iterate over the model_dep dictionary and ask questions

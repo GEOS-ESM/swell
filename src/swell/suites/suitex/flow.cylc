@@ -48,14 +48,12 @@
     # Tasks
     # -----
 
+    {% for model_component in model_components %}
     [[X-{{model_component}}]]
-        script = "swell task Taskx $config -d $datetime -m {{model_component}} -ichunk {{i}}"
+        script = "swell task Taskx $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediEdaControlPertExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-        {%- for key, value in scheduling["RunJediEdaControlPertExecutable"]["directives"][model_component].items() %}
-            --{{key}} = {{value}}
-        {%- endfor %}
+    {% endfor %}
+
 
     [[sync_point]]
         script = true

@@ -24,6 +24,7 @@ class SuiteConfig(QuestionContainer, Enum):
     _x1 = QuestionList(
         list_name="x1",
         questions=[
+            sq.common,
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
