@@ -8,10 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
-import glob
-import os
 import subprocess
-import shutil
 from pathlib import Path
 
 from swell.tasks.base.task_base import taskBase
@@ -83,22 +80,42 @@ obs_builder_dict = {
 
 class BufrToIoda(taskBase):
 
-    def find_obstype_match(self, bufr_path_file: str) -> str:
+    def find_obstype_match(self, bufr_path_file: Path) -> str:
+        """
+        Find the observation type from obs_builder_dict
 
-        parts = bufr_path_file.split('.')
+        Parameters:
+        bufr_path_file: Path to input bufr file (e.g. "gdas1.20231010.t00z.atms.tm00.bufr_d")
+
+        Returns:
+        obs type matching the filename (e.g. "atms")
+        """
+
+        parts = bufr_path_file.name.split('.')
         for part in parts:
             if part in obs_builder_dict:
                 self.logger.info(f'Match found: {part}')
                 return part
-            
+
         valid_obs_types = list(obs_builder_dict.keys())
         self.logger.info(f"No match found in file `{bufr_path_file}`. "
                          f"A valid obs_type part must be one of {valid_obs_types}")
         return None
 
+    # --------------------------------------------------------------------------------------------------
+
     def get_obs_builder_file(self,
                              spoc_script_path: Path,
                              obs_type: str) -> Path:
+        """
+        Returns the path to the ObsBuilder python file
+
+        Parameters:
+        spoc_script_path: Path to the spoc scripts
+
+        Returns:
+        Path to the specific ObsBuilder python file
+        """
 
         obs_builder_file = obs_builder_dict[obs_type]
         obs_builder_glob = list(spoc_script_path.glob(obs_builder_file))
@@ -106,20 +123,26 @@ class BufrToIoda(taskBase):
             return obs_builder_glob[0]
         else:
             self.logger.info(f'ObsBuilder file `{obs_builder_file}` not '
-                                'found in config directory.')
+                             'found in config directory.')
 
         return None
 
+    # --------------------------------------------------------------------------------------------------
+
     def execute(self):
-        
+        """
+        Converts collected bufr files to ioda using ObsBuilder python files
+        """
+
         bufr_dir = Path(self.cycle_dir()) / 'bufr'
 
         ioda_dir = Path(self.cycle_dir()) / 'ioda'
 
-        ioda_dir.mkdir(parents=True, exist_ok=True)
+        ioda_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
 
         spoc_script_path = Path(self.experiment_path()) / 'spoc' / 'dump' / 'scripts' / 'atmosphere'
 
+        # Get the list of bufr files to convert
         bufr_path_files = list(bufr_dir.glob('*bufr*'))
 
         for bufr_path_file in bufr_path_files:
@@ -133,6 +156,7 @@ class BufrToIoda(taskBase):
 
             self.logger.info(f' MATCH FOUND: [ {obs_builder_file} ]')
 
+            # Get the name of the output directory
             obs_type_dir = ioda_dir / obs_type
             obs_type_dir.mkdir(mode=0o755, exist_ok=True)
             self.logger.info(f'obs_type_dir: {obs_type_dir}')
@@ -144,7 +168,8 @@ class BufrToIoda(taskBase):
                 bufr_file_parts = bufr_path_file.name
                 base_name = bufr_path_file.name
 
-            ioda_file_target = ioda_dir / (bufr_file_parts[0] + '.{splits/satId}.tm00.nc4')
+            # Output IODA filepath
+            ioda_file_target = obs_type_dir / (bufr_file_parts[0] + '.{splits/satId}.tm00.nc4')
 
             existing_files = list(obs_type_dir.glob(f'{base_name}*'))
             if len(existing_files) > 0:
@@ -154,11 +179,5 @@ class BufrToIoda(taskBase):
 
             subprocess.run(['python', obs_builder_file, '--input', bufr_path_file,
                             '--output', ioda_file_target], check=True)
-            '''
-            temp_files = list(Path('.').glob('temporary_*.nc'))
-            self.logger.info(f'Moving converted {obs_type} files to {obs_type_dir}')
-            for temp_file in temp_files:
-                shutil.move(temp_file, obs_type_dir)
-            '''
-        
+
 # --------------------------------------------------------------------------------------------------
