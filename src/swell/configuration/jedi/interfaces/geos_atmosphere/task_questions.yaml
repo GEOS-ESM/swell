@@ -125,6 +125,10 @@ ensemble_num_members:
   default_value: 10
   options: None
 
+ensemble_num_chunks:
+  default_value: 8
+  options: None
+
 geovals_experiment:
   default_value: x0050-geovals
   options:

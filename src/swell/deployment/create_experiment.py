@@ -256,8 +256,12 @@ def create_experiment_directory(
 
     # Experiment ID and root from the user input
     # ------------------------------------------
+
+    #ygyu test
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
+
+
 
     # Write out some info
     # -------------------
@@ -483,6 +487,9 @@ def prepare_cylc_suite_jinja2(
     # --------------------------
     with open(os.path.join(swell_suite_path, 'flow.cylc'), 'r') as file:
         suite_file = file.read()
+    print(f'nail6. suite_file in prepare_cylc_suite_jinja2 = {suite_file}')
+
+
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------

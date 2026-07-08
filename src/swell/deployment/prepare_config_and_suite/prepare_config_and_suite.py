@@ -92,6 +92,11 @@ class PrepareExperimentConfigAndSuite:
         self.model_ind_tasks = self.get_suite_task_list_model_ind(self.suite_str)
         self.all_model_dep_tasks = self.get_all_model_dep_tasks(self.suite_str)
 
+        print(f'nail1 model_ind_tasks = {self.model_ind_tasks}')
+        print(f'nail2 all_model_dep_tasks = {self.all_model_dep_tasks}')
+        print(f'nail3  .suite_str  = {self.suite_str}')
+
+
         # Perform the assembly of the dictionaries that contain all the questions that can possibly
         # be asked. This
 
@@ -121,6 +126,8 @@ class PrepareExperimentConfigAndSuite:
 
         suite_config_obj = AllSuites.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
+        print(f'suite q list :  {suite_question_list}')
+
 
         # Allow for adding extra tasks manually from configuration
         # For dynamic suite creation (e.g. comparison tests)
@@ -266,6 +273,11 @@ class PrepareExperimentConfigAndSuite:
 
             for key in keys_to_remove:
                 del self.question_dictionary_model_dep[model][key]
+
+#       print(f'nail1.5 question_dictionary_model_dep = {self.question_dictionary_model_dep}')
+#       for model in self.possible_model_components:
+#           x = self.question_dictionary_model_dep[model]['ensemble_num_chunks']
+#           print(f'x = {x}')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -426,6 +438,13 @@ class PrepareExperimentConfigAndSuite:
         # 2. Perform a non-exhaustive resolving of suite file templates
         # -------------------------------------------------------------
         suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict, True)
+        
+        print(f'nail4.0 self.exp dict = {self.experiment_dict}')
+        
+        print(f'nail4.1 self.suite str = {self.suite_str}')
+        
+
+        print(f'nail4.2 jinja2 suite str = {suite_str}')
 
         # 3. Get a list of tasks that do not depend on the model component
         # ----------------------------------------------------------------
@@ -499,7 +518,9 @@ class PrepareExperimentConfigAndSuite:
 
         # 9.1 Build a list of tasks for each model component
         # -------------------------------------------------
+        print(f'ck suite_str = {suite_str}')
         model_dep_tasks = self.get_suite_task_list_model_dep(suite_str)
+        
 
         # 9.2 Iterate over the model_dep dictionary and ask task questions
         # ----------------------------------------------------------------
@@ -627,11 +648,13 @@ class PrepareExperimentConfigAndSuite:
         swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
         swell_task_lines = [line.strip() for line in swell_task_lines]
 
+        print(f'def all model dep tasks:   swell_task_lines = {swell_task_lines}')
+        
         # All tasks
         all_tasks = []
 
         for line in swell_task_lines:
-            all_tasks.append(line.split('swell task ')[1].split(' ')[0])
+            all_tasks.append(line.split('swell task')[1].strip().split(' ')[0])
 
         # Ensure all_tasks are unique
         all_tasks = list(set(all_tasks))
@@ -650,6 +673,8 @@ class PrepareExperimentConfigAndSuite:
         swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
         swell_task_lines = [line.strip() for line in swell_task_lines]
 
+        print(f'def get_suite_task_list_model_dep  swell_task_lines = {swell_task_lines}')
+        
         # Now get the model part
         models = []
         for line in swell_task_lines:
