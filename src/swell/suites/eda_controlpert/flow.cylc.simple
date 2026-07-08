@@ -17,7 +17,9 @@
             # Clone JEDI source code
             {% for model_component in model_components %}
 
+            {% if models[model_component]['ensemble_num_chunks'] is defined %}
             RunJediEdaControlPertExecutable-{{model_component}} 
+            {% endif %}
 
             {% endfor %}
         """
@@ -38,10 +40,25 @@
     # Tasks
     # -----
 
+    [[CloneJedi]]
+        script = "swell task CloneJedi $config"
+
     {% for model_component in model_components %}
+
+    {% if models[model_component]['ensemble_num_chunks'] is defined %}
     [[RunJediEdaControlPertExecutable-{{model_component}}]]
         script = "swell task RunJediEdaControlPertExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
+
+    [[GetBackground-{{model_component}} ]]
+        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+
+    {% endif %}
+
+
+    [[SP1-{{model_component}}]]
+        script = true
+
 
     {% endfor %}
 

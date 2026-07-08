@@ -443,7 +443,6 @@ class PrepareExperimentConfigAndSuite:
         
         print(f'nail4.1 self.suite str = {self.suite_str}')
         
-
         print(f'nail4.2 jinja2 suite str = {suite_str}')
 
         # 3. Get a list of tasks that do not depend on the model component
@@ -476,10 +475,12 @@ class PrepareExperimentConfigAndSuite:
         # At this point the user should have provided the model components answer. Check that it is
         # in the experiment dictionary and retrieve the response
 
+        render_dict = copy.deepcopy(self.experiment_dict)
         if 'model_components' not in self.experiment_dict:
             self.logger.abort('The model components question has not been answered.')
 
         for model in self.experiment_dict['model_components']:
+            print(f'nail 5.1 model is {model}')
 
             model_dict = self.question_dictionary_model_dep[model]
 
@@ -492,6 +493,15 @@ class PrepareExperimentConfigAndSuite:
                     # Ask the question
                     self.ask_a_question(model_dict, question_key, model)
 
+                # use special task questions for jinja2
+                if model_dict[question_key]['question_type'] == 'task':
+
+                    ensemble_list = ['ensemble_'+s for s in ['num_members', 'num_chunks']]
+                    if question_key in ensemble_list:
+                        render_dict.update({'models':{model: {question_key: model_dict[question_key]['default_value']}}})
+        print(f'render_dict = {render_dict}')
+  
+
         # 7. Perform a more exhaustive resolving of suite file templates
         # --------------------------------------------------------------
         # Note that we reset the suite file to avoid templates having been left unresolved
@@ -499,9 +509,14 @@ class PrepareExperimentConfigAndSuite:
         # of templates because there are things related to scheduling that are not yet able to be
         # resolved. In the future it might be good to bring some of that information into the
         # sphere of suite questions but that requires some careful thought so as not to overload
-        # the user with questions.
-        suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
-                                           True)
+        # the user with questions. A few model dep variables are needed to corectly parse tasks,
+        # e.g., in Eda ControlPert. Hence we use a render_dict for jinja2 here, only to parse
+        # the for loop around model task in .cycl file, e.g.,
+        # {% for i in range( 1, models[model_component]['ensemble_num_chunks'] + 1 ) %}
+        #  [[RunJediEdaControlPertExecutable_chunk{{i}}-{{model_component}}]]
+        # {% endfor %}
+        
+        suite_str = template_string_jinja2(self.logger, self.suite_str, render_dict, True)                                                
 
         # 8. Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
