@@ -537,7 +537,8 @@ def prepare_cylc_suite_jinja2(
                          'dictionary.')
 
     # Check if 'ensemble_hofx_strategy' appears anywhere in suite_file
-    ensemble_list = ['ensemble_'+s for s in ['num_members', 'hofx_strategy', 'hofx_packets']]
+    ensemble_list = ['ensemble_'+s for s in
+                     ['num_members', 'num_chunks', 'hofx_strategy', 'hofx_packets']]
     ensemble_list = ensemble_list + ['skip_ensemble_hofx']
     for ensemble_aspect in ensemble_list:
         if ensemble_aspect in suite_file:
