@@ -111,20 +111,6 @@ cycling_varbc:
   - true
   - false
 
-ensemble_hofx_packets:
-  default_value: 2
-  options: None
-
-ensemble_hofx_strategy:
-  default_value: parallel
-  options:
-  - serial
-  - parallel
-
-ensemble_num_members:
-  default_value: 10
-  options: None
-
 geovals_experiment:
   default_value: x0050-geovals
   options:

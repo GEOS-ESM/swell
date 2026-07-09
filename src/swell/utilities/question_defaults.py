@@ -86,6 +86,18 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensemble_num_members(SuiteQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ensemble_num_members"
+        models: List[str] = mutable_field([
+            "geos_atmosphere"
+        ])
+        prompt: str = "How many members comprise the ensemble?"
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class experiment_id(SuiteQuestion):
         default_value: str = "defer_to_code"
         question_name: str = "experiment_id"
@@ -489,47 +501,6 @@ class QuestionDefaults():
         ])
         prompt: str = "What is the path to the CRTM coefficient files?"
         widget_type: WType = WType.STRING
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ensemble_hofx_packets(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "ensemble_hofx_packets"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Enter number of packets in which ensemble observers should be computed."
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ensemble_hofx_strategy(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "ensemble_hofx_strategy"
-        ask_question: bool = True
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "Enter hofx strategy."
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class ensemble_num_members(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "ensemble_num_members"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "geos_atmosphere"
-        ])
-        prompt: str = "How many members comprise the ensemble?"
-        widget_type: WType = WType.INTEGER
 
     # --------------------------------------------------------------------------------------------------
 
