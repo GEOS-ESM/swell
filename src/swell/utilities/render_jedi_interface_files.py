@@ -81,6 +81,8 @@ class JediConfigRendering():
             'ensemble_hofx_packets',
             'ensemble_hofx_strategy',
             'ensemble_num_members',
+            'ensemble_num_chunks',
+            'ensemble_ichunk',
             'ensmean_only',
             'ensmeanvariance_only',
             'experiment_id',
@@ -305,6 +307,7 @@ class JediConfigRendering():
         # Path to configuration file
         config_file = os.path.join(self.jedi_config_path, 'interfaces', model_component,
                                    f'{model_component}.yaml')
+        print( f'config_file = {config_file}')
 
         # Render templates in file and return dictionary
         return self.__open_file_render_to_dict__(config_file)

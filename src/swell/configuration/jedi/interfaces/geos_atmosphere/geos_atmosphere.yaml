@@ -11,3 +11,4 @@ executables:
   localensembleda: fv3jedi_letkf.x
   ensmeanvariance: fv3jedi_ensmeanvariance.x
   obsfilters: test_ObsFilters.x
+  edaControlPert: fv3jedi_controlpert.x

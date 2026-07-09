@@ -62,9 +62,8 @@ class RunJediEdaControlPertExecutable(taskBase):
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
-        nchunk = self.config.ensemble_eda_chunk()
+        nchunk = self.config.ensemble_num_chunks()
         ichunk = self.get_ensemble_ichunk()
-
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -86,8 +85,9 @@ class RunJediEdaControlPertExecutable(taskBase):
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
         self.jedi_rendering.add_key('local_background_time', local_background_time)
         self.jedi_rendering.add_key('local_background_time_iso', local_background_time_iso)
-        self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members())
-        self.jedi_rendering.add_key('ensemble_ichunk', ichunk)        
+        self.jedi_rendering.add_key('ensemble_num_members', nmember)
+        self.jedi_rendering.add_key('ensemble_num_chunks', nchunk)
+        self.jedi_rendering.add_key('ensemble_ichunk', ichunk)
 
         # Geometry
         # --------
@@ -121,13 +121,13 @@ class RunJediEdaControlPertExecutable(taskBase):
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
         # Jedi configuration file
         # -----------------------
-        str=f'jedi_{jedi_application}{window_type}_config_chunk{{ichunk:03d}}.yaml'
-        jedi_config_file = os.path.join(self.cycle_dir(), str)
+        fname=f'jedi_{jedi_application}{window_type}_config_chunk{ichunk:03d}.yaml'
+        jedi_config_file = os.path.join(self.cycle_dir(), fname)
 
         # Output log file
         # ---------------
         output_log_file = os.path.join(
-            self.cycle_dir(), f"jedi_{jedi_application}{window_type}_log_chunk{{ichunk:03d}}.log")
+            self.cycle_dir(), f"jedi_{jedi_application}{window_type}_log_chunk{ichunk:03d}.log")
 
         # Open the JEDI config file and fill initial templates
         # ----------------------------------------------------
@@ -143,9 +143,10 @@ class RunJediEdaControlPertExecutable(taskBase):
         xdir = os.path.join(self.cycle_dir(), ebkg_chunk_dir)
         os.makedirs(xdir, exist_ok=True)
 
-        npert = nmember / nchunk
+        npert = int( nmember / nchunk )
         mem_s = npert * (ichunk -1) + 1
-        
+
+        print(f'npert, mem_s = {npert} {mem_s}')
         for imem in range(1, npert+1):
             id = mem_s + imem - 1
             f1 = f'ebkg/mem{id:003d}/'
@@ -156,7 +157,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         xdir = os.path.join(self.cycle_dir(), chunk_dir)
         os.makedirs(xdir, exist_ok=True)
 
-        for observer in jedi_config_dict['cost function']['observations']['observers']:
+        for observer in jedi_config_dict['assimilation']['cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
             print(f'ob= {observation}')
@@ -201,6 +202,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         d2 = os.path.join(self.cycle_dir(), chunk_dir, 'fv3-jedi')
         shutil.copytree(d1, d2, dirs_exist_ok=True)
 
+
         with open(jedi_config_file, 'r') as f:
             yaml_content = f.read()
 
@@ -216,14 +218,15 @@ class RunJediEdaControlPertExecutable(taskBase):
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
+        print(f"proc = {model_component_meta['total_processors']}")
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
         # modify np by  (nmember / nchunk) + 1
         if ichunk == 1:
-          np = np *  (nmember / nchunk)
+          np = np * npert
         else:
-          np = np *  (nmember / nchunk + 1)          
+          np = np * (npert + 1)
 
 
         # Jedi executable name
