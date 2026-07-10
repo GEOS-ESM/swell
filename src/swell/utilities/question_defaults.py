@@ -932,44 +932,6 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
-    class horizontal_localization_lengthscale(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_lengthscale"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "What is the length scale for horizontal covariance localization?"
-        widget_type: WType = WType.FLOAT
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_max_nobs(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_max_nobs"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = ("What is the maximum number of observations to consider"
-                       " for horizontal covariance localization?")
-        widget_type: WType = WType.INTEGER
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
-    class horizontal_localization_method(TaskQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "horizontal_localization_method"
-        options: str = "defer_to_model"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Which localization scheme should be applied in the horizontal?"
-        widget_type: WType = WType.STRING_DROP_LIST
-
-    # --------------------------------------------------------------------------------------------------
-
-    @dataclass
     class horizontal_resolution(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "horizontal_resolution"

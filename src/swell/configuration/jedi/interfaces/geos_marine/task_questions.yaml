@@ -59,19 +59,6 @@ gradient_norm_reduction:
 ensemble_num_members:
   default_value: 10
 
-horizontal_localization_lengthscale:
-  default_value: 10000e3
-
-horizontal_localization_max_nobs:
-  default_value: 1000
-
-horizontal_localization_method:
-  default_value: Horizontal Gaspari-Cohn
-  options:
-  - Horizontal Gaspari-Cohn
-  - Horizontal SOAR
-  - Horizontal Box car
-
 horizontal_resolution:
   default_value: 1440x1080
   options:

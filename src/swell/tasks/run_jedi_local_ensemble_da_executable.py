@@ -74,6 +74,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('window_begin_iso', window_begin_iso)
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
+        self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
@@ -97,24 +98,20 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('ensemble_hofx_packets', self.config.ensemble_hofx_packets())
 
         # Ensemble Localizations
-        self.jedi_rendering.add_key('horizontal_localization_method',
-                                    self.config.horizontal_localization_method())
-        self.jedi_rendering.add_key('horizontal_localization_lengthscale',
-                                    self.config.horizontal_localization_lengthscale())
-        self.jedi_rendering.add_key('horizontal_localization_max_nobs',
-                                    self.config.horizontal_localization_max_nobs())
-        self.jedi_rendering.add_key('vertical_localization_method',
-                                    self.config.vertical_localization_method())
-        self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
-                                    self.config.vertical_localization_apply_log_transform())
-        self.jedi_rendering.add_key('vertical_localization_lengthscale',
-                                    self.config.vertical_localization_lengthscale())
-        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
-                                    self.config.vertical_localization_ioda_vertical_coord())
-        self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
-                                    self.config.vertical_localization_ioda_vertical_coord_group())
-        self.jedi_rendering.add_key('vertical_localization_function',
-                                    self.config.vertical_localization_function())
+        # ------------------------------
+        if self.get_model() == 'geos_atmosphere':
+            self.jedi_rendering.add_key('vertical_localization_method',
+                                        self.config.vertical_localization_method())
+            self.jedi_rendering.add_key('vertical_localization_apply_log_transform',
+                                        self.config.vertical_localization_apply_log_transform())
+            self.jedi_rendering.add_key('vertical_localization_lengthscale',
+                                        self.config.vertical_localization_lengthscale())
+            self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
+                                        self.config.vertical_localization_ioda_vertical_coord())
+            self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
+                                        self.config.vertical_localization_ioda_vertical_coord_group())
+            self.jedi_rendering.add_key('vertical_localization_function',
+                                        self.config.vertical_localization_function())
 
         # Driver
         self.jedi_rendering.add_key('local_ensemble_solver', self.config.local_ensemble_solver())
