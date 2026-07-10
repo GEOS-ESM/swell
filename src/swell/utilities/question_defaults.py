@@ -1111,7 +1111,7 @@ class QuestionDefaults():
 
     @dataclass
     class jedi_build_method(TaskQuestion):
-        default_value: str = "create"
+        default_value: str = "use_existing"
         question_name: str = "jedi_build_method"
         ask_question: bool = True
         options: List[str] = mutable_field([
@@ -1620,9 +1620,6 @@ class QuestionDefaults():
     class swell_static_files(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "swell_static_files"
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
         prompt: str = "What is the path to the Swell Static files directory?"
         widget_type: WType = WType.STRING
 

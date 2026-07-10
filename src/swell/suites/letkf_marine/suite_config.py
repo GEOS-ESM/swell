@@ -28,7 +28,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2023-01-02T12:00:00Z"),
+            qd.start_cycle_point("2023-01-02T12:00:00Z"),
             qd.final_cycle_point("2023-01-02T12:00:00Z"),
             qd.model_components(['geos_marine']),
         ],

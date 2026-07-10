@@ -57,7 +57,7 @@
             # Get background and ensemble geos experiment files
             GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
 
-            StageJedi-{{model_component}}[^] & StageJediCycle-{{model_component}} & RenderJediObservations-{{model_component}} & GetEnsembleGeosExperiment-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
+            StageJedi-{{model_component}}[^] & StageJediCycle-{{model_component}} & RenderJediObservations-{{model_component}} & GetEnsemble-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
 
             {% if skip_ensemble_hofx %}
                RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
@@ -128,8 +128,8 @@
     [[GetBackground-{{model_component}} ]]
         script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
 
-    [[GetEnsembleGeosExperiment-{{model_component}}]]
-        script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
+    [[GetEnsemble-{{model_component}}]]
+        script = "swell task GetEnsemble $config -d $datetime -m {{model_component}}"
 
     [[RenderJediObservations-{{model_component}}]]
         script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
