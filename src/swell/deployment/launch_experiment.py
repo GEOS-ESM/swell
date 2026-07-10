@@ -24,7 +24,8 @@ class DeployWorkflow():
         suite_path: str,
         experiment_name: str,
         no_detach: bool,
-        log_path: str
+        log_path: str,
+        cylc_timeout: str
     ) -> None:
 
         self.logger = get_logger('DeployWorkflow')
@@ -32,6 +33,7 @@ class DeployWorkflow():
         self.experiment_name = experiment_name
         self.no_detach = no_detach
         self.log_path = log_path
+        self.cylc_timeout = cylc_timeout
 
     # ----------------------------------------------------------------------------------------------
 
@@ -49,6 +51,10 @@ class DeployWorkflow():
         # Check for user provided global.cylc
         if os.path.exists(self.suite_path + 'global.cylc'):
             os.environ['CYLC_CONF_PATH'] = self.suite_path
+
+        # Tell cylc to exit a stall quickly
+        if self.cylc_timeout is not None:
+            os.environ['SWELL_CYLC_TIMEOUT'] = self.cylc_timeout
 
         # Install the suite
         if self.log_path:
@@ -89,7 +95,8 @@ class DeployWorkflow():
             self.logger.info(' ')
 
             # Launch the job monitor
-            self.logger.critical('Launching the TUI, press \'q\' at any time to exit the TUI')
+            self.logger.critical('Press Enter to launch the TUI. To exit TUI, ' +
+                                 'press \'q\' at any time.')
             input()
             self.logger.info(' ')
             self.logger.info('TUI can be relaunched with:')
@@ -104,7 +111,8 @@ class DeployWorkflow():
 def launch_experiment(
     suite_path: str,
     no_detach: bool,
-    log_path: str
+    log_path: str,
+    cylc_timeout: bool
 ) -> None:
 
     # Get the path to where the suite files are located
@@ -120,7 +128,7 @@ def launch_experiment(
 
     # Create the deployment object
     # ----------------------------
-    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path)
+    deploy_workflow = DeployWorkflow(suite_path, experiment_name, no_detach, log_path, cylc_timeout)
 
     # Write some info for the user
     # ----------------------------

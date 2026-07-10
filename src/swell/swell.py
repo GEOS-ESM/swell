@@ -20,6 +20,8 @@ from swell.test.suite_tests.suite_tests import run_suite, TestSuite
 from swell.suites.all_suites import AllSuites
 from swell.utilities.welcome_message import write_welcome_message
 from swell.utilities.scripts.utility_driver import get_utilities, utility_wrapper
+from swell.utilities.datetime_util import is_duration
+from swell.utilities.suite_utils import read_override_file
 
 
 # --------------------------------------------------------------------------------------------------
@@ -82,6 +84,13 @@ Customize SLURM directives, globally (e.g., account name), for specific tasks,
 or for task-model combinations.
 """
 
+skip_r2d2_help = """Skip registering this experiment and storing products in R2D2."""
+
+additional_parameter_help = ('Additional option to specify parameters to task, '
+                             'context-dependent on individual task.')
+cylc_timeout_help = """
+Set the cylc stall timeout manually for experiment. If unset, defaults to user value in
+ ~/.cylc/flow/global.cylc, or the Cylc default of 1 hour. Uses ISO duration format (e.g. PT30S)"""
 
 # --------------------------------------------------------------------------------------------------
 
@@ -95,13 +104,15 @@ or for task-model combinations.
 @click.option('-o', '--override', 'override', default=None, help=override_help)
 @click.option('-a', '--advanced', 'advanced', default=False, help=advanced_help)
 @click.option('-s', '--slurm', 'slurm', default=None, help=slurm_help)
+@click.option('-k', '--skip-r2d2', 'skip_r2d2', is_flag=True, default=False, help=skip_r2d2_help)
 def create(
     suite: str,
     input_method: str,
     platform: str,
     override: Union[dict, str, None],
     advanced: bool,
-    slurm: str
+    slurm: str,
+    skip_r2d2: bool
 ) -> None:
     """
     Create a new experiment
@@ -112,8 +123,13 @@ def create(
         suite (str): Name of the suite you wish to run. \n
 
     """
+
+    # Read override file
+    override_dict = read_override_file(override)
+
     # Create the experiment directory
-    create_experiment_directory(suite, input_method, platform, override, advanced, slurm)
+    create_experiment_directory(suite, input_method, platform, override_dict,
+                                advanced, slurm, skip_r2d2)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -158,10 +174,12 @@ def clone(
 @click.argument('suite_path')
 @click.option('-b', '--no-detach', 'no_detach', is_flag=True, default=False, help=no_detach_help)
 @click.option('-l', '--log_path', 'log_path', default=None, help=log_path_help)
+@click.option('-t', '--cylc-timeout', 'cylc_timeout', default=None, help=cylc_timeout_help)
 def launch(
     suite_path: str,
     no_detach: bool,
-    log_path: str
+    log_path: str,
+    cylc_timeout: bool
 ) -> None:
     """
     Launch an experiment with the cylc workflow manager
@@ -172,7 +190,12 @@ def launch(
         suite_path (str): Path to where the flow.cylc and associated suite files are located. \n
 
     """
-    launch_experiment(suite_path, no_detach, log_path)
+
+    if cylc_timeout is not None:
+        if not is_duration(cylc_timeout):
+            raise ValueError(f'Specified cylc timeout does not match ISO duration format')
+
+    launch_experiment(suite_path, no_detach, log_path, cylc_timeout)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -183,12 +206,15 @@ def launch(
 @click.argument('config')
 @click.option('-d', '--datetime', 'datetime', default=None, help=datetime_help)
 @click.option('-m', '--model', 'model', default=None, help=model_help)
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
     datetime: Optional[str],
     model: Optional[str],
+    additional_parameter: Optional[str],
     ensemblePacket: Optional[str]
 ) -> None:
     """
@@ -201,7 +227,8 @@ def task(
         config (str): Path to the configuration file for the task.\n
 
     """
-    task_wrapper(task, config, datetime, model, ensemblePacket)
+    task_wrapper(task, config, datetime, model, additional_parameter,
+                 ensemblePacket)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -209,7 +236,9 @@ def task(
 
 @swell_driver.command()
 @click.argument('utility', type=click.Choice(get_utilities()))
-def utility(utility: str) -> None:
+@click.option('-a', '--additional-parameter', 'additional_parameter',
+              default=None, help=additional_parameter_help)
+def utility(utility: str, additional_parameter: str | None) -> None:
     """
     Run a utility script
 
@@ -219,7 +248,7 @@ def utility(utility: str) -> None:
         utility (str): Name of the utility operation to perform.\n
 
     """
-    utility_wrapper(utility)
+    utility_wrapper(utility, additional_parameter)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -246,17 +275,17 @@ def test(test: str) -> None:
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "3dvar_atmos", "localensembleda",
-                                            "3dvar_cycle")))
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
+                                            "localensembleda", "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
     Run a particular swell suite from the tier 1 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, 3dvar_atmos, localensembleda)
+        suite (str): Name of the suite to run (e.g., 3dvar_marine, 3dvar_atmos, localensembleda)
     """
     run_suite(suite, platform, TestSuite.TIER1)
 
@@ -267,10 +296,10 @@ def t1test(
 @swell_driver.command()
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
-@click.argument('suite', type=click.Choice(("hofx", "3dvar", "ufo_testing",
+@click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "ufo_testing",
                                             "convert_ncdiags", "3dfgat_atmos", "build_jedi")))
 def t2test(
-    suite: Literal["hofx", "3dvar", "ufo_testing",
+    suite: Literal["hofx", "3dvar_marine", "ufo_testing",
                    "convert_ncdiags", "3dfgat_atmos", "build_jedi"],
         platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
@@ -278,7 +307,7 @@ def t2test(
     Run a particular swell suite from the tier 2 tests.
 
     Arguments:
-        suite (str): Name of the suite to run (e.g., hofx, 3dvar, ufo_testing)
+        suite (str): Name of the suite to run (e.g., hofx, 3dvar_marine, ufo_testing)
     """
     run_suite(suite, platform, TestSuite.TIER2)
 

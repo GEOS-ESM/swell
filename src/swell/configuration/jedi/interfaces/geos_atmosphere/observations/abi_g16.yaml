@@ -1,0 +1,352 @@
+obs space:
+  name: ABI GOES-16
+  obsdatain:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/abi_g16.{{window_begin}}.nc4'
+      missing file action: warn
+  obsdataout:
+    engine:
+      type: H5File
+      obsfile: '{{cycle_dir}}/{{experiment_id}}.abi_g16.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
+  simulated variables: [brightnessTemperature]
+  channels: &abi_g16_channels {{abi_g16_avail_channels}}
+
+obs operator:
+  name: CRTM
+  Absorbers: [H2O,O3,CO2]
+  obs options:
+    Sensor_ID: &Sensor_ID abi_g16
+    EndianType: little_endian
+    CoefficientPath: '{{crtm_coeff_dir}}/'
+  linear obs operator:
+    Absorbers: [H2O,O3]
+    Surfaces: [Water_Temperature,Land_Temperature,Ice_Temperature,Snow_Temperature]
+
+obs bias:
+  input file: '{{cycle_dir}}/abi_g16.{{background_time}}.satbias.nc4'
+  output file: '{{cycle_dir}}/abi_g16.{{window_begin}}.satbias.nc4'
+  variational bc:
+    predictors:
+    - name: constant
+    - name: lapseRate
+      order: 2
+      tlapse: &abi_g16_tlapse '{{cycle_dir}}/abi_g16.{{background_time}}.tlapse.txt'
+    - name: lapseRate
+      tlapse: *abi_g16_tlapse
+    - name: emissivityJacobian
+    - name: sensorScanAngle
+      var_name: sensorScanPosition
+      order: 4
+    - name: sensorScanAngle
+      var_name: sensorScanPosition
+      order: 3
+    - name: sensorScanAngle
+      var_name: sensorScanPosition
+      order: 2
+    - name: sensorScanAngle
+      var_name: sensorScanPosition
+
+obs prior filters:
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  action:
+    name: assign error
+    error parameter vector: [1.4,3.0,3.0,3.5,2.0,2.0,2.0,2.0,2.0,2.0]      
+
+obs post filters:
+# Useflag Check
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  test variables:
+  - name: ObsFunction/ChannelUseflagCheckRad
+    channels: *abi_g16_channels
+    options:
+      channels: *abi_g16_channels
+      use_flag: &useflag_abi_g16 {{abi_g16_active_channels}}
+  minvalue: 1.0e-12
+  action:
+    name: reject
+
+# Satellite Zenith Angle Check
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  test variables:
+  - name: MetaData/sensorZenithAngle
+  maxvalue: 65.
+  action:
+    name: reject
+
+# Surface type check
+# Over water no reject. Over land, reject ch 7, 11-16. Over ice or snow, reject all.
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: 7, 11-16
+  where:
+  - variable:
+      name: GeoVaLs/land_area_fraction
+    minvalue: 0.99
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: GeoVaLs/ice_area_fraction
+    minvalue: 0.99
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: GeoVaLs/surface_snow_area_fraction
+    minvalue: 0.99
+- filter: BlackList
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: GeoVaLs/land_area_fraction
+    maxvalue: 0.99
+    max_exclusive: true
+  - variable:
+      name: GeoVaLs/water_area_fraction
+    maxvalue: 0.99
+    max_exclusive: true
+  - variable:
+      name: GeoVaLs/ice_area_fraction
+    maxvalue: 0.99
+    max_exclusive: true
+  - variable:
+      name: GeoVaLs/surface_snow_area_fraction
+    maxvalue: 0.99
+    max_exclusive: true
+
+# BT range check
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  minvalue: 0.0
+  maxvalue: 1000.0
+  action:
+    name: reject
+
+# Topography Check           
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorTopoRad
+      channels: *abi_g16_channels
+      options:
+        channels: *abi_g16_channels
+        sensor: *Sensor_ID
+
+# Model top transmittance check
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorTransmitTopRad
+      channels: *abi_g16_channels
+      options:
+        channels: *abi_g16_channels
+
+# Scene Consistency Check based on ch13 (10.3 micron) SDTB
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 13
+    minvalue: 0.4
+  action:
+    name: reject
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 13
+    maxvalue: 0.4
+    minvalue: 0.3
+    max_exclusive: true
+  action:
+    name: inflate error
+    inflation factor: 1.4142
+
+# Scene Consistency Check for ch8-10 based on ch8 (6.2 micron) SDTB
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: 8-10
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 8
+    maxvalue: 0.5
+    minvalue: 0.4
+    max_exclusive: true
+  action:
+    name: inflate error
+    inflation factor: 1.1489
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: 8-10
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 8
+    maxvalue: 0.6
+    minvalue: 0.5
+    max_exclusive: true
+  action:
+    name: inflate error
+    inflation factor: 1.2923
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: 8-10
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 8
+    maxvalue: 0.7
+    minvalue: 0.6
+    max_exclusive: true
+  action:
+    name: inflate error
+    inflation factor: 1.4967
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: 8-10
+  where:
+  - variable:
+      name: ClearSkyStdDev/brightnessTemperature
+      channels: 8
+    minvalue: 0.7
+  action:
+    name: reject
+
+# Near SST Retrieval Check 
+- filter: Bounds Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  test variables:
+  - name: ObsFunction/NearSSTRetCheckIR
+    channels: *abi_g16_channels
+    options:
+      channels: *abi_g16_channels
+      use_flag: *useflag_abi_g16
+  maxvalue: 1.0e-12
+  action:
+    name: reject
+
+# Surface Jacobian Check
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  action:
+    name: inflate error
+    inflation variable:
+      name: ObsFunction/ObsErrorFactorSurfJacobianRad
+      channels: *abi_g16_channels
+      options:
+        channels: *abi_g16_channels
+        sensor: *Sensor_ID
+        obserr_demisf: [0.01, 0.02, 0.03, 0.02, 0.03]
+        obserr_dtempf: [0.5, 2.0, 4.0, 2.0, 4.0]
+
+# All channels are retained where cloud fraction <=1 (i.e., 1%) 
+- filter: Domain Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  where:
+  - variable:
+      name: MetaData/cloud_frac
+    maxvalue: 1
+
+# For surface and ch10 (7.3 micron), use split window chns to remove oqaque clouds
+# step 1: calculate splitWindowDiff with Tb_obs and Tb_sim (hofx, restored to before BC)
+- filter: Variable Assignment
+  assignments:
+  - name: DerivedMetaData/splitWindowDiff
+    type: float
+    function:
+      name: ObsFunction/Arithmetic
+      options:
+        variables:
+        - name: ObsValue/brightnessTemperature
+          channels: 13
+        - name: ObsValue/brightnessTemperature
+          channels: 14
+        - name: HofX/brightnessTemperature
+          channels: 13
+        - name: HofX/brightnessTemperature
+          channels: 14
+        - name: ObsBiasData/brightnessTemperature
+          channels: 13
+        - name: ObsBiasData/brightnessTemperature
+          channels: 14
+        coefs: [1, -1, -1, 1, 1, -1]
+# step 2: apply threshold
+- filter: Perform Action
+  filter variables:
+  - name: brightnessTemperature
+    channels: 7, 10-16
+  where:
+  - variable:
+      name: DerivedMetaData/splitWindowDiff
+    maxvalue: -0.75
+  action:
+    name: reject
+
+# Final gross check
+- filter: Background Check
+  filter variables:
+  - name: brightnessTemperature
+    channels: *abi_g16_channels
+  function absolute threshold:
+  - name: ObsFunction/ObsErrorBoundIR
+    channels: *abi_g16_channels
+    options:
+      channels: *abi_g16_channels
+      obserr_bound_latitude:
+        name: ObsFunction/ObsErrorFactorLatRad
+        options:
+          latitude_parameters: [0.0, 0.0, 0.0, 0.0]
+      obserr_bound_transmittop:
+        name: ObsFunction/ObsErrorFactorTransmitTopRad
+        channels: *abi_g16_channels
+        options:
+          channels: *abi_g16_channels
+      obserr_bound_max: [2.5,4.0,4.0,4.0,2.5,2.5,2.5,2.5,2.5,2.5]
+  action: 
+    name: reject

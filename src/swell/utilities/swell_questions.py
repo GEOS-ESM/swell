@@ -12,8 +12,8 @@ import os
 from dataclasses import dataclass, asdict, field
 from typing import List, Optional, Self, Union, Literal
 from enum import Enum
-from isodate import parse_datetime, parse_duration, ISO8601Error
 
+from swell.utilities.datetime_util import is_datetime, is_duration
 from swell.swell_path import get_swell_path
 
 # --------------------------------------------------------------------------------------------------
@@ -76,17 +76,11 @@ class WidgetType(Enum):
 
         # If the widget is a datetime, ensure it is in the right format
         if self == WidgetType.ISO_DATETIME:
-            try:
-                parse_datetime(value)
-            except ISO8601Error:
-                return False
+            return is_datetime(value)
 
         # Ensure the value is a duration
         if self == WidgetType.ISO_DURATION:
-            try:
-                parse_duration(value)
-            except ISO8601Error:
-                return False
+            return is_duration(value)
 
         return True
 
@@ -128,6 +122,7 @@ class QuestionList:
     questions: List[Union[SwellQuestion, Self]]
 
     geos_atmosphere: list = field(default_factory=lambda: [])
+    geos_cf: list = field(default_factory=lambda: [])
     geos_marine: list = field(default_factory=lambda: [])
 
     # --------------------------------------------------------------------------------------------------

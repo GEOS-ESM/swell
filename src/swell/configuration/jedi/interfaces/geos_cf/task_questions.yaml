@@ -1,0 +1,100 @@
+analysis_variables:
+  default_value:
+  - volume_mixing_ratio_of_no2
+  options:
+  - volume_mixing_ratio_of_no2
+
+background_experiment:
+  default_value: swell_test
+  options:
+  - swell_test
+
+background_frequency:
+  default_value: PT3H
+
+# How long before the middle of the analysis window did
+# the background providing forecast begin?
+
+background_time_offset:
+  default_value: PT9H
+
+clean_patterns:
+  default_value:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+  options:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+
+horizontal_resolution:
+  default_value: 'c90'
+  options:
+  - 'c90'
+  - 'c360'
+
+vertical_resolution:
+  default_value: 72
+  options:
+  - 72
+
+npx:
+  default_value: 91
+  options:
+  - 91
+  - 361
+
+npy:
+  default_value: 91
+  options:
+  - 91
+  - 361
+
+npx_proc:
+  default_value: 2
+
+npy_proc:
+  default_value: 2
+
+
+obs_provider:
+  default_value: 
+  - nasa_VCD
+  - esa
+  options:
+  - nasa_VCD
+  - esa
+
+observations:
+  default_value: 
+  - tempo_no2_tropo
+  - tropomi_s5p_no2_tropo
+  options: 
+  - tempo_no2_tropo
+  - tropomi_s5p_no2_tropo
+  - tempo_no2_total
+
+obs_experiment:
+  default_value: None
+
+observing_system_records_path:
+  default_value: None
+
+window_length:
+  default_value: PT6H
+
+window_type:
+  default_value: 3D
+
+minimizer:
+  default_value: DRPCG
+  options:
+  - DRPCG
+
+number_of_iterations:
+  default_value:
+  - 5
+
+gradient_norm_reduction:
+  default_value: 1e-10

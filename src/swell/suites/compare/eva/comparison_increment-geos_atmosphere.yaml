@@ -19,7 +19,7 @@ graphics:
   - batch figure:
       variables: [ps]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}.png'
@@ -32,6 +32,7 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -53,6 +54,7 @@ graphics:
         add_colorbar:
           label: Surface Pressure Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -64,8 +66,8 @@ graphics:
           label: PS increment 2
           colorbar: true
           cmap: 'bwr'
-          vmin: -100
-          vmax: 100
+          vmin: *vmin_ps
+          vmax: *vmax_ps
 
       # Experiment Diff (1-2)
       - mapping:
@@ -73,8 +75,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Surface Pressure Increment Diff (1-2)
+          label: Surface Pressure Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -86,14 +89,14 @@ graphics:
           label: PS increment Diff
           colorbar: true
           cmap: 'bwr'
-          vmin: -100
-          vmax: 100
+          vmin: &vmin_ps_diff -20
+          vmax: &vmax_ps_diff 20
 
   #map plot for temperature increment (lowest level)
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1000.png'
@@ -104,7 +107,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -126,8 +130,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -140,15 +145,16 @@ graphics:
           label: T increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
       # Experiment Diff (1-2)
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         add_grid:
         layers:
         - type: MapGridded
@@ -162,13 +168,13 @@ graphics:
           label: T increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: &vmin_t_diff -0.2
+          vmax: &vmax_t_diff 0.2
   #map plot for temperature increment
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
@@ -179,8 +185,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -193,16 +200,17 @@ graphics:
           label: T increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
       # Experiment 2
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -215,15 +223,16 @@ graphics:
           label: T increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
       # Diff
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_id_2}})'
         add_grid:
         layers:
         - type: MapGridded
@@ -237,8 +246,8 @@ graphics:
           label: T increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t_diff
+          vmax: *vmax_t_diff
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -254,8 +263,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -268,8 +278,8 @@ graphics:
           label: T increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment 2
       - mapping:
@@ -277,8 +287,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -291,8 +302,8 @@ graphics:
           label: T increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment diff
       - mapping:
@@ -300,8 +311,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -314,8 +326,8 @@ graphics:
           label: T increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t_diff
+          vmax: *vmax_t_diff
   #map plot for temperature increment
   - batch figure:
       variables: [t]
@@ -331,8 +343,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -345,8 +358,8 @@ graphics:
           label: T increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment 2
       - mapping:
@@ -354,8 +367,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -368,8 +382,8 @@ graphics:
           label: T increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment Diff
       - mapping:
@@ -377,8 +391,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -391,14 +406,14 @@ graphics:
           label: T increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t_diff
+          vmax: *vmax_t_diff
 
   #map plot for temperature increment
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -409,8 +424,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -423,8 +439,8 @@ graphics:
           label: T increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment 1
       - mapping:
@@ -432,8 +448,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -446,8 +463,8 @@ graphics:
           label: T increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment Diff
       - mapping:
@@ -455,8 +472,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -469,14 +487,14 @@ graphics:
           label: T increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t_diff
+          vmax: *vmax_t_diff
 
   #map plot for temperature increment
   - batch figure:
       variables: [t]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -486,8 +504,9 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_colorbar:
-          label: Temperature Increment 1
+          label: Temperature Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -501,16 +520,17 @@ graphics:
           label: T increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment 2
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_colorbar:
-          label: Temperature Increment 2
+          label: Temperature Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -524,16 +544,17 @@ graphics:
           label: T increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t
+          vmax: *vmax_t
 
       # Experiment Diff
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         add_colorbar:
-          label: Temperature Increment Diff (1-2)
+          label: Temperature Increment Diff
         add_grid:
         layers:
         - type: MapGridded
@@ -547,8 +568,8 @@ graphics:
           label: T increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_t_diff
+          vmax: *vmax_t_diff
 
   #map plot for Zonal Wind increment (lowest level)
   - batch figure:
@@ -565,8 +586,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Zonal Wind Increment 1
+          label: Zonal Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -587,8 +609,9 @@ graphics:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_colorbar:
-          label: Zonal Wind Increment 2
+          label: Zonal Wind Increment
         add_grid:
         layers:
         - type: MapGridded
@@ -602,325 +625,15 @@ graphics:
           label: U increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_ua
+          vmax: *vmax_ua
 
       # Experiment Diff (1-2)
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment Diff (1-2)
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua_diff
-            slices: '[71,...]'
-          label: U increment (1000 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-  #map plot for Zonal Wind increment
-  - batch figure:
-      variables: [ua]
-    figure:
-      figure size: [60,10]
-      layout: [3,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
-    plots:
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 1
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua
-            slices: '[62,...]'
-          label: U increment (850 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 2
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_2::increment::lon
-          latitude:
-            variable: experiment_increment_2::increment::lat
-          data:
-            variable: experiment_increment_2::increment::ua
-            slices: '[62,...]'
-          label: U increment (850 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 1
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua_diff
-            slices: '[62,...]'
-          label: U increment (850 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-  #map plot for Zonal Wind increment
-  - batch figure:
-      variables: [ua]
-    figure:
-      figure size: [60,10]
-      layout: [3,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
-    plots:
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 1
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua
-            slices: '[49,...]'
-          label: U increment (500 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 2
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 2
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_2::increment::lon
-          latitude:
-            variable: experiment_increment_2::increment::lat
-          data:
-            variable: experiment_increment_2::increment::ua
-            slices: '[49,...]'
-          label: U increment (500 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment Diff
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment Diff (1-2)
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua_diff
-            slices: '[49,...]'
-          label: U increment (500 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-  #map plot for Zonal Wind increment
-  - batch figure:
-      variables: [ua]
-    figure:
-      figure size: [60,10]
-      layout: [3,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
-    plots:
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 1
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua
-            slices: '[42,...]'
-          label: U increment (200 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 2
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 2
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_2::increment::lon
-          latitude:
-            variable: experiment_increment_2::increment::lat
-          data:
-            variable: experiment_increment_2::increment::ua
-            slices: '[42,...]'
-          label: U increment (200 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment Diff (1-2)
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua_diff
-            slices: '[42,...]'
-          label: U increment (200 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-  #map plot for Zonal Wind increment
-  - batch figure:
-      variables: [ua]
-    figure:
-      figure size: [60,10]
-      layout: [3,1]
-      title: 'Increment from JEDI'
-      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
-    plots:
-      # Experiment 1
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 1
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_1::increment::lon
-          latitude:
-            variable: experiment_increment_1::increment::lat
-          data:
-            variable: experiment_increment_1::increment::ua
-            slices: '[24,...]'
-          label: U increment (10 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment 2
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
-        add_colorbar:
-          label: Zonal Wind Increment 2
-        add_grid:
-        layers:
-        - type: MapGridded
-          longitude:
-            variable: experiment_increment_2::increment::lon
-          latitude:
-            variable: experiment_increment_2::increment::lat
-          data:
-            variable: experiment_increment_2::increment::ua
-            slices: '[24,...]'
-          label: U increment (10 hPa)
-          colorbar: true
-          cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
-
-      # Experiment Diff
-      - mapping:
-          projection: plcarr
-          domain: global
-        add_map_features: ['coastline']
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         add_colorbar:
           label: Zonal Wind Increment Diff
         add_grid:
@@ -932,18 +645,341 @@ graphics:
             variable: experiment_increment_1::increment::lat
           data:
             variable: experiment_increment_1::increment::ua_diff
-            slices: '[24,...]'
-          label: U increment (10 hPa)
+            slices: '[71,...]'
+          label: U increment (1000 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: &vmin_ua_diff -0.2
+          vmax: &vmax_ua_diff 0.2
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [60,20]
+      layout: [3,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
+    plots:
+      # Experiment 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua
+            slices: '[62,...]'
+          label: U increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_ua
-          vmax: 1
+          vmax: *vmax_ua
+
+      # Experiment 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::increment::lon
+          latitude:
+            variable: experiment_increment_2::increment::lat
+          data:
+            variable: experiment_increment_2::increment::ua
+            slices: '[62,...]'
+          label: U increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment diff
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_colorbar:
+          label: Zonal Wind Increment diff
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua_diff
+            slices: '[62,...]'
+          label: U increment (850 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua_diff
+          vmax: *vmax_ua_diff
 
   #map plot for Zonal Wind increment
   - batch figure:
       variables: [ua]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
+      layout: [3,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
+    plots:
+      # Experiment 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua
+            slices: '[49,...]'
+          label: U increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::increment::lon
+          latitude:
+            variable: experiment_increment_2::increment::lat
+          data:
+            variable: experiment_increment_2::increment::ua
+            slices: '[49,...]'
+          label: U increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment Diff
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment Diff
+        add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua_diff
+            slices: '[49,...]'
+          label: U increment (500 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua_diff
+          vmax: *vmax_ua_diff
+
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [60,20]
+      layout: [3,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
+    plots:
+      # Experiment 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua
+            slices: '[42,...]'
+          label: U increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::increment::lon
+          latitude:
+            variable: experiment_increment_2::increment::lat
+          data:
+            variable: experiment_increment_2::increment::ua
+            slices: '[42,...]'
+          label: U increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua_diff
+            slices: '[42,...]'
+          label: U increment (200 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua_diff
+          vmax: *vmax_ua_diff
+
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [60,20]
+      layout: [3,1]
+      title: 'Increment from JEDI'
+      output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
+    plots:
+      # Experiment 1
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua
+            slices: '[24,...]'
+          label: U increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment 2
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
+        add_grid:
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_2::increment::lon
+          latitude:
+            variable: experiment_increment_2::increment::lat
+          data:
+            variable: experiment_increment_2::increment::ua
+            slices: '[24,...]'
+          label: U increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua
+          vmax: *vmax_ua
+
+      # Experiment Diff
+      - mapping:
+          projection: plcarr
+          domain: global
+        add_map_features: ['coastline']
+        add_colorbar:
+          label: Zonal Wind Increment Diff
+        add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
+        layers:
+        - type: MapGridded
+          longitude:
+            variable: experiment_increment_1::increment::lon
+          latitude:
+            variable: experiment_increment_1::increment::lat
+          data:
+            variable: experiment_increment_1::increment::ua_diff
+            slices: '[24,...]'
+          label: U increment (10 hPa)
+          colorbar: true
+          cmap: 'bwr'
+          vmin: *vmin_ua_diff
+          vmax: *vmax_ua_diff
+
+  #map plot for Zonal Wind increment
+  - batch figure:
+      variables: [ua]
+    figure:
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -954,8 +990,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Zonal Wind Increment 1
+          label: Zonal Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -969,7 +1006,7 @@ graphics:
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_ua
-          vmax: 1
+          vmax: *vmax_ua
 
       # Experiment 2
       - mapping:
@@ -977,8 +1014,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Zonal Wind Increment 1
+          label: Zonal Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -992,7 +1030,7 @@ graphics:
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_ua
-          vmax: 1
+          vmax: *vmax_ua
 
       # Experiment Diff (1-2)
       - mapping:
@@ -1000,8 +1038,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Zonal Wind Increment Diff (1-2)
+          label: Zonal Wind Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1014,8 +1053,8 @@ graphics:
           label: U increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_ua
-          vmax: 1
+          vmin: *vmin_ua_diff
+          vmax: *vmax_ua_diff
 
   #map plot for Meridional Wind increment (lowest level)
   - batch figure:
@@ -1032,7 +1071,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 1
+          label: Meridional Wind Increment
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -1055,8 +1095,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 2
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1078,7 +1119,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment Diff (1-2)
+          label: Meridional Wind Increment Diff
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         add_grid:
         layers:
         - type: MapGridded
@@ -1092,14 +1134,14 @@ graphics:
           label: V increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: &vmin_diff_va -0.2
+          vmax: &vmax_diff_va 0.2
 
   #map plot for Meridional Wind increment
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_850.png'
@@ -1110,7 +1152,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 1
+          label: Meridional Wind Increment
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -1133,8 +1176,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 2
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1156,8 +1200,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment Diff (1-2)
+          label: Meridional Wind Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1170,14 +1215,14 @@ graphics:
           label: V increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
@@ -1188,8 +1233,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 1
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1211,8 +1257,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 2
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1234,8 +1281,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment Diff (1-2)
+          label: Meridional Wind Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1248,14 +1296,14 @@ graphics:
           label: V increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
@@ -1266,8 +1314,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 1
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1289,8 +1338,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 2
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1313,8 +1363,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment Diff (1-2)
+          label: Meridional Wind Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1327,14 +1378,14 @@ graphics:
           label: V increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: *vmin_va
-          vmax: *vmax_va
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -1345,8 +1396,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 1
+          label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1359,8 +1411,8 @@ graphics:
           label: V increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_va
+          vmax: *vmax_va
 
       # Experiment 2
       - mapping:
@@ -1368,7 +1420,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Meridional Wind Increment 2
+          label: Meridional Wind Increment
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -1382,8 +1435,8 @@ graphics:
           label: V increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_va
+          vmax: *vmax_va
 
       # Experiment Diff
       - mapping:
@@ -1393,6 +1446,7 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff (1-2)
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1405,14 +1459,14 @@ graphics:
           label: V increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
   #map plot for Meridional Wind increment
   - batch figure:
       variables: [va]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_1.png'
@@ -1425,6 +1479,7 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1437,8 +1492,8 @@ graphics:
           label: V increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_va
+          vmax: *vmax_va
 
       # Experiment 2
       - mapping:
@@ -1448,6 +1503,7 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1460,8 +1516,8 @@ graphics:
           label: V increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_va
+          vmax: *vmax_va
 
       # Experiment Diff
       - mapping:
@@ -1471,6 +1527,7 @@ graphics:
         add_colorbar:
           label: Meridional Wind Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1483,8 +1540,8 @@ graphics:
           label: V increment (1 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -1
-          vmax: 1
+          vmin: *vmin_diff_va
+          vmax: *vmax_diff_va
 
 
   #map plot for Specific Humidity increment (lowest level)
@@ -1502,8 +1559,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 1
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1516,15 +1574,16 @@ graphics:
           label: Q increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: &vmin_q -0.001
+          vmax: &vmax_q 0.001
       # Experiment 2
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 2
+          label: Specific Humidity Increment
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -1538,16 +1597,17 @@ graphics:
           label: Q increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
       # Experiment Diff
       - mapping:
           projection: plcarr
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment Diff (1-2)
+          label: Specific Humidity Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1560,8 +1620,8 @@ graphics:
           label: Q increment (1000 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: &vmin_q_diff -0.0002
+          vmax: &vmax_q_diff 0.0002
 
   #map plot for Specific Humidity increment
   - batch figure:
@@ -1578,8 +1638,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 1
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1592,8 +1653,8 @@ graphics:
           label: Q increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment 2
       - mapping:
@@ -1601,8 +1662,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 2
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1615,8 +1677,8 @@ graphics:
           label: Q increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment Diff
       - mapping:
@@ -1624,8 +1686,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment Diff (1-2)
+          label: Specific Humidity Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1638,14 +1701,14 @@ graphics:
           label: Q increment (850 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q_diff
+          vmax: *vmax_q_diff
 
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_500.png'
@@ -1656,8 +1719,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 1
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1670,8 +1734,8 @@ graphics:
           label: Q increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment 2
       - mapping:
@@ -1681,6 +1745,7 @@ graphics:
         add_colorbar:
           label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1693,8 +1758,8 @@ graphics:
           label: Q increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment Diff (1-2)
       - mapping:
@@ -1702,8 +1767,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment Diff (1-2)
+          label: Specific Humidity Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1716,14 +1782,14 @@ graphics:
           label: Q increment (500 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q_diff
+          vmax: *vmax_q_diff
 
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_200.png'
@@ -1734,8 +1800,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 1
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1748,8 +1815,8 @@ graphics:
           label: Q increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment 2
       - mapping:
@@ -1757,7 +1824,8 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 2
+          label: Specific Humidity Increment
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         add_grid:
         layers:
         - type: MapGridded
@@ -1771,8 +1839,8 @@ graphics:
           label: Q increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment Diff
       - mapping:
@@ -1780,8 +1848,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment Diff (1-2)
+          label: Specific Humidity Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1794,14 +1863,14 @@ graphics:
           label: Q increment (200 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q_diff
+          vmax: *vmax_q_diff
 
   #map plot for Specific Humidity increment
   - batch figure:
       variables: [q]
     figure:
-      figure size: [60,10]
+      figure size: [60,20]
       layout: [3,1]
       title: 'Increment from JEDI'
       output name: '{{cycle_dir}}/eva/increment/map_plots/${variable}/inc_${variable}_10.png'
@@ -1812,8 +1881,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 1
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_1}}) {{experiment_id_1}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1826,8 +1896,8 @@ graphics:
           label: Q increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment 2
       - mapping:
@@ -1835,8 +1905,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment 2
+          label: Specific Humidity Increment
         add_grid:
+        add_title: '({{experiment_tag_2}}) {{experiment_id_2}}'
         layers:
         - type: MapGridded
           longitude:
@@ -1849,8 +1920,8 @@ graphics:
           label: Q increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q
+          vmax: *vmax_q
 
       # Experiment Diff
       - mapping:
@@ -1858,8 +1929,9 @@ graphics:
           domain: global
         add_map_features: ['coastline']
         add_colorbar:
-          label: Specific Humidity Increment Diff (1-2)
+          label: Specific Humidity Increment Diff
         add_grid:
+        add_title: '({{experiment_tag_1}}) - ({{experiment_tag_2}})'
         layers:
         - type: MapGridded
           longitude:
@@ -1872,8 +1944,8 @@ graphics:
           label: Q increment (10 hPa)
           colorbar: true
           cmap: 'bwr'
-          vmin: -0.001
-          vmax: 0.001
+          vmin: *vmin_q_diff
+          vmax: *vmax_q_diff
 
 transforms:
 - equals: experiment_increment_1::increment::ps-experiment_increment_2::increment::ps

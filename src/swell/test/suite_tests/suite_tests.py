@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     if args.suites == ["all"]:
-        suites = ("3dvar", "hofx", "ufo_testing")
+        suites = ("3dvar_marine", "hofx", "3dvar_atmos")
     else:
         suites = args.suites
 

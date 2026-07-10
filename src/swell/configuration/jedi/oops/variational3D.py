@@ -39,7 +39,7 @@ class variational3D(OopsConfig):
                 'iterations': [{
                     'geometry': self.interface_model('geometry_inner'),
                     'gradient norm reduction': float(self.template_dict['gradient_norm_reduction']),
-                    'ninner': str(self.template_dict['number_of_iterations']),
+                    'ninner': self.template_dict['number_of_iterations'],
                     'diagnostics': {
                         'departures': 'ombg'
                     },
@@ -56,6 +56,11 @@ class variational3D(OopsConfig):
             },
             'output': self.interface_model('analysis')
         }
+
+        # TODO: Implement this more cleanly in the OOPS schema
+        if self.jedi_interface == 'geos_cf':
+            oops['final']['increment'] = {'geometry': self.interface_model('geometry'),
+                                          'output': self.interface_model('increment_cs')}
 
         return oops
 

@@ -1,3 +1,4 @@
+#!jinja2
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -17,6 +18,8 @@
     UTC mode = True
     allow implicit tasks = False
 
+{{scheduling['stall_timeout']}}
+
 # --------------------------------------------------------------------------------------------------
 
 [scheduling]
@@ -26,15 +29,21 @@
     runahead limit = {{runahead_limit}}
 
     [[graph]]
+	R1 = """
+        {% for model_component in model_components %}
+            JediLogComparison-{{model_component}}?
+        {% endfor %}     
+        """
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
         {% for model_component in model_components %}
         {% if cycle_time[model_component] %}
-            EvaComparisonIncrement-{{model_component}}
-            EvaComparisonJediLog-{{model_component}}
             {% for path in comparison_experiment_paths %}
-            JediOopsLogParser-{{model_component}}-{{ loop.index0 }} => JediLogComparison-{{model_component}}
+            JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons => comparison_fail
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons => comparison_fail
+	    JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}} => PublishComparisons => comparison_fail
         {% endif %}
         {% endfor %}
         """
@@ -56,6 +65,9 @@
             datetime = $CYLC_TASK_CYCLE_POINT
             config = $CYLC_SUITE_DEF_PATH/experiment.yaml
 
+    [[comparison_fail]]
+        script = "exit 1"
+
     {% for model_component in model_components %}
     [[EvaComparisonIncrement-{{model_component}}]]
         script = "swell task EvaComparisonIncrement $config -d $datetime -m {{model_component}}"
@@ -63,10 +75,29 @@
     [[EvaComparisonJediLog-{{model_component}}]]
         script = "swell task EvaComparisonJediLog $config -d $datetime -m {{model_component}}"
 
+    [[EvaComparisonObservations-{{model_component}}]]
+        script = "swell task EvaComparisonObservations $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["EvaComparisonObservations"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["EvaComparisonObservations"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[PublishComparisons]]
+         script = "swell task PublishComparisons $config -d $datetime -m {{model_component}}"
+
+    {% if comparison_experiment_paths is mapping %}
+    {% for path in comparison_experiment_paths.values() %}
+    [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
+        script = "swell task JediOopsLogParser {{path}} -d $datetime -m {{model_component}}"
+    {% endfor %}
+    {% else %}
     {% for path in comparison_experiment_paths %}
     [[JediOopsLogParser-{{model_component}}-{{ loop.index0 }}]]
         script = "swell task JediOopsLogParser {{path}} -d $datetime -m {{model_component}}"
     {% endfor %}
+    {% endif %}
 
     [[JediLogComparison-{{model_component}}]]
         script = "swell task JediLogComparison $config -m {{model_component}}"

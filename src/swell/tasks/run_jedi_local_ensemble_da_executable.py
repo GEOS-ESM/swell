@@ -140,6 +140,13 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                     self.config.local_ensemble_use_linear_observer())
         self.jedi_rendering.add_key('skip_ensemble_hofx', self.config.skip_ensemble_hofx())
 
+        # Add placeholder names if mock experiment
+        # ----------------------------------------
+        if self.config.mock_experiment(False):
+            self.jedi_rendering.add_key('experiment_root', 'experiment_root')
+            self.jedi_rendering.add_key('experiment_id', 'experiment_id')
+            self.jedi_rendering.add_key('cycle_dir', 'cycle_dir')
+
         # Prevent both 'local_ensemble_save_posterior_mean' and
         # 'local_ensemble_save_posterior_ensemble' from being true
         # --------------------------------------------------------

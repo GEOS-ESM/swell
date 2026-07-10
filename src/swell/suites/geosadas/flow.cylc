@@ -1,3 +1,4 @@
+#!jinja2
 # (C) Copyright 2021- United States Government as represented by the Administrator of the
 # National Aeronautics and Space Administration. All Rights Reserved.
 #
@@ -13,6 +14,8 @@
 [scheduler]
     UTC mode = True
     allow implicit tasks = False
+
+{{scheduling['stall_timeout']}}
 
 # --------------------------------------------------------------------------------------------------
 
@@ -107,7 +110,7 @@
     [[ GetGeosAdasBackground ]]
         script = "swell task GetGeosAdasBackground $config -d $datetime -m geos_atmosphere"
 
-    [[RenderJediObservations-{{model_component}}]]
+    [[RenderJediObservations-geos_atmosphere]]
         script = "swell task RenderJediObservations $config -d $datetime -m geos_atmosphere"
 
     [[RunJediVariationalExecutable]]
