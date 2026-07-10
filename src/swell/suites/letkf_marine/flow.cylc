@@ -1,0 +1,200 @@
+#!jinja2
+# (C) Copyright 2021- United States Government as represented by the Administrator of the
+# National Aeronautics and Space Administration. All Rights Reserved.
+#
+# This software is licensed under the terms of the Apache Licence Version 2.0
+# which can be obtained at http://www.apache.org/licenses/LICENSE-2.0.
+
+# --------------------------------------------------------------------------------------------------
+
+# Cylc suite for executing JEDI-based LocalEnsembleDA Algorithm (Marine)
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduler]
+    UTC mode = True
+    allow implicit tasks = False
+
+{{scheduling['stall_timeout']}}
+
+# --------------------------------------------------------------------------------------------------
+
+[scheduling]
+
+    initial cycle point = {{start_cycle_point}}
+    final cycle point = {{final_cycle_point}}
+    runahead limit = {{runahead_limit}}
+
+    [[graph]]
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+            {% for model_component in model_components %}
+            # Stage JEDI static files
+            CloneJedi => StageJedi-{{model_component}}
+            {% endfor %}
+        """
+
+        {% for cycle_time in cycle_times %}
+        {{cycle_time.cycle_time}} = """
+        {% for model_component in model_components %}
+        {% if cycle_time[model_component] %}
+            # Task triggers for: {{model_component}}
+            # ------------------
+
+            # Perform staging that is cycle dependent
+            BuildJediByLinking[^]? | BuildJedi[^] => StageJediCycle-{{model_component}}
+
+            # Get background and ensemble geos experiment files
+            GetObservations-{{model_component}} => RenderJediObservations-{{model_component}}
+
+            StageJedi-{{model_component}}[^] & StageJediCycle-{{model_component}} & RenderJediObservations-{{model_component}} & GetEnsembleGeosExperiment-{{model_component}} => RunJediObsfiltersExecutable-{{model_component}}
+
+            {% if skip_ensemble_hofx %}
+               RunJediObsfiltersExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+            {% else %}
+               # Run hofx for ensemble members according to strategy
+               {% if ensemble_hofx_strategy == 'serial' %}
+                   RunJediObsfiltersExecutable-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}
+                   RunJediHofxEnsembleExecutable-{{model_component}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+
+               {% elif ensemble_hofx_strategy == 'parallel' %}
+                   {% for packet in range(ensemble_hofx_packets) %}
+                      RunJediObsfiltersExecutable-{{model_component}} => RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}
+                      RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}} => RunJediLocalEnsembleDaExecutable-{{model_component}}
+                   {% endfor %}
+               {% endif %}
+            {% endif %}
+
+
+            # EvaIncrement
+            RunJediLocalEnsembleDaExecutable-{{model_component}} => EvaIncrement-{{model_component}}
+
+            # Clean up large files
+            EvaIncrement-{{model_component}} => CleanCycle-{{model_component}}
+
+        {% endif %}
+        {% endfor %}
+        """
+        {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
+
+[runtime]
+
+    # Task defaults
+    # -------------
+    [[root]]
+        pre-script = "source $CYLC_SUITE_DEF_PATH/modules"
+
+        [[[environment]]]
+            datetime = $CYLC_TASK_CYCLE_POINT
+            config   = $CYLC_SUITE_DEF_PATH/experiment.yaml
+
+    # Tasks
+    # -----
+    [[CloneJedi]]
+        script = "swell task CloneJedi $config"
+
+    [[BuildJediByLinking]]
+        script = "swell task BuildJediByLinking $config"
+
+    [[BuildJedi]]
+        script = "swell task BuildJedi $config"
+        platform = {{platform}}
+        execution time limit = {{scheduling["BuildJedi"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["BuildJedi"]["directives"]["all"].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    {% for model_component in model_components %}
+
+    [[StageJedi-{{model_component}}]]
+        script = "swell task StageJedi $config -m {{model_component}}"
+
+    [[StageJediCycle-{{model_component}}]]
+        script = "swell task StageJedi $config -d $datetime -m {{model_component}}"
+
+    [[GetBackground-{{model_component}} ]]
+        script = "swell task GetBackground $config -d $datetime -m {{model_component}}"
+
+    [[GetEnsembleGeosExperiment-{{model_component}}]]
+        script = "swell task GetEnsembleGeosExperiment $config -d $datetime -m {{model_component}}"
+
+    [[RenderJediObservations-{{model_component}}]]
+        script = "swell task RenderJediObservations $config -d $datetime -m {{model_component}}"
+
+    [[RunJediObsfiltersExecutable-{{model_component}}]]
+        script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediObsfiltersExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediObsfiltersExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[RunJediEnsembleMeanVariance-{{model_component}}]]
+        script = "swell task RunJediEnsembleMeanVariance $config -d $datetime -m {{model_component}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediEnsembleMeanVariance"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediEnsembleMeanVariance"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[GetObservations-{{model_component}}]]
+        script = "swell task GetObservations $config -d $datetime -m {{model_component}}"
+
+    {% if not skip_ensemble_hofx %}
+    {% if ensemble_hofx_strategy == 'serial' %}
+    [[RunJediHofxEnsembleExecutable-{{model_component}}]]
+        script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+    {% elif ensemble_hofx_strategy == 'parallel' %}
+    {% for packet in range(ensemble_hofx_packets) %}
+    [[RunJediHofxEnsembleExecutable-{{model_component}}_pack{{packet}}]]
+	script = "swell task RunJediHofxEnsembleExecutable $config -d $datetime -m {{model_component}} -p {{packet}}"
+	platform = {{platform}}
+	execution time limit = {{scheduling["RunJediHofxEnsembleExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediHofxEnsembleExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+    [[RunJediLocalEnsembleDaExecutable-{{model_component}}]]
+        script = "swell task RunJediLocalEnsembleDaExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediLocalEnsembleDaExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+        {%- for key, value in scheduling["RunJediLocalEnsembleDaExecutable"]["directives"][model_component].items() %}
+            --{{key}} = {{value}}
+        {%- endfor %}
+
+    [[EvaIncrement-{{model_component}}]]
+        script = "swell task EvaIncrement $config -d $datetime -m {{model_component}}"
+
+    [[SaveObsDiags-{{model_component}}]]
+        script = "swell task SaveObsDiags $config -d $datetime -m {{model_component}}"
+
+    [[CleanCycle-{{model_component}}]]
+        script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+    {% endfor %}
