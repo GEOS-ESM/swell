@@ -13,8 +13,8 @@ from enum import Enum
 
 class SuiteConfig(QuestionContainer, Enum):
 
-    ingest_obs = QuestionList(
-        list_name="ingest_obs",
+    r2d2_ingest = QuestionList(
+        list_name="r2d2_ingest",
         questions=[
             sq.common,
             qd.download_convert_pipeline(False)
@@ -25,27 +25,32 @@ class SuiteConfig(QuestionContainer, Enum):
     ingest_obs_marine = QuestionList(
         list_name="ingest_obs_marine",
         questions=[
-            ingest_obs,
+            r2d2_ingest,
             sq.marine,
-            qd.start_cycle_point("2021-07-02T06:00:00Z"),
-            qd.final_cycle_point("2021-07-03T06:00:00Z"),
+            qd.start_cycle_point("2023-07-01T00:00:00Z"),
+            qd.final_cycle_point("2023-07-02T12:00:00Z"),
             qd.model_components(['geos_marine']),
             qd.runahead_limit("P5"),
         ],
         geos_marine=[
             qd.window_length("PT6H"),
             qd.cycle_times(['T00', 'T06', 'T12', 'T18']),
-            qd.obs_to_ingest(['adt_cryosat2n']),  # List of obs names
+            qd.obs_to_ingest(['adt_cryosat2n',
+                              'adt_sentinel6a',
+                              'adt_swot_nadir',
+                              'sss_smos',
+                              ]),
             qd.dry_run(True),
+            qd.store_as_symlink(False),
         ]
     )
 
     ingest_obs_cf = QuestionList(
         list_name="ingest_obs_cf",
         questions=[
-            ingest_obs,
-            qd.start_cycle_point("2023-08-10T00:00:00Z"),
-            qd.final_cycle_point("2023-08-11T00:00:00Z"),
+            r2d2_ingest,
+            qd.start_cycle_point("2024-01-01T18:00:00Z"),
+            qd.final_cycle_point("2024-01-01T18:00:00Z"),
             qd.model_components(['geos_cf']),
             qd.runahead_limit("P5"),
             qd.download_convert_pipeline(True),
@@ -53,12 +58,33 @@ class SuiteConfig(QuestionContainer, Enum):
         ],
         geos_cf=[
             qd.window_length("PT6H"),
-            qd.obs_to_download(['omps_o3_nm_total']),
-            qd.obs_to_ingest(['omps_o3_nm_total']),
+            qd.obs_to_download(['tempo_no2_tropo']),
+            qd.obs_to_ingest(['tempo_no2_tropo']),
             qd.converter_path(
                 "/discover/nobackup/projects/jcsda/s2127/maryamao/"
                 "jedi-bundle/build-intel-1.9/bin/"
             ),
             qd.dry_run(False),
+            qd.store_as_symlink(False),
+        ]
+    )
+
+    ingest_background_cf = QuestionList(
+        list_name="ingest_background_cf",
+        questions=[
+            r2d2_ingest,
+            qd.start_cycle_point("2025-10-02T09:00:00Z"),
+            qd.final_cycle_point("2025-10-02T09:00:00Z"),
+            qd.cycle_times(['T09']),
+            qd.model_components(['geos_cf']),
+            qd.runahead_limit("P5"),
+            qd.ingest_background_pipeline(True),
+        ],
+        geos_cf=[
+            qd.dry_run(True),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(True),
         ]
     )

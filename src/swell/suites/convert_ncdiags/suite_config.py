@@ -80,7 +80,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "tcp"
             ]),
             qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                    "ufo_testing/ncdiagv2/%Y%m%d%H"),
+                                    "obsolete/ufo_testing/ncdiagv2/%Y%m%d%H"),
         ]
     )
 

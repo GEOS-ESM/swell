@@ -146,7 +146,8 @@ class TaskQuestions(QuestionContainer, Enum):
     CleanCycle = QuestionList(
         list_name="CleanCycle",
         questions=[
-            qd.clean_patterns()
+            qd.clean_patterns(),
+            qd.window_length()
         ]
     )
 
@@ -334,6 +335,18 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    GetRestartCf = QuestionList(
+        list_name="GetRestartCf",
+        questions=[
+            qd.window_length(),
+            qd.rst_experiment(),
+            qd.rst_file_types(),
+            qd.horizontal_resolution(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     GetBackgroundGeosExperiment = QuestionList(
         list_name="GetBackgroundGeosExperiment",
         questions=[
@@ -489,6 +502,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.dry_run(),
             qd.obs_to_ingest(),
             qd.window_length(),
+            qd.store_as_symlink(),
         ]
     )
 
@@ -580,6 +594,26 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.mom6_iau(),
             qd.total_processors(),
             qd.window_length()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    PrepForecastCf = QuestionList(
+        list_name="PrepForecastCf",
+        questions=[
+            qd.analysis_variables(),
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.geos_cf_install_dir(),
+            qd.geos_cf_run_dir(),
+            qd.geosfp_exp(),
+            qd.geosfp_path(),
+            qd.horizontal_resolution(),
+            qd.iau(),
+            qd.inc_template(),
+            qd.window_length(),
+            qd.rst_experiment()
         ]
     )
 
@@ -796,15 +830,21 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    SaveRestartCf = QuestionList(
+        list_name="SaveRestartCf",
+        questions=[
+            qd.window_length(),
+            qd.horizontal_resolution(),
+            qd.rst_file_types(),
+            qd.rst_store_interval(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     SaveRestart = QuestionList(
         list_name="SaveRestart",
-        questions=[
-            window_questions,
-            qd.background_time_offset(),
-            qd.forecast_duration(),
-            qd.horizontal_resolution(),
-            qd.marine_models(),
-        ]
+        questions=[]
     )
 
     # --------------------------------------------------------------------------------------------------
@@ -825,13 +865,26 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    StoreBackground = QuestionList(
-        list_name="StoreBackground",
+    SaveForecastCf = QuestionList(
+        list_name="SaveForecastCf",
         questions=[
-            window_questions,
-            qd.background_experiment(),
-            qd.background_frequency(),
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
             qd.horizontal_resolution(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveBackground = QuestionList(
+        list_name="SaveBackground",
+        questions=[
+            qd.dry_run(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(),
         ]
     )
 

@@ -7,7 +7,7 @@
 3. [R2D2 Concepts](#r2d2-concepts)
 4. [How Swell Uses R2D2](#how-swell-uses-r2d2)
 5. [Store & Fetch Quick Reference](#store--fetch-quick-reference)
-6. [Storing Observations to R2D2](../examples/r2d2/ingest_obs.md)
+6. [Storing Observations to R2D2](../examples/r2d2/r2d2_ingest.md)
 
 ---
 

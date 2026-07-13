@@ -37,17 +37,18 @@ module load other/mepo
 
 # Load r2d2 modules
 # -----------------
-module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
-module load r2d2-client/112025
+module use -a /discover/nobackup/gmaoswell/r2d2/modulefiles/core
+module load r2d2-client/05302026
 
 # Load eva and jedi_bundle
 # ------------------------
+module use -a /discover/nobackup/projects/gmao/advda/JediOpt/modulefiles/core
 module load eva/sles15_1.6.7
 module load jedi_bundle/sles15_skylab9
 
-# Load sp
+# Load ip
 # -------
-module load sp/2.5.0
+module load ip/5.1.0 
 
 # Set the swell paths
 # -------------------
