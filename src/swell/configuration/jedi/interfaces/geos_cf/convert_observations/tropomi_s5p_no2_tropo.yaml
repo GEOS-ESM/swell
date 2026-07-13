@@ -16,7 +16,7 @@ converter_script: tropomi_no2_co_nc2ioda.py
 
 # Output filename template (must match the source pattern in
 # ingest_observations/tropomi_s5p_no2_tropo.yaml).
-output_filename_template: "tropomi_s5p_no2_tropo_%Y%m%d%H.nc"
+output_filename_template: "tropomi_s5p_no2_tropo_%Y%m%d%H.nc4"
 
 # Additional flags passed verbatim to the converter after -i and -o.
 extra_flags:
