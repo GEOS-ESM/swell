@@ -579,6 +579,32 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ensmeanvariance_spec(TaskQuestion):
+        default_value: List[Dict[str, str]] = field(default_factory=lambda: [{}])
+        question_name: str = "ensmeanvariance_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the ensemble mean and variance specifications:"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class diffstates_spec(TaskQuestion):
+        default_value: Dict[str, Any] = field(default_factory=dict)
+        question_name: str = "diffstates_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the diffstates specifications: [state1, state2]"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class existing_geos_gcm_build_path(TaskQuestion):
         default_value: str = "defer_to_platform"
         question_name: str = "existing_geos_gcm_build_path"

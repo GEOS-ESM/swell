@@ -18,9 +18,8 @@ def eda_analysis_control_pert(template_dict: Mapping) -> Mapping:
     analysis = {
         'filetype': 'cube sphere history',
         'provider': 'geos',
-        'datapath': f'./analysis/chunk{ichunk:03d}/mem%mem_pad%',
-##        'filename': f'eda.ana.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
-##        'filename': f'eda.ana.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'datapath': f'./analysis_chunk/chunk{ichunk:03d}/mem%mem_pad%',
+        'filename': 'eda.ana.mem%mem_pad%.%yyyy%mm%dd_%hh%MM%ssz.nc4',
         'first': 'PT0H',
         'frequency': 'PT1H',
         'field io names': field_io_names,

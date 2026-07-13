@@ -16,14 +16,13 @@ class eda_control_pert(OopsConfig):
     def render_oops(self):
         nmember = self.template_dict['ensemble_num_members']
         nchunk = self.template_dict['ensemble_num_chunks']
-        ichunk = self.template_dict['ensemble_ichunk']        
+        ichunk = self.template_dict['ensemble_ichunk']
         nstate = int ( nmember / nchunk )
         if ichunk == 1:
             num_pert_mem = nstate - 1
-            pert_start_index = 2
         else:
             num_pert_mem = nstate
-            pert_start_index = 1            
+        pert_start_index = 1
 
         oops = {
             'assimilation': {
@@ -32,7 +31,7 @@ class eda_control_pert(OopsConfig):
                   'jb evaluation': False,
                   'time window': {
                       'begin': self.template_dict['window_begin_iso'],
-                      'end': self.template_dict['window_end_iso'],
+                      'length': self.template_dict['window_length'],
                       'bound to include': 'begin'
                   },
                   'geometry': self.interface_model('geometry'),
