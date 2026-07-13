@@ -5,7 +5,7 @@
 # Invocation (one call per cycle, all granules passed together):
 #   python3 <jedi_bundle>/build/bin/tropomi_no2_co_nc2ioda.py
 #       -i <granule1.nc> <granule2.nc> ...
-#       -o <cycle_dir>/ioda/tropomi_s5p_co_total/tropomi_s5p_co_total_YYYYMMDDHH.nc
+#       -o <cycle_dir>/ioda/tropomi_s5p_co_total/tropomi_s5p_co_total_YYYYMMDDHH.nc4
 #       -v co
 #       -c total
 #       -n 0.0
