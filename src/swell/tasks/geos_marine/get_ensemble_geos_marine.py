@@ -31,6 +31,7 @@ class GetEnsemble(taskBase):
         # -------------------------------------------------
         ensemble_path = self.config.path_to_ensemble()
 
+        exit(f'GetEnsemble: ensemble_path = {ensemble_path}')
         # Replate ensemble_path with true path
         # ---------------------------------------------
         ensemble_location = self.cycle_time_dto().strftime(ensemble_path)
