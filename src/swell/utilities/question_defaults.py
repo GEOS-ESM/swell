@@ -90,7 +90,7 @@ class QuestionDefaults():
         default_value: str = "defer_to_model"
         question_name: str = "ensemble_num_members"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "How many members comprise the ensemble?"
         widget_type: WType = WType.INTEGER
