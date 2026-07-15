@@ -50,7 +50,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_num_members(32),
             qd.ensemble_num_chunks(8),
             qd.number_of_iterations([100]),
-            qd.gradient_norm_reduction(1.e-8),
+            qd.gradient_norm_reduction(1.e-4),
+            qd.minimizer("DRPLanczos"),
             qd.analysis_variables([
                 "eastward_wind",
                 "northward_wind",

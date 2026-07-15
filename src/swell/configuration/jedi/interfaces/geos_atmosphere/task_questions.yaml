@@ -212,6 +212,7 @@ minimizer:
   default_value: DRPCG
   options:
   - DRPCG
+  - DRPLanczos
 
 ncdiag_experiments:
   default_value: x0050_fgat
