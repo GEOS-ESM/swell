@@ -132,8 +132,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eda = QuestionList(
-        list_name="eda",
+    eda_atmos = QuestionList(
+        list_name="eda_atmos",
         questions=[
             eda_atmos_tier1
         ]

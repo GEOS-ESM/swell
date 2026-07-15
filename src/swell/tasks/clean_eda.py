@@ -127,10 +127,10 @@ class CleanEda(taskBase):
                 if os.path.islink(d2):
                     # Only remove the symlink itself, never follow it
                     os.unlink(d2)
-                    print(f"Deleted symlink dir: {d2}")
+                    self.logger.info(f"Deleted symlink dir: {d2}")
                 else:
                     shutil.rmtree(d2, ignore_errors=True)
-                    print(f"Deleted directory: {d2}")
+                    self.logger.info(f"Deleted directory: {d2}")
             for observer in jedi_config_dict['cost function']['observations']['observers']:
                 # Get observation name
                 observation = observer['observation_name']
@@ -138,11 +138,11 @@ class CleanEda(taskBase):
                 for file_path in glob.glob(os.path.join(d1, f'{observation}.*')):
                     if os.path.islink(file_path):
                         os.unlink(file_path)                         # safe: removes only the link
-                        print(f"Deleted symlink file: {file_path}")
+                        self.logger.info(f"Deleted symlink file: {file_path}")
                     else:
                         try:
                             os.remove(file_path)
-                            print(f"Deleted file: {file_path}")
+                            self.logger.info(f"Deleted file: {file_path}")
                         except FileNotFoundError:
                             pass   # file disappeared between glob and remove
 
