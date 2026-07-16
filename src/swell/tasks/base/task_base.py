@@ -299,9 +299,9 @@ class taskFactory():
         if model is not None:
             try:
                 task_class = getattr(importlib.import_module(
-                    f'swell.tasks.{model}.{task_lower}-{model}'), task)
+                    f'swell.tasks.{model}.{task_lower}_{model}'), task)
                 factory_logger.info(f'Using model-specific version of {task} in '
-                                    f'<swell.tasks.{model}.{task_lower}-{model}>')
+                                    f'<swell.tasks.{model}.{task_lower}_{model}>')
             except ModuleNotFoundError:
                 factory_logger.info(f'Could not find model-specific version of {task}.'
                                     ' Looking for generic version.')
@@ -333,6 +333,15 @@ def get_tasks() -> list:
         base_name = os.path.basename(task_file)
         if '__' not in base_name:
             tasks.append(snake_case_to_camel_case(base_name[0:-3]))
+
+    # Get model-specific task names
+    for model in os.listdir(os.path.join(get_swell_path(), 'configuration', 'jedi', 'interfaces')):
+        model_task_path = os.path.join(get_swell_path(), 'tasks', model)
+        if os.path.exists(model_task_path):
+            for task_file in os.listdir(model_task_path):
+                if f'_{model}.py' in task_file:
+                    task_name = task_file.split(f'_{model}.py')[0]
+                    tasks.append(snake_case_to_camel_case(task_name))
 
     # Return list of valid task choices
     return tasks
