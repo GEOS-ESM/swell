@@ -67,7 +67,8 @@ obs prior filters:
     channels: *cris-fsr_n21_channels
   action:
     name: assign error
-    error parameter vector: [ 0.8230, 0.7600, 0.7360, 0.7430, 0.8560, 1.0790, 0.8880, 0.7780, 0.6710, 0.6500,
+    error parameter vector: &cris-fsr_n21_obserr
+               [ 0.8230, 0.7600, 0.7360, 0.7430, 0.8560, 1.0790, 0.8880, 0.7780, 0.6710, 0.6500,
                  0.6430, 0.6290, 0.6290, 0.6180, 0.6380, 0.6190, 0.6100, 0.6270, 0.6010, 0.6170,
                  0.6080, 0.4980, 0.5112, 0.4922, 0.4959, 0.4954, 0.4836, 0.5140, 0.5005, 0.4917,
                  0.4881, 0.4656, 0.4793, 0.4638, 0.4557, 0.4666, 0.4468, 0.4534, 0.4471, 0.4448,
@@ -194,6 +195,7 @@ obs post filters:
     channels: *cris-fsr_n21_channels
     options:
       channels: *cris-fsr_n21_channels
+      error parameter vector: *cris-fsr_n21_obserr
       use_flag: &useflag_cris-fsr_n21 {{crisfsr_n21_active_channels}}
       use_flag_clddet: &clddet_cris-fsr_n21 [ 31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
                            31, 31, 31, 31, 31, 31, 31, 31, 31, 31,
@@ -266,6 +268,7 @@ obs post filters:
     channels: *cris-fsr_n21_channels
     options:
       channels: *cris-fsr_n21_channels
+      error parameter vector: *cris-fsr_n21_obserr
       use_flag: *useflag_cris-fsr_n21
   maxvalue: 1.0e-12
   action:
@@ -306,6 +309,7 @@ obs post filters:
         channels: *cris-fsr_n21_channels
         options:
           channels: *cris-fsr_n21_channels
+      error parameter vector: *cris-fsr_n21_obserr
       obserr_bound_max: [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
                           2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
                           2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
