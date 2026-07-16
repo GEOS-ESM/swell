@@ -28,17 +28,17 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2023-10-10T12:00:00Z"),
+            qd.final_cycle_point("2025-11-30T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
             qd.horizontal_resolution('91'),
-            qd.background_experiment('x0050'),
+            qd.background_experiment('x0054'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x'),
+                                           'rtodling/archive/Restarts/JEDI/544'),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                         'rtodling/archive/541/Milan'),
+                                         'rtodling/archive/544'),
             qd.npx_proc(3),
             qd.npy_proc(3),
             qd.cycle_times(['T00']),
@@ -68,17 +68,17 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.skip_ensemble_hofx(),
-            qd.final_cycle_point("2023-10-10T12:00:00Z"),
+            qd.final_cycle_point("2025-11-30T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
         ],
         geos_atmosphere=[
             qd.horizontal_resolution('91'),
-            qd.background_experiment('x0050'),
+            qd.background_experiment('x0054'),
             qd.geos_x_background_directory('/discover/nobackup/projects/gmao/dadev/'
-                                           'rtodling/archive/Restarts/JEDI/541x'),
+                                           'rtodling/archive/Restarts/JEDI/544'),
             qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
-                                         'rtodling/archive/541/Milan'),
+                                         'rtodling/archive/544'),
             qd.npx_proc(4),
             qd.npy_proc(4),
             # qd.perhost(32),
