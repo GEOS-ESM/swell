@@ -202,6 +202,9 @@ ioda instrument names:
     full name: SSMIS (DMSP-F17)
     provider : ncdiag
     inst type: radiance
+  - ioda name: tcp
+    full name: Tropical Cyclone central pressure
+    inst type: conventional
   - ioda name: vadwind
     full name: Velocity Azimuth Display Wind Profile
     provider : ncdiag

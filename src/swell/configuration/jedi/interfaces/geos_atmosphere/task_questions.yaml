@@ -277,6 +277,7 @@ observations:
   - sfcship
   - sfc
   - sondes
+  - tcp
   - airs_aqua
   - amsr2_gcom-w1
   - amsua_aqua
