@@ -125,7 +125,11 @@ ensemble_hofx_strategy:
   - parallel
 
 ensemble_num_members:
-  default_value: 10
+  default_value: 16
+  options: None
+
+obs_pert_amplitude:
+  default_value: 1.0
   options: None
 
 geovals_experiment:

@@ -552,7 +552,7 @@ class QuestionDefaults():
         question_name: str = "obs_pert_amplitude"
         options: str = "defer_to_model"
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "all_models"
         ])
         prompt: str = "Enter obs perturbation amplitude for EDA:"
         widget_type: WType = WType.FLOAT

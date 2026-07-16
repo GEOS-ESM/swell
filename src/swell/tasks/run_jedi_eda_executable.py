@@ -14,7 +14,7 @@ from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
-
+from swell.utilities.yaml_utils import replace_string_value
 
 # --------------------------------------------------------------------------------------------------
 
@@ -149,20 +149,19 @@ class RunJediEdaExecutable(taskBase):
         for observer in jedi_config_dict['cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
-            print(f'ob= {observation}')
             # copy obs input file to avoid multi MPI reading the same file
             files = glob.glob(os.path.join(self.cycle_dir(), f'{observation}.*'))
             for src_file in files:
-                print(f'f= {src_file}')
+                self.logger.info(f'f= {src_file}')
                 shutil.copy(src_file, xdir)
 
             if imember > 1:
                 obs_cov_model = observer.get('obs error', {}).get('covariance model')
-                print(f'{observation}:  obs_cov_model = {obs_cov_model}')
+                self.logger.info(f'{observation}:  obs_cov_model = {obs_cov_model}')
                 if obs_cov_model and 'cross variable covariances' in obs_cov_model:
-                    print(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
+                    self.logger.info(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
                 else:
-                    print(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
+                    self.logger.info(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
                     obs_error_dict = {
                         'covariance model': 'diagonal',
                         'zero-mean perturbations': True,
@@ -205,11 +204,17 @@ class RunJediEdaExecutable(taskBase):
                     File = os.path.join(dir1, mem_dir, fname)
                     obs_bias['covariance']['prior']['input file'] = File
 
+        # copy fv3-jedi dir, update dir names
+        d1 = os.path.join(self.cycle_dir(), 'fv3-jedi')
+        d2 = os.path.join(self.cycle_dir(), mem_dir, 'fv3-jedi')
+        shutil.copytree(d1, d2, dirs_exist_ok=True)
 
-        print('jedi_config_dict')
-        print(jedi_config_dict)
-        print('end jedi_config_dict')
-        exit()
+        dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
+        for i in dir_list:
+            j = f"fv3-jedi/{i}"
+            k = f"{mem_dir}{j}"
+            jedi_config_dict = replace_string_value(jedi_config_dict, j, k)
+            # Result: e.g., analysis/mem002/fv3-jedi/rcov
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False
@@ -217,22 +222,6 @@ class RunJediEdaExecutable(taskBase):
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
-
-        # copy fv3-jedi dir, update dir names
-        d1 = os.path.join(self.cycle_dir(), 'fv3-jedi')
-        d2 = os.path.join(self.cycle_dir(), mem_dir, 'fv3-jedi')
-        shutil.copytree(d1, d2, dirs_exist_ok=True)
-
-        with open(jedi_config_file, 'r') as f:
-            yaml_content = f.read()
-
-        dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
-        for i in dir_list:
-            j = f"fv3-jedi/{i}"
-            k = f"{mem_dir}{j}"  # Result: analysis/mem002/fv3-jedi/rcov
-            yaml_content = yaml_content.replace(j, k)
-        with open(jedi_config_file, 'w') as f:
-            f.write(yaml_content)
 
         # Get the JEDI interface metadata
         # -------------------------------

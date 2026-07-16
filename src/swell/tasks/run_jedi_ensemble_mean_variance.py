@@ -71,7 +71,7 @@ class RunJediEnsembleMeanVariance(taskBase):
         # Ensemble
         self.jedi_rendering.add_key('ensemble_num_members', self.config.ensemble_num_members(None))
 
-        print(f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
+        self.logger.info(f'self.config.ensmeanvariance_spec = {self.config.ensmeanvariance_spec()}')
         meanvar_spec_dict = self.config.ensmeanvariance_spec()
 
         # Add placeholder names if mock experiment
