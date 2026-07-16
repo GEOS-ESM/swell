@@ -65,6 +65,10 @@ class JediConfigRendering():
         self.__template_dict__['experiment_id'] = experiment_id
         self.__template_dict__['experiment_root'] = experiment_root
 
+        # Predefine eda variables to dictionary
+        self.__template_dict__['ensemble_imember'] = None
+        self.__template_dict__['ensemble_ichunk'] = None
+
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
             'analysis_variables',

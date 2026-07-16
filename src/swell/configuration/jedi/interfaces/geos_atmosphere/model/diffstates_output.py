@@ -20,7 +20,7 @@ def diffstates_output(template_dict: Mapping) -> Mapping:
     prefix_output = template_dict['diffstates_spec'].get('state_diff', {}).get('fn_output')
 
     stateType = template_dict.get('diffstates_spec_statetype')
-    if [stateType == 'ensemble']:
+    if stateType == 'ensemble':
         field_io_names_loc = field_io_names_sa1
     else:
         field_io_names_loc = field_io_names

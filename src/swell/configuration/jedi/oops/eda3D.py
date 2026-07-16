@@ -14,6 +14,8 @@ from swell.utilities.oops_config import OopsConfig
 class eda3D(OopsConfig):
 
     def render_oops(self):
+        assert self.template_dict['ensemble_imember'] != None, \
+            f'ensemble_imember is None and eda3D.py fails'
         oops = {
             'cost function': {
                 'cost type': '3D-Var',

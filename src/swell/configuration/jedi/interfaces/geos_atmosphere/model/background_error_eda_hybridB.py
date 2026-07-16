@@ -212,8 +212,8 @@ def background_error_eda_hybridB(template_dict: Mapping) -> Mapping:
     # Use ruamel.yaml to load the string instead of standard pyyaml
     ruamel_yaml = YAML()
     background_error = ruamel_yaml.load(rendered_yaml_string)
-    cov_template = background_error['components'][1]['covariance']
-    ['members from template']['template']
+    cov_template = (background_error['components'][1]['covariance']
+                    ['members from template']['template'])
     cov_template['field io names'] = field_io_names
     a = background_error['components'][0]['covariance']['linear variable change']
     a['output variables'] = template_dict['analysis_variables']

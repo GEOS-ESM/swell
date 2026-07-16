@@ -68,7 +68,7 @@ class RunJediDiffstates(taskBase):
         # Diffstates
         spec_dict = self.config.diffstates_spec()
         self.jedi_rendering.add_key('diffstates_spec', spec_dict)
-        print(f'diffstates = {spec_dict}')
+        self.logger.info(f'diffstates = {spec_dict}')
 
         # Add placeholder names if mock experiment
         # ----------------------------------------
@@ -82,7 +82,7 @@ class RunJediDiffstates(taskBase):
 
         # loop output grid_type:
         grid_type = spec_dict['state_diff'].get('grid_type')
-        print(f'grid_type = {grid_type}')
+        self.logger.info(f'grid_type = {grid_type}')
 
         if grid_type is None:
             grid_type = ['latlon']

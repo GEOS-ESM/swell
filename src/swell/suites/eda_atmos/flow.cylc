@@ -89,7 +89,7 @@
 
             # bkg/ana : mean/variance
             SP3-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
-            RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
+            RunJediEnsembleMeanVariance-{{model_component}} => RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
 
             # CleanupEda directory
             SP4-{{model_component}} => CleanEdaFiles-{{model_component}}

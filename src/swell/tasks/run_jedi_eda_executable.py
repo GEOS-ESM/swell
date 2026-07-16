@@ -205,6 +205,12 @@ class RunJediEdaExecutable(taskBase):
                     File = os.path.join(dir1, mem_dir, fname)
                     obs_bias['covariance']['prior']['input file'] = File
 
+
+        print('jedi_config_dict')
+        print(jedi_config_dict)
+        print('end jedi_config_dict')
+        exit()
+
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False
 
