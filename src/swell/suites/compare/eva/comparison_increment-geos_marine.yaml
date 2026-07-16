@@ -47,7 +47,7 @@ graphics:
             variable: experiment_increment_1::SOCAgrid::lat
           data:
             variable: experiment_increment_1::SOCAVars::ave_ssh
-          label: ave_ssh increment 1
+          label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
           vmin: &vmin_ave_ssh -0.25
@@ -70,7 +70,7 @@ graphics:
             variable: experiment_increment_2::SOCAgrid::lat
           data:
             variable: experiment_increment_2::SOCAVars::ave_ssh
-          label: ave_ssh increment 2
+          label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_ave_ssh
@@ -96,6 +96,8 @@ graphics:
           label: ave_ssh increment
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_ave_ssh_diff -0.05
+          vmax: &vmax_ave_ssh_diff 0.05
 
   - batch figure:
       variables: [Temp]
@@ -123,7 +125,7 @@ graphics:
           data:
             variable: experiment_increment_1::SOCAVars::Temp
             slices: '[0,...]'
-          label: SST increment 1
+          label: SST increment
           colorbar: true
           cmap: 'bwr'
           vmin: &vmin_temp -3
@@ -147,7 +149,7 @@ graphics:
           data:
             variable: experiment_increment_2::SOCAVars::Temp
             slices: '[0,...]'
-          label: SST increment 2
+          label: SST increment
           colorbar: true
           cmap: 'bwr'
           vmin: *vmin_temp
@@ -174,6 +176,8 @@ graphics:
           label: SST increment Diff
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_temp_diff -0.6
+          vmax: &vmax_temp_diff 0.6
 
   - batch figure:
       variables: [Salt]
@@ -201,7 +205,7 @@ graphics:
           data:
             variable: experiment_increment_1::SOCAVars::Salt
             slices: '[0,...]'
-          label: SSS increment 1
+          label: SSS increment
           colorbar: true
           cmap: 'bwr'
           vmin: &vmin_salt -1
@@ -252,6 +256,8 @@ graphics:
           label: SSS increment Diff
           colorbar: true
           cmap: 'bwr'
+          vmin: &vmin_salt_diff -0.2
+          vmax: &vmax_salt_diff 0.2
 
 # ssh diff
 transforms:
