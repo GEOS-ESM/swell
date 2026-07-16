@@ -204,11 +204,8 @@ class GsiNcdiagToIoda(taskBase):
                 # Save single observation in obs files
                 for ioda_obs_file_name in ioda_path_files:
                     # Create a bash file to process ioda_obs files because command lines fails.
-                    module_path_miniconda = '/discover/nobackup/drholdaw/opt/modulefiles/core/'
                     make_file_name = ioda_obs_file_name + '.sh'
                     make_file = f'#!/bin/bash \n' + \
-                                f'module use -a {module_path_miniconda} \n' + \
-                                f'ml miniconda/py39_23.3.1 \n' + \
                                 f'ncks -d Location,0,0,1 -Q -O {ioda_obs_file_name} ' + \
                                 f'{ioda_obs_file_name}'
                     self.logger.info('Making a single-observation file by executing ' +
