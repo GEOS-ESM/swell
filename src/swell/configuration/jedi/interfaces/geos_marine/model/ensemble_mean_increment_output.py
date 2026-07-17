@@ -15,7 +15,7 @@ def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
 
     ensemble_mean_increment_output = {
         'datadir': './',
-        'exp': 'mean.inc',
+        'exp': template_dict['experiment_id'] +'.inc',
         'type': 'an'
     }
 

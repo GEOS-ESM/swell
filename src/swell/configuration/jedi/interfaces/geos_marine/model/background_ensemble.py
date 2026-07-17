@@ -19,7 +19,7 @@ def background_ensemble(template_dict: Mapping) -> Mapping:
                 'date': template_dict['local_background_time_iso'],
                 'read_from_file': 1,
                 'basename': './',
-                'ocn_filename': f'ebkg/mem%mem%/MOM6.res.{template_dict["local_background_time"]}.nc'
+                'ocn_filename': f'bkg/%mem%/ocn.ens.%mem%.nc'
             },
             'pattern': '%mem%',
             'nmembers': template_dict['ensemble_num_members'],
