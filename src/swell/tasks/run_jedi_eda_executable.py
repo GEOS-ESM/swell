@@ -160,9 +160,13 @@ class RunJediEdaExecutable(taskBase):
                 obs_cov_model = observer.get('obs error', {}).get('covariance model')
                 self.logger.info(f'{observation}:  obs_cov_model = {obs_cov_model}')
                 if obs_cov_model and 'cross variable covariances' in obs_cov_model:
-                    self.logger.info(f"Found cross covariance obs: {obs_cov_model}, skip perturbation")
+                    self.logger.info(
+                        f"Found cross covariance obs: {obs_cov_model}, skip perturbation"
+                    )
                 else:
-                    self.logger.info(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
+                    self.logger.info(
+                        f"No cross variable covariance found: {observation}, Obs Error Diagonal"
+                    )
                     obs_error_dict = {
                         'covariance model': 'diagonal',
                         'obs perturbations amplitude': obs_pert_amplitude,
