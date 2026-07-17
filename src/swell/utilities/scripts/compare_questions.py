@@ -202,7 +202,8 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
                             field = field.replace("'", '')
                         else:
                             field = line.split('self.config.')[1].split(')')[0].strip() + ')'
-                        # Include the parentheses, so we can later assess whether the key is optional
+                        # Include the parentheses, so we can later assess
+                        # whether the key is optional
                         used_task.append(field)
 
                 set_task = sorted(list(set(set_task)))
