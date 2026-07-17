@@ -26,7 +26,7 @@ class RunJediObsfiltersExecutable(taskBase):
 
         # skip this task if the model is geos_atmosphere
         if self.get_model() != 'geos_atmosphere':
-            self.logger.info('Skipping RunJediObsfiltersExecutable task for non-geos_atmosphere model')
+            self.logger.info('Skip RunJediObsfiltersExecutable task for non-geos_atmosphere model')
             return
 
         # Jedi application name

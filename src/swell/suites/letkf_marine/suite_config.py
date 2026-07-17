@@ -31,7 +31,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.start_cycle_point("2023-01-02T12:00:00Z"),
             qd.final_cycle_point("2023-01-02T12:00:00Z"),
             qd.model_components(['geos_marine']),
-        ],q
+        ],
         geos_marine=[
             qd.cycle_times(['T12']),
             qd.marine_models(['mom6']),

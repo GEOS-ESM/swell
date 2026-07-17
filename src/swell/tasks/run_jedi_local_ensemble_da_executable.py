@@ -110,8 +110,9 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
                                         self.config.vertical_localization_lengthscale())
             self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord',
                                         self.config.vertical_localization_ioda_vertical_coord())
-            self.jedi_rendering.add_key('vertical_localization_ioda_vertical_coord_group',
-                                        self.config.vertical_localization_ioda_vertical_coord_group())
+            self.jedi_rendering.add_key(
+                'vertical_localization_ioda_vertical_coord_group',
+                self.config.vertical_localization_ioda_vertical_coord_group())
             self.jedi_rendering.add_key('vertical_localization_function',
                                         self.config.vertical_localization_function())
 

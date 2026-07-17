@@ -7,7 +7,6 @@
 
 # --------------------------------------------------------------------------------------------------
 
-import glob
 import os
 import tarfile
 
@@ -56,24 +55,20 @@ class GetEnsemble(taskBase):
                                self.cycle_time_dto().strftime('Y%Y'),
                                ens_tar_file)
 
-
         # Link the ensemble tar archive to the cycle directory
         # ------------------------------------------------------
         self.logger.info(f' Linking {self.get_model()} archive file: ' + ens_tar)
         self.geos.linker(ens_tar, ens_tar_file, dst_dir=self.cycle_dir())
 
-        # Drop the suffix from the filename
-        ens_tar_folder = os.path.splitext(ens_tar_file)[0]
-
         # Path to restarts in the cycle directory
         # ---------------------------------------
         cycle_tar = os.path.join(self.cycle_dir(), ens_tar_file)
 
-        #extract the ensemble tar file into /bkg in the cycle directory
+        # Extract the ensemble tar file into /bkg in the cycle directory
         with tarfile.open(cycle_tar) as cycle_tar_file:
             cycle_tar_file.extractall(self.cycle_dir() + "/bkg")
 
-        self.logger.info(f' Extracted {self.get_model()} ensemble files to: ' + self.cycle_dir() 
+        self.logger.info(f' Extracted {self.get_model()} ensemble files to: ' + self.cycle_dir()
                          + "/bkg")
 
 # --------------------------------------------------------------------------------------------------
