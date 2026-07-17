@@ -840,7 +840,22 @@ class TaskQuestions(QuestionContainer, Enum):
     RunJediEdaExecutable = QuestionList(
         list_name="RunJediEdaExecutable",
         questions=[
-            run_jedi_executable,
+# runJediExecutable
+            background_crtm_obs,
+            np_proc_resolution,
+            window_questions,
+            qd.analysis_variables(),
+            qd.background_frequency(),
+            qd.generate_yaml_and_exit(),
+            qd.gradient_norm_reduction(),
+            qd.gsibec_configuration(),
+            qd.jedi_forecast_model(),
+            qd.minimizer(),
+            qd.gsibec_nlats(),
+            qd.gsibec_nlons(),
+            qd.number_of_iterations(),
+            qd.total_processors(),
+# add
             qd.ensemble_num_members(),
             qd.obs_pert_amplitude(),
             qd.obs_thinning_rej_fraction(),

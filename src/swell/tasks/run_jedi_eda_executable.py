@@ -63,6 +63,7 @@ class RunJediEdaExecutable(taskBase):
         window_end_iso = self.da_window_params.window_end_iso(window_length)
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
+        obs_pert_amplitude = self.obs_pert_amplitude()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -164,6 +165,7 @@ class RunJediEdaExecutable(taskBase):
                     self.logger.info(f"No cross variable covariance found: {observation}, Obs Error Diagonal")
                     obs_error_dict = {
                         'covariance model': 'diagonal',
+                        'obs perturbations amplitude': obs_pert_amplitude,
                         'zero-mean perturbations': True,
                         'member': imember,
                         'number of members': nmember
