@@ -9,9 +9,9 @@
 
 
 import os
+from importlib import resources
 from ruamel.yaml import YAML
 
-from swell.swell_path import get_swell_path
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
 
@@ -55,6 +55,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         generate_yaml_and_exit = self.config.generate_yaml_and_exit(False)
         ensmean_only = self.config.ensmean_only()
         ensmeanvariance_only = self.config.ensmeanvariance_only()
+        perhost = self.config.perhost(None)
 
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
@@ -75,6 +76,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         self.jedi_rendering.add_key('window_length', window_length)
         self.jedi_rendering.add_key('window_end_iso', window_end_iso)
         self.jedi_rendering.add_key('marine_models', self.config.marine_models(None))
+        self.jedi_rendering.add_key('analysis_variables', self.config.analysis_variables())
 
         # Background
         self.jedi_rendering.add_key('horizontal_resolution', self.config.horizontal_resolution())
@@ -182,26 +184,26 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
 
         # Include ensemble localizations and halo types with each observation
         # -------------------------------------------------------------------
+        localization_path = resources.files('swell').joinpath('configuration', 'jedi',
+                                                              'interfaces', self.get_model(),
+                                                              'observations', 'localization')
 
-        swell_path = get_swell_path()
-        localization_path = os.path.join(swell_path,
-                                         f'configuration/jedi/interfaces/geos_atmosphere'
-                                         f'/observations/localization')
+        if localization_path.exists():
+            for observer in jedi_config_dict['observations']['observers']:
 
-        # Read in safe mode
-        in_yaml = YAML(typ="safe")
-        for observer in jedi_config_dict['observations']['observers']:
+                # Read in safe mode
+                in_yaml = YAML(typ="safe")
 
-            # Get observation name
-            observation = observer['observation_name']
-            config_file = os.path.join(localization_path, f'{observation}.yaml')
-            with open(config_file, 'r') as f:
-                loc_list = in_yaml.load(f)
-                horizLoc = loc_list['obs localizations']
-            localization = [horizLoc]
-            observer.update({'obs localizations': localization})
-            observer['obs space'].update(
-                {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
+                # Get observation name
+                observation = observer['observation_name']
+                config_file = os.path.join(localization_path, f'{observation}.yaml')
+                with open(config_file, 'r') as f:
+                    loc_list = in_yaml.load(f)
+                    horizLoc = loc_list['obs localizations']
+                localization = [horizLoc]
+                observer.update({'obs localizations': localization})
+                observer['obs space'].update(
+                    {'distribution': {'name': 'Halo', 'halo size': 5000.e3}})
 
         # bypass the writing of HofXs
         # ---------------------------
@@ -210,7 +212,7 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
             for observer in jedi_config_dict['observations']['observers']:
                 del observer['obs space']['obsdataout']
 
-        # change variational bc to static bc
+        # TODO: Temporary handling, change variational bc to static bc
         # -------------------------------------------------------------------
         for observer in jedi_config_dict['observations']['observers']:
             if 'obs bias' in observer:
@@ -231,7 +233,6 @@ class RunJediLocalEnsembleDaExecutable(taskBase):
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
-        perhost = self.config.perhost()
 
         # Jedi executable name
         # --------------------
