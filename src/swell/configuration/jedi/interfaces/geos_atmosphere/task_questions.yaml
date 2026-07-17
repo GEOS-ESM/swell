@@ -128,10 +128,6 @@ ensemble_num_members:
   default_value: 16
   options: None
 
-obs_pert_amplitude:
-  default_value: 1.0
-  options: None
-
 geovals_experiment:
   default_value: x0050-geovals
   options:

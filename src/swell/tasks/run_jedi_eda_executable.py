@@ -61,9 +61,9 @@ class RunJediEdaExecutable(taskBase):
         window_begin = self.da_window_params.window_begin(window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
+        obs_pert_amplitude = self.config.obs_pert_amplitude()
         nmember = self.config.ensemble_num_members()
         imember = self.get_ensemble_imember()
-        obs_pert_amplitude = self.obs_pert_amplitude()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
