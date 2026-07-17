@@ -381,7 +381,10 @@ class TaskQuestions(QuestionContainer, Enum):
     GetEnsemble = QuestionList(
         list_name="GetEnsemble",
         questions=[
-            qd.path_to_ensemble()
+            qd.path_to_ensemble(),
+            qd.horizontal_resolution(),
+            qd.vertical_resolution(),
+            qd.background_experiment(),
         ]
     )
 
@@ -739,6 +742,7 @@ class TaskQuestions(QuestionContainer, Enum):
             np_proc_resolution,
             window_questions,
             background_crtm_obs,
+            qd.analysis_variables(),
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.ensemble_num_members(),

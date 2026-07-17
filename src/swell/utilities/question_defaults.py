@@ -1443,7 +1443,6 @@ class QuestionDefaults():
         question_name: str = "path_to_ensemble"
         ask_question: bool = True
         models: List[str] = mutable_field([
-            "geos_atmosphere",
             "geos_marine"
         ])
         prompt: str = "What is the path to where ensemble members are stored?"

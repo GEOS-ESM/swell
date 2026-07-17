@@ -173,7 +173,7 @@ observations:
   - temp_profile_xbt
 
 path_to_ensemble:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/letk/ensemble/geos_marine
+  default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/ensemble_marine
 
 skip_ensemble_hofx:
   default_value: true
