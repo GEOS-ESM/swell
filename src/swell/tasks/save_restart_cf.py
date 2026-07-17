@@ -12,6 +12,7 @@ import os
 from r2d2 import store
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import compress_file, compressed_extension
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 # --------------------------------------------------------------------------------------------------
@@ -54,6 +55,10 @@ class SaveRestartCf(taskBase):
         rst_file_types = self.config.rst_file_types()
         rst_store_interval = self.config.rst_store_interval(None)
 
+        compress_output = self.config.compress_output(False)
+        compress_algorithm = self.config.compress_algorithm('gzip')
+        compress_pigz_threads = self.config.compress_pigz_threads(4)
+
         # Determine whether to store as a symlink for this cycle
         # --------------------------------------------------------
         store_as_symlink = True
@@ -74,17 +79,50 @@ class SaveRestartCf(taskBase):
 
             self.logger.info(f'Storing {fname}')
 
-            store(
-                model=model,
-                item='forecast',
-                step=window_length,
-                experiment=expid,
-                resolution=horizontal_resolution,
-                date=window_begin.strftime('%Y%m%dT%H%M%S%z'),
-                source_file=source_file,
-                file_extension='nc',
-                file_type=file_type,
-                store_as_symlink=store_as_symlink,
-            )
+            actual_source = source_file
+            actual_extension = 'nc'
+            compressed_path = None
+
+            if compress_output:
+                if store_as_symlink:
+                    self.logger.warning(
+                        f'compress_output=True and store_as_symlink=True are incompatible. '
+                        f'Forcing store_as_symlink=False for {fname}.'
+                    )
+                    store_as_symlink = False
+
+                self.logger.info(
+                    f'Compressing {source_file} using {compress_algorithm}'
+                    + (f' ({compress_pigz_threads} threads)'
+                       if compress_algorithm == 'pigz' else '')
+                )
+                compressed_path = compress_file(
+                    source_file,
+                    algorithm=compress_algorithm,
+                    num_threads=compress_pigz_threads,
+                )
+                actual_source = compressed_path
+                actual_extension = compressed_extension('nc')
+                self.logger.info(
+                    f'Compressed {source_file} -> {compressed_path} '
+                    f'(extension: {actual_extension})'
+                )
+
+            try:
+                store(
+                    model=model,
+                    item='forecast',
+                    step=window_length,
+                    experiment=expid,
+                    resolution=horizontal_resolution,
+                    date=window_begin.strftime('%Y%m%dT%H%M%S%z'),
+                    source_file=actual_source,
+                    file_extension=actual_extension,
+                    file_type=file_type,
+                    store_as_symlink=store_as_symlink,
+                )
+            finally:
+                if compressed_path is not None and os.path.exists(compressed_path):
+                    os.remove(compressed_path)
 
 # --------------------------------------------------------------------------------------------------

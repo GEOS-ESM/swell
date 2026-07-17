@@ -9,6 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import decompress_if_needed
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 
 import isodate
@@ -172,7 +173,8 @@ class GetBackground(taskBase):
                     fetch_kwargs['data_store'] = r2d2_datastore
                 r2d2.fetch(**fetch_kwargs)
 
-                # Change permission
-                os.chmod(target_file, 0o644)
+                actual_file = decompress_if_needed(target_file)
+
+                os.chmod(actual_file, 0o644)
 
 # --------------------------------------------------------------------------------------------------

@@ -503,6 +503,9 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.obs_to_ingest(),
             qd.window_length(),
             qd.store_as_symlink(),
+            qd.compress_output(),
+            qd.compress_algorithm(),
+            qd.compress_pigz_threads(),
         ]
     )
 
@@ -837,6 +840,9 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.horizontal_resolution(),
             qd.rst_file_types(),
             qd.rst_store_interval(),
+            qd.compress_output(),
+            qd.compress_algorithm(),
+            qd.compress_pigz_threads(),
         ]
     )
 
@@ -872,6 +878,9 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.forecast_output_frequency(),
             qd.horizontal_resolution(),
             qd.window_length(),
+            qd.compress_output(),
+            qd.compress_algorithm(),
+            qd.compress_pigz_threads(),
         ]
     )
 

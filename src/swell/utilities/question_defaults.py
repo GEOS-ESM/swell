@@ -1010,6 +1010,48 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class compress_output(TaskQuestion):
+        default_value: bool = False
+        question_name: str = "compress_output"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Compress output files with gzip before storing in R2D2 to save disk space"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class compress_algorithm(TaskQuestion):
+        default_value: str = "gzip"
+        question_name: str = "compress_algorithm"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Compression algorithm: 'gzip' (Python stdlib, no external binary) or "
+                       "'pigz' (parallel gzip, requires pigz binary on PATH)")
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class compress_pigz_threads(TaskQuestion):
+        default_value: int = 4
+        question_name: str = "compress_pigz_threads"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("Number of parallel threads for pigz compression. "
+                       "Only used when compress_algorithm is 'pigz'. "
+                       "Should not exceed the number of CPUs allocated to the task.")
+        widget_type: WType = WType.INTEGER
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
         question_name: str = "obs_to_ingest"

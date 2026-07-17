@@ -18,6 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from datetime import timedelta, datetime as dt
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import decompress_if_needed
 from swell.utilities.r2d2 import load_r2d2_credentials, get_r2d2_model_name
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
@@ -36,6 +37,12 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
     **r2d2_dict['logger']: Swell logger
 
     These values will be popped from the dictionary before running the fetch command
+
+    If the fetched ``target_file`` ends with ``.gz`` it is automatically decompressed
+    to the path with the ``.gz`` suffix removed (using stdlib gzip).  The ``.gz`` file
+    is deleted after decompression.  The cache check accounts for this: if a prior run
+    already decompressed the file, the decompressed path is checked so the fetch is
+    correctly skipped.
     """
 
     fetch_empty_obs = r2d2_dict.pop('fetch_empty', False)
@@ -45,10 +52,16 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 
     target_file = r2d2_dict['target_file']
 
-    # Skip fetch if caching is enabled and the file already exists
-    if cache_fetch and os.path.exists(target_file) and os.path.getsize(target_file) > 0:
-        logger.info(f"Cache exists, skipping R2D2 fetch: {target_file}")
-        return
+    # For compressed targets (e.g. 'obs.nc4.gz') the decompressed file ('obs.nc4') is
+    # what persists on disk after the first successful fetch.  Check both paths so that
+    # cached decompressed files are recognised correctly.
+    if cache_fetch:
+        decompressed_cache_path = (target_file[:-3] if target_file.endswith('.gz')
+                                   else target_file)
+        for cache_path in (decompressed_cache_path, target_file):
+            if os.path.exists(cache_path) and os.path.getsize(cache_path) > 0:
+                logger.info(f"Cache exists, skipping R2D2 fetch: {cache_path}")
+                return
 
     try:
         r2d2.fetch(**r2d2_dict)
@@ -76,8 +89,9 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
         else:
             raise Exception(e)
 
-    # Change the permissions
-    os.chmod(target_file, 0o644)
+    actual_file = decompress_if_needed(target_file)
+
+    os.chmod(actual_file, 0o644)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -228,25 +242,40 @@ class GetObservations(taskBase):
             obsfile_template = observation_dict['obs space']['obsdatain']['engine']['obsfile']
             obs_file_extension = os.path.splitext(obsfile_template)[1].lstrip('.')
 
+            # Allow an optional 'r2d2_file_extension' key in the obs YAML to specify what
+            # extension was used when the observation was stored in R2D2.  This is needed
+            # when compression is enabled (e.g. 'nc4.gz' stored in R2D2 vs 'nc4' for JEDI).
+            # Falls back to obs_file_extension (i.e. no compression) when not set.
+            r2d2_file_extension = observation_dict.get('r2d2_file_extension', obs_file_extension)
+
             # Fetch observation files
             # -----------------------
             combine_input_files = []
             # Here, we are fetching
             for obs_num, obs_time in enumerate(obs_list_dto):
                 obs_window_begin = dt.strftime(obs_time, datetime_formats['iso_format'])
+
                 target_file = os.path.join(
                     self.cycle_dir(), f'{observation}.{obs_num}.{obs_file_extension}'
                 )
                 combine_input_files.append(target_file)
 
+                if r2d2_file_extension != obs_file_extension:
+                    fetch_target = os.path.join(
+                        self.cycle_dir(),
+                        f'{observation}.{obs_num}.{r2d2_file_extension}'
+                    )
+                else:
+                    fetch_target = target_file
+
                 fetch_criteria = {
                     'item': 'observation',               # Required for r2d2 v3
                     'provider': obs_provider,            # What we registered with
                     'observation_type': observation,     # From filename
-                    'file_extension': obs_file_extension,
+                    'file_extension': r2d2_file_extension,
                     'window_start': obs_window_begin,    # From filename timestamp
                     'window_length': obs_window_length,  # From filename
-                    'target_file': target_file,          # Where to save
+                    'target_file': fetch_target,         # Where to save (may be .gz)
                     'fetch_empty': True
                 }
 
