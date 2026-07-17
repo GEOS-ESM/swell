@@ -24,6 +24,11 @@ class RunJediObsfiltersExecutable(taskBase):
 
     def execute(self, ensemble_members: Optional[list] = None) -> None:
 
+        # skip this task if the model is geos_atmosphere
+        if self.get_model() != 'geos_atmosphere':
+            self.logger.info('Skipping RunJediObsfiltersExecutable task for non-geos_atmosphere model')
+            return
+
         # Jedi application name
         # ---------------------
         jedi_application = 'obsfilters'
@@ -109,7 +114,7 @@ class RunJediObsfiltersExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file('qc_thinning', window_type,
                                                                 jedi_forecast_model)
 
-        # Include filter_thinning into {observations: obs sapce: obs filters:}
+        # Include filter_thinning into {observations: obs space: obs filters:}
         # -------------------------------------------------------------------
         new_dict = {'observations': []}
         for observer in jedi_config_dict['observations']['observers']:
