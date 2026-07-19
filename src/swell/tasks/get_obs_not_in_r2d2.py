@@ -40,7 +40,7 @@ class GetObsNotInR2d2(taskBase):
 
         # Set the file patterns to search for
         # -----------------------------------
-        file_patterns = ['*nc4', '*txt']
+        file_patterns = ['*nc4', '*txt', '*acftbias', '*acftbias_cov']
 
         for file_pattern in file_patterns:
 
