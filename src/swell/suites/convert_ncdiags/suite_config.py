@@ -59,6 +59,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "atms_n21",
                 "atms_npp",
                 "avhrr3_metop-b",
+                "avhrr3_metop-c",
                 "avhrr3_n18",
                 "avhrr3_n19",
                 "cris-fsr_n20",
