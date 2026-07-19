@@ -77,10 +77,7 @@ class GetBackgroundGeosExperiment(taskBase):
         # Define the source tar folder and file
         # -------------------------------------
         bkgr_tar_file = f'{background_experiment}.bkgcrst.{bkgr_exp_start_geos}.tar'
-        if background_experiment == 'x0054':
-            sub_directory = '544'
-        else:
-            sub_directory = horizontal_resolution
+        sub_directory = ''
 
         bkgr_tar = os.path.join(geos_x_background_directory,
                                 sub_directory,
