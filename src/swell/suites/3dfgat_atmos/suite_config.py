@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="3dfgat_atmos",
         questions=[
             sq.common,
-            qd.start_cycle_point("2025-11-30T00:00:00Z"),
-            qd.final_cycle_point("2025-11-30T06:00:00Z"),
+            qd.start_cycle_point("2025-12-30T00:00:00Z"),
+            qd.final_cycle_point("2025-12-30T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.model_components(['geos_atmosphere']),
             qd.runahead_limit("P2"),
@@ -41,7 +41,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.horizontal_resolution("91"),
             qd.background_experiment("x0054"),
             qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/rtodling/"
-                                           "archive/"),
+                                           "archive/Restarts/5_44/c90"),
             qd.window_type("4D"),
             qd.observations([
                 "abi_g16",
@@ -60,6 +60,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "atms_n21",
                 "atms_npp",
                 "avhrr3_metop-b",
+                "avhrr3_metop-c",
                 "avhrr3_n18",
                 "avhrr3_n19",
                 "cris-fsr_n20",
@@ -73,7 +74,9 @@ class SuiteConfig(QuestionContainer, Enum):
                 "mhs_metop-c",
                 "mhs_n19",
                 "mls55_aura",
-                "omi_aura",
+                "omieff_aura",
+                "ompslpnc_n21",
+                "ompslpnc_npp",
                 "ompsnm_npp",
                 "pibal",
                 "satwind",
