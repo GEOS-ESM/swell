@@ -536,19 +536,6 @@ def prepare_cylc_suite_jinja2(
                          'to gather them from or they are not provided in the experiment ' +
                          'dictionary.')
 
-    # Check if 'ensemble_hofx_strategy' appears anywhere in suite_file
-    ensemble_list = ['ensemble_'+s for s in ['num_members', 'hofx_strategy', 'hofx_packets']]
-    ensemble_list = ensemble_list + ['skip_ensemble_hofx']
-    for ensemble_aspect in ensemble_list:
-        if ensemble_aspect in suite_file:
-            if len(model_components) == 0:
-                logger.abort(f'The suite file required {ensemble_aspect} ' +
-                             'there are no model components to gather them from or ' +
-                             'they are not provided in the experiment dictionary.')
-            for model_component in model_components:
-                render_dictionary[ensemble_aspect] = \
-                    experiment_dict['models'][model_component][ensemble_aspect]
-
     # Cycling VarBC exception (only for geos_atmosphere)
     if 'cycling_varbc' in suite_file:
         if 'geos_atmosphere' in model_components:
