@@ -168,6 +168,14 @@
     {% endfor %}
     {% endif %}
 
+
+    [[RunJediEdaControlPertExecutable_]]
+        script = "swell task RunJediEdaControlPertExecutable $config -d $datetime -m {{model_component}}"
+        platform = {{platform}}
+        execution time limit = {{scheduling["RunJediEdaControlPertExecutable"]["execution_time_limit"]}}
+        [[[directives]]]
+
+
     [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}

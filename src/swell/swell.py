@@ -218,7 +218,7 @@ def task(
     model: Optional[str],
     additional_parameter: Optional[str],
     ensemblePacket: Optional[str],
-    ichunk: Optional[int]
+    ichunk: Optional[int],
     imember: Optional[int]
 ) -> None:
     """

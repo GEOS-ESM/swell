@@ -23,6 +23,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import AllSuites
+from swell.utilities.yaml_utils import print_dict
 
 # --------------------------------------------------------------------------------------------------
 
@@ -94,7 +95,7 @@ class PrepareExperimentConfigAndSuite:
 
         print(f'nail1 model_ind_tasks = {self.model_ind_tasks}')
         print(f'nail2 all_model_dep_tasks = {self.all_model_dep_tasks}')
-        print(f'nail3  .suite_str  = {self.suite_str}')
+        print(f'nail3 self.suite_str  = {self.suite_str}')
 
 
         # Perform the assembly of the dictionaries that contain all the questions that can possibly
@@ -127,6 +128,7 @@ class PrepareExperimentConfigAndSuite:
         suite_config_obj = AllSuites.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
         print(f'suite q list :  {suite_question_list}')
+        print_dict(suite_question_list)
 
 
         # Allow for adding extra tasks manually from configuration
@@ -208,6 +210,8 @@ class PrepareExperimentConfigAndSuite:
         self.suite_needs_model_components = True
         if 'model_components' not in question_dictionary.keys():
             self.suite_needs_model_components = False
+
+        print(f'self.suite_needs_model_components = {self.suite_needs_model_components}')
 
         # Create copy of the question_dictionary for model independent questions
         question_dictionary_model_ind = copy.deepcopy(question_dictionary)
@@ -440,7 +444,8 @@ class PrepareExperimentConfigAndSuite:
         suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict, True)
         
         print(f'nail4.0 self.exp dict = {self.experiment_dict}')
-        
+        print_dict(self.experiment_dict)
+
         print(f'nail4.1 self.suite str = {self.suite_str}')
         
         print(f'nail4.2 jinja2 suite str = {suite_str}')
@@ -476,6 +481,10 @@ class PrepareExperimentConfigAndSuite:
         # in the experiment dictionary and retrieve the response
 
         render_dict = copy.deepcopy(self.experiment_dict)
+        print('r1: render_dict')
+        print_dict(render_dict)
+
+        
         if 'model_components' not in self.experiment_dict:
             self.logger.abort('The model components question has not been answered.')
 
@@ -524,8 +533,12 @@ class PrepareExperimentConfigAndSuite:
                             })
 
         # debug
-        # print(f'render_dict = {render_dict}')
+#        print(f'render_dict = {render_dict}')
+        print('r2: render_dict')
+        print_dict(render_dict)
 
+
+        
         # 7. Perform a more exhaustive resolving of suite file templates
         # --------------------------------------------------------------
         # Note that we reset the suite file to avoid templates having been left unresolved
@@ -559,8 +572,8 @@ class PrepareExperimentConfigAndSuite:
         # -------------------------------------------------
         print(f'ck suite_str = {suite_str}')
         model_dep_tasks = self.get_suite_task_list_model_dep(suite_str)
+        print(f'ck show: model_dep_tasks  = {model_dep_tasks}')        
         
-
         # 9.2 Iterate over the model_dep dictionary and ask task questions
         # ----------------------------------------------------------------
         for model in self.experiment_dict['model_components']:
