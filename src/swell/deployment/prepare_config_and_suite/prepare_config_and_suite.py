@@ -493,14 +493,38 @@ class PrepareExperimentConfigAndSuite:
                     # Ask the question
                     self.ask_a_question(model_dict, question_key, model)
 
-                # use special task questions for jinja2
+                # pass special model-dep task questions/variables to render_dict
+                # for suite_str (jinja2) in step 7.
                 if model_dict[question_key]['question_type'] == 'task':
 
                     ensemble_list = ['ensemble_'+s for s in ['num_members', 'num_chunks']]
                     if question_key in ensemble_list:
-                        render_dict.update({'models':{model: {question_key: model_dict[question_key]['default_value']}}})
-        print(f'render_dict = {render_dict}')
-  
+
+                        # a. Ensure the 'models' list exists
+                        if 'models' not in render_dict:
+                            render_dict['models'] = []
+
+                        # b. Check if this model is already in our list
+                        model_found = False
+                        for m in render_dict['models']:
+                            if model in m:
+                                # c. If found, incrementally add the new key!
+                                default_val = model_dict[question_key]['default_value']
+                                m[model][question_key] = default_val
+                                model_found = True
+                                break
+
+                        # d. If not found, add the model to the list for the first time
+                        if not model_found:
+                            default_val = model_dict[question_key]['default_value']
+                            render_dict['models'].append({
+                                model: {
+                                    question_key: default_val
+                                }
+                            })
+
+        # debug
+        # print(f'render_dict = {render_dict}')
 
         # 7. Perform a more exhaustive resolving of suite file templates
         # --------------------------------------------------------------
@@ -515,8 +539,8 @@ class PrepareExperimentConfigAndSuite:
         # {% for i in range( 1, models[model_component]['ensemble_num_chunks'] + 1 ) %}
         #  [[RunJediEdaControlPertExecutable_chunk{{i}}-{{model_component}}]]
         # {% endfor %}
-        
-        suite_str = template_string_jinja2(self.logger, self.suite_str, render_dict, True)                                                
+
+        suite_str = template_string_jinja2(self.logger, self.suite_str, render_dict, True)
 
         # 8. Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
