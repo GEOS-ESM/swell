@@ -26,23 +26,6 @@
     runahead limit = {{runahead_limit}}
 
     [[graph]]
-        R1 = """
-            # Triggers for non cycle time dependent tasks
-            # -------------------------------------------
-            # Clone JEDI source code
-            CloneJedi
-
-            # Build JEDI source code by linking
-            CloneJedi => BuildJediByLinking?
-
-            # If not able to link to build create the build
-            BuildJediByLinking:fail? => BuildJedi
-
-            {% for model_component in model_components %}
-            # Clone geos ana for generating observing system records
-            CloneGeosMksi-{{model_component}}
-            {% endfor %}
-        """
 
         {% for cycle_time in cycle_times %}
         {{cycle_time.cycle_time}} = """
@@ -81,8 +64,6 @@
 
     # Tasks
     # -----
-    [[CloneJedi]]
-        script = "swell task CloneJedi $config"
 
 
     {% for model_component in model_components %}
