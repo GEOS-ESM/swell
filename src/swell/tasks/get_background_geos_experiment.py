@@ -119,9 +119,9 @@ class GetBackgroundGeosExperiment(taskBase):
                     # -----------------------------
                     jedi_date = member_date_dto.strftime(datetime_formats["directory_format"])
                     if member_type_str == "bkg_clcv_rst":
-                       bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
+                        bkg_filename_jedi = f'bkg.{jedi_date}.nc4'
                     if member_type_str == "extbkg_clcv_rst":
-                       bkg_filename_jedi = f'extbkg.{jedi_date}.nc4'
+                        bkg_filename_jedi = f'extbkg.{jedi_date}.nc4'
 
                     # Rename the files
                     # ----------------

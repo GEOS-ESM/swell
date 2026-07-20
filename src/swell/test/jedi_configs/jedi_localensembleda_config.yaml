@@ -4035,7 +4035,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id008
         - 1.0
         - 1.08
         - 1.12
@@ -4115,6 +4115,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id008
           use_flag: None
           use_flag_clddet:
           - 1
@@ -4142,6 +4143,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id008
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -4204,6 +4206,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id008
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -4305,7 +4308,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id009
         - 1.0
         - 1.08
         - 1.12
@@ -4385,6 +4388,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id009
           use_flag: None
           use_flag_clddet:
           - 1
@@ -4412,6 +4416,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id009
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -4474,6 +4479,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id009
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -4575,7 +4581,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id010
         - 1.0
         - 1.08
         - 1.12
@@ -4655,6 +4661,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id010
           use_flag: None
           use_flag_clddet:
           - 1
@@ -4682,6 +4689,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id010
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -4744,6 +4752,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id010
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -7684,6 +7693,15 @@ observations:
       threshold: 5.0
       action:
         name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: ozoneProfile
+      test variables:
+      - name: MetaData/pressure
+      minvalue: 10
+      maxvalue: 25000
+      action:
+        name: reject
     observation_name: mls55_aura
     obs localizations:
     - localization method: Horizontal Gaspari-Cohn
@@ -9016,7 +9034,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id008
+        error parameter vector: &id011
         - 2.5
         - 2.0
         - 2.0
@@ -9142,7 +9160,7 @@ observations:
             options:
               channels: None
               sensor: amsua_metop-b
-          error parameter vector: *id008
+          error parameter vector: *id011
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -9275,7 +9293,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id009
+        error parameter vector: &id012
         - 2.5
         - 2.0
         - 2.0
@@ -9401,7 +9419,7 @@ observations:
             options:
               channels: None
               sensor: amsua_metop-c
-          error parameter vector: *id009
+          error parameter vector: *id012
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -9473,7 +9491,7 @@ output:
   filetype: auxgrid
   gridtype: latlon
   filename: cycle_dir/geos.analysis.mean.
-  field io names: &id010
+  field io names: &id013
     eastward_wind: ua
     northward_wind: va
     air_temperature: t
@@ -9487,4 +9505,4 @@ output increment:
   filetype: auxgrid
   gridtype: latlon
   filename: cycle_dir/geos.mean-inc.
-  field io names: *id010
+  field io names: *id013
