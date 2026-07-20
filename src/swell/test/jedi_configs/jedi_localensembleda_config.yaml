@@ -2094,6 +2094,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
@@ -2353,6 +2356,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
@@ -2612,6 +2618,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
@@ -2871,6 +2880,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
@@ -3142,6 +3154,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
@@ -3450,6 +3465,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
       output file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
@@ -3723,6 +3741,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
       output file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
@@ -3996,6 +4017,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
       output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
@@ -4269,6 +4293,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
       output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
@@ -4542,6 +4569,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
       output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
@@ -6354,6 +6384,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
       output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
@@ -6805,6 +6838,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
       output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
@@ -7256,6 +7292,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
       output file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
@@ -8211,6 +8250,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
       obs options:
         Sensor_ID: ssmis_f17
         EndianType: little_endian
@@ -8991,6 +9033,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
@@ -9250,6 +9295,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4
       output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4

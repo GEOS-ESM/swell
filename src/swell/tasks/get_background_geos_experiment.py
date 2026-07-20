@@ -47,7 +47,6 @@ class GetBackgroundGeosExperiment(taskBase):
         background_experiment = self.config.background_experiment()
         geos_x_background_directory = self.config.geos_x_background_directory()
         background_time_offset = self.config.background_time_offset()
-        horizontal_resolution = self.config.horizontal_resolution()
 
         # Since this is an optional task, check if the geos_x_background_directory is
         # set to /dev/null, if so fail the task

@@ -222,6 +222,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/abi_g16.20231009T150000Z.satbias.nc4
         output file: cycle_dir/abi_g16.20231009T210000Z.satbias.nc4
@@ -606,6 +609,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/abi_g18.20231009T150000Z.satbias.nc4
         output file: cycle_dir/abi_g18.20231009T210000Z.satbias.nc4
@@ -1769,6 +1775,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/airs_aqua.20231009T150000Z.satbias.nc4
         output file: cycle_dir/airs_aqua.20231009T210000Z.satbias.nc4
@@ -2885,6 +2894,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
@@ -3186,6 +3198,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
@@ -3438,6 +3453,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
@@ -3690,6 +3708,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4
@@ -3942,6 +3963,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_n15.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
@@ -4194,6 +4218,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_n18.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
@@ -4446,6 +4473,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/amsua_n19.20231009T150000Z.satbias.nc4
         output file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
@@ -4698,6 +4728,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/atms_n20.20231009T150000Z.satbias.nc4
         output file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
@@ -4964,6 +4997,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/atms_n21.20231009T150000Z.satbias.nc4
         output file: cycle_dir/atms_n21.20231009T210000Z.satbias.nc4
@@ -5230,6 +5266,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/atms_npp.20231009T150000Z.satbias.nc4
         output file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
@@ -5496,6 +5535,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias.nc4
         output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
@@ -5728,16 +5770,16 @@ cost function:
           name: reject
       observation_name: avhrr3_metop-b
     - obs space:
-        name: AVHRR-3 NOAA-18
+        name: AVHRR-3 METOP-C
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/avhrr3_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/avhrr3_metop-c.20231009T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.avhrr3_n18.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.avhrr3_metop-c.20231009T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -5750,7 +5792,7 @@ cost function:
         - O3
         - CO2
         obs options:
-          Sensor_ID: avhrr3_n18
+          Sensor_ID: avhrr3_metop-c
           EndianType: little_endian
           CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
         linear obs operator:
@@ -5762,17 +5804,20 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
-        input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias.nc4
-        output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
+        input file: cycle_dir/avhrr3_metop-c.20231009T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_metop-c.20231009T210000Z.satbias.nc4
         variational bc:
           predictors:
           - name: constant
           - name: lapseRate
             order: 2
-            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-c.20231009T150000Z.tlapse.txt
           - name: lapseRate
-            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+            tlapse: cycle_dir/avhrr3_metop-c.20231009T150000Z.tlapse.txt
           - name: emissivityJacobian
           - name: sensorScanAngle
             order: 4
@@ -5789,11 +5834,11 @@ cost function:
           step size: 0.0001
           largest analysis variance: 10000.0
           prior:
-            input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias_cov.nc4
+            input file: cycle_dir/avhrr3_metop-c.20231009T150000Z.satbias_cov.nc4
             inflation:
               ratio: 1.1
               ratio for small dataset: 2.0
-          output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias_cov.nc4
+          output file: cycle_dir/avhrr3_metop-c.20231009T210000Z.satbias_cov.nc4
       obs prior filters:
       - filter: Perform Action
         filter variables:
@@ -5860,7 +5905,7 @@ cost function:
             channels: None
             options:
               channels: None
-              sensor: avhrr3_n18
+              sensor: avhrr3_metop-c
       - filter: BlackList
         filter variables:
         - name: brightnessTemperature
@@ -5881,8 +5926,8 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id017
             use_flag: None
+            error parameter vector: *id017
             use_flag_clddet:
             - 1
             - 1
@@ -5910,6 +5955,275 @@ cost function:
           options:
             channels: None
             error parameter vector: *id017
+            use_flag: None
+            obserr_demisf:
+            - 0.01
+            - 0.02
+            - 0.03
+            - 0.02
+            - 0.03
+            obserr_dtempf:
+            - 0.5
+            - 2.0
+            - 4.0
+            - 2.0
+            - 4.0
+        maxvalue: 1e-12
+        action:
+          name: reject
+      - filter: BlackList
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        action:
+          name: inflate error
+          inflation variable:
+            name: ObsFunction/ObsErrorFactorSurfJacobianRad
+            channels: None
+            options:
+              channels: None
+              sensor: avhrr3_metop-c
+              obserr_demisf:
+              - 0.01
+              - 0.02
+              - 0.03
+              - 0.02
+              - 0.03
+              obserr_dtempf:
+              - 0.5
+              - 2.0
+              - 4.0
+              - 2.0
+              - 4.0
+      - filter: Background Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        function absolute threshold:
+        - name: ObsFunction/ObsErrorBoundIR
+          channels: None
+          options:
+            channels: None
+            obserr_bound_latitude:
+              name: ObsFunction/ObsErrorFactorLatRad
+              options:
+                latitude_parameters:
+                - 25.0
+                - 0.5
+                - 0.04
+                - 1.0
+            obserr_bound_transmittop:
+              name: ObsFunction/ObsErrorFactorTransmitTopRad
+              channels: None
+              options:
+                channels: None
+            error parameter vector: *id017
+            obserr_bound_max:
+            - 3.0
+            - 3.0
+            - 3.0
+        action:
+          name: reject
+      - filter: Bounds Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        test variables:
+        - name: ObsFunction/ChannelUseflagCheckRad
+          channels: None
+          options:
+            channels: None
+            use_flag: None
+        minvalue: 1e-12
+        action:
+          name: reject
+      observation_name: avhrr3_metop-c
+    - obs space:
+        name: AVHRR-3 NOAA-18
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/avhrr3_n18.20231009T210000Z.nc4
+            missing file action: warn
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/experiment_id.avhrr3_n18.20231009T210000Z.nc4
+        io pool:
+          max pool size: 6
+        simulated variables:
+        - brightnessTemperature
+        channels: None
+      obs operator:
+        name: CRTM
+        Absorbers:
+        - H2O
+        - O3
+        - CO2
+        obs options:
+          Sensor_ID: avhrr3_n18
+          EndianType: little_endian
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        linear obs operator:
+          Absorbers:
+          - H2O
+          - O3
+          Surfaces:
+          - Water_Temperature
+          - Land_Temperature
+          - Ice_Temperature
+          - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
+      obs bias:
+        input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias.nc4
+        output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
+        variational bc:
+          predictors:
+          - name: constant
+          - name: lapseRate
+            order: 2
+            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+          - name: lapseRate
+            tlapse: cycle_dir/avhrr3_n18.20231009T150000Z.tlapse.txt
+          - name: emissivityJacobian
+          - name: sensorScanAngle
+            order: 4
+          - name: sensorScanAngle
+            order: 3
+          - name: sensorScanAngle
+            order: 2
+          - name: sensorScanAngle
+        covariance:
+          minimal required obs number: 20
+          variance range:
+          - 1e-06
+          - 10.0
+          step size: 0.0001
+          largest analysis variance: 10000.0
+          prior:
+            input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias_cov.nc4
+            inflation:
+              ratio: 1.1
+              ratio for small dataset: 2.0
+          output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias_cov.nc4
+      obs prior filters:
+      - filter: Perform Action
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        action:
+          name: assign error
+          error parameter vector: &id018
+          - 1.0
+          - 1.08
+          - 1.12
+      - filter: Variable Assignment
+        assignments:
+        - name: ObsError/brightnessTemperature
+          channels: None
+          type: float
+          function:
+            name: ObsFunction/Arithmetic
+            options:
+              variables:
+              - name: ObsErrorData/brightnessTemperature
+                channels: None
+      obs post filters:
+      - filter: BlackList
+        filter variables:
+        - name: brightnessTemperature
+          channels: 3
+        where:
+        - variable:
+            name: MetaData/solarZenithAngle
+          maxvalue: 88.9999
+        - variable:
+            name: GeoVaLs/water_area_fraction
+          minvalue: 1e-12
+        action:
+          name: reject
+      - filter: BlackList
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        action:
+          name: inflate error
+          inflation variable:
+            name: ObsFunction/ObsErrorFactorWavenumIR
+            channels: None
+            options:
+              channels: None
+      - filter: Bounds Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        minvalue: 1e-05
+        maxvalue: 1000.0
+        action:
+          name: reject
+      - filter: BlackList
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        action:
+          name: inflate error
+          inflation variable:
+            name: ObsFunction/ObsErrorFactorTopoRad
+            channels: None
+            options:
+              channels: None
+              sensor: avhrr3_n18
+      - filter: BlackList
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        action:
+          name: inflate error
+          inflation variable:
+            name: ObsFunction/ObsErrorFactorTransmitTopRad
+            channels: None
+            options:
+              channels: None
+      - filter: Bounds Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        test variables:
+        - name: ObsFunction/CloudDetectMinResidualAVHRR
+          channels: None
+          options:
+            channels: None
+            error parameter vector: *id018
+            use_flag: None
+            use_flag_clddet:
+            - 1
+            - 1
+            - 1
+            obserr_dtempf:
+            - 0.5
+            - 2.0
+            - 4.0
+            - 2.0
+            - 4.0
+            cloud detection criteria:
+            - 0.6
+            - 0.68
+            - 0.72
+        maxvalue: 1e-12
+        action:
+          name: reject
+      - filter: Bounds Check
+        filter variables:
+        - name: brightnessTemperature
+          channels: None
+        test variables:
+        - name: ObsFunction/NearSSTRetCheckIR
+          channels: None
+          options:
+            channels: None
+            error parameter vector: *id018
             use_flag: None
             obserr_demisf:
             - 0.01
@@ -5972,7 +6286,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id017
+            error parameter vector: *id018
             obserr_bound_max:
             - 3.0
             - 3.0
@@ -6028,6 +6342,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias.nc4
         output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
@@ -6067,7 +6384,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id018
+          error parameter vector: &id019
           - 1.0
           - 1.08
           - 1.12
@@ -6147,7 +6464,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id018
+            error parameter vector: *id019
             use_flag: None
             use_flag_clddet:
             - 1
@@ -6175,7 +6492,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id018
+            error parameter vector: *id019
             use_flag: None
             obserr_demisf:
             - 0.01
@@ -6238,7 +6555,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id018
+            error parameter vector: *id019
             obserr_bound_max:
             - 3.0
             - 3.0
@@ -6294,6 +6611,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias.nc4
         output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias.nc4
@@ -6336,7 +6656,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id019
+          error parameter vector: &id020
           - 0.823
           - 0.76
           - 0.736
@@ -6846,9 +7166,9 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id019
+            error parameter vector: *id020
             use_flag: None
-            use_flag_clddet: &id020
+            use_flag_clddet: &id021
             - 31
             - 31
             - 31
@@ -7299,7 +7619,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id019
+            error parameter vector: *id020
             use_flag: None
         maxvalue: 1e-12
         action:
@@ -7350,7 +7670,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id019
+            error parameter vector: *id020
             obserr_bound_max:
             - 2.0
             - 2.0
@@ -7795,7 +8115,7 @@ cost function:
           options:
             channels: None
             use_flag: None
-            use_flag_clddet: *id020
+            use_flag_clddet: *id021
         maxvalue: 1e-12
         defer to post: true
         action:
@@ -7849,6 +8169,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/cris-fsr_n21.20231009T150000Z.satbias.nc4
         output file: cycle_dir/cris-fsr_n21.20231009T210000Z.satbias.nc4
@@ -7891,7 +8214,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id021
+          error parameter vector: &id022
           - 0.823
           - 0.76
           - 0.736
@@ -8401,9 +8724,9 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id021
+            error parameter vector: *id022
             use_flag: None
-            use_flag_clddet: &id022
+            use_flag_clddet: &id023
             - 31
             - 31
             - 31
@@ -8854,7 +9177,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id021
+            error parameter vector: *id022
             use_flag: None
         maxvalue: 1e-12
         action:
@@ -8905,7 +9228,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id021
+            error parameter vector: *id022
             obserr_bound_max:
             - 2.0
             - 2.0
@@ -9350,7 +9673,7 @@ cost function:
           options:
             channels: None
             use_flag: None
-            use_flag_clddet: *id022
+            use_flag_clddet: *id023
         maxvalue: 1e-12
         defer to post: true
         action:
@@ -9404,6 +9727,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias.nc4
         output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias.nc4
@@ -9446,7 +9772,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id023
+          error parameter vector: &id024
           - 0.823
           - 0.76
           - 0.736
@@ -9956,9 +10282,9 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id023
+            error parameter vector: *id024
             use_flag: None
-            use_flag_clddet: &id024
+            use_flag_clddet: &id025
             - 31
             - 31
             - 31
@@ -10409,7 +10735,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id023
+            error parameter vector: *id024
             use_flag: None
         maxvalue: 1e-12
         action:
@@ -10460,7 +10786,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id023
+            error parameter vector: *id024
             obserr_bound_max:
             - 2.0
             - 2.0
@@ -10905,7 +11231,7 @@ cost function:
           options:
             channels: None
             use_flag: None
-            use_flag_clddet: *id024
+            use_flag_clddet: *id025
         maxvalue: 1e-12
         defer to post: true
         action:
@@ -10971,6 +11297,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias.nc4
         output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias.nc4
@@ -11648,6 +11977,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias.nc4
         output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias.nc4
@@ -11690,7 +12022,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id025
+          error parameter vector: &id026
           - 0.727
           - 0.81
           - 0.75
@@ -12387,9 +12719,9 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id025
+            error parameter vector: *id026
             use_flag: None
-            use_flag_clddet: &id026
+            use_flag_clddet: &id027
             - 1
             - 1
             - 1
@@ -13024,7 +13356,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id025
+            error parameter vector: *id026
             use_flag: None
         maxvalue: 1e-12
         action:
@@ -13075,7 +13407,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id025
+            error parameter vector: *id026
             obserr_bound_max:
             - 3.0
             - 2.0
@@ -13705,7 +14037,7 @@ cost function:
           options:
             channels: None
             use_flag: None
-            use_flag_clddet: *id026
+            use_flag_clddet: *id027
         maxvalue: 1e-12
         defer to post: true
         action:
@@ -13759,6 +14091,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias.nc4
         output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias.nc4
@@ -13801,7 +14136,7 @@ cost function:
           channels: None
         action:
           name: assign error
-          error parameter vector: &id027
+          error parameter vector: &id028
           - 0.727
           - 0.81
           - 0.75
@@ -14498,9 +14833,9 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id027
+            error parameter vector: *id028
             use_flag: None
-            use_flag_clddet: &id028
+            use_flag_clddet: &id029
             - 1
             - 1
             - 1
@@ -15135,7 +15470,7 @@ cost function:
           channels: None
           options:
             channels: None
-            error parameter vector: *id027
+            error parameter vector: *id028
             use_flag: None
         maxvalue: 1e-12
         action:
@@ -15186,7 +15521,7 @@ cost function:
               channels: None
               options:
                 channels: None
-            error parameter vector: *id027
+            error parameter vector: *id028
             obserr_bound_max:
             - 3.0
             - 2.0
@@ -15816,7 +16151,7 @@ cost function:
           options:
             channels: None
             use_flag: None
-            use_flag_clddet: *id028
+            use_flag_clddet: *id029
         maxvalue: 1e-12
         defer to post: true
         action:
@@ -15882,6 +16217,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias.nc4
         output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
@@ -16326,6 +16664,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias.nc4
         output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
@@ -16770,6 +17111,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
       obs bias:
         input file: cycle_dir/mhs_n19.20231009T150000Z.satbias.nc4
         output file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
@@ -17211,16 +17555,16 @@ cost function:
           name: reject
       observation_name: mls55_aura
     - obs space:
-        name: OMI AURA
+        name: OMIEFF AURA
         obsdatain:
           engine:
             type: H5File
-            obsfile: cycle_dir/omi_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/omieff_aura.20231009T210000Z.nc4
             missing file action: warn
         obsdataout:
           engine:
             type: H5File
-            obsfile: cycle_dir/experiment_id.omi_aura.20231009T210000Z.nc4
+            obsfile: cycle_dir/experiment_id.omieff_aura.20231009T210000Z.nc4
         io pool:
           max pool size: 6
         simulated variables:
@@ -17271,7 +17615,75 @@ cost function:
         threshold: 5.0
         action:
           name: reject
-      observation_name: omi_aura
+      observation_name: omieff_aura
+    - obs space:
+        name: OMPSLPNC N21
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/ompslpnc_n21.20231009T210000Z.nc4
+            missing file action: warn
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/experiment_id.ompslpnc_n21.20231009T210000Z.nc4
+        io pool:
+          max pool size: 6
+        simulated variables:
+        - ozoneProfile
+      obs operator:
+        name: VertInterp
+        vertical coordinate: air_pressure
+        observation alias file: experiment_root/experiment_id/configuration/jedi/interfaces/geos_atmosphere/observations/obsop_name_map.yaml
+      obs filters:
+      - filter: Bounds Check
+        filter variables:
+        - name: ozoneProfile
+        minvalue: 0
+        maxvalue: 10000
+        action:
+          name: reject
+      - filter: Background Check
+        filter variables:
+        - name: ozoneProfile
+        threshold: 5.0
+        action:
+          name: reject
+      observation_name: ompslpnc_n21
+    - obs space:
+        name: OMPSLPNC NPP
+        obsdatain:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/ompslpnc_npp.20231009T210000Z.nc4
+            missing file action: warn
+        obsdataout:
+          engine:
+            type: H5File
+            obsfile: cycle_dir/experiment_id.ompslpnc_npp.20231009T210000Z.nc4
+        io pool:
+          max pool size: 6
+        simulated variables:
+        - ozoneProfile
+      obs operator:
+        name: VertInterp
+        vertical coordinate: air_pressure
+        observation alias file: experiment_root/experiment_id/configuration/jedi/interfaces/geos_atmosphere/observations/obsop_name_map.yaml
+      obs filters:
+      - filter: Bounds Check
+        filter variables:
+        - name: ozoneProfile
+        minvalue: 0
+        maxvalue: 10000
+        action:
+          name: reject
+      - filter: Background Check
+        filter variables:
+        - name: ozoneProfile
+        threshold: 5.0
+        action:
+          name: reject
+      observation_name: ompslpnc_npp
     - obs space:
         name: OMPSNM NPP
         obsdatain:
@@ -21123,6 +21535,9 @@ cost function:
           - Land_Temperature
           - Ice_Temperature
           - Snow_Temperature
+          zeroO3JacRange:
+          - 996.0
+          - 1170.0
         obs options:
           Sensor_ID: ssmis_f17
           EndianType: little_endian
