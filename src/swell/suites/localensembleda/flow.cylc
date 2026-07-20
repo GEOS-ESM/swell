@@ -233,8 +233,15 @@
 
     [[CleanCycle-{{model_component}}]]
         script = "swell task CleanCycle $config -d $datetime -m {{model_component}}"
+
+    # ensemble_num_members for {{model_component}}: {{models[model_component]['ensemble_num_members']}}
     {% endfor %}
 
+    # Suite question can be used in flow.cylc to set tasks - gmao_perllib_tag shows up in experiment.yaml
+    {% if models['geos_marine']['ensemble_num_members'] is defined %}
+    [[CloneGmaoPerllib]]
+        script = "swell task CloneGmaoPerllib $config -m {{model_component}}"
+    {% endif %}
 
     [[sync_point]]
         script = true

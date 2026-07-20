@@ -31,7 +31,8 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.skip_ensemble_hofx(),
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
-            qd.model_components(['geos_atmosphere']),
+            # Demonstrate multi-model settings
+            qd.model_components(['geos_atmosphere', 'geos_marine']),
         ],
         geos_atmosphere=[
             qd.horizontal_resolution('91'),
@@ -59,6 +60,10 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.window_type("3D"),
             qd.clean_patterns(['*.txt'])
+        ],
+        # Demonstrator for different values of ensemble_num_members
+        geos_marine=[
+            qd.ensemble_num_members(4)
         ]
     )
 
@@ -135,7 +140,7 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda = QuestionList(
         list_name="localensembleda",
         questions=[
-            localensembleda_tier2
+            localensembleda_tier1
         ]
     )
 
