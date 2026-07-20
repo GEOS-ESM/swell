@@ -50,7 +50,7 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.ensemble_num_members(32),
             qd.ensemble_num_chunks(8),
             qd.number_of_iterations([100]),
-            qd.gradient_norm_reduction(1.e-4),
+            qd.gradient_norm_reduction(1.e-3),
             qd.minimizer("DRPLanczos"),
             qd.analysis_variables([
                 "eastward_wind",
@@ -133,8 +133,8 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
-    eda_controlpert = QuestionList(
-        list_name="eda_controlpert",
+    eda_controlpert_atmos = QuestionList(
+        list_name="eda_controlpert_atmos",
         questions=[
             eda_controlpert_atmos_tier1
         ]
