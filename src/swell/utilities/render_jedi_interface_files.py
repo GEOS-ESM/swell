@@ -65,6 +65,10 @@ class JediConfigRendering():
         self.__template_dict__['experiment_id'] = experiment_id
         self.__template_dict__['experiment_root'] = experiment_root
 
+        # Predefine eda variables to dictionary
+        self.__template_dict__['ensemble_imember'] = None
+        self.__template_dict__['ensemble_ichunk'] = None
+
         # List of all potential valid keys that can be used in templates
         self.valid_template_keys = [
             'analysis_variables',
@@ -83,6 +87,7 @@ class JediConfigRendering():
             'ensemble_num_members',
             'ensemble_num_chunks',
             'ensemble_ichunk',
+            'ensemble_imember',
             'ensmean_only',
             'ensmeanvariance_only',
             'ensmeanvariance_spec_item',
@@ -143,6 +148,7 @@ class JediConfigRendering():
             'window_end_iso',
             'window_length',
             'forecast_length',
+            'suite_name',
         ]
 
         # List of all potential valid dynamic keys that can be used in templates

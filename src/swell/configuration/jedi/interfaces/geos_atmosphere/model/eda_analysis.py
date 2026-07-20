@@ -6,27 +6,25 @@
 
 # --------------------------------------------------------------------------------------------------
 
-from swell.utilities.oops_config import OopsConfig
+from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names
 
 # --------------------------------------------------------------------------------------------------
 
 
-class ensmeanvariance(OopsConfig):
+def eda_analysis(template_dict: Mapping) -> Mapping:
 
-    def render_oops(self):
+    imem = template_dict.get('ensemble_imember', None)
+    analysis = {
+        'filetype': 'cube sphere history',
+        'provider': 'geos',
+        'datapath': f'./analysis/mem{imem:03d}',
+        'filename': f'eda.ana.mem{imem:03d}.%yyyy%mm%dd_%hh%MM%ssz.nc4',
+        'first': 'PT0H',
+        'frequency': 'PT1H',
+        'field io names': field_io_names,
+    }
 
-        oops = {
-            'geometry': self.interface_model('geometry'),
-            'ensemble': self.interface_model('ensemble_block'),
-            #
-            # full state variables do not work in ensemble
-            # 'ensemble': self.interface_model('state_ensemble'),
-            #
-            'variance output': self.interface_model('comp_variance_output'),
-            'mean output': self.interface_model('comp_mean_output')
-        }
-
-        return oops
-
+    return analysis
 
 # --------------------------------------------------------------------------------------------------

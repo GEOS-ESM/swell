@@ -392,6 +392,7 @@ class TaskQuestions(QuestionContainer, Enum):
         questions=[
             qd.background_experiment(),
             qd.background_time_offset(),
+            qd.ebkg_time_offset(),
             qd.geos_x_ensemble_directory()
         ]
     )
@@ -842,10 +843,21 @@ class TaskQuestions(QuestionContainer, Enum):
             run_jedi_executable,
             qd.ensemble_num_members(),
             qd.ensemble_num_chunks(),
+            qd.obs_pert_amplitude(),
             qd.obs_thinning_rej_fraction(),
             qd.perhost(),
             qd.comparison_log_type('variational'),
             qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    CleanEda = QuestionList(
+        list_name="CleanEda",
+        questions=[
+            run_jedi_executable,
+            qd.ensemble_num_members()
         ]
     )
 

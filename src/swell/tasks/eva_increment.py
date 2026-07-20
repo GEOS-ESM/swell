@@ -68,6 +68,8 @@ class EvaIncrement(taskBase):
         incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{cycle_time_reformat}.nc4'
         if self.suite_name() == 'localensembleda':
             incr_file = f'geos.mean-inc.{local_bkg_time}.nc4'
+        elif self.suite_name() == 'eda':
+            incr_file = f'eda.mean-inc.{local_bkg_time}.nc4'
         if window_type == '4D' and 'atmos' in self.suite_name():
             incr_file = f'{self.experiment_id()}.increment-iter{iter_no}.{window_begin}.nc4'
 

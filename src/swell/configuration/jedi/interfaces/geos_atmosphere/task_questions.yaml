@@ -52,6 +52,9 @@ background_frequency:
 background_time_offset:
   default_value: PT9H
 
+ebkg_time_offset:
+  default_value: PT3H
+
 bufr_obs_classes:
   default_value:
   - disc_airs_bufr
@@ -122,7 +125,7 @@ ensemble_hofx_strategy:
   - parallel
 
 ensemble_num_members:
-  default_value: 10
+  default_value: 16
   options: None
 
 ensemble_num_chunks:

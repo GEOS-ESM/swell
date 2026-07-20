@@ -210,6 +210,7 @@ def launch(
               default=None, help=additional_parameter_help)
 @click.option('-p', '--ensemblePacket', 'ensemblePacket', default=None, help=ensemble_help)
 @click.option('-ichunk', '--ensemble_ichunk', 'ichunk', type=int, default=None, help=ensemble_help)
+@click.option('-imem', '--ensemble_imember', 'imember', type=int, default=None, help=ensemble_help)
 def task(
     task: str,
     config: str,
@@ -218,6 +219,7 @@ def task(
     additional_parameter: Optional[str],
     ensemblePacket: Optional[str],
     ichunk: Optional[int]
+    imember: Optional[int]
 ) -> None:
     """
     Run a workflow task
@@ -230,7 +232,7 @@ def task(
 
     """
     task_wrapper(task, config, datetime, model, additional_parameter,
-                 ensemblePacket, ichunk)
+                 ensemblePacket, ichunk, imember)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -278,9 +280,9 @@ def test(test: str) -> None:
 @click.option('-p', '--platform', 'platform', type=click.Choice(get_platforms()),
               default="nccs_discover_sles15", help=platform_help)
 @click.argument('suite', type=click.Choice(("hofx", "3dvar_marine", "3dvar_atmos",
-                                            "localensembleda", "3dvar_cycle")))
+                                            "3dvar_cycle")))
 def t1test(
-    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "localensembleda", "3dvar_cycle"],
+    suite: Literal["hofx", "3dvar_marine", "3dvar_atmos", "3dvar_cycle"],
     platform: Optional[str] = "nccs_discover_sles15"
 ) -> None:
     """
