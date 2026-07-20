@@ -133,6 +133,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.window_type("3D"),
             qd.clean_patterns(['*.txt'])
         ]
+        # Demonstrator for different values of ensemble_num_members
+        geos_marine=[
+            qd.ensemble_num_members(11)
+        ]
     )
 
     # --------------------------------------------------------------------------------------------------

@@ -316,12 +316,6 @@ produce_geovals:
   - true
   - false
 
-skip_ensemble_hofx:
-  default_value: true
-  options:
-  - true
-  - false
-
 vertical_localization_function:
   default_value: Gaspari Cohn
   options:
