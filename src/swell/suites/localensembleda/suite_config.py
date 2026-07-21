@@ -24,7 +24,7 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda_tier1 = QuestionList(
         list_name="localensembleda",
         questions=[
-            sq.marine,
+            sq.common,
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.ensemble_num_members(),
@@ -65,7 +65,7 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda_tier2 = QuestionList(
         list_name="localensembleda",
         questions=[
-            sq.marine,
+            sq.common,
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
             qd.ensemble_num_members(),
