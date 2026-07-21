@@ -15,7 +15,7 @@ from ruamel.yaml import YAML
 
 from swell.tasks.base.task_base import taskBase
 from swell.utilities.run_jedi_executables import run_executable
-
+from swell.utilities.yaml_utils import replace_string_value
 
 # --------------------------------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # exit execute if ichunk=-1: meaning reoder analysis files
         # -------------------------------------------------------
-        if ichunk == 0:
+        if ichunk == -1:
             npert = int( nmember / nchunk )
             istart = 0
             imem = 0
@@ -238,7 +238,7 @@ class RunJediEdaControlPertExecutable(taskBase):
             os.symlink(f1, f2)
 
             # analysis_chunk / chunk00x / mem00y will have its own obs, B and R
-            # ----------------------------------------------------
+            # -----------------------------------------------------------------
             mem_dir = f'analysis_chunk/chunk{ichunk:003d}/mem{imem:03d}'
             xdir = os.path.join(self.cycle_dir(), mem_dir)
             os.makedirs(xdir, exist_ok=True)
@@ -259,7 +259,7 @@ class RunJediEdaControlPertExecutable(taskBase):
             shutil.copytree(d1, d2, dirs_exist_ok=True)
 
         # round-2: modify dir keys in yaml to  chunk00x / mem%mem_pad%
-        # ----------------------------------------------------
+        # ------------------------------------------------------------
         for observer in jedi_config_dict['assimilation']['cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
@@ -298,6 +298,16 @@ class RunJediEdaControlPertExecutable(taskBase):
                     File = os.path.join(dir1, mem_temp_dir, fname)
                     obs_bias['covariance']['prior']['input file'] = File
 
+            observer['obs space']['obs perturbations seed shift'] = (ichunk-1)*npert
+
+        # round-3: point dir to newly created chunks dir
+        # ----------------------------------------------------
+        dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
+        for i in dir_list:
+            j = f"fv3-jedi/{i}"
+            k = f"{mem_temp_dir}/{j}"  # Result: analysis/chunk00x/mem_pad/fv3-jedi/rcov
+            jedi_config_dict = replace_string_value(jedi_config_dict, j, k)
+            # Result: e.g., analysis/mem002/fv3-jedi/rcov
 
         ruamel_yaml = YAML()
         ruamel_yaml.default_flow_style = False
@@ -305,19 +315,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         # Write the ordered dictionary to YAML file
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
-
-
-        # round-3: point dir to newly created chunks dir
-        # ----------------------------------------------------
-        with open(jedi_config_file, 'r') as f:
-            yaml_content = f.read()
-        dir_list = ["bkg", "fv3files", "gsibec", "rcov"]
-        for i in dir_list:
-            j = f"fv3-jedi/{i}"
-            k = f"{mem_temp_dir}/{j}"  # Result: analysis/chunk00x/mem_pad/fv3-jedi/rcov
-            yaml_content = yaml_content.replace(j, k)
-        with open(jedi_config_file, 'w') as f:
-            f.write(yaml_content)
 
 
         # Get the JEDI interface metadata

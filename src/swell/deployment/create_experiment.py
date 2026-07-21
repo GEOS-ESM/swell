@@ -488,7 +488,6 @@ def prepare_cylc_suite_jinja2(
     print(f'nail6. suite_file in prepare_cylc_suite_jinja2 = {suite_file}')
     print(f'experiment_dict =')
     print_dict(experiment_dict)
-    exit()
 
 
     # Copy the experiment dictionary to the rendering dictionary

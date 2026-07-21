@@ -57,10 +57,21 @@
             # Generate satellite channel records
             CloneGeosMksi-{{model_component}}[^] => GenerateObservingSystemRecords-{{model_component}}
 
-            # ygyu fix at the end
             # Get observations
+            {% if cycling_varbc %}
+            # Cycling VarBC is active, biases from the previous cycle will be used
+
+            {% if models[model_component]['ensemble_num_chunks'] is defined %}
+            {% for i in range( 1, models[model_component]['ensemble_num_chunks'] + 1 ) %}
+            RunJediEdaControlPertExecutable_chunk{{i}}-{{model_component}}[-PT6H] => GetObservations-{{model_component}}
+            {% endfor %}
+            {% endif %}
+
+            {% else %}
+
             # Cycling VarBC is inactive, static bias files will be used
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}
+            {% endif %}
 
             # Perform staging that is cycle dependent
             StageJediCycle-{{model_component}}
@@ -82,7 +93,8 @@
             {% endif %}
 
             # bkg/ana : mean/variance
-            SP3-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
+            SP3-{{model_component}} => ShuffleAnaMembers-{{model_component}}
+            ShuffleAnaMembers-{{model_component}} => RunJediEnsembleMeanVariance-{{model_component}}
             RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
 
             # CleanupEda directory
@@ -168,13 +180,8 @@
     {% endfor %}
     {% endif %}
 
-
-    [[RunJediEdaControlPertExecutable_]]
-        script = "swell task RunJediEdaControlPertExecutable $config -d $datetime -m {{model_component}}"
-        platform = {{platform}}
-        execution time limit = {{scheduling["RunJediEdaControlPertExecutable"]["execution_time_limit"]}}
-        [[[directives]]]
-
+    [[ShuffleAnaMembers-{{model_component}}]]
+        script = "swell task RunJediEdaControlPertExecutable $config -d $datetime -m {{model_component}} -ichunk -1"
 
     [[RunJediObsfiltersExecutable-{{model_component}}]]
         script = "swell task RunJediObsfiltersExecutable $config -d $datetime -m {{model_component}}"

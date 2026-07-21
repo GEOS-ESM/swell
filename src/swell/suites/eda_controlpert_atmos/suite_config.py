@@ -58,6 +58,7 @@ class SuiteConfig(QuestionContainer, Enum):
                 "air_temperature",
                 "water_vapor_mixing_ratio_wrt_moist_air",
                 "air_pressure_at_surface",
+                "air_pressure_levels",
                 "cloud_liquid_ice",
                 "cloud_liquid_water",
                 "rain_water",
