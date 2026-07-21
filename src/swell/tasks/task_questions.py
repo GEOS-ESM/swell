@@ -502,6 +502,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.dry_run(),
             qd.obs_to_ingest(),
             qd.window_length(),
+            qd.store_as_symlink(),
         ]
     )
 
@@ -883,6 +884,31 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.gsibec_nlons(),
             qd.horizontal_resolution(),
             qd.vertical_resolution()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveForecastCf = QuestionList(
+        list_name="SaveForecastCf",
+        questions=[
+            qd.forecast_length(),
+            qd.forecast_output_frequency(),
+            qd.horizontal_resolution(),
+            qd.window_length(),
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
+    SaveBackground = QuestionList(
+        list_name="SaveBackground",
+        questions=[
+            qd.dry_run(),
+            qd.background_source_path(),
+            qd.background_experiment(),
+            qd.horizontal_resolution(),
+            qd.store_as_symlink(),
         ]
     )
 

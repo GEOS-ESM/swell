@@ -997,6 +997,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class store_as_symlink(TaskQuestion):
+        default_value: bool = True
+        question_name: str = "store_as_symlink"
+        ask_question: bool = True
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_to_ingest(TaskQuestion):
         default_value: list = mutable_field([])
         question_name: str = "obs_to_ingest"
@@ -1762,7 +1775,33 @@ class QuestionDefaults():
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
         widget_type: WType = WType.STRING_DROP_LIST
 
-# --------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class background_source_path(TaskQuestion):
+        default_value: str = (
+            '/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/'
+            'GEOS.cf.ana.jdi_inst_1hr_glo_C360x360x6_v72.%Y%m%d_%H%Mz.R0.nc4'
+        )
+        question_name: str = "background_source_path"
+        ask_question: bool = True
+        models: List[str] = mutable_field(['geos_cf'])
+        prompt: str = ("Path template for background files. Uses Python strftime format codes, "
+                       "e.g. Y%Y/M%m/D%d gives Y2025/M10/D02 and %Y%m%d_%H%Mz gives "
+                       "20251002_0900z.")
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ingest_background_pipeline(SuiteQuestion):
+        default_value: bool = False
+        question_name: str = "ingest_background_pipeline"
+        ask_question: bool = False
+        prompt: str = "Run the SaveBackground task to ingest background files into R2D2?"
+        widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
     @dataclass
     class download_convert_pipeline(SuiteQuestion):
         default_value: bool = False
