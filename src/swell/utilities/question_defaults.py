@@ -1014,7 +1014,7 @@ class QuestionDefaults():
         default_value: str = 'GEOS_mksi/ObsClass/obsys-nccs.rc'
         question_name: str = 'obs_rc_path'
         ask_question: bool = True
-        prompt: str = "Filepath to obssys.rc file within experiment directory."
+        prompt: str = "Filepath to observing system rc file within experiment directory."
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
