@@ -98,7 +98,7 @@
             RunJediEnsembleMeanVariance-{{model_component}} ==> RunJediDiffstates-{{model_component}} => SP4-{{model_component}}
 
             # CleanupEda directory
-            SP4-{{model_component}} => CleanEdaFiles-{{model_component}}
+            #SP4-{{model_component}} => CleanEdaFiles-{{model_component}}
 
             # EvaIncrement
             SP4-{{model_component}} => EvaIncrement-{{model_component}}
