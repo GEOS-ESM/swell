@@ -362,7 +362,8 @@ class TaskQuestions(QuestionContainer, Enum):
     GetBufr = QuestionList(
         list_name="GetBufr",
         questions=[
-            qd.bufr_obs_classes()
+            qd.bufr_obs_classes(),
+            qd.obs_rc_path()
         ]
     )
 
