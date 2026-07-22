@@ -87,6 +87,15 @@ class EvaIncrement(taskBase):
                 ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
                 eva_override['ice_increment_file_path'] = ice_increment_file_path
 
+        # TODO: Yet another exception, need to handle this better
+        if self.suite_name() == 'letkf_marine':
+            incr_file = f'ocn.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
+
+            if 'cice6' in marine_models:
+                ice_incr_file = f'ice.{self.experiment_id()}.inc.an.{ocn_cycle_time}.nc'
+                ice_increment_file_path = os.path.join(self.cycle_dir(), ice_incr_file)
+                eva_override['ice_increment_file_path'] = ice_increment_file_path
+
         increment_file_path = os.path.join(self.cycle_dir(), incr_file)
 
         eva_override['cycle_dir'] = self.cycle_dir()
