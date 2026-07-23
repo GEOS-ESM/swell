@@ -1,6 +1,6 @@
 # Suite tests
 
-Before opening a pull request, we highly recommend running not only the Swell [Code tests](code_tests/code_tests.md) but also some more advanced tests of Swell functionality that confirm that common suites will run successfully.
+Before opening a pull request, we highly recommend running not only the Swell [Code tests](code_tests.md) but also some more advanced tests of Swell functionality that confirm that common suites will run successfully.
 These tests take significantly longer and require significantly more computational resources to run; the only reasonable place to run these is on a compute node on NCCS Discover.
 
 Tier 1 tests are relatively faster and test more basic functionality on a small number of compute nodes.
@@ -31,7 +31,7 @@ One recommended override, per the example below, is to request a local copy of `
           observing_system_records_mksi_path: "~/projects/GEOS_mksi"
     ```
 
-2. Set up your compute SWELL environment interactively (following the [Platform specific instructions](platforms/platforms.md) for your system).
+2. Set up your compute SWELL environment interactively (following the [platform-specific instructions](../installation_and_setup/platforms/README.md) for your system).
     - Confirm that you are running the correct version of Swell with `which swell`.
     - Confirm that swell itself will run by just running `swell` (and make sure the command prints out instructions but throws no errors).
 

@@ -48,4 +48,4 @@ After the install is completed you should have directories `src`, `modulefiles` 
 ```
 **Important:** After logging out of Discover and then logging back in, users should source the JEDI module files again by repeating step 2 above before using `module load swell/<local_name>`.
 
-SWELL is ready to use! See [examples here](../../examples/description.md) on how to run SWELL.
+SWELL is ready to use! See [examples here](../../../practical_examples/README.md) on how to run SWELL.
