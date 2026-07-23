@@ -16,7 +16,7 @@ This will finish the uv installation. Then follow the SWELL documentation to fin
 
 #### Install SWELL
 We will download all the required packages on local with the corresponding python version `[python_version]`, and then install those packages on Discover.
-1. Find the python version used by the JEDI module. On Discover, Load the `mod_swell` (see instructions [here](platforms/discover/installing_swell_uv_venv.md)). Then get the python version `[python_version]` by running `python --version`.
+1. Find the python version used by the JEDI module. On Discover, load the `mod_swell` (see instructions [here](installing_swell_uv_venv.md)). Then get the python version `[python_version]` by running `python --version`.
 2. On a `x86_64` Linux machine (e.g., an AWS ec2 instance with Intel or AMD CPU, and with os=`sles15`), get all the required offline installation packages. 
 ```bash
     #install uv first

@@ -5,7 +5,7 @@ It will be assumed that SWELL has already been installed and loaded as a module 
 
 ## Creating an Experiment Directory
 
-There are common elements in these examples in terms of [creating](../creating_an_experiment.md) and [launching](../launching_an_experiment.md) experiments. We will take a closer look at the `experiment.yaml` that controls the different aspects of the JEDI configuration creations.
+There are common elements in these examples in terms of [creating](../running_an_experiment/creating_an_experiment.md) and [launching](../running_an_experiment/launching_an_experiment.md) experiments. We will take a closer look at the `experiment.yaml` that controls the different aspects of the JEDI configuration creations.
 
 
 ### Using Defaults:
@@ -35,7 +35,7 @@ To see all available arguments use the command `swell create --help`.
 ### Using Defaults with Overrides:
 
  - **SLURM override:**
-It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM directives for different models and each individual task. See [SLURM configuration](../configs/slurm_configuration.md) section for more details.
+It is possible to use the `-s` or `--slurm` option to modify (or override) SLURM directives for different models and each individual task. See [SLURM configuration](../configuration_reference/slurm_configuration.md) section for more details.
 
 - **Overriding** `experiment.yaml`**:**
   It is possible to override `experiment.yaml` keys using the override argument (`-o` or `--override`).
