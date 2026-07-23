@@ -26,7 +26,7 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.logger import Logger, get_logger
 from swell.utilities.slurm import prepare_scheduling_dict
 from swell.utilities.check_da_params import check_da_params
-from swell.utilities.yaml_utils import print_dict
+
 
 # --------------------------------------------------------------------------------------------------
 
@@ -256,8 +256,6 @@ def create_experiment_directory(
 
     # Experiment ID and root from the user input
     # ------------------------------------------
-
-    #ygyu test
     experiment_id = dict_get(logger, experiment_dict, 'experiment_id')
     experiment_root = dict_get(logger, experiment_dict, 'experiment_root')
 
@@ -485,10 +483,6 @@ def prepare_cylc_suite_jinja2(
     # --------------------------
     with open(os.path.join(swell_suite_path, 'flow.cylc'), 'r') as file:
         suite_file = file.read()
-    print(f'nail6. suite_file in prepare_cylc_suite_jinja2 = {suite_file}')
-    print(f'experiment_dict =')
-    print_dict(experiment_dict)
-
 
     # Copy the experiment dictionary to the rendering dictionary
     # ----------------------------------------------------------
@@ -543,11 +537,8 @@ def prepare_cylc_suite_jinja2(
                          'dictionary.')
 
     # Check if 'ensemble_hofx_strategy' appears anywhere in suite_file
-    ensemble_list = ['ensemble_'+s for s in
-                     ['num_members', 'num_chunks', 'hofx_strategy', 'hofx_packets']]
+    ensemble_list = ['ensemble_'+s for s in ['num_members', 'hofx_strategy', 'hofx_packets']]
     ensemble_list = ensemble_list + ['skip_ensemble_hofx']
-    print (f'ensemble_list =  {ensemble_list}')
-
     for ensemble_aspect in ensemble_list:
         if ensemble_aspect in suite_file:
             if len(model_components) == 0:
@@ -589,10 +580,6 @@ def prepare_cylc_suite_jinja2(
     render_dictionary['scheduling']['RunGeos']['execution_time_limit'] = 'PT30M'
     render_dictionary['scheduling']['RunJediLocalEnsembleDaExecutable'][
             'execution_time_limit'] = 'PT1H'
-    render_dictionary['scheduling']['RunJediEdaExecutable'][
-            'execution_time_limit'] = 'PT30M'
-    render_dictionary['scheduling']['RunJediEdaControlPertExecutable'][
-            'execution_time_limit'] = 'PT30M'
 
     # Set jinja templated string to use upon runtime
     # ----------------------------------------------

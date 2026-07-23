@@ -23,7 +23,6 @@ from swell.utilities.jinja2 import template_string_jinja2
 from swell.utilities.dictionary import update_dict
 from swell.tasks.task_questions import TaskQuestions as task_questions
 from swell.suites.all_suites import AllSuites
-from swell.utilities.yaml_utils import print_dict
 
 # --------------------------------------------------------------------------------------------------
 
@@ -93,11 +92,6 @@ class PrepareExperimentConfigAndSuite:
         self.model_ind_tasks = self.get_suite_task_list_model_ind(self.suite_str)
         self.all_model_dep_tasks = self.get_all_model_dep_tasks(self.suite_str)
 
-        print(f'nail1 model_ind_tasks = {self.model_ind_tasks}')
-        print(f'nail2 all_model_dep_tasks = {self.all_model_dep_tasks}')
-        print(f'nail3 self.suite_str  = {self.suite_str}')
-
-
         # Perform the assembly of the dictionaries that contain all the questions that can possibly
         # be asked. This
 
@@ -127,9 +121,6 @@ class PrepareExperimentConfigAndSuite:
 
         suite_config_obj = AllSuites.get_config(self.suite_config)
         suite_question_list = suite_config_obj.expand_question_list()
-        print(f'suite q list :  {suite_question_list}')
-        print_dict(suite_question_list)
-
 
         # Allow for adding extra tasks manually from configuration
         # For dynamic suite creation (e.g. comparison tests)
@@ -211,8 +202,6 @@ class PrepareExperimentConfigAndSuite:
         if 'model_components' not in question_dictionary.keys():
             self.suite_needs_model_components = False
 
-        print(f'self.suite_needs_model_components = {self.suite_needs_model_components}')
-
         # Create copy of the question_dictionary for model independent questions
         question_dictionary_model_ind = copy.deepcopy(question_dictionary)
 
@@ -277,11 +266,6 @@ class PrepareExperimentConfigAndSuite:
 
             for key in keys_to_remove:
                 del self.question_dictionary_model_dep[model][key]
-
-#       print(f'nail1.5 question_dictionary_model_dep = {self.question_dictionary_model_dep}')
-#       for model in self.possible_model_components:
-#           x = self.question_dictionary_model_dep[model]['ensemble_num_chunks']
-#           print(f'x = {x}')
 
     # ----------------------------------------------------------------------------------------------
 
@@ -442,13 +426,6 @@ class PrepareExperimentConfigAndSuite:
         # 2. Perform a non-exhaustive resolving of suite file templates
         # -------------------------------------------------------------
         suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict, True)
-        
-        print(f'nail4.0 self.exp dict = {self.experiment_dict}')
-        print_dict(self.experiment_dict)
-
-        print(f'nail4.1 self.suite str = {self.suite_str}')
-        
-        print(f'nail4.2 jinja2 suite str = {suite_str}')
 
         # 3. Get a list of tasks that do not depend on the model component
         # ----------------------------------------------------------------
@@ -480,16 +457,10 @@ class PrepareExperimentConfigAndSuite:
         # At this point the user should have provided the model components answer. Check that it is
         # in the experiment dictionary and retrieve the response
 
-        render_dict = copy.deepcopy(self.experiment_dict)
-        print('r1: render_dict')
-        print_dict(render_dict)
-
-        
         if 'model_components' not in self.experiment_dict:
             self.logger.abort('The model components question has not been answered.')
 
         for model in self.experiment_dict['model_components']:
-            print(f'nail 5.1 model is {model}')
 
             model_dict = self.question_dictionary_model_dep[model]
 
@@ -502,43 +473,6 @@ class PrepareExperimentConfigAndSuite:
                     # Ask the question
                     self.ask_a_question(model_dict, question_key, model)
 
-                # pass special model-dep task questions/variables to render_dict
-                # for suite_str (jinja2) in step 7.
-                if model_dict[question_key]['question_type'] == 'task':
-
-                    ensemble_list = ['ensemble_'+s for s in ['num_members', 'num_chunks']]
-                    if question_key in ensemble_list:
-
-                        # a. Ensure the 'models' list exists
-                        if 'models' not in render_dict:
-                            render_dict['models'] = []
-
-                        # b. Check if this model is already in our list
-                        model_found = False
-                        for m in render_dict['models']:
-                            if model in m:
-                                # c. If found, incrementally add the new key!
-                                default_val = model_dict[question_key]['default_value']
-                                m[model][question_key] = default_val
-                                model_found = True
-                                break
-
-                        # d. If not found, add the model to the list for the first time
-                        if not model_found:
-                            default_val = model_dict[question_key]['default_value']
-                            render_dict['models'].append({
-                                model: {
-                                    question_key: default_val
-                                }
-                            })
-
-        # debug
-#        print(f'render_dict = {render_dict}')
-        print('r2: render_dict')
-        print_dict(render_dict)
-
-
-        
         # 7. Perform a more exhaustive resolving of suite file templates
         # --------------------------------------------------------------
         # Note that we reset the suite file to avoid templates having been left unresolved
@@ -546,14 +480,9 @@ class PrepareExperimentConfigAndSuite:
         # of templates because there are things related to scheduling that are not yet able to be
         # resolved. In the future it might be good to bring some of that information into the
         # sphere of suite questions but that requires some careful thought so as not to overload
-        # the user with questions. A few model dep variables are needed to corectly parse tasks,
-        # e.g., in Eda ControlPert. Hence we use a render_dict for jinja2 here, only to parse
-        # the for loop around model task in .cycl file, e.g.,
-        # {% for i in range( 1, models[model_component]['ensemble_num_chunks'] + 1 ) %}
-        #  [[RunJediEdaControlPertExecutable_chunk{{i}}-{{model_component}}]]
-        # {% endfor %}
-
-        suite_str = template_string_jinja2(self.logger, self.suite_str, render_dict, True)
+        # the user with questions.
+        suite_str = template_string_jinja2(self.logger, self.suite_str, self.experiment_dict,
+                                           True)
 
         # 8. Ask the new task questions that do not actually depend on the model
         # -----------------------------------------------------------------------
@@ -570,10 +499,8 @@ class PrepareExperimentConfigAndSuite:
 
         # 9.1 Build a list of tasks for each model component
         # -------------------------------------------------
-        print(f'ck suite_str = {suite_str}')
         model_dep_tasks = self.get_suite_task_list_model_dep(suite_str)
-        print(f'ck show: model_dep_tasks  = {model_dep_tasks}')        
-        
+
         # 9.2 Iterate over the model_dep dictionary and ask task questions
         # ----------------------------------------------------------------
         for model in self.experiment_dict['model_components']:
@@ -700,13 +627,11 @@ class PrepareExperimentConfigAndSuite:
         swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
         swell_task_lines = [line.strip() for line in swell_task_lines]
 
-        print(f'def all model dep tasks:   swell_task_lines = {swell_task_lines}')
-        
         # All tasks
         all_tasks = []
 
         for line in swell_task_lines:
-            all_tasks.append(line.split('swell task')[1].strip().split(' ')[0])
+            all_tasks.append(line.split('swell task ')[1].split(' ')[0])
 
         # Ensure all_tasks are unique
         all_tasks = list(set(all_tasks))
@@ -725,8 +650,6 @@ class PrepareExperimentConfigAndSuite:
         swell_task_lines = [line.replace('"', '') for line in swell_task_lines]
         swell_task_lines = [line.strip() for line in swell_task_lines]
 
-        print(f'def get_suite_task_list_model_dep  swell_task_lines = {swell_task_lines}')
-        
         # Now get the model part
         models = []
         for line in swell_task_lines:
