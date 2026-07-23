@@ -1,60 +1,65 @@
-- Getting started
+- Introduction
 
-  - [Installing swell](installing_swell.md)
-  - [Configuring `cylc`](configuring_cylc.md)
-  - [Creating an experiment](creating_an_experiment.md)
-  - [Launching an experiment](launching_an_experiment.md)
-  - [Monitoring an experiment](monitoring_an_experiment.md)
-  - [Manually running tasks](manually_running_tasks.md)
+  - [What Is Swell?](README.md)
+  - Concepts and Architecture
+  - [R2D2 Overview](introduction/r2d2_overview.md)
+  - [Requirements](introduction/requirements.md)
 
-- Platform specific instructions
+- Installation and Setup
 
-  - [Platforms](platforms/platforms.md)
-  - **Discover**
-    - [Installing Swell on SLES15](platforms/discover/installing_swell_discover_sles15.md)
-    - [Installing Swell using `uv` and `venv`](platforms/discover/installing_swell_uv_venv.md)
-    - [Installing Swell with `uv` without internet access](platforms/discover/installing_swell_uv_offline.md)
-    - [Configuring `cylc`](platforms/discover/configuring_cylc_discover.md)
+  - [Installing Swell](installation_and_setup/installing_swell.md)
+  - [Configuring Cylc](installation_and_setup/configuring_cylc.md)
+  - [Platform-Specific Setup](installation_and_setup/platforms/README.md)
+    - **Discover**
+      - [Installing Swell on SLES15](installation_and_setup/platforms/discover/installing_swell_discover_sles15.md)
+      - [Installing Swell with `uv` and `venv`](installation_and_setup/platforms/discover/installing_swell_uv_venv.md)
+      - [Installing Swell Without Internet Access](installation_and_setup/platforms/discover/installing_swell_uv_offline.md)
+      - [Installing Swell in an Interactive C Shell](installation_and_setup/platforms/discover/installing_swell_csh_interactive.md)
+      - [Configuring Cylc on Discover](installation_and_setup/platforms/discover/configuring_cylc_discover.md)
+    - [Configuring an AWS Server](installation_and_setup/configuring_aws_server.md)
+
+- Running an Experiment
+
+  - [Creating an Experiment](running_an_experiment/creating_an_experiment.md)
+  - [Launching an Experiment](running_an_experiment/launching_an_experiment.md)
+  - [Monitoring an Experiment](running_an_experiment/monitoring_an_experiment.md)
+  - [Manually Running Tasks](running_an_experiment/manually_running_tasks.md)
 
 - Practical Examples
 
-  - [Description](examples/description.md)
-  - **SOCA**
-    -  [3DVAR_marine](examples/soca/3dvar_marine.md)
-    -  [3DVAR_marine_cycle_tier2]((examples/soca/3dfgat_marine_cycle_tier2.md))
-    -  [3DFGAT_marine_cycle]((examples/soca/3dfgat_marine_cycle.md))
-  - **R2D2 - Storing Data**
-       - [Understanding R2D2](examples/r2d2_intro.md)
-       - [Storing Observations to R2D2](examples/r2d2/r2d2_ingest.md)
+  - [Examples Overview](practical_examples/README.md)
+  - **SOCA Workflows**
+    - [3DVAR Marine](practical_examples/soca/3dvar_marine.md)
+    - [3DVAR Marine Cycle Tier 2](practical_examples/soca/3dvar_marine_cycle_tier2.md)
+    - [3DFGAT Marine Cycle](practical_examples/soca/3dfgat_marine_cycle.md)
+  - **R2D2 Workflows**
+    - [Storing Observations in R2D2](practical_examples/r2d2/r2d2_ingest.md)
+  - **Generic Swell Suites**
+    - [Comparing Experiment Outputs](practical_examples/generic_suites/comparison_workflows.md)
 
-- Configuration files in swell
+- Configuration Reference
 
-  - [Observation configuration](configs/observation_configuration.md)
-  - [R2D2 v3 credentials](configs/r2d2_v3_credentials.md)
-  - [SLURM configuration](configs/slurm_configuration.md)
-  - Model configuration:
-    - [Storing Observations to R2D2](examples/r2d2/r2d2_ingest.md)
-  - **SWELL Generic Suites**
-    - [Comparing two SWELL experiment outputs](examples/comparison_workflows.md)
+  - **Model Configurations**
+    - [CICE6](configuration_reference/model_configurations/cice6.md)
+    - [MOM6](configuration_reference/model_configurations/mom6.md)
+    - [History Outputs](configuration_reference/model_configurations/history_outputs.md)
+  - [Observation Configuration](configuration_reference/observation_configuration.md)
+  - [R2D2 Credentials](configuration_reference/r2d2_v3_credentials.md)
+  - [SLURM Configuration](configuration_reference/slurm_configuration.md)
 
-- Configuration files in swell
+- Extending Swell
 
-  - Model configurations:
-    - [CICE6](configs/model_configurations/cice6.md)
-    - [MOM6](configs/model_configurations/mom6.md)
-    - [History Outputs](configs/model_configurations/history_outputs.md)
-  - [Observation configuration](configs/observation_configuration.md)
-  - [R2D2 configuration](configs/r2d2_v3_credentials.md)
-  - [SLURM configuration](configs/slurm_configuration.md)
+  - [Adding a Suite](extending_swell/adding_a_suite.md)
+  - Adding Tasks
+  - Developing New Workflows
 
-- Code test before pull request
+- Testing and Contributing
 
-  - [Code Tests](code_tests/code_tests.md)
-  - [Suite Tests](code_tests/suite_tests.md)
+  - [Code Tests](testing_and_contributing/code_tests.md)
+  - [Suite Tests](testing_and_contributing/suite_tests.md)
+  - [Editing the Documentation](testing_and_contributing/editing_docs.md)
+  - Contribution Guidelines
 
-- Governance
+- Additional Resources
 
-  - [Requirements](requirements.md)
-
-- [Editing the docs](editing_docs.md)
-- [Useful links](useful_links.md)
+  - [Useful Links](additional_resources/useful_links.md)
