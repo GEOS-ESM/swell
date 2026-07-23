@@ -10,6 +10,7 @@
 import os
 import glob
 import shutil
+from pathlib import Path
 from swell.tasks.base.task_base import taskBase
 
 
@@ -19,6 +20,8 @@ from swell.tasks.base.task_base import taskBase
 class CleanEda(taskBase):
 
     # ----------------------------------------------------------------------------------------------
+    # this file handles both eda and eda_controlpert cases
+    #
 
     def execute(self) -> None:
 
@@ -119,10 +122,18 @@ class CleanEda(taskBase):
                                                                 window_type,
                                                                 jedi_forecast_model)
 
-        for imem in range(1, nmember+1):
-            mem_dir = f'analysis/mem{imem:003d}/'
-            d1 = os.path.join(self.cycle_dir(), mem_dir)
-            d2 = os.path.join(d1, 'fv3-jedi')
+        #
+        # handle eda case:      analysis/mem00x
+        # eda controlpert case: analysis_chunk/chunk00x/mem00y
+        #
+        d1 = os.path.join(self.cycle_dir(), 'analysis_chunk')        # control pert case
+        if not os.path.exists(d1):
+            d1 = os.path.join(self.cycle_dir(), 'analysis')          # eda case
+        target_dirs =  [str(p) for p in Path(d1).rglob('mem*') if p.is_dir()]
+        print (f'target_dirs = {target_dirs}')
+
+        for mem_dir in target_dirs:
+            d2 = os.path.join(mem_dir, 'fv3-jedi')
             if os.path.exists(d2):
                 if os.path.islink(d2):
                     # Only remove the symlink itself, never follow it
@@ -134,10 +145,10 @@ class CleanEda(taskBase):
             for observer in jedi_config_dict['cost function']['observations']['observers']:
                 # Get observation name
                 observation = observer['observation_name']
-                # Delete input obsfile in analysis/mem00x (.nc4 .tlapse.txt acftbias acftbias_cov)
-                for file_path in glob.glob(os.path.join(d1, f'{observation}.*')):
+                # Delete input obsfile (.nc4 .tlapse.txt acftbias acftbias_cov)
+                for file_path in glob.glob(os.path.join(mem_dir, f'{observation}.*')):
                     if os.path.islink(file_path):
-                        os.unlink(file_path)                         # safe: removes only the link
+                        os.unlink(file_path)               # safe: removes only the link
                         self.logger.info(f"Deleted symlink file: {file_path}")
                     else:
                         try:
