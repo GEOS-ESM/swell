@@ -222,20 +222,17 @@ class RunJediEdaControlPertExecutable(taskBase):
 
             # copy bkg files to imem dir
             f1_list = glob(os.path.join(self.cycle_dir(), f'ebkg/mem{id:03d}/geos.mem*.nc4'))
-            f1  = f1_list[0]
-            print(f'f1 = {f1}')
-            if f1:
+            if not f1_list:
+                self.logger.error(f"ebkg dir is empty for member id: {id}")
+            for f1 in f1_list:
                 f2 = os.path.basename(f1)
                 f2 = f2.split('.')[2:]
                 f2 = '.'.join(f2)
                 f2 = os.path.join(xdir, f2)
                 print(f'f2 = {f2}')
-            else:
-                f2 = None  # Handle the case where no file is found
-                self.logger.error(f"bkg dir is empty for member id: {id}")
-            if os.path.lexists(f2):
-                os.remove(f2)
-            os.symlink(f1, f2)
+                if os.path.lexists(f2):
+                    os.remove(f2)
+                os.symlink(f1, f2)
 
             # analysis_chunk / chunk00x / mem00y will have its own obs, B and R
             # -----------------------------------------------------------------
