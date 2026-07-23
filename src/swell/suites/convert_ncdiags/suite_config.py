@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="convert_ncdiags",
         questions=[
             sq.common,
-            qd.start_cycle_point("2021-12-12T00:00:00Z"),
-            qd.final_cycle_point("2021-12-12T06:00:00Z"),
+            qd.start_cycle_point("2025-12-30T00:00:00Z"),
+            qd.final_cycle_point("2025-12-30T00:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.bundles("REMOVE"),
             qd.model_components(['geos_atmosphere']),
@@ -84,11 +84,10 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sfcship",
                 "sfc",
                 "sondes",
-                "ssmis_f17",
-                "tcp"
+                "ssmis_f17"
             ]),
-            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                    "obsolete/ufo_testing/ncdiagv2/%Y%m%d%H"),
+            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/"
+                                    "archive/544/x0054/obs/Y%Y/M%m/D%d/H%H"),
         ]
     )
 
