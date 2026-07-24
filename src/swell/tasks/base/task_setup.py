@@ -125,7 +125,7 @@ class TaskSetup(ABC):
             self.pre_script = pre_script
 
         if script != blank_spec:
-            self.script = pre_script
+            self.script = script
 
         if retry != blank_spec:
             self.retry = retry

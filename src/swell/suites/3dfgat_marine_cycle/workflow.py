@@ -192,7 +192,8 @@ class Workflow_3dfgat_marine_cycle(CylcWorkflow):
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
-            self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+            if 'cice6' in self.experiment_dict['models'][model]['marine_models']:
+                self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
             self.tasks.append(ta.SaveRestart(model=model))
             self.tasks.append(ta.CleanCycle(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))

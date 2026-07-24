@@ -143,6 +143,12 @@ class Workflow_localensembleda(CylcWorkflow):
             workflow_str += task.runtime_string(self.experiment_dict,
                                                 self.slurm_external)
 
+        for model in self.experiment_dict['model_components']:
+            if self.experiment_dict['models'][model]['ensemble_hofx_strategy'] == 'parallel':
+                for packet in range(self.experiment_dict['models'][model]['ensemble_hofx_packets']):
+                    hofx_task = ta.RunJediHofxEnsembleExecutable(scheduling_name=f'RunJediHofxExecutable_pack{packet}', script=f'swell task RunJediHofxEnsembleExecutable -m {model} -d $datetime $config -p {packet}', model=model)
+                    workflow_str += hofx_task.runtime_string(self.experiment_dict, self.slurm_external)
+
         self.experiment_dict['stall_timeout'] = """\
         {% if environ.get('SWELL_CYLC_TIMEOUT') %}
         [[events]]
@@ -172,7 +178,8 @@ class Workflow_localensembleda(CylcWorkflow):
             self.tasks.append(ta.RunJediObsfiltersExecutable(model=model))
             self.tasks.append(ta.RunJediLocalEnsembleDaExecutable(model=model))
             self.tasks.append(ta.RunJediEnsembleMeanVariance(model=model))
-            self.tasks.append(ta.RunJediHofxEnsembleExecutable(model=model))
+            if not self.experiment_dict['models'][model]['skip_ensemble_hofx']:
+                self.tasks.append(ta.RunJediHofxEnsembleExecutable(model=model))
             self.tasks.append(ta.EvaIncrement(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.SaveObsDiags(model=model))

@@ -65,7 +65,7 @@ def prepare_slurm_defaults_and_overrides(
             logger.info(f"Reading SLURM directives from {slurm_overrides}.")
             try:
                 with open(slurm_overrides, "r") as slurmfile:
-                    slurm_overrides = yaml.safe_load(slurmfile)
+                    slurm_overrides = yaml.load(slurmfile)
             except FileNotFoundError:
                 raise FileNotFoundError(f"Slurm config {slurm_overrides} not found.")
         elif not isinstance(slurm_overrides, Mapping):

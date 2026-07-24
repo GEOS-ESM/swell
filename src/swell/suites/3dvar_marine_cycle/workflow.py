@@ -187,7 +187,8 @@ class Workflow_3dvar_marine_cycle(CylcWorkflow):
             self.tasks.append(ta.GetObservations(model=model))
             self.tasks.append(ta.PrepareAnalysis(model=model))
             self.tasks.append(ta.RenderJediObservations(model=model))
-            self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
+            if 'cice6' in self.experiment_dict['models'][model]['marine_models']:
+                self.tasks.append(ta.RunJediConvertStateSoca2ciceExecutable(model=model))
             self.tasks.append(ta.MoveDaRestart(model=model))
             self.tasks.append(ta.EvaObservations(model=model))
             self.tasks.append(ta.EvaJediLog(model=model))
