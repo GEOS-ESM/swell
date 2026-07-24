@@ -48,7 +48,7 @@ class Setup(TaskSetup):
         self.base_name = task_name
         self.is_cycling = True
         self.model_dep = True
-        self.task_time_limit = True
+        self.task_time_limit = 'PT40M'
         self.slurm = {}
         self.questions = [
             qd.npx_proc(),
