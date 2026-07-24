@@ -175,11 +175,6 @@ observations:
 path_to_ensemble:
   default_value: /discover/nobackup/projects/gmao/advda/SwellTestData/ensemble_marine
 
-skip_ensemble_hofx:
-  default_value: true
-  options:
-  - true
-  - false
 
 total_processors:
   default_value: 24
