@@ -1747,6 +1747,23 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class window_type(TaskQuestion):
+        question_name: str = "window_type"
+        default_value: str = "defer_to_model"
+        ask_question: bool = True
+        options: list[str] = mutable_field([
+            "3D",
+            "4D"
+        ])
+        models: list[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
+        widget_type: WType = WType.STRING_DROP_LIST
+
+    # ---------------------------------------------------------------------------------------------
+
+    @dataclass
     class background_source_path(TaskQuestion):
         default_value: str = (
             '/css/gmao/geos-cf/NRTv2/priv/ana/Y%Y/M%m/D%d/'
