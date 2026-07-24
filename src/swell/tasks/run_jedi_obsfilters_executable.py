@@ -24,7 +24,7 @@ class RunJediObsfiltersExecutable(taskBase):
 
     def execute(self, ensemble_members: Optional[list] = None) -> None:
 
-        # skip this task if the model is geos_atmosphere
+        # skip this task if the model is not geos_atmosphere
         if self.get_model() != 'geos_atmosphere':
             self.logger.info('Skip RunJediObsfiltersExecutable task for non-geos_atmosphere model')
             return
