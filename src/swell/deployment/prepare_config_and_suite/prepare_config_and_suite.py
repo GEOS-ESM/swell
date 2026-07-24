@@ -275,7 +275,7 @@ class PrepareExperimentConfigAndSuite:
         # -------------------------------------------------------
         yaml = YAML(typ='safe')
         platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
-                                            self.platform, 'platform_defaults.yaml')
+                                          self.platform, 'platform_defaults.yaml')
         with open(platform_dict_file, 'r') as ymlfile:
             platform_defaults = yaml.load(ymlfile)
 
@@ -296,8 +296,8 @@ class PrepareExperimentConfigAndSuite:
 
                 # Open the default dictionaries
                 model_dict_file = os.path.join(get_swell_path(), 'configuration', 'jedi',
-                                                'interfaces', model,
-                                                f'model_defaults.yaml')
+                                               'interfaces', model,
+                                               f'model_defaults.yaml')
                 with open(model_dict_file, 'r') as ymlfile:
                     model_defaults = yaml.load(ymlfile)
 
