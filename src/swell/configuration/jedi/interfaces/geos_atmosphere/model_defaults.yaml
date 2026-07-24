@@ -105,6 +105,10 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  options: ['T00', 'T06', 'T12', 'T18']
+
 cycling_varbc:
   default_value: false
   options:
@@ -329,6 +333,12 @@ produce_geovals:
   options:
   - true
   - false
+
+saber_central_block:
+  default_value: None
+
+saber_outer_block:
+  default_value: None
 
 skip_ensemble_hofx:
   default_value: true

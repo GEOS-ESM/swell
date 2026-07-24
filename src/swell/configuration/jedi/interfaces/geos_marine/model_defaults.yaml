@@ -43,6 +43,19 @@ clean_patterns:
   - '*MOM*'
   - logfile.*.out
 
+cycle_times:
+  default_value: ['T00', 'T12']
+  options: ['T00', 'T12']
+
+ensemble_hofx_strategy:
+  default_value: 'serial'
+  options:
+  - 'serial'
+  - 'parallel'
+
+ensemble_hofx_packets:
+  default_value: 1
+
 gradient_norm_reduction:
   default_value: 1e-10
 
@@ -120,6 +133,15 @@ path_to_ensemble:
 
 total_processors:
   default_value: 24
+
+saber_central_block:
+  default_value: None
+
+saber_outer_block:
+  default_value: None
+
+skip_ensemble_hofx:
+  default_value: true
 
 vertical_resolution:
   default_value: '75'
