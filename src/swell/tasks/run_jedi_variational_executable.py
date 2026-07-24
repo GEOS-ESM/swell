@@ -26,7 +26,7 @@ task_name = 'RunJediVariationalExecutable'
 class Setup(TaskSetup):
     def set_defaults(self):
         self.base_name = task_name
-        self.task_time_limit = True
+        self.task_time_limit = 'PT40M'
         self.is_cycling = True
         self.model_dep = True
         self.slurm = {'nodes': 3}

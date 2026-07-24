@@ -28,13 +28,39 @@ template_str = '''
 
     [[graph]]
 
+        {% if download_convert_pipeline %}
+        R1 = """
+            # Triggers for non cycle time dependent tasks
+            # -------------------------------------------
+            # Clone JEDI source code
+            CloneJedi
+
+            # Build JEDI source code by linking
+            CloneJedi => BuildJediByLinking?
+
+            # If not able to link to build create the build
+            BuildJediByLinking:fail? => BuildJedi
+
+        """
+        {% endif %}
+
         {% for cycle_time in cycle_times %}
             {{cycle_time.cycle_time}} = """
                 {% for model_component in model_components %}
+                {% if download_convert_pipeline %}
+                DownloadObs-{{model_component}} => ConvertObsToIoda-{{model_component}}
+                BuildJediByLinking[^]? | BuildJedi[^]  => ConvertObsToIoda-{{model_component}}
+                ConvertObsToIoda-{{model_component}} => IngestObs-{{model_component}}
+                {% elif ingest_background_pipeline %}
+                SaveBackground-{{model_component}}
+                {% else %}
                 IngestObs-{{model_component}}
+                {% endif %}
                 {% endfor %}
             """
         {% endfor %}
+
+# --------------------------------------------------------------------------------------------------
 
 [runtime]
 
@@ -43,7 +69,7 @@ template_str = '''
 # --------------------------------------------------------------------------------------------------
 
 
-@workflows.register('ingest_obs')
+@workflows.register('r2d2_ingest')
 class Workflow_ingest_obs(CylcWorkflow):
 
     def get_workflow_string(self):
@@ -69,8 +95,13 @@ class Workflow_ingest_obs(CylcWorkflow):
     def set_tasks(self) -> list:
 
         self.tasks.append(ta.root())
-
+        self.tasks.append(ta.CloneJedi())
+        self.tasks.append(ta.BuildJediByLinking())
+        self.tasks.append(ta.BuildJedi())
         for model in self.experiment_dict['model_components']:
+            self.tasks.append(ta.DownloadObs(model=model))
+            self.tasks.append(ta.ConvertObsToIoda(model=model))
             self.tasks.append(ta.IngestObs(model=model))
+            self.tasks.append(ta.SaveBackground(model=model))
 
 # --------------------------------------------------------------------------------------------------

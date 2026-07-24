@@ -194,7 +194,7 @@ class TaskSetup(ABC):
 
         # Set time limit defaults
         if self.task_time_limit is True:
-            self.task_time_limit = 'PT1H'
+            self.task_time_limit = 'PT20M'
         elif self.task_time_limit:
             self.task_time_limit = self.match_platform(self.task_time_limit)
 

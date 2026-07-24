@@ -15,16 +15,16 @@ from swell.suites.base.suite_attributes import suite_configs
 
 # --------------------------------------------------------------------------------------------------
 
-suite_name = 'ingest_obs'
+suite_name = 'r2d2_ingest'
 
-ingest_obs = QuestionList(
+r2d2_ingest = QuestionList(
     questions=[
         common,
         qd.download_convert_pipeline(False)
     ],
 )
 
-suite_configs.register(suite_name, 'ingest_obs', ingest_obs)
+suite_configs.register(suite_name, 'r2d2_ingest', r2d2_ingest)
 
 # --------------------------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ suite_configs.register(suite_name, 'ingest_obs', ingest_obs)
 # (otherwise it might get overwritten)
 ingest_obs_marine = QuestionList(
     questions=[
-        ingest_obs,
+        r2d2_ingest,
         marine,
         qd.start_cycle_point("2023-07-01T00:00:00Z"),
         qd.final_cycle_point("2023-07-02T12:00:00Z"),
@@ -46,8 +46,9 @@ ingest_obs_marine = QuestionList(
                           'adt_sentinel6a',
                           'adt_swot_nadir',
                           'sss_smos',
-                          ]),  # List of obs names
+                          ]),
         qd.dry_run(True),
+        qd.store_as_symlink(False),
     ]
 )
 
@@ -57,9 +58,9 @@ suite_configs.register(suite_name, 'ingest_obs_marine', ingest_obs_marine)
 
 ingest_obs_cf = QuestionList(
     questions=[
-        ingest_obs,
-        qd.start_cycle_point("2023-08-10T00:00:00Z"),
-        qd.final_cycle_point("2023-08-11T00:00:00Z"),
+        r2d2_ingest,
+        qd.start_cycle_point("2024-01-01T18:00:00Z"),
+        qd.final_cycle_point("2024-01-01T18:00:00Z"),
         qd.model_components(['geos_cf']),
         qd.runahead_limit("P5"),
         qd.download_convert_pipeline(True),
@@ -74,9 +75,33 @@ ingest_obs_cf = QuestionList(
             "jedi-bundle/build-intel-1.9/bin/"
         ),
         qd.dry_run(False),
+        qd.store_as_symlink(False),
     ]
 )
 
 suite_configs.register(suite_name, 'ingest_obs_cf', ingest_obs_cf)
+
+# --------------------------------------------------------------------------------------------------
+
+ingest_background_cf = QuestionList(
+    questions=[
+        r2d2_ingest,
+        qd.start_cycle_point("2025-10-02T09:00:00Z"),
+        qd.final_cycle_point("2025-10-02T09:00:00Z"),
+        qd.cycle_times(['T09']),
+        qd.model_components(['geos_cf']),
+        qd.runahead_limit("P5"),
+        qd.ingest_background_pipeline(True),
+    ],
+    geos_cf=[
+        qd.dry_run(True),
+        qd.background_source_path(),
+        qd.background_experiment(),
+        qd.horizontal_resolution(),
+        qd.store_as_symlink(True),
+    ]
+)
+
+suite_configs.register(suite_name, 'ingest_background_cf', ingest_background_cf)
 
 # --------------------------------------------------------------------------------------------------

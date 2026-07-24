@@ -75,11 +75,9 @@ convert_ncdiags_tier1 = QuestionList(
             "ssmis_f17"
         ]),
         qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                "ufo_testing/ncdiagv2/%Y%m%d%H"),
+                                "obsolete/ufo_testing/ncdiagv2/%Y%m%d%H"),
     ]
 )
-
-suite_configs.register(suite_name, 'convert_ncdiags_tier1', convert_ncdiags_tier1)
 
 # --------------------------------------------------------------------------------------------------
 

@@ -15,8 +15,6 @@ from swell.tasks.base.task_setup import TaskSetup
 from swell.tasks.base.task_attributes import task_attributes
 import swell.configuration.question_defaults as qd
 from swell.utilities.pinned_versions.check_hashes import check_hashes
-from swell.tasks.base.task_attributes import task_attributes
-
 
 # --------------------------------------------------------------------------------------------------
 
