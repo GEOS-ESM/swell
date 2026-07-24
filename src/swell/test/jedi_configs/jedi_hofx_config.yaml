@@ -916,7 +916,7 @@ observations:
       obs options:
         Sensor_ID: airs_aqua
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2034,7 +2034,7 @@ observations:
       obs options:
         Sensor_ID: amsr2_gcom-w1
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2347,7 +2347,7 @@ observations:
       obs options:
         Sensor_ID: amsua_aqua
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2606,7 +2606,7 @@ observations:
       obs options:
         Sensor_ID: amsua_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2865,7 +2865,7 @@ observations:
       obs options:
         Sensor_ID: amsua_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3124,7 +3124,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n15
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3383,7 +3383,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n18
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3642,7 +3642,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3901,7 +3901,7 @@ observations:
       obs options:
         Sensor_ID: atms_n20
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4174,7 +4174,7 @@ observations:
       obs options:
         Sensor_ID: atms_npp
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4447,7 +4447,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4720,7 +4720,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_n18
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4993,7 +4993,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -5266,7 +5266,7 @@ observations:
       obs options:
         Sensor_ID: cris-fsr_n20
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -6828,7 +6828,7 @@ observations:
       obs options:
         Sensor_ID: cris-fsr_npp
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -8397,7 +8397,7 @@ observations:
       obs options:
         Sensor_ID: gmi_gpm
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -9090,7 +9090,7 @@ observations:
       obs options:
         Sensor_ID: iasi_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -11208,7 +11208,7 @@ observations:
       obs options:
         Sensor_ID: iasi_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -13333,7 +13333,7 @@ observations:
       obs options:
         Sensor_ID: mhs_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -13784,7 +13784,7 @@ observations:
       obs options:
         Sensor_ID: mhs_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -14235,7 +14235,7 @@ observations:
       obs options:
         Sensor_ID: mhs_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -18652,7 +18652,7 @@ observations:
       obs options:
         Sensor_ID: ssmis_f17
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
     obs bias:
       input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias.nc4
       output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias.nc4
