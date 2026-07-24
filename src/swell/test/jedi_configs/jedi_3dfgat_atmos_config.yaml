@@ -212,7 +212,7 @@ cost function:
         obs options:
           Sensor_ID: abi_g16
           EndianType: little_endian
-          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
         linear obs operator:
           Absorbers:
           - H2O
@@ -599,7 +599,7 @@ cost function:
         obs options:
           Sensor_ID: abi_g18
           EndianType: little_endian
-          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
         linear obs operator:
           Absorbers:
           - H2O
@@ -4987,7 +4987,7 @@ cost function:
         obs options:
           Sensor_ID: atms_n21
           EndianType: little_endian
-          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
         linear obs operator:
           Absorbers:
           - H2O
@@ -5794,7 +5794,7 @@ cost function:
         obs options:
           Sensor_ID: avhrr3_metop-c
           EndianType: little_endian
-          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
         linear obs operator:
           Absorbers:
           - H2O
@@ -8159,7 +8159,7 @@ cost function:
         obs options:
           Sensor_ID: cris-fsr_n21
           EndianType: little_endian
-          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+          CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
         linear obs operator:
           Absorbers:
           - H2O
