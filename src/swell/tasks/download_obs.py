@@ -264,6 +264,7 @@ class DownloadObs(taskBase):
                 'Install it with: pip install boto3')
 
         s3_source_template = obs_config['s3_source']
+        filename_pattern = obs_config.get('filename_pattern', '')
         max_orbit_dur = isodate.parse_duration(
             obs_config.get('max_orbit_duration', 'PT0H'))
 
@@ -280,8 +281,10 @@ class DownloadObs(taskBase):
         if dry_run:
             for day_date in self._day_slots(search_start, search_end):
                 prefix = self._resolve_path(prefix_template, day_date)
+                pattern_info = (f' matching {self._resolve_path(filename_pattern, day_date)}'
+                                if filename_pattern else '')
                 self.logger.info(
-                    f'  [DRY RUN] Would list s3://{bucket}/{prefix}')
+                    f'  [DRY RUN] Would list s3://{bucket}/{prefix}{pattern_info}')
             return 0, 0
 
         s3_client = boto3.client(
@@ -313,6 +316,51 @@ class DownloadObs(taskBase):
                 self.logger.info(
                     f'  No objects found under s3://{bucket}/{prefix}')
                 continue
+
+            # download only files that are in the window
+            if filename_pattern:
+                valid_hours = [h for d, h in self._hour_slots(search_start, search_end)
+                               if d == day_date]
+                hours_window = [
+                    re.compile(
+                        '^' + re.escape(
+                            self._resolve_filename(filename_pattern, day_date, h)
+                        ).replace(r'\*', '.*') + '$')
+                    for h in valid_hours
+                ]
+                keys = [k for k in keys
+                        if any(r.match(os.path.basename(k)) for r in hours_window)]
+
+            utc = datetime.timezone.utc
+            s_start = (search_start.replace(tzinfo=utc)
+                       if search_start.tzinfo is None else search_start)
+            s_end = (search_end.replace(tzinfo=utc)
+                     if search_end.tzinfo is None else search_end)
+            timestamp_rx = re.compile(r'\d{8}T\d{6}')
+            filtered = []
+            any_timestamp_found = False
+            for k in keys:
+                basename = os.path.basename(k)
+                matches = timestamp_rx.findall(basename)
+                if not matches:
+                    filtered.append(k)
+                    continue
+                any_timestamp_found = True
+                granule_start_str = matches[0]
+                try:
+                    gran_start = datetime.datetime.strptime(
+                        granule_start_str, '%Y%m%dT%H%M%S'
+                    ).replace(tzinfo=utc)
+                except ValueError:
+                    filtered.append(k)
+                    continue
+                if s_start <= gran_start <= s_end:
+                    filtered.append(k)
+            if any_timestamp_found:
+                keys = filtered
+            elif not filename_pattern:
+                self.logger.warning(
+                    f'  {day_date}: no YYYYMMDDTHHmmss timestamp found in filenames ')
 
             self.logger.info(
                 f'  {day_date}: {len(keys)} object(s) found')

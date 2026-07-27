@@ -5,7 +5,7 @@
 # Invocation (one call per cycle, all granules passed together):
 #   python3 <jedi_bundle>/build/bin/tropomi_no2_co_nc2ioda.py
 #       -i <granule1.nc> <granule2.nc> ...
-#       -o <cycle_dir>/ioda/tropomi_s5p_no2_tropo/tropomi_s5p_no2_tropo_YYYYMMDDHH.nc
+#       -o <cycle_dir>/ioda/tropomi_s5p_no2_tropo/tropomi_s5p_no2_tropo_YYYYMMDDHH.nc4
 #       -v no2
 #       -c troposphere
 #       -n 0.0
@@ -16,7 +16,7 @@ converter_script: tropomi_no2_co_nc2ioda.py
 
 # Output filename template (must match the source pattern in
 # ingest_observations/tropomi_s5p_no2_tropo.yaml).
-output_filename_template: "tropomi_s5p_no2_tropo_%Y%m%d%H.nc"
+output_filename_template: "tropomi_s5p_no2_tropo_%Y%m%d%H.nc4"
 
 # Additional flags passed verbatim to the converter after -i and -o.
 extra_flags:

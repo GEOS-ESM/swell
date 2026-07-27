@@ -57,7 +57,7 @@ def mock_jedi_config(suite: str,
                                    f'{experiment_id}-suite', 'experiment.yaml')
 
     task_wrapper('RenderJediObservations', experiment_yaml, datetime,
-                 model, ensemblePacket=None)
+                 model, additional_parameter=None, ensemblePacket=None)
 
     if executable_type == 'localensembleda':
         executable_name = 'LocalEnsembleDa'
@@ -65,7 +65,7 @@ def mock_jedi_config(suite: str,
         executable_name = executable_type.capitalize()
 
     task_wrapper(f'RunJedi{executable_name}Executable', experiment_yaml, datetime,
-                 model, ensemblePacket=None)
+                 model, additional_parameter=None, ensemblePacket=None)
 
     cycle_dir = os.path.join(tempdir, experiment_id, 'run', datetime, model)
 
