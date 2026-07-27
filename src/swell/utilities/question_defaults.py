@@ -1070,8 +1070,11 @@ class QuestionDefaults():
         default_value: str = "defer_to_platform"
         question_name: str = "ioda_locations_not_in_r2d2"
         ask_question: bool = True
+        # Apply to both geos_atmosphere and geos_aero so aerosol workflows can
+        # use GetObsNotInR2d2 with an interface-specific default path.
         models: List[str] = mutable_field([
-            "geos_atmosphere"
+            "geos_atmosphere",
+            "geos_aero",
         ])
         prompt: str = (
             "Provide a path that contains observation files not in r2d2.")
@@ -1339,7 +1342,8 @@ class QuestionDefaults():
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_atmosphere",
-            "geos_cf"
+            "geos_cf",
+            "geos_aero"
         ])
         prompt: str = "What number of processors do you wish to use in the x-direction?"
         widget_type: WType = WType.INTEGER
@@ -1353,7 +1357,8 @@ class QuestionDefaults():
         ask_question: bool = True
         models: List[str] = mutable_field([
             "geos_atmosphere",
-            "geos_cf"
+            "geos_cf",
+            "geos_aero"
         ])
         prompt: str = "What number of processors do you wish to use in the y-direction?"
         widget_type: WType = WType.INTEGER

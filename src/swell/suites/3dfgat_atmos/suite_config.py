@@ -40,7 +40,7 @@ class SuiteConfig(QuestionContainer, Enum):
             ]),
             qd.horizontal_resolution("91"),
             qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
-                                           "dadev/rtodling/archive/Restarts/JEDI/541x"),
+                                           "dadev/rtodling/archive/Restarts/JEDI/541x/91/x0050/rs"),
             qd.window_type("4D"),
             qd.observations([
                 "aircraft_temperature",

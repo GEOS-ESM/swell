@@ -1,0 +1,58 @@
+background_experiment:
+  default_value: x0054
+  options:
+  - x0054
+
+background_frequency:
+  default_value: PT3H
+
+# How long before the middle of the analysis window did
+# the background providing forecast begin?
+background_time_offset:
+  default_value: PT9H
+
+clean_patterns:
+  default_value:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+  options:
+  - '*.nc4'
+  - '*.txt'
+  - logfile.*.out
+
+horizontal_resolution:
+  default_value: '181'
+  options:
+  - '91'
+  - '181'
+
+npx_proc:
+  default_value: 4
+
+npy_proc:
+  default_value: 4
+
+observations:
+  default_value:
+  - mod04_l2a_land
+  options:
+  - mod04_l2a_land
+
+obs_experiment:
+  default_value: None
+
+# obs needs to be in {ioda_locations_not_in_r2d2}/{cycle}/{model}
+ioda_locations_not_in_r2d2:
+  default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
+
+vertical_resolution:
+  default_value: '72'
+  options:
+  - '72'
+
+window_length:
+  default_value: PT6H
+
+window_type:
+  default_value: 3D
