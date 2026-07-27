@@ -1,5 +1,5 @@
 crtm_coeff_dir:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0/jedi/crtm_coefficients/2.4.1/
 
 existing_geos_gcm_build_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-GCMv12-rc12/install
@@ -23,7 +23,7 @@ existing_perllib_path:
   default_value: /discover/nobackup/projects/gmao/advda/perllib_opt/GMAO_perllib/g1.0.1/
 
 geos_homdir:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0/geos/homdirs/coupled_5deg
 
 initial_restarts_method:
   default_value: geos_expdir
@@ -32,7 +32,7 @@ path_to_bufr:
   default_value: None
 
 swell_static_files:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0
 
 ioda_locations_not_in_r2d2:
   default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda

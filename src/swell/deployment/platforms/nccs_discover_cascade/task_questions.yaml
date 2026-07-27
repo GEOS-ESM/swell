@@ -1,5 +1,5 @@
 crtm_coeff_dir:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1/
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0/jedi/crtm_coefficients/2.4.1/
 
 existing_geos_gcm_build_path:
   default_value: /discover/nobackup/projects/gmao/SIteam/Models/GEOSgcm-v11.6.0/install-SLES15
@@ -20,10 +20,10 @@ existing_jedi_source_directory_pinned:
   default_value: /discover/nobackup/projects/gmao/advda/jedi_bundles/current_pinned_jedi_bundle/source/
 
 geos_homdir:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/geos/homdirs/coupled_5deg
+  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/versions/v0.0.0/geos/homdirs/coupled_5deg
 
 swell_static_files:
-  default_value: /discover/nobackup/projects/gmao/advda/SwellStaticFiles
+  default_value: /discover/nobackup/projects/gmao/advda/versions/v0.0.0/SwellStaticFiles/
 
 ioda_locations_not_in_r2d2:
   default_value: /discover/nobackup/projects/gmao/dadev/rtodling/archive/542/prePP/ioda
