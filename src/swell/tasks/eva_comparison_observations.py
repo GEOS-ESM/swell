@@ -11,6 +11,7 @@
 from multiprocessing import Pool
 import os
 import yaml
+from pathlib import Path
 
 from eva.eva_driver import eva
 
@@ -62,7 +63,6 @@ class EvaComparisonObservations(taskBase):
             experiment_config_1 = yaml.safe_load(f)
             experiment_id_1 = experiment_config_1['experiment_id']
             comparison_suite = experiment_config_1['suite_to_run']
-            observations = experiment_config_1['models'][model]['observations']
 
         # Second file parameters
         with open(experiment_path_2, 'r') as f:
@@ -120,16 +120,21 @@ class EvaComparisonObservations(taskBase):
                              445, 552, 573, 906, 1121, 1194, 1427, 1585],
             }
 
-        # Loop over observations and create dictionaries
-        # ----------------------------------------------
-        eva_dicts = []  # Empty list of dictionaries
-
         # Set the observing system records path
         self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
-        for observation in observations:
+        eva_dicts = []
+
+        for observation in self.config.observations():
+
+            obs_comparison_file = Path(self.cycle_dir()) / f'ioda_{observation}_comparison.txt'
+            if not obs_comparison_file.exists():
+                continue
+
             if self.get_model() == 'geos_atmosphere':
                 obs_long_name = ioda_name_to_long_name(observation, self.logger)
+                obs_long_name = obs_long_name.replace('(', '')
+                obs_long_name = obs_long_name.replace(')', '')
             else:
                 obs_long_name = observation
 
@@ -144,7 +149,7 @@ class EvaComparisonObservations(taskBase):
                     observation_dict_2 = value.copy()
 
             if observation_dict_1 is None or observation_dict_2 is None:
-                continue
+                return
 
             # Check if IODA observation input and output have non-zero location dimensions
             use_obs_1 = check_obs(self.jedi_rendering.observing_system_records_path, observation,
@@ -156,7 +161,7 @@ class EvaComparisonObservations(taskBase):
             use_obs = use_obs_1 and use_obs_2
 
             if not use_obs:
-                continue
+                return
 
             # Split the full path into path and filename
             obs_path_file_1 = observation_dict_1['obs space']['obsdataout']['engine']['obsfile']
@@ -261,8 +266,8 @@ class EvaComparisonObservations(taskBase):
             with open(conf_output, 'w') as outfile:
                 yaml.dump(eva_dict, outfile, default_flow_style=False)
 
-            # Add eva dictionary to list
-            # --------------------------
+            # Call Eva
+            # --------
             eva_dicts.append(eva_dict)
 
         # Call eva in parallel

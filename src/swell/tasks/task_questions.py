@@ -196,6 +196,17 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CompareIodaObservations = QuestionList(
+        list_name="CompareIodaObservations",
+        questions=[
+            qd.window_length(),
+            qd.ioda_fields_for_comparison(),
+            qd.observations()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     ConvertObsToIoda = QuestionList(
         list_name="ConvertObsToIoda",
         questions=[
@@ -232,6 +243,7 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="EvaComparisonObservations",
         questions=[
             qd.comparison_log_type(),
+            qd.observations()
         ]
     )
 
