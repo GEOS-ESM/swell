@@ -72,6 +72,7 @@
 
     {% for model_component in model_components %}
     [[Pass]]
+        #cylc set ... --out skip tells Cylc: “this task is intentionally not going to run; mark it as skipped.”
         script = """
             cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
             cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip
