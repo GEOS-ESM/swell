@@ -271,20 +271,6 @@ class QuestionDefaults():
 
     # --------------------------------------------------------------------------------------------------
 
-    @dataclass
-    class window_type(SuiteQuestion):
-        default_value: str = "defer_to_model"
-        question_name: str = "window_type"
-        options: List[str] = mutable_field([
-            "3D",
-            "4D"
-        ])
-        models: List[str] = mutable_field([
-            "all_models"
-        ])
-        prompt: str = "Enter the window type for this model."
-        widget_type: WType = WType.STRING_DROP_LIST
-
     # --------------------------------------------------------------------------------------------------
     # Task question defaults go here
     # --------------------------------------------------------------------------------------------------
@@ -1765,17 +1751,17 @@ class QuestionDefaults():
         question_name: str = "window_type"
         default_value: str = "defer_to_model"
         ask_question: bool = True
-        options: List[str] = mutable_field([
+        options: list[str] = mutable_field([
             "3D",
             "4D"
         ])
-        models: List[str] = mutable_field([
+        models: list[str] = mutable_field([
             "all_models"
         ])
         prompt: str = "Do you want to use a 3D or 4D (including FGAT) window?"
         widget_type: WType = WType.STRING_DROP_LIST
 
-    # --------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
     @dataclass
     class background_source_path(TaskQuestion):

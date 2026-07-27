@@ -19,6 +19,9 @@ existing_jedi_source_directory:
 existing_jedi_source_directory_pinned:
   default_value: This would need to be provided by user
 
+experiment_root:
+  default_value: This would need to be provided by user
+
 geos_homdir:
   default_value:
   - /home/geos/

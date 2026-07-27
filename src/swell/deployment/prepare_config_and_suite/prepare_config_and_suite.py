@@ -274,12 +274,10 @@ class PrepareExperimentConfigAndSuite:
         # Perform a platform override on the model_ind dictionary
         # -------------------------------------------------------
         yaml = YAML(typ='safe')
-        platform_defaults = {}
-        for suite_task in ['suite', 'task']:
-            platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
-                                              self.platform, f'{suite_task}_questions.yaml')
-            with open(platform_dict_file, 'r') as ymlfile:
-                platform_defaults.update(yaml.load(ymlfile))
+        platform_dict_file = os.path.join(get_swell_path(), 'deployment', 'platforms',
+                                          self.platform, 'platform_defaults.yaml')
+        with open(platform_dict_file, 'r') as ymlfile:
+            platform_defaults = yaml.load(ymlfile)
 
         # Loop over the keys in self.question_dictionary_model_ind and update with platform_defaults
         # if that dictionary shares the key
@@ -296,14 +294,12 @@ class PrepareExperimentConfigAndSuite:
         if self.suite_needs_model_components:
             for model, model_dict in self.question_dictionary_model_dep.items():
 
-                # Open the suite and task default dictionaries
-                model_defaults = {}
-                for suite_task in ['suite', 'task']:
-                    model_dict_file = os.path.join(get_swell_path(), 'configuration', 'jedi',
-                                                   'interfaces', model,
-                                                   f'{suite_task}_questions.yaml')
-                    with open(model_dict_file, 'r') as ymlfile:
-                        model_defaults.update(yaml.load(ymlfile))
+                # Open the default dictionaries
+                model_dict_file = os.path.join(get_swell_path(), 'configuration', 'jedi',
+                                               'interfaces', model,
+                                               f'model_defaults.yaml')
+                with open(model_dict_file, 'r') as ymlfile:
+                    model_defaults = yaml.load(ymlfile)
 
                 # Loop over the keys in self.question_dictionary_model_ind and update with
                 # model_defaults or platform_defaults if that dictionary shares the key

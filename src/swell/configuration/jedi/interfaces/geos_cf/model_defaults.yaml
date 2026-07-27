@@ -28,6 +28,19 @@ clean_patterns:
   - '*.txt'
   - logfile.*.out
 
+cycle_times:
+  default_value: ['T00', 'T06', 'T12', 'T18']
+  options: ['T00', 'T06', 'T12', 'T18']
+
+ensemble_hofx_strategy:
+  default_value: 'serial'
+  options:
+  - 'serial'
+  - 'parallel'
+
+ensemble_hofx_packets:
+  default_value: 1
+
 horizontal_resolution:
   default_value: 'c90'
   options:
@@ -80,6 +93,24 @@ obs_experiment:
 
 observing_system_records_path:
   default_value: None
+
+saber_central_block:
+  default_value: bump_nicas
+  options:
+  - identity
+  - bump_nicas
+
+saber_outer_block:
+  default_value: stddev_bkg_scaled
+  options:
+  - stddev_bkg_scaled
+  - stddev_fixed_values
+
+skip_ensemble_hofx:
+  default_value: true
+  options:
+  - true
+  - false
 
 window_length:
   default_value: PT6H
