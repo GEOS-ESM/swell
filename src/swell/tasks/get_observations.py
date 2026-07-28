@@ -92,41 +92,97 @@ def run_r2d2_fetch(r2d2_dict: dict) -> None:
 # --------------------------------------------------------------------------------------------------
 
 
-def _fetch_from_public_s3(external_s3: dict, r2d2_dict: dict, logger) -> None:
-    """Download a single observation file directly from a public S3 bucket.
-
-    The S3 key is built from the sub-window time (``window_start``) and the
-    ``s3_key_template`` for this observation, then fetched anonymously into
-    ``target_file``. Nothing is stored in any R2D2 datastore.
-
-    By default this uses exact-key mode (one GET, no listing). If a
-    ``filename_pattern`` is supplied, ``s3_key_template`` is treated as a prefix
-    that is listed and filtered, and the first matching object is used.
-
-    Raises an exception (caught by run_r2d2_fetch) if the object is missing, so a
-    missing sub-window is handled like a missing R2D2 fetch (empty obs).
-    """
-    target_file = r2d2_dict['target_file']
-    bucket = external_s3['bucket']
-    when = dt.strptime(r2d2_dict['window_start'], datetime_formats['iso_format'])
-
-    client = swell_s3.anonymous_s3_client()
-
-    filename_pattern = external_s3.get('filename_pattern')
+def _resolve_s3_key(client, bucket: str, key_template: str,
+                    filename_pattern: Union[str, None], when: dt) -> str:
     if filename_pattern:
-        prefix = swell_s3.resolve_template(external_s3['key_template'], when)
+        prefix = swell_s3.resolve_template(key_template, when)
         filename_glob = swell_s3.resolve_template(filename_pattern, when)
         regex = swell_s3.glob_to_regex(filename_glob)
         matches = swell_s3.list_matching_keys(client, bucket, prefix, regex)
         if not matches:
             raise FileNotFoundError(
                 f's3://{bucket}/{prefix} has no object matching {filename_glob}')
-        key = matches[0]
-    else:
-        key = swell_s3.resolve_template(external_s3['key_template'], when)
+        return matches[0]
 
-    logger.info(f'Fetching from public S3: s3://{bucket}/{key}')
-    swell_s3.download_object(client, bucket, key, target_file)
+    return swell_s3.resolve_template(key_template, when)
+
+
+def _copy_nc_variable(source_var, destination_group, var_name: str) -> None:
+    fill_value = (source_var.getncattr('_FillValue')
+                  if '_FillValue' in source_var.ncattrs() else None)
+
+    new_var = destination_group.createVariable(
+        var_name, source_var.datatype, source_var.dimensions, fill_value=fill_value)
+    new_var.setncatts({key: source_var.getncattr(key)
+                       for key in source_var.ncattrs() if key != '_FillValue'})
+    new_var[:] = source_var[:]
+
+
+def _merge_ioda_variables(output_filename: str, input_filenames: list, logger) -> None:
+    base_filename = input_filenames[0]
+
+    with nc.Dataset(output_filename, 'w', format='NETCDF4') as output, \
+            nc.Dataset(base_filename, 'r') as base:
+
+        for dim_name, dimension in base.dimensions.items():
+            output.createDimension(
+                dim_name, None if dimension.isunlimited() else dimension.size)
+
+        output.setncatts({key: base.getncattr(key) for key in base.ncattrs()})
+
+        for var_name, variable in base.variables.items():
+            _copy_nc_variable(variable, output, var_name)
+
+        for group_name, group in base.groups.items():
+            output_group = output.createGroup(group_name)
+            for var_name, variable in group.variables.items():
+                _copy_nc_variable(variable, output_group, var_name)
+
+        for extra_filename in input_filenames[1:]:
+            with nc.Dataset(extra_filename, 'r') as extra:
+                for group_name, group in extra.groups.items():
+                    if group_name in output.groups:
+                        output_group = output.groups[group_name]
+                    else:
+                        output_group = output.createGroup(group_name)
+
+                    for var_name, variable in group.variables.items():
+                        if var_name in output_group.variables:
+                            continue
+
+                        _copy_nc_variable(variable, output_group, var_name)
+                        logger.info(f'  Merged {group_name}/{var_name} from '
+                                    f'{os.path.basename(extra_filename)}')
+
+
+def _fetch_from_public_s3(external_s3: dict, r2d2_dict: dict, logger) -> None:
+    target_file = r2d2_dict['target_file']
+    bucket = external_s3['bucket']
+    key_templates = external_s3['key_templates']
+    filename_pattern = external_s3.get('filename_pattern')
+    when = dt.strptime(r2d2_dict['window_start'], datetime_formats['iso_format'])
+
+    client = swell_s3.anonymous_s3_client()
+
+    single_key = len(key_templates) == 1
+    downloaded = []
+
+    try:
+        for index, key_template in enumerate(key_templates):
+            key = _resolve_s3_key(client, bucket, key_template, filename_pattern, when)
+            destination = target_file if single_key else f'{target_file}.part{index}'
+
+            logger.info(f'Fetching from public S3: s3://{bucket}/{key}')
+            swell_s3.download_object(client, bucket, key, destination)
+            downloaded.append(destination)
+
+        if not single_key:
+            _merge_ioda_variables(target_file, downloaded, logger)
+
+    finally:
+        for path in downloaded:
+            if path != target_file and os.path.exists(path):
+                os.remove(path)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -331,7 +387,7 @@ class GetObservations(taskBase):
                 if external_s3_config:
                     fetch_criteria['external_s3'] = {
                         'bucket': external_s3_config['s3_bucket'],
-                        'key_template': external_s3_config['s3_key_template'],
+                        'key_templates': external_s3_config['s3_key_templates'],
                         'filename_pattern': external_s3_config.get('filename_pattern'),
                     }
 
@@ -614,10 +670,20 @@ class GetObservations(taskBase):
             config = yaml.safe_load(fh)
 
         # Minimal validation of the required keys.
-        for required in ('s3_bucket', 's3_key_template'):
-            if required not in config:
+        if 's3_bucket' not in config:
+            self.logger.abort(f"'s3_bucket' missing from {config_path}")
+
+        key_templates = config.get('s3_key_templates')
+        if key_templates is None:
+            single = config.get('s3_key_template')
+            if single is None:
                 self.logger.abort(
-                    f"'{required}' missing from {config_path}")
+                    f"'s3_key_template' or 's3_key_templates' missing from {config_path}")
+            key_templates = [single]
+        elif not isinstance(key_templates, list):
+            self.logger.abort(f"'s3_key_templates' must be a list in {config_path}")
+
+        config['s3_key_templates'] = key_templates
         return config
 
     # ----------------------------------------------------------------------------------------------
