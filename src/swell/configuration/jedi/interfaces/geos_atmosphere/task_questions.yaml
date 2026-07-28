@@ -41,10 +41,11 @@ background_error_model:
   - GSIbec
 
 background_experiment:
-  default_value: x0050
+  default_value: x0054
   options:
   - x0048
   - x0050
+  - x0054
 
 background_frequency:
   default_value: PT1H
