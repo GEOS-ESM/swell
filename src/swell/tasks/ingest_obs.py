@@ -18,6 +18,7 @@ from datetime import datetime
 import requests
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import compress_file, compressed_extension
 from swell.utilities.r2d2 import load_r2d2_credentials
 from swell.utilities.observations import get_ioda_names_list, get_provider_for_observation
 import r2d2
@@ -101,6 +102,11 @@ class IngestObs(taskBase):
 
         store_as_symlink = self.config.store_as_symlink(False)
 
+        # Compression options
+        compress_output = self.config.compress_output(False)
+        compress_algorithm = self.config.compress_algorithm('gzip')
+        compress_pigz_threads = self.config.compress_pigz_threads(4)
+
         total_ingested = 0
         total_failed = 0
 
@@ -132,7 +138,8 @@ class IngestObs(taskBase):
             # Ingest
             ingested, failed = self.process_obs_config(
                 obs_config, obs_name, cycle_time, window_start, window_length, dry_run,
-                r2d2_datastore, store_as_symlink)
+                r2d2_datastore, store_as_symlink,
+                compress_output, compress_algorithm, compress_pigz_threads)
 
             total_ingested += len(ingested)
             total_failed += len(failed)
@@ -156,6 +163,9 @@ class IngestObs(taskBase):
         dry_run: bool,
         r2d2_datastore: str | None = None,
         store_as_symlink: bool = False,
+        compress_output: bool = False,
+        compress_algorithm: str = 'gzip',
+        compress_pigz_threads: int = 4,
     ) -> tuple[list[str], list[tuple[str, str]]]:
         """Process a single observation configuration file."""
         ingested = []
@@ -209,19 +219,47 @@ class IngestObs(taskBase):
             self.logger.info(f"    Provider: {provider}")
             self.logger.info(f"    Method: {acquisition_method}")
             self.logger.info(f"    Source: {target_file}")
+            if compress_output:
+                self.logger.info(
+                    f"    Compression: {compress_algorithm} "
+                    f"(threads={compress_pigz_threads if compress_algorithm == 'pigz' else 'N/A'})"
+                )
             ingested.append(target_file)
         else:
+            # Resolve the actual source file and file extension, compressing if requested.
+            actual_source = target_file
+            file_extension = os.path.splitext(target_file)[1][1:]  # e.g. 'nc4' from '.nc4'
+            actual_extension = file_extension
+            compressed_path = None
+
+            if compress_output:
+                self.logger.info(
+                    f"Compressing {target_file} using {compress_algorithm}"
+                    + (f" ({compress_pigz_threads} threads)"
+                       if compress_algorithm == 'pigz' else "")
+                )
+                compressed_path = compress_file(
+                    target_file,
+                    algorithm=compress_algorithm,
+                    num_threads=compress_pigz_threads,
+                )
+                actual_source = compressed_path
+                actual_extension = compressed_extension(file_extension)
+                self.logger.info(
+                    f"Compressed {target_file} -> {compressed_path} "
+                    f"(extension: {actual_extension})"
+                )
+
             try:
                 # Store to R2D2
                 store_kwargs = dict(
                     item='observation',
                     provider=provider,
                     observation_type=obs_name,
-                    file_extension=os.path.splitext(
-                        target_file)[1][1:],  # 'nc' from '.nc'
+                    file_extension=actual_extension,
                     window_start=window_start,
                     window_length=window_length,
-                    source_file=target_file,
+                    source_file=actual_source,
                     store_as_symlink=store_as_symlink,
                 )
                 if r2d2_datastore:
@@ -234,5 +272,9 @@ class IngestObs(taskBase):
             else:
                 ingested.append(target_file)
                 self.logger.info(f"Successfully ingested {obs_name}")
+            finally:
+                # Remove the temporary compressed file regardless of store success/failure
+                if compressed_path is not None and os.path.exists(compressed_path):
+                    os.remove(compressed_path)
 
         return ingested, failed

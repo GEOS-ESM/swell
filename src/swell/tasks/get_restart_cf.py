@@ -9,6 +9,7 @@
 
 
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import decompress_if_needed
 from swell.utilities.r2d2 import load_r2d2_credentials
 
 import isodate
@@ -67,7 +68,10 @@ class GetRestartCf(taskBase):
                 file_type=file_type,
                 )
 
+            # Decompress if the file was .gz compressed
+            actual_file = decompress_if_needed(target_file)
+
             # Change permission
-            os.chmod(target_file, 0o644)
+            os.chmod(actual_file, 0o644)
 
 # --------------------------------------------------------------------------------------------------
