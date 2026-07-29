@@ -1809,10 +1809,10 @@ class store_as_symlink(TaskQuestion):
     ask_question: bool = True
     models: list = mutable_field([
         "all_models"
-    ])             
+    ])
     prompt: str = "Store background files as symlinks in R2D2 instead of copying them?"
     widget_type: WType = WType.BOOLEAN
-    
+
 # --------------------------------------------------------------------------------------------------
 
 

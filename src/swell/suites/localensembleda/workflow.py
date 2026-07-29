@@ -146,8 +146,13 @@ class Workflow_localensembleda(CylcWorkflow):
         for model in self.experiment_dict['model_components']:
             if self.experiment_dict['models'][model]['ensemble_hofx_strategy'] == 'parallel':
                 for packet in range(self.experiment_dict['models'][model]['ensemble_hofx_packets']):
-                    hofx_task = ta.RunJediHofxEnsembleExecutable(scheduling_name=f'RunJediHofxExecutable_pack{packet}', script=f'swell task RunJediHofxEnsembleExecutable -m {model} -d $datetime $config -p {packet}', model=model)
-                    workflow_str += hofx_task.runtime_string(self.experiment_dict, self.slurm_external)
+                    hofx_task = ta.RunJediHofxEnsembleExecutable(
+                            scheduling_name=f'RunJediHofxExecutable_pack{packet}',
+                            script=(f'swell task RunJediHofxEnsembleExecutable -m {model}'
+                                    f' -d $datetime $config -p {packet}'), model=model)
+
+                    workflow_str += hofx_task.runtime_string(self.experiment_dict,
+                                                             self.slurm_external)
 
         self.experiment_dict['stall_timeout'] = """\
         {% if environ.get('SWELL_CYLC_TIMEOUT') %}
