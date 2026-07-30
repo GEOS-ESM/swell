@@ -47,8 +47,8 @@ def prepare_scheduling_dict(
         "RunJediVariationalExecutable": {"all": {"nodes": 3}},
         "RunJediUfoTestsExecutable": {"all": {"ntasks-per-node": 1}},
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
-        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 120}},
-        "RunJediEdaControlPertExecutable": {"all": {"nodes": 4, "ntasks-per-node": 120}}
+        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}},
+        "RunJediEdaControlPertExecutable": {"all": {"nodes": 3, "ntasks-per-node": 126}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
