@@ -196,6 +196,15 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    CompareJediCtests = QuestionList(
+        list_name="CompareJediCtests",
+        questions=[
+            qd.bundles_to_run_ctests()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     ConvertObsToIoda = QuestionList(
         list_name="ConvertObsToIoda",
         questions=[
