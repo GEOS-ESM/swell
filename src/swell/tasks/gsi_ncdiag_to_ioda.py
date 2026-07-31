@@ -262,11 +262,13 @@ class GsiNcdiagToIoda(taskBase):
                 if produce_geovals:
                     geo_dir = self.cycle_dir()
 
-                combine_obsspace(ioda_path_files, new_name, geo_dir)
+                pattern = r"\b\w*aircraft\w*\b"
+                if not re.search(pattern, new_name):
+                    combine_obsspace(ioda_path_files, new_name, geo_dir)
 
-                # Remove input files
-                for ioda_path_file in ioda_path_files:
-                    os.remove(ioda_path_file)
+                    # Remove input files
+                    for ioda_path_file in ioda_path_files:
+                        os.remove(ioda_path_file)
 
             elif len(ioda_file_0_) == 3:
                 self.logger.info(f'Skipping combine for {needed_ioda_type}, single file already.')
@@ -341,6 +343,35 @@ class GsiNcdiagToIoda(taskBase):
         for observation in observations_orig:
 
             self.logger.info(f'Renaming \'{observation}\' to be swell compliant')
+
+            # Special handling for aircraft observations
+            # Rename from aircraft_tsen_obs -> aircraft_temperature
+            #             aircraft_uv_obs -> aircraft_wind
+            # And use the beginning of the window
+            if observation == 'aircraft':
+                aircraft_uv_file_found = glob.glob(os.path.join(
+                    self.cycle_dir(), f'aircraft_uv_obs_*nc?'))
+                if len(aircraft_uv_file_found) == 0:
+                    self.logger.info(f'No observation files found for aircraft_uv. Skipping rename')
+                else:
+                    aircraft_uv_file_in = aircraft_uv_file_found[0]
+                    aircraft_uv_file_out = os.path.join(self.cycle_dir(),
+                                                        f'aircraft_wind.{window_begin}.nc4')
+                    os.rename(aircraft_uv_file_in, aircraft_uv_file_out)
+
+                aircraft_tsen_file_found = glob.glob(os.path.join(
+                    self.cycle_dir(), f'aircraft_tsen_obs_*nc?'))
+
+                if len(aircraft_tsen_file_found) == 0:
+                    self.logger.info(f'No observation files found for '
+                                     'aircraft_tsen. Skipping rename')
+                else:
+                    aircraft_tsen_file_in = aircraft_tsen_file_found[0]
+                    aircraft_tsen_file_out = os.path.join(
+                            self.cycle_dir(), f'aircraft_temperature.{window_begin}.nc4')
+                    os.rename(aircraft_tsen_file_in, aircraft_tsen_file_out)
+
+                continue
 
             # Change to gps_bend
             search_name = observation
