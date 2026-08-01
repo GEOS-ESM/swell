@@ -24,9 +24,10 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda_tier1 = QuestionList(
         list_name="localensembleda",
         questions=[
-            sq.marine,
+            sq.common,
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
             qd.skip_ensemble_hofx(),
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),
@@ -64,9 +65,10 @@ class SuiteConfig(QuestionContainer, Enum):
     localensembleda_tier2 = QuestionList(
         list_name="localensembleda",
         questions=[
-            sq.marine,
+            sq.common,
             qd.ensemble_hofx_packets(),
             qd.ensemble_hofx_strategy(),
+            qd.ensemble_num_members(),
             qd.skip_ensemble_hofx(),
             qd.final_cycle_point("2023-10-10T12:00:00Z"),
             qd.jedi_build_method("use_existing"),

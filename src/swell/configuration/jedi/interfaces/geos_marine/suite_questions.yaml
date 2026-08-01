@@ -2,6 +2,9 @@ cycle_times:
   default_value: ['T00', 'T12']
   options: ['T00', 'T12']
 
+ensemble_num_members:
+  default_value: None
+
 ensemble_hofx_strategy:
   default_value: 'serial'
 
