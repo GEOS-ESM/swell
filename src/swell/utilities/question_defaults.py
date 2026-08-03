@@ -1414,6 +1414,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class observation_providers(TaskQuestion):
+        default_value: Dict[str, str] = mutable_field({})
+        question_name: str = "observation_providers"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Map observation names to their R2D2 providers."
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class obs_thinning_rej_fraction(TaskQuestion):
         default_value: float = 0.75
         question_name: str = "obs_thinning_rej_fraction"
