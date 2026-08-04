@@ -11,7 +11,9 @@
 import glob
 import os
 import subprocess
+import isodate
 
+from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
 
 
@@ -19,6 +21,35 @@ from swell.tasks.base.task_base import taskBase
 
 
 class GetObsNotInR2d2(taskBase):
+
+    def previous_cycle_bias(self,
+                            target_file: str,
+                            window_length: str
+                            ) -> str:
+
+        # This requires two modifications, one in the directory and one in the filename.
+        # Start with the changing the bias filename
+        # -----------------------------------------------------------------
+        bias_file = os.path.basename(target_file)
+
+        # Get the date bit from the target file
+        bias_path = os.path.dirname(target_file)
+        dt_str = bias_path.split('/')[-2]
+
+        # Get the previous cycle datetime string and replace it in the bias path
+        previous_cycle_dto = self.cycle_time_dto() - isodate.parse_duration(window_length)
+        previous_cycle_dt_str = previous_cycle_dto.strftime(datetime_formats['directory_format'])
+
+        bias_path = bias_path.replace(dt_str, previous_cycle_dt_str)
+
+        # Combine the new bias path and the file name
+        # ---------------------------------------------
+        new_target_file = os.path.join(bias_path, bias_file)
+
+        return new_target_file
+
+    # --------------------------------------------------------------------------------------------------
+
 
     def execute(self) -> None:
 
@@ -80,5 +111,31 @@ class GetObsNotInR2d2(taskBase):
             # Copy the file
             # -------------
             subprocess.run(command)
+
+        window_length = self.config.window_length()
+
+        for observation in self.config.observations():
+
+            observation_dict = \
+                    self.jedi_rendering.render_interface_observations(observation)
+            
+            # Satellite and aircraft bias correction (coeff and cov) files
+            # -----------------------------------------------
+            target_bccoef = observation_dict['obs bias']['input file']
+            target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
+
+            if self.config.cycling_varbc():
+                if self.cycle_time_dto() == self.start_cycle_point_dto():
+                    self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
+                    self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
+                else:
+                    self.logger.info(f'Using bias files from the previous cycle')
+                    previous_bias_coef = self.previous_cycle_bias(target_bccoef, window_length)
+                    previous_bias_covr = self.previous_cycle_bias(target_bccovr, window_length)
+                    # Link the previous bias file to the current cycle directory
+                    self.logger.info(f'Linking {previous_bias_coef} to {target_bccoef}')
+                    self.geos.linker(previous_bias_coef, target_bccoef, dst_dir=self.cycle_dir())
+                    self.logger.info(f'Linking {previous_bias_covr} to {target_bccovr}')
+                    self.geos.linker(previous_bias_covr, target_bccovr, dst_dir=self.cycle_dir())
 
 # --------------------------------------------------------------------------------------------------
