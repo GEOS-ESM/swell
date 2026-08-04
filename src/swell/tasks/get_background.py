@@ -22,7 +22,7 @@ import r2d2
 class GetBackground(taskBase):
 
     @staticmethod
-    def geos_cf_v2_forecast_start(background_time):
+    def geos_cf_oper_forecast_start(background_time):
         """Return the GEOS-CF v2 forecast cycle that provides background_time."""
         forecast_start = background_time.replace(hour=9, minute=0, second=0, microsecond=0)
 
@@ -32,7 +32,7 @@ class GetBackground(taskBase):
         return forecast_start
 
     @staticmethod
-    def geos_cf_v2_step(background_time, forecast_start_time):
+    def geos_cf_oper_step(background_time, forecast_start_time):
         """Return a GEOS-CF v2 R2D2 step string matching SaveBackground."""
         step_seconds = int((background_time - forecast_start_time).total_seconds())
 
@@ -145,12 +145,12 @@ class GetBackground(taskBase):
         # Get name of this model component
         # --------------------------------
         model_component = self.get_model()
-        use_geos_cf_v2_background = (
+        use_geos_cf_oper_background = (
             model_component == 'geos_cf'
-            and background_experiment == 'geos_cf_v2'
+            and background_experiment == 'geos_cf_oper'
         )
 
-        if use_geos_cf_v2_background:
+        if use_geos_cf_oper_background:
             self.logger.info(
                 'Using GEOS-CF v2 fixed 09Z forecast reference for background fetches.'
             )
@@ -189,9 +189,9 @@ class GetBackground(taskBase):
                 fetch_step = bkg_step
                 fetch_date = forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
 
-                if use_geos_cf_v2_background:
-                    geos_cf_forecast_start_time = self.geos_cf_v2_forecast_start(background_time)
-                    fetch_step = self.geos_cf_v2_step(background_time, geos_cf_forecast_start_time)
+                if use_geos_cf_oper_background:
+                    geos_cf_forecast_start_time = self.geos_cf_oper_forecast_start(background_time)
+                    fetch_step = self.geos_cf_oper_step(background_time, geos_cf_forecast_start_time)
                     fetch_date = geos_cf_forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
                     file_extension = 'nc4'
                     self.logger.info(
