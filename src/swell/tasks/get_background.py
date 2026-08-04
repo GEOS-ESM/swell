@@ -191,7 +191,10 @@ class GetBackground(taskBase):
 
                 if use_geos_cf_oper_background:
                     geos_cf_forecast_start_time = self.geos_cf_oper_forecast_start(background_time)
-                    fetch_step = self.geos_cf_oper_step(background_time, geos_cf_forecast_start_time)
+                    fetch_step = self.geos_cf_oper_step(
+                        background_time,
+                        geos_cf_forecast_start_time
+                    )
                     fetch_date = geos_cf_forecast_start_time.strftime('%Y-%m-%dT%H:%M:%SZ')
                     file_extension = 'nc4'
                     self.logger.info(
