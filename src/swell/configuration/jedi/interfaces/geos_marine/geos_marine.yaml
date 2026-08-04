@@ -1,14 +1,15 @@
 jedi_interface: soca
 total_processors: {{total_processors}}
 executables:
+  # convert_state_soca2cice: soca_convertstate.x
+  explicit_diffusion: soca_error_covariance_toolbox.x
   fgat: soca_var.x
   hofx3D: soca_hofx3d.x
   hofx4D: soca_hofx.x
+  postproc_soca2cice: soca_postproc.x
   variational3D: soca_var.x
   variational4D: soca_var.x
   variational4DEnsVar: soca_var.x
-  explicit_diffusion: soca_error_covariance_toolbox.x
-  convert_state_soca2cice: soca_convertstate.x
 variables:
   hocn: h
   socn: Salt
