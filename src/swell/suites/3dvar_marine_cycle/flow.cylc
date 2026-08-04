@@ -92,10 +92,10 @@
             # Prepare analysis for next forecast
             EvaIncrement-{{model_component}} => PrepareAnalysis-{{model_component}}
             {% if 'cice6' in models[model_component]["marine_models"] %}
-            PrepareAnalysis-{{model_component}} => RunJediConvertStateSoca2ciceExecutable-{{model_component}}
-            # RunJediConvertStateSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
-            RunJediConvertStateSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
+            PrepareAnalysis-{{model_component}} => RunJediPostprocSoca2ciceExecutable-{{model_component}}
+            # RunJediPostprocSoca2ciceExecutable-{{model_component}} => SaveRestart-{{model_component}}
+            RunJediPostprocSoca2ciceExecutable-{{model_component}} => MoveDaRestart-{{model_component}}
+            RunJediPostprocSoca2ciceExecutable-{{model_component}} => CleanCycle-{{model_component}}
             {% else %}
             # PrepareAnalysis-{{model_component}} => SaveRestart-{{model_component}}
             PrepareAnalysis-{{model_component}} => MoveDaRestart-{{model_component}}
@@ -206,12 +206,12 @@
 
     {% if 'cice6' in models["geos_marine"]["marine_models"] %}
 
-    [[RunJediConvertStateSoca2ciceExecutable-{{model_component}}]]
-        script = "swell task RunJediConvertStateSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
+    [[RunJediPostprocSoca2ciceExecutable-{{model_component}}]]
+        script = "swell task RunJediPostprocSoca2ciceExecutable $config -d $datetime -m {{model_component}}"
         platform = {{platform}}
-        execution time limit = {{scheduling["RunJediConvertStateSoca2ciceExecutable"]["execution_time_limit"]}}
+        execution time limit = {{scheduling["RunJediPostprocSoca2ciceExecutable"]["execution_time_limit"]}}
         [[[directives]]]
-        {%- for key, value in scheduling["RunJediConvertStateSoca2ciceExecutable"]["directives"][model_component].items() %}
+        {%- for key, value in scheduling["RunJediPostprocSoca2ciceExecutable"]["directives"][model_component].items() %}
             --{{key}} = {{value}}
         {%- endfor %}
 
