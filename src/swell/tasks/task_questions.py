@@ -794,6 +794,24 @@ class TaskQuestions(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    RunJediPostprocSoca2ciceExecutable = QuestionList(
+        list_name="RunJediPostprocSoca2ciceExecutable",
+        questions=[
+            qd.analysis_variables(),
+            qd.generate_yaml_and_exit(),
+            qd.jedi_forecast_model(),
+            qd.marine_models(),
+            qd.observations(),
+            qd.total_processors(),
+            qd.window_length(),
+            qd.window_type(),
+            qd.comparison_log_type('postproc_soca2cice'),
+            qd.mock_experiment()
+        ]
+    )
+
+    # --------------------------------------------------------------------------------------------------
+
     RunJediUfoTestsExecutable = QuestionList(
         list_name="RunJediUfoTestsExecutable",
         questions=[
