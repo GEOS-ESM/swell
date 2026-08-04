@@ -10,10 +10,7 @@
 from datetime import datetime as dt
 import isodate
 import os
-from netCDF4 import Dataset
-import numpy as np
 import xarray as xr
-from typing import Tuple
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
@@ -201,6 +198,6 @@ class LinkGeosOutput(taskBase):
                         'Tair': 'Tair_h', 'sice': 'sice_h'})
 
         # Save as a new file
-        ds.to_netcdf(dst_history, mode='w')
+        ds.to_netcdf(dst_history, mode='w', format='NETCDF4')
 
 # --------------------------------------------------------------------------------------------------
