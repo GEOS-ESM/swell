@@ -582,6 +582,8 @@ def prepare_cylc_suite_jinja2(
             'execution_time_limit'] = 'PT1H'
     render_dictionary['scheduling']['RunJediEdaControlPertExecutable'][
             'execution_time_limit'] = 'PT10M'
+    render_dictionary['scheduling']['EvaObservations'][
+            'execution_time_limit'] = 'PT30M'
 
     # Set jinja templated string to use upon runtime
     # ----------------------------------------------
