@@ -177,10 +177,12 @@ class RunJediEdaExecutable(taskBase):
                     observer.update({'obs error': obs_error_dict})
                     observer['obs space'].update({'obs perturbations seed': imember})
 
-            hxout = observer['obs space']['obsdataout']['engine']['obsfile']
-            dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, mem_dir, fname)
-            observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
+            del observer['obs space']['obsdataout']
+            # donot output obsdataout
+            # hxout = observer['obs space']['obsdataout']['engine']['obsfile']
+            # dir1, fname = os.path.split(hxout)
+            # hxout = os.path.join(dir1, mem_dir, fname)
+            # observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
 
             obsFileIn = observer['obs space']['obsdatain']['engine']['obsfile']
             dir1, fname = os.path.split(obsFileIn)
