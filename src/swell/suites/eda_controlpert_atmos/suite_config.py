@@ -21,6 +21,86 @@ class SuiteConfig(QuestionContainer, Enum):
 
     # --------------------------------------------------------------------------------------------------
 
+    eda_controlpert_atmos_tier1_fast = QuestionList(
+        list_name="eda_controlpert_atmos_tier1",
+        questions=[
+            sq.common,
+            qd.start_cycle_point("2023-10-10T00:00:00Z"),
+            qd.final_cycle_point("2023-10-10T06:00:00Z"),
+            qd.runahead_limit("P2"),
+            qd.jedi_build_method("use_existing"),
+            qd.model_components(['geos_atmosphere']),
+        ],
+        geos_atmosphere=[
+            qd.cycle_times([
+                "T00",
+            ]),
+            qd.background_experiment('x0050'),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
+                                           "rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
+                                         'rtodling/archive/541/Milan'),
+            qd.npx_proc(4),
+            qd.npy_proc(5),
+            qd.perhost(120),
+            qd.window_length("PT6H"),
+            qd.window_type("3D"),
+            qd.horizontal_resolution("91"),
+            qd.gsibec_nlats("91"),
+            qd.gsibec_nlons("144"),
+            qd.vertical_resolution("72"),
+            qd.ensemble_num_members(4),
+            qd.ensemble_num_chunks(2),
+            qd.number_of_iterations([10]),
+            qd.gradient_norm_reduction(1.e-3),
+            qd.minimizer("DRPLanczos"),
+            qd.analysis_variables([
+                "eastward_wind",
+                "northward_wind",
+                "air_temperature",
+                "water_vapor_mixing_ratio_wrt_moist_air",
+                "air_pressure_at_surface",
+                "air_pressure_levels",
+                "cloud_liquid_ice",
+                "cloud_liquid_water",
+                "rain_water",
+                "snow_water",
+                "mole_fraction_of_ozone_in_air",
+                "geopotential_height_times_gravity_at_surface",
+                "fraction_of_ocean",
+                "fraction_of_lake",
+                "fraction_of_ice",
+                "skin_temperature_at_surface"
+            ]),
+            qd.observations([
+                "sondes",
+            ]),
+            qd.obs_thinning_rej_fraction(0.8),
+            qd.ensmeanvariance_spec([
+                {"state": "bkg",
+                 "fn_input": "ebkg/mem%mem%/geos.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "geos.prior.mean",
+                 "fn_output_variance": "geos.prior.variance",
+                 "grid_type": ['cs', 'latlon']},
+                {"state": "analysis",
+                 "fn_input": "analysis/mem%mem%/eda.ana.mem%mem%.%yyyy%mm%dd_%hh%MM%ssz.nc4",
+                 "fn_output_mean": "eda.ana.mean",
+                 "fn_output_variance": "eda.ana.variance",
+                 "grid_type": ['cs', 'latlon']},
+                ]),
+            qd.diffstates_spec({
+                "state1":
+                {"fn_input": "geos.prior.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state2":
+                {"fn_input": "eda.ana.mean.%yyyy%mm%dd_%hh%MM%ssz.nc4"},
+                "state_diff":
+                {"fn_output": "eda.mean-inc", "grid_type": ['cs', 'latlon']},
+                "state_type": "ensemble"
+                }),
+            qd.clean_patterns(['*.txt', '*.csv']),
+        ]
+    )
+
     eda_controlpert_atmos_tier1 = QuestionList(
         list_name="eda_controlpert_atmos_tier1",
         questions=[
@@ -35,9 +115,10 @@ class SuiteConfig(QuestionContainer, Enum):
             qd.cycle_times([
                 "T00",
             ]),
-            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/"
-                                           "dadev/rtodling/archive/Restarts/JEDI/541x"),
-            qd.geos_x_ensemble_directory('/discover/nobackup/projects/gmao/dadev/'
+            qd.background_experiment('x0050'),
+            qd.geos_x_background_directory("/discover/nobackup/projects/gmao/dadev/"
+                                           "rtodling/archive/Restarts/JEDI/541x"),
+            qd.geos_x_ensemble_directory("/discover/nobackup/projects/gmao/dadev/"
                                          'rtodling/archive/541/Milan'),
             qd.npx_proc(4),
             qd.npy_proc(5),
@@ -138,7 +219,7 @@ class SuiteConfig(QuestionContainer, Enum):
     eda_controlpert_atmos = QuestionList(
         list_name="eda_controlpert_atmos",
         questions=[
-            eda_controlpert_atmos_tier1
+            eda_controlpert_atmos_tier1_fast
         ]
     )
 
