@@ -129,7 +129,10 @@ class GetObsNotInR2d2(taskBase):
 
             observation_dict = \
                     self.jedi_rendering.render_interface_observations(observation)
-            print(observation_dict)
+
+            if 'obs bias' not in observation_dict:
+                continue
+
             # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
             target_bccoef = observation_dict['obs bias']['input file']
