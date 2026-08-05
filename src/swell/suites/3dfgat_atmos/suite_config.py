@@ -44,7 +44,7 @@ class SuiteConfig(QuestionContainer, Enum):
                                            "archive/Restarts/5_44/c90"),
             qd.window_type("4D"),
             qd.observations([
-                "abi_g16",
+                # "abi_g16",
                 "abi_g18",
                 "aircraft_temperature",
                 "aircraft_wind",
