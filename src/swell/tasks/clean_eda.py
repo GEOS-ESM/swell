@@ -125,15 +125,15 @@ class CleanEda(taskBase):
         # This special design works with either eda or eda_control_pert
         # handle eda case:      analysis/mem00x
         # eda controlpert case: analysis_chunk/chunk00x/mem00y
-        # This avoids blindly search for mem0xx dir, as some of them 
+        # This avoids blindly search for mem0xx dir, as some of them
         # only contains linked analysis files and donot require clean up
-        #---------------------------------------------------------------
+        # --------------------------------------------------------------
         d1 = os.path.join(self.cycle_dir(), 'analysis_chunk')        # control pert case
         if not os.path.exists(d1):
             d1 = os.path.join(self.cycle_dir(), 'analysis')          # eda case
-        target_dirs =  [str(p) for p in Path(d1).rglob('mem*') if p.is_dir()]
+        target_dirs = [str(p) for p in Path(d1).rglob('mem*') if p.is_dir()]
         self.logger.info(f'target_dirs = {target_dirs}')
-        
+
         for mem_dir in target_dirs:
             d2 = os.path.join(mem_dir, 'fv3-jedi')
             if os.path.exists(d2):

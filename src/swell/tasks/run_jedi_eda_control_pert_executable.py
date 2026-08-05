@@ -70,26 +70,27 @@ class RunJediEdaControlPertExecutable(taskBase):
         nchunk = self.config.ensemble_num_chunks()
         ichunk = self.get_ensemble_ichunk()
 
-        # exit execute if ichunk=-1: meaning reoder analysis files
-        # -------------------------------------------------------
+        # exit execute if ichunk=-1: meaning reoder analysis files and return
+        # -------------------------------------------------------------------
         if ichunk == -1:
-            npert = int( nmember / nchunk )
+            npert = int(nmember/nchunk)
             istart = 0
             imem = 0
-            for xchunk in range (1, nchunk+1):
+            for xchunk in range(1, nchunk+1):
                 if xchunk == 1:
-                    iend = npert -1              # mem: [0, 1 ... npert-1] : [ctrl, all pert]
+                    iend = npert - 1    # mem: [0, 1 ... npert-1] : [ctrl, all pert]
                 else:
-                    iend = npert                 # mem: [0, 1 ... npert]   : [ctrl, all pert]
+                    iend = npert        # mem: [0, 1 ... npert]   : [ctrl, all pert]
                 for imem_in_chunk in range(istart, iend+1):
-                    # skip extra ctrl
+                    # skip extra ctrl, because of ichunk=-1
                     if xchunk > 1 and imem_in_chunk == 0:
                         continue
                     else:
                         imem += 1
                         dir_a = f'analysis_chunk/chunk{xchunk:03d}/mem{imem_in_chunk:03d}'
                         dir_b = f'analysis/mem{imem:03d}'
-                        dir_a_full = os.path.join(self.cycle_dir(), dir_a, f'eda.ana.mem{imem_in_chunk:03d}.*.nc4')
+                        dir_a_full = os.path.join(self.cycle_dir(), dir_a,
+                                                  f'eda.ana.mem{imem_in_chunk:03d}.*.nc4')
                         # print(f'dir_a_full = {dir_a_full}')
                         fa_list = glob(dir_a_full)
                         # print(f'fa_list = {fa_list}')
@@ -98,10 +99,11 @@ class RunJediEdaControlPertExecutable(taskBase):
                         else:
                             fa = ''
                             self.logger.error(
-                                f"analysis files not found ichunk={ichunk}, imem_in_chunk={imem_in_chunk}")
+                                f"analysis files not found ichunk={ichunk}, "
+                                f"imem_in_chunk={imem_in_chunk}")
                         print(f'fa = {fa}')
-                        tail =  '.'.join(os.path.basename(fa).split('.')[-2:])
-                        fb =  os.path.join(self.cycle_dir(), dir_b, f'eda.ana.mem{imem:03d}.{tail}')
+                        tail = '.'.join(os.path.basename(fa).split('.')[-2:])
+                        fb = os.path.join(self.cycle_dir(), dir_b, f'eda.ana.mem{imem:03d}.{tail}')
                         print(f'fb = {fb}')
                         # link fa to fb
                         # Convert strings to Path objects
@@ -117,7 +119,6 @@ class RunJediEdaControlPertExecutable(taskBase):
                         fb.symlink_to(fa.resolve())
                         print(f"Successfully linked {fa} to {fb}")
             return
-
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------
@@ -175,7 +176,7 @@ class RunJediEdaControlPertExecutable(taskBase):
             self.jedi_rendering.add_key('background_frequency', self.config.background_frequency())
         # Jedi configuration file
         # -----------------------
-        fname=f'jedi_{jedi_application}{window_type}_config_chunk{ichunk:03d}.yaml'
+        fname = f'jedi_{jedi_application}{window_type}_config_chunk{ichunk:03d}.yaml'
         jedi_config_file = os.path.join(self.cycle_dir(), fname)
         print(f'file = {jedi_config_file}')
 
@@ -191,13 +192,12 @@ class RunJediEdaControlPertExecutable(taskBase):
                                                                 jedi_forecast_model)
         print(f'jedi file')
 
-
-        npert = int( nmember / nchunk )
+        npert = int(nmember/nchunk)
         istart = 0
         if ichunk == 1:
-            iend = npert -1              # mem: [0, 1 ... npert-1] : [ctrl, all pert]
+            iend = npert - 1     # mem: [0, 1 ... npert-1] : [ctrl, all pert]
         else:
-            iend = npert                 # mem: [0, 1 ... npert]   : [ctrl, all pert]
+            iend = npert         # mem: [0, 1 ... npert]   : [ctrl, all pert]
 
         print(f'npert = {npert}')
 
@@ -212,7 +212,7 @@ class RunJediEdaControlPertExecutable(taskBase):
                 if imem == 0:
                     id = 1
                 else:
-                    id = npert * (ichunk -1) + imem
+                    id = npert*(ichunk-1) + imem
 
             # link ebkg to ebkg_chunk
             # -----------------------
@@ -240,7 +240,8 @@ class RunJediEdaControlPertExecutable(taskBase):
             xdir = os.path.join(self.cycle_dir(), mem_dir)
             os.makedirs(xdir, exist_ok=True)
 
-            for observer in jedi_config_dict['assimilation']['cost function']['observations']['observers']:
+            for observer in jedi_config_dict['assimilation'][
+                    'cost function']['observations']['observers']:
                 # Get observation name
                 observation = observer['observation_name']
                 print(f'ob= {observation}')
@@ -257,7 +258,8 @@ class RunJediEdaControlPertExecutable(taskBase):
 
         # round-2: modify dir keys in yaml to  chunk00x / mem%mem_pad%
         # ------------------------------------------------------------
-        for observer in jedi_config_dict['assimilation']['cost function']['observations']['observers']:
+        for observer in jedi_config_dict['assimilation'][
+                'cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
             print(f'ob= {observation}')
@@ -313,7 +315,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         with open(jedi_config_file, 'w') as jedi_config_file_open:
             ruamel_yaml.dump(jedi_config_dict, jedi_config_file_open)
 
-
         # Get the JEDI interface metadata
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
@@ -324,16 +325,15 @@ class RunJediEdaControlPertExecutable(taskBase):
         np = eval(str(model_component_meta['total_processors']))
         # modify np by  (nmember / nchunk) + 1
         if ichunk == 1:
-          np = np * npert
+            np = np * npert
         else:
-          np = np * (npert + 1)
-
+            np = np * (npert + 1)
 
         # Jedi executable name
         # --------------------
         jedi_executable = model_component_meta['executables']['edaControlPert']
-        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle', 'build', 'bin',
-                                            jedi_executable)
+        jedi_executable_path = os.path.join(self.experiment_path(), 'jedi_bundle',
+                                            'build', 'bin', jedi_executable)
 
         # Run the JEDI executable
         # -----------------------

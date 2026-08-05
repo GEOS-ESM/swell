@@ -2,6 +2,7 @@ import yaml
 
 # --------------------------------------------------------------------------------------------------
 
+
 def replace_key(obj, old_key, new_key):
     """
     Recursively replace dictionary keys in nested dictionaries/lists.
@@ -43,15 +44,17 @@ def replace_string_value(data, sa, sb):
 
 # --------------------------------------------------------------------------------------------------
 
+
 def print_dict(*args, **kwargs):
     return print_dict_as_yaml(*args, **kwargs)
+
 
 def print_dict_as_yaml(data_dict):
     # Convert the dictionary to a YAML string
     # default_flow_style=False ensures block formatting instead of inline JSON-like formatting
     # sort_keys=False preserves your dictionary's original key order (Python 3.7+)
     yaml_string = yaml.dump(data_dict, default_flow_style=False, sort_keys=False)
-    
+
     # Output to the terminal
     print(yaml_string)
 

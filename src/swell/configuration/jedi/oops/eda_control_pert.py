@@ -17,7 +17,7 @@ class eda_control_pert(OopsConfig):
         nmember = self.template_dict['ensemble_num_members']
         nchunk = self.template_dict['ensemble_num_chunks']
         ichunk = self.template_dict['ensemble_ichunk']
-        nstate = int ( nmember / nchunk )
+        nstate = int(nmember/nchunk)
         if ichunk == 1:
             num_pert_mem = nstate - 1
         else:
@@ -49,7 +49,8 @@ class eda_control_pert(OopsConfig):
                   },
                   'iterations': [{
                       'geometry': self.interface_model('geometry_inner'),
-                      'gradient norm reduction': float(self.template_dict['gradient_norm_reduction']),
+                      'gradient norm reduction': float(
+                          self.template_dict['gradient_norm_reduction']),
                       'ninner': self.template_dict['number_of_iterations'],
                   }],
               },
