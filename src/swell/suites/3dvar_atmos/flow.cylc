@@ -62,7 +62,6 @@
             RunJediVariationalExecutable-{{model_component}}[-PT6H] => GetObsNotInR2d2-{{model_component}}?
             {% endif %}
 
-            # Cycling VarBC is inactive, static bias files will be used
             GetObsNotInR2d2-{{model_component}}: fail? => GetObservations-{{model_component}}?
 
             # Perform staging that is cycle dependent
