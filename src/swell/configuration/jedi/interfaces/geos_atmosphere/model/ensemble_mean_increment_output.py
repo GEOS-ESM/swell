@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------------------------------
 
 from collections.abc import Mapping
+from swell.configuration.jedi.interfaces.geos_atmosphere.model.shared import field_io_names_ensemble
 
 # --------------------------------------------------------------------------------------------------
 
@@ -19,17 +20,7 @@ def ensemble_mean_increment_output(template_dict: Mapping) -> Mapping:
         'filetype': 'auxgrid',
         'gridtype': 'latlon',
         'filename': f'{cycle_dir}/geos.mean-inc.',
-        'field io names': {
-            'eastward_wind': 'ua',
-            'northward_wind': 'va',
-            'air_temperature': 't',
-            'air_pressure_at_surface': 'ps',
-            'air_pressure_levels': 'pe',
-            'water_vapor_mixing_ratio_wrt_moist_air': 'q',
-            'cloud_liquid_ice': 'qi',
-            'cloud_liquid_water': 'ql',
-            'mole_fraction_of_ozone_in_air': 'o3ppmv',
-        }
+        'field io names': field_io_names_ensemble
     }
 
     return ensemble_mean_increment_output
