@@ -81,11 +81,12 @@ def is_datetime(dt_str: str) -> bool:
 
 # --------------------------------------------------------------------------------------------------
 
+
 def previous_bias_file(cycle_time_dto: Datetime,
                        target_file: str,
                        window_length: str,
                        background_time_offset) -> str:
-    
+
     # This requires two modifications, one in the directory and one in the filename.
     # Start with the changing the bias filename
     # -----------------------------------------------------------------

@@ -101,7 +101,8 @@ class GetObsNotInR2d2(taskBase):
             self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
             self.jedi_rendering.add_key('window_begin', window_begin)
 
-            self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+            self.jedi_rendering.set_obs_records_path(
+                    self.config.observing_system_records_path(None))
 
             # Iterate through each observation
             # --------------------------------
