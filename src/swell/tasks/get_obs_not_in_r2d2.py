@@ -113,12 +113,23 @@ class GetObsNotInR2d2(taskBase):
             subprocess.run(command)
 
         window_length = self.config.window_length()
+        window_begin = self.da_window_params.window_begin(window_length)
+        crtm_coeff_dir = self.config.crtm_coeff_dir()
+
+        background_time_offset = self.config.background_time_offset()
+        background_time = self.da_window_params.background_time(background_time_offset)
+
+        self.jedi_rendering.add_key('background_time', background_time)
+        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+        self.jedi_rendering.add_key('window_begin', window_begin)
+
+        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
         for observation in self.config.observations():
 
             observation_dict = \
                     self.jedi_rendering.render_interface_observations(observation)
-            
+            print(observation_dict)
             # Satellite and aircraft bias correction (coeff and cov) files
             # -----------------------------------------------
             target_bccoef = observation_dict['obs bias']['input file']

@@ -469,6 +469,12 @@ class TaskQuestions(QuestionContainer, Enum):
         list_name="GetExistingObservations",
         questions=[
             qd.ioda_locations_not_in_r2d2(),
+            qd.window_length(),
+            qd.observations(),
+            qd.crtm_coeff_dir(),
+            qd.background_time_offset(),
+            qd.observing_system_records_path(),
+            qd.cycling_varbc()
         ]
     )
 
