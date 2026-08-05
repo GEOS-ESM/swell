@@ -112,33 +112,41 @@ class GetObsNotInR2d2(taskBase):
             # -------------
             subprocess.run(command)
 
-        window_length = self.config.window_length()
-        window_begin = self.da_window_params.window_begin(window_length)
-        crtm_coeff_dir = self.config.crtm_coeff_dir()
+        # Handling for cycling_varbc experiments, handle linking previous cycle bias files
+        # --------------------------------------------------------------------------------
+        if self.config.cycling_varbc(False):
 
-        background_time_offset = self.config.background_time_offset()
-        background_time = self.da_window_params.background_time(background_time_offset)
+            # Get information needed to fill out obs yamls
+            # --------------------------------------------
+            window_length = self.config.window_length()
+            window_begin = self.da_window_params.window_begin(window_length)
+            crtm_coeff_dir = self.config.crtm_coeff_dir()
 
-        self.jedi_rendering.add_key('background_time', background_time)
-        self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
-        self.jedi_rendering.add_key('window_begin', window_begin)
+            background_time_offset = self.config.background_time_offset()
+            background_time = self.da_window_params.background_time(background_time_offset)
 
-        self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
+            self.jedi_rendering.add_key('background_time', background_time)
+            self.jedi_rendering.add_key('crtm_coeff_dir', crtm_coeff_dir)
+            self.jedi_rendering.add_key('window_begin', window_begin)
 
-        for observation in self.config.observations():
+            self.jedi_rendering.set_obs_records_path(self.config.observing_system_records_path(None))
 
-            observation_dict = \
-                    self.jedi_rendering.render_interface_observations(observation)
+            # Iterate through each observation
+            # --------------------------------
+            for observation in self.config.observations():
+                observation_dict = \
+                        self.jedi_rendering.render_interface_observations(observation)
 
-            if 'obs bias' not in observation_dict:
-                continue
+                # Skip if bias not needed
+                # -----------------------
+                if 'obs bias' not in observation_dict:
+                    continue
 
-            # Satellite and aircraft bias correction (coeff and cov) files
-            # -----------------------------------------------
-            target_bccoef = observation_dict['obs bias']['input file']
-            target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
+                # Satellite and aircraft bias correction (coeff and cov) files
+                # -----------------------------------------------
+                target_bccoef = observation_dict['obs bias']['input file']
+                target_bccovr = observation_dict['obs bias']['covariance']['prior']['input file']
 
-            if self.config.cycling_varbc():
                 if self.cycle_time_dto() == self.start_cycle_point_dto():
                     self.logger.info(f'Process bias file {target_bccoef} for the first cycle')
                     self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
