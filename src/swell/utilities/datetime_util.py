@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------------------------------
 
 
+import os
 import re
 import datetime as pydatetime
 from isodate import parse_duration, parse_datetime, ISO8601Error
@@ -77,5 +78,43 @@ def is_datetime(dt_str: str) -> bool:
         return False
 
     return True
+
+# --------------------------------------------------------------------------------------------------
+
+def previous_bias_file(cycle_time_dto: Datetime,
+                       target_file: str,
+                       window_length: str,
+                       background_time_offset) -> str:
+    
+    # This requires two modifications, one in the directory and one in the filename.
+    # Start with the changing the bias filename
+    # -----------------------------------------------------------------
+    bias_file = os.path.basename(target_file)
+
+    # Get the date bit from the target file
+    bias_path = os.path.dirname(target_file)
+    dt_str = bias_path.split('/')[-2]
+
+    # Get the previous cycle datetime string and replace it in the bias path
+    previous_cycle_dto = cycle_time_dto - parse_duration(window_length)
+    previous_cycle_dt_str = previous_cycle_dto.strftime(datetime_formats['directory_format'])
+
+    bias_path = bias_path.replace(dt_str, previous_cycle_dt_str)
+
+    # Get the previous cycle's offset time
+    previous_cycle_offset = previous_cycle_dto - parse_duration(background_time_offset)
+    previous_cycle_offset_str = previous_cycle_offset.strftime(datetime_formats['directory_format'])
+
+    # Get the current cycle's offset time, so it can be replaced
+    current_cycle_offset = cycle_time_dto - parse_duration(background_time_offset)
+    current_cycle_offset_str = current_cycle_offset.strftime(datetime_formats['directory_format'])
+
+    bias_file = bias_file.replace(current_cycle_offset_str, previous_cycle_offset_str)
+
+    # Combine the new bias path and the file name
+    # ---------------------------------------------
+    new_target_file = os.path.join(bias_path, bias_file)
+
+    return new_target_file
 
 # --------------------------------------------------------------------------------------------------

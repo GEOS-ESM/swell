@@ -15,50 +15,13 @@ import isodate
 
 from swell.utilities.datetime_util import datetime_formats
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.datetime_util import previous_bias_file
 
 
 # --------------------------------------------------------------------------------------------------
 
 
 class GetObsNotInR2d2(taskBase):
-
-    def previous_cycle_bias(self,
-                            target_file: str,
-                            window_length: str,
-                            background_time_offset: str
-                            ) -> str:
-
-        # This requires two modifications, one in the directory and one in the filename.
-        # Start with the changing the bias filename
-        # -----------------------------------------------------------------
-        bias_file = os.path.basename(target_file)
-
-        # Get the date bit from the target file
-        bias_path = os.path.dirname(target_file)
-        dt_str = bias_path.split('/')[-2]
-
-        # Get the previous cycle datetime string and replace it in the bias path
-        previous_cycle_dto = self.cycle_time_dto() - isodate.parse_duration(window_length)
-        previous_cycle_dt_str = previous_cycle_dto.strftime(datetime_formats['directory_format'])
-
-        bias_path = bias_path.replace(dt_str, previous_cycle_dt_str)
-
-        previous_cycle_offset = previous_cycle_dto - isodate.parse_duration(background_time_offset)
-        previous_cycle_offset_str = previous_cycle_offset.strftime(datetime_formats['directory_format'])
-
-        current_cycle_offset = self.cycle_time_dto() - isodate.parse_duration(background_time_offset)
-        current_cycle_offset_str = current_cycle_offset.strftime(datetime_formats['directory_format'])
-
-        bias_file = bias_file.replace(current_cycle_offset_str, previous_cycle_offset_str)
-
-        # Combine the new bias path and the file name
-        # ---------------------------------------------
-        new_target_file = os.path.join(bias_path, bias_file)
-
-        return new_target_file
-
-    # --------------------------------------------------------------------------------------------------
-
 
     def execute(self) -> None:
 
@@ -161,8 +124,10 @@ class GetObsNotInR2d2(taskBase):
                     self.logger.info(f'Process bias file {target_bccovr} for the first cycle')
                 else:
                     self.logger.info(f'Using bias files from the previous cycle')
-                    previous_bias_coef = self.previous_cycle_bias(target_bccoef, window_length, background_time_offset)
-                    previous_bias_covr = self.previous_cycle_bias(target_bccovr, window_length, background_time_offset)
+                    previous_bias_coef = previous_bias_file(self.cycle_time_dto(), target_bccoef,
+                                                            window_length, background_time_offset)
+                    previous_bias_covr = previous_bias_file(self.cycle_time_dto(), target_bccovr,
+                                                            window_length, background_time_offset)
                     # Link the previous bias file to the current cycle directory
                     self.logger.info(f'Linking {previous_bias_coef} to {target_bccoef}')
                     self.geos.linker(previous_bias_coef, target_bccoef, dst_dir=self.cycle_dir())
