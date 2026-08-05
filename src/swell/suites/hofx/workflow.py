@@ -140,7 +140,6 @@ class Workflow_hofx(CylcWorkflow):
         self.tasks.append(ta.CloneJedi())
         self.tasks.append(ta.BuildJedi())
         self.tasks.append(ta.BuildJediByLinking())
-        self.tasks.append(ta.CloneGeosMksi())
 
         for model in self.experiment_dict['model_components']:
             self.tasks.append(ta.CloneGeosMksi(model=model))

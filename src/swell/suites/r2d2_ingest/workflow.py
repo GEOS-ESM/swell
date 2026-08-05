@@ -70,7 +70,7 @@ template_str = '''
 
 
 @workflows.register('r2d2_ingest')
-class Workflow_ingest_obs(CylcWorkflow):
+class Workflow_r2d2_ingest(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()

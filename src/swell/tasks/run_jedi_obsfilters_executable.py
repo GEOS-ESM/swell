@@ -48,7 +48,6 @@ class Setup(TaskSetup):
             qd.background_frequency(),
             qd.generate_yaml_and_exit(),
             qd.jedi_forecast_model(),
-            qd.observing_system_records_path(),
             qd.total_processors(),
             qd.obs_thinning_rej_fraction(),
             qd.comparison_log_type('obsfilters'),

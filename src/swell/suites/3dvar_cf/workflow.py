@@ -108,7 +108,7 @@ template_str = '''
 
 
 @workflows.register('3dvar_cf')
-class Workflow_hofx_cf(CylcWorkflow):
+class Workflow_3dvar_cf(CylcWorkflow):
 
     def get_workflow_string(self):
         workflow_str = self.default_header()

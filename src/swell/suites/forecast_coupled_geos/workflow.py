@@ -121,7 +121,6 @@ class Workflow_forecast_coupled_geos(CylcWorkflow):
         self.tasks.append(ta.PrepCoupledGeosRunDir())
         self.tasks.append(ta.GetCoupledGeosRestart())
         self.tasks.append(ta.MoveForecastRestart())
-        self.tasks.append(ta.SaveRestart())
         self.tasks.append(RunGeos())
 
 # --------------------------------------------------------------------------------------------------

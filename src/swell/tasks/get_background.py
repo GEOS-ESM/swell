@@ -32,7 +32,6 @@ class Setup(TaskSetup):
         self.is_cycling = True
         self.model_dep = True
         self.questions = [
-            qd.window_length(),
             qd.window_type(),
             qd.window_length(),
             qd.background_experiment(),

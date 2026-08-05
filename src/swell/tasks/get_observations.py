@@ -39,7 +39,6 @@ class Setup(TaskSetup):
             qd.background_time_offset(),
             qd.crtm_coeff_dir(),
             qd.observations(),
-            qd.observing_system_records_path(),
             qd.cycling_varbc(),
             qd.obs_experiment(),
             qd.observing_system_records_path(),
