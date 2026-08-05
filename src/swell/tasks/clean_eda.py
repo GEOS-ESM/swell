@@ -59,8 +59,6 @@ class CleanEda(taskBase):
         window_begin = self.da_window_params.window_begin(window_length)
         window_begin_iso = self.da_window_params.window_begin_iso(window_length)
         window_end_iso = self.da_window_params.window_end_iso(window_length)
-        nmember = self.config.ensemble_num_members()
-        # imember = self.get_ensemble_imember()
 
         # Populate jedi interface templates dictionary
         # --------------------------------------------

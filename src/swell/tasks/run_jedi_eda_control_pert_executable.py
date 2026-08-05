@@ -91,9 +91,7 @@ class RunJediEdaControlPertExecutable(taskBase):
                         dir_b = f'analysis/mem{imem:03d}'
                         dir_a_full = os.path.join(self.cycle_dir(), dir_a,
                                                   f'eda.ana.mem{imem_in_chunk:03d}.*.nc4')
-                        # print(f'dir_a_full = {dir_a_full}')
                         fa_list = glob(dir_a_full)
-                        # print(f'fa_list = {fa_list}')
                         if fa_list:
                             fa = fa_list[0]
                         else:
@@ -101,10 +99,8 @@ class RunJediEdaControlPertExecutable(taskBase):
                             self.logger.error(
                                 f"analysis files not found ichunk={ichunk}, "
                                 f"imem_in_chunk={imem_in_chunk}")
-                        print(f'fa = {fa}')
                         tail = '.'.join(os.path.basename(fa).split('.')[-2:])
                         fb = os.path.join(self.cycle_dir(), dir_b, f'eda.ana.mem{imem:03d}.{tail}')
-                        print(f'fb = {fb}')
                         # link fa to fb
                         # Convert strings to Path objects
                         fa = Path(fa)
@@ -117,7 +113,7 @@ class RunJediEdaControlPertExecutable(taskBase):
                         # a3. Create the symbolic link
                         # .resolve() gets the absolute path (like realpath in bash)
                         fb.symlink_to(fa.resolve())
-                        print(f"Successfully linked {fa} to {fb}")
+                        self.logger.info(f"Successfully linked {fa} to {fb}")
             return
 
         # Populate jedi interface templates dictionary
@@ -178,7 +174,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         # -----------------------
         fname = f'jedi_{jedi_application}{window_type}_config_chunk{ichunk:03d}.yaml'
         jedi_config_file = os.path.join(self.cycle_dir(), fname)
-        print(f'file = {jedi_config_file}')
 
         # Output log file
         # ---------------
@@ -190,7 +185,6 @@ class RunJediEdaControlPertExecutable(taskBase):
         jedi_config_dict = self.jedi_rendering.render_oops_file(f'{jedi_application}',
                                                                 window_type,
                                                                 jedi_forecast_model)
-        print(f'jedi file')
 
         npert = int(nmember/nchunk)
         istart = 0
@@ -199,11 +193,8 @@ class RunJediEdaControlPertExecutable(taskBase):
         else:
             iend = npert         # mem: [0, 1 ... npert]   : [ctrl, all pert]
 
-        print(f'npert = {npert}')
-
-        # round-1: link bkg, copy obs, B and R
+        # round-1: link bkg, copy obs, fv3jedi dir (B and R)
         # ----------------------------------------------------
-        chunk_dir = f'analysis_chunk/chunk{ichunk:003d}'
         mem_temp_dir = f'analysis_chunk/chunk{ichunk:003d}/mem%mem_pad%'
         for imem in range(istart, iend+1):
             if ichunk == 1:
@@ -229,7 +220,6 @@ class RunJediEdaControlPertExecutable(taskBase):
                 f2 = f2.split('.')[2:]
                 f2 = '.'.join(f2)
                 f2 = os.path.join(xdir, f2)
-                print(f'f2 = {f2}')
                 if os.path.lexists(f2):
                     os.remove(f2)
                 os.symlink(f1, f2)
@@ -244,11 +234,10 @@ class RunJediEdaControlPertExecutable(taskBase):
                     'cost function']['observations']['observers']:
                 # Get observation name
                 observation = observer['observation_name']
-                print(f'ob= {observation}')
                 # copy obs input file to avoid multi MPI reading the same file
                 files = glob(os.path.join(self.cycle_dir(), f'{observation}.*'))
                 for src_file in files:
-                    print(f'f= {src_file}')
+                    self.loggerin.info(f'f= {src_file} is copied to {xdir}')
                     shutil.copy(src_file, xdir)
 
             # copy fv3-jedi dir, update dir names
@@ -262,11 +251,13 @@ class RunJediEdaControlPertExecutable(taskBase):
                 'cost function']['observations']['observers']:
             # Get observation name
             observation = observer['observation_name']
-            print(f'ob= {observation}')
-            hxout = observer['obs space']['obsdataout']['engine']['obsfile']
-            dir1, fname = os.path.split(hxout)
-            hxout = os.path.join(dir1, mem_temp_dir, fname)
-            observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
+
+            # for now delete obsdataout
+            del observer['obs space']['obsdataout']
+            # hxout = observer['obs space']['obsdataout']['engine']['obsfile']
+            # dir1, fname = os.path.split(hxout)
+            # hxout = os.path.join(dir1, mem_temp_dir, fname)
+            # observer['obs space']['obsdataout']['engine']['obsfile'] = hxout
 
             obsFileIn = observer['obs space']['obsdatain']['engine']['obsfile']
             dir1, fname = os.path.split(obsFileIn)
@@ -319,7 +310,7 @@ class RunJediEdaControlPertExecutable(taskBase):
         # -------------------------------
         model_component_meta = self.jedi_rendering.render_interface_meta()
 
-        print(f"proc = {model_component_meta['total_processors']}")
+        self.logger.info(f"num of processors = {model_component_meta['total_processors']}")
         # Compute number of processors
         # ----------------------------
         np = eval(str(model_component_meta['total_processors']))
