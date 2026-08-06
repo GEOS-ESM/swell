@@ -129,6 +129,8 @@ class JediConfigRendering():
             'vertical_localization_ioda_vertical_coord',
             'vertical_localization_ioda_vertical_coord_group',
             'vertical_localization_lengthscale',
+            'vertical_localization_unit',
+            'vertical_localization_frac_retained_variance',
             'vertical_localization_method',
             'vertical_resolution',
             'window_begin',
