@@ -457,6 +457,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.cache_fetch(),
             qd.cycling_varbc(),
             qd.obs_experiment(),
+            qd.observation_providers(),
             qd.observing_system_records_path(),
             qd.window_length(),
         ]
