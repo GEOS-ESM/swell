@@ -7,12 +7,17 @@
 """
 Task for downloading raw observation files from remote servers.
 
-Two retrieval methods are supported, selected by ``retrieval_method`` in
-the per-obs download YAML:
+Downloads native observation files (e.g. HDF5, NetCDF) from either HTTPS
+servers such as NASA GES DISC, from public AWS S3 buckets, or from
+authenticated HTTPS endpoints for NASA ASDC datasets.
 
 ``https`` (default)
     Scrapes an HTML directory listing and streams files via HTTPS.
     Authentication uses ``~/.netrc``.
+
+``s3_public``
+    Downloads from a publicly readable S3 bucket using anonymous boto3
+    access (e.g. ``s3://meeo-s5p``).  Requires ``boto3``.
 
 ``cmr``
     Queries the NASA CMR API for granule URLs, then downloads via
@@ -136,6 +141,10 @@ class DownloadObs(taskBase):
         """
         retrieval_method = obs_config.get('retrieval_method', 'https')
 
+        if retrieval_method == 's3_public':
+            return self._download_obs_s3_public(
+                obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
+
         if retrieval_method == 'cmr':
             return self._download_obs_cmr(
                 obs_config, obs_name, window_begin_dto, window_end_dto, dry_run)
@@ -216,6 +225,162 @@ class DownloadObs(taskBase):
                     downloaded += 1
                 except requests.RequestException as exc:
                     self.logger.error(f'  Failed to download {filename}: {exc}')
+                    failed += 1
+
+        return downloaded, failed
+
+    def _download_obs_s3_public(
+        self,
+        obs_config: dict,
+        obs_name: str,
+        window_begin_dto: datetime.datetime,
+        window_end_dto: datetime.datetime,
+        dry_run: bool,
+    ) -> tuple[int, int]:
+        """Download files for one observation type from a publicly readable
+        S3 bucket using anonymous (unsigned) boto3 access.
+
+        The ``obs_config`` dict must contain:
+
+        - ``s3_source``: S3 URI template with ``YYYY``, ``MM``, ``DD``
+          placeholders, e.g.
+          ``s3://meeo-s5p/NRTI/L2__NO2___/YYYY/MM/DD``.
+
+        Optional keys:
+
+        - ``max_orbit_duration``: ISO-8601 duration; extends the search
+          window backwards (default ``PT0H``).
+
+        Returns ``(n_downloaded, n_failed)``.
+        """
+        try:
+            import boto3
+            from botocore import UNSIGNED
+            from botocore.config import Config as BotocoreConfig
+            from botocore.exceptions import BotoCoreError, ClientError
+        except ImportError:
+            self.logger.abort(
+                "boto3 is required for 's3_public' retrieval but is not installed. "
+                'Install it with: pip install boto3')
+
+        s3_source_template = obs_config['s3_source']
+        filename_pattern = obs_config.get('filename_pattern', '')
+        max_orbit_dur = isodate.parse_duration(
+            obs_config.get('max_orbit_duration', 'PT0H'))
+
+        search_start = window_begin_dto - max_orbit_dur
+        search_end = window_end_dto
+
+        dest_dir = os.path.join(self.cycle_dir(), 'download', obs_name)
+        if not dry_run:
+            os.makedirs(dest_dir, exist_ok=True)
+
+        without_scheme = s3_source_template[len('s3://'):]
+        bucket, _, prefix_template = without_scheme.partition('/')
+
+        if dry_run:
+            for day_date in self._day_slots(search_start, search_end):
+                prefix = self._resolve_path(prefix_template, day_date)
+                pattern_info = (f' matching {self._resolve_path(filename_pattern, day_date)}'
+                                if filename_pattern else '')
+                self.logger.info(
+                    f'  [DRY RUN] Would list s3://{bucket}/{prefix}{pattern_info}')
+            return 0, 0
+
+        s3_client = boto3.client(
+            's3',
+            config=BotocoreConfig(signature_version=UNSIGNED))
+
+        downloaded = 0
+        failed = 0
+
+        for day_date in self._day_slots(search_start, search_end):
+            prefix = self._resolve_path(prefix_template, day_date)
+            self.logger.info(f'  Listing s3://{bucket}/{prefix}')
+
+            try:
+                paginator = s3_client.get_paginator('list_objects_v2')
+                pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
+                keys = [
+                    obj['Key']
+                    for page in pages
+                    for obj in page.get('Contents', [])
+                ]
+            except (BotoCoreError, ClientError) as exc:
+                self.logger.error(
+                    f'  Failed to list s3://{bucket}/{prefix}: {exc}')
+                failed += 1
+                continue
+
+            if not keys:
+                self.logger.info(
+                    f'  No objects found under s3://{bucket}/{prefix}')
+                continue
+
+            # download only files that are in the window
+            if filename_pattern:
+                valid_hours = [h for d, h in self._hour_slots(search_start, search_end)
+                               if d == day_date]
+                hours_window = [
+                    re.compile(
+                        '^' + re.escape(
+                            self._resolve_filename(filename_pattern, day_date, h)
+                        ).replace(r'\*', '.*') + '$')
+                    for h in valid_hours
+                ]
+                keys = [k for k in keys
+                        if any(r.match(os.path.basename(k)) for r in hours_window)]
+
+            utc = datetime.timezone.utc
+            s_start = (search_start.replace(tzinfo=utc)
+                       if search_start.tzinfo is None else search_start)
+            s_end = (search_end.replace(tzinfo=utc)
+                     if search_end.tzinfo is None else search_end)
+            timestamp_rx = re.compile(r'\d{8}T\d{6}')
+            filtered = []
+            any_timestamp_found = False
+            for k in keys:
+                basename = os.path.basename(k)
+                matches = timestamp_rx.findall(basename)
+                if not matches:
+                    filtered.append(k)
+                    continue
+                any_timestamp_found = True
+                granule_start_str = matches[0]
+                try:
+                    gran_start = datetime.datetime.strptime(
+                        granule_start_str, '%Y%m%dT%H%M%S'
+                    ).replace(tzinfo=utc)
+                except ValueError:
+                    filtered.append(k)
+                    continue
+                if s_start <= gran_start <= s_end:
+                    filtered.append(k)
+            if any_timestamp_found:
+                keys = filtered
+            elif not filename_pattern:
+                self.logger.warning(
+                    f'  {day_date}: no YYYYMMDDTHHmmss timestamp found in filenames ')
+
+            self.logger.info(
+                f'  {day_date}: {len(keys)} object(s) found')
+
+            for key in keys:
+                filename = os.path.basename(key)
+                dest_path = os.path.join(dest_dir, filename)
+
+                if os.path.exists(dest_path):
+                    self.logger.info(f'  Already exists, skipping: {filename}')
+                    downloaded += 1
+                    continue
+
+                try:
+                    s3_client.download_file(bucket, key, dest_path)
+                    self.logger.info(f'  Downloaded: {filename}')
+                    downloaded += 1
+                except (BotoCoreError, ClientError) as exc:
+                    self.logger.error(
+                        f'  Failed to download {filename}: {exc}')
                     failed += 1
 
         return downloaded, failed
@@ -413,6 +578,20 @@ class DownloadObs(taskBase):
     # ------------------------------------------------------------------
     # Slot/date helpers
     # ------------------------------------------------------------------
+
+    def _day_slots(
+        self,
+        search_start: datetime.datetime,
+        search_end: datetime.datetime,
+    ) -> list[datetime.date]:
+        """Return a list of unique date objects from search_start to search_end."""
+        days = []
+        current = search_start.date()
+        end_date = search_end.date()
+        while current <= end_date:
+            days.append(current)
+            current += datetime.timedelta(days=1)
+        return days
 
     def _hour_slots(
         self,

@@ -4,13 +4,22 @@ obs space:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/satwind.{{window_begin}}.nc4'
+      missing file action: warn
   obsdataout:
     engine:
       type: H5File
       obsfile: '{{cycle_dir}}/{{experiment_id}}.satwind.{{window_begin}}.nc4'
+  io pool:
+    max pool size: 6
   simulated variables: [windEastward, windNorthward]
 
 obs operator:
+  name: VertInterp
+  observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
+  hofx scaling field: SurfaceWindScalingPressure
+  hofx scaling field group: DerivedVariables
+
+linear obs operator:
   name: VertInterp
   observation alias file: '{{experiment_root}}/{{experiment_id}}/configuration/jedi/interfaces/{{model_component}}/observations/obsop_name_map.yaml'
   hofx scaling field: SurfaceWindScalingPressure
@@ -238,6 +247,90 @@ obs post filters:
   filter variables:
   - name: windEastward
   - name: windNorthward
+  reference: GeoVaLs/tropopause_pressure
+  value: MetaData/pressure
+  minvalue: -5000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 240-260
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 95000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 240-260
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  minvalue: 70000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 242,243
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 39900.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 246,247,250,254
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  minvalue: 24900.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 257,259
+  action:
+    name: reject
+
+- filter: Bounds Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
+  test variables:
+  - name: MetaData/pressure
+  maxvalue: 60000.
+  where:
+  - variable:
+      name: ObsType/windEastward
+    is_in: 258,259
+  action:
+    name: reject      
+      
+- filter: Difference Check
+  filter variables:
+  - name: windEastward
+  - name: windNorthward
   reference: GeoVaLs/air_pressure_at_surface
   value: MetaData/pressure
   maxvalue: -11000
@@ -309,7 +402,7 @@ obs post filters:
         variable: windEastward
         inflation factor: 4
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 
 - filter: BlackList
   filter variables:
@@ -326,7 +419,7 @@ obs post filters:
         variable: windNorthward
         inflation factor: 4
         adjusted_error_name: GsiAdjustObsError
-        geovar_sfc_geomz: surface_geometric_height
+        geovar_sfc_geomz: height_above_mean_sea_level_at_surface
 
 # Gross Check
 - filter: Background Check

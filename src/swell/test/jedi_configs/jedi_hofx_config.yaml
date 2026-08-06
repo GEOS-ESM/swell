@@ -63,7 +63,7 @@ initial condition:
   - soilm
   - eastward_wind_at_surface
   - northward_wind_at_surface
-  field io names: &id017
+  field io names: &id023
     eastward_wind: ua
     northward_wind: va
     air_temperature: t
@@ -916,7 +916,7 @@ observations:
       obs options:
         Sensor_ID: airs_aqua
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -926,6 +926,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/airs_aqua.20231009T150000Z.satbias.nc4
       output file: cycle_dir/airs_aqua.20231009T210000Z.satbias.nc4
@@ -968,7 +971,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id001
         - 1.2
         - 1.2
         - 1.3136
@@ -1330,8 +1333,9 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id001
           use_flag: None
-          use_flag_clddet: &id001
+          use_flag_clddet: &id002
           - 1
           - 1
           - 1
@@ -1631,6 +1635,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id001
           use_flag: None
       maxvalue: 1e-12
       action:
@@ -1681,6 +1686,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id001
           obserr_bound_max:
           - 3.5
           - 3.5
@@ -1975,7 +1981,7 @@ observations:
         options:
           channels: None
           use_flag: None
-          use_flag_clddet: *id001
+          use_flag_clddet: *id002
       maxvalue: 1e-12
       defer to post: true
       action:
@@ -2028,7 +2034,7 @@ observations:
       obs options:
         Sensor_ID: amsr2_gcom-w1
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2043,6 +2049,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsr2_gcom-w1.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsr2_gcom-w1.20231009T210000Z.satbias.nc4
@@ -2129,7 +2138,7 @@ observations:
           clwret_ch18h: 8
           clwret_ch36v: 11
           clwret_ch36h: 12
-          sys_bias: &id002
+          sys_bias: &id003
           - 0.48
           - 3.0737
           - 0.7433
@@ -2158,7 +2167,7 @@ observations:
           clwret_ch18h: 8
           clwret_ch36v: 11
           clwret_ch36h: 12
-          sys_bias: *id002
+          sys_bias: *id003
           clwret_types:
           - HofX
       maxvalue: 1.0
@@ -2173,7 +2182,7 @@ observations:
           clwret_ch18h: 8
           clwret_ch36v: 11
           clwret_ch36h: 12
-          sys_bias: *id002
+          sys_bias: *id003
           clwret_types:
           - ObsValue
       reference:
@@ -2183,7 +2192,7 @@ observations:
           clwret_ch18h: 8
           clwret_ch36v: 11
           clwret_ch36h: 12
-          sys_bias: *id002
+          sys_bias: *id003
           clwret_types:
           - HofX
       minvalue: -0.5
@@ -2206,7 +2215,7 @@ observations:
                 clwret_ch18h: 8
                 clwret_ch36v: 11
                 clwret_ch36h: 12
-                sys_bias: *id002
+                sys_bias: *id003
                 clwret_types:
                 - ObsValue
                 - HofX
@@ -2338,7 +2347,7 @@ observations:
       obs options:
         Sensor_ID: amsua_aqua
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2348,6 +2357,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_aqua.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_aqua.20231009T210000Z.satbias.nc4
@@ -2391,7 +2403,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id003
+        error parameter vector: &id004
         - 2.5
         - 2.0
         - 2.0
@@ -2519,7 +2531,7 @@ observations:
             options:
               channels: None
               sensor: amsua_aqua
-          error parameter vector: *id003
+          error parameter vector: *id004
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -2594,7 +2606,7 @@ observations:
       obs options:
         Sensor_ID: amsua_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2604,6 +2616,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_metop-b.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_metop-b.20231009T210000Z.satbias.nc4
@@ -2647,7 +2662,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id004
+        error parameter vector: &id005
         - 2.5
         - 2.0
         - 2.0
@@ -2775,7 +2790,7 @@ observations:
             options:
               channels: None
               sensor: amsua_metop-b
-          error parameter vector: *id004
+          error parameter vector: *id005
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -2850,7 +2865,7 @@ observations:
       obs options:
         Sensor_ID: amsua_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -2860,6 +2875,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_metop-c.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_metop-c.20231009T210000Z.satbias.nc4
@@ -2903,7 +2921,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id005
+        error parameter vector: &id006
         - 2.5
         - 2.0
         - 2.0
@@ -3031,7 +3049,7 @@ observations:
             options:
               channels: None
               sensor: amsua_metop-c
-          error parameter vector: *id005
+          error parameter vector: *id006
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -3106,7 +3124,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n15
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3116,6 +3134,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n15.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_n15.20231009T210000Z.satbias.nc4
@@ -3159,7 +3180,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id006
+        error parameter vector: &id007
         - 3.0
         - 2.0
         - 2.0
@@ -3287,7 +3308,7 @@ observations:
             options:
               channels: None
               sensor: amsua_n15
-          error parameter vector: *id006
+          error parameter vector: *id007
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -3362,7 +3383,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n18
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3372,6 +3393,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n18.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_n18.20231009T210000Z.satbias.nc4
@@ -3415,7 +3439,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id007
+        error parameter vector: &id008
         - 2.5
         - 2.0
         - 2.0
@@ -3543,7 +3567,7 @@ observations:
             options:
               channels: None
               sensor: amsua_n18
-          error parameter vector: *id007
+          error parameter vector: *id008
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -3618,7 +3642,7 @@ observations:
       obs options:
         Sensor_ID: amsua_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3628,6 +3652,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/amsua_n19.20231009T150000Z.satbias.nc4
       output file: cycle_dir/amsua_n19.20231009T210000Z.satbias.nc4
@@ -3671,7 +3698,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id008
+        error parameter vector: &id009
         - 2.5
         - 2.0
         - 2.0
@@ -3799,7 +3826,7 @@ observations:
             options:
               channels: None
               sensor: amsua_n19
-          error parameter vector: *id008
+          error parameter vector: *id009
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -3874,7 +3901,7 @@ observations:
       obs options:
         Sensor_ID: atms_n20
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -3884,6 +3911,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/atms_n20.20231009T150000Z.satbias.nc4
       output file: cycle_dir/atms_n20.20231009T210000Z.satbias.nc4
@@ -3927,7 +3957,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id009
+        error parameter vector: &id010
         - 5.0
         - 5.0
         - 5.0
@@ -4062,7 +4092,7 @@ observations:
             options:
               channels: None
               sensor: atms_n20
-          error parameter vector: *id009
+          error parameter vector: *id010
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -4144,7 +4174,7 @@ observations:
       obs options:
         Sensor_ID: atms_npp
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4154,6 +4184,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/atms_npp.20231009T150000Z.satbias.nc4
       output file: cycle_dir/atms_npp.20231009T210000Z.satbias.nc4
@@ -4197,7 +4230,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id010
+        error parameter vector: &id011
         - 5.0
         - 5.0
         - 5.0
@@ -4332,7 +4365,7 @@ observations:
             options:
               channels: None
               sensor: atms_npp
-          error parameter vector: *id010
+          error parameter vector: *id011
           obserr_bound_max:
           - 4.5
           - 4.5
@@ -4414,7 +4447,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4424,6 +4457,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_metop-b.20231009T150000Z.satbias.nc4
       output file: cycle_dir/avhrr3_metop-b.20231009T210000Z.satbias.nc4
@@ -4463,7 +4499,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id012
         - 1.0
         - 1.08
         - 1.12
@@ -4545,6 +4581,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id012
           use_flag: None
           use_flag_clddet:
           - 1
@@ -4572,6 +4609,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id012
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -4634,6 +4672,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id012
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -4681,7 +4720,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_n18
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4691,6 +4730,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_n18.20231009T150000Z.satbias.nc4
       output file: cycle_dir/avhrr3_n18.20231009T210000Z.satbias.nc4
@@ -4730,7 +4772,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id013
         - 1.0
         - 1.08
         - 1.12
@@ -4812,6 +4854,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id013
           use_flag: None
           use_flag_clddet:
           - 1
@@ -4839,6 +4882,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id013
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -4901,6 +4945,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id013
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -4948,7 +4993,7 @@ observations:
       obs options:
         Sensor_ID: avhrr3_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -4958,6 +5003,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/avhrr3_n19.20231009T150000Z.satbias.nc4
       output file: cycle_dir/avhrr3_n19.20231009T210000Z.satbias.nc4
@@ -4997,7 +5045,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id014
         - 1.0
         - 1.08
         - 1.12
@@ -5079,6 +5127,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id014
           use_flag: None
           use_flag_clddet:
           - 1
@@ -5106,6 +5155,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id014
           use_flag: None
           obserr_demisf:
           - 0.01
@@ -5168,6 +5218,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id014
           obserr_bound_max:
           - 3.0
           - 3.0
@@ -5215,7 +5266,7 @@ observations:
       obs options:
         Sensor_ID: cris-fsr_n20
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -5225,6 +5276,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/cris-fsr_n20.20231009T150000Z.satbias.nc4
       output file: cycle_dir/cris-fsr_n20.20231009T210000Z.satbias.nc4
@@ -5267,7 +5321,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id015
         - 0.823
         - 0.76
         - 0.736
@@ -5779,8 +5833,9 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id015
           use_flag: None
-          use_flag_clddet: &id011
+          use_flag_clddet: &id016
           - 31
           - 31
           - 31
@@ -6218,6 +6273,7 @@ observations:
           - 4.0
           - 2.0
           - 4.0
+          cldthreshold_clearsky: 0.01
       maxvalue: 1e-12
       action:
         name: reject
@@ -6230,6 +6286,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id015
           use_flag: None
       maxvalue: 1e-12
       action:
@@ -6280,6 +6337,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id015
           obserr_bound_max:
           - 2.0
           - 2.0
@@ -6724,7 +6782,7 @@ observations:
         options:
           channels: None
           use_flag: None
-          use_flag_clddet: *id011
+          use_flag_clddet: *id016
       maxvalue: 1e-12
       defer to post: true
       action:
@@ -6770,7 +6828,7 @@ observations:
       obs options:
         Sensor_ID: cris-fsr_npp
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -6780,6 +6838,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/cris-fsr_npp.20231009T150000Z.satbias.nc4
       output file: cycle_dir/cris-fsr_npp.20231009T210000Z.satbias.nc4
@@ -6822,7 +6883,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector:
+        error parameter vector: &id017
         - 0.823
         - 0.76
         - 0.736
@@ -7334,8 +7395,9 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id017
           use_flag: None
-          use_flag_clddet: &id012
+          use_flag_clddet: &id018
           - 31
           - 31
           - 31
@@ -7773,6 +7835,7 @@ observations:
           - 4.0
           - 2.0
           - 4.0
+          cldthreshold_clearsky: 0.01
       maxvalue: 1e-12
       action:
         name: reject
@@ -7785,6 +7848,7 @@ observations:
         channels: None
         options:
           channels: None
+          error parameter vector: *id017
           use_flag: None
       maxvalue: 1e-12
       action:
@@ -7835,6 +7899,7 @@ observations:
             channels: None
             options:
               channels: None
+          error parameter vector: *id017
           obserr_bound_max:
           - 2.0
           - 2.0
@@ -8279,7 +8344,7 @@ observations:
         options:
           channels: None
           use_flag: None
-          use_flag_clddet: *id012
+          use_flag_clddet: *id018
       maxvalue: 1e-12
       defer to post: true
       action:
@@ -8332,7 +8397,7 @@ observations:
       obs options:
         Sensor_ID: gmi_gpm
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -8347,6 +8412,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/gmi_gpm.20231009T150000Z.satbias.nc4
       output file: cycle_dir/gmi_gpm.20231009T210000Z.satbias.nc4
@@ -9022,7 +9090,7 @@ observations:
       obs options:
         Sensor_ID: iasi_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -9032,6 +9100,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/iasi_metop-b.20231009T150000Z.satbias.nc4
       output file: cycle_dir/iasi_metop-b.20231009T210000Z.satbias.nc4
@@ -9074,7 +9145,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id013
+        error parameter vector: &id019
         - 0.727
         - 0.81
         - 0.75
@@ -9773,9 +9844,9 @@ observations:
         channels: None
         options:
           channels: None
-          error parameter vector: *id013
+          error parameter vector: *id019
           use_flag: None
-          use_flag_clddet: &id014
+          use_flag_clddet: &id020
           - 1
           - 1
           - 1
@@ -10410,7 +10481,7 @@ observations:
         channels: None
         options:
           channels: None
-          error parameter vector: *id013
+          error parameter vector: *id019
           use_flag: None
       maxvalue: 1e-12
       action:
@@ -10461,7 +10532,7 @@ observations:
             channels: None
             options:
               channels: None
-          error parameter vector: *id013
+          error parameter vector: *id019
           obserr_bound_max:
           - 3.0
           - 2.0
@@ -11091,7 +11162,7 @@ observations:
         options:
           channels: None
           use_flag: None
-          use_flag_clddet: *id014
+          use_flag_clddet: *id020
       maxvalue: 1e-12
       defer to post: true
       action:
@@ -11137,7 +11208,7 @@ observations:
       obs options:
         Sensor_ID: iasi_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -11147,6 +11218,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/iasi_metop-c.20231009T150000Z.satbias.nc4
       output file: cycle_dir/iasi_metop-c.20231009T210000Z.satbias.nc4
@@ -11189,7 +11263,7 @@ observations:
         channels: None
       action:
         name: assign error
-        error parameter vector: &id015
+        error parameter vector: &id021
         - 0.727
         - 0.81
         - 0.75
@@ -11888,9 +11962,9 @@ observations:
         channels: None
         options:
           channels: None
-          error parameter vector: *id015
+          error parameter vector: *id021
           use_flag: None
-          use_flag_clddet: &id016
+          use_flag_clddet: &id022
           - 1
           - 1
           - 1
@@ -12525,7 +12599,7 @@ observations:
         channels: None
         options:
           channels: None
-          error parameter vector: *id015
+          error parameter vector: *id021
           use_flag: None
       maxvalue: 1e-12
       action:
@@ -12576,7 +12650,7 @@ observations:
             channels: None
             options:
               channels: None
-          error parameter vector: *id015
+          error parameter vector: *id021
           obserr_bound_max:
           - 3.0
           - 2.0
@@ -13206,7 +13280,7 @@ observations:
         options:
           channels: None
           use_flag: None
-          use_flag_clddet: *id016
+          use_flag_clddet: *id022
       maxvalue: 1e-12
       defer to post: true
       action:
@@ -13259,7 +13333,7 @@ observations:
       obs options:
         Sensor_ID: mhs_metop-b
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -13274,6 +13348,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_metop-b.20231009T150000Z.satbias.nc4
       output file: cycle_dir/mhs_metop-b.20231009T210000Z.satbias.nc4
@@ -13707,7 +13784,7 @@ observations:
       obs options:
         Sensor_ID: mhs_metop-c
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -13722,6 +13799,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_metop-c.20231009T150000Z.satbias.nc4
       output file: cycle_dir/mhs_metop-c.20231009T210000Z.satbias.nc4
@@ -14155,7 +14235,7 @@ observations:
       obs options:
         Sensor_ID: mhs_n19
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
       linear obs operator:
         Absorbers:
         - H2O
@@ -14170,6 +14250,9 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
     obs bias:
       input file: cycle_dir/mhs_n19.20231009T150000Z.satbias.nc4
       output file: cycle_dir/mhs_n19.20231009T210000Z.satbias.nc4
@@ -14602,6 +14685,15 @@ observations:
       filter variables:
       - name: ozoneProfile
       threshold: 5.0
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: ozoneProfile
+      test variables:
+      - name: MetaData/pressure
+      minvalue: 10
+      maxvalue: 25000
       action:
         name: reject
     - filter: GOMsaver
@@ -15707,6 +15799,84 @@ observations:
       - variable:
           name: ObsType/windEastward
         is_in: 259
+    - filter: Difference Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      reference: GeoVaLs/tropopause_pressure
+      value: MetaData/pressure
+      minvalue: -5000.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 240-260
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      test variables:
+      - name: MetaData/pressure
+      maxvalue: 95000.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 240-260
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      test variables:
+      - name: MetaData/pressure
+      minvalue: 70000.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 242,243
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      test variables:
+      - name: MetaData/pressure
+      maxvalue: 39900.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 246,247,250,254
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      test variables:
+      - name: MetaData/pressure
+      minvalue: 24900.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 257,259
+      action:
+        name: reject
+    - filter: Bounds Check
+      filter variables:
+      - name: windEastward
+      - name: windNorthward
+      test variables:
+      - name: MetaData/pressure
+      maxvalue: 60000.0
+      where:
+      - variable:
+          name: ObsType/windEastward
+        is_in: 258,259
+      action:
+        name: reject
     - filter: Difference Check
       filter variables:
       - name: windEastward
@@ -18476,10 +18646,13 @@ observations:
         - Land_Temperature
         - Ice_Temperature
         - Snow_Temperature
+        zeroO3JacRange:
+        - 996.0
+        - 1170.0
       obs options:
         Sensor_ID: ssmis_f17
         EndianType: little_endian
-        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1//
+        CoefficientPath: /discover/nobackup/projects/gmao/advda/SwellStaticFiles/jedi/crtm_coefficients/2.4.1-1//
     obs bias:
       input file: cycle_dir/ssmis_f17.20231009T150000Z.satbias.nc4
       output file: cycle_dir/ssmis_f17.20231009T210000Z.satbias.nc4
@@ -19229,5 +19402,5 @@ model:
   filenames:
   - bkg.%yyyy%mm%ddT%hh%MM%ssZ.nc4
   - fv3-jedi/bkg/geos.crtmsrf.91.nc4
-  field io names: *id017
+  field io names: *id023
 forecast length: PT6H

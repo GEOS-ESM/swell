@@ -154,49 +154,67 @@ def compare_used_and_set_questions() -> Tuple[dict, dict]:
         tasks = get_all_tasks(suite)
 
         for task in tasks:
-            # Task-specific used and set questions
-            used_task = []
-            set_task = []
 
-            # Get the set questions for the task
-            if task in tq.get_all():
-                set_task.extend(get_question_names(tq[task].value))
+            task_files = []
+            task_names = []
 
-                for model in possible_model_components:
-                    set_task.extend(get_question_names(tq[task].value, model))
+            # Check for generic task files
+            generic_task = os.path.join(get_swell_path(), 'tasks',
+                                        camel_case_to_snake_case(task) + '.py')
+            if os.path.exists(generic_task):
+                task_files.append(generic_task)
+                task_names.append(task)
 
-            # Check the task's code for the questions it uses
-            task_file = os.path.join(get_swell_path(), 'tasks',
-                                     camel_case_to_snake_case(task) + '.py')
+            # Get model-specific tasks
+            for model in possible_model_components:
+                model_file = os.path.join(get_swell_path(), 'tasks', model,
+                                          camel_case_to_snake_case(task) + f'_{model}.py')
+                if os.path.exists(model_file):
+                    task_files.append(model_file)
+                    task_names.append(f'{task}-{model}')
 
-            with open(task_file, 'r') as f:
-                config_lines = [line for line in f.readlines() if 'self.config.' in line]
-                for line in config_lines:
-                    if 'get_key_for_model' in line:
-                        field = line.split(
-                                'self.config.get_key_for_model(')[1].split(')')[0].strip() + ')'
-                        if len(field.split(',')) == 1:
-                            field = field.split(',')[0] + '()'
+            for task_file, task_name in zip(task_files, task_names):
+
+                # Task-specific used and set questions
+                used_task = []
+                set_task = []
+
+                # Get the set questions for the task
+                if task in tq.get_all():
+                    set_task.extend(get_question_names(tq[task].value))
+
+                    for model in possible_model_components:
+                        set_task.extend(get_question_names(tq[task].value, model))
+
+                with open(task_file, 'r') as f:
+                    config_lines = [line for line in f.readlines() if 'self.config.' in line]
+                    for line in config_lines:
+                        if 'get_key_for_model' in line:
+                            field = line.split(
+                                    'self.config.get_key_for_model(')[1].split(')')[0].strip() + ')'
+                            if len(field.split(',')) == 1:
+                                field = field.split(',')[0] + '()'
+                            else:
+                                field = field.split(',')[
+                                        0].strip() + '(' + field.split(',')[-1].strip() + ')'
+
+                            field = field.replace('"', '')
+                            field = field.replace("'", '')
                         else:
-                            field = field.split(',')[
-                                    0].strip() + '(' + field.split(',')[-1].strip() + ')'
+                            field = line.split('self.config.')[1].split(')')[0].strip() + ')'
+                        # Include the parentheses, so we can later assess
+                        # whether the key is optional
+                        used_task.append(field)
 
-                        field = field.replace('"', '')
-                        field = field.replace("'", '')
-                    else:
-                        field = line.split('self.config.')[1].split(')')[0].strip() + ')'
-                    # Include the parentheses, so we can later assess whether the key is optional
-                    used_task.append(field)
+                set_task = sorted(list(set(set_task)))
+                used_task = sorted(list(set(used_task)))
 
-            set_task = sorted(list(set(set_task)))
-            used_task = sorted(list(set(used_task)))
+                # Filter out the questions set by the code
+                set_task = CodeDependentQuestions.filter_list(set_task)
+                used_task = CodeDependentQuestions.filter_list(used_task)
 
-            # Filter out the questions set by the code
-            set_task = CodeDependentQuestions.filter_list(set_task)
-            used_task = CodeDependentQuestions.filter_list(used_task)
-
-            used_by[task] = used_task
-            set_for[task] = set_task
+                used_by[task_name] = used_task
+                set_for[task_name] = set_task
 
         used_not_set[suite] = {}
         set_not_used[suite] = {}

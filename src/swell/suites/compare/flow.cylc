@@ -42,13 +42,12 @@
             JediOopsLogParser-{{model_component}}-{{ loop.index0 }}
             {% endfor %}
             CompareIodaObservations-{{model_component}}? & JediLogComparison-{{model_component}}[^]? => Pass
-
-            CompareIodaObservations-{{model_component}}:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}:fail? => comparison_fail?
             {% if comparison_log_type is defined and comparison_log_type != "hofx" %}
-            CompareIncrement-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}} => PublishComparisons?
+            CompareIncrement-{{model_component}}:fail? => EvaComparisonIncrement-{{model_component}}? => PublishComparisons?
             {% endif %}
-            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}} => PublishComparisons?
-            PublishComparisons? => comparison_fail?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonJediLog-{{model_component}}? => PublishComparisons?
+            JediLogComparison-{{model_component}}[^]:fail? => EvaComparisonObservations-{{model_component}}? => PublishComparisons?
         {% endif %}
         {% endfor %}
         """
@@ -75,6 +74,7 @@
 
     {% for model_component in model_components %}
     [[Pass]]
+        #cylc set ... --out skip tells Cylc: “this task is intentionally not going to run; mark it as skipped.”
         script = """
             cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonIncrement-{{model_component}} --out skip
             cylc set $CYLC_WORKFLOW_ID//$datetime/EvaComparisonJediLog-{{model_component}} --out skip

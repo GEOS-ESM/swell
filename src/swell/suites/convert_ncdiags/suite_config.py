@@ -25,8 +25,8 @@ class SuiteConfig(QuestionContainer, Enum):
         list_name="convert_ncdiags",
         questions=[
             sq.common,
-            qd.start_cycle_point("2021-12-12T00:00:00Z"),
-            qd.final_cycle_point("2021-12-12T06:00:00Z"),
+            qd.start_cycle_point("2025-12-30T00:00:00Z"),
+            qd.final_cycle_point("2025-12-30T06:00:00Z"),
             qd.jedi_build_method("use_existing"),
             qd.bundles("REMOVE"),
             qd.model_components(['geos_atmosphere']),
@@ -44,6 +44,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "gsi_ncdiags"
             ]),
             qd.observations([
+                "abi_g16",
+                "abi_g18",
                 "aircraft",
                 "airs_aqua",
                 "amsr2_gcom-w1",
@@ -54,11 +56,14 @@ class SuiteConfig(QuestionContainer, Enum):
                 "amsua_n18",
                 "amsua_n19",
                 "atms_n20",
+                "atms_n21",
                 "atms_npp",
                 "avhrr3_metop-b",
+                "avhrr3_metop-c",
                 "avhrr3_n18",
                 "avhrr3_n19",
                 "cris-fsr_n20",
+                "cris-fsr_n21",
                 "cris-fsr_npp",
                 "gmi_gpm",
                 "gps",
@@ -69,6 +74,9 @@ class SuiteConfig(QuestionContainer, Enum):
                 "mhs_n19",
                 "mls55_aura",
                 "omi_aura",
+                "omieff_aura",
+                "ompslpnc_n21",
+                "ompslpnc_npp",
                 "ompsnm_npp",
                 "pibal",
                 "satwind",
@@ -78,8 +86,8 @@ class SuiteConfig(QuestionContainer, Enum):
                 "sondes",
                 "ssmis_f17"
             ]),
-            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/advda/SwellTestData/"
-                                    "ufo_testing/ncdiagv2/%Y%m%d%H"),
+            qd.path_to_gsi_nc_diags("/discover/nobackup/projects/gmao/dadev/rtodling/"
+                                    "archive/544/x0054/obs/Y%Y/M%m/D%d/H%H"),
         ]
     )
 
