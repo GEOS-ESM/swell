@@ -828,7 +828,7 @@ class TaskQuestions(QuestionContainer, Enum):
             qd.horizontal_resolution(),
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
 
     SaveForecastCf = QuestionList(

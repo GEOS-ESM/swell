@@ -14,7 +14,9 @@ import os
 import tarfile
 from r2d2 import store
 
+from swell.deployment.platforms.platforms import login_or_compute
 from swell.tasks.base.task_base import taskBase
+from swell.utilities.compress import compress_file
 from swell.utilities.datetime_util import datetime_formats
 from swell.utilities.r2d2 import load_r2d2_credentials
 
@@ -56,6 +58,11 @@ class SaveForecast(taskBase):
             self.window_type,
             dto=True)
 
+        # Compute the step that aligns with GetBackground's fetch key
+        window_length_dur = isodate.parse_duration(self.window_length)
+        window_offset_dur = self.da_window_params.window_offset(self.window_length, dto=True)
+        self.marine_step = isodate.duration_isoformat(window_length_dur - window_offset_dur)
+
         analysis_time_iso = self.da_window_params.analysis_time_iso()
 
         # Populate jedi_rendering template dictionary before rendering
@@ -93,7 +100,8 @@ class SaveForecast(taskBase):
                 marine_model_configs.append(('cice6', 'ice_filename', 'cice.res'))
 
             for model_name, filename_key, file_type in marine_model_configs:
-                self._store_compressed_marine(model_name, filename_key, file_type, is_4d)
+                self._store_compressed_marine(model_name, filename_key, file_type, is_4d,
+                                              self.marine_step)
 
         else:
             self.logger.abort(f'Unknown model component for SaveForecast: {model_component}')
@@ -167,6 +175,7 @@ class SaveForecast(taskBase):
                                  filename_key: str,
                                  file_type: str,
                                  is_4d: bool,
+                                 step: str,
                                  ) -> None:
         """Collect all marine state files, check that they exist, compress them with gz,
         and store the compressed archive in R2D2.
@@ -177,6 +186,7 @@ class SaveForecast(taskBase):
                 (e.g. 'ocn_filename', 'ice_filename').
             file_type (str): R2D2 file_type label (e.g. 'MOM.res', 'cice.res').
             is_4d (bool): Whether the model is running in 4D (or FGAT) mode.
+            step (str): ISO 8601 duration for the R2D2 forecast step key.
         """
 
         # Gather file paths
@@ -206,28 +216,38 @@ class SaveForecast(taskBase):
                 else:
                     self.logger.abort(f"Required marine state file does not exist: {f}")
 
-        # Step 2: Compress them with gz mode
-        archive_name = f"{model_name}.{self.local_background_time}.tar.gz"
-        archive_path = os.path.join(self.cycle_dir(), archive_name)
+        # Step 2a: Create an uncompressed tar archive
+        archive_tar = os.path.join(self.cycle_dir(),
+                                   f"{model_name}.{self.local_background_time}.tar")
+        archive_path = archive_tar + '.gz'
 
-        self.logger.info(f"Compressing {len(files_to_compress)} marine state and/or background "
-                         f"files into {archive_path}")
-        self.logger.debug(f"Files to compress: {files_to_compress}")
+        self.logger.info(f"Archiving {len(files_to_compress)} marine state file(s) into "
+                         f"{archive_path}")
+        self.logger.debug(f"Files to archive: {files_to_compress}")
 
         try:
-            with tarfile.open(archive_path, 'w:gz', dereference=True) as tar:
+            with tarfile.open(archive_tar, 'w', dereference=True) as tar:
                 for f in files_to_compress:
                     tar.add(f, arcname=os.path.basename(f))
         except Exception as e:
-            self.logger.abort(f"Failed to create tar.gz archive for marine states: {e}")
+            self.logger.abort(f"Failed to create tar archive for marine states: {e}")
 
-        # Step 3: Finally, store them in r2d2
+        # Step 2b: Compress — pigz on compute nodes, stdlib gzip on login nodes
+        algorithm = 'pigz' if login_or_compute(self.platform()) == 'compute' else 'gzip'
+        self.logger.info(f"Compressing archive using {algorithm}")
+        try:
+            compress_file(archive_tar, algorithm=algorithm)
+        except Exception as e:
+            self.logger.abort(f"Failed to compress marine archive with {algorithm}: {e}")
+        os.remove(archive_tar)
+
+        # Step 3: Store in R2D2
         self._store_forecast(
             model_name=model_name,
             bkg_dto=self.local_background_time_dto,
             source_file=archive_path,
             file_type=file_type,
-            step='PT0H'
+            step=step,
         )
 
 # --------------------------------------------------------------------------------------------------
