@@ -58,14 +58,14 @@ class SuiteConfig(QuestionContainer, Enum):
     )
 
     # --------------------------------------------------------------------------------------------------
-    
+
     _3dvar_marine_tier1 = QuestionList(
         list_name="3dvar_marine_tier1",
         questions=[
             _3dvar_marine
         ]
     )
-    
+
     # --------------------------------------------------------------------------------------------------
 
     _3dvar_marine_tier2 = QuestionList(
