@@ -49,6 +49,7 @@ def prepare_scheduling_dict(
         "RunJediConvertStateSoca2ciceExecutable": {"all": {"nodes": 1}},
         "RunJediEtkfObserver": {"all": {"nodes": 4}},
         "RunJediEtkfSolver": {"all": {"nodes": 4}}
+        "RunJediEdaExecutable": {"all": {"ntasks-per-node": 126}}
     }
 
     # Global SLURM settings stored in $HOME/.swell/swell-slurm.yaml
@@ -81,7 +82,9 @@ def prepare_scheduling_dict(
         'EvaTimeseries',
         'GenerateBClimatology',
         'RunGeos',
+        'RunJediEdaExecutable',
         'RunJediEnsembleMeanVariance',
+        'RunJediDiffstates',
         'RunJediConvertStateSoca2ciceExecutable',
         'RunJediFgatExecutable',
         'RunJediHofxEnsembleExecutable',
