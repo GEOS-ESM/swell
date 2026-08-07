@@ -8,8 +8,8 @@
 # --------------------------------------------------------------------------------------------------
 
 
-from dataclasses import dataclass
-from typing import List, Dict
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 from swell.utilities.swell_questions import SuiteQuestion, TaskQuestion
 from swell.utilities.swell_questions import WidgetType as WType
@@ -357,6 +357,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class ebkg_time_offset(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "ebkg_time_offset"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = ("How long before the middle of the analysis window did"
+                       " the ensemble background providing forecast begin?")
+        widget_type: WType = WType.ISO_DURATION
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class rst_experiment(TaskQuestion):
         default_value: str = "defer_to_model"
         question_name: str = "rst_experiment"
@@ -534,6 +547,19 @@ class QuestionDefaults():
     # --------------------------------------------------------------------------------------------------
 
     @dataclass
+    class obs_pert_amplitude(TaskQuestion):
+        default_value: str = "defer_to_model"
+        question_name: str = "obs_pert_amplitude"
+        options: str = "defer_to_model"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Enter obs perturbation amplitude for EDA:"
+        widget_type: WType = WType.FLOAT
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
     class ensmean_only(TaskQuestion):
         default_value: bool = False
         question_name: str = "ensmean_only"
@@ -562,6 +588,32 @@ class QuestionDefaults():
         ])
         prompt: str = "Calculate ensemble mean and variance only?"
         widget_type: WType = WType.BOOLEAN
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class ensmeanvariance_spec(TaskQuestion):
+        default_value: List[Dict[str, str]] = field(default_factory=lambda: [{}])
+        question_name: str = "ensmeanvariance_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the ensemble mean and variance specifications:"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class diffstates_spec(TaskQuestion):
+        default_value: Dict[str, Any] = field(default_factory=dict)
+        question_name: str = "diffstates_spec"
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        ask_question: bool = True
+        prompt: str = "Configure the diffstates specifications: [state1, state2]"
+        widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
 
@@ -1371,6 +1423,19 @@ class QuestionDefaults():
             "all_models"
         ])
         prompt: str = "What is the database providing the observations?"
+        widget_type: WType = WType.STRING
+
+    # --------------------------------------------------------------------------------------------------
+
+    @dataclass
+    class observation_providers(TaskQuestion):
+        default_value: Dict[str, str] = mutable_field({})
+        question_name: str = "observation_providers"
+        ask_question: bool = False
+        models: List[str] = mutable_field([
+            "all_models"
+        ])
+        prompt: str = "Map observation names to their R2D2 providers."
         widget_type: WType = WType.STRING
 
     # --------------------------------------------------------------------------------------------------
